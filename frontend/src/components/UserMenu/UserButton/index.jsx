@@ -5,8 +5,14 @@ import System from "@/models/system";
 import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
 import { Person } from "@phosphor-icons/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import AccountModal from "../AccountModal";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   AUTH_TIMESTAMP,
   AUTH_TOKEN,
@@ -16,37 +22,19 @@ import {
 } from "@/utils/constants";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Account button. Lives in the sidebar footer alongside the other footer icons,
+ * so it is sized and coloured to match them rather than floating over the page.
+ *
+ * The menu opens upward because the footer sits at the bottom of the sidebar;
+ * Radix flips it automatically if there is not enough room.
+ */
 export default function UserButton() {
   const { t } = useTranslation();
   const mode = useLoginMode();
   const { user } = useUser();
-  const menuRef = useRef();
-  const buttonRef = useRef();
-  const [showMenu, setShowMenu] = useState(false);
   const [showAccountSettings, setShowAccountSettings] = useState(false);
   const [supportEmail, setSupportEmail] = useState("");
-
-  const handleClose = (event) => {
-    if (
-      menuRef.current &&
-      !menuRef.current.contains(event.target) &&
-      !buttonRef.current.contains(event.target)
-    ) {
-      setShowMenu(false);
-    }
-  };
-
-  const handleOpenAccountModal = () => {
-    setShowAccountSettings(true);
-    setShowMenu(false);
-  };
-
-  useEffect(() => {
-    if (showMenu) {
-      document.addEventListener("mousedown", handleClose);
-    }
-    return () => document.removeEventListener("mousedown", handleClose);
-  }, [showMenu]);
 
   useEffect(() => {
     const fetchSupportEmail = async () => {
@@ -61,54 +49,54 @@ export default function UserButton() {
   }, []);
 
   if (mode === null) return null;
-  return (
-    <div className="absolute top-3 right-4 md:top-9 md:right-10 w-fit h-fit z-40">
-      <button
-        ref={buttonRef}
-        onClick={() => setShowMenu(!showMenu)}
-        type="button"
-        className="uppercase transition-all duration-300 w-[35px] h-[35px] text-base font-semibold rounded-full flex items-center bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover justify-center text-white p-2 hover:border-slate-100 hover:border-opacity-50 border-transparent border"
-      >
-        {mode === "multi" ? <UserDisplay /> : <Person size={14} />}
-      </button>
 
-      {showMenu && (
-        <div
-          ref={menuRef}
-          className="w-fit rounded-lg absolute top-12 right-0 bg-theme-action-menu-bg p-2 flex items-center-justify-center"
+  return (
+    <div className="flex w-fit">
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          type="button"
+          aria-label={t("profile_settings.account")}
+          data-tooltip-id="footer-item"
+          data-tooltip-content={t("profile_settings.account")}
+          className="uppercase transition-all duration-300 h-9 w-9 text-xs font-semibold rounded-full flex items-center justify-center overflow-hidden bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover text-white light:text-slate-800"
         >
-          <div className="flex flex-col gap-y-2">
-            {mode === "multi" && !!user && (
-              <button
-                onClick={handleOpenAccountModal}
-                className="border-none text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
-              >
-                {t("profile_settings.account")}
-              </button>
-            )}
-            <a
-              href={supportEmail}
-              className="text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
+          {mode === "multi" ? <UserDisplay /> : <Person size={18} />}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          side="top"
+          align="start"
+          className="bg-theme-action-menu-bg border-theme-modal-border"
+        >
+          {mode === "multi" && !!user && (
+            <DropdownMenuItem
+              onSelect={() => setShowAccountSettings(true)}
+              className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
             >
-              {t("profile_settings.support")}
-            </a>
-            <button
-              onClick={() => {
-                window.localStorage.removeItem(AUTH_USER);
-                window.localStorage.removeItem(AUTH_TOKEN);
-                window.localStorage.removeItem(AUTH_TIMESTAMP);
-                window.localStorage.removeItem(LAST_VISITED_WORKSPACE);
-                window.localStorage.removeItem(USER_PROMPT_INPUT_MAP);
-                window.location.replace(paths.home());
-              }}
-              type="button"
-              className="text-white hover:bg-theme-action-menu-item-hover w-full text-left px-4 py-1.5 rounded-md"
-            >
-              {t("profile_settings.signout")}
-            </button>
-          </div>
-        </div>
-      )}
+              {t("profile_settings.account")}
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem
+            asChild
+            className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
+          >
+            <a href={supportEmail}>{t("profile_settings.support")}</a>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              window.localStorage.removeItem(AUTH_USER);
+              window.localStorage.removeItem(AUTH_TOKEN);
+              window.localStorage.removeItem(AUTH_TIMESTAMP);
+              window.localStorage.removeItem(LAST_VISITED_WORKSPACE);
+              window.localStorage.removeItem(USER_PROMPT_INPUT_MAP);
+              window.location.replace(paths.home());
+            }}
+            className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
+          >
+            {t("profile_settings.signout")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       {user && showAccountSettings && (
         <AccountModal
           user={user}
@@ -123,17 +111,14 @@ function UserDisplay() {
   const { pfp } = usePfp();
   const user = userFromStorage();
 
-  if (pfp) {
+  if (pfp)
     return (
-      <div className="w-[35px] h-[35px] rounded-full flex-shrink-0 overflow-hidden transition-all duration-300 bg-gray-100 hover:border-slate-100 hover:border-opacity-50 border-transparent border hover:opacity-60">
-        <img
-          src={pfp}
-          alt="User profile picture"
-          className="w-full h-full object-cover"
-        />
-      </div>
+      <img
+        src={pfp}
+        alt="User profile picture"
+        className="w-full h-full object-cover"
+      />
     );
-  }
 
   return user?.username?.slice(0, 2) || "AA";
 }
