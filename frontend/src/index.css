@@ -7,6 +7,41 @@
 }
 
 :root {
+  /*
+   * shadcn/ui design tokens (dark is the app default, matching --theme-* below).
+   * Stored as HSL triplets — consumed via hsl(var(--token)) in tailwind.config.js —
+   * so Tailwind opacity modifiers like `bg-primary/50` keep working. Do not change
+   * these to hex; that silently breaks every `/opacity` usage in shadcn components.
+   * Each value is derived from the matching --theme-* token on the next lines.
+   */
+  --background: 180 3.4% 5.7%; /* #0e0f0f — --theme-bg-primary */
+  --foreground: 0 0% 100%; /* #ffffff — --theme-text-primary */
+  --card: 240 5.3% 11.2%; /* #1b1b1e — --theme-bg-secondary */
+  --card-foreground: 0 0% 100%; /* #ffffff */
+  --popover: 220 3.7% 15.9%; /* #27282a — --theme-action-menu-bg */
+  --popover-foreground: 0 0% 100%; /* #ffffff */
+  --primary: 197.8 100% 63.7%; /* #46c8ff — --theme-button-primary */
+  --primary-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --muted: 240 5.3% 11.2%; /* #1b1b1e */
+  --muted-foreground: 240 0.5% 62.5%; /* #9f9fa0 — --theme-home-text-secondary */
+  --destructive: 3.9 86% 58%; /* #f04438 — colors.danger */
+  --destructive-foreground: 0 0% 100%; /* #ffffff */
+  --border: 240 2.3% 25.3%; /* #3f3f42 — --theme-modal-border */
+  --input: 180 3.4% 5.7%; /* #0e0f0f — --theme-settings-input-bg */
+  --ring: 197.8 100% 63.7%; /* #46c8ff */
+  --radius: 0.5rem;
+
+  /*
+   * `secondary` and `accent` are pinned to the flat hex values they replaced in
+   * tailwind.config.js and are intentionally identical in both themes, so the ~30
+   * pre-existing `bg-secondary` / `hover:bg-accent` usages render byte-identically.
+   * Giving them real light-mode values is a follow-up, not part of this change.
+   */
+  --secondary: 222 10.2% 19.2%; /* #2C2F36 — was colors.secondary */
+  --secondary-foreground: 0 0% 100%; /* #ffffff */
+  --accent: 216 7.6% 25.9%; /* #3D4147 — was colors.accent */
+  --accent-foreground: 0 0% 100%; /* #ffffff */
+
   /* Default theme */
   --theme-loader: #ffffff;
   --theme-bg-primary: #0e0f0f;
@@ -106,6 +141,24 @@
 }
 
 [data-theme="light"] {
+  /* shadcn/ui tokens — light overrides. --secondary/--accent are deliberately
+     absent so they inherit the pinned dark values from :root (see note there). */
+  --background: 0 0% 100%; /* #ffffff */
+  --foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --card: 0 0% 100%; /* #ffffff */
+  --card-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --popover: 0 0% 91.8%; /* #eaeaea — --theme-action-menu-bg */
+  --popover-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --primary: 198.9 91.1% 48.4%; /* #0ba5ec — --theme-button-primary */
+  --primary-foreground: 0 0% 100%; /* #ffffff */
+  --muted: 216.9 56.5% 95.5%; /* #edf2fa — --theme-settings-input-bg */
+  --muted-foreground: 195 1.6% 48.6%; /* #7a7d7e — --theme-text-secondary */
+  --destructive: 4.2 76.5% 40%; /* #b42318 — colors.error */
+  --destructive-foreground: 0 0% 100%; /* #ffffff */
+  --border: 0 0% 82.7%; /* #d3d3d3 — --theme-modal-border */
+  --input: 216.9 56.5% 95.5%; /* #edf2fa */
+  --ring: 198.9 91.1% 48.4%; /* #0ba5ec */
+
   --theme-loader: #000000;
   --theme-bg-primary: #ffffff;
   --theme-bg-secondary: #ffffff;

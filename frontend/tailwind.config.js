@@ -1,6 +1,10 @@
+import animate from "tailwindcss-animate"
+
 /** @type {import('tailwindcss').Config} */
 export default {
-  darkMode: "class",
+  // The app sets `data-theme="light" | "dark"` on <html> (see src/hooks/useTheme.js).
+  // `:root` in index.css holds the dark values, so dark is also the pre-hydration default.
+  darkMode: ["class", '[data-theme="dark"]'],
   content: {
     relative: true,
     files: [
@@ -20,9 +24,49 @@ export default {
         "270": "270deg",
         "360": "360deg"
       },
+      // shadcn/ui radius scale — driven by --radius in src/index.css
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)"
+      },
       colors: {
+        // --- shadcn/ui design tokens ---
+        // Values live in src/index.css as HSL triplets so Tailwind opacity
+        // modifiers (bg-primary/50) keep working. `secondary` and `accent` are
+        // pinned to the legacy hex values they replaced so the ~30 existing
+        // `bg-secondary` / `hover:bg-accent` usages render identically.
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+
         "black-900": "#141414",
-        accent: "#3D4147",
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
         "sidebar-button": "#31353A",
         sidebar: "#25272C",
         "historical-msg-system": "rgba(255, 255, 255, 0.05);",
@@ -30,7 +74,10 @@ export default {
         outline: "#4E5153",
         "primary-button": "var(--theme-button-primary)",
         "cta-button": "var(--theme-button-cta)",
-        secondary: "#2C2F36",
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
         "dark-input": "#18181B",
         "mobile-onboarding": "#2C2F35",
         "dark-highlight": "#1C1E21",
@@ -287,6 +334,9 @@ export default {
     }
   ],
   plugins: [
+    // NOTE: imported at the top, not `require()`d — package.json sets "type": "module",
+    // so the require() form the shadcn CLI writes would throw here.
+    animate,
     function ({ addVariant }) {
       addVariant('light', '.light &') // Add the `light:` variant
       addVariant('pwa', '.pwa &') // Add the `pwa:` variant
