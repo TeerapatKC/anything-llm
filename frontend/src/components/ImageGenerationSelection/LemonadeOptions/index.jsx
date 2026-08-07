@@ -6,6 +6,8 @@ import { LEMONADE_COMMON_URLS } from "@/utils/constants";
 import { originOnly } from "@/utils/url";
 import ImageModelSelection from "../ImageModelSelection";
 import ImageDimensionSelection from "../ImageDimensionSelection";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LemonadeImageOptions({ settings }) {
   const {
@@ -31,9 +33,7 @@ export default function LemonadeImageOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1">
-              <label className="text-white text-sm font-semibold">
-                Lemonade Base URL
-              </label>
+              <Label variant="settings">Lemonade Base URL</Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -82,10 +82,10 @@ export default function LemonadeImageOptions({ settings }) {
               </>
             )}
           </div>
-          <input
+          <Input
+            variant="settings"
             type="url"
             name="ImageGenerationLemonadeBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:13305"
             value={basePathValue.value || ""}
             required={true}
@@ -96,13 +96,13 @@ export default function LemonadeImageOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key <span className="text-white/40">(optional)</span>
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="ImageGenerationLemonadeApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Lemonade API Key"
             value={authTokenValue.value || ""}
             onChange={authToken.onChange}

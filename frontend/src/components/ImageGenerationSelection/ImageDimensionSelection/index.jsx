@@ -1,3 +1,4 @@
+import { Label } from "@/components/ui/label";
 const PROVIDER_DIMENSIONS = {
   "openai-imggen": ["auto", "1024x1024", "1024x1536", "1536x1024"],
   "lemonade-imggen": ["256x256", "512x512", "768x768", "1024x1024"],
@@ -17,9 +18,9 @@ export default function ImageDimensionSelection({ provider, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Image Dimensions
-      </label>
+      </Label>
       <select
         name="ImageGenerationDimensions"
         className={INPUT_CLASSES}

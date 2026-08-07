@@ -4,6 +4,8 @@ import PreLoader from "@/components/Preloader";
 import { KOBOLDCPP_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function KoboldCPPOptions({ settings }) {
   const {
@@ -42,13 +44,13 @@ export default function KoboldCPPOptions({ settings }) {
           basePath={basePath.value}
         />
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             Model context window
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="KoboldCPPTokenLimit"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="4096"
             min={1}
             value={tokenLimit}
@@ -62,13 +64,13 @@ export default function KoboldCPPOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             Max response tokens
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="KoboldCPPMaxTokens"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="2048"
             min={1}
             value={maxTokens}
@@ -103,9 +105,7 @@ export default function KoboldCPPOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                KoboldCPP Base URL
-              </label>
+              <Label variant="settings">KoboldCPP Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -121,10 +121,10 @@ export default function KoboldCPPOptions({ settings }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="KoboldCPPBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://127.0.0.1:5000/v1"
               value={basePathValue.value}
               required={true}
@@ -174,9 +174,9 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           KoboldCPP Model
-        </label>
+        </Label>
         <select
           name="KoboldCPPModelPref"
           disabled={true}
@@ -198,9 +198,9 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         KoboldCPP Model
-      </label>
+      </Label>
       <select
         name="KoboldCPPModelPref"
         required={true}

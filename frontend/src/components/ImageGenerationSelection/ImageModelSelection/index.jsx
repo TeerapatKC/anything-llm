@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
+import { Label } from "@/components/ui/label";
 
 const INPUT_CLASSES =
   "border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5";
@@ -120,9 +121,9 @@ export default function ImageModelSelection({
 function ModelSelectionWrapper({ children, hint = null }) {
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Model
-      </label>
+      </Label>
       {children}
       {hint && (
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">

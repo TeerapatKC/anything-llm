@@ -2,6 +2,8 @@ import { ArrowSquareOut, Info } from "@phosphor-icons/react";
 import { AWS_REGIONS } from "./regions";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AwsBedrockLLMOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.AwsBedrockLLMApiKey);
@@ -33,13 +35,13 @@ export default function AwsBedrockLLMOptions({ settings }) {
 
       <div className="w-full flex items-center gap-[36px] my-1.5">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             AWS Bedrock API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="AwsBedrockLLMApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="AWS Bedrock API Key"
             defaultValue={settings?.AwsBedrockLLMApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -50,9 +52,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             AWS Region
-          </label>
+          </Label>
           <select
             name="AwsBedrockLLMRegion"
             value={region}
@@ -81,13 +83,13 @@ export default function AwsBedrockLLMOptions({ settings }) {
               region={region}
             />
             <div className="flex flex-col w-60">
-              <label className="text-white text-sm font-semibold block mb-3">
+              <Label variant="settings" className="block mb-3">
                 Model context window
-              </label>
-              <input
+              </Label>
+              <Input
+                variant="settings"
                 type="number"
                 name="AwsBedrockLLMTokenLimit"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="Content window limit (eg: 8192)"
                 min={1}
                 onScroll={(e) => e.target.blur()}
@@ -98,9 +100,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
             </div>
             <div className="flex flex-col w-60">
               <div className="flex items-center gap-x-1 mb-3">
-                <label className="text-white text-sm font-semibold block">
+                <Label variant="settings" className="block">
                   Max Tokens
-                </label>
+                </Label>
                 <div className="group relative">
                   <Info size={14} className="text-white/60 cursor-pointer" />
                   <div className="hidden group-hover:block absolute left-0 bottom-full mb-1 w-64 p-2 bg-theme-settings-input-bg text-white text-xs rounded-lg shadow-lg z-10">
@@ -109,10 +111,10 @@ export default function AwsBedrockLLMOptions({ settings }) {
                   </div>
                 </div>
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="number"
                 name="AwsBedrockLLMMaxTokens"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="4096"
                 min={1}
                 onScroll={(e) => e.target.blur()}
@@ -159,9 +161,9 @@ function BedrockModelSelection({ settings, apiKey, region }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="AwsBedrockLLMModel"
           disabled={true}
@@ -177,9 +179,9 @@ function BedrockModelSelection({ settings, apiKey, region }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="AwsBedrockLLMModel"
         required={true}

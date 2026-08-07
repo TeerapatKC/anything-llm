@@ -4,6 +4,8 @@ import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDis
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
 import ImageModelSelection from "../ImageModelSelection";
 import ImageDimensionSelection from "../ImageDimensionSelection";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function OllamaImageOptions({ settings }) {
   const {
@@ -62,9 +64,7 @@ export default function OllamaImageOptions({ settings }) {
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <label className="text-white text-sm font-semibold">
-                  Ollama Base URL
-                </label>
+                <Label variant="settings">Ollama Base URL</Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -101,10 +101,10 @@ export default function OllamaImageOptions({ settings }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="ImageGenerationOllamaBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://127.0.0.1:11434"
               value={basePathValue.value || ""}
               required={true}
@@ -117,9 +117,7 @@ export default function OllamaImageOptions({ settings }) {
 
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <label className="text-white text-sm font-semibold">
-                Authentication Token
-              </label>
+              <Label variant="settings">Authentication Token</Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -147,10 +145,10 @@ export default function OllamaImageOptions({ settings }) {
                 </p>
               </Tooltip>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="password"
               name="ImageGenerationOllamaAuthToken"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 focus:outline-primary-button active:outline-primary-button"
               placeholder="Ollama Auth Token"
               value={authTokenValue.value || ""}
               onChange={authToken.onChange}

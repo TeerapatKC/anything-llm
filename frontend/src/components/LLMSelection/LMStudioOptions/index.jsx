@@ -11,6 +11,8 @@ import System from "@/models/system";
 import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Tooltip } from "react-tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LMStudioOptions({ settings, showAlert = false }) {
   const {
@@ -84,9 +86,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           <div className="flex flex-col w-[300px]">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <label className="text-white text-sm font-semibold">
-                  LM Studio Base URL
-                </label>
+                <Label variant="settings">LM Studio Base URL</Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -123,10 +123,10 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="LMStudioBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://localhost:1234/v1"
               value={basePathValue.value}
               required={true}
@@ -138,9 +138,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <label className="text-white text-sm font-semibold">
-                Model Context Window
-              </label>
+              <Label variant="settings">Model Context Window</Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -157,10 +155,10 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                 }}
               />
             </div>
-            <input
+            <Input
+              variant="settings"
               type="number"
               name="LMStudioTokenLimit"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="Automatically managed"
               min={1}
               value={maxTokens}
@@ -175,9 +173,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
         <div className="flex items-start gap-4 mt-4">
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <label className="text-white text-sm font-semibold">
-                Authentication Token
-              </label>
+              <Label variant="settings">Authentication Token</Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -204,10 +200,10 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                 </p>
               </Tooltip>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="password"
               name="LMStudioAuthToken"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 focus:outline-primary-button active:outline-primary-button"
               placeholder="LM Studio Auth Token"
               defaultValue={settings?.LMStudioAuthToken ? "*".repeat(20) : ""}
               value={authTokenValue.value}
@@ -256,9 +252,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <label className="text-white text-sm font-semibold">
-            Selected Model
-          </label>
+          <Label variant="settings">Selected Model</Label>
           {!loading && !!basePath && (
             <>
               <Warning
@@ -306,9 +300,9 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         Selected Model
-      </label>
+      </Label>
       <select
         name="LMStudioModelPref"
         required={true}

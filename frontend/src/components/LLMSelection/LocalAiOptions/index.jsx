@@ -5,6 +5,8 @@ import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { LOCALAI_COMMON_URLS } from "@/utils/constants";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LocalAiOptions({ settings, showAlert = false }) {
   const {
@@ -50,13 +52,13 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
               apiKey={apiKey}
             />
             <div className="flex flex-col w-60">
-              <label className="text-white text-sm font-semibold block mb-2">
+              <Label variant="settings" className="block mb-2">
                 Model context window
-              </label>
-              <input
+              </Label>
+              <Input
+                variant="settings"
                 type="number"
                 name="LocalAiTokenLimit"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="4096"
                 min={1}
                 onScroll={(e) => e.target.blur()}
@@ -69,15 +71,15 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
         )}
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
-            <label className="text-white text-sm font-semibold flex items-center gap-x-2">
+            <Label variant="settings" className="flex items-center gap-x-2">
               Local AI API Key{" "}
               <p className="!text-xs !italic !font-thin">optional</p>
-            </label>
+            </Label>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="password"
             name="LocalAiApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="sk-mysecretkey"
             defaultValue={settings?.LocalAiApiKey ? "*".repeat(20) : ""}
             autoComplete="off"
@@ -107,9 +109,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
         <div className="w-full flex items-center gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                Local AI Base URL
-              </label>
+              <Label variant="settings">Local AI Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -125,10 +125,10 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="LocalAiBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://localhost:8080/v1"
               value={basePathValue.value}
               required={true}
@@ -170,9 +170,9 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="LocalAiModelPref"
           disabled={true}
@@ -190,9 +190,9 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="LocalAiModelPref"
         required={true}

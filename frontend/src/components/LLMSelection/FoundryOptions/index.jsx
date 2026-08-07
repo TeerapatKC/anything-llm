@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function FoundryOptions({ settings }) {
   const [models, setModels] = useState([]);
@@ -37,13 +39,13 @@ export default function FoundryOptions({ settings }) {
     <div className="flex flex-col gap-y-7">
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Base URL
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="FoundryBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="eg: http://127.0.0.1:8080"
             defaultValue={settings?.FoundryBasePath}
             required={true}
@@ -53,9 +55,9 @@ export default function FoundryOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Chat Model
-          </label>
+          </Label>
           {loading ? (
             <select
               name="FoundryModelPref"
@@ -91,13 +93,13 @@ export default function FoundryOptions({ settings }) {
           )}
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Model context window
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="FoundryModelTokenLimit"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="4096"
             defaultValue={settings?.FoundryModelTokenLimit}
             autoComplete="off"

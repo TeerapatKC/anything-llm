@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import System from "@/models/system";
+import { Label } from "@/components/ui/label";
 
 export default function NativeEmbeddingOptions({ settings }) {
   const [loading, setLoading] = useState(true);
@@ -38,9 +39,9 @@ export default function NativeEmbeddingOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex flex-col mt-1.5">
         <div className="flex flex-col w-96">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Model Preference
-          </label>
+          </Label>
           <select
             name="EmbeddingModelPref"
             required={true}

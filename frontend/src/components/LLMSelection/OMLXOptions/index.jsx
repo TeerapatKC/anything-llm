@@ -4,6 +4,8 @@ import { OMLX_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp, CircleNotch, Info } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function OMLXOptions({ settings }) {
   const {
@@ -56,9 +58,7 @@ export default function OMLXOptions({ settings }) {
             <div className="flex flex-col w-60">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-1">
-                  <label className="text-white text-sm font-semibold">
-                    OMLX Base URL
-                  </label>
+                  <Label variant="settings">OMLX Base URL</Label>
                   <Info
                     size={18}
                     className="text-theme-text-secondary cursor-pointer"
@@ -95,10 +95,10 @@ export default function OMLXOptions({ settings }) {
                   </>
                 )}
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="url"
                 name="OMLXLLMBasePath"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="http://127.0.0.1:8000"
                 value={basePathValue.value}
                 required={true}
@@ -112,9 +112,9 @@ export default function OMLXOptions({ settings }) {
           <div className="w-full flex items-start gap-4">
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <label className="text-white text-sm font-semibold block">
+                <Label variant="settings" className="block">
                   Model context window
-                </label>
+                </Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -154,10 +154,10 @@ export default function OMLXOptions({ settings }) {
                   </p>
                 </Tooltip>
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="number"
                 name="OMLXLLMTokenLimit"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="Automatically managed"
                 min={1}
                 value={contextWindowLimit}
@@ -174,9 +174,7 @@ export default function OMLXOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <label className="text-white text-sm font-semibold">
-                  Authentication Token
-                </label>
+                <Label variant="settings">Authentication Token</Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -202,10 +200,10 @@ export default function OMLXOptions({ settings }) {
                   </p>
                 </Tooltip>
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="password"
                 name="OMLXLLMApiKey"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 focus:outline-primary-button active:outline-primary-button"
                 placeholder="OMLX API Key"
                 defaultValue={settings?.OMLXLLMApiKey ? "*".repeat(20) : ""}
                 value={authTokenValue.value}
@@ -254,9 +252,9 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           OMLX Model
-        </label>
+        </Label>
         <select
           name="OMLXLLMModelPref"
           disabled={true}
@@ -278,9 +276,9 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         OMLX Model
-      </label>
+      </Label>
       <select
         name="OMLXLLMModelPref"
         required={true}

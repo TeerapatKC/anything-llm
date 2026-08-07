@@ -1,19 +1,21 @@
 import System from "@/models/system";
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function CometApiLLMOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <label className="text-theme-text-primary text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             CometAPI API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="CometApiLLMApiKey"
-            className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="CometAPI API Key"
             defaultValue={settings?.CometApiLLMApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -51,13 +53,13 @@ function AdvancedControls({ settings }) {
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
-          <label className="text-theme-text-primary text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Stream Timeout (ms)
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="CometApiLLMTimeout"
-            className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Timeout value between token responses to auto-timeout the stream"
             defaultValue={settings?.CometApiLLMTimeout ?? 3_000}
             autoComplete="off"
@@ -110,13 +112,13 @@ function CometApiModelSelection({ settings }) {
   if (loading || models.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-theme-text-primary text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="text"
           name="CometApiLLMModelPref"
-          className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
           placeholder="-- loading available models --"
           disabled
         />
@@ -126,15 +128,15 @@ function CometApiModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-theme-text-primary text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
-      <input
+      </Label>
+      <Input
+        variant="settings"
         type="text"
         name="CometApiLLMModelPref"
         list="cometapi-models-list"
         required
-        className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
         placeholder="Type or select a model"
         defaultValue={settings?.CometApiLLMModelPref || ""}
         autoComplete="off"

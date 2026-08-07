@@ -1,5 +1,7 @@
 import { useState } from "react";
 import ImageModelSelection from "../ImageModelSelection";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function OpenRouterImageOptions({ settings }) {
   const [inputValue, setInputValue] = useState(
@@ -13,13 +15,13 @@ export default function OpenRouterImageOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="ImageGenerationOpenRouterApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="OpenRouter API Key"
             defaultValue={
               settings?.ImageGenerationOpenRouterApiKey ? "*".repeat(20) : ""

@@ -3,6 +3,8 @@ import { Info } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
 import System from "@/models/system";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function PrivateModeOptions({ settings }) {
   const [models, setModels] = useState([]);
@@ -41,9 +43,7 @@ export default function PrivateModeOptions({ settings }) {
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-2">
-            <label className="text-white text-sm font-semibold">
-              Privatemode Proxy URL
-            </label>
+            <Label variant="settings">Privatemode Proxy URL</Label>
             <Info
               size={18}
               className="text-theme-text-secondary cursor-pointer"
@@ -73,10 +73,10 @@ export default function PrivateModeOptions({ settings }) {
               </Link>
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="url"
             name="PrivateModeBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="eg: http://127.0.0.1:8080"
             defaultValue={settings?.PrivateModeBasePath}
             required={true}
@@ -86,9 +86,9 @@ export default function PrivateModeOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             Chat Model
-          </label>
+          </Label>
           {loading ? (
             <select
               name="PrivateModeModelPref"

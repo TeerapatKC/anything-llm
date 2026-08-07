@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function MoonshotAiOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.MoonshotAiApiKey);
@@ -10,13 +12,13 @@ export default function MoonshotAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           API Key
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="password"
           name="MoonshotAiApiKey"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="Moonshot AI API Key"
           defaultValue={settings?.MoonshotAiApiKey ? "*".repeat(20) : ""}
           required={true}
@@ -57,9 +59,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
   if (!apiKey) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="MoonshotAiModelPref"
           disabled={true}
@@ -76,9 +78,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="MoonshotAiModelPref"
           disabled={true}
@@ -94,9 +96,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="MoonshotAiModelPref"
         required={true}

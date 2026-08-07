@@ -5,6 +5,8 @@ import PreLoader from "@/components/Preloader";
 import { LOCALAI_COMMON_URLS } from "@/utils/constants";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Tooltip } from "react-tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LocalAiOptions({ settings }) {
   const {
@@ -33,9 +35,9 @@ export default function LocalAiOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
             <div className="flex gap-x-1 items-center">
-              <label className="text-white text-sm font-semibold block">
+              <Label variant="settings" className="block">
                 Local AI API Key
-              </label>
+              </Label>
               <Info
                 size={16}
                 data-tooltip-id="localai-api-key-tooltip"
@@ -56,10 +58,10 @@ export default function LocalAiOptions({ settings }) {
               </Tooltip>
             </div>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="password"
             name="LocalAiApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="sk-mysecretkey"
             defaultValue={settings?.LocalAiApiKey ? "*".repeat(20) : ""}
             autoComplete="off"
@@ -76,9 +78,9 @@ export default function LocalAiOptions({ settings }) {
             data-tooltip-id="max-embedding-chunk-length-tooltip"
             className="flex gap-x-1 items-center mb-3"
           >
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Max embedding chunk length
-            </label>
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
@@ -97,10 +99,10 @@ export default function LocalAiOptions({ settings }) {
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="1000"
             min={1}
             onScroll={(e) => e.target.blur()}
@@ -115,9 +117,9 @@ export default function LocalAiOptions({ settings }) {
             data-tooltip-id="embedding-output-dimensions-tooltip"
             className="flex gap-x-1 items-center mb-3"
           >
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Output dimensions
-            </label>
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
@@ -140,10 +142,10 @@ export default function LocalAiOptions({ settings }) {
               model.
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="EmbeddingOutputDimensions"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Assume default dimensions"
             min={1}
             onScroll={(e) => e.target.blur()}
@@ -173,9 +175,7 @@ export default function LocalAiOptions({ settings }) {
         <div className="w-full flex items-center gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                LocalAI Base URL
-              </label>
+              <Label variant="settings">LocalAI Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -191,10 +191,10 @@ export default function LocalAiOptions({ settings }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="EmbeddingBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://localhost:8080/v1"
               value={basePathValue.value}
               required={true}
@@ -236,9 +236,9 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           Embedding Model Name
-        </label>
+        </Label>
         <select
           name="EmbeddingModelPref"
           disabled={true}
@@ -256,9 +256,9 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         Embedding Model Name
-      </label>
+      </Label>
       <select
         name="EmbeddingModelPref"
         required={true}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AnthropicAiOptions({ settings }) {
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
@@ -13,13 +15,13 @@ export default function AnthropicAiOptions({ settings }) {
     <div className="w-full flex flex-col">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Anthropic API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="AnthropicApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Anthropic API Key"
             defaultValue={settings?.AnthropicApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -56,9 +58,7 @@ export default function AnthropicAiOptions({ settings }) {
         <div className="w-full flex items-start gap-4 mt-1.5">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                Prompt Caching
-              </label>
+              <Label variant="settings">Prompt Caching</Label>
             </div>
             <select
               name="AnthropicCacheControl"
@@ -110,9 +110,9 @@ function AnthropicModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="AnthropicModelPref"
           disabled={true}
@@ -128,9 +128,9 @@ function AnthropicModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="AnthropicModelPref"
         required={true}

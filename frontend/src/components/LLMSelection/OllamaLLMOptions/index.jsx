@@ -5,6 +5,8 @@ import { CaretDown, CaretUp, Info, CircleNotch } from "@phosphor-icons/react";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function OllamaLLMOptions({ settings }) {
   const {
@@ -57,9 +59,7 @@ export default function OllamaLLMOptions({ settings }) {
             <div className="flex flex-col w-60">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-1">
-                  <label className="text-white text-sm font-semibold">
-                    Ollama Base URL
-                  </label>
+                  <Label variant="settings">Ollama Base URL</Label>
                   <Info
                     size={18}
                     className="text-theme-text-secondary cursor-pointer"
@@ -96,10 +96,10 @@ export default function OllamaLLMOptions({ settings }) {
                   </>
                 )}
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="url"
                 name="OllamaLLMBasePath"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="http://127.0.0.1:11434"
                 value={basePathValue.value}
                 required={true}
@@ -112,9 +112,9 @@ export default function OllamaLLMOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <label className="text-white text-sm font-semibold block">
+                <Label variant="settings" className="block">
                   Ollama Keep Alive
-                </label>
+                </Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -163,9 +163,9 @@ export default function OllamaLLMOptions({ settings }) {
           <div className="w-full flex items-start gap-4">
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <label className="text-white text-sm font-semibold block">
+                <Label variant="settings" className="block">
                   Model context window
-                </label>
+                </Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -205,10 +205,10 @@ export default function OllamaLLMOptions({ settings }) {
                   </p>
                 </Tooltip>
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="number"
                 name="OllamaLLMTokenLimit"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="Automatically managed"
                 min={1}
                 value={maxTokens}
@@ -223,9 +223,7 @@ export default function OllamaLLMOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <label className="text-white text-sm font-semibold">
-                  Authentication Token
-                </label>
+                <Label variant="settings">Authentication Token</Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -253,10 +251,10 @@ export default function OllamaLLMOptions({ settings }) {
                   </p>
                 </Tooltip>
               </div>
-              <input
+              <Input
+                variant="settings"
                 type="password"
                 name="OllamaLLMAuthToken"
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 focus:outline-primary-button active:outline-primary-button"
                 placeholder="Ollama Auth Token"
                 defaultValue={
                   settings?.OllamaLLMAuthToken ? "*".repeat(20) : ""
@@ -311,9 +309,9 @@ function OllamaLLMModelSelection({
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           Ollama Model
-        </label>
+        </Label>
         <select
           name="OllamaLLMModelPref"
           disabled={true}
@@ -335,9 +333,9 @@ function OllamaLLMModelSelection({
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         Ollama Model
-      </label>
+      </Label>
       <select
         name="OllamaLLMModelPref"
         required={true}

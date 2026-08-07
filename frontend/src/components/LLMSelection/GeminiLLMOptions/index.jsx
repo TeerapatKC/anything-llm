@@ -1,5 +1,7 @@
 import System from "@/models/system";
 import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function GeminiLLMOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.GeminiLLMApiKey);
@@ -9,13 +11,13 @@ export default function GeminiLLMOptions({ settings }) {
     <div className="w-full flex flex-col">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Google AI API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="GeminiLLMApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Google Gemini API Key"
             defaultValue={settings?.GeminiLLMApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -35,9 +37,9 @@ export default function GeminiLLMOptions({ settings }) {
             We are not using the generativeAPI endpoint and therefore cannot set the safety threshold.
 
             <div className="flex flex-col w-60">
-              <label className="text-white text-sm font-semibold block mb-3">
+              <Label variant="settings" className="block mb-3">
                 Safety Setting
-              </label>
+              </Label>
               <select
                 name="GeminiSafetySetting"
                 defaultValue={
@@ -87,9 +89,9 @@ function GeminiModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="GeminiLLMModelPref"
           disabled={true}
@@ -105,9 +107,9 @@ function GeminiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="GeminiLLMModelPref"
         required={true}

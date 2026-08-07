@@ -5,6 +5,8 @@ import { CaretDown, CaretUp, Info, CircleNotch } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { originOnly } from "@/utils/url";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LemonadeEmbeddingOptions({ settings }) {
   const {
@@ -39,9 +41,9 @@ export default function LemonadeEmbeddingOptions({ settings }) {
             data-tooltip-id="max-embedding-chunk-length-tooltip"
             className="flex gap-x-1 items-center mb-3"
           >
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Max embedding chunk length
-            </label>
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
@@ -50,10 +52,10 @@ export default function LemonadeEmbeddingOptions({ settings }) {
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="8192"
             min={1}
             value={maxChunkLength}
@@ -69,9 +71,9 @@ export default function LemonadeEmbeddingOptions({ settings }) {
             data-tooltip-id="lemonade-embedding-api-key"
             className="flex gap-x-1 items-center mb-3"
           >
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               API Key (optional)
-            </label>
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
@@ -80,11 +82,11 @@ export default function LemonadeEmbeddingOptions({ settings }) {
               The API key for your Lemonade instance
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="password"
             name="LemonadeLLMApiKey"
             defaultValue={settings?.LemonadeLLMApiKey ? "*".repeat(20) : ""}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             autoComplete="off"
           />
         </div>
@@ -111,9 +113,7 @@ export default function LemonadeEmbeddingOptions({ settings }) {
           <div className="flex flex-col w-[300px]">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <label className="text-white text-sm font-semibold">
-                  Lemonade Base URL
-                </label>
+                <Label variant="settings">Lemonade Base URL</Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -150,10 +150,10 @@ export default function LemonadeEmbeddingOptions({ settings }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="EmbeddingBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://localhost:8000/live"
               value={basePathValue.value}
               required={true}
@@ -202,9 +202,9 @@ function LemonadeModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           Lemonade Embedding Model
-        </label>
+        </Label>
         <select
           name="EmbeddingModelPref"
           disabled={true}
@@ -226,9 +226,9 @@ function LemonadeModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Lemonade Embedding Model
-      </label>
+      </Label>
       <select
         name="EmbeddingModelPref"
         required={true}

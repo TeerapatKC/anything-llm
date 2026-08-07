@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import ModelRouter from "@/models/modelRouter";
+import { Label } from "@/components/ui/label";
 
 export default function ModelRouterOptions({ settings }) {
   const { t } = useTranslation();
@@ -49,9 +50,9 @@ export default function ModelRouterOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             {t("model-router.router-selection.model-router-label")}
-          </label>
+          </Label>
           <select
             name="ModelRouterId"
             defaultValue={settings?.ModelRouterId || ""}

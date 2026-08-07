@@ -10,6 +10,8 @@ import {
 } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LMStudioEmbeddingOptions({ settings }) {
   const {
@@ -49,9 +51,9 @@ export default function LMStudioEmbeddingOptions({ settings }) {
             data-tooltip-id="max-embedding-chunk-length-tooltip"
             className="flex gap-x-1 items-center mb-3"
           >
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Max embedding chunk length
-            </label>
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
@@ -60,10 +62,10 @@ export default function LMStudioEmbeddingOptions({ settings }) {
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="8192"
             min={1}
             value={maxChunkLength}
@@ -96,9 +98,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           <div className="flex flex-col w-[300px]">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <label className="text-white text-sm font-semibold">
-                  LM Studio Base URL
-                </label>
+                <Label variant="settings">LM Studio Base URL</Label>
                 <Info
                   size={18}
                   className="text-theme-text-secondary cursor-pointer"
@@ -135,10 +135,10 @@ export default function LMStudioEmbeddingOptions({ settings }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="EmbeddingBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://localhost:1234/v1"
               value={basePathValue.value}
               required={true}
@@ -150,9 +150,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <label className="text-white text-sm font-semibold">
-                Authentication Token
-              </label>
+              <Label variant="settings">Authentication Token</Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -179,10 +177,10 @@ export default function LMStudioEmbeddingOptions({ settings }) {
                 </p>
               </Tooltip>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="password"
               name="LMStudioAuthToken"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 focus:outline-primary-button active:outline-primary-button"
               placeholder="LM Studio Auth Token"
               defaultValue={settings?.LMStudioAuthToken ? "*".repeat(20) : ""}
               value={authTokenValue.value}
@@ -231,9 +229,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <label className="text-white text-sm font-semibold">
-            Embedding Model
-          </label>
+          <Label variant="settings">Embedding Model</Label>
           {!loading && !!basePath && (
             <>
               <Warning
@@ -281,9 +277,9 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         LM Studio Embedding Model
-      </label>
+      </Label>
       <select
         name="EmbeddingModelPref"
         required={true}

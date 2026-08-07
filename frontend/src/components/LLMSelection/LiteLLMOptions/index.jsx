@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LiteLLMOptions({ settings }) {
   const [basePathValue, setBasePathValue] = useState(settings?.LiteLLMBasePath);
@@ -11,13 +13,13 @@ export default function LiteLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7 mt-1.5">
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Base URL
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="LiteLLMBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://127.0.0.1:4000"
             defaultValue={settings?.LiteLLMBasePath}
             required={true}
@@ -33,13 +35,13 @@ export default function LiteLLMOptions({ settings }) {
           apiKey={apiKey}
         />
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Model context window
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="LiteLLMTokenLimit"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="8192"
             min={1}
             onScroll={(e) => e.target.blur()}
@@ -52,14 +54,14 @@ export default function LiteLLMOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
-            <label className="text-white text-sm font-semibold flex items-center gap-x-2">
+            <Label variant="settings" className="flex items-center gap-x-2">
               API Key <p className="!text-xs !italic !font-thin">optional</p>
-            </label>
+            </Label>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="password"
             name="LiteLLMAPIKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="sk-mysecretkey"
             defaultValue={settings?.LiteLLMAPIKey ? "*".repeat(20) : ""}
             autoComplete="off"
@@ -99,9 +101,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="LiteLLMModelPref"
           disabled={true}
@@ -119,9 +121,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="LiteLLMModelPref"
         required={true}

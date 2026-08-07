@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function GenericOpenAiOptions({ settings }) {
   const [genericOpenAiBasePath, setGenericOpenAiBasePath] = useState(
@@ -16,13 +18,13 @@ export default function GenericOpenAiOptions({ settings }) {
     <div className="flex flex-col gap-y-7">
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Base URL
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="GenericOpenAiBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="eg: https://proxy.openai.com"
             defaultValue={settings?.GenericOpenAiBasePath}
             onChange={(e) => setGenericOpenAiBasePath(e.target.value)}
@@ -32,13 +34,13 @@ export default function GenericOpenAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="GenericOpenAiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Generic service API Key"
             defaultValue={settings?.GenericOpenAiKey ? "*".repeat(20) : ""}
             onChange={(e) => setGenericOpenAiApiKey(e.target.value)}
@@ -57,13 +59,13 @@ export default function GenericOpenAiOptions({ settings }) {
       </div>
       <div className="flex gap-[36px] flex-wrap">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Model context window
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="GenericOpenAiTokenLimit"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Content window limit (eg: 4096)"
             min={1}
             onScroll={(e) => e.target.blur()}
@@ -73,13 +75,13 @@ export default function GenericOpenAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Max Tokens
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="number"
             name="GenericOpenAiMaxTokens"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Max tokens per request (eg: 1024)"
             min={1}
             defaultValue={settings?.GenericOpenAiMaxTokens || 1024}
@@ -130,9 +132,7 @@ function GenericOpenAiModelSelection({
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <label className="text-white text-sm font-semibold">
-            Selected Model
-          </label>
+          <Label variant="settings">Selected Model</Label>
         </div>
         <select
           name="GenericOpenAiModelPref"
@@ -151,13 +151,13 @@ function GenericOpenAiModelSelection({
   if (customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           Selected Model
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="text"
           name="GenericOpenAiModelPref"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="Model id used for chat requests"
           defaultValue={genericOpenAiModelPref}
           onChange={(e) => setGenericOpenAiModelPref(e.target.value)}
@@ -172,9 +172,9 @@ function GenericOpenAiModelSelection({
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         Selected Model
-      </label>
+      </Label>
       <select
         name="GenericOpenAiModelPref"
         required={true}

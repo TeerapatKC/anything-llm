@@ -12,6 +12,8 @@ import ModelTableLayout from "@/components/lib/ModelTable/layout";
 import ModelTableLoadingSkeleton from "@/components/lib/ModelTable/loading";
 import DMRUtils from "@/models/utils/dmrUtils";
 import showToast from "@/utils/toast";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function DockerModelRunnerOptions({ settings }) {
   const {
@@ -37,9 +39,7 @@ export default function DockerModelRunnerOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <label className="text-white text-sm font-semibold">
-                Base URL
-              </label>
+              <Label variant="settings">Base URL</Label>
               {loading ? (
                 <CircleNotch className="w-4 h-4 text-theme-text-secondary animate-spin" />
               ) : (
@@ -93,10 +93,10 @@ export default function DockerModelRunnerOptions({ settings }) {
             </div>
           </div>
 
-          <input
+          <Input
+            variant="settings"
             type="url"
             name="DockerModelRunnerBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:12434/engines/llama.cpp/v1"
             value={basePathValue.value}
             required={true}
@@ -108,9 +108,9 @@ export default function DockerModelRunnerOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Model context window
-            </label>
+            </Label>
             <Tooltip
               id="docker-model-runner-model-context-window"
               place="top"
@@ -156,10 +156,10 @@ export default function DockerModelRunnerOptions({ settings }) {
               <Info size={18} className="text-theme-text-secondary" />
             </div>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="DockerModelRunnerModelTokenLimit"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="4096"
             min={1}
             value={maxTokens}

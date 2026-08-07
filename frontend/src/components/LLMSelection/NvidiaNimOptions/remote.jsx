@@ -3,6 +3,8 @@ import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDis
 import System from "@/models/system";
 import { NVIDIA_NIM_COMMON_URLS } from "@/utils/constants";
 import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 /**
  * This component is used to select a remote NVIDIA NIM model endpoint
@@ -25,9 +27,7 @@ export default function RemoteNvidiaNimOptions({ settings }) {
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
         <div className="flex justify-between items-center mb-2">
-          <label className="text-white text-sm font-semibold">
-            NVIDIA Nim Base URL
-          </label>
+          <Label variant="settings">NVIDIA Nim Base URL</Label>
           {loading ? (
             <PreLoader size="6" />
           ) : (
@@ -43,10 +43,10 @@ export default function RemoteNvidiaNimOptions({ settings }) {
             </>
           )}
         </div>
-        <input
+        <Input
+          variant="settings"
           type="url"
           name="NvidiaNimLLMBasePath"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="http://localhost:8000/v1"
           value={basePathValue.value}
           required={true}
@@ -89,9 +89,9 @@ function NvidiaNimModelSelection({ settings, basePath }) {
   if (loading || models.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Chat Model Selection
-        </label>
+        </Label>
         <select
           name="NvidiaNimLLMModelPref"
           disabled={true}
@@ -107,9 +107,9 @@ function NvidiaNimModelSelection({ settings, basePath }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Chat Model Selection
-      </label>
+      </Label>
       <select
         name="NvidiaNimLLMModelPref"
         required={true}

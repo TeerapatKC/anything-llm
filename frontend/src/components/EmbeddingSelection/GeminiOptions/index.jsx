@@ -1,5 +1,7 @@
 import { Info } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const DEFAULT_MODELS = [
   {
@@ -14,13 +16,13 @@ export default function GeminiOptions({ settings }) {
       <div className="w-full flex flex-col gap-y-4">
         <div className="w-full flex items-center gap-[36px] mt-1.5">
           <div className="flex flex-col w-60">
-            <label className="text-white text-sm font-semibold block mb-3">
+            <Label variant="settings" className="block mb-3">
               API Key
-            </label>
-            <input
+            </Label>
+            <Input
+              variant="settings"
               type="password"
               name="GeminiEmbeddingApiKey"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="Gemini API Key"
               defaultValue={
                 settings?.GeminiEmbeddingApiKey ? "*".repeat(20) : ""
@@ -31,9 +33,9 @@ export default function GeminiOptions({ settings }) {
             />
           </div>
           <div className="flex flex-col w-60">
-            <label className="text-white text-sm font-semibold block mb-3">
+            <Label variant="settings" className="block mb-3">
               Model Preference
-            </label>
+            </Label>
             <select
               name="EmbeddingModelPref"
               required={true}
@@ -61,9 +63,9 @@ export default function GeminiOptions({ settings }) {
           data-tooltip-id="embedding-output-dimensions-tooltip"
           className="flex gap-x-1 items-center mb-3"
         >
-          <label className="text-white text-sm font-semibold block">
+          <Label variant="settings" className="block">
             Output dimensions
-          </label>
+          </Label>
           <Info
             size={16}
             className="text-theme-text-secondary cursor-pointer"
@@ -86,10 +88,10 @@ export default function GeminiOptions({ settings }) {
             model.
           </Tooltip>
         </div>
-        <input
+        <Input
+          variant="settings"
           type="number"
           name="EmbeddingOutputDimensions"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="Assume default dimensions"
           min={1}
           onScroll={(e) => e.target.blur()}

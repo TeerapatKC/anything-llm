@@ -5,6 +5,8 @@ import { OLLAMA_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function OllamaEmbeddingOptions({ settings }) {
   const {
@@ -50,9 +52,9 @@ export default function OllamaEmbeddingOptions({ settings }) {
             data-tooltip-id="max-embedding-chunk-length-tooltip"
             className="flex gap-x-1 items-center mb-3"
           >
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Max embedding chunk length
-            </label>
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
@@ -61,10 +63,10 @@ export default function OllamaEmbeddingOptions({ settings }) {
               Maximum length of text chunks, in characters, for embedding.
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="8192"
             min={1}
             value={maxChunkLength}
@@ -96,9 +98,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <label className="text-white text-sm font-semibold">
-                Ollama Base URL
-              </label>
+              <Label variant="settings">Ollama Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
@@ -114,10 +114,10 @@ export default function OllamaEmbeddingOptions({ settings }) {
                 </>
               )}
             </div>
-            <input
+            <Input
+              variant="settings"
               type="url"
               name="EmbeddingBasePath"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="http://127.0.0.1:11434"
               value={basePathValue.value}
               required={true}
@@ -136,9 +136,9 @@ export default function OllamaEmbeddingOptions({ settings }) {
               data-tooltip-id="ollama-batch-size-tooltip"
               className="flex gap-x-1 items-center mb-3"
             >
-              <label className="text-white text-sm font-semibold block">
+              <Label variant="settings" className="block">
                 Embedding batch size
-              </label>
+              </Label>
               <Info
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
@@ -148,10 +148,10 @@ export default function OllamaEmbeddingOptions({ settings }) {
                 improve speed but use more memory. Default is 1.
               </Tooltip>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="number"
               name="OllamaEmbeddingBatchSize"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="1"
               min={1}
               value={batchSize}
@@ -166,13 +166,13 @@ export default function OllamaEmbeddingOptions({ settings }) {
             </p>
           </div>
           <div>
-            <label className="text-white font-semibold block mb-3 text-sm">
+            <Label variant="settings" className="block mb-3">
               Auth Token (optional)
-            </label>
-            <input
+            </Label>
+            <Input
+              variant="settings"
               type="password"
               name="OllamaLLMAuthToken"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="Enter your Auth Token"
               defaultValue={settings?.OllamaLLMAuthToken ? "*".repeat(20) : ""}
               value={authTokenValue.value}
@@ -223,9 +223,9 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-2">
+        <Label variant="settings" className="block mb-2">
           Ollama Embedding Model
-        </label>
+        </Label>
         <select
           name="EmbeddingModelPref"
           disabled={true}
@@ -247,9 +247,9 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-2">
+      <Label variant="settings" className="block mb-2">
         Ollama Embedding Model
-      </label>
+      </Label>
       <select
         name="EmbeddingModelPref"
         required={true}

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function GenericOpenAiEmbeddingOptions({ settings }) {
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
@@ -8,13 +10,13 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Base URL
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="EmbeddingBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="https://api.openai.com/v1"
             defaultValue={settings?.EmbeddingBasePath}
             required={true}
@@ -23,13 +25,13 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Embedding Model
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="text"
             name="EmbeddingModelPref"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="text-embedding-ada-002"
             defaultValue={settings?.EmbeddingModelPref}
             required={true}
@@ -39,9 +41,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center mb-3 gap-x-1">
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Max embedding chunk length
-            </label>
+            </Label>
             <Info
               size={18}
               className="text-theme-text-secondary cursor-pointer"
@@ -60,10 +62,10 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
               }}
             />
           </div>
-          <input
+          <Input
+            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="8192"
             min={1}
             onScroll={(e) => e.target.blur()}
@@ -76,14 +78,14 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
-            <label className="text-white text-sm font-semibold flex items-center gap-x-2">
+            <Label variant="settings" className="flex items-center gap-x-2">
               API Key <p className="!text-xs !italic !font-thin">optional</p>
-            </label>
+            </Label>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="password"
             name="GenericOpenAiEmbeddingApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="sk-mysecretkey"
             defaultValue={
               settings?.GenericOpenAiEmbeddingApiKey ? "*".repeat(20) : ""
@@ -113,15 +115,15 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         <div className="w-full flex items-start gap-4 flex-wrap">
           <div className="flex flex-col w-60">
             <div className="flex flex-col gap-y-1 mb-4">
-              <label className="text-white text-sm font-semibold flex items-center gap-x-2">
+              <Label variant="settings" className="flex items-center gap-x-2">
                 Max concurrent Chunks
                 <p className="!text-xs !italic !font-thin">optional</p>
-              </label>
+              </Label>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="number"
               name="GenericOpenAiEmbeddingMaxConcurrentChunks"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="500"
               min={1}
               onScroll={(e) => e.target.blur()}
@@ -133,9 +135,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-4 gap-x-1">
-              <label className="text-white text-sm font-semibold flex items-center gap-x-2">
+              <Label variant="settings" className="flex items-center gap-x-2">
                 Passage Prefix
-              </label>
+              </Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -165,10 +167,10 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                 </p>
               </Tooltip>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="text"
               name="GenericOpenAiEmbeddingPassagePrefix"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="passage: "
               defaultValue={settings?.GenericOpenAiEmbeddingPassagePrefix}
               required={false}
@@ -178,9 +180,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-4 gap-x-1">
-              <label className="text-white text-sm font-semibold flex items-center gap-x-2">
+              <Label variant="settings" className="flex items-center gap-x-2">
                 Query Prefix
-              </label>
+              </Label>
               <Info
                 size={18}
                 className="text-theme-text-secondary cursor-pointer"
@@ -210,10 +212,10 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                 </p>
               </Tooltip>
             </div>
-            <input
+            <Input
+              variant="settings"
               type="text"
               name="GenericOpenAiEmbeddingQueryPrefix"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
               placeholder="query: "
               defaultValue={settings?.GenericOpenAiEmbeddingQueryPrefix}
               required={false}
