@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 export default function DrupalWikiOptions() {
   const [loading, setLoading] = useState(false);
@@ -173,13 +174,9 @@ export default function DrupalWikiOptions() {
           </div>
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-2 w-full justify-center border-none px-4 py-2 rounded-lg text-dark-text light:text-white text-sm font-bold items-center flex gap-x-2 bg-theme-home-button-primary hover:bg-theme-home-button-primary-hover disabled:bg-theme-home-button-primary-hover disabled:cursor-not-allowed"
-            >
+            <Button variant="homePrimary" type="submit" disabled={loading}>
               {loading ? "Collecting pages..." : "Submit"}
-            </button>
+            </Button>
             {loading && (
               <p className="text-xs text-theme-text-secondary">
                 Once complete, all pages will be available for embedding into

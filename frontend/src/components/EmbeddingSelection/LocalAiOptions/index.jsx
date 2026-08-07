@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export default function LocalAiOptions({ settings }) {
   const {
@@ -143,12 +144,12 @@ export default function LocalAiOptions({ settings }) {
         </div>
       </div>
       <div className="flex justify-start mt-4">
-        <button
+        <Button
+          variant="inline"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
           }}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -156,7 +157,7 @@ export default function LocalAiOptions({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="w-full flex items-center gap-4">
@@ -168,12 +169,9 @@ export default function LocalAiOptions({ settings }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <button
-                      onClick={handleAutoDetectClick}
-                      className="bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
-                    >
+                    <Button variant="chip" onClick={handleAutoDetectClick}>
                       Auto-Detect
-                    </button>
+                    </Button>
                   )}
                 </>
               )}
@@ -236,7 +234,7 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
               }
             />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

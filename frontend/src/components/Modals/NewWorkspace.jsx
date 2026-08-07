@@ -4,6 +4,7 @@ import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import ModalWrapper from "@/components/ModalWrapper";
+import { Button } from "@/components/ui/button";
 
 const noop = () => false;
 export default function NewWorkspaceModal({ hideModal = noop }) {
@@ -32,13 +33,9 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
               {t("new-workspace.title")}
             </h3>
           </div>
-          <button
-            onClick={hideModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
+          <Button variant="modalClose" onClick={hideModal} type="button">
             <X size={24} weight="bold" className="text-white" />
-          </button>
+          </Button>
         </div>
         <div
           className="h-full w-full overflow-y-auto"
@@ -71,12 +68,9 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
               </div>
             </div>
             <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
+              <Button variant="cta" type="submit">
                 Save
-              </button>
+              </Button>
             </div>
           </form>
         </div>

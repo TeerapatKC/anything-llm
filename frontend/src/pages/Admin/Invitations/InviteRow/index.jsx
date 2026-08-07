@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { titleCase } from "text-case";
 import Admin from "@/models/admin";
 import { Trash } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
 
 export default function InviteRow({ invite }) {
   const rowRef = useRef(null);
@@ -64,12 +65,9 @@ export default function InviteRow({ invite }) {
               >
                 {copied ? "Copied" : "Copy Invite Link"}
               </button>
-              <button
-                onClick={handleDelete}
-                className="text-xs font-medium text-white/80 light:text-black/80 hover:light:text-red-500 hover:text-red-300 rounded-lg px-2 py-1 hover:bg-white hover:light:bg-red-50 hover:bg-opacity-10"
-              >
+              <Button variant="danger" onClick={handleDelete}>
                 <Trash className="h-5 w-5" />
-              </button>
+              </Button>
             </>
           )}
         </td>

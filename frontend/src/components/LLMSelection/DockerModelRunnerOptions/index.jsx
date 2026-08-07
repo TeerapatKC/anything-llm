@@ -18,6 +18,7 @@ import DMRUtils from "@/models/utils/dmrUtils";
 import showToast from "@/utils/toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function DockerModelRunnerOptions({ settings }) {
   const {
@@ -49,12 +50,9 @@ export default function DockerModelRunnerOptions({ settings }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <button
-                      onClick={handleAutoDetectClick}
-                      className="bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
-                    >
+                    <Button variant="chip" onClick={handleAutoDetectClick}>
                       Auto-Detect
-                    </button>
+                    </Button>
                   )}
                 </>
               )}

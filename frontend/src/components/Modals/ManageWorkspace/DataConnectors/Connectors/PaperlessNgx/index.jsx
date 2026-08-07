@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { Info } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
 
 export default function PaperlessNgxOptions() {
   const [loading, setLoading] = useState(false);
@@ -103,13 +104,9 @@ export default function PaperlessNgxOptions() {
                 </p>
               </div>
             </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-2 w-full justify-center border-none px-4 py-2 rounded-lg text-dark-text light:text-white text-sm font-bold items-center flex gap-x-2 bg-theme-home-button-primary hover:bg-theme-home-button-primary-hover disabled:bg-theme-home-button-primary-hover disabled:cursor-not-allowed"
-            >
+            <Button variant="homePrimary" type="submit" disabled={loading}>
               {loading ? "Importing documents..." : "Submit"}
-            </button>
+            </Button>
             {loading && (
               <p className="text-xs text-white/50">
                 Once complete, all documents will be available for embedding

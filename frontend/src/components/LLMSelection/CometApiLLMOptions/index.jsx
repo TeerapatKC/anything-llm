@@ -3,6 +3,7 @@ import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function CometApiLLMOptions({ settings }) {
   return (
@@ -38,10 +39,10 @@ function AdvancedControls({ settings }) {
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-start">
-        <button
+        <Button
+          variant="inline"
           type="button"
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -49,7 +50,7 @@ function AdvancedControls({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">

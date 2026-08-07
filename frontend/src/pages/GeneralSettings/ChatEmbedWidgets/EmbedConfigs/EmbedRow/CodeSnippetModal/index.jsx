@@ -4,6 +4,7 @@ import showToast from "@/utils/toast";
 import hljs from "highlight.js";
 import "@/utils/chat/themes/github-dark.css";
 import "@/utils/chat/themes/github.css";
+import { Button } from "@/components/ui/button";
 
 export default function CodeSnippetModal({ embed, closeModal }) {
   return (
@@ -15,26 +16,18 @@ export default function CodeSnippetModal({ embed, closeModal }) {
               Copy your embed code
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
+          <Button variant="modalClose" onClick={closeModal} type="button">
             <X size={24} weight="bold" className="text-white" />
-          </button>
+          </Button>
         </div>
         <div className="px-7 py-6">
           <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
             <ScriptTag embed={embed} />
           </div>
           <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-            <button
-              onClick={closeModal}
-              type="button"
-              className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-            >
+            <Button variant="muted" onClick={closeModal} type="button">
               Close
-            </button>
+            </Button>
             <div hidden={true} />
           </div>
         </div>

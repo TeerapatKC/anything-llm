@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { originOnly } from "@/utils/url";
+import { Button } from "@/components/ui/button";
 
 export default function LemonadeSpeechToTextOptions({ settings }) {
   const {
@@ -37,13 +38,13 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <button
+                    <Button
+                      variant="chip"
                       type="button"
                       onClick={handleAutoDetectClick}
-                      className="border-none bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
                     >
                       Auto-Detect
-                    </button>
+                    </Button>
                   )}
                 </>
               )}

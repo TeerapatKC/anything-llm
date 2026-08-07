@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { X } from "@phosphor-icons/react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
+import { Button } from "@/components/ui/button";
 
 export default function AddVariableModal({ closeModal, onRefresh }) {
   const [error, setError] = useState(null);
@@ -39,13 +40,9 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
               Add New Variable
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
+          <Button variant="modalClose" onClick={closeModal} type="button">
             <X size={24} weight="bold" className="text-white" />
-          </button>
+          </Button>
         </div>
         <div className="p-6">
           <form onSubmit={handleCreate}>
@@ -107,19 +104,12 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
               {error && <p className="text-red-400 text-sm">Error: {error}</p>}
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <button
-                onClick={closeModal}
-                type="button"
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
+              <Button variant="muted" onClick={closeModal} type="button">
                 Cancel
-              </button>
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
+              </Button>
+              <Button variant="cta" type="submit">
                 Create variable
-              </button>
+              </Button>
             </div>
           </form>
         </div>

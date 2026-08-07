@@ -3,6 +3,7 @@ import { X } from "@phosphor-icons/react";
 import ModalWrapper from "@/components/ModalWrapper";
 import { CMD_REGEX } from "./constants";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 export default function AddPresetModal({ isOpen, onClose, onSave }) {
   const [command, setCommand] = useState("");
@@ -34,13 +35,9 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
               {t("chat_window.add_new_preset")}
             </h3>
           </div>
-          <button
-            onClick={onClose}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
+          <Button variant="modalClose" onClick={onClose} type="button">
             <X size={24} weight="bold" className="text-white" />
-          </button>
+          </Button>
         </div>
         <div
           className="h-full w-full overflow-y-auto"
@@ -116,12 +113,9 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
               >
                 {t("chat_window.cancel")}
               </button>
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
+              <Button variant="cta" type="submit">
                 {t("chat_window.save")}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

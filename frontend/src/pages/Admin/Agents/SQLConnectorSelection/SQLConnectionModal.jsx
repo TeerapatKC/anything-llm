@@ -6,6 +6,7 @@ import { DB_LOGOS } from "./DBConnection";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import Toggle from "@/components/lib/Toggle";
+import { Button } from "@/components/ui/button";
 
 /**
  * Converts a string to a URL-friendly slug format.
@@ -277,13 +278,9 @@ export default function SQLConnectionModal({
                 {isEditMode ? "Edit SQL Connection" : "New SQL Connection"}
               </h3>
             </div>
-            <button
-              onClick={handleClose}
-              type="button"
-              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-            >
+            <Button variant="modalClose" onClick={handleClose} type="button">
               <X size={24} weight="bold" className="text-white" />
-            </button>
+            </Button>
           </div>
           <form
             id="sql-connection-form"

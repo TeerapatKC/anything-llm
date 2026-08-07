@@ -12,6 +12,7 @@ import ImageModelSelection from "../ImageModelSelection";
 import ImageDimensionSelection from "../ImageDimensionSelection";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function LemonadeImageOptions({ settings }) {
   const {
@@ -67,12 +68,9 @@ export default function LemonadeImageOptions({ settings }) {
             ) : (
               <>
                 {!basePathValue.value && (
-                  <button
-                    onClick={handleAutoDetectClick}
-                    className="border-none bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
-                  >
+                  <Button variant="chip" onClick={handleAutoDetectClick}>
                     Auto-Detect
-                  </button>
+                  </Button>
                 )}
               </>
             )}

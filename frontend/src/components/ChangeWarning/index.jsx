@@ -1,4 +1,5 @@
 import { Warning, X } from "@phosphor-icons/react";
+import { Button } from "@/components/ui/button";
 
 export default function ChangeWarningModal({
   warningText = "",
@@ -14,13 +15,9 @@ export default function ChangeWarningModal({
             WARNING - This action is irreversible
           </h3>
         </div>
-        <button
-          onClick={onClose}
-          type="button"
-          className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-        >
+        <Button variant="modalClose" onClick={onClose} type="button">
           <X size={24} weight="bold" className="text-white" />
-        </button>
+        </Button>
       </div>
       <div
         className="h-full w-full overflow-y-auto"

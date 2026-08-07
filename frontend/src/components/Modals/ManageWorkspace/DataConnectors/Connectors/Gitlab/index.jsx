@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import Toggle from "@/components/lib/Toggle";
+import { Button } from "@/components/ui/button";
 
 const DEFAULT_BRANCHES = ["main", "master"];
 export default function GitlabOptions() {
@@ -180,13 +181,9 @@ export default function GitlabOptions() {
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
             <PATAlert accessToken={accessToken} />
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-2 w-full justify-center border-none px-4 py-2 rounded-lg text-dark-text light:text-white text-sm font-bold items-center flex gap-x-2 bg-theme-home-button-primary hover:bg-theme-home-button-primary-hover disabled:bg-theme-home-button-primary-hover disabled:cursor-not-allowed"
-            >
+            <Button variant="homePrimary" type="submit" disabled={loading}>
               {loading ? "Collecting files..." : "Submit"}
-            </button>
+            </Button>
             {loading && (
               <p className="text-xs text-white/50">
                 {t("connectors.gitlab.task_explained")}

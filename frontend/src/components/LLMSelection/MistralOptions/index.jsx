@@ -80,7 +80,7 @@ function MistralModelSelection({ apiKey, settings }) {
               }
             />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

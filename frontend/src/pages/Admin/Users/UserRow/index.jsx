@@ -5,6 +5,7 @@ import EditUserModal from "./EditUserModal";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
+import { Button } from "@/components/ui/button";
 
 const ModMap = {
   admin: ["admin", "manager", "default"],
@@ -81,12 +82,9 @@ export default function UserRow({ currUser, user }) {
               >
                 {suspended ? "Unsuspend" : "Suspend"}
               </button>
-              <button
-                onClick={handleDelete}
-                className="text-xs font-medium text-white/80 light:text-black/80 hover:light:text-red-500 hover:text-red-300 rounded-lg px-2 py-1 hover:bg-white hover:light:bg-red-50 hover:bg-opacity-10"
-              >
+              <Button variant="danger" onClick={handleDelete}>
                 Delete
-              </button>
+              </Button>
             </>
           )}
         </td>

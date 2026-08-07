@@ -142,7 +142,7 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
               }
             />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

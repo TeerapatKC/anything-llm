@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function GenericOpenAiEmbeddingOptions({ settings }) {
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
@@ -94,12 +95,12 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         </div>
       </div>
       <div className="flex justify-start mt-4">
-        <button
+        <Button
+          variant="inline"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
           }}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -107,7 +108,7 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="w-full flex items-start gap-4 flex-wrap">

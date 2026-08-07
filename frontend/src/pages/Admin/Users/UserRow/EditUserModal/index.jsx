@@ -9,6 +9,7 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_PATTERN,
 } from "@/utils/username";
+import { Button } from "@/components/ui/button";
 
 export default function EditUserModal({ currentUser, user, closeModal }) {
   const [role, setRole] = useState(user.role);
@@ -58,13 +59,9 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
               Edit {user.username}
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
+          <Button variant="modalClose" onClick={closeModal} type="button">
             <X size={24} weight="bold" className="text-white" />
-          </button>
+          </Button>
         </div>
         <div className="p-6">
           <form onSubmit={handleUpdate}>
@@ -158,19 +155,12 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
               {error && <p className="text-red-400 text-sm">Error: {error}</p>}
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <button
-                onClick={closeModal}
-                type="button"
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
+              <Button variant="muted" onClick={closeModal} type="button">
                 Cancel
-              </button>
-              <button
-                type="submit"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
+              </Button>
+              <Button variant="cta" type="submit">
                 Update user
-              </button>
+              </Button>
             </div>
           </form>
         </div>

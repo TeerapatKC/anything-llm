@@ -6,6 +6,7 @@ import { titleCase } from "text-case";
 import MCPServers from "@/models/mcpServers";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { useTranslation, Trans } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 function ManageServerMenu({ server, toggleServer, onDelete }) {
   const { t } = useTranslation();
@@ -80,24 +81,16 @@ function ManageServerMenu({ server, toggleServer, onDelete }) {
       </button>
       {open && (
         <div className="absolute w-[150px] top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-white z-99 md:z-10">
-          <button
-            type="button"
-            onClick={handleToggleServer}
-            className="border-none flex items-center rounded-lg gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
-          >
+          <Button variant="menuItem" type="button" onClick={handleToggleServer}>
             <span className="text-sm">
               {running
                 ? t("agent.mcp.stop-server")
                 : t("agent.mcp.start-server")}
             </span>
-          </button>
-          <button
-            type="button"
-            onClick={deleteServer}
-            className="border-none flex items-center rounded-lg gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
-          >
+          </Button>
+          <Button variant="menuItem" type="button" onClick={deleteServer}>
             <span className="text-sm">{t("agent.mcp.delete-server")}</span>
-          </button>
+          </Button>
         </div>
       )}
     </div>

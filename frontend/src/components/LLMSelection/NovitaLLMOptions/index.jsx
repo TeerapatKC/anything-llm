@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export default function NovitaLLMOptions({ settings }) {
   return (
@@ -47,10 +48,10 @@ function AdvancedControls({ settings }) {
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-start">
-        <button
+        <Button
+          variant="inline"
           type="button"
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -58,7 +59,7 @@ function AdvancedControls({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
@@ -116,7 +117,7 @@ function NovitaModelSelection({ settings }) {
           <SelectTrigger variant="settings">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

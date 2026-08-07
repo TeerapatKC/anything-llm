@@ -10,6 +10,7 @@ import DocumentSettings from "./Documents";
 import DataConnectors from "./DataConnectors";
 import ModalWrapper from "@/components/ModalWrapper";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
+import { Button } from "@/components/ui/button";
 
 const noop = () => {};
 const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
@@ -48,13 +49,9 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
                 {t("connectors.manage.editing")} "{workspace.name}"
               </h3>
             </div>
-            <button
-              onClick={hideModal}
-              type="button"
-              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-            >
+            <Button variant="modalClose" onClick={hideModal} type="button">
               <X size={24} weight="bold" className="text-white" />
-            </button>
+            </Button>
           </div>
           <div
             className="h-full w-full overflow-y-auto"
@@ -67,13 +64,9 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </div>
           </div>
           <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-            <button
-              onClick={hideModal}
-              type="button"
-              className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-            >
+            <Button variant="cta" onClick={hideModal} type="button">
               {t("connectors.manage.dismiss")}
-            </button>
+            </Button>
           </div>
         </div>
       </ModalWrapper>

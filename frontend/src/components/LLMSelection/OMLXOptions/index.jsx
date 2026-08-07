@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export default function OMLXOptions({ settings }) {
   const {
@@ -49,12 +50,12 @@ export default function OMLXOptions({ settings }) {
         />
       </div>
       <div className="flex justify-start mt-4">
-        <button
+        <Button
+          variant="inline"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
           }}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -62,7 +63,7 @@ export default function OMLXOptions({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
 
       <div hidden={!showAdvancedControls}>
@@ -95,12 +96,9 @@ export default function OMLXOptions({ settings }) {
                 ) : (
                   <>
                     {!basePathValue.value && (
-                      <button
-                        onClick={handleAutoDetectClick}
-                        className="border-none bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
-                      >
+                      <Button variant="chip" onClick={handleAutoDetectClick}>
                         Auto-Detect
-                      </button>
+                      </Button>
                     )}
                   </>
                 )}
@@ -257,7 +255,7 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
               }
             />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Select the OMLX model you want to use. Models will load after entering

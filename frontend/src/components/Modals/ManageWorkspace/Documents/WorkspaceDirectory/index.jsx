@@ -18,6 +18,7 @@ import Workspace from "@/models/workspace";
 import { useTranslation } from "react-i18next";
 import { middleTruncate } from "@/utils/directories";
 import { useEmbeddingProgress } from "@/EmbeddingProgressContext";
+import { Button } from "@/components/ui/button";
 
 function WorkspaceDirectory({
   workspace,
@@ -354,12 +355,9 @@ const PinAlert = memo(() => {
           </div>
         </div>
         <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-          <button
-            onClick={dismissAlert}
-            className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-          >
+          <Button variant="cta" onClick={dismissAlert}>
             {t("connectors.pinning.accept")}
-          </button>
+          </Button>
         </div>
       </div>
     </ModalWrapper>
@@ -422,12 +420,9 @@ const DocumentWatchAlert = memo(() => {
           </div>
         </div>
         <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-          <button
-            onClick={dismissAlert}
-            className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-          >
+          <Button variant="cta" onClick={dismissAlert}>
             {t("connectors.watching.accept")}
-          </button>
+          </Button>
         </div>
       </div>
     </ModalWrapper>

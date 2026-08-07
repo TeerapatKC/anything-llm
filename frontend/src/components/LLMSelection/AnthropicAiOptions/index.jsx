@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export default function AnthropicAiOptions({ settings }) {
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
@@ -46,12 +47,12 @@ export default function AnthropicAiOptions({ settings }) {
         )}
       </div>
       <div className="flex justify-start mt-4">
-        <button
+        <Button
+          variant="inline"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
           }}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -59,7 +60,7 @@ export default function AnthropicAiOptions({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="w-full flex items-start gap-4 mt-1.5">
@@ -114,7 +115,7 @@ function AnthropicModelSelection({ apiKey, settings }) {
           <SelectTrigger variant="settings">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

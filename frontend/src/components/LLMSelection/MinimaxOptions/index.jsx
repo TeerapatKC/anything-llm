@@ -72,7 +72,7 @@ function MinimaxModelSelection({ apiKey, settings }) {
           <SelectTrigger variant="settings">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

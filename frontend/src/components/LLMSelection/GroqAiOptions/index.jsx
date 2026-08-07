@@ -79,7 +79,7 @@ function GroqAIModelSelection({ apiKey, settings }) {
           <SelectTrigger variant="settings">
             <SelectValue placeholder="--loading available models--" />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Enter a valid API key to view all available models for your account.

@@ -76,7 +76,7 @@ export default function ImageModelSelection({
               }
             />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </ModelSelectionWrapper>
     );

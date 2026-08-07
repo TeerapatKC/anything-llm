@@ -73,7 +73,7 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
           <SelectTrigger variant="settings">
             <SelectValue placeholder="-- Enter API key --" />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );
@@ -89,7 +89,7 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
           <SelectTrigger variant="settings">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
-          <SelectContent>null</SelectContent>
+          <SelectContent />
         </Select>
       </div>
     );

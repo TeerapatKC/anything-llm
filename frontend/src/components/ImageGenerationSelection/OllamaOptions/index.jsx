@@ -10,6 +10,7 @@ import ImageModelSelection from "../ImageModelSelection";
 import ImageDimensionSelection from "../ImageDimensionSelection";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function OllamaImageOptions({ settings }) {
   const {
@@ -47,12 +48,12 @@ export default function OllamaImageOptions({ settings }) {
         Only models that report image generation support will be listed.
       </p>
       <div className="flex justify-start">
-        <button
+        <Button
+          variant="inline"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
           }}
-          className="border-none text-theme-text-primary hover:text-theme-text-secondary flex items-center text-sm"
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
@@ -60,7 +61,7 @@ export default function OllamaImageOptions({ settings }) {
           ) : (
             <CaretDown size={14} className="ml-1" />
           )}
-        </button>
+        </Button>
       </div>
 
       <div hidden={!showAdvancedControls}>
@@ -89,12 +90,9 @@ export default function OllamaImageOptions({ settings }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <button
-                      onClick={handleAutoDetectClick}
-                      className="bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
-                    >
+                    <Button variant="chip" onClick={handleAutoDetectClick}>
                       Auto-Detect
-                    </button>
+                    </Button>
                   )}
                 </>
               )}

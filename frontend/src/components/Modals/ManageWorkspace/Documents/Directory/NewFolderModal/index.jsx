@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { X } from "@phosphor-icons/react";
 import Document from "@/models/document";
+import { Button } from "@/components/ui/button";
 
 export default function NewFolderModal({ closeModal, onCreated }) {
   const [error, setError] = useState(null);
@@ -29,13 +30,9 @@ export default function NewFolderModal({ closeModal, onCreated }) {
               Create New Folder
             </h3>
           </div>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
+          <Button variant="modalClose" onClick={closeModal} type="button">
             <X size={24} weight="bold" className="text-white" />
-          </button>
+          </Button>
         </div>
         <div className="p-6">
           <form onSubmit={handleCreate}>
@@ -61,13 +58,9 @@ export default function NewFolderModal({ closeModal, onCreated }) {
               {error && <p className="text-red-400 text-sm">Error: {error}</p>}
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <button
-                onClick={closeModal}
-                type="button"
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
+              <Button variant="muted" onClick={closeModal} type="button">
                 Cancel
-              </button>
+              </Button>
               <button
                 type="submit"
                 disabled={creating}

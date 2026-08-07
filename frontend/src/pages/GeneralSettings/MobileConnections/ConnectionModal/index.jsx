@@ -9,6 +9,7 @@ import PreLoader from "@/components/Preloader";
 import Logo from "@/media/logo/anything-llm-infinity.png";
 import paths from "@/utils/paths";
 import GetOnGooglePlay from "./gplay-badge.svg";
+import { Button } from "@/components/ui/button";
 
 export default function MobileConnectModal({ isOpen, onClose }) {
   return (
@@ -23,13 +24,9 @@ export default function MobileConnectModal({ isOpen, onClose }) {
           backgroundPosition: "center",
         }}
       >
-        <button
-          onClick={onClose}
-          type="button"
-          className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-        >
+        <Button variant="modalClose" onClick={onClose} type="button">
           <X size={24} weight="bold" className="text-[#FFF]" />
-        </button>
+        </Button>
 
         <div className="flex w-full h-full justify-between p-[35px]">
           {/* left column */}

@@ -4,6 +4,7 @@ import { Gear, Plug } from "@phosphor-icons/react";
 import { useEffect, useState, useRef } from "react";
 import { sentenceCase } from "text-case";
 import Toggle from "@/components/lib/Toggle";
+import { Button } from "@/components/ui/button";
 
 /**
  * Converts setup_args to inputs for the form builder
@@ -237,13 +238,9 @@ function ManageSkillMenu({ config, setImportedSkills }) {
       </button>
       {open && (
         <div className="absolute w-[100px] -top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-white z-99 md:z-10">
-          <button
-            type="button"
-            onClick={deleteSkill}
-            className="border-none flex items-center rounded-lg gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
-          >
+          <Button variant="menuItem" type="button" onClick={deleteSkill}>
             <span className="text-sm">Delete Skill</span>
-          </button>
+          </Button>
         </div>
       )}
     </div>

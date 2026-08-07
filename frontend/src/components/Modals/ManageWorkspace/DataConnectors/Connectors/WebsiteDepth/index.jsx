@@ -3,6 +3,7 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import pluralize from "pluralize";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 export default function WebsiteDepthOptions() {
   const { t } = useTranslation();
@@ -115,13 +116,9 @@ export default function WebsiteDepthOptions() {
           </div>
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <button
-              type="submit"
-              disabled={loading}
-              className="mt-2 w-full justify-center border-none px-4 py-2 rounded-lg text-dark-text light:text-white text-sm font-bold items-center flex gap-x-2 bg-theme-home-button-primary hover:bg-theme-home-button-primary-hover disabled:bg-theme-home-button-primary-hover disabled:cursor-not-allowed"
-            >
+            <Button variant="homePrimary" type="submit" disabled={loading}>
               {loading ? "Scraping website..." : "Submit"}
-            </button>
+            </Button>
             {loading && (
               <p className="text-xs text-theme-text-secondary">
                 {t("connectors.website-depth.task_explained")}

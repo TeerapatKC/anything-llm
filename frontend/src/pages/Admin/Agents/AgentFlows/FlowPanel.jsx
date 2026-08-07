@@ -5,6 +5,7 @@ import { FlowArrow, Gear } from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
 import Toggle from "@/components/lib/Toggle";
+import { Button } from "@/components/ui/button";
 
 function ManageFlowMenu({ flow, onDelete }) {
   const [open, setOpen] = useState(false);
@@ -54,20 +55,16 @@ function ManageFlowMenu({ flow, onDelete }) {
       </button>
       {open && (
         <div className="absolute min-w-[140px] top-full right-0 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-white z-99 md:z-10">
-          <button
+          <Button
+            variant="menuItem"
             type="button"
             onClick={() => navigate(paths.agents.editAgent(flow.uuid))}
-            className="border-none flex items-center rounded-lg gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
           >
             <span className="text-sm whitespace-nowrap">Edit Flow</span>
-          </button>
-          <button
-            type="button"
-            onClick={deleteFlow}
-            className="border-none flex items-center rounded-lg gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
-          >
+          </Button>
+          <Button variant="menuItem" type="button" onClick={deleteFlow}>
             <span className="text-sm whitespace-nowrap">Delete Flow</span>
-          </button>
+          </Button>
         </div>
       )}
     </div>

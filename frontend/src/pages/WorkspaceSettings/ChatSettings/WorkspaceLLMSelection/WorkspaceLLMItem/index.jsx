@@ -8,6 +8,7 @@ import { X, Gear } from "@phosphor-icons/react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const NO_SETTINGS_NEEDED = ["default"];
 export default function WorkspaceLLM({
@@ -141,13 +142,9 @@ function SetupProvider({
                 {LLMOption.name} Settings
               </h3>
             </div>
-            <button
-              onClick={closeModal}
-              type="button"
-              className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-            >
+            <Button variant="modalClose" onClick={closeModal} type="button">
               <X size={24} weight="bold" className="text-white" />
-            </button>
+            </Button>
           </div>
           <form id="provider-form" onSubmit={handleUpdate}>
             <div className="px-7 py-6">
@@ -162,20 +159,12 @@ function SetupProvider({
               </div>
             </div>
             <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border px-7 pb-6">
-              <button
-                type="button"
-                onClick={closeModal}
-                className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm"
-              >
+              <Button variant="muted" type="button" onClick={closeModal}>
                 Cancel
-              </button>
-              <button
-                type="submit"
-                form="provider-form"
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
+              </Button>
+              <Button variant="cta" type="submit" form="provider-form">
                 Save settings
-              </button>
+              </Button>
             </div>
           </form>
         </div>
