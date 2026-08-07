@@ -15,6 +15,7 @@ import KeyboardShortcutsHelp from "@/components/KeyboardShortcutsHelp";
 import ImageLightbox from "@/components/ImageLightbox";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorBoundaryFallback from "./components/ErrorBoundaryFallback";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export default function App() {
   const location = useLocation();
@@ -31,10 +32,14 @@ export default function App() {
               <LogoProvider>
                 <PfpProvider>
                   <I18nextProvider i18n={i18n}>
-                    <Outlet />
-                    <ToastContainer />
-                    <KeyboardShortcutsHelp />
-                    <ImageLightbox />
+                    {/* delayDuration matches the delayShow={300} the
+                        react-tooltip call sites used. */}
+                    <TooltipProvider delayDuration={300}>
+                      <Outlet />
+                      <ToastContainer />
+                      <KeyboardShortcutsHelp />
+                      <ImageLightbox />
+                    </TooltipProvider>
                   </I18nextProvider>
                 </PfpProvider>
               </LogoProvider>

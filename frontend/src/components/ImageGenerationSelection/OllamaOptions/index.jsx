@@ -1,5 +1,9 @@
 import { CaretDown, CaretUp, CircleNotch, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
 import ImageModelSelection from "../ImageModelSelection";
@@ -65,23 +69,17 @@ export default function OllamaImageOptions({ settings }) {
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
                 <Label variant="settings">Ollama Base URL</Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="image-gen-ollama-base-url"
-                  data-tooltip-content="Enter the URL where Ollama is running."
-                />
-                <Tooltip
-                  id="image-gen-ollama-base-url"
-                  place="top"
-                  delayShow={300}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    Enter the URL where Ollama is running.
+                  </TooltipContent>
+                </Tooltip>
               </div>
               {loading ? (
                 <CircleNotch
@@ -118,31 +116,22 @@ export default function OllamaImageOptions({ settings }) {
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
               <Label variant="settings">Authentication Token</Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="image-gen-ollama-auth-token"
-              />
-              <Tooltip
-                id="image-gen-ollama-auth-token"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Enter a <code>Bearer</code> Auth Token for interacting with
-                  your Ollama server.
-                  <br /> <br />
-                  Used <b>only</b> if running Ollama behind an authentication
-                  server.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px]">
+                  <p className="text-xs leading-[18px] font-base">
+                    Enter a <code>Bearer</code> Auth Token for interacting with
+                    your Ollama server.
+                    <br /> <br />
+                    Used <b>only</b> if running Ollama behind an authentication
+                    server.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </div>
             <Input

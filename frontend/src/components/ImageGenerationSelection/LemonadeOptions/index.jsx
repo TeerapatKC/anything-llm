@@ -1,5 +1,9 @@
 import { CircleNotch, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
@@ -34,34 +38,25 @@ export default function LemonadeImageOptions({ settings }) {
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1">
               <Label variant="settings">Lemonade Base URL</Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="image-gen-lemonade-base-url"
-              />
-              <Tooltip
-                id="image-gen-lemonade-base-url"
-                place="top"
-                delayShow={300}
-                delayHide={800}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100 z-99"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                Enter the URL where Lemonade is running.
-                <br />
-                <br />
-                <Link
-                  to="https://lemonade-server.ai/docs"
-                  target="_blank"
-                  className="text-blue-500 hover:underline"
-                >
-                  Learn more &rarr;
-                </Link>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  Enter the URL where Lemonade is running.
+                  <br />
+                  <br />
+                  <Link
+                    to="https://lemonade-server.ai/docs"
+                    target="_blank"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Learn more &rarr;
+                  </Link>
+                </TooltipContent>
               </Tooltip>
             </div>
             {loading ? (
