@@ -99,11 +99,9 @@ export default function PrivateModeOptions({ settings }) {
           {loading ? (
             <Select name="PrivateModeModelPref" required={true} disabled={true}>
               <SelectTrigger variant="settings">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue placeholder="---- Loading ----" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem>---- Loading ----</SelectItem>
-              </SelectContent>
+              <SelectContent />
             </Select>
           ) : (
             <Select
