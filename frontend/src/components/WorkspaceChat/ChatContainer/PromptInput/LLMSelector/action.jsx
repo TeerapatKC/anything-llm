@@ -1,7 +1,10 @@
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Brain, CheckCircle } from "@phosphor-icons/react";
 import LLMSelectorModal from "./index";
-import { useTheme } from "@/hooks/useTheme";
 import { useRef, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useUser from "@/hooks/useUser";
@@ -16,7 +19,6 @@ export default function LLMSelectorAction({ workspaceSlug = null }) {
   const { slug: urlSlug } = useParams();
   const slug = urlSlug ?? workspaceSlug;
   const tooltipRef = useRef(null);
-  const { theme } = useTheme();
   const { user } = useUser();
   const [saved, setSaved] = useState(false);
   const {
@@ -94,35 +96,25 @@ export default function LLMSelectorAction({ workspaceSlug = null }) {
 
   return (
     <>
-      <div
-        id="llm-selector-btn"
-        data-tooltip-id="tooltip-llm-selector-btn"
-        aria-label="LLM Selector"
-        className={`border-none relative flex justify-center items-center opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 cursor-pointer`}
-      >
-        {saved ? (
-          <CheckCircle className="w-[20px] h-[20px] pointer-events-none text-green-400" />
-        ) : (
-          <Brain className="w-[20px] h-[20px] pointer-events-none text-[var(--theme-sidebar-footer-icon-fill)]" />
-        )}
-      </div>
-      <Tooltip
-        ref={tooltipRef}
-        id="tooltip-llm-selector-btn"
-        place="top"
-        opacity={1}
-        clickable={true}
-        delayShow={300} // dont trigger tooltip instantly to not spam the UI
-        delayHide={800} // Prevent the travel time from icon to window hiding tooltip
-        arrowColor={
-          theme === "light"
-            ? "var(--theme-modal-border)"
-            : "var(--theme-bg-primary)"
-        }
-        className="z-99 !w-[500px] !bg-theme-bg-primary !px-[5px] !rounded-lg !pointer-events-auto light:border-2 light:border-theme-modal-border"
-      >
-        <LLMSelectorModal tooltipRef={tooltipRef} workspaceSlug={slug} />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div
+            id="llm-selector-btn"
+            aria-label="LLM Selector"
+            className={`border-none relative flex justify-center items-center opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 cursor-pointer`}
+          >
+            {saved ? (
+              <CheckCircle className="w-[20px] h-[20px] pointer-events-none text-green-400" />
+            ) : (
+              <Brain className="w-[20px] h-[20px] pointer-events-none text-[var(--theme-sidebar-footer-icon-fill)]" />
+            )}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[250px] text-xs">
+          <LLMSelectorModal tooltipRef={tooltipRef} workspaceSlug={slug} />
+        </TooltipContent>
       </Tooltip>
+
       <SetupProvider
         isOpen={isSetupProviderOpen}
         closeModal={closeSetupProviderModal}

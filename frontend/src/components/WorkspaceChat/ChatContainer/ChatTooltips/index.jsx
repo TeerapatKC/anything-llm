@@ -1,89 +1,24 @@
 import { Tooltip } from "react-tooltip";
-import { createPortal } from "react-dom";
 
 /**
- * Set the tooltips for the chat container in bulk.
- * Why do this?
+ * The last two react-tooltip definitions in the chat container.
  *
- * React-tooltip rendering on _each_ chat will attach an event listener to the body.
- * This will add up if we have many chats open resulting in the browser crashing
- * so we batch them together in a single component that renders at the top most level with
- * a static id the content can change, but this prevents the React-tooltip library from adding
- * hundreds of event listeners to the DOM.
+ * This used to hold every chat tooltip, because react-tooltip attaches a
+ * body-level event listener per instance and rendering one on each message
+ * would add hundreds of them. Radix attaches listeners to its own trigger
+ * instead, so the rest now live inline at their anchors and that constraint is
+ * gone.
  *
- * In general, anywhere we have iterative rendering the Tooltip should be rendered at the highest level to prevent
- * hundreds of event listeners from being added to the DOM in the worst case scenario.
- * @returns
+ * What remains belongs to AttachItem, which uses react-tooltip as an
+ * interactive popover — clickable, holding the ParsedFilesMenu panel, and
+ * driven imperatively through a ref. That is a Radix Popover rather than a
+ * Tooltip, so converting it is a redesign and is left for its own change.
+ * ParsedFilesMenu's own anchor is spread from an object literal, so it is still
+ * id-matched too.
  */
 export function ChatTooltips() {
   return (
     <>
-      <Tooltip
-        id="message-to-speech"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="regenerate-assistant-text"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="copy-assistant-text"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="feedback-button"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="action-menu"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="edit-input-text"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="metrics-visibility"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="routing-details"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="expand-cot"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="cot-thinking"
-        place="bottom"
-        delayShow={500}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
-        id="query-refusal-info"
-        place="top"
-        delayShow={500}
-        className="tooltip !text-xs max-w-[350px]"
-      />
       <Tooltip
         id="context-window-limit-exceeded"
         place="top"
@@ -91,40 +26,11 @@ export function ChatTooltips() {
         className="tooltip !text-xs max-w-[350px]"
       />
       <Tooltip
-        id="attachment-status-tooltip"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
-      <Tooltip
         id="attach-item-btn"
         place="top"
         delayShow={300}
         className="tooltip !text-xs"
       />
-      <DocumentLevelTooltip />
     </>
-  );
-}
-
-/**
- * This is a document level tooltip that is rendered at the top most level of the document
- * to ensure it is rendered above the chat history and other elements. Anytime we have tooltips
- * in modals the z-indexing can be recalculated and we need to ensure it is rendered at the top most level
- * so it positions correctly.
- */
-function DocumentLevelTooltip() {
-  return createPortal(
-    <>
-      <Tooltip
-        id="similarity-score"
-        place="top"
-        delayShow={100}
-        // z-[100] to ensure it renders above the chat history
-        // as the citation modal is z-indexed above the chat history
-        className="tooltip !text-xs z-[100]"
-      />
-    </>,
-    document.body
   );
 }

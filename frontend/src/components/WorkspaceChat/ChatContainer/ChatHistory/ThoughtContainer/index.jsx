@@ -13,6 +13,11 @@ import DOMPurify from "dompurify";
 import { isMobile } from "react-device-detect";
 import ThinkingAnimation from "@/media/animations/thinking-animation.webm";
 import ThinkingStatic from "@/media/animations/thinking-static.png";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /**
  * Context to persist thought expansion state across component transitions
@@ -153,45 +158,67 @@ export const ThoughtChainComponent = forwardRef(
             >
               <div className="absolute top-4 left-4 w-[18px] h-[18px]">
                 {isThinking ? (
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-[18px] h-[18px] scale-[115%] light:invert light:opacity-50"
-                    data-tooltip-id="cot-thinking"
-                    data-tooltip-content="Model is thinking..."
-                    aria-label="Model is thinking..."
-                  >
-                    <source src={ThinkingAnimation} type="video/webm" />
-                  </video>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-[18px] h-[18px] scale-[115%] light:invert light:opacity-50"
+                        aria-label="Model is thinking..."
+                      >
+                        <source src={ThinkingAnimation} type="video/webm" />
+                      </video>
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="bottom"
+                      className="max-w-[250px] text-xs"
+                    >
+                      Model is thinking...
+                    </TooltipContent>
+                  </Tooltip>
                 ) : isComplete ? (
-                  <img
-                    src={ThinkingStatic}
-                    alt="Thinking complete"
-                    className="w-[18px] h-[18px] light:invert light:opacity-50"
-                    data-tooltip-id="cot-thinking"
-                    data-tooltip-content="Model has finished thinking"
-                    aria-label="Model has finished thinking"
-                  />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <img
+                        src={ThinkingStatic}
+                        alt="Thinking complete"
+                        className="w-[18px] h-[18px] light:invert light:opacity-50"
+                        aria-label="Model has finished thinking"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="bottom"
+                      className="max-w-[250px] text-xs"
+                    >
+                      Model has finished thinking
+                    </TooltipContent>
+                  </Tooltip>
                 ) : null}
               </div>
               {canExpand && (
-                <button
-                  onClick={handleExpandClick}
-                  className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
-                  data-tooltip-id="expand-cot"
-                  data-tooltip-content={
-                    isExpanded ? "Hide thought chain" : "Show thought chain"
-                  }
-                  aria-label={
-                    isExpanded ? "Hide thought chain" : "Show thought chain"
-                  }
-                >
-                  <CaretDown
-                    className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                  />
-                </button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleExpandClick}
+                      className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
+                      aria-label={
+                        isExpanded ? "Hide thought chain" : "Show thought chain"
+                      }
+                    >
+                      <CaretDown
+                        className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="bottom"
+                    className="max-w-[250px] text-xs"
+                  >
+                    {isExpanded ? "Hide thought chain" : "Show thought chain"}
+                  </TooltipContent>
+                </Tooltip>
               )}
               <div
                 className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}

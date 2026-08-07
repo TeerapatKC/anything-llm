@@ -6,6 +6,11 @@ import {
   useMessageActionsContext,
   EDIT_EVENT,
 } from "@/components/WorkspaceChat/ChatContainer/ChatHistory/MessageActionsContext";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export function useEditMessage({ chatId, role }) {
   const context = useMessageActionsContext();
@@ -28,19 +33,22 @@ export function EditMessageAction({ chatId = null, role, isEditing }) {
         role === "user" && !isEditing ? "" : "!opacity-100"
       }`}
     >
-      <button
-        onClick={handleEditClick}
-        data-tooltip-id="edit-input-text"
-        data-tooltip-content={`${
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={handleEditClick}
+            className="border-none text-zinc-300 light:text-slate-500 px-0"
+            aria-label={`Edit ${role === "user" ? t("chat_window.edit_prompt") : t("chat_window.edit_response")}`}
+          >
+            <Pencil size={21} className="mb-1" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">{`${
           role === "user"
             ? t("chat_window.edit_prompt")
             : t("chat_window.edit_response")
-        } `}
-        className="border-none text-zinc-300 light:text-slate-500 px-0"
-        aria-label={`Edit ${role === "user" ? t("chat_window.edit_prompt") : t("chat_window.edit_response")}`}
-      >
-        <Pencil size={21} className="mb-1" />
-      </button>
+        } `}</TooltipContent>
+      </Tooltip>
     </div>
   );
 }

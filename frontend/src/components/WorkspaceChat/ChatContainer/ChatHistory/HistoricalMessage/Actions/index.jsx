@@ -6,6 +6,11 @@ import { EditMessageAction } from "./EditMessage";
 import RenderMetrics from "./RenderMetrics";
 import ActionMenu from "./ActionMenu";
 import { useTranslation } from "react-i18next";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Actions = ({
   message,
@@ -81,19 +86,24 @@ function FeedbackButton({
 }) {
   return (
     <div className="mt-3 relative">
-      <button
-        onClick={handleFeedback}
-        data-tooltip-id="feedback-button"
-        data-tooltip-content={tooltipContent}
-        className="text-zinc-300 light:text-slate-500"
-        aria-label={tooltipContent}
-      >
-        <IconComponent
-          size={20}
-          className="mb-1"
-          weight={isSelected ? "fill" : "regular"}
-        />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={handleFeedback}
+            className="text-zinc-300 light:text-slate-500"
+            aria-label={tooltipContent}
+          >
+            <IconComponent
+              size={20}
+              className="mb-1"
+              weight={isSelected ? "fill" : "regular"}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {tooltipContent}
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }
@@ -105,19 +115,24 @@ function CopyMessage({ message }) {
   return (
     <>
       <div className="mt-3 relative">
-        <button
-          onClick={() => copyText(message)}
-          data-tooltip-id="copy-assistant-text"
-          data-tooltip-content={t("chat_window.copy")}
-          className="text-zinc-300 light:text-slate-500"
-          aria-label={t("chat_window.copy")}
-        >
-          {copied ? (
-            <Check size={20} className="mb-1" />
-          ) : (
-            <Copy size={20} className="mb-1" />
-          )}
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => copyText(message)}
+              className="text-zinc-300 light:text-slate-500"
+              aria-label={t("chat_window.copy")}
+            >
+              {copied ? (
+                <Check size={20} className="mb-1" />
+              ) : (
+                <Copy size={20} className="mb-1" />
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+            {t("chat_window.copy")}
+          </TooltipContent>
+        </Tooltip>
       </div>
     </>
   );
@@ -128,15 +143,20 @@ function RegenerateMessage({ regenerateMessage, chatId }) {
   if (!chatId) return null;
   return (
     <div className="mt-3 relative">
-      <button
-        onClick={() => regenerateMessage(chatId)}
-        data-tooltip-id="regenerate-assistant-text"
-        data-tooltip-content={t("chat_window.regenerate_response")}
-        className="border-none text-zinc-300 light:text-slate-500"
-        aria-label={t("chat_window.regenerate")}
-      >
-        <ArrowsClockwise size={20} className="mb-1" weight="fill" />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={() => regenerateMessage(chatId)}
+            className="border-none text-zinc-300 light:text-slate-500"
+            aria-label={t("chat_window.regenerate")}
+          >
+            <ArrowsClockwise size={20} className="mb-1" weight="fill" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {t("chat_window.regenerate_response")}
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

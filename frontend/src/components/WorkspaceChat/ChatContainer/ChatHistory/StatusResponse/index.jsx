@@ -3,6 +3,11 @@ import { CaretDown } from "@phosphor-icons/react";
 
 import AgentAnimation from "@/media/animations/agent-animation.webm";
 import AgentStatic from "@/media/animations/agent-static.png";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function StatusResponse({ messages = [], isThinking = false }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -34,8 +39,6 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
                   muted
                   playsInline
                   className="w-[18px] h-[18px] scale-[165%] transition-opacity duration-200 light:invert light:opacity-50"
-                  data-tooltip-id="agent-thinking"
-                  data-tooltip-content="Agent is thinking..."
                   aria-label="Agent is thinking..."
                 >
                   <source src={AgentAnimation} type="video/webm" />
@@ -45,28 +48,29 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
                   src={AgentStatic}
                   alt="Agent complete"
                   className="w-[18px] h-[18px] transition-opacity duration-200 light:invert light:opacity-50"
-                  data-tooltip-id="agent-thinking"
-                  data-tooltip-content="Agent has finished thinking"
                   aria-label="Agent has finished thinking"
                 />
               )}
             </div>
             {previousThoughts?.length > 0 && (
-              <button
-                onClick={handleExpandClick}
-                className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
-                data-tooltip-id="expand-cot"
-                data-tooltip-content={
-                  isExpanded ? "Hide thought chain" : "Show thought chain"
-                }
-                aria-label={
-                  isExpanded ? "Hide thought chain" : "Show thought chain"
-                }
-              >
-                <CaretDown
-                  className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                />
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={handleExpandClick}
+                    className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
+                    aria-label={
+                      isExpanded ? "Hide thought chain" : "Show thought chain"
+                    }
+                  >
+                    <CaretDown
+                      className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                    />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+                  {isExpanded ? "Hide thought chain" : "Show thought chain"}
+                </TooltipContent>
+              </Tooltip>
             )}
             <div
               className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}

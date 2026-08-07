@@ -1,6 +1,10 @@
 import { useCallback, useEffect } from "react";
 import { Microphone, CircleNotch } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { PROMPT_INPUT_EVENT } from "../../../PromptInput";
 
@@ -48,38 +52,38 @@ export default function MicButton({
 
   const active = listening || processing;
   return (
-    <div
-      data-tooltip-id="tooltip-microphone-btn"
-      data-tooltip-content={`${t("chat_window.microphone")} (CTRL + M)`}
-      aria-label={t("chat_window.microphone")}
-      onClick={toggle}
-      className={`group border-none relative flex justify-center items-center cursor-pointer w-8 h-8 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200 ${
-        active ? "bg-zinc-700 light:bg-slate-200" : ""
-      }`}
-    >
-      {processing ? (
-        <CircleNotch
-          size={18}
-          weight="bold"
-          className="pointer-events-none text-white light:text-slate-800 animate-spin shrink-0"
-        />
-      ) : (
-        <Microphone
-          weight="regular"
-          size={18}
-          className={`pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0 ${
-            listening
-              ? "animate-pulse-glow !text-white light:!text-slate-800"
-              : ""
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          aria-label={t("chat_window.microphone")}
+          onClick={toggle}
+          className={`group border-none relative flex justify-center items-center cursor-pointer w-8 h-8 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200 ${
+            active ? "bg-zinc-700 light:bg-slate-200" : ""
           }`}
-        />
-      )}
-      <Tooltip
-        id="tooltip-microphone-btn"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
-    </div>
+        >
+          {processing ? (
+            <CircleNotch
+              size={18}
+              weight="bold"
+              className="pointer-events-none text-white light:text-slate-800 animate-spin shrink-0"
+            />
+          ) : (
+            <Microphone
+              weight="regular"
+              size={18}
+              className={`pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0 ${
+                listening
+                  ? "animate-pulse-glow !text-white light:!text-slate-800"
+                  : ""
+              }`}
+            />
+          )}
+        </div>
+      </TooltipTrigger>
+      <TooltipContent
+        side="top"
+        className="max-w-[250px] text-xs"
+      >{`${t("chat_window.microphone")} (CTRL + M)`}</TooltipContent>
+    </Tooltip>
   );
 }

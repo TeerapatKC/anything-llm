@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { SpeakerHigh, PauseCircle } from "@phosphor-icons/react";
 import messageToSpeech from "@/utils/chat/messageToSpeech";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function NativeTTSMessage({ chatId, message }) {
   const [speaking, setSpeaking] = useState(false);
@@ -35,22 +40,25 @@ export default function NativeTTSMessage({ chatId, message }) {
   if (!supported) return null;
   return (
     <div className="mt-3 relative">
-      <button
-        onClick={speakMessage}
-        data-auto-play-chat-id={chatId}
-        data-tooltip-id="message-to-speech"
-        data-tooltip-content={
-          speaking ? "Pause TTS speech of message" : "TTS Speak message"
-        }
-        className="border-none text-zinc-300 light:text-slate-500"
-        aria-label={speaking ? "Pause speech" : "Speak message"}
-      >
-        {speaking ? (
-          <PauseCircle size={18} className="mb-1" />
-        ) : (
-          <SpeakerHigh size={18} className="mb-1" />
-        )}
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={speakMessage}
+            data-auto-play-chat-id={chatId}
+            className="border-none text-zinc-300 light:text-slate-500"
+            aria-label={speaking ? "Pause speech" : "Speak message"}
+          >
+            {speaking ? (
+              <PauseCircle size={18} className="mb-1" />
+            ) : (
+              <SpeakerHigh size={18} className="mb-1" />
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {speaking ? "Pause TTS speech of message" : "TTS Speak message"}
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

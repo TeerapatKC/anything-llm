@@ -2,6 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { SpeakerHigh, PauseCircle, CircleNotch } from "@phosphor-icons/react";
 import PiperTTSClient from "@/utils/piperTTS";
 import messageToSpeech from "@/utils/chat/messageToSpeech";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function PiperTTS({ chatId, voiceId = null, message }) {
   const playerRef = useRef(null);
@@ -52,37 +57,40 @@ export default function PiperTTS({ chatId, voiceId = null, message }) {
 
   return (
     <div className="mt-3 relative">
-      <button
-        type="button"
-        onClick={speakMessage}
-        disabled={loading}
-        data-auto-play-chat-id={chatId}
-        data-tooltip-id="message-to-speech"
-        data-tooltip-content={
-          speaking ? "Pause TTS speech of message" : "TTS Speak message"
-        }
-        className="border-none text-[var(--theme-sidebar-footer-icon-fill)]"
-        aria-label={speaking ? "Pause speech" : "Speak message"}
-      >
-        {speaking ? (
-          <PauseCircle size={18} className="mb-1" />
-        ) : (
-          <>
-            {loading ? (
-              <CircleNotch size={18} className="mb-1 animate-spin" />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={speakMessage}
+            disabled={loading}
+            data-auto-play-chat-id={chatId}
+            className="border-none text-[var(--theme-sidebar-footer-icon-fill)]"
+            aria-label={speaking ? "Pause speech" : "Speak message"}
+          >
+            {speaking ? (
+              <PauseCircle size={18} className="mb-1" />
             ) : (
-              <SpeakerHigh size={18} className="mb-1" />
+              <>
+                {loading ? (
+                  <CircleNotch size={18} className="mb-1 animate-spin" />
+                ) : (
+                  <SpeakerHigh size={18} className="mb-1" />
+                )}
+              </>
             )}
-          </>
-        )}
-        <audio
-          ref={playerRef}
-          hidden={true}
-          src={audioSrc}
-          autoPlay={true}
-          controls={false}
-        />
-      </button>
+            <audio
+              ref={playerRef}
+              hidden={true}
+              src={audioSrc}
+              autoPlay={true}
+              controls={false}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {speaking ? "Pause TTS speech of message" : "TTS Speak message"}
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

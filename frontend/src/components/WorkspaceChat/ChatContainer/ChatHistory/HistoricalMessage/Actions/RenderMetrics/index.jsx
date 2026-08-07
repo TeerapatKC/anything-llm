@@ -2,6 +2,11 @@ import { formatDateTimeAsMoment } from "@/utils/directories";
 import { formatDuration, numberWithCommas } from "@/utils/numbers";
 import React, { useEffect, useState, useContext } from "react";
 import { isMobile } from "react-device-detect";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 const MetricsContext = React.createContext();
 const SHOW_METRICS_KEY = "anythingllm_show_chat_metrics";
 const SHOW_METRICS_EVENT = "anythingllm_show_metrics_change";
@@ -106,20 +111,23 @@ export default function RenderMetrics({ metrics = {} }) {
   if (!metrics?.duration || !metrics?.outputTps || isMobile) return null;
 
   return (
-    <button
-      type="button"
-      onClick={() => setShowMetricsAutomatically(toggleAutoShowMetrics())}
-      data-tooltip-id="metrics-visibility"
-      data-tooltip-content={
-        showMetricsAutomatically
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          type="button"
+          onClick={() => setShowMetricsAutomatically(toggleAutoShowMetrics())}
+          className={`border-none flex md:justify-end items-center gap-x-[8px] -ml-7 ${showMetricsAutomatically ? "opacity-100" : "opacity-0"} md:group-hover:opacity-100 transition-all duration-300`}
+        >
+          <p className="cursor-pointer text-xs font-mono text-zinc-400 light:text-slate-500">
+            {buildMetricsString(metrics)}
+          </p>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+        {showMetricsAutomatically
           ? "Click to only show metrics when hovering"
-          : "Click to show metrics as soon as they are available"
-      }
-      className={`border-none flex md:justify-end items-center gap-x-[8px] -ml-7 ${showMetricsAutomatically ? "opacity-100" : "opacity-0"} md:group-hover:opacity-100 transition-all duration-300`}
-    >
-      <p className="cursor-pointer text-xs font-mono text-zinc-400 light:text-slate-500">
-        {buildMetricsString(metrics)}
-      </p>
-    </button>
+          : "Click to show metrics as soon as they are available"}
+      </TooltipContent>
+    </Tooltip>
   );
 }

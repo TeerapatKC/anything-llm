@@ -1,4 +1,9 @@
 import { Info } from "@phosphor-icons/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const TOGGLE_STYLES = {
   sm: "h-[12px] w-[20px] after:h-[8px] after:w-[8px] after:top-[2px] after:left-[2px] peer-checked:after:translate-x-full",
@@ -35,7 +40,9 @@ const LABEL_STYLES = {
  * @param {string} [props.label] - Label text next to toggle
  * @param {string} [props.description] - Description text below label
  * @param {"default" | "horizontal"} [props.variant="default"] - Layout variant
- * @param {string} [props.hint] - Tooltip ID for info icon hint next to label
+ * @param {import("react").ReactNode} [props.hint] - Tooltip content for the info
+ * icon next to the label. This was a react-tooltip id resolved against a
+ * definition elsewhere; it is now the content itself.
  * @param {string} [props.value] - Input value for form submission
  * @param {string} [props.labelClassName] - Additional CSS classes for label
  * @param {string} [props.descriptionClassName] - Additional CSS classes for description
@@ -163,11 +170,17 @@ function TextContent({
         >
           {label}
           {hint && (
-            <Info
-              size={14}
-              className="text-theme-text-secondary cursor-pointer"
-              data-tooltip-id={hint}
-            />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info
+                  size={14}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                {hint}
+              </TooltipContent>
+            </Tooltip>
           )}
         </span>
       )}

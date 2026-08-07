@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Tooltip } from "react-tooltip";
 
 import BlockList, { BLOCK_TYPES, BLOCK_INFO } from "./BlockList";
 import AddBlockMenu from "./AddBlockMenu";
@@ -375,21 +374,6 @@ export default function AgentBuilder() {
             />
           </div>
         </div>
-        <Tooltip
-          id="content-summarization-tooltip"
-          place="top"
-          delayShow={300}
-          className="tooltip !text-xs z-99"
-        >
-          <p className="text-sm">
-            When enabled, long webpage content will be automatically summarized
-            to reduce token usage.
-            <br />
-            <br />
-            Note: This may affect data quality and remove specific details from
-            the original content.
-          </p>
-        </Tooltip>
       </div>
     </AvailableVariablesProvider>
   );

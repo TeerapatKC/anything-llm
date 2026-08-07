@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { At } from "@phosphor-icons/react";
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
 import { useTranslation } from "react-i18next";
@@ -10,27 +14,26 @@ export default function AvailableAgentsButton({ showing, setShowAgents }) {
   const agentSessionActive = useIsAgentSessionActive();
   if (agentSessionActive) return null;
   return (
-    <div
-      id="agent-list-btn"
-      data-tooltip-id="tooltip-agent-list-btn"
-      data-tooltip-content={t("chat_window.agents")}
-      aria-label={t("chat_window.agents")}
-      onClick={() => setShowAgents(!showing)}
-      className={`flex justify-center items-center cursor-pointer opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 ${
-        showing ? "!opacity-100" : ""
-      }`}
-    >
-      <At
-        color="var(--theme-sidebar-footer-icon-fill)"
-        className="w-[20px] h-[20px] pointer-events-none text-theme-text-primary"
-      />
-      <Tooltip
-        id="tooltip-agent-list-btn"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          id="agent-list-btn"
+          aria-label={t("chat_window.agents")}
+          onClick={() => setShowAgents(!showing)}
+          className={`flex justify-center items-center cursor-pointer opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 ${
+            showing ? "!opacity-100" : ""
+          }`}
+        >
+          <At
+            color="var(--theme-sidebar-footer-icon-fill)"
+            className="w-[20px] h-[20px] pointer-events-none text-theme-text-primary"
+          />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[250px] text-xs">
+        {t("chat_window.agents")}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

@@ -73,7 +73,16 @@ export default function WebScrapingNode({
         size="md"
         variant="horizontal"
         label="Content Summarization"
-        hint="content-summarization-tooltip"
+        hint={
+          <p className="text-sm">
+            When enabled, long webpage content will be automatically summarized
+            to reduce token usage.
+            <br />
+            <br />
+            Note: This may affect data quality and remove specific details from
+            the original content.
+          </p>
+        }
         enabled={config.enableSummarization ?? true}
         onChange={(checked) =>
           onConfigChange({ ...config, enableSummarization: checked })

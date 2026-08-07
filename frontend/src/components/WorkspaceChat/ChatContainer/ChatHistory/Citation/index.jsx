@@ -19,6 +19,11 @@ import OutlookLogo from "@/pages/Admin/Agents/OutlookSkillPanel/outlook.png";
 import { toPercentString } from "@/utils/numbers";
 import { useTranslation } from "react-i18next";
 import { useSourcesSidebar } from "../../ChatSidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const CIRCLE_ICONS = {
   file: FileText,
@@ -258,17 +263,21 @@ export function CitationDetailModal({ source, onClose }) {
 
                     {!!score && (
                       <div className="w-full flex items-center text-xs text-white/60 light:text-slate-500 gap-x-2 cursor-default">
-                        <div
-                          data-tooltip-id="similarity-score"
-                          data-tooltip-content={`This is the semantic similarity score of this chunk of text compared to your query calculated by the vector database.`}
-                          className="flex items-center gap-x-1"
-                        >
-                          <Info size={14} />
-                          <p>
-                            {toPercentString(score)}{" "}
-                            {t("chat_window.similarity_match")}
-                          </p>
-                        </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex items-center gap-x-1">
+                              <Info size={14} />
+                              <p>
+                                {toPercentString(score)}{" "}
+                                {t("chat_window.similarity_match")}
+                              </p>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            className="max-w-[250px] text-xs"
+                          >{`This is the semantic similarity score of this chunk of text compared to your query calculated by the vector database.`}</TooltipContent>
+                        </Tooltip>
                       </div>
                     )}
                   </div>

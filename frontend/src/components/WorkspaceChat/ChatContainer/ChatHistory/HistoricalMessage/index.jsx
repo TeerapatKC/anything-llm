@@ -21,6 +21,11 @@ import { chatQueryRefusalResponse } from "@/utils/chat";
 import HistoricalOutputs from "./HistoricalOutputs";
 import HistoricalClarifyingQuestions from "./HistoricalClarifyingQuestions";
 import { openImageLightbox } from "@/components/ImageLightbox";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const HistoricalMessage = ({
   uuid: uuidProp,
@@ -150,20 +155,26 @@ const HistoricalMessage = ({
             <HistoricalClarifyingQuestions surveys={clarifyingQuestions} />
             <RenderChatContent role={role} message={message} messageId={uuid} />
             {isRefusalMessage && (
-              <Link
-                data-tooltip-id="query-refusal-info"
-                data-tooltip-content={`${t("chat.refusal.tooltip-description")}`}
-                className="!no-underline group !flex w-fit"
-                to={paths.chatModes()}
-                target="_blank"
-              >
-                <div className="flex flex-row items-center gap-x-1 group-hover:opacity-100 opacity-60 w-fit">
-                  <Info className="text-theme-text-secondary" />
-                  <p className="!m-0 !p-0 text-theme-text-secondary !no-underline text-xs cursor-pointer">
-                    {t("chat.refusal.tooltip-title")}
-                  </p>
-                </div>
-              </Link>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    className="!no-underline group !flex w-fit"
+                    to={paths.chatModes()}
+                    target="_blank"
+                  >
+                    <div className="flex flex-row items-center gap-x-1 group-hover:opacity-100 opacity-60 w-fit">
+                      <Info className="text-theme-text-secondary" />
+                      <p className="!m-0 !p-0 text-theme-text-secondary !no-underline text-xs cursor-pointer">
+                        {t("chat.refusal.tooltip-title")}
+                      </p>
+                    </div>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="max-w-[250px] text-xs"
+                >{`${t("chat.refusal.tooltip-description")}`}</TooltipContent>
+              </Tooltip>
             )}
             <ChatAttachments attachments={attachments} />
             <HistoricalOutputs outputs={outputs} />

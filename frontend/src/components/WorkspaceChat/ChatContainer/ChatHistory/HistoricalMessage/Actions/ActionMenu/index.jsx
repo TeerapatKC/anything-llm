@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Trash, DotsThreeVertical, TreeView } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function ActionMenu({ chatId, forkThread, isEditing, role }) {
   const { t } = useTranslation();
@@ -39,15 +44,20 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
 
   return (
     <div className="mt-2 -ml-0.5 relative" ref={menuRef}>
-      <button
-        onClick={toggleMenu}
-        className="border-none text-zinc-300 light:text-slate-500 transition-colors duration-200"
-        data-tooltip-id="action-menu"
-        data-tooltip-content={t("chat_window.more_actions")}
-        aria-label={t("chat_window.more_actions")}
-      >
-        <DotsThreeVertical size={24} weight="bold" />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={toggleMenu}
+            className="border-none text-zinc-300 light:text-slate-500 transition-colors duration-200"
+            aria-label={t("chat_window.more_actions")}
+          >
+            <DotsThreeVertical size={24} weight="bold" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[250px] text-xs">
+          {t("chat_window.more_actions")}
+        </TooltipContent>
+      </Tooltip>
       {open && (
         <div
           data-action-menu-open

@@ -3,7 +3,11 @@ import debounce from "lodash.debounce";
 import { ArrowUp, At } from "@phosphor-icons/react";
 import StopGenerationButton from "./StopGenerationButton";
 import SpeechToText from "./SpeechToText";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import AttachmentManager from "./Attachments";
 import AttachItem from "./AttachItem";
 import {
@@ -427,25 +431,24 @@ function AgentSessionButton({
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handleClick}
-        data-tooltip-id="agent-session"
-        data-tooltip-content={t("chat_window.start_agent_session")}
-        aria-label={t("chat_window.start_agent_session")}
-        className="group border-none relative flex justify-center items-center cursor-pointer w-6 h-6 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200"
-      >
-        <At
-          size={18}
-          className="pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0"
-        />
-      </button>
-      <Tooltip
-        id="agent-session"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={handleClick}
+            aria-label={t("chat_window.start_agent_session")}
+            className="group border-none relative flex justify-center items-center cursor-pointer w-6 h-6 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200"
+          >
+            <At
+              size={18}
+              className="pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0"
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {t("chat_window.start_agent_session")}
+        </TooltipContent>
+      </Tooltip>
     </>
   );
 }
@@ -491,35 +494,32 @@ function SendPromptButton({ formRef, promptInput, isDisabled }) {
 
   return (
     <>
-      <button
-        ref={formRef}
-        type="submit"
-        disabled={isDisabled || !promptInput.trim().length}
-        className={`border-none flex justify-center items-center rounded-full w-8 h-8 transition-all ${
-          promptInput.trim().length && !isDisabled
-            ? "cursor-pointer bg-white hover:bg-zinc-200 light:bg-slate-800 light:hover:bg-slate-600"
-            : "cursor-not-allowed bg-zinc-600 light:bg-slate-400"
-        }`}
-        data-tooltip-id="send-prompt"
-        data-tooltip-content={
-          isDisabled
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            ref={formRef}
+            type="submit"
+            disabled={isDisabled || !promptInput.trim().length}
+            className={`border-none flex justify-center items-center rounded-full w-8 h-8 transition-all ${
+              promptInput.trim().length && !isDisabled
+                ? "cursor-pointer bg-white hover:bg-zinc-200 light:bg-slate-800 light:hover:bg-slate-600"
+                : "cursor-not-allowed bg-zinc-600 light:bg-slate-400"
+            }`}
+            aria-label={t("chat_window.send")}
+          >
+            <ArrowUp
+              className="w-[18px] h-[18px] pointer-events-none text-zinc-800 light:text-white"
+              weight="bold"
+            />
+            <span className="sr-only">{t("chat_window.send")}</span>
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {isDisabled
             ? t("chat_window.attachments_processing")
-            : t("chat_window.send")
-        }
-        aria-label={t("chat_window.send")}
-      >
-        <ArrowUp
-          className="w-[18px] h-[18px] pointer-events-none text-zinc-800 light:text-white"
-          weight="bold"
-        />
-        <span className="sr-only">{t("chat_window.send")}</span>
-      </button>
-      <Tooltip
-        id="send-prompt"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
+            : t("chat_window.send")}
+        </TooltipContent>
+      </Tooltip>
     </>
   );
 }
