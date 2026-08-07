@@ -2,6 +2,15 @@ import { Info } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DEFAULT_MODELS = [
   {
@@ -36,25 +45,29 @@ export default function GeminiOptions({ settings }) {
             <Label variant="settings" className="block mb-3">
               Model Preference
             </Label>
-            <select
+            <Select
               name="EmbeddingModelPref"
               required={true}
-              className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+              defaultValue={
+                settings?.EmbeddingModelPref ?? DEFAULT_MODELS?.[0]?.id
+              }
             >
-              <optgroup label="Available embedding models">
-                {DEFAULT_MODELS.map((model) => {
-                  return (
-                    <option
-                      key={model.id}
-                      value={model.id}
-                      selected={settings?.EmbeddingModelPref === model.id}
-                    >
-                      {model.name}
-                    </option>
-                  );
-                })}
-              </optgroup>
-            </select>
+              <SelectTrigger variant="settings">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Available embedding models</SelectLabel>
+                  {DEFAULT_MODELS.map((model) => {
+                    return (
+                      <SelectItem key={model.id} value={model.id}>
+                        {model.name}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

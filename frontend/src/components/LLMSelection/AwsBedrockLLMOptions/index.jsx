@@ -4,6 +4,15 @@ import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AwsBedrockLLMOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.AwsBedrockLLMApiKey);
@@ -55,22 +64,25 @@ export default function AwsBedrockLLMOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             AWS Region
           </Label>
-          <select
+          <Select
             name="AwsBedrockLLMRegion"
             value={region}
             required={true}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-            onChange={(e) => setRegion(e.target.value)}
-            onBlur={() => setRegion(region)}
+            onValueChange={setRegion}
           >
-            {AWS_REGIONS.map((region) => {
-              return (
-                <option key={region.code} value={region.code}>
-                  {region.name} ({region.code})
-                </option>
-              );
-            })}
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select a region" />
+            </SelectTrigger>
+            <SelectContent>
+              {AWS_REGIONS.map((region) => {
+                return (
+                  <SelectItem key={region.code} value={region.code}>
+                    {region.name} ({region.code})
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -164,15 +176,12 @@ function BedrockModelSelection({ settings, apiKey, region }) {
         <Label variant="settings" className="block mb-3">
           Chat Model Selection
         </Label>
-        <select
-          name="AwsBedrockLLMModel"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="AwsBedrockLLMModel" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </div>
     );
   }
@@ -182,27 +191,32 @@ function BedrockModelSelection({ settings, apiKey, region }) {
       <Label variant="settings" className="block mb-3">
         Chat Model Selection
       </Label>
-      <select
+      <Select
         name="AwsBedrockLLMModel"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={
+          settings?.AwsBedrockLLMModel ??
+          groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
+        }
       >
-        {Object.keys(groupedModels)
-          .sort()
-          .map((organization) => (
-            <optgroup key={organization} label={organization}>
-              {groupedModels[organization].map((model) => (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings?.AwsBedrockLLMModel === model.id}
-                >
-                  {model.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.keys(groupedModels)
+            .sort()
+            .map((organization) => (
+              <SelectGroup key={organization}>
+                <SelectLabel>{organization}</SelectLabel>
+                {groupedModels[organization].map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

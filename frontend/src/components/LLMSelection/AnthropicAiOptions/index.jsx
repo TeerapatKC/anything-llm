@@ -3,6 +3,13 @@ import System from "@/models/system";
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AnthropicAiOptions({ settings }) {
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
@@ -60,29 +67,19 @@ export default function AnthropicAiOptions({ settings }) {
             <div className="flex justify-between items-center mb-2">
               <Label variant="settings">Prompt Caching</Label>
             </div>
-            <select
+            <Select
               name="AnthropicCacheControl"
-              className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+              defaultValue={settings?.AnthropicCacheControl ?? "none"}
             >
-              <option
-                value="none"
-                selected={settings?.AnthropicCacheControl === "none"}
-              >
-                No caching
-              </option>
-              <option
-                value="5m"
-                selected={settings?.AnthropicCacheControl === "5m"}
-              >
-                5 minutes
-              </option>
-              <option
-                value="1h"
-                selected={settings?.AnthropicCacheControl === "1h"}
-              >
-                1 hour
-              </option>
-            </select>
+              <SelectTrigger variant="settings">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No caching</SelectItem>
+                <SelectItem value="5m">5 minutes</SelectItem>
+                <SelectItem value="1h">1 hour</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -113,15 +110,12 @@ function AnthropicModelSelection({ apiKey, settings }) {
         <Label variant="settings" className="block mb-3">
           Chat Model Selection
         </Label>
-        <select
-          name="AnthropicModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="AnthropicModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </div>
     );
   }
@@ -131,21 +125,22 @@ function AnthropicModelSelection({ apiKey, settings }) {
       <Label variant="settings" className="block mb-3">
         Chat Model Selection
       </Label>
-      <select
+      <Select
         name="AnthropicModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings?.AnthropicModelPref ?? models?.[0]?.id}
       >
-        {models.map((model) => (
-          <option
-            key={model.id}
-            value={model.id}
-            selected={settings?.AnthropicModelPref === model.id}
-          >
-            {model.name}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {models.map((model) => (
+            <SelectItem key={model.id} value={model.id}>
+              {model.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

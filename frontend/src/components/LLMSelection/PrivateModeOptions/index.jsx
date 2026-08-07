@@ -5,6 +5,13 @@ import System from "@/models/system";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function PrivateModeOptions({ settings }) {
   const [models, setModels] = useState([]);
@@ -90,37 +97,44 @@ export default function PrivateModeOptions({ settings }) {
             Chat Model
           </Label>
           {loading ? (
-            <select
-              name="PrivateModeModelPref"
-              required={true}
-              disabled={true}
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-            >
-              <option>---- Loading ----</option>
-            </select>
+            <Select name="PrivateModeModelPref" required={true} disabled={true}>
+              <SelectTrigger variant="settings">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem>---- Loading ----</SelectItem>
+              </SelectContent>
+            </Select>
           ) : (
-            <select
+            <Select
               name="PrivateModeModelPref"
+              // "" keeps this controlled for its whole lifetime and reads as
+              // "nothing picked", surfacing through the trigger placeholder the
+              // way the old `<option value="">` row did. Passing undefined
+              // instead would flip Radix between uncontrolled and controlled.
               value={model}
-              onChange={(e) => setModel(e.target.value)}
+              onValueChange={setModel}
               required={true}
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             >
-              {models.length > 0 ? (
-                <>
-                  <option value="">-- Select a model --</option>
-                  {models.map((model) => (
-                    <option key={model.id} value={model.id}>
+              <SelectTrigger variant="settings">
+                <SelectValue placeholder="-- Select a model --" />
+              </SelectTrigger>
+              <SelectContent>
+                {models.length > 0 ? (
+                  models.map((model) => (
+                    <SelectItem key={model.id} value={model.id}>
                       {model.name}
-                    </option>
-                  ))}
-                </>
-              ) : (
-                <option disabled value="">
-                  No models found
-                </option>
-              )}
-            </select>
+                    </SelectItem>
+                  ))
+                ) : (
+                  // SelectItem rejects an empty value outright; this row is
+                  // disabled so its value can never be submitted.
+                  <SelectItem disabled value="__no_models">
+                    No models found
+                  </SelectItem>
+                )}
+              </SelectContent>
+            </Select>
           )}
         </div>
       </div>

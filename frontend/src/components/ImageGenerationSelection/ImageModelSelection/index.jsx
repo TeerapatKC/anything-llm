@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const INPUT_CLASSES =
   "border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5";
@@ -58,17 +66,18 @@ export default function ImageModelSelection({
   if (loading || needsBasePath) {
     return (
       <ModelSelectionWrapper>
-        <select
-          name="ImageGenerationModelPref"
-          disabled={true}
-          className={INPUT_CLASSES}
-        >
-          <option disabled={true} selected={true}>
-            {needsBasePath
-              ? `Enter ${endpointName} first`
-              : "-- loading available models --"}
-          </option>
-        </select>
+        <Select name="ImageGenerationModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                needsBasePath
+                  ? `Enter ${endpointName} first`
+                  : "-- loading available models --"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </ModelSelectionWrapper>
     );
   }
@@ -93,27 +102,29 @@ export default function ImageModelSelection({
   const groupedModels = groupModelsByOrganization(models);
   return (
     <ModelSelectionWrapper>
-      <select
-        name="ImageGenerationModelPref"
-        required={true}
-        className={INPUT_CLASSES}
-      >
-        {Object.keys(groupedModels).length > 0
-          ? Object.entries(groupedModels).map(([organization, models]) => (
-              <optgroup key={organization} label={organization}>
-                {models.map((model) => (
-                  <ModelOption
-                    key={model.id}
-                    model={model}
-                    settings={settings}
-                  />
-                ))}
-              </optgroup>
-            ))
-          : models.map((model) => (
-              <ModelOption key={model.id} model={model} settings={settings} />
-            ))}
-      </select>
+      <Select name="ImageGenerationModelPref" required={true}>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.keys(groupedModels).length > 0
+            ? Object.entries(groupedModels).map(([organization, models]) => (
+                <SelectGroup key={organization}>
+                  <SelectLabel>{organization}</SelectLabel>
+                  {models.map((model) => (
+                    <ModelOption
+                      key={model.id}
+                      model={model}
+                      settings={settings}
+                    />
+                  ))}
+                </SelectGroup>
+              ))
+            : models.map((model) => (
+                <ModelOption key={model.id} model={model} settings={settings} />
+              ))}
+        </SelectContent>
+      </Select>
     </ModelSelectionWrapper>
   );
 }

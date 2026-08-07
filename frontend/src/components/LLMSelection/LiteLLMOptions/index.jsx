@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function LiteLLMOptions({ settings }) {
   const [basePathValue, setBasePathValue] = useState(settings?.LiteLLMBasePath);
@@ -104,17 +113,18 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
         <Label variant="settings" className="block mb-3">
           Chat Model Selection
         </Label>
-        <select
-          name="LiteLLMModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {basePath?.includes("/v1")
-              ? "-- loading available models --"
-              : "-- waiting for URL --"}
-          </option>
-        </select>
+        <Select name="LiteLLMModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                basePath?.includes("/v1")
+                  ? "-- loading available models --"
+                  : "-- waiting for URL --"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </div>
     );
   }
@@ -124,27 +134,29 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
       <Label variant="settings" className="block mb-3">
         Chat Model Selection
       </Label>
-      <select
+      <Select
         name="LiteLLMModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings.LiteLLMModelPref ?? customModels?.[0]?.id}
       >
-        {customModels.length > 0 && (
-          <optgroup label="Your loaded models">
-            {customModels.map((model) => {
-              return (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings.LiteLLMModelPref === model.id}
-                >
-                  {model.id}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Your loaded models</SelectLabel>
+              {customModels.map((model) => {
+                return (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          )}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

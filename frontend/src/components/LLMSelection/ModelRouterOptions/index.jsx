@@ -4,6 +4,13 @@ import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import ModelRouter from "@/models/modelRouter";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ModelRouterOptions({ settings }) {
   const { t } = useTranslation();
@@ -53,21 +60,26 @@ export default function ModelRouterOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             {t("model-router.router-selection.model-router-label")}
           </Label>
-          <select
+          <Select
             name="ModelRouterId"
-            defaultValue={settings?.ModelRouterId || ""}
-            className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2.5"
+            // The old `<option value="">` prompt row becomes the trigger
+            // placeholder, since Radix has no empty-string value.
+            defaultValue={settings?.ModelRouterId || undefined}
             required
           >
-            <option value="">
-              {t("model-router.router-selection.select-router")}
-            </option>
-            {routers.map((router) => (
-              <option key={router.id} value={router.id}>
-                {router.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue
+                placeholder={t("model-router.router-selection.select-router")}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {routers.map((router) => (
+                <SelectItem key={router.id} value={router.id}>
+                  {router.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

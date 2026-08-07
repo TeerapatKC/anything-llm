@@ -2,6 +2,15 @@ import System from "@/models/system";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function FireworksAiOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.FireworksAiLLMApiKey);
@@ -67,15 +76,12 @@ function FireworksAiModelSelection({ apiKey, settings }) {
         <Label variant="settings" className="block mb-3">
           Chat Model Selection
         </Label>
-        <select
-          name="FireworksAiLLMModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="FireworksAiLLMModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </div>
     );
   }
@@ -85,27 +91,32 @@ function FireworksAiModelSelection({ apiKey, settings }) {
       <Label variant="settings" className="block mb-3">
         Chat Model Selection
       </Label>
-      <select
+      <Select
         name="FireworksAiLLMModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={
+          settings?.FireworksAiLLMModelPref ??
+          groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
+        }
       >
-        {Object.keys(groupedModels)
-          .sort()
-          .map((organization) => (
-            <optgroup key={organization} label={organization}>
-              {groupedModels[organization].map((model) => (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings?.FireworksAiLLMModelPref === model.id}
-                >
-                  {model.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.keys(groupedModels)
+            .sort()
+            .map((organization) => (
+              <SelectGroup key={organization}>
+                <SelectLabel>{organization}</SelectLabel>
+                {groupedModels[organization].map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

@@ -7,6 +7,15 @@ import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDis
 import { originOnly } from "@/utils/url";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function LemonadeEmbeddingOptions({ settings }) {
   const {
@@ -205,17 +214,18 @@ function LemonadeModelSelection({ settings, basePath = null }) {
         <Label variant="settings" className="block mb-2">
           Lemonade Embedding Model
         </Label>
-        <select
-          name="EmbeddingModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {!!basePath
-              ? "--loading available models--"
-              : "Enter Lemonade URL first"}
-          </option>
-        </select>
+        <Select name="EmbeddingModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                !!basePath
+                  ? "--loading available models--"
+                  : "Enter Lemonade URL first"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Select the Lemonade model for embeddings. Models will load after
           entering a valid Lemonade URL.
@@ -229,40 +239,44 @@ function LemonadeModelSelection({ settings, basePath = null }) {
       <Label variant="settings" className="block mb-3">
         Lemonade Embedding Model
       </Label>
-      <select
+      <Select
         name="EmbeddingModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        // A native select falls back to its first option; the two groups render
+        // in this order, so the first downloaded model wins when there is one.
+        defaultValue={
+          settings.EmbeddingModelPref ??
+          (downloadedModels[0]?.id || customModels[0]?.id)
+        }
       >
-        {downloadedModels.length > 0 && (
-          <optgroup label="Downloaded models">
-            {downloadedModels.map((model) => (
-              <option
-                key={model.id}
-                value={model.id}
-                selected={settings.EmbeddingModelPref === model.id}
-              >
-                {model.id}
-              </option>
-            ))}
-          </optgroup>
-        )}
-        {customModels.length > 0 && (
-          <optgroup label="Discovered models">
-            {customModels.map((model) => {
-              return (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings.EmbeddingModelPref === model.id}
-                >
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select a model" />
+        </SelectTrigger>
+        <SelectContent>
+          {downloadedModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Downloaded models</SelectLabel>
+              {downloadedModels.map((model) => (
+                <SelectItem key={model.id} value={model.id}>
                   {model.id}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-      </select>
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          )}
+          {customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Discovered models</SelectLabel>
+              {customModels.map((model) => {
+                return (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          )}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

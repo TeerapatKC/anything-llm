@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function GenericOpenAiOptions({ settings }) {
   const [genericOpenAiBasePath, setGenericOpenAiBasePath] = useState(
@@ -134,15 +143,12 @@ function GenericOpenAiModelSelection({
         <div className="flex items-center mb-2 gap-x-1">
           <Label variant="settings">Selected Model</Label>
         </div>
-        <select
-          name="GenericOpenAiModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            --loading available models--
-          </option>
-        </select>
+        <Select name="GenericOpenAiModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="--loading available models--" />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </div>
     );
   }
@@ -175,27 +181,29 @@ function GenericOpenAiModelSelection({
       <Label variant="settings" className="block mb-2">
         Selected Model
       </Label>
-      <select
+      <Select
         name="GenericOpenAiModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings.GenericOpenAiModelPref ?? customModels?.[0]?.id}
       >
-        {customModels.length > 0 && (
-          <optgroup label="Your loaded models">
-            {customModels.map((model) => {
-              return (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings.GenericOpenAiModelPref === model.id}
-                >
-                  {model.id}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Your loaded models</SelectLabel>
+              {customModels.map((model) => {
+                return (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          )}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

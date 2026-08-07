@@ -3,6 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Tooltip } from "react-tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AzureAiOptions({ settings }) {
   const { t } = useTranslation();
@@ -64,22 +71,28 @@ export default function AzureAiOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             {t("llm.providers.azure_openai.chat_model_token_limit")}
           </Label>
-          <select
+          <Select
             name="AzureOpenAiTokenLimit"
             defaultValue={settings?.AzureOpenAiTokenLimit || 4096}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             required={true}
           >
-            <option value={4096}>4,096 (gpt-3.5-turbo)</option>
-            <option value={16384}>16,384 (gpt-3.5-16k)</option>
-            <option value={8192}>8,192 (gpt-4)</option>
-            <option value={32768}>32,768 (gpt-4-32k)</option>
-            <option value={128000}>
-              128,000 (gpt-4-turbo,gpt-4o,gpt-4o-mini,o1-mini)
-            </option>
-            <option value={200000}>200,000 (o1,o1-pro,o3-mini)</option>
-            <option value={1047576}>1,047,576 (gpt-4.1)</option>
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={4096}>4,096 (gpt-3.5-turbo)</SelectItem>
+              <SelectItem value={16384}>16,384 (gpt-3.5-16k)</SelectItem>
+              <SelectItem value={8192}>8,192 (gpt-4)</SelectItem>
+              <SelectItem value={32768}>32,768 (gpt-4-32k)</SelectItem>
+              <SelectItem value={128000}>
+                128,000 (gpt-4-turbo,gpt-4o,gpt-4o-mini,o1-mini)
+              </SelectItem>
+              <SelectItem value={200000}>
+                200,000 (o1,o1-pro,o3-mini)
+              </SelectItem>
+              <SelectItem value={1047576}>1,047,576 (gpt-4.1)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex flex-col w-60">
@@ -110,19 +123,23 @@ export default function AzureAiOptions({ settings }) {
               <Info size={18} className="text-theme-text-secondary" />
             </div>
           </div>
-          <select
+          <Select
             name="AzureOpenAiModelType"
             defaultValue={settings?.AzureOpenAiModelType || "default"}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             required={true}
           >
-            <option value="default">
-              {t("llm.providers.azure_openai.default")}
-            </option>
-            <option value="reasoning">
-              {t("llm.providers.azure_openai.reasoning")}
-            </option>
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">
+                {t("llm.providers.azure_openai.default")}
+              </SelectItem>
+              <SelectItem value="reasoning">
+                {t("llm.providers.azure_openai.reasoning")}
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

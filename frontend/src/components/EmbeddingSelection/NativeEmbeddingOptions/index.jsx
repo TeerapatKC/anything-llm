@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function NativeEmbeddingOptions({ settings }) {
   const [loading, setLoading] = useState(true);
@@ -42,37 +51,33 @@ export default function NativeEmbeddingOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             Model Preference
           </Label>
-          <select
+          <Select
             name="EmbeddingModelPref"
             required={true}
-            defaultValue={selectedModel}
-            className="border-none bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg block w-60 p-2.5"
-            onChange={(e) => setSelectedModel(e.target.value)}
+            value={selectedModel}
+            onValueChange={setSelectedModel}
+            disabled={loading}
           >
-            {loading ? (
-              <option
-                value="--loading-available-models--"
-                disabled={true}
-                selected={true}
-              >
-                --loading available models--
-              </option>
-            ) : (
-              <optgroup label="Available embedding models">
+            <SelectTrigger variant="settings" className="w-60">
+              <SelectValue
+                placeholder={
+                  loading ? "--loading available models--" : "Select a model"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Available embedding models</SelectLabel>
                 {availableModels.map((model) => {
                   return (
-                    <option
-                      key={model.id}
-                      value={model.id}
-                      selected={selectedModel === model.id}
-                    >
+                    <SelectItem key={model.id} value={model.id}>
                       {model.name}
-                    </option>
+                    </SelectItem>
                   );
                 })}
-              </optgroup>
-            )}
-          </select>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
         {selectedModelInfo && (
           <div className="flex flex-col gap-y-2 mt-2">

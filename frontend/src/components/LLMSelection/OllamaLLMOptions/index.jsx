@@ -7,6 +7,15 @@ import { Tooltip } from "react-tooltip";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OllamaLLMOptions({ settings }) {
   const {
@@ -147,17 +156,21 @@ export default function OllamaLLMOptions({ settings }) {
                   </p>
                 </Tooltip>
               </div>
-              <select
+              <Select
                 name="OllamaLLMKeepAliveSeconds"
                 required={true}
-                className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
                 defaultValue={settings?.OllamaLLMKeepAliveSeconds ?? "300"}
               >
-                <option value="0">No cache</option>
-                <option value="300">5 minutes</option>
-                <option value="3600">1 hour</option>
-                <option value="-1">Forever</option>
-              </select>
+                <SelectTrigger variant="settings">
+                  <SelectValue placeholder="Select an option" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="0">No cache</SelectItem>
+                  <SelectItem value="300">5 minutes</SelectItem>
+                  <SelectItem value="3600">1 hour</SelectItem>
+                  <SelectItem value="-1">Forever</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="w-full flex items-start gap-4">
@@ -312,17 +325,18 @@ function OllamaLLMModelSelection({
         <Label variant="settings" className="block mb-2">
           Ollama Model
         </Label>
-        <select
-          name="OllamaLLMModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {!!basePath
-              ? "--loading available models--"
-              : "Enter Ollama URL first"}
-          </option>
-        </select>
+        <Select name="OllamaLLMModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                !!basePath
+                  ? "--loading available models--"
+                  : "Enter Ollama URL first"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Select the Ollama model you want to use. Models will load after
           entering a valid Ollama URL.
@@ -336,27 +350,29 @@ function OllamaLLMModelSelection({
       <Label variant="settings" className="block mb-2">
         Ollama Model
       </Label>
-      <select
+      <Select
         name="OllamaLLMModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings.OllamaLLMModelPref ?? customModels?.[0]?.id}
       >
-        {customModels.length > 0 && (
-          <optgroup label="Your loaded models">
-            {customModels.map((model) => {
-              return (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings.OllamaLLMModelPref === model.id}
-                >
-                  {model.id}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Your loaded models</SelectLabel>
+              {customModels.map((model) => {
+                return (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          )}
+        </SelectContent>
+      </Select>
       <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
         Choose the Ollama model you want to use for your conversations.
       </p>

@@ -6,6 +6,15 @@ import { useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OMLXOptions({ settings }) {
   const {
@@ -255,17 +264,18 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
         <Label variant="settings" className="block mb-2">
           OMLX Model
         </Label>
-        <select
-          name="OMLXLLMModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {!!basePath
-              ? "--loading available models--"
-              : "Enter OMLX URL first"}
-          </option>
-        </select>
+        <Select name="OMLXLLMModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                !!basePath
+                  ? "--loading available models--"
+                  : "Enter OMLX URL first"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Select the OMLX model you want to use. Models will load after entering
           a valid OMLX URL.
@@ -279,27 +289,29 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
       <Label variant="settings" className="block mb-2">
         OMLX Model
       </Label>
-      <select
+      <Select
         name="OMLXLLMModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings.OMLXLLMModelPref ?? customModels?.[0]?.id}
       >
-        {customModels.length > 0 && (
-          <optgroup label="Your loaded models">
-            {customModels.map((model) => {
-              return (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings.OMLXLLMModelPref === model.id}
-                >
-                  {model.id}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Your loaded models</SelectLabel>
+              {customModels.map((model) => {
+                return (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          )}
+        </SelectContent>
+      </Select>
       <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
         Choose the OMLX model you want to use for your conversations.
       </p>

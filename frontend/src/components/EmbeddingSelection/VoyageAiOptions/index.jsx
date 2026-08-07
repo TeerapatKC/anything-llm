@@ -1,5 +1,14 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 export default function VoyageAiOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-4">
@@ -23,34 +32,39 @@ export default function VoyageAiOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             Model Preference
           </Label>
-          <select
+          <Select
             name="EmbeddingModelPref"
             required={true}
             defaultValue={settings?.EmbeddingModelPref}
-            className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
           >
-            <optgroup label="Available embedding models">
-              {[
-                "voyage-large-2-instruct",
-                "voyage-finance-2",
-                "voyage-multilingual-2",
-                "voyage-law-2",
-                "voyage-code-2",
-                "voyage-large-2",
-                "voyage-2",
-                "voyage-3",
-                "voyage-3-lite",
-                "voyage-3-large",
-                "voyage-code-3",
-              ].map((model) => {
-                return (
-                  <option key={model} value={model}>
-                    {model}
-                  </option>
-                );
-              })}
-            </optgroup>
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Available embedding models</SelectLabel>
+                {[
+                  "voyage-large-2-instruct",
+                  "voyage-finance-2",
+                  "voyage-multilingual-2",
+                  "voyage-law-2",
+                  "voyage-code-2",
+                  "voyage-large-2",
+                  "voyage-2",
+                  "voyage-3",
+                  "voyage-3-lite",
+                  "voyage-3-large",
+                  "voyage-code-3",
+                ].map((model) => {
+                  return (
+                    <SelectItem key={model} value={model}>
+                      {model}
+                    </SelectItem>
+                  );
+                })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

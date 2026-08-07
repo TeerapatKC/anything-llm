@@ -2,6 +2,15 @@ import System from "@/models/system";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function GeminiLLMOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.GeminiLLMApiKey);
@@ -92,15 +101,12 @@ function GeminiModelSelection({ apiKey, settings }) {
         <Label variant="settings" className="block mb-3">
           Chat Model Selection
         </Label>
-        <select
-          name="GeminiLLMModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="GeminiLLMModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
       </div>
     );
   }
@@ -110,31 +116,42 @@ function GeminiModelSelection({ apiKey, settings }) {
       <Label variant="settings" className="block mb-3">
         Chat Model Selection
       </Label>
-      <select
+      <Select
         name="GeminiLLMModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={
+          settings?.GeminiLLMModelPref ??
+          groupedModels[
+            Object.keys(groupedModels).sort((a, b) => {
+              if (a === "Stable") return -1;
+              if (b === "Stable") return 1;
+              return a.localeCompare(b);
+            })[0]
+          ]?.[0]?.id
+        }
       >
-        {Object.keys(groupedModels)
-          .sort((a, b) => {
-            if (a === "Stable") return -1;
-            if (b === "Stable") return 1;
-            return a.localeCompare(b);
-          })
-          .map((organization) => (
-            <optgroup key={organization} label={organization}>
-              {groupedModels[organization].map((model) => (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={settings?.GeminiLLMModelPref === model.id}
-                >
-                  {model.id}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.keys(groupedModels)
+            .sort((a, b) => {
+              if (a === "Stable") return -1;
+              if (b === "Stable") return 1;
+              return a.localeCompare(b);
+            })
+            .map((organization) => (
+              <SelectGroup key={organization}>
+                <SelectLabel>{organization}</SelectLabel>
+                {groupedModels[organization].map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

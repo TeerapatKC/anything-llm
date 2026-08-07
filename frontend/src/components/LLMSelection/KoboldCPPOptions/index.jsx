@@ -6,6 +6,13 @@ import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function KoboldCPPOptions({ settings }) {
   const {
@@ -177,17 +184,18 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
         <Label variant="settings" className="block mb-2">
           KoboldCPP Model
         </Label>
-        <select
-          name="KoboldCPPModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {basePath?.includes("/v1")
-              ? "--loading available models--"
-              : "Enter KoboldCPP URL first"}
-          </option>
-        </select>
+        <Select name="KoboldCPPModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                basePath?.includes("/v1")
+                  ? "--loading available models--"
+                  : "Enter KoboldCPP URL first"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>null</SelectContent>
+        </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Select the KoboldCPP model you want to use. Models will load after
           entering a valid KoboldCPP URL.
@@ -201,21 +209,22 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
       <Label variant="settings" className="block mb-2">
         KoboldCPP Model
       </Label>
-      <select
+      <Select
         name="KoboldCPPModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings.KoboldCPPModelPref ?? customModels?.[0]?.id}
       >
-        {customModels.map((model) => (
-          <option
-            key={model.id}
-            value={model.id}
-            selected={settings.KoboldCPPModelPref === model.id}
-          >
-            {model.id}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {customModels.map((model) => (
+            <SelectItem key={model.id} value={model.id}>
+              {model.id}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
         Choose the KoboldCPP model you want to use for your conversations.
       </p>
