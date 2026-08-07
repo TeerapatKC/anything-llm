@@ -21,6 +21,11 @@ import {
   USER_PROMPT_INPUT_MAP,
 } from "@/utils/constants";
 import { useTranslation } from "react-i18next";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 /**
  * Account button. Lives in the sidebar footer alongside the other footer icons,
@@ -53,15 +58,20 @@ export default function UserButton() {
   return (
     <div className="flex w-fit">
       <DropdownMenu>
-        <DropdownMenuTrigger
-          type="button"
-          aria-label={t("profile_settings.account")}
-          data-tooltip-id="footer-item"
-          data-tooltip-content={t("profile_settings.account")}
-          className="uppercase transition-all duration-300 h-9 w-9 text-xs font-semibold rounded-full flex items-center justify-center overflow-hidden bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover text-white light:text-slate-800"
-        >
-          {mode === "multi" ? <UserDisplay /> : <Person size={18} />}
-        </DropdownMenuTrigger>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger
+              type="button"
+              aria-label={t("profile_settings.account")}
+              className="uppercase transition-all duration-300 h-9 w-9 text-xs font-semibold rounded-full flex items-center justify-center overflow-hidden bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover text-white light:text-slate-800"
+            >
+              {mode === "multi" ? <UserDisplay /> : <Person size={18} />}
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[250px] text-xs">
+            {t("profile_settings.account")}
+          </TooltipContent>
+        </Tooltip>
         <DropdownMenuContent
           side="top"
           align="start"

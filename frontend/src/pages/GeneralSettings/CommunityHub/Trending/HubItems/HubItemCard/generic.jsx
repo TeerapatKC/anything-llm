@@ -1,7 +1,11 @@
 import paths from "@/utils/paths";
 import { Eye, LockSimple } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function GenericHubCard({ item }) {
   return (
@@ -28,18 +32,17 @@ export function VisibilityIcon({ visibility = "public" }) {
 
   return (
     <>
-      <div
-        data-tooltip-id="visibility-icon"
-        data-tooltip-content={`This item is ${visibility === "private" ? "private" : "public"}`}
-      >
-        <Icon className="w-4 h-4 text-white/60" />
-      </div>
-      <Tooltip
-        id="visibility-icon"
-        place="top"
-        delayShow={300}
-        className="allm-tooltip !allm-text-xs"
-      />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div>
+            <Icon className="w-4 h-4 text-white/60" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent
+          side="top"
+          className="max-w-[250px] text-xs"
+        >{`This item is ${visibility === "private" ? "private" : "public"}`}</TooltipContent>
+      </Tooltip>
     </>
   );
 }

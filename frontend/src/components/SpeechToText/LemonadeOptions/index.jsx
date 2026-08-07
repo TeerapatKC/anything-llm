@@ -2,7 +2,11 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
 import { CircleNotch, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { originOnly } from "@/utils/url";
 
@@ -44,29 +48,17 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
                 </>
               )}
             </div>
-            <Tooltip
-              id="lemonade-stt-base-url"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "250px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              Enter the URL where your Lemonade server is running.
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
+                  <Info size={18} className="text-theme-text-secondary" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                Enter the URL where your Lemonade server is running.
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="lemonade-stt-base-url"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
           <input
             type="url"
@@ -90,30 +82,18 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
             <label className="text-white text-sm font-semibold block">
               API Key (optional)
             </label>
-            <Tooltip
-              id="lemonade-stt-api-key"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "350px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              The API key for your Lemonade server. Shared with the Lemonade LLM
-              and embedder settings.
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
+                  <Info size={18} className="text-theme-text-secondary" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                The API key for your Lemonade server. Shared with the Lemonade
+                LLM and embedder settings.
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="lemonade-stt-api-key"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
           <input
             type="password"

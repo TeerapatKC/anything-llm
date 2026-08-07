@@ -6,7 +6,11 @@ import paths from "@/utils/paths";
 import Preloader from "@/components/Preloader";
 import debounce from "lodash.debounce";
 import Workspace from "@/models/workspace";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const DEFAULT_SEARCH_RESULTS = {
   workspaces: [],
@@ -193,24 +197,23 @@ function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
 
   return (
     <>
-      <button
-        data-tooltip-id="new-workspace-tooltip"
-        data-tooltip-content={t("new-workspace.title")}
-        onClick={showNewWsModal}
-        className="border-none flex items-center justify-center bg-white  rounded-lg p-[8px] hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
-      >
-        <Plus
-          size={16}
-          weight="bold"
-          className="text-black light:text-slate-500"
-        />
-      </button>
-      <Tooltip
-        id="new-workspace-tooltip"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={showNewWsModal}
+            className="border-none flex items-center justify-center bg-white  rounded-lg p-[8px] hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
+          >
+            <Plus
+              size={16}
+              weight="bold"
+              className="text-black light:text-slate-500"
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[250px] text-xs">
+          {t("new-workspace.title")}
+        </TooltipContent>
+      </Tooltip>
     </>
   );
 }

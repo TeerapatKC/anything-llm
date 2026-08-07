@@ -3,7 +3,11 @@ import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { Warning } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Toggle from "@/components/lib/Toggle";
 
 export default function ConfluenceOptions() {
@@ -187,31 +191,33 @@ export default function ConfluenceOptions() {
                         <p className="font-bold text-white">
                           {t("connectors.confluence.token")}
                         </p>
-                        <Warning
-                          size={14}
-                          className="ml-1 text-orange-500 cursor-pointer"
-                          data-tooltip-id="access-token-tooltip"
-                          data-tooltip-place="right"
-                        />
-                        <Tooltip
-                          delayHide={300}
-                          id="access-token-tooltip"
-                          className="max-w-xs z-99"
-                          clickable={true}
-                        >
-                          <p className="text-sm">
-                            {t("connectors.confluence.token_explained_start")}
-                            <a
-                              href="https://id.atlassian.com/manage-profile/security/api-tokens"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="underline"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {t("connectors.confluence.token_explained_link")}
-                            </a>
-                            .
-                          </p>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Warning
+                              size={14}
+                              className="ml-1 text-orange-500 cursor-pointer"
+                            />
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="right"
+                            className="max-w-[250px] text-xs"
+                          >
+                            <p className="text-sm">
+                              {t("connectors.confluence.token_explained_start")}
+                              <a
+                                href="https://id.atlassian.com/manage-profile/security/api-tokens"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                {t(
+                                  "connectors.confluence.token_explained_link"
+                                )}
+                              </a>
+                              .
+                            </p>
+                          </TooltipContent>
                         </Tooltip>
                       </label>
                       <p className="text-xs font-normal text-theme-text-secondary">

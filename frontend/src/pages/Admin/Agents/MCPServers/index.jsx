@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { titleCase } from "text-case";
 import { BookOpenText, ArrowClockwise, Warning } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import MCPLogo from "@/media/agents/mcp-logo.svg";
 import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
@@ -137,13 +141,6 @@ export function MCPServersList({
           handleClick={() => handleClick?.(server)}
         />
       ))}
-      <Tooltip
-        id="mcp-server-warning"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-        content={t("agent.mcp.tool-warning")}
-      />
     </div>
   );
 }
@@ -168,10 +165,14 @@ function MCPServerItem({ server, isFirst, isLast, isSelected, handleClick }) {
     >
       <div className="flex items-center gap-x-2 text-sm font-light">
         {showWarning && (
-          <Warning
-            data-tooltip-id="mcp-server-warning"
-            className="h-4 w-4 text-yellow-500"
-          />
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Warning className="h-4 w-4 text-yellow-500" />
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+              {t("agent.mcp.tool-warning")}
+            </TooltipContent>
+          </Tooltip>
         )}
         {titleCase(server.name.replace(/[_-]/g, " "))}
       </div>

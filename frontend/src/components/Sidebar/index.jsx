@@ -13,7 +13,6 @@ import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import { useSidebarToggle, ToggleSidebarButton } from "./SidebarToggle";
 import SearchBox from "./SearchBox";
-import { Tooltip } from "react-tooltip";
 import { createPortal } from "react-dom";
 
 export default function Sidebar() {
@@ -208,33 +207,5 @@ function NewWorkspaceButton({ user, showNewWsModal }) {
 }
 
 function WorkspaceAndThreadTooltips() {
-  return createPortal(
-    <React.Fragment>
-      <Tooltip
-        id="workspace-name"
-        place="right"
-        delayShow={800}
-        className="tooltip !text-xs z-99"
-      />
-      <Tooltip
-        id="workspace-thread-name"
-        place="right"
-        delayShow={800}
-        className="tooltip !text-xs z-99"
-      />
-      <Tooltip
-        id="upload-workspace"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
-      <Tooltip
-        id="gear-workspace"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
-    </React.Fragment>,
-    document.body
-  );
+  return createPortal(<React.Fragment></React.Fragment>, document.body);
 }

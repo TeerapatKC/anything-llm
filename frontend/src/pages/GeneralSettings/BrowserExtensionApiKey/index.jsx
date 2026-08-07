@@ -10,7 +10,6 @@ import NewBrowserExtensionApiKeyModal from "./NewBrowserExtensionApiKeyModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import { fullApiUrl } from "@/utils/constants";
-import { Tooltip } from "react-tooltip";
 
 export default function BrowserExtensionApiKeys() {
   const [loading, setLoading] = useState(true);
@@ -133,18 +132,6 @@ export default function BrowserExtensionApiKeys() {
           isMultiUser={isMultiUser}
         />
       </ModalWrapper>
-      <Tooltip
-        id="auto-connection"
-        place="bottom"
-        delayShow={300}
-        className="allm-tooltip !allm-text-xs"
-      />
-      <Tooltip
-        id="copy-connection-text"
-        place="bottom"
-        delayShow={300}
-        className="allm-tooltip !allm-text-xs"
-      />
     </div>
   );
 }

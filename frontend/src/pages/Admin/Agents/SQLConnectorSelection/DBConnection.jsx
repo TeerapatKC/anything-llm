@@ -4,6 +4,11 @@ import MSSQLLogo from "./icons/mssql.png";
 import { PencilSimple, X } from "@phosphor-icons/react";
 import { useModal } from "@/hooks/useModal";
 import EditSQLConnection from "./SQLConnectionModal";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export const DB_LOGOS = {
   postgresql: PostgreSQLLogo,
@@ -44,22 +49,34 @@ export default function DBConnection({
           <div className="mt-1 text-xs text-description">{engine}</div>
         </div>
         <div className="flex gap-x-2">
-          <button
-            type="button"
-            data-tooltip-id="edit-sql-connection-tooltip"
-            className="border-none text-theme-text-secondary hover:text-theme-text-primary transition-colors duration-200 p-1 rounded"
-            onClick={openModal}
-          >
-            <PencilSimple size={18} />
-          </button>
-          <button
-            type="button"
-            data-tooltip-id="delete-sql-connection-tooltip"
-            onClick={removeConfirmation}
-            className="border-none text-theme-text-secondary hover:text-red-500"
-          >
-            <X size={18} />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="border-none text-theme-text-secondary hover:text-theme-text-primary transition-colors duration-200 p-1 rounded"
+                onClick={openModal}
+              >
+                <PencilSimple size={18} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
+              Edit SQL connection
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={removeConfirmation}
+                className="border-none text-theme-text-secondary hover:text-red-500"
+              >
+                <X size={18} />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
+              Delete SQL connection
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
       <EditSQLConnection

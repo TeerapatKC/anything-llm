@@ -5,6 +5,11 @@ import {
   middleTruncate,
 } from "@/utils/directories";
 import { File } from "@phosphor-icons/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 function FileRow({ item, selected, folderName, toggleSelection }) {
   const tooltipContent = useMemo(
@@ -24,29 +29,32 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
         selected ? "selected light:text-white" : ""
       }`}
     >
-      <div
-        data-tooltip-id="directory-item"
-        className="col-span-10 w-fit flex gap-x-[4px] items-center relative"
-        data-tooltip-content={tooltipContent}
-      >
-        <div
-          className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
-            selected ? "text-white" : "text-theme-text-primary light:invert"
-          } flex justify-center items-center cursor-pointer`}
-          role="checkbox"
-          aria-checked={selected}
-          tabIndex={0}
-        >
-          {selected && <div className="w-2 h-2 bg-white rounded-[2px]" />}
-        </div>
-        <File
-          className="shrink-0 text-base font-bold w-4 h-4 mr-[3px]"
-          weight="fill"
-        />
-        <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
-          {middleTruncate(item.title, 55)}
-        </p>
-      </div>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="col-span-10 w-fit flex gap-x-[4px] items-center relative">
+            <div
+              className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
+                selected ? "text-white" : "text-theme-text-primary light:invert"
+              } flex justify-center items-center cursor-pointer`}
+              role="checkbox"
+              aria-checked={selected}
+              tabIndex={0}
+            >
+              {selected && <div className="w-2 h-2 bg-white rounded-[2px]" />}
+            </div>
+            <File
+              className="shrink-0 text-base font-bold w-4 h-4 mr-[3px]"
+              weight="fill"
+            />
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
+              {middleTruncate(item.title, 55)}
+            </p>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {tooltipContent}
+        </TooltipContent>
+      </Tooltip>
       <div className="col-span-2 flex justify-end items-center">
         {item?.cached && (
           <div className="bg-theme-settings-input-active rounded-3xl">

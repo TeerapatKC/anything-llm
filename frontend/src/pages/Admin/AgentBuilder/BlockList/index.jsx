@@ -10,7 +10,11 @@ import {
   Info,
   BracketsCurly,
 } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import Toggle from "@/components/lib/Toggle";
 import StartNode from "../nodes/StartNode";
 import ApiCallNode from "../nodes/ApiCallNode";
@@ -256,42 +260,66 @@ export default function BlockList({
                   block.type !== BLOCK_TYPES.FLOW_INFO && (
                     <div className="flex items-center gap-1">
                       {index > 2 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            moveBlock(index, index - 1);
-                          }}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-white hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-                          data-tooltip-id="block-action"
-                          data-tooltip-content="Move block up"
-                        >
-                          <CaretUp className="w-3.5 h-3.5" />
-                        </button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                moveBlock(index, index - 1);
+                              }}
+                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-white hover:bg-theme-action-menu-item-hover transition-colors duration-300"
+                            >
+                              <CaretUp className="w-3.5 h-3.5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            className="max-w-[250px] text-xs"
+                          >
+                            Move block up
+                          </TooltipContent>
+                        </Tooltip>
                       )}
                       {index < blocks.length - 2 && (
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            moveBlock(index, index + 1);
-                          }}
-                          className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-white hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-                          data-tooltip-id="block-action"
-                          data-tooltip-content="Move block down"
-                        >
-                          <CaretDown className="w-3.5 h-3.5" />
-                        </button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                moveBlock(index, index + 1);
+                              }}
+                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-white hover:bg-theme-action-menu-item-hover transition-colors duration-300"
+                            >
+                              <CaretDown className="w-3.5 h-3.5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="bottom"
+                            className="max-w-[250px] text-xs"
+                          >
+                            Move block down
+                          </TooltipContent>
+                        </Tooltip>
                       )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeBlock(block.id);
-                        }}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors duration-300"
-                        data-tooltip-id="block-action"
-                        data-tooltip-content="Delete block"
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeBlock(block.id);
+                            }}
+                            className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors duration-300"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="bottom"
+                          className="max-w-[250px] text-xs"
+                        >
+                          Delete block
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   )}
               </div>
@@ -330,12 +358,6 @@ export default function BlockList({
           )}
         </div>
       ))}
-      <Tooltip
-        id="block-action"
-        place="bottom"
-        delayShow={300}
-        className="tooltip !text-xs"
-      />
     </div>
   );
 }

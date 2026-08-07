@@ -11,6 +11,11 @@ import {
 } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const THREAD_CALLOUT_DETAIL_WIDTH = 26;
 export default function ThreadItem({
@@ -96,24 +101,29 @@ export default function ThreadItem({
             )}
           </div>
         ) : (
-          <Link
-            ref={ref}
-            to={linkTo}
-            data-tooltip-id="workspace-thread-name"
-            data-tooltip-content={thread.name}
-            className="w-full pl-2 py-1 overflow-hidden"
-            aria-current={isActive ? "page" : ""}
-          >
-            <p
-              className={`text-left text-sm truncate max-w-[150px] ${
-                isActive
-                  ? "font-semibold text-theme-text-primary light:text-blue-900"
-                  : "text-theme-text-primary font-medium light:text-slate-800"
-              }`}
-            >
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                ref={ref}
+                to={linkTo}
+                className="w-full pl-2 py-1 overflow-hidden"
+                aria-current={isActive ? "page" : ""}
+              >
+                <p
+                  className={`text-left text-sm truncate max-w-[150px] ${
+                    isActive
+                      ? "font-semibold text-theme-text-primary light:text-blue-900"
+                      : "text-theme-text-primary font-medium light:text-slate-800"
+                  }`}
+                >
+                  {thread.name}
+                </p>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="max-w-[250px] text-xs">
               {thread.name}
-            </p>
-          </Link>
+            </TooltipContent>
+          </Tooltip>
         )}
         {!!thread.slug && !thread.deleted && !thread.virtual && (
           <div ref={optionsContainer} className="flex items-center">

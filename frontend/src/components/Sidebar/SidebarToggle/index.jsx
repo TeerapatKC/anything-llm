@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { SidebarSimple } from "@phosphor-icons/react";
 import paths from "@/utils/paths";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 const SIDEBAR_TOGGLE_STORAGE_KEY = "anythingllm_sidebar_toggle";
 export const SIDEBAR_TOGGLE_EVENT = "sidebar-toggle";
 
@@ -79,33 +83,30 @@ export function ToggleSidebarButton({ showSidebar, setShowSidebar }) {
 
   return (
     <>
-      <button
-        type="button"
-        className={`hidden md:block border-none bg-transparent outline-none ring-0 absolute transition-all duration-500 z-10 ${showSidebar ? "top-[18px] left-[248px]" : "top-[20px] left-[30px]"}`}
-        onClick={() => setShowSidebar((prev) => !prev)}
-        data-tooltip-id="sidebar-toggle"
-        data-tooltip-content={
-          showSidebar
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            className={`hidden md:block border-none bg-transparent outline-none ring-0 absolute transition-all duration-500 z-10 ${showSidebar ? "top-[18px] left-[248px]" : "top-[20px] left-[30px]"}`}
+            onClick={() => setShowSidebar((prev) => !prev)}
+            aria-label={
+              showSidebar
+                ? `Hide Sidebar (${shortcut})`
+                : `Show Sidebar (${shortcut})`
+            }
+          >
+            <SidebarSimple
+              className="text-theme-text-secondary hover:text-theme-text-primary"
+              size={24}
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[250px] text-xs">
+          {showSidebar
             ? `Hide Sidebar (${shortcut})`
-            : `Show Sidebar (${shortcut})`
-        }
-        aria-label={
-          showSidebar
-            ? `Hide Sidebar (${shortcut})`
-            : `Show Sidebar (${shortcut})`
-        }
-      >
-        <SidebarSimple
-          className="text-theme-text-secondary hover:text-theme-text-primary"
-          size={24}
-        />
-      </button>
-      <Tooltip
-        id="sidebar-toggle"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
+            : `Show Sidebar (${shortcut})`}
+        </TooltipContent>
+      </Tooltip>
     </>
   );
 }

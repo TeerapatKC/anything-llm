@@ -9,7 +9,11 @@ import { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { Warning } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function DrupalWikiOptions() {
   const [loading, setLoading] = useState(false);
@@ -124,31 +128,31 @@ export default function DrupalWikiOptions() {
                     <p className="font-bold text-white">
                       Drupal Wiki API Token
                     </p>
-                    <Warning
-                      size={14}
-                      className="ml-1 text-orange-500 cursor-pointer"
-                      data-tooltip-id="access-token-tooltip"
-                      data-tooltip-place="right"
-                    />
-                    <Tooltip
-                      delayHide={300}
-                      id="access-token-tooltip"
-                      className="max-w-xs z-99"
-                      clickable={true}
-                    >
-                      <p className="text-sm font-light text-theme-text-primary">
-                        You need to provide an API token for authentication. See
-                        the Drupal Wiki&nbsp;
-                        <a
-                          href="https://help.drupal-wiki.com/node/605#2-Zugriffs-Token-generieren"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline"
-                        >
-                          manual
-                        </a>
-                        &nbsp;on how to generate an API-Token for your user.
-                      </p>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Warning
+                          size={14}
+                          className="ml-1 text-orange-500 cursor-pointer"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="right"
+                        className="max-w-[250px] text-xs"
+                      >
+                        <p className="text-sm font-light text-theme-text-primary">
+                          You need to provide an API token for authentication.
+                          See the Drupal Wiki&nbsp;
+                          <a
+                            href="https://help.drupal-wiki.com/node/605#2-Zugriffs-Token-generieren"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="underline"
+                          >
+                            manual
+                          </a>
+                          &nbsp;on how to generate an API-Token for your user.
+                        </p>
+                      </TooltipContent>
                     </Tooltip>
                   </label>
                   <p className="text-xs font-normal text-theme-text-secondary">

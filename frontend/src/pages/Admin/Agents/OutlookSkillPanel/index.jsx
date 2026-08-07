@@ -23,7 +23,11 @@ import System from "@/models/system";
 import OutlookAgent from "@/models/outlookAgent";
 import { getOutlookSkills, filterSkillCategories } from "./utils";
 import OutlookIcon from "./outlook.png";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 
@@ -336,18 +340,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.outlook.authType")}
               </label>
-              <Info
-                data-tooltip-id="auth-type-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="auth-type-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100 max-w-xs"
-              >
-                {t("agent.skill.outlook.authTypeHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.outlook.authTypeHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <select
@@ -375,18 +374,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.outlook.clientId")}
               </label>
-              <Info
-                data-tooltip-id="client-id-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="client-id-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100"
-              >
-                {t("agent.skill.outlook.clientIdHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.outlook.clientIdHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <input
@@ -407,18 +401,13 @@ function ConfigurationSection({
                 <label className="text-theme-text-primary text-sm font-medium">
                   {t("agent.skill.outlook.tenantId")}
                 </label>
-                <Info
-                  data-tooltip-id="tenant-id-tooltip"
-                  size={16}
-                  className="text-theme-text-secondary"
-                />
-                <Tooltip
-                  id="tenant-id-tooltip"
-                  place="top"
-                  delayShow={300}
-                  className="tooltip !text-xs !opacity-100"
-                >
-                  {t("agent.skill.outlook.tenantIdHelp")}
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info size={16} className="text-theme-text-secondary" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    {t("agent.skill.outlook.tenantIdHelp")}
+                  </TooltipContent>
                 </Tooltip>
               </div>
               <input
@@ -439,18 +428,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.outlook.clientSecret")}
               </label>
-              <Info
-                data-tooltip-id="client-secret-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="client-secret-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100"
-              >
-                {t("agent.skill.outlook.clientSecretHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.outlook.clientSecretHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <input

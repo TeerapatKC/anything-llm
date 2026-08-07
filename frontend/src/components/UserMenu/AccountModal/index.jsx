@@ -9,7 +9,11 @@ import ModalWrapper from "@/components/ModalWrapper";
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { safeJsonParse } from "@/utils/request";
 import Toggle from "@/components/lib/Toggle";
 import {
@@ -309,21 +313,18 @@ function AutoSubmitPreference() {
         >
           {t("customization.chat.auto_submit.title")}
         </label>
-        <div
-          data-tooltip-id="auto-submit-info"
-          data-tooltip-content={t("customization.chat.auto_submit.description")}
-          className="cursor-pointer h-fit"
-        >
-          <Info size={16} weight="bold" className="text-white" />
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="cursor-pointer h-fit">
+              <Info size={16} weight="bold" className="text-white" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+            {t("customization.chat.auto_submit.description")}
+          </TooltipContent>
+        </Tooltip>
       </div>
       <Toggle size="lg" enabled={autoSubmitSttInput} onChange={handleChange} />
-      <Tooltip
-        id="auto-submit-info"
-        place="bottom"
-        delayShow={300}
-        className="allm-tooltip !allm-text-xs"
-      />
     </div>
   );
 }
@@ -354,24 +355,21 @@ function AutoSpeakPreference() {
         >
           {t("customization.chat.auto_speak.title")}
         </label>
-        <div
-          data-tooltip-id="auto-speak-info"
-          data-tooltip-content={t("customization.chat.auto_speak.description")}
-          className="cursor-pointer h-fit"
-        >
-          <Info size={16} weight="bold" className="text-white" />
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="cursor-pointer h-fit">
+              <Info size={16} weight="bold" className="text-white" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+            {t("customization.chat.auto_speak.description")}
+          </TooltipContent>
+        </Tooltip>
       </div>
       <Toggle
         size="lg"
         enabled={autoPlayAssistantTtsResponse}
         onChange={handleChange}
-      />
-      <Tooltip
-        id="auto-speak-info"
-        place="bottom"
-        delayShow={300}
-        className="allm-tooltip !allm-text-xs"
       />
     </div>
   );

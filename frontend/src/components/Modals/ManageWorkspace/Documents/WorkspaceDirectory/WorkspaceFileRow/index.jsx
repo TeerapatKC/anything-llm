@@ -8,6 +8,11 @@ import { ArrowUUpLeft, Eye, File, PushPin } from "@phosphor-icons/react";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function WorkspaceFileRow({
   item,
@@ -65,38 +70,45 @@ export default function WorkspaceFileRow({
       }`}
       onClick={toggleRowSelection}
     >
-      <div
-        className="col-span-10 w-fit flex gap-x-[2px] items-center relative"
-        data-tooltip-id="ws-directory-item"
-        data-tooltip-content={JSON.stringify({
-          title: item.title,
-          date: formatDateTimeAsMoment(item?.published),
-          extension: getFileExtension(item.url),
-        })}
-      >
-        <div className="shrink-0 w-3 h-3">
-          {!disableSelection ? (
-            <div
-              className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
-                selected ? "text-white" : "text-theme-text-primary light:invert"
-              } flex justify-center items-center cursor-pointer`}
-              role="checkbox"
-              aria-checked={selected}
-              tabIndex={0}
-              onClick={handleRowSelection}
-            >
-              {selected && <div className="w-2 h-2 bg-white rounded-[2px]" />}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className="col-span-10 w-fit flex gap-x-[2px] items-center relative">
+            <div className="shrink-0 w-3 h-3">
+              {!disableSelection ? (
+                <div
+                  className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
+                    selected
+                      ? "text-white"
+                      : "text-theme-text-primary light:invert"
+                  } flex justify-center items-center cursor-pointer`}
+                  role="checkbox"
+                  aria-checked={selected}
+                  tabIndex={0}
+                  onClick={handleRowSelection}
+                >
+                  {selected && (
+                    <div className="w-2 h-2 bg-white rounded-[2px]" />
+                  )}
+                </div>
+              ) : null}
             </div>
-          ) : null}
-        </div>
-        <File
-          className="shrink-0 text-base font-bold w-4 h-4 mr-[3px] ml-1"
-          weight="fill"
-        />
-        <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
-          {middleTruncate(item.title, 50)}
-        </p>
-      </div>
+            <File
+              className="shrink-0 text-base font-bold w-4 h-4 mr-[3px] ml-1"
+              weight="fill"
+            />
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
+              {middleTruncate(item.title, 50)}
+            </p>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {JSON.stringify({
+            title: item.title,
+            date: formatDateTimeAsMoment(item?.published),
+            extension: getFileExtension(item.url),
+          })}
+        </TooltipContent>
+      </Tooltip>
       <div className="col-span-2 flex justify-end items-center">
         {hasChanges ? (
           <div className="w-4 h-4 ml-2 flex-shrink-0" />
@@ -160,29 +172,32 @@ const PinItemToWorkspace = memo(({ workspace, docPath, item }) => {
   if (!item) return <div className="w-[16px] p-[2px] ml-2" />;
 
   return (
-    <div
-      onClick={updatePinStatus}
-      className="group flex items-center ml-2 cursor-pointer"
-      data-tooltip-id="pin-document"
-      data-tooltip-content={
-        pinned ? "Un-pin from workspace" : "Pin to workspace"
-      }
-    >
-      {pinned ? (
-        <div className="bg-theme-settings-input-active group-hover:bg-red-500/20 rounded-3xl whitespace-nowrap">
-          <p className="text-xs px-2 py-0.5 group-hover:text-red-500">
-            <span className="group-hover:hidden">Pinned</span>
-            <span className="hidden group-hover:inline">Un-pin</span>
-          </p>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          onClick={updatePinStatus}
+          className="group flex items-center ml-2 cursor-pointer"
+        >
+          {pinned ? (
+            <div className="bg-theme-settings-input-active group-hover:bg-red-500/20 rounded-3xl whitespace-nowrap">
+              <p className="text-xs px-2 py-0.5 group-hover:text-red-500">
+                <span className="group-hover:hidden">Pinned</span>
+                <span className="hidden group-hover:inline">Un-pin</span>
+              </p>
+            </div>
+          ) : (
+            <PushPin
+              size={16}
+              weight="regular"
+              className="outline-none text-base font-bold flex-shrink-0"
+            />
+          )}
         </div>
-      ) : (
-        <PushPin
-          size={16}
-          weight="regular"
-          className="outline-none text-base font-bold flex-shrink-0"
-        />
-      )}
-    </div>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+        {pinned ? "Un-pin from workspace" : "Pin to workspace"}
+      </TooltipContent>
+    </Tooltip>
   );
 });
 
@@ -233,38 +248,46 @@ const WatchForChanges = memo(({ workspace, docPath, item }) => {
   if (!item || !item.canWatch) return <div className="w-[16px] p-[2px] ml-2" />;
 
   return (
-    <div
-      className="group flex gap-x-2 items-center hover:bg-theme-file-picker-hover p-[2px] rounded ml-2 cursor-pointer"
-      onClick={updateWatchStatus}
-      data-tooltip-id="watch-changes"
-      data-active={watched}
-      data-tooltip-content={
-        watched ? "Stop watching for changes" : "Watch document for changes"
-      }
-    >
-      <Eye
-        size={16}
-        weight="regular"
-        className="outline-none text-base font-bold flex-shrink-0 group-hover:hidden group-data-[active=true]:hidden"
-      />
-      <Eye
-        size={16}
-        weight="fill"
-        className="outline-none text-base font-bold flex-shrink-0 hidden group-hover:block group-data-[active=true]:block"
-      />
-    </div>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div
+          className="group flex gap-x-2 items-center hover:bg-theme-file-picker-hover p-[2px] rounded ml-2 cursor-pointer"
+          onClick={updateWatchStatus}
+          data-active={watched}
+        >
+          <Eye
+            size={16}
+            weight="regular"
+            className="outline-none text-base font-bold flex-shrink-0 group-hover:hidden group-data-[active=true]:hidden"
+          />
+          <Eye
+            size={16}
+            weight="fill"
+            className="outline-none text-base font-bold flex-shrink-0 hidden group-hover:block group-data-[active=true]:block"
+          />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+        {watched ? "Stop watching for changes" : "Watch document for changes"}
+      </TooltipContent>
+    </Tooltip>
   );
 });
 
 const RemoveItemFromWorkspace = ({ item: _item, onClick }) => {
   return (
     <div>
-      <ArrowUUpLeft
-        data-tooltip-id="remove-document"
-        data-tooltip-content="Remove document from workspace"
-        onClick={onClick}
-        className="text-base font-bold w-4 h-4 ml-2 flex-shrink-0 cursor-pointer"
-      />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <ArrowUUpLeft
+            onClick={onClick}
+            className="text-base font-bold w-4 h-4 ml-2 flex-shrink-0 cursor-pointer"
+          />
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          Remove document from workspace
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 };

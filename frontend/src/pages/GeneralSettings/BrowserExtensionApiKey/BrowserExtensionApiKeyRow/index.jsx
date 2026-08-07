@@ -3,6 +3,11 @@ import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import showToast from "@/utils/toast";
 import { Trash, Copy, Check, Plug } from "@phosphor-icons/react";
 import { POPUP_BROWSER_EXTENSION_EVENT } from "@/utils/constants";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function BrowserExtensionApiKeyRow({
   apiKey,
@@ -64,27 +69,37 @@ export default function BrowserExtensionApiKeyRow({
         <div className="flex items-center">
           <span className="mr-2 font-mono">{connectionString}</span>
           <div className="flex items-center space-x-2">
-            <button
-              onClick={handleCopy}
-              data-tooltip-id="copy-connection-text"
-              data-tooltip-content="Copy connection string"
-              className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
-            >
-              {copied ? (
-                <Check className="h-4 w-4 text-green-500" />
-              ) : (
-                <Copy className="h-4 w-4" />
-              )}
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleCopy}
+                  className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
+                >
+                  {copied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+                Copy connection string
+              </TooltipContent>
+            </Tooltip>
 
-            <button
-              onClick={handleConnect}
-              data-tooltip-id="auto-connection"
-              data-tooltip-content="Automatically connect to extension"
-              className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
-            >
-              <Plug className="h-4 w-4" />
-            </button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={handleConnect}
+                  className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
+                >
+                  <Plug className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+                Automatically connect to extension
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </td>

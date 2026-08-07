@@ -18,8 +18,6 @@ import { useModal } from "@/hooks/useModal";
 import NewFolderModal from "./NewFolderModal";
 import debounce from "lodash.debounce";
 import ContextMenu from "./ContextMenu";
-import { Tooltip } from "react-tooltip";
-import { safeJsonParse } from "@/utils/request";
 import useUploadQueue from "../hooks/useUploadQueue";
 import { getFilesFromUploadEvent } from "@/utils/folderUpload";
 
@@ -437,41 +435,6 @@ export default function Directory({
           onClearSelection={clearSelection}
         />
       </div>
-      <DirectoryTooltips />
     </>
-  );
-}
-
-/**
- * Tooltips for the directory components. Renders when the directory is shown
- * or updated so that tooltips are attached as the items are changed.
- */
-function DirectoryTooltips() {
-  return (
-    <Tooltip
-      id="directory-item"
-      place="bottom"
-      delayShow={800}
-      className="tooltip invert light:invert-0 z-99 max-w-[300px]"
-      render={({ content }) => {
-        const data = safeJsonParse(content, null);
-        if (!data) return null;
-        return (
-          <div className="text-xs">
-            <p className="text-white light:invert font-medium break-all">
-              {data.title}
-            </p>
-            <div className="flex flex-col mt-1">
-              <p className="">
-                Date: <b>{data.date}</b>
-              </p>
-              <p className="">
-                Type: <b>{data.extension}</b>
-              </p>
-            </div>
-          </div>
-        );
-      }}
-    />
   );
 }

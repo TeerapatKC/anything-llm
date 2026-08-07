@@ -13,6 +13,11 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import showToast from "@/utils/toast";
 import { LAST_VISITED_WORKSPACE } from "@/utils/constants";
 import { safeJsonParse } from "@/utils/request";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -137,69 +142,94 @@ export default function ActiveWorkspaces() {
                                 weight="bold"
                               />
                             </div>
-                            <div
-                              data-tooltip-id="workspace-name"
-                              data-tooltip-content={workspace.name}
-                              className="flex items-center space-x-2 overflow-hidden flex-grow"
-                            >
-                              <div className="w-[130px] overflow-hidden">
-                                <p
-                                  className={`
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center space-x-2 overflow-hidden flex-grow">
+                                  <div className="w-[130px] overflow-hidden">
+                                    <p
+                                      className={`
                                   text-[14px] leading-loose whitespace-nowrap overflow-hidden
                                   ${isActive ? "font-bold text-white light:text-blue-900" : "font-medium "} truncate
                                   w-full group-hover:w-[130px] group-hover:duration-200
                                 `}
-                                >
-                                  {workspace.name}
-                                </p>
-                              </div>
-                            </div>
+                                    >
+                                      {workspace.name}
+                                    </p>
+                                  </div>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="right"
+                                className="max-w-[250px] text-xs"
+                              >
+                                {workspace.name}
+                              </TooltipContent>
+                            </Tooltip>
                             {user?.role !== "default" && (
                               <div
                                 className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                               >
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    setSelectedWs(workspace);
-                                    showModal();
-                                  }}
-                                  data-tooltip-id="upload-workspace"
-                                  data-tooltip-content="Upload documents to this workspace for RAG indexing"
-                                  className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
-                                >
-                                  <UploadSimple
-                                    className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/upload:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/upload:text-slate-950"}`}
-                                  />
-                                </button>
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    navigate(
-                                      isInWorkspaceSettings
-                                        ? paths.workspace.chat(workspace.slug)
-                                        : paths.workspace.settings.generalAppearance(
-                                            workspace.slug
-                                          )
-                                    );
-                                  }}
-                                  className={`group/gear rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
-                                  aria-label="General appearance settings"
-                                  data-tooltip-id="gear-workspace"
-                                  data-tooltip-content="General appearance settings"
-                                >
-                                  <GearSix
-                                    color={
-                                      isInWorkspaceSettings &&
-                                      workspace.slug === slug
-                                        ? "#46C8FF"
-                                        : undefined
-                                    }
-                                    className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/gear:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/gear:text-slate-950"}`}
-                                  />
-                                </button>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        setSelectedWs(workspace);
+                                        showModal();
+                                      }}
+                                      className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
+                                    >
+                                      <UploadSimple
+                                        className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/upload:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/upload:text-slate-950"}`}
+                                      />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent
+                                    side="top"
+                                    className="max-w-[250px] text-xs"
+                                  >
+                                    Upload documents to this workspace for RAG
+                                    indexing
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        navigate(
+                                          isInWorkspaceSettings
+                                            ? paths.workspace.chat(
+                                                workspace.slug
+                                              )
+                                            : paths.workspace.settings.generalAppearance(
+                                                workspace.slug
+                                              )
+                                        );
+                                      }}
+                                      className={`group/gear rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
+                                      aria-label="General appearance settings"
+                                    >
+                                      <GearSix
+                                        color={
+                                          isInWorkspaceSettings &&
+                                          workspace.slug === slug
+                                            ? "#46C8FF"
+                                            : undefined
+                                        }
+                                        className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/gear:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/gear:text-slate-950"}`}
+                                      />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent
+                                    side="top"
+                                    className="max-w-[250px] text-xs"
+                                  >
+                                    General appearance settings
+                                  </TooltipContent>
+                                </Tooltip>
                               </div>
                             )}
                           </div>

@@ -12,7 +12,11 @@ import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import JobRow from "./components/JobRow";
 import { Bell } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function ScheduledJobsPage() {
   const { t } = useTranslation();
@@ -220,23 +224,23 @@ function NotificationBellButton() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handleClick}
-        data-tooltip-id="notification-bell-tooltip"
-        data-tooltip-content={t(
-          "scheduledJobs.enableNotifications",
-          "Enable browser notifications for job results"
-        )}
-        className="border-none flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/10 light:hover:bg-slate-200 transition-colors"
-      >
-        <Bell size={20} className="text-orange-400" />
-      </button>
-      <Tooltip
-        id="notification-bell-tooltip"
-        place="bottom"
-        className="tooltip !text-xs"
-      />
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={handleClick}
+            className="border-none flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/10 light:hover:bg-slate-200 transition-colors"
+          >
+            <Bell size={20} className="text-orange-400" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+          {t(
+            "scheduledJobs.enableNotifications",
+            "Enable browser notifications for job results"
+          )}
+        </TooltipContent>
+      </Tooltip>
     </>
   );
 }

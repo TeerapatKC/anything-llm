@@ -15,7 +15,11 @@ import React, { useEffect, useState } from "react";
 import SettingsButton from "../SettingsButton";
 import UserButton from "../UserMenu/UserButton";
 import { isMobile } from "react-device-detect";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 
 export const MAX_ICONS = 3;
@@ -51,64 +55,73 @@ export default function Footer() {
       <div className="flex justify-center mb-2">
         <div className="flex space-x-4">
           <div className="flex w-fit">
-            <Link
-              to={paths.github()}
-              target="_blank"
-              rel="noreferrer"
-              className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-              aria-label="Find us on GitHub"
-              data-tooltip-id="footer-item"
-              data-tooltip-content="View Source Code"
-            >
-              <GithubLogo
-                weight="fill"
-                className="h-5 w-5 text-white light:text-slate-800"
-              />
-            </Link>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to={paths.github()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+                  aria-label="Find us on GitHub"
+                >
+                  <GithubLogo
+                    weight="fill"
+                    className="h-5 w-5 text-white light:text-slate-800"
+                  />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                View Source Code
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="flex w-fit">
-            <Link
-              to={paths.docs()}
-              target="_blank"
-              rel="noreferrer"
-              className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-              aria-label="Docs"
-              data-tooltip-id="footer-item"
-              data-tooltip-content="Open AnythingLLM help docs"
-            >
-              <BookOpen
-                weight="fill"
-                className="h-5 w-5 text-white light:text-slate-800"
-              />
-            </Link>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to={paths.docs()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+                  aria-label="Docs"
+                >
+                  <BookOpen
+                    weight="fill"
+                    className="h-5 w-5 text-white light:text-slate-800"
+                  />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                Open AnythingLLM help docs
+              </TooltipContent>
+            </Tooltip>
           </div>
           <div className="flex w-fit">
-            <Link
-              to={paths.discord()}
-              target="_blank"
-              rel="noreferrer"
-              className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-              aria-label="Join our Discord server"
-              data-tooltip-id="footer-item"
-              data-tooltip-content="Join the AnythingLLM Discord"
-            >
-              <DiscordLogo
-                weight="fill"
-                className="h-5 w-5 text-white light:text-slate-800"
-              />
-            </Link>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  to={paths.discord()}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+                  aria-label="Join our Discord server"
+                >
+                  <DiscordLogo
+                    weight="fill"
+                    className="h-5 w-5 text-white light:text-slate-800"
+                  />
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                Join the AnythingLLM Discord
+              </TooltipContent>
+            </Tooltip>
           </div>
           {!isMobile && <SettingsButton />}
           {/* Account button. Not gated on isMobile — the mobile sidebar header
               renders SettingsButton itself, but has no account entry point. */}
           <UserButton />
         </div>
-        <Tooltip
-          id="footer-item"
-          place="top"
-          delayShow={300}
-          className="tooltip !text-xs z-99"
-        />
       </div>
     );
   }
@@ -139,12 +152,6 @@ export default function Footer() {
             renders SettingsButton itself, but has no account entry point. */}
         <UserButton />
       </div>
-      <Tooltip
-        id="footer-item"
-        place="top"
-        delayShow={300}
-        className="tooltip !text-xs z-99"
-      />
     </div>
   );
 }

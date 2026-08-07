@@ -21,7 +21,11 @@ import Admin from "@/models/admin";
 import System from "@/models/system";
 import GoogleAgentSkills from "@/models/googleAgentSkills";
 import { getGmailSkills, filterSkillCategories } from "./utils";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 
@@ -230,18 +234,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.gmail.deploymentId")}
               </label>
-              <Info
-                data-tooltip-id="deployment-id-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="deployment-id-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100"
-              >
-                {t("agent.skill.gmail.deploymentIdHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.gmail.deploymentIdHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <input
@@ -261,18 +260,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.gmail.apiKey")}
               </label>
-              <Info
-                data-tooltip-id="api-key-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="api-key-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100"
-              >
-                {t("agent.skill.gmail.apiKeyHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.gmail.apiKeyHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <input

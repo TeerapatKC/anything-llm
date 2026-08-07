@@ -5,7 +5,11 @@ import showToast from "@/utils/toast";
 import pluralize from "pluralize";
 import { TagsInput } from "react-tag-input-component";
 import { Info, Warning } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const DEFAULT_BRANCHES = ["main", "master"];
 export default function GiteaOptions() {
@@ -265,33 +269,30 @@ function PATTooltip({ accessToken }) {
   return (
     <>
       {!accessToken && (
-        <Warning
-          size={14}
-          className="ml-1 text-orange-500 cursor-pointer"
-          data-tooltip-id="access-token-tooltip"
-          data-tooltip-place="right"
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Warning
+              size={14}
+              className="ml-1 text-orange-500 cursor-pointer"
+            />
+          </TooltipTrigger>
+          <TooltipContent side="right" className="max-w-[250px] text-xs">
+            <p className="text-sm">
+              {t("connectors.gitea.token_explained_start")}
+              <a
+                href="https://docs.gitea.com/development/api-usage/"
+                rel="noreferrer"
+                target="_blank"
+                className="underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {t("connectors.gitea.token_explained_link1")}
+              </a>
+              {t("connectors.gitea.token_explained_end")}
+            </p>
+          </TooltipContent>
+        </Tooltip>
       )}
-      <Tooltip
-        delayHide={300}
-        id="access-token-tooltip"
-        className="max-w-xs z-99"
-        clickable={true}
-      >
-        <p className="text-sm">
-          {t("connectors.gitea.token_explained_start")}
-          <a
-            href="https://docs.gitea.com/development/api-usage/"
-            rel="noreferrer"
-            target="_blank"
-            className="underline"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {t("connectors.gitea.token_explained_link1")}
-          </a>
-          {t("connectors.gitea.token_explained_end")}
-        </p>
-      </Tooltip>
     </>
   );
 }

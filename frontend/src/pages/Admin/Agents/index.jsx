@@ -26,7 +26,6 @@ import {
 import { DefaultBadge } from "./Badges/default";
 import ImportedSkillList from "./Imported/SkillList";
 import ImportedSkillConfig from "./Imported/ImportedSkillConfig";
-import { Tooltip } from "react-tooltip";
 import AgentFlowsList from "./AgentFlows";
 import FlowPanel from "./AgentFlows/FlowPanel";
 import { MCPServersList, MCPServerHeader } from "./MCPServers";
@@ -865,14 +864,6 @@ function SkillList({
         ))}
       </div>
       {/* Tooltip for default skills - only render when skill list is passed isDefault */}
-      {isDefault && (
-        <Tooltip
-          id="default-skill"
-          place="bottom"
-          delayShow={300}
-          className="tooltip light:invert-0 !text-xs"
-        />
-      )}
     </>
   );
 }

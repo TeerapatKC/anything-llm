@@ -20,7 +20,11 @@ import Admin from "@/models/admin";
 import System from "@/models/system";
 import GoogleAgentSkills from "@/models/googleAgentSkills";
 import { getGoogleCalendarSkills, filterSkillCategories } from "./utils";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import GoogleCalendarIcon from "./google-calendar.png";
@@ -239,18 +243,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.googleCalendar.deploymentId")}
               </label>
-              <Info
-                data-tooltip-id="gcal-deployment-id-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="gcal-deployment-id-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100"
-              >
-                {t("agent.skill.googleCalendar.deploymentIdHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.googleCalendar.deploymentIdHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <input
@@ -270,18 +269,13 @@ function ConfigurationSection({
               <label className="text-theme-text-primary text-sm font-medium">
                 {t("agent.skill.googleCalendar.apiKey")}
               </label>
-              <Info
-                data-tooltip-id="gcal-api-key-tooltip"
-                size={16}
-                className="text-theme-text-secondary"
-              />
-              <Tooltip
-                id="gcal-api-key-tooltip"
-                place="top"
-                delayShow={300}
-                className="tooltip !text-xs !opacity-100"
-              >
-                {t("agent.skill.googleCalendar.apiKeyHelp")}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info size={16} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  {t("agent.skill.googleCalendar.apiKeyHelp")}
+                </TooltipContent>
               </Tooltip>
             </div>
             <input
