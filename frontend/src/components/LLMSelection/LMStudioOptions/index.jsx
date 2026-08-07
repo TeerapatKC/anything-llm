@@ -10,7 +10,11 @@ import paths from "@/utils/paths";
 import System from "@/models/system";
 import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -96,23 +100,17 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
                 <Label variant="settings">LM Studio Base URL</Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="lmstudio-base-url"
-                  data-tooltip-content="Enter the URL where LM Studio is running."
-                />
-                <Tooltip
-                  id="lmstudio-base-url"
-                  place="top"
-                  delayShow={300}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    Enter the URL where LM Studio is running.
+                  </TooltipContent>
+                </Tooltip>
               </div>
               {loading ? (
                 <CircleNotch
@@ -148,21 +146,18 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
               <Label variant="settings">Model Context Window</Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="lmstudio-max-tokens"
-                data-tooltip-content="Override the context window limit. Leave empty to auto-detect from the model (defaults to 4096 if detection fails)."
-              />
-              <Tooltip
-                id="lmstudio-max-tokens"
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  Override the context window limit. Leave empty to auto-detect
+                  from the model (defaults to 4096 if detection fails).
+                </TooltipContent>
+              </Tooltip>
             </div>
             <Input
               variant="settings"
@@ -183,30 +178,22 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
               <Label variant="settings">Authentication Token</Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="lmstudio-authentication-token"
-              />
-              <Tooltip
-                id="lmstudio-authentication-token"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Enter a <code>Bearer</code> Auth Token for interacting with
-                  your LM Studio server.
-                  <br /> <br />
-                  Useful if running LM Studio behind an authentication or proxy.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  <p className="text-xs leading-[18px] font-base">
+                    Enter a <code>Bearer</code> Auth Token for interacting with
+                    your LM Studio server.
+                    <br /> <br />
+                    Useful if running LM Studio behind an authentication or
+                    proxy.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </div>
             <Input
@@ -264,28 +251,16 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
           <Label variant="settings">Selected Model</Label>
           {!loading && !!basePath && (
             <>
-              <Warning
-                size={18}
-                className="text-red-400 cursor-pointer"
-                data-tooltip-id="lmstudio-selected-model"
-              />
-              <Tooltip
-                id="lmstudio-selected-model"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100 z-99"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Could not reach LM Studio. Verify the URL is correct and the
-                  LMStudio server is running and accessible.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Warning size={18} className="text-red-400 cursor-pointer" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  <p className="text-xs leading-[18px] font-base">
+                    Could not reach LM Studio. Verify the URL is correct and the
+                    LMStudio server is running and accessible.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </>
           )}

@@ -6,7 +6,11 @@ import strDistance from "js-levenshtein";
 import { LLM_PREFERENCE_CHANGED_EVENT } from "@/pages/GeneralSettings/LLMPreference";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
 import { originOnly } from "@/utils/url";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import ModelTable from "@/components/lib/ModelTable";
 import ModelTableLayout from "@/components/lib/ModelTable/layout";
@@ -57,42 +61,30 @@ export default function LemonadeOptions({ settings }) {
                 </>
               )}
             </div>
-            <Tooltip
-              id="lemonade-base-url"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "250px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              Enter the URL where the Lemonade is running.
-              <br />
-              <br />
-              You <b>must</b> have enabled the Lemonade TCP support for this to
-              work.
-              <br />
-              <br />
-              <Link
-                to="https://lemonade-server.ai/docs"
-                target="_blank"
-                className="text-blue-500 hover:underline"
-              >
-                Learn more &rarr;
-              </Link>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
+                  <Info size={18} className="text-theme-text-secondary" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                Enter the URL where the Lemonade is running.
+                <br />
+                <br />
+                You <b>must</b> have enabled the Lemonade TCP support for this
+                to work.
+                <br />
+                <br />
+                <Link
+                  to="https://lemonade-server.ai/docs"
+                  target="_blank"
+                  className="text-blue-500 hover:underline"
+                >
+                  Learn more &rarr;
+                </Link>
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="lemonade-base-url"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
 
           <Input
@@ -113,31 +105,19 @@ export default function LemonadeOptions({ settings }) {
             <Label variant="settings" className="block">
               Model context window
             </Label>
-            <Tooltip
-              id="lemonade-model-context-window"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "350px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              The maximum number of tokens that can be used for a model context
-              window. This must be set to a value that is supported by the
-              model.
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
+                  <Info size={18} className="text-theme-text-secondary" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                The maximum number of tokens that can be used for a model
+                context window. This must be set to a value that is supported by
+                the model.
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="lemonade-model-context-window"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
           <Input
             variant="settings"
@@ -157,29 +137,17 @@ export default function LemonadeOptions({ settings }) {
             <Label variant="settings" className="block">
               API Key (optional)
             </Label>
-            <Tooltip
-              id="lemonade-api-key"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "350px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              The API key for your Lemonade server
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
+                  <Info size={18} className="text-theme-text-secondary" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                The API key for your Lemonade server
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="lemonade-api-key"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
           <Input
             variant="settings"
@@ -401,11 +369,6 @@ function LemonadeModelSelection({
       setSearchQuery={setSearchQuery}
       loading={loading}
     >
-      <Tooltip
-        id="install-model-tooltip"
-        place="top"
-        className="tooltip !text-xs !opacity-100 z-99"
-      />
       <input
         type="hidden"
         name="LemonadeLLMModelPref"

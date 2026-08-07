@@ -1,5 +1,9 @@
 import { Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -72,35 +76,26 @@ export default function GeminiOptions({ settings }) {
         </div>
       </div>
       <div className="flex flex-col w-60">
-        <div
-          data-tooltip-id="embedding-output-dimensions-tooltip"
-          className="flex gap-x-1 items-center mb-3"
-        >
-          <Label variant="settings" className="block">
-            Output dimensions
-          </Label>
-          <Info
-            size={16}
-            className="text-theme-text-secondary cursor-pointer"
-          />
-          <Tooltip
-            id="embedding-output-dimensions-tooltip"
-            place="top"
-            delayShow={300}
-            className="tooltip !text-xs !opacity-100"
-            style={{
-              maxWidth: "250px",
-              whiteSpace: "normal",
-              wordWrap: "break-word",
-            }}
-          >
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex gap-x-1 items-center mb-3">
+              <Label variant="settings" className="block">
+                Output dimensions
+              </Label>
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[250px] text-xs">
             The number of dimensions the resulting output embeddings should have
             if it supports multiple dimensions output.
             <br />
             <br /> Leave blank to use the default dimensions for the selected
             model.
-          </Tooltip>
-        </div>
+          </TooltipContent>
+        </Tooltip>
         <Input
           variant="settings"
           type="number"

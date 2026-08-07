@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Warning, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -46,22 +50,22 @@ export default function LiteLLMOptions({ settings }) {
           apiKey={apiKey}
         />
         <div className="flex flex-col w-60">
-          <div
-            data-tooltip-place="top"
-            data-tooltip-id="max-embedding-chunk-length-tooltip"
-            className="flex gap-x-1 items-center mb-3"
-          >
-            <Info
-              size={16}
-              className="text-theme-text-secondary cursor-pointer"
-            />
-            <Label variant="settings" className="block">
-              Max embedding chunk length
-            </Label>
-            <Tooltip id="max-embedding-chunk-length-tooltip">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex gap-x-1 items-center mb-3">
+                <Info
+                  size={16}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+                <Label variant="settings" className="block">
+                  Max embedding chunk length
+                </Label>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
-            </Tooltip>
-          </div>
+            </TooltipContent>
+          </Tooltip>
           <Input
             variant="settings"
             type="number"
@@ -182,31 +186,25 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
 function EmbeddingModelTooltip() {
   return (
     <div className="flex items-center justify-center -mt-3 ml-1">
-      <Warning
-        size={14}
-        className="ml-1 text-orange-500 cursor-pointer"
-        data-tooltip-id="model-tooltip"
-        data-tooltip-place="right"
-      />
-      <Tooltip
-        delayHide={300}
-        id="model-tooltip"
-        className="max-w-xs"
-        clickable={true}
-      >
-        <p className="text-sm">
-          Be sure to select a valid embedding model. Chat models are not
-          embedding models. See{" "}
-          <a
-            href="https://litellm.vercel.app/docs/embedding/supported_embedding"
-            target="_blank"
-            rel="noreferrer"
-            className="underline"
-          >
-            this page
-          </a>{" "}
-          for more information.
-        </p>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Warning size={14} className="ml-1 text-orange-500 cursor-pointer" />
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-[250px] text-xs">
+          <p className="text-sm">
+            Be sure to select a valid embedding model. Chat models are not
+            embedding models. See{" "}
+            <a
+              href="https://litellm.vercel.app/docs/embedding/supported_embedding"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              this page
+            </a>{" "}
+            for more information.
+          </p>
+        </TooltipContent>
       </Tooltip>
     </div>
   );

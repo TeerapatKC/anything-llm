@@ -1,6 +1,10 @@
 import { Info } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -100,28 +104,20 @@ export default function AzureAiOptions({ settings }) {
             <Label variant="settings" className="block">
               {t("llm.providers.azure_openai.model_type")}
             </Label>
-            <Tooltip
-              id="azure-openai-model-type"
-              place="top"
-              delayShow={300}
-              className="tooltip !text-xs !opacity-100"
-              style={{
-                maxWidth: "250px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            />
-            <div
-              type="button"
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="azure-openai-model-type"
-              data-tooltip-place="top"
-              data-tooltip-content={t(
-                "llm.providers.azure_openai.model_type_tooltip"
-              )}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  type="button"
+                  className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
+                >
+                  <Info size={18} className="text-theme-text-secondary" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                {t("llm.providers.azure_openai.model_type_tooltip")}
+              </TooltipContent>
+            </Tooltip>
           </div>
           <Select
             name="AzureOpenAiModelType"

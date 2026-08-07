@@ -8,7 +8,11 @@ import {
   CircleNotch,
   Warning,
 } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,22 +59,22 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           apiKey={authTokenValue.value}
         />
         <div className="flex flex-col w-60">
-          <div
-            data-tooltip-place="top"
-            data-tooltip-id="max-embedding-chunk-length-tooltip"
-            className="flex gap-x-1 items-center mb-3"
-          >
-            <Label variant="settings" className="block">
-              Max embedding chunk length
-            </Label>
-            <Info
-              size={16}
-              className="text-theme-text-secondary cursor-pointer"
-            />
-            <Tooltip id="max-embedding-chunk-length-tooltip">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex gap-x-1 items-center mb-3">
+                <Label variant="settings" className="block">
+                  Max embedding chunk length
+                </Label>
+                <Info
+                  size={16}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
-            </Tooltip>
-          </div>
+            </TooltipContent>
+          </Tooltip>
           <Input
             variant="settings"
             type="number"
@@ -108,23 +112,17 @@ export default function LMStudioEmbeddingOptions({ settings }) {
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
                 <Label variant="settings">LM Studio Base URL</Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="lmstudio-base-url"
-                  data-tooltip-content="Enter the URL where LM Studio is running."
-                />
-                <Tooltip
-                  id="lmstudio-base-url"
-                  place="top"
-                  delayShow={300}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    Enter the URL where LM Studio is running.
+                  </TooltipContent>
+                </Tooltip>
               </div>
               {loading ? (
                 <CircleNotch
@@ -160,30 +158,22 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
               <Label variant="settings">Authentication Token</Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="lmstudio-authentication-token"
-              />
-              <Tooltip
-                id="lmstudio-authentication-token"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Enter a <code>Bearer</code> Auth Token for interacting with
-                  your LM Studio server.
-                  <br /> <br />
-                  Useful if running LM Studio behind an authentication or proxy.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  <p className="text-xs leading-[18px] font-base">
+                    Enter a <code>Bearer</code> Auth Token for interacting with
+                    your LM Studio server.
+                    <br /> <br />
+                    Useful if running LM Studio behind an authentication or
+                    proxy.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </div>
             <Input
@@ -241,28 +231,16 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
           <Label variant="settings">Embedding Model</Label>
           {!loading && !!basePath && (
             <>
-              <Warning
-                size={18}
-                className="text-red-400 cursor-pointer"
-                data-tooltip-id="lmstudio-embedding-model"
-              />
-              <Tooltip
-                id="lmstudio-embedding-model"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Could not reach LM Studio. Verify the URL is correct and the
-                  LMStudio server is running and accessible.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Warning size={18} className="text-red-400 cursor-pointer" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  <p className="text-xs leading-[18px] font-base">
+                    Could not reach LM Studio. Verify the URL is correct and the
+                    LMStudio server is running and accessible.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </>
           )}

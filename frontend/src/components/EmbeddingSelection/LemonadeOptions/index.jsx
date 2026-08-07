@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp, Info, CircleNotch } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { originOnly } from "@/utils/url";
 import { Input } from "@/components/ui/input";
@@ -45,22 +49,22 @@ export default function LemonadeEmbeddingOptions({ settings }) {
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <LemonadeModelSelection settings={settings} basePath={basePath.value} />
         <div className="flex flex-col w-60">
-          <div
-            data-tooltip-place="top"
-            data-tooltip-id="max-embedding-chunk-length-tooltip"
-            className="flex gap-x-1 items-center mb-3"
-          >
-            <Label variant="settings" className="block">
-              Max embedding chunk length
-            </Label>
-            <Info
-              size={16}
-              className="text-theme-text-secondary cursor-pointer"
-            />
-            <Tooltip id="max-embedding-chunk-length-tooltip">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex gap-x-1 items-center mb-3">
+                <Label variant="settings" className="block">
+                  Max embedding chunk length
+                </Label>
+                <Info
+                  size={16}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
-            </Tooltip>
-          </div>
+            </TooltipContent>
+          </Tooltip>
           <Input
             variant="settings"
             type="number"
@@ -75,22 +79,22 @@ export default function LemonadeEmbeddingOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <div
-            data-tooltip-place="top"
-            data-tooltip-id="lemonade-embedding-api-key"
-            className="flex gap-x-1 items-center mb-3"
-          >
-            <Label variant="settings" className="block">
-              API Key (optional)
-            </Label>
-            <Info
-              size={16}
-              className="text-theme-text-secondary cursor-pointer"
-            />
-            <Tooltip id="lemonade-embedding-api-key">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex gap-x-1 items-center mb-3">
+                <Label variant="settings" className="block">
+                  API Key (optional)
+                </Label>
+                <Info
+                  size={16}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
               The API key for your Lemonade instance
-            </Tooltip>
-          </div>
+            </TooltipContent>
+          </Tooltip>
           <Input
             variant="settings"
             type="password"
@@ -123,23 +127,17 @@ export default function LemonadeEmbeddingOptions({ settings }) {
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
                 <Label variant="settings">Lemonade Base URL</Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="lemonade-base-url"
-                  data-tooltip-content="Enter the URL where Lemonade is running."
-                />
-                <Tooltip
-                  id="lemonade-base-url"
-                  place="top"
-                  delayShow={300}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    Enter the URL where Lemonade is running.
+                  </TooltipContent>
+                </Tooltip>
               </div>
               {loading ? (
                 <CircleNotch

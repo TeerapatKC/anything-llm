@@ -3,7 +3,11 @@ import System from "@/models/system";
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp, Info, CircleNotch } from "@phosphor-icons/react";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,23 +73,20 @@ export default function OllamaLLMOptions({ settings }) {
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-1">
                   <Label variant="settings">Ollama Base URL</Label>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                    data-tooltip-id="ollama-base-url"
-                    data-tooltip-content="Enter the URL where Ollama is running."
-                  />
-                  <Tooltip
-                    id="ollama-base-url"
-                    place="top"
-                    delayShow={300}
-                    className="tooltip !text-xs !opacity-100"
-                    style={{
-                      maxWidth: "250px",
-                      whiteSpace: "normal",
-                      wordWrap: "break-word",
-                    }}
-                  />
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent
+                      side="top"
+                      className="max-w-[250px] text-xs"
+                    >
+                      Enter the URL where Ollama is running.
+                    </TooltipContent>
+                  </Tooltip>
                 </div>
                 {loading ? (
                   <CircleNotch
@@ -124,36 +125,27 @@ export default function OllamaLLMOptions({ settings }) {
                 <Label variant="settings" className="block">
                   Ollama Keep Alive
                 </Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="ollama-keep-alive"
-                />
-                <Tooltip
-                  id="ollama-keep-alive"
-                  place="top"
-                  delayShow={300}
-                  delayHide={400}
-                  clickable={true}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                >
-                  <p className="text-xs leading-[18px] font-base">
-                    Choose how long Ollama should keep your model in memory
-                    before unloading.{" "}
-                    <Link
-                      className="underline text-blue-300"
-                      to="https://docs.ollama.com/faq#how-do-i-keep-a-model-loaded-in-memory-or-make-it-unload-immediately"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Learn more &rarr;
-                    </Link>
-                  </p>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    <p className="text-xs leading-[18px] font-base">
+                      Choose how long Ollama should keep your model in memory
+                      before unloading.{" "}
+                      <Link
+                        className="underline text-blue-300"
+                        to="https://docs.ollama.com/faq#how-do-i-keep-a-model-loaded-in-memory-or-make-it-unload-immediately"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Learn more &rarr;
+                      </Link>
+                    </p>
+                  </TooltipContent>
                 </Tooltip>
               </div>
               <Select
@@ -179,43 +171,34 @@ export default function OllamaLLMOptions({ settings }) {
                 <Label variant="settings" className="block">
                   Model context window
                 </Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="ollama-model-context-window"
-                />
-                <Tooltip
-                  id="ollama-model-context-window"
-                  place="top"
-                  delayShow={300}
-                  delayHide={400}
-                  clickable={true}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                >
-                  <p className="text-xs leading-[18px] font-base">
-                    Specify the maximum number of tokens that can be used for
-                    the model context window.
-                    <br /> <br />
-                    If you leave this field blank, the context window limit will
-                    be auto-detected from the model and applied to all chats. If
-                    auto-detection fails, a fallback context window limit of
-                    4096 will be used.
-                    <br /> <br />
-                    <b>Important:</b> Some models have very large context
-                    windows using the full context window limit can dramatically
-                    increase the memory usage of your system. For this reason,
-                    we will automatically cap the context window limit to 16,384
-                    tokens if the model supports more than that and no value is
-                    specified.
-                    <br /> <br />
-                    If an invalid value is entered, AnythingLLM will handle this
-                    for you so that chats do not fail.
-                  </p>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    <p className="text-xs leading-[18px] font-base">
+                      Specify the maximum number of tokens that can be used for
+                      the model context window.
+                      <br /> <br />
+                      If you leave this field blank, the context window limit
+                      will be auto-detected from the model and applied to all
+                      chats. If auto-detection fails, a fallback context window
+                      limit of 4096 will be used.
+                      <br /> <br />
+                      <b>Important:</b> Some models have very large context
+                      windows using the full context window limit can
+                      dramatically increase the memory usage of your system. For
+                      this reason, we will automatically cap the context window
+                      limit to 16,384 tokens if the model supports more than
+                      that and no value is specified.
+                      <br /> <br />
+                      If an invalid value is entered, AnythingLLM will handle
+                      this for you so that chats do not fail.
+                    </p>
+                  </TooltipContent>
                 </Tooltip>
               </div>
               <Input
@@ -237,31 +220,22 @@ export default function OllamaLLMOptions({ settings }) {
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
                 <Label variant="settings">Authentication Token</Label>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                  data-tooltip-id="ollama-authentication-token"
-                />
-                <Tooltip
-                  id="ollama-authentication-token"
-                  place="top"
-                  delayShow={300}
-                  delayHide={400}
-                  clickable={true}
-                  className="tooltip !text-xs !opacity-100"
-                  style={{
-                    maxWidth: "250px",
-                    whiteSpace: "normal",
-                    wordWrap: "break-word",
-                  }}
-                >
-                  <p className="text-xs leading-[18px] font-base">
-                    Enter a <code>Bearer</code> Auth Token for interacting with
-                    your Ollama server.
-                    <br /> <br />
-                    Used <b>only</b> if running Ollama behind an authentication
-                    server.
-                  </p>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-[250px] text-xs">
+                    <p className="text-xs leading-[18px] font-base">
+                      Enter a <code>Bearer</code> Auth Token for interacting
+                      with your Ollama server.
+                      <br /> <br />
+                      Used <b>only</b> if running Ollama behind an
+                      authentication server.
+                    </p>
+                  </TooltipContent>
                 </Tooltip>
               </div>
               <Input

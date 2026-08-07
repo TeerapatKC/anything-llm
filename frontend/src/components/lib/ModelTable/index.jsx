@@ -10,6 +10,11 @@ import {
 } from "@phosphor-icons/react";
 import pluralize from "pluralize";
 import { titleCase } from "text-case";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { humanFileSize } from "@/utils/numbers";
 import MonoProviderIcon from "../MonoProviderIcon";
 
@@ -295,21 +300,24 @@ function ModelRow({
           </>
         ) : null}
         {!model.downloaded && !processing && (
-          <button
-            type="button"
-            data-tooltip-id="install-model-tooltip"
-            data-tooltip-place="top"
-            data-tooltip-delay-show={300}
-            data-tooltip-content={`Install ${model.organization}:${model.name}`}
-            className="border-none hover:bg-white/20 light:hover:bg-black/5 rounded-lg p-2 flex items-center gap-x-1 cursor-pointer"
-            onClick={handleSetActiveModel}
-          >
-            <CloudArrowDown
-              size={20}
-              weight="bold"
-              className="text-theme-text-primary"
-            />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                className="border-none hover:bg-white/20 light:hover:bg-black/5 rounded-lg p-2 flex items-center gap-x-1 cursor-pointer"
+                onClick={handleSetActiveModel}
+              >
+                <CloudArrowDown
+                  size={20}
+                  weight="bold"
+                  className="text-theme-text-primary"
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
+              {`Install ${model.organization}:${model.name}`}
+            </TooltipContent>
+          </Tooltip>
         )}
         {!model.downloaded && processing && (
           <div className="flex items-center justify-center gap-x-[10px] whitespace-nowrap">

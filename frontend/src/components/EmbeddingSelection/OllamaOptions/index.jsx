@@ -3,7 +3,11 @@ import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -56,22 +60,22 @@ export default function OllamaEmbeddingOptions({ settings }) {
           basePath={basePath.value}
         />
         <div className="flex flex-col w-60">
-          <div
-            data-tooltip-place="top"
-            data-tooltip-id="max-embedding-chunk-length-tooltip"
-            className="flex gap-x-1 items-center mb-3"
-          >
-            <Label variant="settings" className="block">
-              Max embedding chunk length
-            </Label>
-            <Info
-              size={16}
-              className="text-theme-text-secondary cursor-pointer"
-            />
-            <Tooltip id="max-embedding-chunk-length-tooltip">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex gap-x-1 items-center mb-3">
+                <Label variant="settings" className="block">
+                  Max embedding chunk length
+                </Label>
+                <Info
+                  size={16}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
-            </Tooltip>
-          </div>
+            </TooltipContent>
+          </Tooltip>
           <Input
             variant="settings"
             type="number"
@@ -140,23 +144,23 @@ export default function OllamaEmbeddingOptions({ settings }) {
             </p>
           </div>
           <div className="flex flex-col w-60">
-            <div
-              data-tooltip-place="top"
-              data-tooltip-id="ollama-batch-size-tooltip"
-              className="flex gap-x-1 items-center mb-3"
-            >
-              <Label variant="settings" className="block">
-                Embedding batch size
-              </Label>
-              <Info
-                size={16}
-                className="text-theme-text-secondary cursor-pointer"
-              />
-              <Tooltip id="ollama-batch-size-tooltip">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex gap-x-1 items-center mb-3">
+                  <Label variant="settings" className="block">
+                    Embedding batch size
+                  </Label>
+                  <Info
+                    size={16}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
                 Number of text chunks to embed in parallel. Higher values
                 improve speed but use more memory. Default is 1.
-              </Tooltip>
-            </div>
+              </TooltipContent>
+            </Tooltip>
             <Input
               variant="settings"
               type="number"

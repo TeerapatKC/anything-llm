@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import System from "@/models/system";
 import { Link } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -51,33 +55,25 @@ export default function PrivateModeOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-2">
             <Label variant="settings">Privatemode Proxy URL</Label>
-            <Info
-              size={18}
-              className="text-theme-text-secondary cursor-pointer"
-              data-tooltip-id="private-mode-base-url"
-            />
-            <Tooltip
-              id="private-mode-base-url"
-              place="top"
-              delayShow={300}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100"
-              style={{
-                maxWidth: "250px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              Enter the URL where Privatemode Proxy is running.
-              <br />
-              <br />
-              <Link
-                to="https://docs.privatemode.ai/quickstart#2-run-the-proxy"
-                target="_blank"
-                className="text-blue-500 hover:underline"
-              >
-                Learn more &rarr;
-              </Link>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info
+                  size={18}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                Enter the URL where Privatemode Proxy is running.
+                <br />
+                <br />
+                <Link
+                  to="https://docs.privatemode.ai/quickstart#2-run-the-proxy"
+                  target="_blank"
+                  className="text-blue-500 hover:underline"
+                >
+                  Learn more &rarr;
+                </Link>
+              </TooltipContent>
             </Tooltip>
           </div>
           <Input

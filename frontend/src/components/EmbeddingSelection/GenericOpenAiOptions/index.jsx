@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -44,23 +48,17 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
             <Label variant="settings" className="block">
               Max embedding chunk length
             </Label>
-            <Info
-              size={18}
-              className="text-theme-text-secondary cursor-pointer"
-              data-tooltip-id="max-embedding-chunk-length-tooltip"
-              data-tooltip-content="Maximum length of text chunks, in characters, for embedding."
-            />
-            <Tooltip
-              id="max-embedding-chunk-length-tooltip"
-              place="top"
-              delayShow={300}
-              className="tooltip !text-xs !opacity-100"
-              style={{
-                maxWidth: "250px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info
+                  size={18}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px] text-xs">
+                Maximum length of text chunks, in characters, for embedding.
+              </TooltipContent>
+            </Tooltip>
           </div>
           <Input
             variant="settings"
@@ -138,33 +136,24 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
               <Label variant="settings" className="flex items-center gap-x-2">
                 Passage Prefix
               </Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="embedding-passage-prefix-tooltip"
-              />
-              <Tooltip
-                id="embedding-passage-prefix-tooltip"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Text prepended to each chunk of content before embedding for
-                  storage. Some models require this to distinguish passages from
-                  queries (e.g. "passage: " or "search_document: ").
-                  <br />
-                  <br />
-                  AnythingLLM <b>does not</b> append anything to this text
-                  including the ":" character.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  <p className="text-xs leading-[18px] font-base">
+                    Text prepended to each chunk of content before embedding for
+                    storage. Some models require this to distinguish passages
+                    from queries (e.g. "passage: " or "search_document: ").
+                    <br />
+                    <br />
+                    AnythingLLM <b>does not</b> append anything to this text
+                    including the ":" character.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </div>
             <Input
@@ -183,33 +172,24 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
               <Label variant="settings" className="flex items-center gap-x-2">
                 Query Prefix
               </Label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="embedding-query-prefix-tooltip"
-              />
-              <Tooltip
-                id="embedding-query-prefix-tooltip"
-                place="top"
-                delayShow={300}
-                delayHide={400}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                <p className="text-xs leading-[18px] font-base">
-                  Text prepended to the query text before embedding for search.
-                  Some models require this to distinguish queries from passages
-                  (e.g. "query: " or "search_query: ").
-                  <br />
-                  <br />
-                  AnythingLLM <b>does not</b> append anything to this text
-                  including the ":" character.
-                </p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  <p className="text-xs leading-[18px] font-base">
+                    Text prepended to the query text before embedding for
+                    search. Some models require this to distinguish queries from
+                    passages (e.g. "query: " or "search_query: ").
+                    <br />
+                    <br />
+                    AnythingLLM <b>does not</b> append anything to this text
+                    including the ":" character.
+                  </p>
+                </TooltipContent>
               </Tooltip>
             </div>
             <Input
