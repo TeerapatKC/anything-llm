@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 import Workspace from "@/models/workspace";
 import ManageWorkspace, {
   useManageWorkspaceModal,
@@ -37,7 +36,7 @@ export default function ActiveWorkspaces() {
 
   if (loading) {
     return (
-      <Skeleton.default
+      <Skeleton
         height={40}
         width="100%"
         count={5}

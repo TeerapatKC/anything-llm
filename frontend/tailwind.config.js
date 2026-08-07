@@ -247,7 +247,10 @@ export default {
         "pulse-glow": "pulse-glow 1.5s infinite",
         'fade-in': 'fade-in 0.3s ease-out',
         'slide-up': 'slide-up 0.4s ease-out forwards',
-        'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite'
+        'bounce-subtle': 'bounce-subtle 2s ease-in-out infinite',
+        // Reproduces react-loading-skeleton's sweeping highlight so the loading
+        // placeholders keep their look now that the library is gone.
+        'skeleton-sweep': 'skeleton-sweep 1.5s ease-in-out infinite'
       },
       keyframes: {
         sweep: {
@@ -293,6 +296,9 @@ export default {
         'bounce-subtle': {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-2px)' }
+        },
+        'skeleton-sweep': {
+          '100%': { transform: 'translateX(100%)' }
         }
       }
     }

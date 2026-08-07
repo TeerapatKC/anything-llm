@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import CommunityHub from "@/models/communityHub";
 import paths from "@/utils/paths";
 import HubItemCard from "./HubItemCard";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 import { readableType, typeToPath } from "../../utils";
 
 const DEFAULT_EXPLORE_ITEMS = {
@@ -92,7 +91,7 @@ export function HubItemCardSkeleton() {
     <div className="flex flex-col gap-4">
       <div className="rounded-lg w-full">
         <div className="flex justify-between items-center">
-          <Skeleton.default
+          <Skeleton
             height="40px"
             width="300px"
             highlightColor="var(--theme-settings-input-active)"
@@ -100,7 +99,7 @@ export function HubItemCardSkeleton() {
             count={1}
           />
         </div>
-        <Skeleton.default
+        <Skeleton
           height="200px"
           width="300px"
           highlightColor="var(--theme-settings-input-active)"
@@ -112,7 +111,7 @@ export function HubItemCardSkeleton() {
       </div>
       <div className="rounded-lg w-full">
         <div className="flex justify-between items-center">
-          <Skeleton.default
+          <Skeleton
             height="40px"
             width="300px"
             highlightColor="var(--theme-settings-input-active)"
@@ -120,7 +119,7 @@ export function HubItemCardSkeleton() {
             count={1}
           />
         </div>
-        <Skeleton.default
+        <Skeleton
           height="200px"
           width="300px"
           highlightColor="var(--theme-settings-input-active)"

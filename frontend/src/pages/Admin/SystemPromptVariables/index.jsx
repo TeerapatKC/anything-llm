@@ -9,8 +9,7 @@ import VariableRow from "./VariableRow";
 import ModalWrapper from "@/components/ModalWrapper";
 import AddVariableModal from "./AddVariableModal";
 import { useModal } from "@/hooks/useModal";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SystemPromptVariables() {
   const [variables, setVariables] = useState([]);
@@ -66,7 +65,7 @@ export default function SystemPromptVariables() {
 
           <div className="overflow-x-auto">
             {loading ? (
-              <Skeleton.default
+              <Skeleton
                 height="80vh"
                 width="100%"
                 highlightColor="var(--theme-bg-primary)"

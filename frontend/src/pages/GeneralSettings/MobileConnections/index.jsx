@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/SettingsSidebar";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 import { QrCode } from "@phosphor-icons/react";
 import { useModal } from "@/hooks/useModal";
 import CTAButton from "@/components/lib/CTAButton";
@@ -71,7 +70,7 @@ export default function MobileDevices() {
           </div>
           <div className="overflow-x-auto mt-6">
             {loading ? (
-              <Skeleton.default
+              <Skeleton
                 height="80vh"
                 width="100%"
                 highlightColor="var(--theme-bg-primary)"

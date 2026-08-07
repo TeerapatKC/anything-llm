@@ -1,10 +1,9 @@
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function ModelTableLoadingSkeleton() {
   return (
     <div className="flex flex-col w-full gap-y-4 pt-4">
-      <Skeleton.default
+      <Skeleton
         height={100}
         width="100%"
         count={7}

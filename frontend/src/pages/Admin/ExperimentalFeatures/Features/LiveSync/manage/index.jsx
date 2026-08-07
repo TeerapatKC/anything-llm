@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { isMobile } from "react-device-detect";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 import System from "@/models/system";
 import DocumentSyncQueueRow from "./DocumentSyncQueueRow";
 
@@ -51,7 +50,7 @@ function WatchedDocumentsContainer() {
 
   if (loading) {
     return (
-      <Skeleton.default
+      <Skeleton
         height="80vh"
         width="100%"
         highlightColor="var(--theme-bg-primary)"

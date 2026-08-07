@@ -3,8 +3,7 @@ import { useTranslation } from "react-i18next";
 import { X } from "@phosphor-icons/react";
 import PromptHistory from "@/models/promptHistory";
 import PromptHistoryItem from "./PromptHistoryItem";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default forwardRef(function ChatPromptHistory(
   { show, workspaceSlug, onRestore, onClose, onPublishClick },
@@ -106,7 +105,7 @@ function LoaderSkeleton() {
   const highlightColor = "var(--theme-bg-primary)";
   const baseColor = "var(--theme-bg-secondary)";
   return (
-    <Skeleton.default
+    <Skeleton
       height="85px"
       width="100%"
       highlightColor={highlightColor}

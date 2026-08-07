@@ -5,8 +5,7 @@ import { castToType } from "@/utils/types";
 import { useEffect, useRef, useState } from "react";
 import AgentLLMSelection from "./AgentLLMSelection";
 import Admin from "@/models/admin";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 import paths from "@/utils/paths";
 import useUser from "@/hooks/useUser";
 
@@ -123,7 +122,7 @@ function LoadingSkeleton() {
   return (
     <div id="workspace-agent-settings-container">
       <div className="w-1/2 flex flex-col gap-y-6">
-        <Skeleton.default
+        <Skeleton
           height={100}
           width="100%"
           count={2}
@@ -133,7 +132,7 @@ function LoadingSkeleton() {
           containerClassName="flex flex-col gap-y-1"
         />
         <div className="bg-white/10 h-[1px] w-full" />
-        <Skeleton.default
+        <Skeleton
           height={100}
           width="100%"
           count={2}

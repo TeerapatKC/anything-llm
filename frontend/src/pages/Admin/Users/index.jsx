@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
-import * as Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
+import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import UserRow from "./UserRow";
@@ -72,7 +71,7 @@ function UsersContainer() {
 
   if (loading) {
     return (
-      <Skeleton.default
+      <Skeleton
         height="80vh"
         width="100%"
         highlightColor="var(--theme-bg-primary)"

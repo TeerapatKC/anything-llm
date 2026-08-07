@@ -2,7 +2,7 @@ import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import Admin from "@/models/admin";
 import { useEffect, useState } from "react";
-import * as Skeleton from "react-loading-skeleton";
+import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
 import CTAButton from "@/components/lib/CTAButton";
@@ -33,7 +33,7 @@ export default function Members({ workspace }) {
 
   if (loading) {
     return (
-      <Skeleton.default
+      <Skeleton
         height="80vh"
         width="100%"
         highlightColor="var(--theme-bg-primary)"
