@@ -12,6 +12,13 @@ import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ConfluenceOptions() {
   const { t } = useTranslation();
@@ -80,18 +87,22 @@ export default function ConfluenceOptions() {
                     {t("connectors.confluence.deployment_type_explained")}
                   </p>
                 </div>
-                <select
+                <Select
                   name="isCloud"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
                   defaultValue="true"
-                  onChange={(e) => setIsCloud(e.target.value === "true")}
+                  onValueChange={(value) => setIsCloud(value === "true")}
                 >
-                  <option value="true">Atlassian Cloud</option>
-                  <option value="false">Self-hosted</option>
-                </select>
+                  <SelectTrigger variant="settings">
+                    <SelectValue placeholder="Select an option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="true">Atlassian Cloud</SelectItem>
+                    <SelectItem value="false">Self-hosted</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex flex-col pr-10">
@@ -143,29 +154,33 @@ export default function ConfluenceOptions() {
                     {t("connectors.confluence.auth_type_explained")}
                   </p>
                 </div>
-                <select
+                <Select
                   name="accessType"
-                  className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 border-gray-500 text-white text-sm rounded-lg block py-2"
                   defaultValue={accessType}
-                  onChange={(e) => setAccessType(e.target.value)}
+                  onValueChange={setAccessType}
                 >
-                  {[
-                    {
-                      name: t("connectors.confluence.auth_type_username"),
-                      value: "username",
-                    },
-                    {
-                      name: t("connectors.confluence.auth_type_personal"),
-                      value: "personalToken",
-                    },
-                  ].map((type) => {
-                    return (
-                      <option key={type.value} value={type.value}>
-                        {type.name}
-                      </option>
-                    );
-                  })}
-                </select>
+                  <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 border-gray-500 text-white text-sm rounded-lg block py-2">
+                    <SelectValue placeholder="Select an option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[
+                      {
+                        name: t("connectors.confluence.auth_type_username"),
+                        value: "username",
+                      },
+                      {
+                        name: t("connectors.confluence.auth_type_personal"),
+                        value: "personalToken",
+                      },
+                    ].map((type) => {
+                      return (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.name}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
               </div>
               {accessType === "username" && (
                 <>

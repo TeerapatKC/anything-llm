@@ -6,6 +6,15 @@ import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
 import CommunityHub from "@/models/communityHub";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SystemPrompt({ item, setStep }) {
   const [destinationWorkspaceSlug, setDestinationWorkspaceSlug] =
@@ -78,20 +87,25 @@ export default function SystemPrompt({ item, setStep }) {
           <Label variant="settings" className="block mb-3">
             Apply to Workspace
           </Label>
-          <select
+          <Select
             name="destinationWorkspaceSlug"
             required={true}
-            onChange={(e) => setDestinationWorkspaceSlug(e.target.value)}
-            className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+            onValueChange={setDestinationWorkspaceSlug}
           >
-            <optgroup label="Available workspaces">
-              {workspaces.map((workspace) => (
-                <option key={workspace.id} value={workspace.slug}>
-                  {workspace.name}
-                </option>
-              ))}
-            </optgroup>
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Available workspaces</SelectLabel>
+                {workspaces.map((workspace) => (
+                  <SelectItem key={workspace.id} value={workspace.slug}>
+                    {workspace.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       {destinationWorkspaceSlug && (

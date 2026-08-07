@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function KokoroTTSOptions({ settings }) {
   const [endpoint, setEndpoint] = useState(
@@ -111,15 +118,12 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
         <Label variant="settings" className="block mb-3">
           Voice Model
         </Label>
-        <select
-          name="TTSKokoroVoiceModel"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available voices --
-          </option>
-        </select>
+        <Select name="TTSKokoroVoiceModel" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available voices --" />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -153,18 +157,22 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
       <Label variant="settings" className="block mb-3">
         Voice Model
       </Label>
-      <select
+      <Select
         name="TTSKokoroVoiceModel"
         required={true}
         defaultValue={settings?.TTSKokoroVoiceModel ?? "af_bella"}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
       >
-        {voices.map((voice) => (
-          <option key={voice.id} value={voice.id}>
-            {voice.name}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {voices.map((voice) => (
+            <SelectItem key={voice.id} value={voice.id}>
+              {voice.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

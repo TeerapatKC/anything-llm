@@ -13,6 +13,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function NewUserModal({ closeModal }) {
   const [error, setError] = useState(null);
@@ -114,19 +121,23 @@ export default function NewUserModal({ closeModal }) {
                 <Label variant="field" htmlFor="role" className="block mb-2">
                   Role
                 </Label>
-                <select
+                <Select
                   name="role"
                   required={true}
                   defaultValue={"default"}
-                  onChange={(e) => setRole(e.target.value)}
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
+                  onValueChange={setRole}
                 >
-                  <option value="default">Default</option>
-                  <option value="manager">Manager</option>
-                  {user?.role === "admin" && (
-                    <option value="admin">Administrator</option>
-                  )}
-                </select>
+                  <SelectTrigger variant="settings">
+                    <SelectValue placeholder="Select an option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Default</SelectItem>
+                    <SelectItem value="manager">Manager</SelectItem>
+                    {user?.role === "admin" && (
+                      <SelectItem value="admin">Administrator</SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
                 <RoleHintDisplay role={role} />
               </div>
               <MessageLimitInput

@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OpenAiWhisperOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.OpenAiKey);
@@ -29,14 +35,12 @@ export default function OpenAiWhisperOptions({ settings }) {
         <Label variant="settings" className="block mb-3">
           Whisper Model
         </Label>
-        <select
-          disabled={true}
-          className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            Whisper Large
-          </option>
-        </select>
+        <Select disabled={true}>
+          <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5">
+            <SelectValue placeholder="Whisper Large" />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     </div>
   );

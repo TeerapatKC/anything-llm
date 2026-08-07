@@ -1,4 +1,11 @@
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // We dont support all vectorDBs yet for reranking due to complexities of how each provider
 // returns information. We need to normalize the response data so Reranker can be used for each provider.
@@ -33,19 +40,23 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
           {hint[selection]?.description}
         </p>
       </div>
-      <select
+      <Select
         name="vectorSearchMode"
         value={selection}
-        className="border-none bg-theme-settings-input-bg text-white text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-        onChange={(e) => {
-          setSelection(e.target.value);
+        onValueChange={(value) => {
+          setSelection(value);
           setHasChanges(true);
         }}
         required={true}
       >
-        <option value="default">Default</option>
-        <option value="rerank">Accuracy Optimized</option>
-      </select>
+        <SelectTrigger className="border-none bg-theme-settings-input-bg text-white text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="default">Default</SelectItem>
+          <SelectItem value="rerank">Accuracy Optimized</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }

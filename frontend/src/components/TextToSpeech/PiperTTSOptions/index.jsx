@@ -5,6 +5,15 @@ import { humanFileSize } from "@/utils/numbers";
 import showToast from "@/utils/toast";
 import { CircleNotch, PauseCircle, PlayCircle } from "@phosphor-icons/react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function PiperTTSOptions({ settings }) {
   return (
@@ -72,16 +81,12 @@ function PiperTTSModelSelection({ settings }) {
         <Label variant="settings" className="block mb-3">
           Voice Model Selection
         </Label>
-        <select
-          name="TTSPiperTTSVoiceModel"
-          value=""
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option value="" disabled={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="TTSPiperTTSVoiceModel" value="" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -93,25 +98,30 @@ function PiperTTSModelSelection({ settings }) {
           Voice Model Selection
         </Label>
         <div className="flex items-center w-fit gap-x-4 mb-2">
-          <select
+          <Select
             name="TTSPiperTTSVoiceModel"
             required={true}
-            onChange={(e) => setSelectedVoice(e.target.value)}
+            onValueChange={setSelectedVoice}
             value={selectedVoice}
-            className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
           >
-            {voicesByLanguage(voices).map(([lang, voices]) => {
-              return (
-                <optgroup key={lang} label={lang}>
-                  {voices.map((voice) => (
-                    <option key={voice.key} value={voice.key}>
-                      {voiceDisplayName(voice)}
-                    </option>
-                  ))}
-                </optgroup>
-              );
-            })}
-          </select>
+            <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {voicesByLanguage(voices).map(([lang, voices]) => {
+                return (
+                  <SelectGroup key={lang}>
+                    <SelectLabel>{lang}</SelectLabel>
+                    {voices.map((voice) => (
+                      <SelectItem key={voice.key} value={voice.key}>
+                        {voiceDisplayName(voice)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                );
+              })}
+            </SelectContent>
+          </Select>
           <DemoVoiceSample voiceId={selectedVoice} />
         </div>
         <p className="text-xs text-white/40">

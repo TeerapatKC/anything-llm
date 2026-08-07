@@ -1,6 +1,15 @@
 import useGetProviderModels, {
   DISABLED_PROVIDERS,
 } from "@/hooks/useGetProvidersModels";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ChatModelSelection({
   provider,
@@ -14,90 +23,82 @@ export default function ChatModelSelection({
 
   if (loading) {
     return (
-      <select
-        required={true}
-        disabled={true}
-        className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-not-allowed"
-      >
-        <option disabled={true} selected={true}>
-          -- waiting for models --
-        </option>
-      </select>
+      <Select required={true} disabled={true}>
+        <SelectTrigger className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-not-allowed">
+          <SelectValue placeholder="-- waiting for models --" />
+        </SelectTrigger>
+        <SelectContent />
+      </Select>
     );
   }
 
   return (
-    <select
-      id="workspace-llm-model-select"
+    <Select
       required={true}
       value={selectedLLMModel}
-      onChange={(e) => {
+      onValueChange={(value) => {
         setHasChanges(true);
-        setSelectedLLMModel(e.target.value);
+        setSelectedLLMModel(value);
       }}
-      className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-pointer"
     >
-      {defaultModels.length > 0 && (
-        <optgroup label="General models">
-          {defaultModels.map((model) => {
-            return (
-              <option
-                key={model}
-                value={model}
-                selected={selectedLLMModel === model}
-              >
-                {model}
-              </option>
-            );
-          })}
-        </optgroup>
-      )}
-      {downloadedModels.length > 0 && (
-        <optgroup label="Downloaded models">
-          {downloadedModels.map((model) => (
-            <option
-              key={model.id}
-              value={model.id}
-              selected={selectedLLMModel === model.id}
-            >
-              {model.name || model.id}
-            </option>
-          ))}
-        </optgroup>
-      )}
-      {Array.isArray(customModels) && customModels.length > 0 && (
-        <optgroup label="Discovered models">
-          {customModels.map((model) => {
-            return (
-              <option
-                key={model.id}
-                value={model.id}
-                selected={selectedLLMModel === model.id}
-              >
+      <SelectTrigger
+        id="workspace-llm-model-select"
+        className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-pointer"
+      >
+        <SelectValue placeholder="Select a model" />
+      </SelectTrigger>
+      <SelectContent>
+        {defaultModels.length > 0 && (
+          <SelectGroup>
+            <SelectLabel>General models</SelectLabel>
+            {defaultModels.map((model) => {
+              return (
+                <SelectItem key={model} value={model}>
+                  {model}
+                </SelectItem>
+              );
+            })}
+          </SelectGroup>
+        )}
+        {downloadedModels.length > 0 && (
+          <SelectGroup>
+            <SelectLabel>Downloaded models</SelectLabel>
+            {downloadedModels.map((model) => (
+              <SelectItem key={model.id} value={model.id}>
                 {model.name || model.id}
-              </option>
-            );
-          })}
-        </optgroup>
-      )}
-      {/* For providers like TogetherAi where we partition model by creator entity. */}
-      {!Array.isArray(customModels) && Object.keys(customModels).length > 0 && (
-        <>
-          {Object.entries(customModels).map(([organization, models]) => (
-            <optgroup key={organization} label={organization}>
-              {models.map((model) => (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={selectedLLMModel === model.id}
-                >
-                  {model.name}
-                </option>
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        )}
+        {Array.isArray(customModels) && customModels.length > 0 && (
+          <SelectGroup>
+            <SelectLabel>Discovered models</SelectLabel>
+            {customModels.map((model) => {
+              return (
+                <SelectItem key={model.id} value={model.id}>
+                  {model.name || model.id}
+                </SelectItem>
+              );
+            })}
+          </SelectGroup>
+        )}
+        {/* For providers like TogetherAi where we partition model by creator entity. */}
+        {!Array.isArray(customModels) &&
+          Object.keys(customModels).length > 0 && (
+            <>
+              {Object.entries(customModels).map(([organization, models]) => (
+                <SelectGroup key={organization}>
+                  <SelectLabel>{organization}</SelectLabel>
+                  {models.map((model) => (
+                    <SelectItem key={model.id} value={model.id}>
+                      {model.name || model.id}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               ))}
-            </optgroup>
-          ))}
-        </>
-      )}
-    </select>
+            </>
+          )}
+      </SelectContent>
+    </Select>
   );
 }

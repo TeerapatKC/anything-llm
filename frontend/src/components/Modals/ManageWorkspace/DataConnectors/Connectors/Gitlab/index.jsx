@@ -14,6 +14,13 @@ import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DEFAULT_BRANCHES = ["main", "master"];
 export default function GitlabOptions() {
@@ -229,15 +236,12 @@ function GitLabBranchSelection({ repo, accessToken }) {
             {t("connectors.gitlab.branch_explained")}
           </p>
         </div>
-        <select
-          name="branch"
-          required={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {t("connectors.gitlab.branch_loading")}
-          </option>
-        </select>
+        <Select name="branch" required={true}>
+          <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg block w-full p-2.5">
+            <SelectValue placeholder={t("connectors.gitlab.branch_loading")} />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -250,19 +254,20 @@ function GitLabBranchSelection({ repo, accessToken }) {
           {t("connectors.gitlab.branch_explained")}
         </p>
       </div>
-      <select
-        name="branch"
-        required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg block w-full p-2.5"
-      >
-        {allBranches.map((branch) => {
-          return (
-            <option key={branch} value={branch}>
-              {branch}
-            </option>
-          );
-        })}
-      </select>
+      <Select name="branch" required={true}>
+        <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg block w-full p-2.5">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {allBranches.map((branch) => {
+            return (
+              <SelectItem key={branch} value={branch}>
+                {branch}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

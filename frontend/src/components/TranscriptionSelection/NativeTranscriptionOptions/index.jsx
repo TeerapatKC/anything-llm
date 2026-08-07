@@ -2,6 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Gauge } from "@phosphor-icons/react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function NativeTranscriptionOptions({ settings }) {
   const { t } = useTranslation();
@@ -15,22 +22,26 @@ export default function NativeTranscriptionOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             {t("common.selection")}
           </Label>
-          <select
+          <Select
             name="WhisperModelPref"
             defaultValue={model}
-            onChange={(e) => setModel(e.target.value)}
-            className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+            onValueChange={setModel}
           >
-            {["Xenova/whisper-small", "Xenova/whisper-large"].map(
-              (value, i) => {
-                return (
-                  <option key={i} value={value}>
-                    {value}
-                  </option>
-                );
-              }
-            )}
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {["Xenova/whisper-small", "Xenova/whisper-large"].map(
+                (value, i) => {
+                  return (
+                    <SelectItem key={i} value={value}>
+                      {value}
+                    </SelectItem>
+                  );
+                }
+              )}
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

@@ -12,6 +12,15 @@ import { originOnly } from "@/utils/url";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function LemonadeSpeechToTextOptions({ settings }) {
   const {
@@ -145,17 +154,18 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
         <Label variant="settings" className="block mb-3">
           Transcription Model
         </Label>
-        <select
-          name="STTLemonadeModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {basePath
-              ? "-- no transcription models found --"
-              : "Enter Lemonade URL first"}
-          </option>
-        </select>
+        <Select name="STTLemonadeModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue
+              placeholder={
+                basePath
+                  ? "-- no transcription models found --"
+                  : "Enter Lemonade URL first"
+              }
+            />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
           Load a Whisper or transcription model into your Lemonade server, then
           it will appear here.
@@ -169,36 +179,42 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
       <Label variant="settings" className="block mb-3">
         Transcription Model
       </Label>
-      <select
+      <Select
         name="STTLemonadeModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        // The groups render in this order, so a native select would have
+        // defaulted to the first downloaded model when there was one.
+        defaultValue={
+          settings?.STTLemonadeModelPref ??
+          (downloadedModels[0]?.id || customModels[0]?.id)
+        }
       >
-        {downloadedModels.length > 0 && (
-          <optgroup label="Downloaded models">
-            {downloadedModels.map((model) => (
-              <option
-                key={model.id}
-                value={model.id}
-                selected={settings?.STTLemonadeModelPref === model.id}
-              >
-                {model.id}
-              </option>
-            ))}
-          </optgroup>
-        )}
-        <optgroup label="Discovered models">
-          {customModels.map((model) => (
-            <option
-              key={model.id}
-              value={model.id}
-              selected={settings?.STTLemonadeModelPref === model.id}
-            >
-              {model.id}
-            </option>
-          ))}
-        </optgroup>
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select a model" />
+        </SelectTrigger>
+        <SelectContent>
+          {downloadedModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Downloaded models</SelectLabel>
+              {downloadedModels.map((model) => (
+                <SelectItem key={model.id} value={model.id}>
+                  {model.id}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          )}
+          {customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Discovered models</SelectLabel>
+              {customModels.map((model) => (
+                <SelectItem key={model.id} value={model.id}>
+                  {model.id}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          )}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

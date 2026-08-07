@@ -1,5 +1,12 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 const SerpApiEngines = [
   { name: "Google Search", value: "google" },
   { name: "Google Images", value: "google_images_light" },
@@ -46,18 +53,22 @@ export function SerpApiOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             Engine
           </Label>
-          <select
+          <Select
             name="env::AgentSerpApiEngine"
             required={true}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             defaultValue={settings?.AgentSerpApiEngine || "google"}
           >
-            {SerpApiEngines.map(({ name, value }) => (
-              <option key={name} value={value}>
-                {name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {SerpApiEngines.map(({ name, value }) => (
+                <SelectItem key={name} value={value}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {/* <input
             type="text"
             name="env::AgentSerpApiEngine"
@@ -123,18 +134,22 @@ export function SearchApiOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             Engine
           </Label>
-          <select
+          <Select
             name="env::AgentSearchApiEngine"
             required={true}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             defaultValue={settings?.AgentSearchApiEngine || "google"}
           >
-            {SearchApiEngines.map(({ name, value }) => (
-              <option key={name} value={value}>
-                {name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {SearchApiEngines.map(({ name, value }) => (
+                <SelectItem key={name} value={value}>
+                  {name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           {/* <input
             type="text"
             name="env::AgentSearchApiEngine"

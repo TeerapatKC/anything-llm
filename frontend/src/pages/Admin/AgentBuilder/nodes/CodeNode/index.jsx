@@ -1,5 +1,12 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CodeNode({
   config,
@@ -12,21 +19,19 @@ export default function CodeNode({
         <Label variant="field" className="block mb-2">
           Language
         </Label>
-        <select
+        <Select
           value={config.language}
-          onChange={(e) => onConfigChange({ language: e.target.value })}
-          className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
+          onValueChange={(value) => onConfigChange({ language: value })}
         >
-          <option value="javascript" className="bg-theme-bg-primary">
-            JavaScript
-          </option>
-          <option value="python" className="bg-theme-bg-primary">
-            Python
-          </option>
-          <option value="shell" className="bg-theme-bg-primary">
-            Shell
-          </option>
-        </select>
+          <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="javascript">JavaScript</SelectItem>
+            <SelectItem value="python">Python</SelectItem>
+            <SelectItem value="shell">Shell</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div>
         <Label variant="field" className="block mb-2">

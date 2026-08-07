@@ -3,6 +3,13 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import ModelRouter from "@/models/modelRouter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function RouterSelection({ workspace, setHasChanges }) {
   const { t } = useTranslation();
@@ -53,23 +60,28 @@ export default function RouterSelection({ workspace, setHasChanges }) {
       <p className="text-white text-opacity-60 text-xs font-medium">
         {t("model-router.router-selection.select-description")}
       </p>
-      <select
+      <Select
         name="router_id"
-        defaultValue={workspace?.router_id || ""}
-        onChange={() => setHasChanges(true)}
-        className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full max-w-[640px] p-2.5"
+        // The old `<option value="">` prompt row becomes the placeholder, since
+        // Radix has no empty-string item value.
+        defaultValue={workspace?.router_id || undefined}
+        onValueChange={() => setHasChanges(true)}
         required
       >
-        <option value="">
-          {t("model-router.router-selection.select-router")}
-        </option>
-        {routers.map((router) => (
-          <option key={router.id} value={router.id}>
-            {router.name}
-            {router.description ? ` — ${router.description}` : ""}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger variant="settings" className="max-w-[640px]">
+          <SelectValue
+            placeholder={t("model-router.router-selection.select-router")}
+          />
+        </SelectTrigger>
+        <SelectContent>
+          {routers.map((router) => (
+            <SelectItem key={router.id} value={router.id}>
+              {router.name}
+              {router.description ? ` — ${router.description}` : ""}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

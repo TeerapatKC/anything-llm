@@ -4,6 +4,15 @@ import useGetProviderModels, {
 import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /**
  * These models do NOT support function calling
@@ -76,16 +85,12 @@ export default function AgentModelSelection({
             {t("agent.mode.chat.description")}
           </p>
         </div>
-        <select
-          name="agentModel"
-          required={true}
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            {t("agent.mode.wait")}
-          </option>
-        </select>
+        <Select name="agentModel" required={true} disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder={t("agent.mode.wait")} />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -101,83 +106,76 @@ export default function AgentModelSelection({
         </p>
       </div>
 
-      <select
+      <Select
         name="agentModel"
         required={true}
-        onChange={() => {
+        defaultValue={workspace?.agentModel ?? undefined}
+        onValueChange={() => {
           setHasChanges(true);
         }}
-        className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
       >
-        {defaultModels.length > 0 && (
-          <optgroup label="General models">
-            {defaultModels.map((model) => {
-              if (!supportedModel(provider, model)) return null;
-              return (
-                <option
-                  key={model}
-                  value={model}
-                  selected={workspace?.agentModel === model}
-                >
-                  {model}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-        {downloadedModels.length > 0 && (
-          <optgroup label="Downloaded models">
-            {downloadedModels.map((model) => (
-              <option
-                key={model.id}
-                value={model.id}
-                selected={workspace?.agentModel === model.id}
-              >
-                {model.name || model.id}
-              </option>
-            ))}
-          </optgroup>
-        )}
-        {Array.isArray(customModels) && customModels.length > 0 && (
-          <optgroup label="Custom models">
-            {customModels.map((model) => {
-              if (!supportedModel(provider, model.id)) return null;
-
-              return (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={workspace?.agentModel === model.id}
-                >
-                  {model.id}
-                </option>
-              );
-            })}
-          </optgroup>
-        )}
-        {/* For providers like TogetherAi where we partition model by creator entity. */}
-        {!Array.isArray(customModels) &&
-          Object.keys(customModels).length > 0 && (
-            <>
-              {Object.entries(customModels).map(([organization, models]) => (
-                <optgroup key={organization} label={organization}>
-                  {models.map((model) => {
-                    if (!supportedModel(provider, model.id)) return null;
-                    return (
-                      <option
-                        key={model.id}
-                        value={model.id}
-                        selected={workspace?.agentModel === model.id}
-                      >
-                        {model.name || model.id}
-                      </option>
-                    );
-                  })}
-                </optgroup>
-              ))}
-            </>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select a model" />
+        </SelectTrigger>
+        <SelectContent>
+          {defaultModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>General models</SelectLabel>
+              {defaultModels.map((model) => {
+                if (!supportedModel(provider, model)) return null;
+                return (
+                  <SelectItem key={model} value={model}>
+                    {model}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
           )}
-      </select>
+          {downloadedModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Downloaded models</SelectLabel>
+              {downloadedModels.map((model) => (
+                <SelectItem key={model.id} value={model.id}>
+                  {model.name || model.id}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          )}
+          {Array.isArray(customModels) && customModels.length > 0 && (
+            <SelectGroup>
+              <SelectLabel>Custom models</SelectLabel>
+              {customModels.map((model) => {
+                if (!supportedModel(provider, model.id)) return null;
+
+                return (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.id}
+                  </SelectItem>
+                );
+              })}
+            </SelectGroup>
+          )}
+          {/* For providers like TogetherAi where we partition model by creator entity. */}
+          {!Array.isArray(customModels) &&
+            Object.keys(customModels).length > 0 && (
+              <>
+                {Object.entries(customModels).map(([organization, models]) => (
+                  <SelectGroup key={organization}>
+                    <SelectLabel>{organization}</SelectLabel>
+                    {models.map((model) => {
+                      if (!supportedModel(provider, model.id)) return null;
+                      return (
+                        <SelectItem key={model.id} value={model.id}>
+                          {model.name || model.id}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectGroup>
+                ))}
+              </>
+            )}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

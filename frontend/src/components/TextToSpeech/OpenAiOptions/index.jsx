@@ -1,5 +1,12 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 function toProperCase(string) {
   return string.replace(/\w\S*/g, function (txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -30,21 +37,25 @@ export default function OpenAiTextToSpeechOptions({ settings }) {
         <Label variant="settings" className="block mb-3">
           Voice Model
         </Label>
-        <select
+        <Select
           name="TTSOpenAIVoiceModel"
           defaultValue={settings?.TTSOpenAIVoiceModel ?? "alloy"}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
-          {["alloy", "echo", "fable", "onyx", "nova", "shimmer"].map(
-            (voice) => {
-              return (
-                <option key={voice} value={voice}>
-                  {toProperCase(voice)}
-                </option>
-              );
-            }
-          )}
-        </select>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            {["alloy", "echo", "fable", "onyx", "nova", "shimmer"].map(
+              (voice) => {
+                return (
+                  <SelectItem key={voice} value={voice}>
+                    {toProperCase(voice)}
+                  </SelectItem>
+                );
+              }
+            )}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

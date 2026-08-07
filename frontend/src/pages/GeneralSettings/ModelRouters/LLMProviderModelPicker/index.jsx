@@ -6,6 +6,15 @@ import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import { X } from "@phosphor-icons/react";
 import showToast from "@/utils/toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Providers that can't be routing targets
 const EXCLUDED_PROVIDERS = ["anythingllm-router"];
@@ -74,8 +83,9 @@ export default function LLMProviderModelPicker({
 
   const downloadedModels = models.filter((model) => model?.downloaded);
 
-  function handleProviderChange(e) {
-    const value = e.target.value;
+  // Radix hands the value straight through, where the native select passed an
+  // event.
+  function handleProviderChange(value) {
     setSelectedProvider(value);
     setSelectedModel("");
     setModels([]);
@@ -127,25 +137,28 @@ export default function LLMProviderModelPicker({
       )}
       <div className="flex gap-x-3">
         <div className="flex-1">
-          <select
+          <Select
             name={providerFieldName}
             value={selectedProvider}
-            onChange={handleProviderChange}
-            className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+            onValueChange={handleProviderChange}
             required
           >
-            <option value="">
-              {t("model-router.provider-picker.select-provider")}
-            </option>
-            {availableProviders.map((llm) => (
-              <option key={llm.value} value={llm.value}>
-                {llm.name}
-                {!isConfigured(llm.value)
-                  ? ` ${t("model-router.provider-picker.setup-required")}`
-                  : ""}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+              <SelectValue
+                placeholder={t("model-router.provider-picker.select-provider")}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {availableProviders.map((llm) => (
+                <SelectItem key={llm.value} value={llm.value}>
+                  {llm.name}
+                  {!isConfigured(llm.value)
+                    ? ` ${t("model-router.provider-picker.setup-required")}`
+                    : ""}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex-1">
           {needsSetup ? (
@@ -163,33 +176,39 @@ export default function LLMProviderModelPicker({
               {t("model-router.provider-picker.loading-models")}
             </div>
           ) : models.length > 0 ? (
-            <select
+            <Select
               name={modelFieldName}
               value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+              onValueChange={setSelectedModel}
               required
             >
-              <option value="">
-                {t("model-router.provider-picker.select-model")}
-              </option>
-              {downloadedModels.length > 0 && (
-                <optgroup label="Downloaded models">
-                  {downloadedModels.map((model) => (
-                    <option key={model.id} value={model.id}>
-                      {model.name || model.id}
-                    </option>
+              <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+                <SelectValue
+                  placeholder={t("model-router.provider-picker.select-model")}
+                />
+              </SelectTrigger>
+              <SelectContent>
+                null
+                {downloadedModels.length > 0 && (
+                  <SelectGroup>
+                    <SelectLabel>Downloaded models</SelectLabel>
+                    {downloadedModels.map((model) => (
+                      <SelectItem key={model.id} value={model.id}>
+                        {model.name || model.id}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                )}
+                <SelectGroup>
+                  <SelectLabel>Discovered models</SelectLabel>
+                  {models.map((model) => (
+                    <SelectItem key={model.id} value={model.id}>
+                      {model.id}
+                    </SelectItem>
                   ))}
-                </optgroup>
-              )}
-              <optgroup label="Discovered models">
-                {models.map((model) => (
-                  <option key={model.id} value={model.id}>
-                    {model.id}
-                  </option>
-                ))}
-              </optgroup>
-            </select>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           ) : (
             <input
               type="text"

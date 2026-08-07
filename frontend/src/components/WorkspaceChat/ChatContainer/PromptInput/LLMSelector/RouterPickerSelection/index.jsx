@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ModelRouter from "@/models/modelRouter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function RouterPickerSelection({
   selectedRouterId,
@@ -22,12 +29,14 @@ export default function RouterPickerSelection({
 
   if (loading) {
     return (
-      <select
-        disabled
-        className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-not-allowed"
-      >
-        <option>{t("model-router.router-selection.loading-routers")}</option>
-      </select>
+      <Select disabled>
+        <SelectTrigger className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-not-allowed">
+          <SelectValue
+            placeholder={t("model-router.router-selection.loading-routers")}
+          />
+        </SelectTrigger>
+        <SelectContent />
+      </Select>
     );
   }
 
@@ -40,25 +49,29 @@ export default function RouterPickerSelection({
   }
 
   return (
-    <select
+    <Select
       value={selectedRouterId || ""}
-      onChange={(e) => {
-        setSelectedRouterId(Number(e.target.value));
+      onValueChange={(value) => {
+        setSelectedRouterId(Number(value));
         setHasChanges(true);
       }}
-      className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-pointer"
     >
-      <option value="">
-        {t("model-router.router-selection.select-router")}
-      </option>
-      {routers.map((router) => (
-        <option key={router.id} value={router.id}>
-          {router.name}
-          {router.ruleCount != null
-            ? ` ${t("model-router.router-selection.rule-count", { count: router.ruleCount })}`
-            : ""}
-        </option>
-      ))}
-    </select>
+      <SelectTrigger className="bg-zinc-900 light:bg-white text-white light:text-slate-900 text-sm rounded-lg h-8 w-full px-2.5 outline-none border border-zinc-900 light:border-slate-400 cursor-pointer">
+        <SelectValue
+          placeholder={t("model-router.router-selection.select-router")}
+        />
+      </SelectTrigger>
+      <SelectContent>
+        null
+        {routers.map((router) => (
+          <SelectItem key={router.id} value={router.id}>
+            {router.name}
+            {router.ruleCount != null
+              ? ` ${t("model-router.router-selection.rule-count", { count: router.ruleCount })}`
+              : ""}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

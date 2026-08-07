@@ -10,6 +10,13 @@ import HeaderMenu from "./HeaderMenu";
 import paths from "@/utils/paths";
 import PublishEntityModal from "@/components/CommunityHub/PublishEntityModal";
 import { AvailableVariablesProvider } from "./useAvailableVariables";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const DEFAULT_BLOCKS = [
   {
@@ -250,20 +257,19 @@ export default function AgentBuilder() {
     onChange,
     placeholder = "Select variable"
   ) => (
-    <select
-      value={value || ""}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none p-2.5"
-    >
-      <option value="" className="bg-theme-bg-primary">
-        {placeholder}
-      </option>
-      {getAvailableVariables().map((v) => (
-        <option key={v.name} value={v.name} className="bg-theme-bg-primary">
-          {v.name}
-        </option>
-      ))}
-    </select>
+    <Select value={value || ""} onValueChange={onChange}>
+      <SelectTrigger variant="settings">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        null
+        {getAvailableVariables().map((v) => (
+          <SelectItem key={v.name} value={v.name}>
+            {v.name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 
   const deleteVariable = (variableName) => {

@@ -7,6 +7,13 @@ import showToast from "@/utils/toast";
 import LLMProviderModelPicker from "../../LLMProviderModelPicker";
 import CalculatedFields from "./CalculatedFields";
 import LLMDescriptionField from "./LLMDescriptionField";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 function createRuleTypes(t) {
   return [
@@ -161,17 +168,18 @@ export default function RuleForm({
                 <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
                   {t("model-router.rule-form.rule-type")}
                 </label>
-                <select
-                  value={ruleType}
-                  onChange={(e) => setRuleType(e.target.value)}
-                  className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
-                >
-                  {ruleTypes.map((rt) => (
-                    <option key={rt.value} value={rt.value}>
-                      {rt.label}
-                    </option>
-                  ))}
-                </select>
+                <Select value={ruleType} onValueChange={setRuleType}>
+                  <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+                    <SelectValue placeholder="Select an option" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ruleTypes.map((rt) => (
+                      <SelectItem key={rt.value} value={rt.value}>
+                        {rt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <p className="text-xs leading-4 text-zinc-400 light:text-slate-600">
                   {ruleTypes.find((rt) => rt.value === ruleType)?.description}
                 </p>

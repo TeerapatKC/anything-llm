@@ -31,6 +31,13 @@ import {
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OutlookSkillPanel({
   title,
@@ -348,24 +355,28 @@ function ConfigurationSection({
                 </TooltipContent>
               </Tooltip>
             </div>
-            <select
+            <Select
               value={authType}
-              onChange={(e) => {
-                setAuthType(e.target.value);
+              onValueChange={(value) => {
+                setAuthType(value);
                 setHasChanges(true);
               }}
-              className="w-full px-3 py-2 bg-theme-bg-primary border border-theme-sidebar-border rounded-lg text-theme-text-primary text-sm"
             >
-              <option value="common">
-                {t("agent.skill.outlook.authTypeCommon")}
-              </option>
-              <option value="consumers">
-                {t("agent.skill.outlook.authTypeConsumers")}
-              </option>
-              <option value="organization">
-                {t("agent.skill.outlook.authTypeOrganization")}
-              </option>
-            </select>
+              <SelectTrigger className="w-full px-3 py-2 bg-theme-bg-primary border border-theme-sidebar-border rounded-lg text-theme-text-primary text-sm">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="common">
+                  {t("agent.skill.outlook.authTypeCommon")}
+                </SelectItem>
+                <SelectItem value="consumers">
+                  {t("agent.skill.outlook.authTypeConsumers")}
+                </SelectItem>
+                <SelectItem value="organization">
+                  {t("agent.skill.outlook.authTypeOrganization")}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex flex-col gap-y-2">

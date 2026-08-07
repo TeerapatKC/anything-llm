@@ -1,5 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { Plus, X } from "@phosphor-icons/react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const NUMERIC_PROPERTIES = [
   "conversationTokenCount",
@@ -208,21 +215,25 @@ function ConditionRow({
         <FieldColumn
           label={showLabels ? t("model-router.rule-form.property-label") : null}
         >
-          <select
+          <Select
             value={condition.property}
-            onChange={(e) => handlePropertyChange(e.target.value)}
-            className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+            onValueChange={handlePropertyChange}
             required
           >
-            <option value="">
-              {t("model-router.rule-form.property-select")}
-            </option>
-            {properties.map((p) => (
-              <option key={p.value} value={p.value}>
-                {p.label}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+              <SelectValue
+                placeholder={t("model-router.rule-form.property-select")}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              null
+              {properties.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </FieldColumn>
 
         {isBoolean ? (
@@ -273,15 +284,19 @@ function FieldColumn({ label, children }) {
 function BooleanValueField({ value, onChange }) {
   const { t } = useTranslation();
   return (
-    <select
-      value={value || "true"}
-      onChange={(e) => onChange(e.target.value)}
-      className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
-      required
-    >
-      <option value="true">{t("model-router.rule-form.bool-true")}</option>
-      <option value="false">{t("model-router.rule-form.bool-false")}</option>
-    </select>
+    <Select value={value || "true"} onValueChange={onChange} required>
+      <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+        <SelectValue placeholder="Select an option" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="true">
+          {t("model-router.rule-form.bool-true")}
+        </SelectItem>
+        <SelectItem value="false">
+          {t("model-router.rule-form.bool-false")}
+        </SelectItem>
+      </SelectContent>
+    </Select>
   );
 }
 
@@ -293,21 +308,25 @@ function ComparatorAndValueFields({ condition, onChange, showLabels }) {
       <FieldColumn
         label={showLabels ? t("model-router.rule-form.comparator-label") : null}
       >
-        <select
+        <Select
           value={condition.comparator}
-          onChange={(e) => onChange({ comparator: e.target.value })}
-          className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+          onValueChange={(value) => onChange({ comparator: value })}
           required
         >
-          <option value="">
-            {t("model-router.rule-form.comparator-select")}
-          </option>
-          {comparators.map((c) => (
-            <option key={c.value} value={c.value}>
-              {c.label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+            <SelectValue
+              placeholder={t("model-router.rule-form.comparator-select")}
+            />
+          </SelectTrigger>
+          <SelectContent>
+            null
+            {comparators.map((c) => (
+              <SelectItem key={c.value} value={c.value}>
+                {c.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </FieldColumn>
 
       <FieldColumn

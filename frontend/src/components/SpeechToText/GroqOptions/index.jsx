@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function GroqSpeechToTextOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.STTGroqApiKey);
@@ -54,15 +61,12 @@ function GroqSttModelSelection({ apiKey, settings }) {
         <Label variant="settings" className="block mb-3">
           Transcription Model
         </Label>
-        <select
-          name="STTGroqModel"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="STTGroqModel" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -72,18 +76,22 @@ function GroqSttModelSelection({ apiKey, settings }) {
       <Label variant="settings" className="block mb-3">
         Transcription Model
       </Label>
-      <select
+      <Select
         name="STTGroqModel"
         required={true}
         defaultValue={settings?.STTGroqModel ?? "whisper-large-v3-turbo"}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
       >
-        {models.map((model) => (
-          <option key={model.id} value={model.id}>
-            {model.id}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {models.map((model) => (
+            <SelectItem key={model.id} value={model.id}>
+              {model.id}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

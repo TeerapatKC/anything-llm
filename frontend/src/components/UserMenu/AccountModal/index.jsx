@@ -23,6 +23,13 @@ import {
 } from "@/utils/username";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AccountModal({ user, hideModal }) {
   const { pfp, setPfp } = usePfp();
@@ -231,20 +238,24 @@ function LanguagePreference() {
       <Label variant="field" htmlFor="userLang" className="block mb-2">
         {t("profile_settings.language")}
       </Label>
-      <select
+      <Select
         name="userLang"
-        className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2"
         defaultValue={currentLanguage || "en"}
-        onChange={(e) => changeLanguage(e.target.value)}
+        onValueChange={changeLanguage}
       >
-        {supportedLanguages.map((lang) => {
-          return (
-            <option key={lang} value={lang}>
-              {getLanguageName(lang)}
-            </option>
-          );
-        })}
-      </select>
+        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {supportedLanguages.map((lang) => {
+            return (
+              <SelectItem key={lang} value={lang}>
+                {getLanguageName(lang)}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
     </div>
   );
 }
@@ -257,18 +268,18 @@ function ThemePreference() {
       <Label variant="field" htmlFor="theme" className="block mb-2">
         {t("profile_settings.theme")}
       </Label>
-      <select
-        name="theme"
-        value={theme}
-        onChange={(e) => setTheme(e.target.value)}
-        className="border-none bg-theme-settings-input-bg w-fit px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2"
-      >
-        {Object.entries(availableThemes).map(([key, value]) => (
-          <option key={key} value={key}>
-            {value}
-          </option>
-        ))}
-      </select>
+      <Select name="theme" value={theme} onValueChange={setTheme}>
+        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.entries(availableThemes).map(([key, value]) => (
+            <SelectItem key={key} value={key}>
+              {value}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

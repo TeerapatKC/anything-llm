@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ElevenLabsOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.TTSElevenLabsKey);
@@ -67,15 +76,12 @@ function ElevenLabsModelSelection({ apiKey, settings }) {
         <Label variant="settings" className="block mb-3">
           Chat Model Selection
         </Label>
-        <select
-          name="TTSElevenLabsVoiceModel"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="TTSElevenLabsVoiceModel" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -85,27 +91,32 @@ function ElevenLabsModelSelection({ apiKey, settings }) {
       <Label variant="settings" className="block mb-3">
         Chat Model Selection
       </Label>
-      <select
+      <Select
         name="TTSElevenLabsVoiceModel"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={
+          settings?.TTSElevenLabsVoiceModel ??
+          groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
+        }
       >
-        {Object.keys(groupedModels)
-          .sort()
-          .map((organization) => (
-            <optgroup key={organization} label={organization}>
-              {groupedModels[organization].map((model) => (
-                <option
-                  key={model.id}
-                  value={model.id}
-                  selected={model.id === settings?.TTSElevenLabsVoiceModel}
-                >
-                  {model.name}
-                </option>
-              ))}
-            </optgroup>
-          ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select a voice" />
+        </SelectTrigger>
+        <SelectContent>
+          {Object.keys(groupedModels)
+            .sort()
+            .map((organization) => (
+              <SelectGroup key={organization}>
+                <SelectLabel>{organization}</SelectLabel>
+                {groupedModels[organization].map((model) => (
+                  <SelectItem key={model.id} value={model.id}>
+                    {model.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

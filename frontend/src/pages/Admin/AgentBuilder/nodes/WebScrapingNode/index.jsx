@@ -1,6 +1,13 @@
 import Toggle from "@/components/lib/Toggle";
 import VariableInput from "../../VariableInput";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function WebScrapingNode({
   config,
@@ -29,27 +36,27 @@ export default function WebScrapingNode({
         <Label variant="field" className="block mb-2">
           Capture Page Content As
         </Label>
-        <select
+        <Select
           value={config.captureAs}
-          onChange={(e) =>
-            onConfigChange({ ...config, captureAs: e.target.value })
+          onValueChange={(value) =>
+            onConfigChange({ ...config, captureAs: value })
           }
-          className="w-full border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none p-2.5"
         >
-          {[
-            { label: "Text content only", value: "text" },
-            { label: "Raw HTML", value: "html" },
-            { label: "CSS Query Selector", value: "querySelector" },
-          ].map((captureAs) => (
-            <option
-              key={captureAs.value}
-              value={captureAs.value}
-              className="bg-theme-settings-input-bg"
-            >
-              {captureAs.label}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            {[
+              { label: "Text content only", value: "text" },
+              { label: "Raw HTML", value: "html" },
+              { label: "CSS Query Selector", value: "querySelector" },
+            ].map((captureAs) => (
+              <SelectItem key={captureAs.value} value={captureAs.value}>
+                {captureAs.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {config.captureAs === "querySelector" && (

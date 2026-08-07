@@ -75,26 +75,28 @@ export default function AzureAiOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             {t("llm.providers.azure_openai.chat_model_token_limit")}
           </Label>
+          {/* Radix only deals in string values, where a native select coerced
+              the numbers itself — value={4096} submitted "4096". */}
           <Select
             name="AzureOpenAiTokenLimit"
-            defaultValue={settings?.AzureOpenAiTokenLimit || 4096}
+            defaultValue={String(settings?.AzureOpenAiTokenLimit || 4096)}
             required={true}
           >
             <SelectTrigger variant="settings">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={4096}>4,096 (gpt-3.5-turbo)</SelectItem>
-              <SelectItem value={16384}>16,384 (gpt-3.5-16k)</SelectItem>
-              <SelectItem value={8192}>8,192 (gpt-4)</SelectItem>
-              <SelectItem value={32768}>32,768 (gpt-4-32k)</SelectItem>
-              <SelectItem value={128000}>
+              <SelectItem value="4096">4,096 (gpt-3.5-turbo)</SelectItem>
+              <SelectItem value="16384">16,384 (gpt-3.5-16k)</SelectItem>
+              <SelectItem value="8192">8,192 (gpt-4)</SelectItem>
+              <SelectItem value="32768">32,768 (gpt-4-32k)</SelectItem>
+              <SelectItem value="128000">
                 128,000 (gpt-4-turbo,gpt-4o,gpt-4o-mini,o1-mini)
               </SelectItem>
-              <SelectItem value={200000}>
+              <SelectItem value="200000">
                 200,000 (o1,o1-pro,o3-mini)
               </SelectItem>
-              <SelectItem value={1047576}>1,047,576 (gpt-4.1)</SelectItem>
+              <SelectItem value="1047576">1,047,576 (gpt-4.1)</SelectItem>
             </SelectContent>
           </Select>
         </div>

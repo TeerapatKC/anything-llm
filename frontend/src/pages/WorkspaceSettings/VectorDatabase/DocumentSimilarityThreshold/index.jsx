@@ -1,4 +1,11 @@
 import { useTranslation } from "react-i18next";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function DocumentSimilarityThreshold({
   workspace,
@@ -15,18 +22,26 @@ export default function DocumentSimilarityThreshold({
           {t("vector-workspace.doc.description")}
         </p>
       </div>
-      <select
+      {/* Radix only deals in string values, where a native select coerced the
+          numbers itself — `value={0.25}` submitted "0.25". */}
+      <Select
         name="similarityThreshold"
-        defaultValue={workspace?.similarityThreshold ?? 0.25}
-        className="border-none bg-theme-settings-input-bg text-white text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-        onChange={() => setHasChanges(true)}
+        defaultValue={String(workspace?.similarityThreshold ?? 0.25)}
+        onValueChange={() => setHasChanges(true)}
         required={true}
       >
-        <option value={0.0}>{t("vector-workspace.doc.zero")}</option>
-        <option value={0.25}>{t("vector-workspace.doc.low")}</option>
-        <option value={0.5}>{t("vector-workspace.doc.medium")}</option>
-        <option value={0.75}>{t("vector-workspace.doc.high")}</option>
-      </select>
+        <SelectTrigger variant="settings" className="mt-2">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="0">{t("vector-workspace.doc.zero")}</SelectItem>
+          <SelectItem value="0.25">{t("vector-workspace.doc.low")}</SelectItem>
+          <SelectItem value="0.5">
+            {t("vector-workspace.doc.medium")}
+          </SelectItem>
+          <SelectItem value="0.75">{t("vector-workspace.doc.high")}</SelectItem>
+        </SelectContent>
+      </Select>
     </div>
   );
 }

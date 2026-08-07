@@ -1,5 +1,12 @@
 import { useLanguageOptions } from "@/hooks/useLanguageOptions";
 import { useTranslation } from "react-i18next";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function LanguagePreference() {
   const { t } = useTranslation();
@@ -19,20 +26,24 @@ export default function LanguagePreference() {
         {t("customization.items.display-language.description")}
       </p>
       <div className="flex items-center gap-x-4">
-        <select
+        <Select
           name="userLang"
-          className="border-none bg-theme-settings-input-bg mt-2 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4"
           defaultValue={currentLanguage || "en"}
-          onChange={(e) => changeLanguage(e.target.value)}
+          onValueChange={changeLanguage}
         >
-          {supportedLanguages.map((lang) => {
-            return (
-              <option key={lang} value={lang}>
-                {getLanguageName(lang)}
-              </option>
-            );
-          })}
-        </select>
+          <SelectTrigger className="border-none bg-theme-settings-input-bg mt-2 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            {supportedLanguages.map((lang) => {
+              return (
+                <SelectItem key={lang} value={lang}>
+                  {getLanguageName(lang)}
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );

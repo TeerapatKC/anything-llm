@@ -1,5 +1,12 @@
 import React from "react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function FileNode({
   config,
@@ -12,21 +19,19 @@ export default function FileNode({
         <Label variant="field" className="block mb-2">
           Operation
         </Label>
-        <select
+        <Select
           value={config.operation}
-          onChange={(e) => onConfigChange({ operation: e.target.value })}
-          className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
+          onValueChange={(value) => onConfigChange({ operation: value })}
         >
-          <option value="read" className="bg-theme-bg-primary">
-            Read File
-          </option>
-          <option value="write" className="bg-theme-bg-primary">
-            Write File
-          </option>
-          <option value="append" className="bg-theme-bg-primary">
-            Append to File
-          </option>
-        </select>
+          <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="read">Read File</SelectItem>
+            <SelectItem value="write">Write File</SelectItem>
+            <SelectItem value="append">Append to File</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
       <div>
         <Label variant="field" className="block mb-2">

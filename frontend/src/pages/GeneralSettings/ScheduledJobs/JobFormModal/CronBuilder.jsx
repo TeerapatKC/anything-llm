@@ -4,6 +4,13 @@ import {
   parseCronToBuilderState,
   buildCronFromBuilderState,
 } from "../utils/cron";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const MINUTE_INTERVALS = [1, 2, 5, 10, 15, 20, 30];
 const MINUTES = Array.from({ length: 60 }, (_, i) => i);
@@ -52,47 +59,55 @@ export default function CronBuilder({ value, onChange }) {
 
       <div className="flex items-center gap-2 flex-wrap">
         <span className={labelClass}>{t("scheduledJobs.builder.run")}</span>
-        <select
+        <Select
           value={state.frequency}
-          onChange={(e) => update({ frequency: e.target.value })}
-          className={inputClass}
+          onValueChange={(value) => update({ frequency: value })}
         >
-          <option value="minute">
-            {t("scheduledJobs.builder.frequency.minute")}
-          </option>
-          <option value="hour">
-            {t("scheduledJobs.builder.frequency.hour")}
-          </option>
-          <option value="day">
-            {t("scheduledJobs.builder.frequency.day")}
-          </option>
-          <option value="week">
-            {t("scheduledJobs.builder.frequency.week")}
-          </option>
-          <option value="month">
-            {t("scheduledJobs.builder.frequency.month")}
-          </option>
-        </select>
+          <SelectTrigger className={inputClass}>
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="minute">
+              {t("scheduledJobs.builder.frequency.minute")}
+            </SelectItem>
+            <SelectItem value="hour">
+              {t("scheduledJobs.builder.frequency.hour")}
+            </SelectItem>
+            <SelectItem value="day">
+              {t("scheduledJobs.builder.frequency.day")}
+            </SelectItem>
+            <SelectItem value="week">
+              {t("scheduledJobs.builder.frequency.week")}
+            </SelectItem>
+            <SelectItem value="month">
+              {t("scheduledJobs.builder.frequency.month")}
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {state.frequency === "minute" && (
         <div className="flex items-center gap-2 flex-wrap">
           <span className={labelClass}>{t("scheduledJobs.builder.every")}</span>
-          <select
+          <Select
             value={state.minuteInterval}
-            onChange={(e) =>
-              update({ minuteInterval: parseInt(e.target.value, 10) })
+            onValueChange={(value) =>
+              update({ minuteInterval: parseInt(value, 10) })
             }
-            className={inputClass}
           >
-            {MINUTE_INTERVALS.map((n) => (
-              <option key={n} value={n}>
-                {n === 1
-                  ? t("scheduledJobs.builder.minuteOne")
-                  : t("scheduledJobs.builder.minuteOther", { count: n })}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className={inputClass}>
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {MINUTE_INTERVALS.map((n) => (
+                <SelectItem key={n} value={n}>
+                  {n === 1
+                    ? t("scheduledJobs.builder.minuteOne")
+                    : t("scheduledJobs.builder.minuteOther", { count: n })}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       )}
 
@@ -101,19 +116,23 @@ export default function CronBuilder({ value, onChange }) {
           <span className={labelClass}>
             {t("scheduledJobs.builder.atMinute")}
           </span>
-          <select
+          <Select
             value={state.hourMinuteOffset}
-            onChange={(e) =>
-              update({ hourMinuteOffset: parseInt(e.target.value, 10) })
+            onValueChange={(value) =>
+              update({ hourMinuteOffset: parseInt(value, 10) })
             }
-            className={inputClass}
           >
-            {MINUTES.map((n) => (
-              <option key={n} value={n}>
-                {pad2(n)}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className={inputClass}>
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {MINUTES.map((n) => (
+                <SelectItem key={n} value={n}>
+                  {pad2(n)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <span className={labelClass}>
             {t("scheduledJobs.builder.pastEveryHour")}
           </span>
@@ -173,19 +192,23 @@ export default function CronBuilder({ value, onChange }) {
       {state.frequency === "month" && (
         <div className="flex items-center gap-2 flex-wrap">
           <span className={labelClass}>{t("scheduledJobs.builder.onDay")}</span>
-          <select
+          <Select
             value={state.dayOfMonth}
-            onChange={(e) =>
-              update({ dayOfMonth: parseInt(e.target.value, 10) })
+            onValueChange={(value) =>
+              update({ dayOfMonth: parseInt(value, 10) })
             }
-            className={inputClass}
           >
-            {DAYS_OF_MONTH.map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className={inputClass}>
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              {DAYS_OF_MONTH.map((n) => (
+                <SelectItem key={n} value={n}>
+                  {n}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <span className={labelClass}>
             {t("scheduledJobs.builder.ofEveryMonth")}
           </span>

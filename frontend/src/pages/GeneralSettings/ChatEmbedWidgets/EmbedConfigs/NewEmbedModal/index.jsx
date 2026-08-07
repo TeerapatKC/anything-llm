@@ -6,6 +6,13 @@ import Embed from "@/models/embed";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function enforceSubmissionSchema(form) {
   const data = {};
@@ -137,24 +144,20 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
           will be inherited from the workspace unless overridden by this config.
         </p>
       </div>
-      <select
-        name="workspace_id"
-        required={true}
-        defaultValue={defaultValue}
-        className="min-w-[15rem] rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-white focus:ring-blue-500 focus:border-blue-500"
-      >
-        {workspaces.map((workspace) => {
-          return (
-            <option
-              key={workspace.id}
-              selected={defaultValue === workspace.id}
-              value={workspace.id}
-            >
-              {workspace.name}
-            </option>
-          );
-        })}
-      </select>
+      <Select name="workspace_id" required={true} defaultValue={defaultValue}>
+        <SelectTrigger className="min-w-[15rem] rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-white focus:ring-blue-500 focus:border-blue-500">
+          <SelectValue placeholder="Select an option" />
+        </SelectTrigger>
+        <SelectContent>
+          {workspaces.map((workspace) => {
+            return (
+              <SelectItem key={workspace.id} value={workspace.id}>
+                {workspace.name}
+              </SelectItem>
+            );
+          })}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

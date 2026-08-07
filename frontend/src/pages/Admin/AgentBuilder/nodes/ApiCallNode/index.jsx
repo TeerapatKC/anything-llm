@@ -3,6 +3,13 @@ import React, { useRef, useState } from "react";
 import { Plus, X, CaretDown } from "@phosphor-icons/react";
 import VariableInput from "../../VariableInput";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ApiCallNode({
   config,
@@ -99,21 +106,21 @@ export default function ApiCallNode({
         <Label variant="field" className="block mb-2">
           Method
         </Label>
-        <select
+        <Select
           value={config.method}
-          onChange={(e) => onConfigChange({ method: e.target.value })}
-          className="w-full border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none p-2.5"
+          onValueChange={(value) => onConfigChange({ method: value })}
         >
-          {["GET", "POST", "DELETE", "PUT", "PATCH"].map((method) => (
-            <option
-              key={method}
-              value={method}
-              className="bg-theme-settings-input-bg"
-            >
-              {method}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            {["GET", "POST", "DELETE", "PUT", "PATCH"].map((method) => (
+              <SelectItem key={method} value={method}>
+                {method}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div>
@@ -169,30 +176,19 @@ export default function ApiCallNode({
             Request Body
           </Label>
           <div className="space-y-2">
-            <select
+            <Select
               value={config.bodyType || "json"}
-              onChange={(e) => onConfigChange({ bodyType: e.target.value })}
-              className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none light:bg-theme-settings-input-bg light:border-black/10"
+              onValueChange={(value) => onConfigChange({ bodyType: value })}
             >
-              <option
-                value="json"
-                className="bg-theme-bg-primary light:bg-theme-settings-input-bg"
-              >
-                JSON
-              </option>
-              <option
-                value="text"
-                className="bg-theme-bg-primary light:bg-theme-settings-input-bg"
-              >
-                Raw Text
-              </option>
-              <option
-                value="form"
-                className="bg-theme-bg-primary light:bg-theme-settings-input-bg"
-              >
-                Form Data
-              </option>
-            </select>
+              <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none light:bg-theme-settings-input-bg light:border-black/10">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="json">JSON</SelectItem>
+                <SelectItem value="text">Raw Text</SelectItem>
+                <SelectItem value="form">Form Data</SelectItem>
+              </SelectContent>
+            </Select>
             {config.bodyType === "json" ? (
               <VariableInput
                 multiline
