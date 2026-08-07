@@ -4,6 +4,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function PGVectorOptions({ settings }) {
   return (
@@ -11,9 +13,9 @@ export default function PGVectorOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-96">
           <div className="flex items-center gap-x-1 mb-3">
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Postgres Connection String
-            </label>
+            </Label>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Info
@@ -43,10 +45,10 @@ export default function PGVectorOptions({ settings }) {
               </TooltipContent>
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="text"
             name="PGVectorConnectionString"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="postgresql://username:password@host:port/database"
             defaultValue={
               settings?.PGVectorConnectionString ? "*".repeat(20) : ""
@@ -59,9 +61,9 @@ export default function PGVectorOptions({ settings }) {
 
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-x-1 mb-3">
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               Vector Table Name
-            </label>
+            </Label>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Info
@@ -87,12 +89,12 @@ export default function PGVectorOptions({ settings }) {
               </TooltipContent>
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="text"
             name="PGVectorTableName"
             autoComplete="off"
             defaultValue={settings?.PGVectorTableName}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="vector_table"
           />
         </div>

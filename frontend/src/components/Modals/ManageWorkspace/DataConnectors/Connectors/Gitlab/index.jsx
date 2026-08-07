@@ -12,6 +12,8 @@ import {
 import { useTranslation } from "react-i18next";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const DEFAULT_BRANCHES = ["main", "master"];
 export default function GitlabOptions() {
@@ -76,17 +78,15 @@ export default function GitlabOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold">
-                    {t("connectors.gitlab.URL")}
-                  </label>
+                  <Label variant="bold">{t("connectors.gitlab.URL")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.gitlab.URL_explained")}
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="url"
                   name="repo"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="https://gitlab.com/gitlab-org/gitlab"
                   required={true}
                   autoComplete="off"
@@ -97,7 +97,7 @@ export default function GitlabOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white font-bold text-sm flex gap-x-2 items-center">
+                  <Label variant="bold" className="flex gap-x-2 items-center">
                     <p className="font-bold text-white">
                       {t("connectors.gitlab.token")}
                     </p>{" "}
@@ -107,15 +107,15 @@ export default function GitlabOptions() {
                       </span>
                       <PATTooltip accessToken={accessToken} />
                     </p>
-                  </label>
+                  </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.gitlab.token_description")}
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="text"
                   name="accessToken"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="glpat-XXXXXXXXXXXXXXXXXXXX"
                   required={false}
                   autoComplete="off"
@@ -126,9 +126,9 @@ export default function GitlabOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white font-bold text-sm flex gap-x-2 items-center">
+                  <Label variant="bold" className="flex gap-x-2 items-center">
                     <p className="font-bold text-white">Settings</p>
-                  </label>
+                  </Label>
                   <p className="text-xs font-normal text-white">
                     {t("connectors.gitlab.token_description")}
                   </p>
@@ -224,9 +224,7 @@ function GitLabBranchSelection({ repo, accessToken }) {
     return (
       <div className="flex flex-col w-60">
         <div className="flex flex-col gap-y-1 mb-4">
-          <label className="text-white text-sm font-bold">
-            {t("connectors.gitlab.branch")}
-          </label>
+          <Label variant="bold">{t("connectors.gitlab.branch")}</Label>
           <p className="text-xs font-normal text-theme-text-secondary">
             {t("connectors.gitlab.branch_explained")}
           </p>
@@ -247,7 +245,7 @@ function GitLabBranchSelection({ repo, accessToken }) {
   return (
     <div className="flex flex-col w-60">
       <div className="flex flex-col gap-y-1 mb-4">
-        <label className="text-white text-sm font-bold">Branch</label>
+        <Label variant="bold">Branch</Label>
         <p className="text-xs font-normal text-theme-text-secondary">
           {t("connectors.gitlab.branch_explained")}
         </p>

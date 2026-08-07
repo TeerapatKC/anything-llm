@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function DeepgramSpeechToTextOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.STTDeepgramApiKey);
@@ -10,13 +12,13 @@ export default function DeepgramSpeechToTextOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           API Key
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="password"
           name="STTDeepgramApiKey"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="Deepgram API Key"
           defaultValue={settings?.STTDeepgramApiKey ? "*".repeat(20) : ""}
           required={true}
@@ -51,9 +53,9 @@ function DeepgramSttModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Transcription Model
-        </label>
+        </Label>
         <select
           name="STTDeepgramModel"
           disabled={true}
@@ -69,9 +71,9 @@ function DeepgramSttModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Transcription Model
-      </label>
+      </Label>
       <select
         name="STTDeepgramModel"
         required={true}

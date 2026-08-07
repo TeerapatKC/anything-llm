@@ -10,6 +10,7 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_PATTERN,
 } from "@/utils/username";
+import { Input } from "@/components/ui/input";
 
 export default function NewUserModal() {
   const { code } = useParams();
@@ -55,10 +56,10 @@ export default function NewUserModal() {
                 >
                   Username
                 </label>
-                <input
+                <Input
+                  variant="settings"
                   name="username"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="My username"
                   minLength={USERNAME_MIN_LENGTH}
                   maxLength={USERNAME_MAX_LENGTH}
@@ -77,10 +78,10 @@ export default function NewUserModal() {
                 >
                   Password
                 </label>
-                <input
+                <Input
+                  variant="settings"
                   name="password"
                   type="password"
-                  className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="Your password"
                   required={true}
                   minLength={8}

@@ -22,6 +22,7 @@ import {
   USERNAME_PATTERN,
 } from "@/utils/username";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function AccountModal({ user, hideModal }) {
   const { pfp, setPfp } = usePfp();
@@ -162,12 +163,13 @@ export default function AccountModal({ user, hideModal }) {
                 </p>
               </div>
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   {t("profile_settings.new_password")}
-                </label>
+                </Label>
                 <input
                   name="password"
                   type="text"
@@ -180,12 +182,9 @@ export default function AccountModal({ user, hideModal }) {
                 </p>
               </div>
               <div>
-                <label
-                  htmlFor="bio"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="bio" className="block mb-2">
                   Bio
-                </label>
+                </Label>
                 <textarea
                   name="bio"
                   className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 min-h-[100px] resize-y"
@@ -229,12 +228,9 @@ function LanguagePreference() {
   const { t } = useTranslation();
   return (
     <div>
-      <label
-        htmlFor="userLang"
-        className="block mb-2 text-sm font-medium text-white"
-      >
+      <Label variant="field" htmlFor="userLang" className="block mb-2">
         {t("profile_settings.language")}
-      </label>
+      </Label>
       <select
         name="userLang"
         className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2"
@@ -258,12 +254,9 @@ function ThemePreference() {
   const { t } = useTranslation();
   return (
     <div>
-      <label
-        htmlFor="theme"
-        className="block mb-2 text-sm font-medium text-white"
-      >
+      <Label variant="field" htmlFor="theme" className="block mb-2">
         {t("profile_settings.theme")}
-      </label>
+      </Label>
       <select
         name="theme"
         value={theme}
@@ -297,12 +290,9 @@ function AutoSubmitPreference() {
   return (
     <div>
       <div className="flex items-center gap-x-1 mb-2">
-        <label
-          htmlFor="autoSubmit"
-          className="block text-sm font-medium text-white"
-        >
+        <Label variant="field" htmlFor="autoSubmit" className="block">
           {t("customization.chat.auto_submit.title")}
-        </label>
+        </Label>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="cursor-pointer h-fit">
@@ -339,12 +329,9 @@ function AutoSpeakPreference() {
   return (
     <div>
       <div className="flex items-center gap-x-1 mb-2">
-        <label
-          htmlFor="autoSpeak"
-          className="block text-sm font-medium text-white"
-        >
+        <Label variant="field" htmlFor="autoSpeak" className="block">
           {t("customization.chat.auto_speak.title")}
-        </label>
+        </Label>
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="cursor-pointer h-fit">

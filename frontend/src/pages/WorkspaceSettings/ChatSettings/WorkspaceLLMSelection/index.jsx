@@ -8,6 +8,7 @@ import RouterSelection from "./RouterSelection";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
+import { Input } from "@/components/ui/input";
 
 // Some providers do not support model selection via /models.
 // In that case we allow the user to enter the model name manually and hope they
@@ -217,12 +218,12 @@ function FreeFormLLMInput({ workspace, setHasChanges }) {
       <p className="text-white text-opacity-60 text-xs font-medium">
         {t("chat.model.description")}
       </p>
-      <input
+      <Input
+        variant="settings"
         type="text"
         name="chatModel"
         defaultValue={workspace?.chatModel || ""}
         onChange={() => setHasChanges(true)}
-        className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
         placeholder="Enter model name exactly as referenced in the API (e.g., gpt-4.1-nano)"
       />
     </div>

@@ -3,6 +3,8 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { Info } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function PaperlessNgxOptions() {
   const [loading, setLoading] = useState(false);
@@ -52,18 +54,16 @@ export default function PaperlessNgxOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold">
-                    Base URL
-                  </label>
+                  <Label variant="bold">Base URL</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     The URL where your Paperless-ngx instance is running (e.g.,
                     http://localhost:8000)
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="url"
                   name="baseUrl"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="http://localhost:8000"
                   required={true}
                   autoComplete="off"
@@ -73,18 +73,18 @@ export default function PaperlessNgxOptions() {
 
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold flex gap-x-2 items-center">
+                  <Label variant="bold" className="flex gap-x-2 items-center">
                     <p className="font-bold text-white">API Token</p>
-                  </label>
+                  </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     Your Paperless-ngx API token. You can find this under
                     &apos;My Profile&apos; and then &apos;API Auth Token&apos;.
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="password"
                   name="apiToken"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="Enter your API token"
                   required={true}
                   autoComplete="off"

@@ -1,14 +1,16 @@
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 export default function GenericOpenAiWhisperOptions({ settings }) {
   return (
     <div className="flex gap-x-7 gap-[36px] mt-1.5 flex-wrap">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Base URL
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="url"
           name="WhisperGenericOpenAiBaseUrl"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="http://localhost:8000/v1"
           defaultValue={settings?.WhisperGenericOpenAiBaseUrl}
           required={true}
@@ -21,13 +23,13 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
         </p>
       </div>
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           API Key
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="password"
           name="WhisperGenericOpenAiApiKey"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="API Key"
           defaultValue={
             settings?.WhisperGenericOpenAiApiKey ? "*".repeat(20) : ""
@@ -40,13 +42,13 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
         </p>
       </div>
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Transcription Model
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="text"
           name="WhisperGenericOpenAiModel"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="whisper-small"
           defaultValue={settings?.WhisperGenericOpenAiModel}
           required={true}

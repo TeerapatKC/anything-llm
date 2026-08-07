@@ -28,6 +28,7 @@ import {
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import GoogleCalendarIcon from "./google-calendar.png";
+import { Label } from "@/components/ui/label";
 
 export default function GoogleCalendarSkillPanel({
   title,
@@ -240,9 +241,9 @@ function ConfigurationSection({
         <div className="p-3 flex flex-col gap-y-4 border-t border-theme-sidebar-border/50">
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <label className="text-theme-text-primary text-sm font-medium">
+              <Label variant="field">
                 {t("agent.skill.googleCalendar.deploymentId")}
-              </label>
+              </Label>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Info size={16} className="text-theme-text-secondary" />
@@ -266,9 +267,9 @@ function ConfigurationSection({
 
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <label className="text-theme-text-primary text-sm font-medium">
+              <Label variant="field">
                 {t("agent.skill.googleCalendar.apiKey")}
-              </label>
+              </Label>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Info size={16} className="text-theme-text-secondary" />

@@ -1,3 +1,5 @@
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 const SerpApiEngines = [
   { name: "Google Search", value: "google" },
   { name: "Google Images", value: "google_images_light" },
@@ -26,13 +28,13 @@ export function SerpApiOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentSerpApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="SerpApi API Key"
             defaultValue={settings?.AgentSerpApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -41,9 +43,9 @@ export function SerpApiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Engine
-          </label>
+          </Label>
           <select
             name="env::AgentSerpApiEngine"
             required={true}
@@ -103,13 +105,13 @@ export function SearchApiOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentSearchApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="SearchApi API Key"
             defaultValue={settings?.AgentSearchApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -118,9 +120,9 @@ export function SearchApiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Engine
-          </label>
+          </Label>
           <select
             name="env::AgentSearchApiEngine"
             required={true}
@@ -165,13 +167,13 @@ export function SerperDotDevOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentSerperApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Serper.dev API Key"
             defaultValue={settings?.AgentSerperApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -200,13 +202,13 @@ export function BingSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentBingSearchApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Bing Web Search API Key"
             defaultValue={settings?.AgentBingSearchApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -264,13 +266,13 @@ export function BaiduSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentBaiduSearchApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Baidu Search API Key"
             defaultValue={
               settings?.AgentBaiduSearchApiKey ? "*".repeat(20) : ""
@@ -301,13 +303,13 @@ export function SerplySearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentSerplyApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Serply API Key"
             defaultValue={settings?.AgentSerplyApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -324,13 +326,13 @@ export function SearXNGOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           SearXNG API Base URL
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="url"
           name="env::AgentSearXNGApiUrl"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="SearXNG API Base URL"
           defaultValue={settings?.AgentSearXNGApiUrl}
           required={true}
@@ -358,13 +360,13 @@ export function TavilySearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentTavilyApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Tavily API Key"
             defaultValue={settings?.AgentTavilyApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -402,13 +404,13 @@ export function CrwSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentCrwApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="fastCRW API Key"
             defaultValue={settings?.AgentCrwApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -417,13 +419,13 @@ export function CrwSearchOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Base URL (optional)
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="env::AgentCrwApiUrl"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="https://fastcrw.com/api"
             defaultValue={settings?.AgentCrwApiUrl}
             autoComplete="off"
@@ -461,13 +463,13 @@ export function ExaSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentExaApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Exa API Key"
             defaultValue={settings?.AgentExaApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -496,13 +498,13 @@ export function PerplexitySearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentPerplexityApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Perplexity API Key"
             defaultValue={settings?.AgentPerplexityApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -531,13 +533,13 @@ export function BraveSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentBraveApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Brave API Key"
             defaultValue={settings?.AgentBraveApiKey ? "*".repeat(20) : ""}
             required={true}
@@ -568,13 +570,13 @@ export function YouSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             API Key (optional)
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="env::AgentYouApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="You.com API Key"
             defaultValue={settings?.AgentYouApiKey ? "*".repeat(20) : ""}
             required={false}

@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import ChangeWarningModal from "@/components/ChangeWarning";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 function isNullOrNaN(value) {
   if (value === null) return true;
@@ -131,20 +133,20 @@ export default function EmbeddingTextSplitterPreference() {
               <div className="flex flex-col gap-y-4 mt-8">
                 <div className="flex flex-col max-w-[300px]">
                   <div className="flex flex-col gap-y-2 mb-4">
-                    <label className="text-white text-sm font-semibold block">
+                    <Label variant="settings" className="block">
                       {t("text.size.title")}
-                    </label>
+                    </Label>
                     <p className="text-xs text-white/60">
                       {t("text.size.description")}
                     </p>
                   </div>
-                  <input
+                  <Input
+                    variant="settings"
                     type="number"
                     name="text_splitter_chunk_size"
                     min={1}
                     max={settings?.max_embed_chunk_size || 1000}
                     onWheel={(e) => e?.currentTarget?.blur()}
-                    className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     placeholder="maximum length of vectorized text"
                     defaultValue={
                       isNullOrNaN(settings?.text_splitter_chunk_size)
@@ -164,19 +166,19 @@ export default function EmbeddingTextSplitterPreference() {
               <div className="flex flex-col gap-y-4 mt-8">
                 <div className="flex flex-col max-w-[300px]">
                   <div className="flex flex-col gap-y-2 mb-4">
-                    <label className="text-white text-sm font-semibold block">
+                    <Label variant="settings" className="block">
                       {t("text.overlap.title")}
-                    </label>
+                    </Label>
                     <p className="text-xs text-white/60">
                       {t("text.overlap.description")}
                     </p>
                   </div>
-                  <input
+                  <Input
+                    variant="settings"
                     type="number"
                     name="text_splitter_chunk_overlap"
                     min={0}
                     onWheel={(e) => e?.currentTarget?.blur()}
-                    className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     placeholder="maximum length of vectorized text"
                     defaultValue={
                       isNullOrNaN(settings?.text_splitter_chunk_overlap)

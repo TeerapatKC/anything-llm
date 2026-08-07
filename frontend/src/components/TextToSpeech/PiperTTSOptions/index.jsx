@@ -4,6 +4,7 @@ import { titleCase } from "text-case";
 import { humanFileSize } from "@/utils/numbers";
 import showToast from "@/utils/toast";
 import { CircleNotch, PauseCircle, PlayCircle } from "@phosphor-icons/react";
+import { Label } from "@/components/ui/label";
 
 export default function PiperTTSOptions({ settings }) {
   return (
@@ -68,9 +69,9 @@ function PiperTTSModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Voice Model Selection
-        </label>
+        </Label>
         <select
           name="TTSPiperTTSVoiceModel"
           value=""
@@ -88,9 +89,9 @@ function PiperTTSModelSelection({ settings }) {
   return (
     <div className="flex flex-col w-fit">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Voice Model Selection
-        </label>
+        </Label>
         <div className="flex items-center w-fit gap-x-4 mb-2">
           <select
             name="TTSPiperTTSVoiceModel"

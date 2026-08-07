@@ -10,6 +10,8 @@ import {
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { originOnly } from "@/utils/url";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function LemonadeSpeechToTextOptions({ settings }) {
   const {
@@ -30,9 +32,7 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <label className="text-white text-sm font-semibold">
-                Base URL
-              </label>
+              <Label variant="settings">Base URL</Label>
               {loading ? (
                 <CircleNotch className="w-4 h-4 text-theme-text-secondary animate-spin" />
               ) : (
@@ -61,10 +61,10 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
               </TooltipContent>
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="url"
             name="STTLemonadeBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:13305"
             value={basePathValue.value}
             required={true}
@@ -80,9 +80,9 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
         />
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <label className="text-white text-sm font-semibold block">
+            <Label variant="settings" className="block">
               API Key (optional)
-            </label>
+            </Label>
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -96,11 +96,11 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
               </TooltipContent>
             </Tooltip>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="password"
             name="LemonadeLLMApiKey"
             defaultValue={settings?.LemonadeLLMApiKey ? "*".repeat(20) : ""}
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             autoComplete="off"
           />
         </div>
@@ -142,9 +142,9 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Transcription Model
-        </label>
+        </Label>
         <select
           name="STTLemonadeModelPref"
           disabled={true}
@@ -166,9 +166,9 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Transcription Model
-      </label>
+      </Label>
       <select
         name="STTLemonadeModelPref"
         required={true}

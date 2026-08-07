@@ -5,6 +5,7 @@ import { useEffect, useState, useRef } from "react";
 import { sentenceCase } from "text-case";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 /**
  * Converts setup_args to inputs for the form builder
@@ -147,9 +148,9 @@ export default function ImportedSkillConfig({
             <div className="flex flex-col gap-y-2">
               {Object.entries(config.setup_args).map(([key, props]) => (
                 <div key={key} className="flex flex-col gap-y-1">
-                  <label htmlFor={key} className="text-white text-sm font-bold">
+                  <Label variant="bold" htmlFor={key}>
                     {key}
-                  </label>
+                  </Label>
                   <input
                     type={props?.input?.type || "text"}
                     required={props?.input?.required}

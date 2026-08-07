@@ -3,6 +3,8 @@ import { X } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function NewWorkspaceModal({ closeModal }) {
   const [error, setError] = useState(null);
@@ -33,16 +35,13 @@ export default function NewWorkspaceModal({ closeModal }) {
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
               <div>
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="name" className="block mb-2">
                   {t("common.workspaces-name")}
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="name"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="My workspace"
                   minLength={4}
                   required={true}

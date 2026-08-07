@@ -15,6 +15,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function DrupalWikiOptions() {
   const [loading, setLoading] = useState(false);
@@ -67,9 +69,9 @@ export default function DrupalWikiOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold flex gap-x-2 items-center">
+                  <Label variant="bold" className="flex gap-x-2 items-center">
                     <p className="font-bold text-white">Drupal Wiki base URL</p>
-                  </label>
+                  </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     This is the base URL of your&nbsp;
                     <a
@@ -83,10 +85,10 @@ export default function DrupalWikiOptions() {
                     .
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="url"
                   name="baseUrl"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="eg: https://mywiki.drupal-wiki.net, https://drupalwiki.mycompany.tld, etc..."
                   required={true}
                   autoComplete="off"
@@ -95,9 +97,7 @@ export default function DrupalWikiOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold">
-                    Drupal Wiki Space IDs
-                  </label>
+                  <Label variant="bold">Drupal Wiki Space IDs</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     Comma separated Space IDs you want to extract. See the&nbsp;
                     <a
@@ -113,10 +113,10 @@ export default function DrupalWikiOptions() {
                     'API-Token User' has access to those spaces.
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="text"
                   name="spaceIds"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="eg: 12,34,69"
                   required={true}
                   autoComplete="off"
@@ -125,7 +125,7 @@ export default function DrupalWikiOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold flex gap-x-2 items-center">
+                  <Label variant="bold" className="flex gap-x-2 items-center">
                     <p className="font-bold text-white">
                       Drupal Wiki API Token
                     </p>
@@ -155,15 +155,15 @@ export default function DrupalWikiOptions() {
                         </p>
                       </TooltipContent>
                     </Tooltip>
-                  </label>
+                  </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     Access token for authentication.
                   </p>
                 </div>
-                <input
+                <Input
+                  variant="settings"
                   type="password"
                   name="accessToken"
-                  className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="pat:123"
                   required={true}
                   autoComplete="off"

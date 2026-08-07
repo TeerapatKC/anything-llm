@@ -5,6 +5,7 @@ import { TagsInput } from "react-tag-input-component";
 import Embed from "@/models/embed";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export function enforceSubmissionSchema(form) {
   const data = {};
@@ -128,12 +129,9 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <label
-          htmlFor="workspace_id"
-          className="block  text-sm font-medium text-white"
-        >
+        <Label variant="field" htmlFor="workspace_id" className="block">
           Workspace
-        </label>
+        </Label>
         <p className="text-theme-text-secondary text-xs">
           This is the workspace your chat window will be based on. All defaults
           will be inherited from the workspace unless overridden by this config.
@@ -167,12 +165,9 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <label
-          className="block text-sm font-medium text-white"
-          htmlFor="chat_mode"
-        >
+        <Label variant="field" className="block" htmlFor="chat_mode">
           Allowed chat method
-        </label>
+        </Label>
         <p className="text-theme-text-secondary text-xs">
           Set how your chatbot should operate. Query means it will only respond
           if a document helps answer the query.
@@ -280,12 +275,9 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <label
-          htmlFor="allowlist_domains"
-          className="block text-sm font-medium text-white"
-        >
+        <Label variant="field" htmlFor="allowlist_domains" className="block">
           Restrict requests from domains
-        </label>
+        </Label>
         <p className="text-theme-text-secondary text-xs">
           This filter will block any requests that come from a domain other than
           the list below.
@@ -313,9 +305,9 @@ export const NumberInput = ({ name, title, hint, defaultValue = 0 }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <label htmlFor={name} className="block text-sm font-medium text-white">
+        <Label variant="field" htmlFor={name} className="block">
           {title}
-        </label>
+        </Label>
         <p className="text-theme-text-secondary text-xs">{hint}</p>
       </div>
       <input

@@ -1,3 +1,5 @@
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 function toProperCase(string) {
   return string.replace(/\w\S*/g, function (txt) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -10,13 +12,13 @@ export default function OpenAiTextToSpeechOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           API Key
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="password"
           name="TTSOpenAIKey"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="OpenAI API Key"
           defaultValue={apiKey ? "*".repeat(20) : ""}
           required={true}
@@ -25,9 +27,9 @@ export default function OpenAiTextToSpeechOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Voice Model
-        </label>
+        </Label>
         <select
           name="TTSOpenAIVoiceModel"
           defaultValue={settings?.TTSOpenAIVoiceModel ?? "alloy"}

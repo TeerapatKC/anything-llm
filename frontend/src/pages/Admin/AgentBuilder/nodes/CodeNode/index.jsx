@@ -1,4 +1,5 @@
 import React from "react";
+import { Label } from "@/components/ui/label";
 
 export default function CodeNode({
   config,
@@ -8,9 +9,9 @@ export default function CodeNode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Language
-        </label>
+        </Label>
         <select
           value={config.language}
           onChange={(e) => onConfigChange({ language: e.target.value })}
@@ -28,9 +29,9 @@ export default function CodeNode({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Code
-        </label>
+        </Label>
         <textarea
           placeholder="Enter code..."
           value={config.code}
@@ -42,9 +43,9 @@ export default function CodeNode({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Store Result In
-        </label>
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),

@@ -1,5 +1,6 @@
 import React from "react";
 import VariableInput from "../../VariableInput";
+import { Label } from "@/components/ui/label";
 
 export default function LLMInstructionNode({
   config,
@@ -9,9 +10,9 @@ export default function LLMInstructionNode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Instruction
-        </label>
+        </Label>
         <VariableInput
           multiline
           rows={3}
@@ -27,9 +28,9 @@ export default function LLMInstructionNode({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Result Variable
-        </label>
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ ...config, resultVariable: value }),

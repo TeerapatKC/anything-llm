@@ -14,6 +14,11 @@ const labelVariants = cva("", {
       // left out — the call sites vary between mb-3, mb-2 and no margin, so
       // spacing stays with the caller.
       settings: "text-theme-text-primary text-sm font-semibold",
+      // The two other weights the app repeats for form labels. As with
+      // `settings`, spacing stays with the caller because the call sites vary
+      // between mb-3, mb-2, mb-1 and none.
+      field: "text-theme-text-primary text-sm font-medium",
+      bold: "text-theme-text-primary text-sm font-bold",
     },
   },
   defaultVariants: { variant: "default" },

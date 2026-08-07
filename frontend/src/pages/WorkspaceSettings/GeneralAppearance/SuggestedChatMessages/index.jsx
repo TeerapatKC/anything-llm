@@ -4,6 +4,7 @@ import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import { Plus, X } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import { Label } from "@/components/ui/label";
 
 export default function SuggestedChatMessages({ slug }) {
   const [suggestedMessages, setSuggestedMessages] = useState([]);
@@ -160,9 +161,9 @@ export default function SuggestedChatMessages({ slug }) {
       {editingIndex >= 0 && (
         <div className="flex flex-col gap-y-4 mr-2">
           <div className="w-1/2">
-            <label className="text-white text-sm font-semibold block mb-2">
+            <Label variant="settings" className="block mb-2">
               Message
-            </label>
+            </Label>
             <input
               placeholder="Message"
               className="border-none bg-theme-settings-input-bg text-white placeholder:text-white/20 text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block p-2.5 w-full"

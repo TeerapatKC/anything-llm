@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Gauge } from "@phosphor-icons/react";
+import { Label } from "@/components/ui/label";
 
 export default function NativeTranscriptionOptions({ settings }) {
   const { t } = useTranslation();
@@ -11,9 +12,9 @@ export default function NativeTranscriptionOptions({ settings }) {
       <LocalWarning model={model} />
       <div className="w-full flex items-center gap-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             {t("common.selection")}
-          </label>
+          </Label>
           <select
             name="WhisperModelPref"
             defaultValue={model}

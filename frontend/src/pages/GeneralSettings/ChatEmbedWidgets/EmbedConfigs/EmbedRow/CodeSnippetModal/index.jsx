@@ -5,6 +5,7 @@ import hljs from "highlight.js";
 import "@/utils/chat/themes/github-dark.css";
 import "@/utils/chat/themes/github.css";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function CodeSnippetModal({ embed, closeModal }) {
   return (
@@ -75,9 +76,9 @@ const ScriptTag = ({ embed }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <label className="block text-sm font-medium text-white">
+        <Label variant="field" className="block">
           HTML Script Tag Embed Code
-        </label>
+        </Label>
         <p className="text-theme-text-secondary text-xs">
           Have your workspace chat embed function like a help desk chat bottom
           in the corner of your website.

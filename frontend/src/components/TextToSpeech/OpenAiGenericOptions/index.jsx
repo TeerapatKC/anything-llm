@@ -1,4 +1,6 @@
 import React from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function OpenAiGenericTextToSpeechOptions({ settings }) {
   return (
@@ -6,12 +8,12 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
           <div className="flex justify-between items-start mb-2">
-            <label className="text-white text-sm font-semibold">Base URL</label>
+            <Label variant="settings">Base URL</Label>
           </div>
-          <input
+          <Input
+            variant="settings"
             type="url"
             name="TTSOpenAICompatibleEndpoint"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:7851/v1"
             defaultValue={settings?.TTSOpenAICompatibleEndpoint}
             required={false}
@@ -24,13 +26,13 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="TTSOpenAICompatibleKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="API Key"
             defaultValue={
               settings?.TTSOpenAICompatibleKey ? "*".repeat(20) : ""
@@ -46,13 +48,13 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
       </div>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             TTS Model
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="text"
             name="TTSOpenAICompatibleModel"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Your TTS model identifier"
             defaultValue={settings?.TTSOpenAICompatibleModel}
             required={true}
@@ -66,13 +68,13 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Voice Model
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="text"
             name="TTSOpenAICompatibleVoiceModel"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Your voice model identifier"
             defaultValue={settings?.TTSOpenAICompatibleVoiceModel}
             required={true}

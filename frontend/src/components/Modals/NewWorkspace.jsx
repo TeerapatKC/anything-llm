@@ -5,6 +5,8 @@ import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import ModalWrapper from "@/components/ModalWrapper";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const noop = () => false;
 export default function NewWorkspaceModal({ hideModal = noop }) {
@@ -45,17 +47,14 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
             <div className="py-7 px-9 space-y-2 flex-col">
               <div className="w-full flex flex-col gap-y-4">
                 <div>
-                  <label
-                    htmlFor="name"
-                    className="block mb-2 text-sm font-medium text-white"
-                  >
+                  <Label variant="field" htmlFor="name" className="block mb-2">
                     {t("common.workspaces-name")}
-                  </label>
-                  <input
+                  </Label>
+                  <Input
+                    variant="settings"
                     name="name"
                     type="text"
                     id="name"
-                    className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     placeholder={t("new-workspace.placeholder")}
                     required={true}
                     autoComplete="off"

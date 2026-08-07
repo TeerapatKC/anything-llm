@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function KokoroTTSOptions({ settings }) {
   const [endpoint, setEndpoint] = useState(
@@ -25,13 +27,13 @@ export default function KokoroTTSOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             Base URL
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="TTSKokoroEndpoint"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:8880/v1"
             defaultValue={settings?.TTSKokoroEndpoint}
             required={true}
@@ -45,13 +47,13 @@ export default function KokoroTTSOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="TTSKokoroKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Optional API Key"
             defaultValue={settings?.TTSKokoroKey ? "*".repeat(20) : ""}
             autoComplete="off"
@@ -106,9 +108,9 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Voice Model
-        </label>
+        </Label>
         <select
           name="TTSKokoroVoiceModel"
           disabled={true}
@@ -125,13 +127,13 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
   if (voices.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Voice Model
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="text"
           name="TTSKokoroVoiceModel"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="af_bella"
           defaultValue={settings?.TTSKokoroVoiceModel ?? "af_bella"}
           required={true}
@@ -148,9 +150,9 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <label className="text-white text-sm font-semibold block mb-3">
+      <Label variant="settings" className="block mb-3">
         Voice Model
-      </label>
+      </Label>
       <select
         name="TTSKokoroVoiceModel"
         required={true}

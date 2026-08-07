@@ -10,6 +10,9 @@ import {
   USERNAME_PATTERN,
 } from "@/utils/username";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function NewUserModal({ closeModal }) {
   const [error, setError] = useState(null);
@@ -52,16 +55,17 @@ export default function NewUserModal({ closeModal }) {
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   Username
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="username"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="User's username"
                   minLength={USERNAME_MIN_LENGTH}
                   maxLength={USERNAME_MAX_LENGTH}
@@ -74,16 +78,17 @@ export default function NewUserModal({ closeModal }) {
                 </p>
               </div>
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   Password
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="password"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="User's initial password"
                   required={true}
                   autoComplete="off"
@@ -94,27 +99,21 @@ export default function NewUserModal({ closeModal }) {
                 </p>
               </div>
               <div>
-                <label
-                  htmlFor="bio"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="bio" className="block mb-2">
                   Bio
-                </label>
-                <textarea
+                </Label>
+                <Textarea
+                  variant="settings"
                   name="bio"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="User's bio"
                   autoComplete="off"
                   rows={3}
                 />
               </div>
               <div>
-                <label
-                  htmlFor="role"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="role" className="block mb-2">
                   Role
-                </label>
+                </Label>
                 <select
                   name="role"
                   required={true}

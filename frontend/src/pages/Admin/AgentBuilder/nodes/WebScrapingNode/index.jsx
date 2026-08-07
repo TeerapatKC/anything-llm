@@ -1,5 +1,6 @@
 import Toggle from "@/components/lib/Toggle";
 import VariableInput from "../../VariableInput";
+import { Label } from "@/components/ui/label";
 
 export default function WebScrapingNode({
   config,
@@ -9,9 +10,9 @@ export default function WebScrapingNode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           URL to Scrape
-        </label>
+        </Label>
         <VariableInput
           value={config?.url || ""}
           onChange={(e) =>
@@ -25,9 +26,9 @@ export default function WebScrapingNode({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Capture Page Content As
-        </label>
+        </Label>
         <select
           value={config.captureAs}
           onChange={(e) =>
@@ -53,9 +54,9 @@ export default function WebScrapingNode({
 
       {config.captureAs === "querySelector" && (
         <div>
-          <label className="block text-sm font-medium text-theme-text-primary mb-2">
+          <Label variant="field" className="block mb-2">
             Query Selector
-          </label>
+          </Label>
           <p className="text-xs text-theme-text-secondary mb-2">
             Enter a valid CSS selector to scrape the content of the page.
           </p>
@@ -89,9 +90,9 @@ export default function WebScrapingNode({
         }
       />
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Result Variable
-        </label>
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ ...config, resultVariable: value }),

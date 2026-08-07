@@ -5,6 +5,7 @@ import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
 import CommunityHub from "@/models/communityHub";
+import { Label } from "@/components/ui/label";
 
 export default function SystemPrompt({ item, setStep }) {
   const [destinationWorkspaceSlug, setDestinationWorkspaceSlug] =
@@ -74,9 +75,9 @@ export default function SystemPrompt({ item, setStep }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <label className="text-theme-text-primary text-sm font-semibold block mb-3">
+          <Label variant="settings" className="block mb-3">
             Apply to Workspace
-          </label>
+          </Label>
           <select
             name="destinationWorkspaceSlug"
             required={true}

@@ -1,4 +1,5 @@
 import React from "react";
+import { Label } from "@/components/ui/label";
 
 export default function FileNode({
   config,
@@ -8,9 +9,9 @@ export default function FileNode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Operation
-        </label>
+        </Label>
         <select
           value={config.operation}
           onChange={(e) => onConfigChange({ operation: e.target.value })}
@@ -28,9 +29,9 @@ export default function FileNode({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           File Path
-        </label>
+        </Label>
         <input
           type="text"
           placeholder="/path/to/file"
@@ -43,9 +44,9 @@ export default function FileNode({
       </div>
       {config.operation !== "read" && (
         <div>
-          <label className="block text-sm font-medium text-white mb-2">
+          <Label variant="field" className="block mb-2">
             Content
-          </label>
+          </Label>
           <textarea
             placeholder="File content..."
             value={config.content}
@@ -58,9 +59,9 @@ export default function FileNode({
         </div>
       )}
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Store Result In
-        </label>
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),

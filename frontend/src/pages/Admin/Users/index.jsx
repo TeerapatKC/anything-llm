@@ -11,6 +11,7 @@ import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
 import Toggle from "@/components/lib/Toggle";
+import { Input } from "@/components/ui/input";
 
 export default function AdminUsers() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -166,7 +167,8 @@ export function MessageLimitInput({ enabled, limit, updateState, role }) {
             Message limit per day
           </label>
           <div className="relative mt-2">
-            <input
+            <Input
+              variant="settings"
               type="number"
               onScroll={(e) => e.target.blur()}
               onChange={(e) => {
@@ -177,7 +179,6 @@ export function MessageLimitInput({ enabled, limit, updateState, role }) {
               }}
               value={limit}
               min={1}
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             />
           </div>
         </div>

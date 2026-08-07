@@ -14,6 +14,7 @@ import {
   USERNAME_MAX_LENGTH,
   USERNAME_PATTERN,
 } from "@/utils/username";
+import { Label } from "@/components/ui/label";
 
 export default function GeneralSecurity() {
   const { t } = useTranslation();
@@ -142,12 +143,13 @@ function MultiUserMode() {
                 {useMultiUserMode && (
                   <div className="w-full flex flex-col gap-y-2 my-5">
                     <div className="w-80">
-                      <label
+                      <Label
+                        variant="settings"
                         htmlFor="username"
-                        className="text-white text-sm font-semibold block mb-3"
+                        className="block mb-3"
                       >
                         {t("security.multiuser.enable.username")}
-                      </label>
+                      </Label>
                       <input
                         name="username"
                         type="text"
@@ -166,12 +168,13 @@ function MultiUserMode() {
                       </p>
                     </div>
                     <div className="mt-4 w-80">
-                      <label
+                      <Label
+                        variant="settings"
                         htmlFor="password"
-                        className="text-white text-sm font-semibold block mb-3"
+                        className="block mb-3"
                       >
                         {t("security.multiuser.enable.password")}
-                      </label>
+                      </Label>
                       <input
                         name="password"
                         type="text"
@@ -311,12 +314,13 @@ function PasswordProtection() {
                 {usePassword && (
                   <div className="w-full flex flex-col gap-y-2 my-5">
                     <div className="mt-4 w-80">
-                      <label
+                      <Label
+                        variant="settings"
                         htmlFor="password"
-                        className="text-white text-sm font-semibold block mb-3"
+                        className="block mb-3"
                       >
                         {t("security.password.password-label")}
-                      </label>
+                      </Label>
                       <input
                         name="password"
                         type="text"

@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { FolderOpen, Info } from "@phosphor-icons/react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function ObsidianOptions() {
   const { t } = useTranslation();
@@ -104,20 +106,20 @@ export default function ObsidianOptions() {
 
               <div className="flex flex-col">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <label className="text-white text-sm font-bold">
+                  <Label variant="bold">
                     {t("connectors.obsidian.vault_location")}
-                  </label>
+                  </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.obsidian.vault_description")}
                   </p>
                 </div>
                 <div className="flex gap-x-2">
-                  <input
+                  <Input
+                    variant="settings"
                     type="text"
                     value={vaultPath}
                     onChange={(e) => setVaultPath(e.target.value)}
                     placeholder="/path/to/your/vault"
-                    className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     required={true}
                     autoComplete="off"
                     spellCheck={false}

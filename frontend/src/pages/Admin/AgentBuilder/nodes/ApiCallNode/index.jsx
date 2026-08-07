@@ -2,6 +2,7 @@
 import React, { useRef, useState } from "react";
 import { Plus, X, CaretDown } from "@phosphor-icons/react";
 import VariableInput from "../../VariableInput";
+import { Label } from "@/components/ui/label";
 
 export default function ApiCallNode({
   config,
@@ -59,9 +60,9 @@ export default function ApiCallNode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           URL
-        </label>
+        </Label>
         <div className="flex gap-2">
           <VariableInput
             ref={urlInputRef}
@@ -95,9 +96,9 @@ export default function ApiCallNode({
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Method
-        </label>
+        </Label>
         <select
           value={config.method}
           onChange={(e) => onConfigChange({ method: e.target.value })}
@@ -164,9 +165,9 @@ export default function ApiCallNode({
 
       {["POST", "PUT", "PATCH"].includes(config.method) && (
         <div>
-          <label className="block text-sm font-medium text-theme-text-primary mb-2">
+          <Label variant="field" className="block mb-2">
             Request Body
-          </label>
+          </Label>
           <div className="space-y-2">
             <select
               value={config.bodyType || "json"}
@@ -269,9 +270,9 @@ export default function ApiCallNode({
       )}
 
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Store Response In
-        </label>
+        </Label>
         {renderVariableSelect(
           config.responseVariable,
           (value) => onConfigChange({ responseVariable: value }),

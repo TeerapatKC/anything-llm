@@ -1,4 +1,5 @@
 import React from "react";
+import { Label } from "@/components/ui/label";
 
 export default function WebsiteNode({
   config,
@@ -8,7 +9,9 @@ export default function WebsiteNode({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-white mb-2">URL</label>
+        <Label variant="field" className="block mb-2">
+          URL
+        </Label>
         <input
           type="text"
           placeholder="https://example.com"
@@ -20,9 +23,9 @@ export default function WebsiteNode({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Action
-        </label>
+        </Label>
         <select
           value={config.action}
           onChange={(e) => onConfigChange({ action: e.target.value })}
@@ -40,9 +43,9 @@ export default function WebsiteNode({
         </select>
       </div>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           CSS Selector
-        </label>
+        </Label>
         <input
           type="text"
           placeholder="#element-id or .class-name"
@@ -54,9 +57,9 @@ export default function WebsiteNode({
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-white mb-2">
+        <Label variant="field" className="block mb-2">
           Store Result In
-        </label>
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),

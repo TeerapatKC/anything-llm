@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/refs */
 import React, { forwardRef } from "react";
+import { Label } from "@/components/ui/label";
 
 const FlowInfoNode = forwardRef(({ config, onConfigChange }, refs) => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Flow Name
-        </label>
+        </Label>
         <div className="flex flex-col text-xs text-theme-text-secondary mt-2 mb-3">
           <p className="">
             It is important to give your flow a name that an LLM can easily
@@ -34,9 +35,9 @@ const FlowInfoNode = forwardRef(({ config, onConfigChange }, refs) => {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-theme-text-primary mb-2">
+        <Label variant="field" className="block mb-2">
           Description
-        </label>
+        </Label>
         <div className="flex flex-col text-xs text-theme-text-secondary mt-2 mb-3">
           <p className="">
             It is equally important to give your flow a description that an LLM

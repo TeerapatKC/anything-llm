@@ -10,6 +10,9 @@ import {
   USERNAME_PATTERN,
 } from "@/utils/username";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EditUserModal({ currentUser, user, closeModal }) {
   const [role, setRole] = useState(user.role);
@@ -67,16 +70,17 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
           <form onSubmit={handleUpdate}>
             <div className="space-y-4">
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   Username
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="username"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="User's username"
                   defaultValue={user.username}
                   minLength={USERNAME_MIN_LENGTH}
@@ -90,16 +94,17 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
                 </p>
               </div>
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   New Password
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="password"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder={`${user.username}'s new password`}
                   autoComplete="off"
                   minLength={8}
@@ -109,15 +114,12 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
                 </p>
               </div>
               <div>
-                <label
-                  htmlFor="bio"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="bio" className="block mb-2">
                   Bio
-                </label>
-                <textarea
+                </Label>
+                <Textarea
+                  variant="settings"
                   name="bio"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="User's bio"
                   defaultValue={user.bio}
                   autoComplete="off"
@@ -125,12 +127,9 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
                 />
               </div>
               <div>
-                <label
-                  htmlFor="role"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="role" className="block mb-2">
                   Role
-                </label>
+                </Label>
                 <select
                   name="role"
                   required={true}

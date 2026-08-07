@@ -3,6 +3,8 @@ import CTAButton from "@/components/lib/CTAButton";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function Introduction({ settings, setSettings, setStep }) {
   const [itemId, setItemId] = useState(settings.itemId);
@@ -50,15 +52,15 @@ export default function Introduction({ settings, setSettings, setStep }) {
           <div className="flex flex-col gap-y-2 mt-4">
             <div className="w-full flex flex-col gap-y-4">
               <div className="flex flex-col w-full">
-                <label className="text-theme-text-primary text-sm font-semibold block mb-3">
+                <Label variant="settings" className="block mb-3">
                   Community Hub Item Import ID
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   type="text"
                   value={itemId}
                   onChange={(e) => setItemId(e.target.value)}
                   placeholder="allm-community-id:agent-skill:1234567890"
-                  className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 />
               </div>
             </div>

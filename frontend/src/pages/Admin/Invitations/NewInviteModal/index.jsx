@@ -4,6 +4,7 @@ import Admin from "@/models/admin";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function NewInviteModal({ closeModal, onSuccess }) {
   const [invite, setInvite] = useState(null);
@@ -121,12 +122,13 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
               <div className="mt-6">
                 <div className="w-full">
                   <div className="flex flex-col gap-y-1 mb-2">
-                    <label
+                    <Label
+                      variant="field"
                       htmlFor="workspaces"
-                      className="block text-sm font-medium text-white"
+                      className="block"
                     >
                       Auto-add invitee to workspaces
-                    </label>
+                    </Label>
                     <p className="text-white text-opacity-60 text-xs">
                       You can optionally automatically assign the user to the
                       workspaces below by selecting them. By default, the user

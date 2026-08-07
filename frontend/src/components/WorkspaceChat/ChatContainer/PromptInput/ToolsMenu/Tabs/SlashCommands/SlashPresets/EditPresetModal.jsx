@@ -3,6 +3,9 @@ import { X } from "@phosphor-icons/react";
 import ModalWrapper from "@/components/ModalWrapper";
 import { CMD_REGEX } from "./constants";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EditPresetModal({
   isOpen,
@@ -67,54 +70,57 @@ export default function EditPresetModal({
             <div className="py-7 px-9 space-y-2 flex-col">
               <div className="w-full flex flex-col gap-y-4">
                 <div>
-                  <label
+                  <Label
+                    variant="field"
                     htmlFor="command"
-                    className="block mb-2 text-sm font-medium text-white"
+                    className="block mb-2"
                   >
                     Command
-                  </label>
+                  </Label>
                   <div className="flex items-center">
                     <span className="text-white text-sm mr-2 font-bold">/</span>
-                    <input
+                    <Input
+                      variant="settings"
                       type="text"
                       name="command"
                       placeholder="your-command"
                       value={command}
                       onChange={handleCommandChange}
                       required={true}
-                      className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     />
                   </div>
                 </div>
                 <div>
-                  <label
+                  <Label
+                    variant="field"
                     htmlFor="prompt"
-                    className="block mb-2 text-sm font-medium text-white"
+                    className="block mb-2"
                   >
                     Prompt
-                  </label>
-                  <textarea
+                  </Label>
+                  <Textarea
+                    variant="settings"
                     name="prompt"
                     placeholder="This is a test prompt. Please respond with a poem about LLMs."
                     defaultValue={preset.prompt}
                     required={true}
-                    className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
-                  ></textarea>
+                  ></Textarea>
                 </div>
                 <div>
-                  <label
+                  <Label
+                    variant="field"
                     htmlFor="description"
-                    className="block mb-2 text-sm font-medium text-white"
+                    className="block mb-2"
                   >
                     Description
-                  </label>
-                  <input
+                  </Label>
+                  <Input
+                    variant="settings"
                     type="text"
                     name="description"
                     defaultValue={preset.description}
                     placeholder="Responds with a poem about LLMs."
                     required={true}
-                    className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   />
                 </div>
               </div>

@@ -7,6 +7,8 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 /**
  * Converts a string to a URL-friendly slug format.
@@ -329,13 +331,13 @@ export default function SQLConnectionModal({
                 </div>
 
                 <div className="flex flex-col w-full">
-                  <label className="block mb-2 text-sm font-medium text-white">
+                  <Label variant="field" className="block mb-2">
                     Connection name
-                  </label>
-                  <input
+                  </Label>
+                  <Input
+                    variant="settings"
                     type="text"
                     name="name"
-                    className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     placeholder="a unique name to identify this SQL connection"
                     required={true}
                     autoComplete="off"
@@ -346,13 +348,13 @@ export default function SQLConnectionModal({
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="flex flex-col">
-                    <label className="block mb-2 text-sm font-medium text-white">
+                    <Label variant="field" className="block mb-2">
                       Database user
-                    </label>
-                    <input
+                    </Label>
+                    <Input
+                      variant="settings"
                       type="text"
                       name="username"
-                      className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                       placeholder="root"
                       required={true}
                       autoComplete="off"
@@ -361,13 +363,13 @@ export default function SQLConnectionModal({
                     />
                   </div>
                   <div className="flex flex-col">
-                    <label className="block mb-2 text-sm font-medium text-white">
+                    <Label variant="field" className="block mb-2">
                       Database user password
-                    </label>
-                    <input
+                    </Label>
+                    <Input
+                      variant="settings"
                       type="password"
                       name="password"
-                      className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                       placeholder="password123"
                       required={true}
                       autoComplete="off"
@@ -379,13 +381,13 @@ export default function SQLConnectionModal({
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div className="sm:col-span-2">
-                    <label className="block mb-2 text-sm font-medium text-white">
+                    <Label variant="field" className="block mb-2">
                       Server endpoint
-                    </label>
-                    <input
+                    </Label>
+                    <Input
+                      variant="settings"
                       type="text"
                       name="host"
-                      className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                       placeholder="the hostname or endpoint for your database"
                       required={true}
                       autoComplete="off"
@@ -394,13 +396,13 @@ export default function SQLConnectionModal({
                     />
                   </div>
                   <div>
-                    <label className="block mb-2 text-sm font-medium text-white">
+                    <Label variant="field" className="block mb-2">
                       Port
-                    </label>
-                    <input
+                    </Label>
+                    <Input
+                      variant="settings"
                       type="text"
                       name="port"
-                      className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                       placeholder="3306"
                       required={false}
                       autoComplete="off"
@@ -411,13 +413,13 @@ export default function SQLConnectionModal({
                 </div>
 
                 <div className="flex flex-col">
-                  <label className="block mb-2 text-sm font-medium text-white">
+                  <Label variant="field" className="block mb-2">
                     Database
-                  </label>
-                  <input
+                  </Label>
+                  <Input
+                    variant="settings"
                     type="text"
                     name="database"
-                    className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                     placeholder="the database the agent will interact with"
                     required={true}
                     autoComplete="off"
@@ -428,13 +430,13 @@ export default function SQLConnectionModal({
 
                 {engine === "postgresql" && (
                   <div className="flex flex-col">
-                    <label className="block mb-2 text-sm font-medium text-white">
+                    <Label variant="field" className="block mb-2">
                       Schema (optional)
-                    </label>
-                    <input
+                    </Label>
+                    <Input
+                      variant="settings"
                       type="text"
                       name="schema"
-                      className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                       placeholder="public (default schema if not specified)"
                       required={false}
                       autoComplete="off"

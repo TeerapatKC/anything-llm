@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
 export default function ChatHistorySettings({ workspace, setHasChanges }) {
   const { t } = useTranslation();
   return (
@@ -12,14 +13,14 @@ export default function ChatHistorySettings({ workspace, setHasChanges }) {
           <i> {t("chat.history.recommend")} </i>
         </p>
       </div>
-      <input
+      <Input
+        variant="settings"
         name="openAiHistory"
         type="number"
         min={1}
         step={1}
         onWheel={(e) => e.target.blur()}
         defaultValue={workspace?.openAiHistory ?? 20}
-        className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
         placeholder="20"
         required={true}
         autoComplete="off"

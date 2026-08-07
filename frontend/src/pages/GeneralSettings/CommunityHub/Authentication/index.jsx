@@ -8,6 +8,7 @@ import { FullScreenLoader } from "@/components/Preloader";
 import paths from "@/utils/paths";
 import { Info } from "@phosphor-icons/react";
 import UserItems from "./UserItems";
+import { Input } from "@/components/ui/input";
 
 function useCommunityHubAuthentication() {
   const [originalConnectionKey, setOriginalConnectionKey] = useState("");
@@ -164,11 +165,11 @@ export default function CommunityHubAuthentication() {
               <label className="text-theme-text-primary text-sm font-semibold block mb-2">
                 AnythingLLM Hub API Key
               </label>
-              <input
+              <Input
+                variant="settings"
                 type="password"
                 value={connectionKey || ""}
                 onChange={onConnectionKeyChange}
-                className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                 placeholder="Enter your AnythingLLM Hub API key"
               />
               <div className="flex items-center justify-between mt-2">

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { X } from "@phosphor-icons/react";
 import Document from "@/models/document";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function NewFolderModal({ closeModal, onCreated }) {
   const [error, setError] = useState(null);
@@ -38,16 +40,17 @@ export default function NewFolderModal({ closeModal, onCreated }) {
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="folderName"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   Folder Name
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="folderName"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="Enter folder name"
                   required={true}
                   autoComplete="off"

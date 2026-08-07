@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function OpenAiWhisperOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.OpenAiKey);
@@ -7,13 +9,13 @@ export default function OpenAiWhisperOptions({ settings }) {
   return (
     <div className="flex gap-x-7 gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           API Key
-        </label>
-        <input
+        </Label>
+        <Input
+          variant="settings"
           type="password"
           name="OpenAiKey"
-          className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
           placeholder="OpenAI API Key"
           defaultValue={settings?.OpenAiKey ? "*".repeat(20) : ""}
           required={true}
@@ -24,9 +26,9 @@ export default function OpenAiWhisperOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <label className="text-white text-sm font-semibold block mb-3">
+        <Label variant="settings" className="block mb-3">
           Whisper Model
-        </label>
+        </Label>
         <select
           disabled={true}
           className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"

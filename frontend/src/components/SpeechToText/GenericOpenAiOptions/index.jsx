@@ -1,15 +1,17 @@
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 export default function GenericOpenAiSpeechToTextOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             Base URL
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="url"
             name="STTOpenAICompatibleEndpoint"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:8000/v1"
             defaultValue={settings?.STTOpenAICompatibleEndpoint}
             required={true}
@@ -22,13 +24,13 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             API Key
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="password"
             name="STTOpenAICompatibleKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="API Key"
             defaultValue={
               settings?.STTOpenAICompatibleKey ? "*".repeat(20) : ""
@@ -42,13 +44,13 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-2">
+          <Label variant="settings" className="block mb-2">
             Transcription Model
-          </label>
-          <input
+          </Label>
+          <Input
+            variant="settings"
             type="text"
             name="STTOpenAICompatibleModel"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="Your STT model identifier"
             defaultValue={settings?.STTOpenAICompatibleModel}
             required={true}

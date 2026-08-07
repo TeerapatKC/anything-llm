@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
 function recommendedSettings(provider = null) {
   switch (provider) {
     case "mistral":
@@ -25,14 +26,14 @@ export default function ChatTemperatureSettings({
           {t("chat.temperature.desc-end")}
         </p>
       </div>
-      <input
+      <Input
+        variant="settings"
         name="openAiTemp"
         type="number"
         min={0.0}
         step={0.1}
         onWheel={(e) => e.target.blur()}
         defaultValue={workspace?.openAiTemp ?? defaults.temp}
-        className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
         placeholder="0.7"
         required={true}
         autoComplete="off"

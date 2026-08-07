@@ -3,6 +3,8 @@ import { X } from "@phosphor-icons/react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function AddVariableModal({ closeModal, onRefresh }) {
   const [error, setError] = useState(null);
@@ -48,18 +50,15 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
           <form onSubmit={handleCreate}>
             <div className="space-y-4">
               <div>
-                <label
-                  htmlFor="key"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="key" className="block mb-2">
                   Key
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="key"
                   type="text"
                   minLength={3}
                   maxLength={255}
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="e.g., company_name"
                   required={true}
                   autoComplete="off"
@@ -71,32 +70,30 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
                 </p>
               </div>
               <div>
-                <label
-                  htmlFor="value"
-                  className="block mb-2 text-sm font-medium text-white"
-                >
+                <Label variant="field" htmlFor="value" className="block mb-2">
                   Value
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="value"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="e.g., Acme Corp"
                   required={true}
                   autoComplete="off"
                 />
               </div>
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="description"
-                  className="block mb-2 text-sm font-medium text-white"
+                  className="block mb-2"
                 >
                   Description
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="description"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="Optional description"
                   autoComplete="off"
                 />

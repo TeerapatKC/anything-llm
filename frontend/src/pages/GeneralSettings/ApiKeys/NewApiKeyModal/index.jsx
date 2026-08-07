@@ -6,6 +6,7 @@ import { userFromStorage } from "@/utils/request";
 import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export default function NewApiKeyModal({ closeModal, onSuccess }) {
   const { t } = useTranslation();
@@ -69,9 +70,9 @@ export default function NewApiKeyModal({ closeModal, onSuccess }) {
               )}
               {!apiKey && (
                 <div>
-                  <label className="block mb-2 text-sm font-medium text-white">
+                  <Label variant="field" className="block mb-2">
                     {t("api.modal.name.label")}
-                  </label>
+                  </Label>
                   <input
                     type="text"
                     value={name}
