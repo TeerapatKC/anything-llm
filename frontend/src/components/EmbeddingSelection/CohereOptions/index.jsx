@@ -2,6 +2,13 @@ import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function CohereEmbeddingOptions({ settings }) {
   const [inputValue, setInputValue] = useState(settings?.CohereApiKey);
@@ -62,15 +69,12 @@ function CohereModelSelection({ apiKey, settings }) {
         <Label variant="settings" className="block mb-3">
           Model Preference
         </Label>
-        <select
-          name="EmbeddingModelPref"
-          disabled={true}
-          className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
-        >
-          <option disabled={true} selected={true}>
-            -- loading available models --
-          </option>
-        </select>
+        <Select name="EmbeddingModelPref" disabled={true}>
+          <SelectTrigger variant="settings">
+            <SelectValue placeholder="-- loading available models --" />
+          </SelectTrigger>
+          <SelectContent />
+        </Select>
       </div>
     );
   }
@@ -80,21 +84,22 @@ function CohereModelSelection({ apiKey, settings }) {
       <Label variant="settings" className="block mb-3">
         Model Preference
       </Label>
-      <select
+      <Select
         name="EmbeddingModelPref"
         required={true}
-        className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+        defaultValue={settings?.EmbeddingModelPref ?? undefined}
       >
-        {models.map((model) => (
-          <option
-            key={model.id}
-            value={model.id}
-            selected={settings?.EmbeddingModelPref === model.id}
-          >
-            {model.name}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger variant="settings">
+          <SelectValue placeholder="Select a model" />
+        </SelectTrigger>
+        <SelectContent>
+          {models.map((model) => (
+            <SelectItem key={model.id} value={model.id}>
+              {model.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 }

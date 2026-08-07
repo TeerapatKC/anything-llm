@@ -1,5 +1,21 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const EMBEDDING_MODELS = [
+  "text-embedding-ada-002",
+  "text-embedding-3-small",
+  "text-embedding-3-large",
+];
+
 export default function OpenAiOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-4">
@@ -23,29 +39,25 @@ export default function OpenAiOptions({ settings }) {
           <Label variant="settings" className="block mb-3">
             Model Preference
           </Label>
-          <select
+          <Select
             name="EmbeddingModelPref"
             required={true}
-            className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+            defaultValue={settings?.EmbeddingModelPref ?? undefined}
           >
-            <optgroup label="Available embedding models">
-              {[
-                "text-embedding-ada-002",
-                "text-embedding-3-small",
-                "text-embedding-3-large",
-              ].map((model) => {
-                return (
-                  <option
-                    key={model}
-                    value={model}
-                    selected={settings?.EmbeddingModelPref === model}
-                  >
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select a model" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Available embedding models</SelectLabel>
+                {EMBEDDING_MODELS.map((model) => (
+                  <SelectItem key={model} value={model}>
                     {model}
-                  </option>
-                );
-              })}
-            </optgroup>
-          </select>
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
     </div>

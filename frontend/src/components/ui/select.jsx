@@ -1,10 +1,27 @@
-"use client";
-
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+
+const selectTriggerVariants = cva(
+  "flex w-full items-center justify-between disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+  {
+    variants: {
+      variant: {
+        // Stock shadcn/ui trigger.
+        default:
+          "h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+        // Matches the native <select> look used across the provider settings
+        // forms: border-none bg-theme-settings-input-bg text-sm rounded-lg p-2.5.
+        settings:
+          "border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg p-2.5 focus:outline-primary-button active:outline-primary-button outline-none",
+      },
+    },
+    defaultVariants: { variant: "default" },
+  }
+);
 
 const Select = SelectPrimitive.Root;
 
@@ -13,13 +30,10 @@ const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 
 const SelectTrigger = React.forwardRef(
-  ({ className, children, ...props }, ref) => (
+  ({ className, children, variant, ...props }, ref) => (
     <SelectPrimitive.Trigger
       ref={ref}
-      className={cn(
-        "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background data-[placeholder]:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
-        className
-      )}
+      className={cn(selectTriggerVariants({ variant }), className)}
       {...props}
     >
       {children}
@@ -146,4 +160,5 @@ export {
   SelectSeparator,
   SelectScrollUpButton,
   SelectScrollDownButton,
+  selectTriggerVariants,
 };
