@@ -14,8 +14,7 @@ export default {
       "./src/pages/**/*.{js,jsx}",
       "./src/utils/**/*.js",
       "./src/*.jsx",
-      "./index.html",
-      "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}"
+      "./index.html"
     ]
   },
   theme: {
