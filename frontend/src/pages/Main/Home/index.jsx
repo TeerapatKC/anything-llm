@@ -25,7 +25,6 @@ import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import useUser from "@/hooks/useUser";
 import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSettingsMenu";
 import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/WorkspaceModelPicker";
-import { ChatTooltips } from "@/components/WorkspaceChat/ChatContainer/ChatTooltips";
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
 
@@ -323,7 +322,6 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
               />
             </div>
           </DnDFileUploaderWrapper>
-          <ChatTooltips />
         </div>
         <MemoriesSidebar workspace={workspace} />
       </div>

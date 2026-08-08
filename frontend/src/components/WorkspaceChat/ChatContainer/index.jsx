@@ -23,7 +23,6 @@ import DnDFileUploaderWrapper from "./DnDWrapper";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { ChatTooltips } from "./ChatTooltips";
 import { MetricsProvider } from "./ChatHistory/HistoricalMessage/Actions/RenderMetrics";
 import useChatContainerQuickScroll from "@/hooks/useChatContainerQuickScroll";
 import { PENDING_HOME_MESSAGE } from "@/utils/constants";
@@ -504,7 +503,6 @@ export default function ChatContainer({
                 />
               </div>
             </DnDFileUploaderWrapper>
-            <ChatTooltips />
           </div>
           <MemoriesSidebar workspace={workspace} />
         </div>
@@ -551,7 +549,6 @@ export default function ChatContainer({
               </div>
             </div>
           </DnDFileUploaderWrapper>
-          <ChatTooltips />
         </div>
         <SourcesSidebar />
         <MemoriesSidebar workspace={workspace} />

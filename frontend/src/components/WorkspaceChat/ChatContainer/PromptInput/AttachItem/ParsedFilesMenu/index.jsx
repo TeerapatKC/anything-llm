@@ -6,10 +6,15 @@ import showToast from "@/utils/toast";
 import pluralize from "pluralize";
 import { PARSED_FILE_ATTACHMENT_REMOVED_EVENT } from "../../../DnDWrapper";
 import useUser from "@/hooks/useUser";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function ParsedFilesMenu({
   onEmbeddingChange,
-  tooltipRef,
+  onClose,
   files,
   setFiles,
   currentTokens,
@@ -93,7 +98,7 @@ export default function ParsedFilesMenu({
         `${files.length} ${pluralize("file", files.length)} embedded successfully`,
         "success"
       );
-      tooltipRef?.current?.close();
+      onClose?.();
     } catch (error) {
       console.error("Failed to embed files:", error);
       showToast("Failed to embed files", "error");
@@ -109,26 +114,13 @@ export default function ParsedFilesMenu({
         <div className="text-sm font-medium text-theme-text-primary">
           Current Context ({files.length} files)
         </div>
-        <div
-          // If the user cannot see the embed CTA, show a tooltip
-          {...(contextWindowLimitExceeded &&
-            !canEmbed && {
-              "data-tooltip-id": "context-window-limit-exceeded",
-              "data-tooltip-content":
-                "You have exceeded the context window limit. Some files may be truncated or excluded from chat responses. Responses may hallucinate or lack relevant information.",
-            })}
-          className={`flex items-center gap-x-1 ${contextWindowLimitExceeded && !canEmbed ? "cursor-pointer" : ""}`}
-        >
-          {contextWindowLimitExceeded && (
-            <Warning size={14} className="text-orange-600" />
-          )}
-          <div
-            className={`text-xs ${contextWindowLimitExceeded ? "text-orange-600" : "text-theme-text-secondary"}`}
-          >
-            {nFormatter(currentTokens)} /{" "}
-            {contextWindow ? nFormatter(contextWindow) : "--"} tokens
-          </div>
-        </div>
+        <TokenCount
+          currentTokens={currentTokens}
+          contextWindow={contextWindow}
+          exceeded={contextWindowLimitExceeded}
+          // Only worth explaining when the user has no way to act on it.
+          explain={contextWindowLimitExceeded && !canEmbed}
+        />
       </div>
       {contextWindowLimitExceeded && canEmbed && (
         <div className="flex flex-col gap-2 p-2 bg-theme-bg-secondary light:bg-theme-bg-primary rounded">
@@ -193,5 +185,38 @@ export default function ParsedFilesMenu({
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * The token counter, optionally explaining why it is over the limit. The
+ * explanation is a tooltip only when it is shown, so the counter is not made
+ * focusable for everyone else.
+ */
+function TokenCount({ currentTokens, contextWindow, exceeded, explain }) {
+  const body = (
+    <div
+      className={`flex items-center gap-x-1 ${explain ? "cursor-pointer" : ""}`}
+    >
+      {exceeded && <Warning size={14} className="text-orange-600" />}
+      <div
+        className={`text-xs ${exceeded ? "text-orange-600" : "text-theme-text-secondary"}`}
+      >
+        {nFormatter(currentTokens)} /{" "}
+        {contextWindow ? nFormatter(contextWindow) : "--"} tokens
+      </div>
+    </div>
+  );
+
+  if (!explain) return body;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{body}</TooltipTrigger>
+      <TooltipContent side="top" className="max-w-[350px] text-xs">
+        You have exceeded the context window limit. Some files may be truncated
+        or excluded from chat responses. Responses may hallucinate or lack
+        relevant information.
+      </TooltipContent>
+    </Tooltip>
   );
 }
