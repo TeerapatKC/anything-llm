@@ -3,6 +3,7 @@ import FileRow from "../FileRow";
 import { CaretDown, FolderNotch, CircleNotch } from "@phosphor-icons/react";
 import { middleTruncate } from "@/utils/directories";
 import { useTranslation } from "react-i18next";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 /**
  * A folder in the document picker. Purely presentational - every piece of
@@ -86,7 +87,8 @@ export default function FolderRow({
       {/* Clicking the row opens the folder. Selection is the checkbox's job -
           a whole-row click is too easy to hit by accident for something that
           can stage hundreds of files for embedding. */}
-      <tr
+      <TableRow
+        variant="none"
         onClick={() => onToggleExpanded(item.name)}
         onMouseEnter={() => onPrefetch(item.name)}
         onDragOver={handleDragOver}
@@ -156,14 +158,20 @@ export default function FolderRow({
         </div>
         <p className="col-span-2 pl-3.5" />
         <p className="col-span-2 pl-2" />
-      </tr>
+      </TableRow>
       {expanded && loading && files.length === 0 && (
-        <tr className="text-theme-text-secondary text-xs py-2 pl-8 pr-8">
-          <td className="flex items-center gap-x-2 py-2 pl-8">
+        <TableRow
+          variant="none"
+          className="text-theme-text-secondary text-xs py-2 pl-8 pr-8"
+        >
+          <TableCell
+            variant="none"
+            className="flex items-center gap-x-2 py-2 pl-8"
+          >
             <CircleNotch size={14} className="animate-spin" weight="bold" />
             <span>{t("common.loading")}...</span>
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       )}
       {expanded &&
         files.map((file) => (
@@ -176,8 +184,11 @@ export default function FolderRow({
           />
         ))}
       {expanded && hasMore && (
-        <tr className="text-theme-text-secondary text-xs py-1 pl-8 pr-8">
-          <td className="py-1 pl-8">
+        <TableRow
+          variant="none"
+          className="text-theme-text-secondary text-xs py-1 pl-8 pr-8"
+        >
+          <TableCell variant="none" className="py-1 pl-8">
             <button
               onClick={(event) => {
                 event.stopPropagation();
@@ -190,8 +201,8 @@ export default function FolderRow({
                 ? `${t("common.loading")}...`
                 : `Load more (${files.length} of ${totalCount})`}
             </button>
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       )}
     </>
   );

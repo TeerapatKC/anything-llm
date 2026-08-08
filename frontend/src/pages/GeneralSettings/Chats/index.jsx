@@ -10,6 +10,13 @@ import { CaretDown, Download, Trash } from "@phosphor-icons/react";
 import { saveAs } from "file-saver";
 import { useTranslation } from "react-i18next";
 import { CanViewChatHistory } from "@/components/CanViewChatHistory";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const exportOptions = {
   csv: {
@@ -229,39 +236,47 @@ function ChatsContainer({
 
   return (
     <>
-      <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-        <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-          <tr>
-            <th scope="col" className="px-6 py-3 rounded-tl-lg">
+      <Table variant="settings">
+        <TableHeader variant="settings">
+          <TableRow variant="none">
+            <TableHead
+              variant="none"
+              scope="col"
+              className="px-6 py-3 rounded-tl-lg"
+            >
               {t("recorded.table.id")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("recorded.table.by")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("recorded.table.workspace")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("recorded.table.prompt")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("recorded.table.response")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("recorded.table.at")}
-            </th>
-            <th scope="col" className="px-6 py-3 rounded-tr-lg">
+            </TableHead>
+            <TableHead
+              variant="none"
+              scope="col"
+              className="px-6 py-3 rounded-tr-lg"
+            >
               {" "}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody variant="none">
           {!!chats &&
             chats.map((chat) => (
               <ChatRow key={chat.id} chat={chat} onDelete={handleDeleteChat} />
             ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <div className="flex w-full justify-between items-center mt-6">
         <button
           onClick={handlePrevious}

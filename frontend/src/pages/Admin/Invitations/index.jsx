@@ -9,6 +9,14 @@ import NewInviteModal from "./NewInviteModal";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminInvites() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -65,40 +73,52 @@ export default function AdminInvites() {
                 containerClassName="flex w-full"
               />
             ) : (
-              <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-                <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 rounded-tl-lg">
+              <Table variant="settings">
+                <TableHeader variant="settings">
+                  <TableRow variant="none">
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-6 py-3 rounded-tl-lg"
+                    >
                       Status
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       Accepted By
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       Created By
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       Created
-                    </th>
-                    <th scope="col" className="px-6 py-3 rounded-tr-lg">
+                    </TableHead>
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-6 py-3 rounded-tr-lg"
+                    >
                       {" "}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody variant="none">
                   {invites.length === 0 ? (
-                    <tr className="bg-transparent text-theme-text-secondary text-sm font-medium">
-                      <td colSpan="5" className="px-6 py-4 text-center">
+                    <TableRow variant="settings">
+                      <TableCell
+                        variant="none"
+                        colSpan="5"
+                        className="px-6 py-4 text-center"
+                      >
                         No invitations found
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     invites.map((invite) => (
                       <InviteRow key={invite.id} invite={invite} />
                     ))
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             )}
           </div>
         </div>

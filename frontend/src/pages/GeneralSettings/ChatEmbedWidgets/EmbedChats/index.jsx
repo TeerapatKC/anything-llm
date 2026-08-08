@@ -8,6 +8,13 @@ import { CaretDown, Download } from "@phosphor-icons/react";
 import showToast from "@/utils/toast";
 import { saveAs } from "file-saver";
 import System from "@/models/system";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const exportOptions = {
   csv: {
@@ -175,35 +182,43 @@ export default function EmbedChatsView() {
         </p>
       </div>
       <div className="overflow-x-auto mt-6">
-        <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-          <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-            <tr>
-              <th scope="col" className="px-6 py-3 rounded-tl-lg">
+        <Table variant="settings">
+          <TableHeader variant="settings">
+            <TableRow variant="none">
+              <TableHead
+                variant="none"
+                scope="col"
+                className="px-6 py-3 rounded-tl-lg"
+              >
                 {t("embed-chats.table.embed")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embed-chats.table.sender")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embed-chats.table.message")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embed-chats.table.response")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embed-chats.table.at")}
-              </th>
-              <th scope="col" className="px-6 py-3 rounded-tr-lg">
+              </TableHead>
+              <TableHead
+                variant="none"
+                scope="col"
+                className="px-6 py-3 rounded-tr-lg"
+              >
                 {" "}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody variant="none">
             {chats.map((chat) => (
               <ChatRow key={chat.id} chat={chat} onDelete={handleDeleteChat} />
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
         {(offset > 0 || canNext) && (
           <div className="flex items-center justify-end gap-2 mt-4 pb-6">
             <button

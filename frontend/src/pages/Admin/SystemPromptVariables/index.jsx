@@ -10,6 +10,13 @@ import ModalWrapper from "@/components/ModalWrapper";
 import AddVariableModal from "./AddVariableModal";
 import { useModal } from "@/hooks/useModal";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function SystemPromptVariables() {
   const [variables, setVariables] = useState([]);
@@ -79,24 +86,31 @@ export default function SystemPromptVariables() {
                 No variables found
               </div>
             ) : (
-              <table className="w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0">
-                <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-                  <tr>
-                    <th scope="col" className="px-4 py-2 rounded-tl-lg">
+              <Table
+                variant="none"
+                className="w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0"
+              >
+                <TableHeader variant="settings">
+                  <TableRow variant="none">
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-4 py-2 rounded-tl-lg"
+                    >
                       Key
-                    </th>
-                    <th scope="col" className="px-4 py-2">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-4 py-2">
                       Value
-                    </th>
-                    <th scope="col" className="px-4 py-2">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-4 py-2">
                       Description
-                    </th>
-                    <th scope="col" className="px-4 py-2">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-4 py-2">
                       Type
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody variant="none">
                   {variables.map((variable) => (
                     <VariableRow
                       key={variable.id}
@@ -104,8 +118,8 @@ export default function SystemPromptVariables() {
                       onRefresh={fetchVariables}
                     />
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             )}
           </div>
         </div>

@@ -5,6 +5,7 @@ import { userFromStorage } from "@/utils/request";
 import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function ApiKeyRow({ apiKey, removeApiKey }) {
   const { t } = useTranslation();
@@ -36,22 +37,36 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
 
   return (
     <>
-      <tr className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10">
-        <td scope="row" className="px-6 py-3 whitespace-nowrap align-middle">
+      <TableRow
+        variant="none"
+        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10"
+      >
+        <TableCell
+          variant="none"
+          scope="row"
+          className="px-6 py-3 whitespace-nowrap align-middle"
+        >
           {apiKey.name || t("api.row.unnamed")}
-        </td>
-        <td scope="row" className="px-6 py-3 align-middle">
+        </TableCell>
+        <TableCell
+          variant="none"
+          scope="row"
+          className="px-6 py-3 align-middle"
+        >
           <code className="font-mono text-[11px] break-all text-theme-text-primary">
             {apiKey.secret}
           </code>
-        </td>
-        <td className="px-6 py-3 text-left align-middle">
+        </TableCell>
+        <TableCell variant="none" className="px-6 py-3 text-left align-middle">
           {apiKey.createdBy?.username || "--"}
-        </td>
-        <td className="px-6 py-3 whitespace-nowrap align-middle">
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 py-3 whitespace-nowrap align-middle"
+        >
           {new Date(apiKey.createdAt).toLocaleString()}
-        </td>
-        <td className="px-6 py-3 align-middle">
+        </TableCell>
+        <TableCell variant="none" className="px-6 py-3 align-middle">
           <div className="flex items-center gap-x-6">
             <button
               onClick={copyApiKey}
@@ -64,8 +79,8 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
               <Trash className="h-5 w-5" />
             </Button>
           </div>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   );
 }

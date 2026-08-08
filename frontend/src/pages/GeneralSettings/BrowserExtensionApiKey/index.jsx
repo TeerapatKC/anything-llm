@@ -10,6 +10,14 @@ import NewBrowserExtensionApiKeyModal from "./NewBrowserExtensionApiKeyModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import { fullApiUrl } from "@/utils/constants";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function BrowserExtensionApiKeys() {
   const [loading, setLoading] = useState(true);
@@ -79,35 +87,51 @@ export default function BrowserExtensionApiKeys() {
             ) : error ? (
               <div className="text-red-500 mt-6">Error: {error}</div>
             ) : (
-              <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0">
-                <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-                  <tr>
-                    <th scope="col" className="px-6 py-2 rounded-tl-lg">
+              <Table
+                variant="none"
+                className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0"
+              >
+                <TableHeader variant="settings">
+                  <TableRow variant="none">
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-6 py-2 rounded-tl-lg"
+                    >
                       Extension Connection String
-                    </th>
+                    </TableHead>
                     {isMultiUser && (
-                      <th scope="col" className="px-6 py-2">
+                      <TableHead
+                        variant="none"
+                        scope="col"
+                        className="px-6 py-2"
+                      >
                         Created By
-                      </th>
+                      </TableHead>
                     )}
-                    <th scope="col" className="px-6 py-2">
+                    <TableHead variant="none" scope="col" className="px-6 py-2">
                       Created At
-                    </th>
-                    <th scope="col" className="px-6 py-2 rounded-tr-lg">
+                    </TableHead>
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-6 py-2 rounded-tr-lg"
+                    >
                       Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody variant="none">
                   {apiKeys.length === 0 ? (
-                    <tr className="bg-transparent text-theme-text-secondary text-sm font-medium">
-                      <td
+                    <TableRow variant="settings">
+                      <TableCell
+                        variant="none"
                         colSpan={isMultiUser ? "4" : "3"}
                         className="px-6 py-4 text-center"
                       >
                         No API keys found
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     apiKeys.map((apiKey) => (
                       <BrowserExtensionApiKeyRow
@@ -119,8 +143,8 @@ export default function BrowserExtensionApiKeys() {
                       />
                     ))
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             )}
           </div>
         </div>

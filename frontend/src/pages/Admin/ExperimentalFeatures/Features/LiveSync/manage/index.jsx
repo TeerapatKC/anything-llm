@@ -4,6 +4,13 @@ import { isMobile } from "react-device-detect";
 import { Skeleton } from "@/components/ui/skeleton";
 import System from "@/models/system";
 import DocumentSyncQueueRow from "./DocumentSyncQueueRow";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function LiveDocumentSyncManager() {
   return (
@@ -63,31 +70,42 @@ function WatchedDocumentsContainer() {
   }
 
   return (
-    <table className="w-full text-sm text-left rounded-lg mt-6 min-w-[640px]">
-      <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-        <tr>
-          <th scope="col" className="px-6 py-3 rounded-tl-lg">
+    <Table
+      variant="none"
+      className="w-full text-sm text-left rounded-lg mt-6 min-w-[640px]"
+    >
+      <TableHeader variant="settings">
+        <TableRow variant="none">
+          <TableHead
+            variant="none"
+            scope="col"
+            className="px-6 py-3 rounded-tl-lg"
+          >
             Document Name
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Last Synced
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Time until next refresh
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Created On
-          </th>
-          <th scope="col" className="px-6 py-3 rounded-tr-lg">
+          </TableHead>
+          <TableHead
+            variant="none"
+            scope="col"
+            className="px-6 py-3 rounded-tr-lg"
+          >
             {" "}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody variant="none">
         {queues.map((queue) => (
           <DocumentSyncQueueRow key={queue.id} queue={queue} />
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MagnifyingGlass, X } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
+import { Table, TableRow } from "@/components/ui/table";
 
 export default function AddMemberModal({ closeModal, workspace, users }) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -88,10 +89,14 @@ export default function AddMemberModal({ closeModal, workspace, users }) {
         </div>
         <form onSubmit={handleUpdate}>
           <div className="py-[17px] px-[20px]">
-            <table className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto no-scroll">
+            <Table
+              variant="none"
+              className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto no-scroll"
+            >
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <tr
+                  <TableRow
+                    variant="none"
                     key={user.id}
                     className="flex items-center gap-x-2 cursor-pointer"
                     onClick={() => handleUserSelect(user.id)}
@@ -109,14 +114,14 @@ export default function AddMemberModal({ closeModal, workspace, users }) {
                     <p className="text-theme-text-primary text-sm font-medium">
                       {user.username}
                     </p>
-                  </tr>
+                  </TableRow>
                 ))
               ) : (
                 <p className="text-theme-text-secondary text-sm font-medium ">
                   No users found
                 </p>
               )}
-            </table>
+            </Table>
           </div>
           <div className="flex w-full justify-between items-center p-3 space-x-2 border-t rounded-b border-gray-500/50">
             <div className="flex items-center gap-x-2">

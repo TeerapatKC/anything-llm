@@ -3,6 +3,7 @@ import Admin from "@/models/admin";
 import paths from "@/utils/paths";
 import { LinkSimple, Trash } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 
 export default function WorkspaceRow({
   workspace,
@@ -23,14 +24,19 @@ export default function WorkspaceRow({
 
   return (
     <>
-      <tr
+      <TableRow
+        variant="none"
         ref={rowRef}
         className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
       >
-        <th scope="row" className="px-6 whitespace-nowrap">
+        <TableHead
+          variant="none"
+          scope="row"
+          className="px-6 whitespace-nowrap"
+        >
           {workspace.name}
-        </th>
-        <td className="px-6">
+        </TableHead>
+        <TableCell variant="none" className="px-6">
           <a
             href={paths.workspace.chat(workspace.slug)}
             target="_blank"
@@ -39,24 +45,26 @@ export default function WorkspaceRow({
           >
             <LinkSimple className="mr-2 w-4 h-4" /> {workspace.slug}
           </a>
-        </td>
-        <td className="px-6">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
           <a
             href={paths.workspace.settings.members(workspace.slug)}
             className="text-white flex items-center underline"
           >
             {workspace.userIds?.length}
           </a>
-        </td>
-        <td className="px-6">{workspace.createdAt}</td>
-        <td className="px-6">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {workspace.createdAt}
+        </TableCell>
+        <TableCell variant="none" className="px-6">
           {!deletionProtected && (
             <Button variant="danger" onClick={handleDelete}>
               <Trash className="h-5 w-5" />
             </Button>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   );
 }

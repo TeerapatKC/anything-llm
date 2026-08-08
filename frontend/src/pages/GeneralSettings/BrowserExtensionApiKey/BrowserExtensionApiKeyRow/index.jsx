@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function BrowserExtensionApiKeyRow({
   apiKey,
@@ -62,11 +63,16 @@ export default function BrowserExtensionApiKeyRow({
   };
 
   return (
-    <tr
+    <TableRow
+      variant="none"
       ref={rowRef}
       className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
     >
-      <td scope="row" className="px-6 py-2 whitespace-nowrap">
+      <TableCell
+        variant="none"
+        scope="row"
+        className="px-6 py-2 whitespace-nowrap"
+      >
         <div className="flex items-center">
           <span className="mr-2 font-mono">{connectionString}</span>
           <div className="flex items-center space-x-2">
@@ -103,20 +109,20 @@ export default function BrowserExtensionApiKeyRow({
             </Tooltip>
           </div>
         </div>
-      </td>
+      </TableCell>
       {isMultiUser && (
-        <td className="px-6 py-2">
+        <TableCell variant="none" className="px-6 py-2">
           {apiKey.user ? apiKey.user.username : "N/A"}
-        </td>
+        </TableCell>
       )}
-      <td className="px-6 py-2">
+      <TableCell variant="none" className="px-6 py-2">
         {new Date(apiKey.createdAt).toLocaleString()}
-      </td>
-      <td className="px-6 py-2">
+      </TableCell>
+      <TableCell variant="none" className="px-6 py-2">
         <Button variant="danger" onClick={handleRevoke}>
           <Trash className="h-4 w-4" />
         </Button>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 }

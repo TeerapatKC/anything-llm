@@ -1,6 +1,7 @@
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/request";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function LogRow({ log }) {
   const [expanded, setExpanded] = useState(false);
@@ -24,39 +25,48 @@ export default function LogRow({ log }) {
 
   return (
     <>
-      <tr
+      <TableRow
+        variant="none"
         onClick={handleRowClick}
         className={`bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10 ${
           hasMetadata ? "cursor-pointer hover:bg-white/5" : ""
         }`}
       >
         <EventBadge event={log.event} />
-        <td className="px-6 border-transparent transform transition-transform duration-200">
+        <TableCell
+          variant="none"
+          className="px-6 border-transparent transform transition-transform duration-200"
+        >
           {log.user.username}
-        </td>
-        <td className="px-6 border-transparent transform transition-transform duration-200">
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 border-transparent transform transition-transform duration-200"
+        >
           {log.occurredAt}
-        </td>
+        </TableCell>
         {hasMetadata && (
           <div className="mt-1">
             {expanded ? (
-              <td
+              <TableCell
+                variant="none"
                 className={`px-2 gap-x-1 flex items-center justify-center transform transition-transform duration-200`}
               >
                 <CaretUp weight="bold" size={20} />
                 <p className="text-xs text-white/50 w-[20px]">hide</p>
-              </td>
+              </TableCell>
             ) : (
-              <td
+              <TableCell
+                variant="none"
                 className={`px-2 gap-x-1 flex items-center justify-center transform transition-transform duration-200`}
               >
                 <CaretDown weight="bold" size={20} />
                 <p className="text-xs text-white/50 w-[20px]">show</p>
-              </td>
+              </TableCell>
             )}
           </div>
         )}
-      </tr>
+      </TableRow>
       <EventMetadata metadata={metadata} expanded={expanded} />
     </>
   );
@@ -65,21 +75,22 @@ export default function LogRow({ log }) {
 const EventMetadata = ({ metadata, expanded = false }) => {
   if (!metadata || !expanded) return null;
   return (
-    <tr className="bg-theme-bg-primary">
-      <td
+    <TableRow variant="none" className="bg-theme-bg-primary">
+      <TableCell
+        variant="none"
         colSpan="2"
         className="px-6 py-4 font-medium text-theme-text-primary rounded-l-2xl"
       >
         Event Metadata
-      </td>
-      <td colSpan="4" className="px-6 py-4 rounded-r-2xl">
+      </TableCell>
+      <TableCell variant="none" colSpan="4" className="px-6 py-4 rounded-r-2xl">
         <div className="w-full rounded-lg bg-theme-bg-secondary p-2 text-white shadow-sm border-white/10 border bg-opacity-10">
           <pre className="overflow-scroll">
             {JSON.stringify(metadata, null, 2)}
           </pre>
         </div>
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 };
 
@@ -105,12 +116,15 @@ const EventBadge = ({ event }) => {
     };
 
   return (
-    <td className="px-6 py-2 font-medium whitespace-nowrap text-white flex items-center">
+    <TableCell
+      variant="none"
+      className="px-6 py-2 font-medium whitespace-nowrap text-white flex items-center"
+    >
       <span
         className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs font-medium ${colorTheme.text} shadow-sm`}
       >
         {event}
       </span>
-    </td>
+    </TableCell>
   );
 };

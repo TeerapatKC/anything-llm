@@ -8,6 +8,13 @@ import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import Embed from "@/models/embed";
 import CTAButton from "@/components/lib/CTAButton";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function EmbedConfigsView() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -61,32 +68,35 @@ export default function EmbedConfigsView() {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-          <thead className="text-theme-text-secondary text-xs leading-[18px] uppercase border-white/10 border-b">
-            <tr>
-              <th scope="col" className="px-6 py-3">
+        <Table variant="settings">
+          <TableHeader
+            variant="none"
+            className="text-theme-text-secondary text-xs leading-[18px] uppercase border-white/10 border-b"
+          >
+            <TableRow variant="none">
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embeddable.table.workspace")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embeddable.table.chats")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embeddable.table.active")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {t("embeddable.table.created")}
-              </th>
-              <th scope="col" className="px-6 py-3">
+              </TableHead>
+              <TableHead variant="none" scope="col" className="px-6 py-3">
                 {" "}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody variant="none">
             {embeds.map((embed) => (
               <EmbedRow key={embed.id} embed={embed} />
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       <ModalWrapper isOpen={isOpen}>
         <NewEmbedModal closeModal={closeModal} />

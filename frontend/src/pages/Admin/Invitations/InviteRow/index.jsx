@@ -3,6 +3,7 @@ import { titleCase } from "text-case";
 import Admin from "@/models/admin";
 import { Trash } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function InviteRow({ invite }) {
   const rowRef = useRef(null);
@@ -41,21 +42,33 @@ export default function InviteRow({ invite }) {
 
   return (
     <>
-      <tr
+      <TableRow
+        variant="none"
         ref={rowRef}
         className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
       >
-        <td scope="row" className="px-6 whitespace-nowrap">
+        <TableCell
+          variant="none"
+          scope="row"
+          className="px-6 whitespace-nowrap"
+        >
           {titleCase(status)}
-        </td>
-        <td className="px-6">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
           {invite.claimedBy
             ? invite.claimedBy?.username || "deleted user"
             : "--"}
-        </td>
-        <td className="px-6">{invite.createdBy?.username || "deleted user"}</td>
-        <td className="px-6">{invite.createdAt}</td>
-        <td className="px-6 flex items-center gap-x-6 h-full mt-1">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {invite.createdBy?.username || "deleted user"}
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {invite.createdAt}
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 flex items-center gap-x-6 h-full mt-1"
+        >
           {status === "pending" && (
             <>
               <button
@@ -70,8 +83,8 @@ export default function InviteRow({ invite }) {
               </Button>
             </>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   );
 }

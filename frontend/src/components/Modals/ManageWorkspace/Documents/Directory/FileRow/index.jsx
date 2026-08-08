@@ -10,6 +10,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { TableRow } from "@/components/ui/table";
 
 function FileRow({ item, selected, folderName, toggleSelection }) {
   const tooltipContent = useMemo(
@@ -23,7 +24,8 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
   );
 
   return (
-    <tr
+    <TableRow
+      variant="none"
       onClick={() => toggleSelection(item, folderName)}
       className={`text-theme-text-primary text-xs grid grid-cols-12 py-2 pl-8 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
         selected ? "selected light:text-white" : ""
@@ -62,7 +64,7 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
           </div>
         )}
       </div>
-    </tr>
+    </TableRow>
   );
 }
 

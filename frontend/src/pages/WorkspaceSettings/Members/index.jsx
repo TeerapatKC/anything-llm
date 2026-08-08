@@ -6,6 +6,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
 import CTAButton from "@/components/lib/CTAButton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function Members({ workspace }) {
   const [loading, setLoading] = useState(true);
@@ -47,37 +55,55 @@ export default function Members({ workspace }) {
 
   return (
     <div className="flex justify-between -mt-3">
-      <table className="w-full max-w-[700px] text-sm text-left rounded-lg">
-        <thead className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white/10 border-b border-opacity-60">
-          <tr>
-            <th scope="col" className="px-6 py-3 rounded-tl-lg">
+      <Table
+        variant="none"
+        className="w-full max-w-[700px] text-sm text-left rounded-lg"
+      >
+        <TableHeader
+          variant="none"
+          className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white/10 border-b border-opacity-60"
+        >
+          <TableRow variant="none">
+            <TableHead
+              variant="none"
+              scope="col"
+              className="px-6 py-3 rounded-tl-lg"
+            >
               Username
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               Role
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               Date Added
-            </th>
-            <th scope="col" className="px-6 py-3 rounded-tr-lg">
+            </TableHead>
+            <TableHead
+              variant="none"
+              scope="col"
+              className="px-6 py-3 rounded-tr-lg"
+            >
               {" "}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody variant="none">
           {workspaceUsers.length > 0 ? (
             workspaceUsers.map((user, index) => (
               <WorkspaceMemberRow key={index} user={user} />
             ))
           ) : (
-            <tr>
-              <td className="text-center py-4 text-white/80" colSpan="4">
+            <TableRow variant="none">
+              <TableCell
+                variant="none"
+                className="text-center py-4 text-white/80"
+                colSpan="4"
+              >
                 No workspace members
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           )}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <CTAButton onClick={openModal}>Manage Users</CTAButton>
       <ModalWrapper isOpen={isOpen}>
         <AddMemberModal

@@ -12,6 +12,13 @@ import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
 import Toggle from "@/components/lib/Toggle";
 import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminUsers() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -85,29 +92,37 @@ function UsersContainer() {
   }
 
   return (
-    <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-      <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-        <tr>
-          <th scope="col" className="px-6 py-3 rounded-tl-lg">
+    <Table variant="settings">
+      <TableHeader variant="settings">
+        <TableRow variant="none">
+          <TableHead
+            variant="none"
+            scope="col"
+            className="px-6 py-3 rounded-tl-lg"
+          >
             Username
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Role
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Date Added
-          </th>
-          <th scope="col" className="px-6 py-3 rounded-tr-lg">
+          </TableHead>
+          <TableHead
+            variant="none"
+            scope="col"
+            className="px-6 py-3 rounded-tr-lg"
+          >
             {" "}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody variant="none">
         {users.map((user) => (
           <UserRow key={user.id} currUser={currUser} user={user} />
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }
 

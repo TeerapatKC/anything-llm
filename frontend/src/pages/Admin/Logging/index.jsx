@@ -8,6 +8,13 @@ import LogRow from "./LogRow";
 import showToast from "@/utils/toast";
 import CTAButton from "@/components/lib/CTAButton";
 import { useTranslation } from "react-i18next";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminLogs() {
   const query = useQuery();
@@ -120,27 +127,35 @@ function LogsContainer({
 
   return (
     <>
-      <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-        <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-          <tr>
-            <th scope="col" className="px-6 py-3 rounded-tl-lg">
+      <Table variant="settings">
+        <TableHeader variant="settings">
+          <TableRow variant="none">
+            <TableHead
+              variant="none"
+              scope="col"
+              className="px-6 py-3 rounded-tl-lg"
+            >
               {t("event.table.type")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("event.table.user")}
-            </th>
-            <th scope="col" className="px-6 py-3">
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
               {t("event.table.occurred")}
-            </th>
-            <th scope="col" className="px-6 py-3 rounded-tr-lg">
+            </TableHead>
+            <TableHead
+              variant="none"
+              scope="col"
+              className="px-6 py-3 rounded-tr-lg"
+            >
               {" "}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody variant="none">
           {!!logs && logs.map((log) => <LogRow key={log.id} log={log} />)}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <div className="flex w-full justify-between items-center mt-6">
         <button
           onClick={handlePrevious}

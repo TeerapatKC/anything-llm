@@ -5,6 +5,7 @@ import moment from "moment";
 import { BugDroid, AppleLogo } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function DeviceRow({ device, removeDevice }) {
   const [status, setStatus] = useState(device.approved);
@@ -24,8 +25,15 @@ export default function DeviceRow({ device, removeDevice }) {
 
   return (
     <>
-      <tr className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10">
-        <td scope="row" className="px-6 whitespace-nowrap">
+      <TableRow
+        variant="none"
+        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+      >
+        <TableCell
+          variant="none"
+          scope="row"
+          className="px-6 whitespace-nowrap"
+        >
           <div className="flex items-center gap-x-2">
             {device.deviceOs === "ios" ? (
               <AppleLogo
@@ -42,8 +50,8 @@ export default function DeviceRow({ device, removeDevice }) {
             )}
             <span className="text-sm">{device.deviceName}</span>
           </div>
-        </td>
-        <td className="px-6">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
           <div className="flex items-center gap-x-2">
             {moment(device.createdAt).format("lll")}
             {device.user && (
@@ -58,8 +66,11 @@ export default function DeviceRow({ device, removeDevice }) {
               </div>
             )}
           </div>
-        </td>
-        <td className="px-6 flex items-center gap-x-6 h-full mt-1">
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 flex items-center gap-x-6 h-full mt-1"
+        >
           {status ? (
             <button
               onClick={handleDeny}
@@ -83,8 +94,8 @@ export default function DeviceRow({ device, removeDevice }) {
               </button>
             </>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
     </>
   );
 }

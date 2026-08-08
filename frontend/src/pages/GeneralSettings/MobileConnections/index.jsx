@@ -8,6 +8,14 @@ import MobileConnection from "@/models/mobile";
 import ConnectionModal from "./ConnectionModal";
 import DeviceRow from "./DeviceRow";
 import { isMobile } from "react-device-detect";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function MobileDevices() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -80,27 +88,31 @@ export default function MobileDevices() {
                 containerClassName="flex w-full"
               />
             ) : (
-              <table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0">
-                <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
+              <Table variant="settings">
+                <TableHeader variant="settings">
+                  <TableRow variant="none">
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       Device Name
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       Registered
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       {" "}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody variant="none">
                   {devices.length === 0 ? (
-                    <tr className="bg-transparent text-theme-text-secondary text-sm font-medium">
-                      <td colSpan="4" className="px-6 py-4 text-center">
+                    <TableRow variant="settings">
+                      <TableCell
+                        variant="none"
+                        colSpan="4"
+                        className="px-6 py-4 text-center"
+                      >
                         No devices found
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     devices.map((device) => (
                       <DeviceRow
@@ -110,8 +122,8 @@ export default function MobileDevices() {
                       />
                     ))
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             )}
           </div>
         </div>

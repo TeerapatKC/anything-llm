@@ -10,6 +10,13 @@ import NewWorkspaceModal from "./NewWorkspaceModal";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminWorkspaces() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -89,27 +96,38 @@ function WorkspacesContainer() {
   }
 
   return (
-    <table className="w-full text-xs text-left rounded-lg mt-6 min-w-[640px] border-spacing-0">
-      <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-        <tr>
-          <th scope="col" className="px-6 py-3 rounded-tl-lg">
+    <Table
+      variant="none"
+      className="w-full text-xs text-left rounded-lg mt-6 min-w-[640px] border-spacing-0"
+    >
+      <TableHeader variant="settings">
+        <TableRow variant="none">
+          <TableHead
+            variant="none"
+            scope="col"
+            className="px-6 py-3 rounded-tl-lg"
+          >
             Name
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Link
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Users
-          </th>
-          <th scope="col" className="px-6 py-3">
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Created On
-          </th>
-          <th scope="col" className="px-6 py-3 rounded-tr-lg">
+          </TableHead>
+          <TableHead
+            variant="none"
+            scope="col"
+            className="px-6 py-3 rounded-tr-lg"
+          >
             {" "}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody variant="none">
         {workspaces.map((workspace) => (
           <WorkspaceRow
             key={workspace.id}
@@ -118,7 +136,7 @@ function WorkspacesContainer() {
             deletionProtected={deletionProtected}
           />
         ))}
-      </tbody>
-    </table>
+      </TableBody>
+    </Table>
   );
 }

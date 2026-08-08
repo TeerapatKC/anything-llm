@@ -13,6 +13,14 @@ import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import CTAButton from "@/components/lib/CTAButton";
 import { useTranslation } from "react-i18next";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function AdminApiKeys() {
   const { isOpen, openModal, closeModal } = useModal();
@@ -83,33 +91,48 @@ export default function AdminApiKeys() {
                 containerClassName="flex w-full"
               />
             ) : (
-              <table className="w-full text-xs text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0">
-                <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 rounded-tl-lg">
+              <Table
+                variant="none"
+                className="w-full text-xs text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0"
+              >
+                <TableHeader variant="settings">
+                  <TableRow variant="none">
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-6 py-3 rounded-tl-lg"
+                    >
                       {t("api.table.name")}
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       {t("api.table.key")}
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       {t("api.table.by")}
-                    </th>
-                    <th scope="col" className="px-6 py-3">
+                    </TableHead>
+                    <TableHead variant="none" scope="col" className="px-6 py-3">
                       {t("api.table.created")}
-                    </th>
-                    <th scope="col" className="px-6 py-3 rounded-tr-lg">
+                    </TableHead>
+                    <TableHead
+                      variant="none"
+                      scope="col"
+                      className="px-6 py-3 rounded-tr-lg"
+                    >
                       {t("api.actions")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody variant="none">
                   {apiKeys.length === 0 ? (
-                    <tr className="bg-transparent text-theme-text-secondary text-sm font-medium">
-                      <td colSpan="5" className="px-6 py-4 text-center">
+                    <TableRow variant="settings">
+                      <TableCell
+                        variant="none"
+                        colSpan="5"
+                        className="px-6 py-4 text-center"
+                      >
                         {t("api.empty")}
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ) : (
                     apiKeys.map((apiKey) => (
                       <ApiKeyRow
@@ -119,8 +142,8 @@ export default function AdminApiKeys() {
                       />
                     ))
                   )}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             )}
           </div>
         </div>

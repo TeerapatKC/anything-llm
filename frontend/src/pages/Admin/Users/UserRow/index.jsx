@@ -6,6 +6,7 @@ import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import { Button } from "@/components/ui/button";
+import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 
 const ModMap = {
   admin: ["admin", "manager", "default"],
@@ -56,16 +57,28 @@ export default function UserRow({ currUser, user }) {
 
   return (
     <>
-      <tr
+      <TableRow
+        variant="none"
         ref={rowRef}
         className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
       >
-        <th scope="row" className="px-6 whitespace-nowrap">
+        <TableHead
+          variant="none"
+          scope="row"
+          className="px-6 whitespace-nowrap"
+        >
           {user.username}
-        </th>
-        <td className="px-6">{titleCase(user.role)}</td>
-        <td className="px-6">{user.createdAt}</td>
-        <td className="px-6 flex items-center gap-x-6 h-full mt-2">
+        </TableHead>
+        <TableCell variant="none" className="px-6">
+          {titleCase(user.role)}
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {user.createdAt}
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 flex items-center gap-x-6 h-full mt-2"
+        >
           {canModify && (
             <button
               onClick={openModal}
@@ -87,8 +100,8 @@ export default function UserRow({ currUser, user }) {
               </Button>
             </>
           )}
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       <ModalWrapper isOpen={isOpen}>
         <EditUserModal
           currentUser={currUser}

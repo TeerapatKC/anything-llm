@@ -10,6 +10,7 @@ import EditEmbedModal from "./EditEmbedModal";
 import CodeSnippetModal from "./CodeSnippetModal";
 import moment from "moment";
 import { safeJsonParse } from "@/utils/request";
+import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 
 export default function EmbedRow({ embed }) {
   const rowRef = useRef(null);
@@ -63,11 +64,13 @@ export default function EmbedRow({ embed }) {
 
   return (
     <>
-      <tr
+      <TableRow
+        variant="none"
         ref={rowRef}
         className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
       >
-        <th
+        <TableHead
+          variant="none"
           scope="row"
           className="px-6 whitespace-nowrap flex item-center gap-x-1"
         >
@@ -79,14 +82,23 @@ export default function EmbedRow({ embed }) {
           >
             {embed.workspace.name}
           </a>
-        </th>
-        <th scope="row" className="px-6 whitespace-nowrap">
+        </TableHead>
+        <TableHead
+          variant="none"
+          scope="row"
+          className="px-6 whitespace-nowrap"
+        >
           {nFormatter(embed._count.embed_chats)}
-        </th>
-        <th scope="row" className="px-6 whitespace-nowrap">
+        </TableHead>
+        <TableHead
+          variant="none"
+          scope="row"
+          className="px-6 whitespace-nowrap"
+        >
           <ActiveDomains domainList={embed.allowlist_domains} />
-        </th>
-        <th
+        </TableHead>
+        <TableHead
+          variant="none"
           scope="row"
           className="px-6 whitespace-nowrap text-theme-text-secondary !font-normal"
         >
@@ -96,8 +108,11 @@ export default function EmbedRow({ embed }) {
               ? moment(embed.createdAt).format("MMM D, YYYY")
               : moment(embed.createdAt).fromNow()
           }
-        </th>
-        <td className="px-6 flex items-center gap-x-6 h-full mt-1">
+        </TableHead>
+        <TableCell
+          variant="none"
+          className="px-6 flex items-center gap-x-6 h-full mt-1"
+        >
           <button
             onClick={openSnippetModal}
             className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-code-hover-bg"
@@ -128,8 +143,8 @@ export default function EmbedRow({ embed }) {
           >
             <DotsThreeOutline weight="fill" className="h-5 w-5" />
           </button>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       <ModalWrapper isOpen={isSettingsOpen}>
         <EditEmbedModal embed={embed} closeModal={closeSettingsModal} />
       </ModalWrapper>

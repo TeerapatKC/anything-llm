@@ -6,6 +6,7 @@ import { useModal } from "@/hooks/useModal";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { safeJsonParse } from "@/utils/request";
 import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -32,33 +33,51 @@ export default function ChatRow({ chat, onDelete }) {
 
   return (
     <>
-      <tr className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10">
-        <td className="px-6 font-medium whitespace-nowrap text-white">
+      <TableRow
+        variant="none"
+        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+      >
+        <TableCell
+          variant="none"
+          className="px-6 font-medium whitespace-nowrap text-white"
+        >
           {chat.id}
-        </td>
-        <td className="px-6 font-medium whitespace-nowrap text-white">
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 font-medium whitespace-nowrap text-white"
+        >
           {chat.user?.username}
-        </td>
-        <td className="px-6">{chat.workspace?.name}</td>
-        <td
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {chat.workspace?.name}
+        </TableCell>
+        <TableCell
+          variant="none"
           onClick={openPromptModal}
           className="px-6 border-transparent cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
         >
           {truncate(chat.prompt, 40)}
-        </td>
-        <td
+        </TableCell>
+        <TableCell
+          variant="none"
           onClick={openResponseModal}
           className="px-6 cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
-        </td>
-        <td className="px-6">{chat.createdAt}</td>
-        <td className="px-6 flex items-center gap-x-6 h-full mt-1">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {chat.createdAt}
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 flex items-center gap-x-6 h-full mt-1"
+        >
           <Button variant="danger" onClick={handleDelete}>
             <Trash className="h-5 w-5" />
           </Button>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       <ModalWrapper isOpen={isPromptOpen}>
         <TextPreview text={chat.prompt} closeModal={closePromptModal} />
       </ModalWrapper>

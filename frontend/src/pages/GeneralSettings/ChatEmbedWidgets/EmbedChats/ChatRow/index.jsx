@@ -6,6 +6,7 @@ import paths from "@/utils/paths";
 import Embed from "@/models/embed";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { safeJsonParse } from "@/utils/request";
+import { TableCell, TableRow } from "@/components/ui/table";
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -37,8 +38,14 @@ export default function ChatRow({ chat, onDelete }) {
 
   return (
     <>
-      <tr className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10">
-        <td className="px-6 font-medium whitespace-nowrap text-white">
+      <TableRow
+        variant="none"
+        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+      >
+        <TableCell
+          variant="none"
+          className="px-6 font-medium whitespace-nowrap text-white"
+        >
           <a
             href={paths.settings.embedChatWidgets()}
             target="_blank"
@@ -47,29 +54,37 @@ export default function ChatRow({ chat, onDelete }) {
           >
             {chat.embed_config.workspace.name}
           </a>
-        </td>
-        <td
+        </TableCell>
+        <TableCell
+          variant="none"
           onClick={openConnectionDetailsModal}
           className="px-6 cursor-pointer hover:shadow-lg"
         >
           <div className="flex flex-col">
             <p>{truncate(chat.session_id, 20)}</p>
           </div>
-        </td>
-        <td
+        </TableCell>
+        <TableCell
+          variant="none"
           onClick={openPromptModal}
           className="px-6 border-transparent cursor-pointer hover:shadow-lg"
         >
           {truncate(chat.prompt, 40)}
-        </td>
-        <td
+        </TableCell>
+        <TableCell
+          variant="none"
           onClick={openResponseModal}
           className="px-6 cursor-pointer hover:shadow-lg"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
-        </td>
-        <td className="px-6">{chat.createdAt}</td>
-        <td className="px-6 flex items-center gap-x-6 h-full mt-1">
+        </TableCell>
+        <TableCell variant="none" className="px-6">
+          {chat.createdAt}
+        </TableCell>
+        <TableCell
+          variant="none"
+          className="px-6 flex items-center gap-x-6 h-full mt-1"
+        >
           <button
             onClick={handleDelete}
             className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-delete-hover-bg"
@@ -78,8 +93,8 @@ export default function ChatRow({ chat, onDelete }) {
               Delete
             </span>
           </button>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
       <ModalWrapper isOpen={isPromptOpen}>
         <TextPreview text={chat.prompt} closeModal={closePromptModal} />
       </ModalWrapper>
