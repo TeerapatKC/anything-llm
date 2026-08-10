@@ -54,7 +54,7 @@ export default function AdminUsers() {
               </DialogTrigger>
             </div>
             <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-              <NewUserModal closeModal={closeModal} />
+              <NewUserModal />
             </DialogContent>
           </Dialog>
           <div className="overflow-x-auto">

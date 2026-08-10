@@ -64,10 +64,7 @@ export default function AdminInvites() {
               </DialogTrigger>
             </div>
             <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-              <NewInviteModal
-                closeModal={closeModal}
-                onSuccess={fetchInvites}
-              />
+              <NewInviteModal onSuccess={fetchInvites} />
             </DialogContent>
           </Dialog>
           <div className="overflow-x-auto mt-6">

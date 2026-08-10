@@ -6,12 +6,13 @@ import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
+  DialogClose,
   DialogHeader,
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
 
-export default function NewInviteModal({ closeModal, onSuccess }) {
+export default function NewInviteModal({ onSuccess }) {
   const [invite, setInvite] = useState(null);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -141,17 +142,21 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
         <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
           {!invite ? (
             <>
-              <Button variant="muted" onClick={closeModal} type="button">
-                Cancel
-              </Button>
-              <Button variant="cta" type="submit">
+              <DialogClose asChild>
+                <Button variant="outline" type="button">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button variant="default" type="submit">
                 Create Invite
               </Button>
             </>
           ) : (
-            <Button variant="muted" onClick={closeModal} type="button">
-              Close
-            </Button>
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                Close
+              </Button>
+            </DialogClose>
           )}
         </DialogFooter>
       </form>

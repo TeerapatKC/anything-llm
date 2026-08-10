@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  DialogClose,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -25,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function NewUserModal({ closeModal }) {
+export default function NewUserModal() {
   const [error, setError] = useState(null);
   const [role, setRole] = useState("default");
   const [messageLimit, setMessageLimit] = useState({
@@ -140,10 +141,12 @@ export default function NewUserModal({ closeModal }) {
           </p>
         </div>
         <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
-          <Button variant="muted" onClick={closeModal} type="button">
-            Cancel
-          </Button>
-          <Button variant="cta" type="submit">
+          <DialogClose asChild>
+            <Button variant="outline" type="button">
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button variant="default" type="submit">
             Add user
           </Button>
         </DialogFooter>

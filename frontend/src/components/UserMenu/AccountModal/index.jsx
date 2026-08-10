@@ -7,6 +7,7 @@ import showToast from "@/utils/toast";
 import { Info, Plus } from "@phosphor-icons/react";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -214,10 +215,12 @@ export default function AccountModal({ user, hideModal }) {
               </div>
             </div>
             <DialogFooter className="border-t border-theme-modal-border pt-4 p-6">
-              <Button variant="muted" onClick={hideModal} type="button">
-                {t("profile_settings.cancel")}
-              </Button>
-              <Button variant="cta" type="submit">
+              <DialogClose asChild>
+                <Button variant="outline" type="button">
+                  {t("profile_settings.cancel")}
+                </Button>
+              </DialogClose>
+              <Button variant="default" type="submit">
                 {t("profile_settings.update_account")}
               </Button>
             </DialogFooter>
