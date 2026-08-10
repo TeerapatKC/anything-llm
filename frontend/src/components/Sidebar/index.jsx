@@ -101,7 +101,7 @@ export default function Sidebar() {
           </Tooltip>
         )}
       </SidebarHeader>
-      <SidebarContent className="px-2 group-data-[collapsible=icon]:hidden">
+      <SidebarContent className="px-2 group-data-[collapsible=icon]:invisible">
         <ActiveWorkspaces />
       </SidebarContent>
       <SidebarFooter className="border-t border-theme-sidebar-border pt-2">
