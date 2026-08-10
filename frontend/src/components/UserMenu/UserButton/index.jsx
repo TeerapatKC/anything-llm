@@ -118,7 +118,7 @@ export default function UserButton() {
                 {mode === "multi" ? <UserDisplay /> : <Person size={16} />}
               </span>
               <span className="grid flex-1 leading-tight">
-                <span className="truncate text-sm font-semibold text-white">
+                <span className="truncate text-sm font-semibold text-theme-text-primary">
                   {displayName}
                 </span>
                 {mode === "multi" && !!user?.role && (
@@ -133,7 +133,7 @@ export default function UserButton() {
           {mode === "multi" && !!user && (
             <DropdownMenuItem
               onSelect={() => setShowAccountSettings(true)}
-              className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
+              className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
             >
               <Person size={16} />
               {t("profile_settings.account")}
@@ -142,7 +142,7 @@ export default function UserButton() {
           {canSeeSettings && (
             <DropdownMenuItem
               asChild
-              className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
+              className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
             >
               <Link to={paths.settings.interface()}>
                 <Wrench size={16} />
