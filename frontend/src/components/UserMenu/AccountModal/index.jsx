@@ -4,8 +4,14 @@ import System from "@/models/system";
 import Appearance from "@/models/appearance";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
-import { Info, Plus, X } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Info, Plus } from "@phosphor-icons/react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
@@ -23,6 +29,8 @@ import {
 } from "@/utils/username";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -89,18 +97,11 @@ export default function AccountModal({ user, hideModal }) {
     }
   };
   return (
-    <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {t("profile_settings.edit_account")}
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={hideModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
+    <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
+        <DialogHeader className="p-6 border-b border-theme-modal-border">
+          <DialogTitle>{t("profile_settings.edit_account")}</DialogTitle>
+        </DialogHeader>
         <div
           className="h-full w-full overflow-y-auto"
           style={{ maxHeight: "calc(100vh - 200px)" }}
@@ -147,16 +148,17 @@ export default function AccountModal({ user, hideModal }) {
             </div>
             <div className="flex flex-col gap-y-4 px-6">
               <div>
-                <label
+                <Label
+                  variant="field"
                   htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-theme-text-primary"
+                  className="block mb-2"
                 >
                   {t("profile_settings.username")}
-                </label>
-                <input
+                </Label>
+                <Input
+                  variant="settings"
                   name="username"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder="User's username"
                   minLength={USERNAME_MIN_LENGTH}
                   maxLength={USERNAME_MAX_LENGTH}
@@ -177,10 +179,10 @@ export default function AccountModal({ user, hideModal }) {
                 >
                   {t("profile_settings.new_password")}
                 </Label>
-                <input
+                <Input
+                  variant="settings"
                   name="password"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
                   placeholder={`${user.username}'s new password`}
                   minLength={8}
                 />
@@ -192,11 +194,12 @@ export default function AccountModal({ user, hideModal }) {
                 <Label variant="field" htmlFor="bio" className="block mb-2">
                   Bio
                 </Label>
-                <textarea
+                <Textarea
+                  variant="settings"
                   name="bio"
-                  className="border-none bg-theme-settings-input-bg placeholder:text-theme-settings-input-placeholder border-gray-500 text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 min-h-[100px] resize-y"
                   placeholder="Tell us about yourself..."
                   defaultValue={user.bio}
+                  rows={3}
                 />
               </div>
               <div className="flex gap-x-16">
@@ -210,18 +213,18 @@ export default function AccountModal({ user, hideModal }) {
                 </div>
               </div>
             </div>
-            <div className="flex justify-between items-center border-t border-theme-modal-border pt-4 p-6">
+            <DialogFooter className="border-t border-theme-modal-border pt-4 p-6">
               <Button variant="muted" onClick={hideModal} type="button">
                 {t("profile_settings.cancel")}
               </Button>
               <Button variant="cta" type="submit">
                 {t("profile_settings.update_account")}
               </Button>
-            </div>
+            </DialogFooter>
           </form>
         </div>
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }
 
