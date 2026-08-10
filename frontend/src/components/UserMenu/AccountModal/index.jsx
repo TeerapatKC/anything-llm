@@ -100,17 +100,19 @@ export default function AccountModal({ user, hideModal }) {
   return (
     <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
       <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
-        <DialogHeader className="p-6 border-b border-theme-modal-border">
-          <DialogTitle>{t("profile_settings.edit_account")}</DialogTitle>
+        <DialogHeader className="p-4">
+          <DialogTitle className="text-sm font-semibold">
+            {t("profile_settings.edit_account")}
+          </DialogTitle>
         </DialogHeader>
         <div
           className="h-full w-full overflow-y-auto"
           style={{ maxHeight: "calc(100vh - 200px)" }}
         >
-          <form onSubmit={handleUpdate} className="space-y-6">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex flex-col items-center">
-                <label className="group w-48 h-48 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full mt-8 border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
+                <label className="group w-24 h-24 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
                   <input
                     id="logo-upload"
                     type="file"
@@ -122,16 +124,13 @@ export default function AccountModal({ user, hideModal }) {
                     <img
                       src={pfp}
                       alt="User profile picture"
-                      className="w-48 h-48 rounded-full object-cover bg-white"
+                      className="w-24 h-24 rounded-full object-cover bg-white"
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center p-3">
-                      <Plus className="w-8 h-8 text-theme-text-secondary m-2" />
-                      <span className="text-theme-text-secondary text-opacity-80 text-sm font-semibold">
+                    <div className="flex flex-col items-center justify-center p-1">
+                      <Plus className="w-5 h-5 text-theme-text-secondary" />
+                      <span className="text-theme-text-secondary text-opacity-80 text-xs font-semibold">
                         {t("profile_settings.profile_picture")}
-                      </span>
-                      <span className="text-theme-text-secondary text-opacity-60 text-xs">
-                        800 x 800
                       </span>
                     </div>
                   )}
@@ -140,14 +139,14 @@ export default function AccountModal({ user, hideModal }) {
                   <button
                     type="button"
                     onClick={handleRemovePfp}
-                    className="mt-3 text-theme-text-secondary text-opacity-60 text-sm font-medium hover:underline"
+                    className="mt-2 text-theme-text-secondary text-opacity-60 text-xs font-medium hover:underline"
                   >
                     {t("profile_settings.remove_profile_picture")}
                   </button>
                 )}
               </div>
             </div>
-            <div className="flex flex-col gap-y-4 px-6">
+            <div className="flex flex-col gap-y-3 px-4">
               <div>
                 <Label
                   variant="field"
@@ -203,18 +202,18 @@ export default function AccountModal({ user, hideModal }) {
                   rows={3}
                 />
               </div>
-              <div className="flex gap-x-16">
-                <div className="flex flex-col gap-y-6">
+              <div className="flex gap-x-8">
+                <div className="flex flex-col gap-y-3">
                   <ThemePreference />
                   <LanguagePreference />
                 </div>
-                <div className="flex flex-col gap-y-6">
+                <div className="flex flex-col gap-y-3">
                   <AutoSubmitPreference />
                   <AutoSpeakPreference />
                 </div>
               </div>
             </div>
-            <DialogFooter className="border-t border-theme-modal-border pt-4 p-6">
+            <DialogFooter className="p-4">
               <DialogClose asChild>
                 <Button variant="outline" type="button">
                   {t("profile_settings.cancel")}
