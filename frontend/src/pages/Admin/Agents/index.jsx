@@ -455,7 +455,7 @@ export default function AdminAgents() {
 
           {/* Selected agent skill modal */}
           {showSkillModal && (
-            <div className="fixed top-0 left-0 w-full h-full bg-sidebar z-30">
+            <div className="fixed top-0 left-0 w-full h-full bg-[#25272C] z-30">
               <div className="flex flex-col h-full">
                 <div className="flex items-center p-4">
                   <button

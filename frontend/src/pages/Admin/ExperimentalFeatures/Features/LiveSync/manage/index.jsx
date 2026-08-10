@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 import { isMobile } from "react-device-detect";
 import { Skeleton } from "@/components/ui/skeleton";
 import System from "@/models/system";
@@ -14,7 +14,7 @@ import {
 
 export default function LiveDocumentSyncManager() {
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+    <SidebarPageLayout className="bg-theme-bg-container light:bg-theme-bg-container">
       <Sidebar />
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
@@ -38,7 +38,7 @@ export default function LiveDocumentSyncManager() {
           </div>
         </div>
       </div>
-    </div>
+    </SidebarPageLayout>
   );
 }
 

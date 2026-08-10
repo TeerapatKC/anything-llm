@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { default as WorkspaceChatContainer } from "@/components/WorkspaceChat";
-import Sidebar from "@/components/Sidebar";
+import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 import { useParams } from "react-router-dom";
 import Workspace from "@/models/workspace";
 import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
@@ -17,10 +17,10 @@ export default function WorkspaceChat() {
   }
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-zinc-950 light:bg-slate-50 flex">
+    <SidebarPageLayout>
       {!isMobile && <Sidebar />}
       <ShowWorkspaceChat />
-    </div>
+    </SidebarPageLayout>
   );
 }
 

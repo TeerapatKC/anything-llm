@@ -67,7 +67,20 @@ export default {
           foreground: "hsl(var(--accent-foreground))",
         },
         "sidebar-button": "#31353A",
-        sidebar: "#25272C",
+        // shadcn/ui Sidebar component tokens (see src/index.css for the values,
+        // reused from the app's existing dark/light tokens). This replaces the
+        // flat `sidebar: "#25272C"` this app used to have; its two call sites
+        // now spell that colour out as `bg-[#25272C]` directly.
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))",
+        },
         "historical-msg-system": "rgba(255, 255, 255, 0.05);",
         "historical-msg-user": "#2C2F35",
         outline: "#4E5153",

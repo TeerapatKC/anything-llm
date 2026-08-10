@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { List, Plus } from "@phosphor-icons/react";
+import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import NewWorkspaceModal, {
   useNewWorkspaceModal,
 } from "../Modals/NewWorkspace";
@@ -8,74 +10,107 @@ import useLogo from "@/hooks/useLogo";
 import useUser from "@/hooks/useUser";
 import Footer from "../Footer";
 import SettingsButton from "../SettingsButton";
-import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
-import { useTranslation } from "react-i18next";
-import { useSidebarToggle, ToggleSidebarButton } from "./SidebarToggle";
+import { cn } from "@/lib/utils";
 import SearchBox from "./SearchBox";
-import { createPortal } from "react-dom";
+import {
+  Sidebar as SidebarPrimitive,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+/**
+ * Wraps a page's sidebar + main content in shadcn's SidebarProvider, which is
+ * what actually tracks open/collapsed state (and persists it — see
+ * SIDEBAR_COOKIE_NAME in ui/sidebar.jsx). `--sidebar-width` is set to this
+ * app's previous fixed sidebar width rather than shadcn's 16rem default;
+ * `--sidebar-width-icon` is left at the primitive's 3rem default.
+ */
+export function SidebarPageLayout({ className, children }) {
+  return (
+    <SidebarProvider
+      style={{ "--sidebar-width": "292px" }}
+      className={cn(
+        "h-screen overflow-hidden bg-zinc-950 light:bg-slate-50",
+        className
+      )}
+    >
+      {children}
+    </SidebarProvider>
+  );
+}
 
 export default function Sidebar() {
+  const { t } = useTranslation();
   const { user } = useUser();
   const { logo } = useLogo();
-  const sidebarRef = useRef(null);
-  const { showSidebar, setShowSidebar, canToggleSidebar } = useSidebarToggle();
   const {
     showing: showingNewWsModal,
     showModal: showNewWsModal,
     hideModal: hideNewWsModal,
   } = useNewWorkspaceModal();
+  const canCreateWorkspace = !user || user?.role !== "default";
 
   return (
-    <>
-      <div
-        style={{
-          width: showSidebar ? "292px" : "0px",
-          paddingLeft: showSidebar ? "0px" : "16px",
-        }}
-        className="relative transition-all duration-500"
-      >
-        {canToggleSidebar && (
-          <ToggleSidebarButton
-            showSidebar={showSidebar}
-            setShowSidebar={setShowSidebar}
-          />
-        )}
-        <div className="overflow-hidden h-full">
-          <div className="flex shrink-0 w-full justify-center my-[18px]">
-            <div className="flex w-[250px] min-w-[250px]">
-              <Link to={paths.home()} aria-label="Home">
-                <img
-                  src={logo}
-                  alt="Logo"
-                  className={`rounded max-h-[24px] object-contain transition-opacity duration-500 ${showSidebar ? "opacity-100" : "opacity-0"}`}
-                />
-              </Link>
-            </div>
-          </div>
-          <div
-            ref={sidebarRef}
-            className="relative m-[16px] rounded-[16px] bg-theme-bg-sidebar light:bg-slate-200 border-[2px] border-theme-sidebar-border light:border-none min-w-[250px] p-[10px] h-[calc(100%-76px)]"
+    <SidebarPrimitive collapsible="icon" variant="floating" className="p-0">
+      <SidebarHeader className="gap-3 pt-4">
+        <div className="flex items-center justify-between gap-2 group-data-[collapsible=icon]:justify-center">
+          <Link
+            to={paths.home()}
+            aria-label="Home"
+            className="min-w-0 group-data-[collapsible=icon]:hidden"
           >
-            <div className="flex flex-col h-full overflow-hidden">
-              <div className="flex-grow flex flex-col min-w-[235px] min-h-0">
-                <div className="relative h-[calc(100%-60px)] flex flex-col w-full justify-between pt-[10px] overflow-y-scroll no-scroll">
-                  <div className="flex flex-col gap-y-[14px]">
-                    <SearchBox user={user} showNewWsModal={showNewWsModal} />
-                    <ActiveWorkspaces />
-                  </div>
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 pb-3 rounded-b-[16px] bg-theme-bg-sidebar light:bg-slate-200 bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
-                  <Footer />
-                </div>
-              </div>
-            </div>
-          </div>
+            <img
+              src={logo}
+              alt="Logo"
+              className="rounded max-h-[24px] object-contain"
+            />
+          </Link>
+          <SidebarTrigger className="shrink-0 text-theme-text-secondary hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
         </div>
-        {showingNewWsModal && <NewWorkspaceModal hideModal={hideNewWsModal} />}
-      </div>
-      <WorkspaceAndThreadTooltips />
-    </>
+        <div className="group-data-[collapsible=icon]:hidden">
+          <SearchBox user={user} showNewWsModal={showNewWsModal} />
+        </div>
+        {canCreateWorkspace && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={showNewWsModal}
+                aria-label={t("new-workspace.title")}
+                className="hidden group-data-[collapsible=icon]:flex mx-auto items-center justify-center h-8 w-8 rounded-lg bg-white hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
+              >
+                <Plus
+                  size={16}
+                  weight="bold"
+                  className="text-black light:text-slate-500"
+                />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" className="max-w-[250px] text-xs">
+              {t("new-workspace.title")}
+            </TooltipContent>
+          </Tooltip>
+        )}
+      </SidebarHeader>
+      <SidebarContent className="px-2 group-data-[collapsible=icon]:hidden">
+        <ActiveWorkspaces />
+      </SidebarContent>
+      <SidebarFooter className="border-t border-theme-sidebar-border pt-2">
+        <Footer />
+      </SidebarFooter>
+      <SidebarRail />
+      {showingNewWsModal && <NewWorkspaceModal hideModal={hideNewWsModal} />}
+    </SidebarPrimitive>
   );
 }
 
@@ -195,17 +230,13 @@ function NewWorkspaceButton({ user, showNewWsModal }) {
     <div className="flex gap-x-2 items-center justify-between">
       <button
         onClick={showNewWsModal}
-        className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-white rounded-lg text-sidebar justify-center items-center hover:bg-opacity-80 transition-all duration-300"
+        className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-white rounded-lg text-[#25272C] justify-center items-center hover:bg-opacity-80 transition-all duration-300"
       >
         <Plus className="h-5 w-5" />
-        <p className="text-sidebar text-sm font-semibold">
+        <p className="text-[#25272C] text-sm font-semibold">
           {t("new-workspace.title")}
         </p>
       </button>
     </div>
   );
-}
-
-function WorkspaceAndThreadTooltips() {
-  return createPortal(<React.Fragment></React.Fragment>, document.body);
 }

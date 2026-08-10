@@ -42,6 +42,27 @@
   --accent: 216 7.6% 25.9%; /* #3D4147 — was colors.accent */
   --accent-foreground: 0 0% 100%; /* #ffffff */
 
+  /*
+   * shadcn/ui Sidebar component tokens. Reused from the tokens above rather
+   * than introduced fresh: --sidebar-background/foreground/primary/ring are
+   * byte-identical to --background/--foreground/--primary/--ring, and
+   * --sidebar-accent reuses --border's value (the same #3f3f42 the app already
+   * borders things with) since --theme-sidebar-item-hover's rgba(255,255,255,.1)
+   * composited over this background lands in the same dark-gray range. The
+   * component needs real HSL triplets here (not var() indirection to the
+   * --theme-* strings) because it reads --sidebar-border through both a
+   * `/70` opacity modifier and a raw hsl(var(--sidebar-border)) inside an
+   * arbitrary shadow value.
+   */
+  --sidebar-background: 180 3.4% 5.7%; /* #0e0f0f */
+  --sidebar-foreground: 0 0% 100%; /* #ffffff */
+  --sidebar-primary: 197.8 100% 63.7%; /* #46c8ff */
+  --sidebar-primary-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --sidebar-accent: 240 2.3% 25.3%; /* #3f3f42 */
+  --sidebar-accent-foreground: 0 0% 100%; /* #ffffff */
+  --sidebar-border: 240 2.3% 25.3%; /* #3f3f42 */
+  --sidebar-ring: 197.8 100% 63.7%; /* #46c8ff */
+
   /* Default theme */
   --theme-loader: #ffffff;
   --theme-bg-primary: #0e0f0f;
@@ -158,6 +179,16 @@
   --border: 0 0% 82.7%; /* #d3d3d3 — --theme-modal-border */
   --input: 216.9 56.5% 95.5%; /* #edf2fa */
   --ring: 198.9 91.1% 48.4%; /* #0ba5ec */
+
+  /* shadcn/ui Sidebar tokens — light overrides, same reuse pattern as :root. */
+  --sidebar-background: 216.9 56.5% 95.5%; /* #edf2fa — --theme-bg-sidebar */
+  --sidebar-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --sidebar-primary: 198.9 91.1% 48.4%; /* #0ba5ec */
+  --sidebar-primary-foreground: 0 0% 100%; /* #ffffff */
+  --sidebar-accent: 197.5 100% 89.2%; /* #c8efff — --theme-sidebar-item-hover */
+  --sidebar-accent-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --sidebar-border: 180 1.1% 82.9%; /* #d3d4d4 — --theme-sidebar-border */
+  --sidebar-ring: 198.9 91.1% 48.4%; /* #0ba5ec */
 
   --theme-loader: #000000;
   --theme-bg-primary: #ffffff;
