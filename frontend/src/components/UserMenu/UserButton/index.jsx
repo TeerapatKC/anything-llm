@@ -81,9 +81,9 @@ export default function UserButton() {
             <DropdownMenuTrigger
               type="button"
               aria-label={t("profile_settings.account")}
-              className="flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:!rounded-full group-data-[collapsible=icon]:justify-center"
+              className="group/account flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:data-[state=open]:!bg-transparent"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800 group-data-[collapsible=icon]:group-hover/account:ring-2 group-data-[collapsible=icon]:group-data-[state=open]/account:ring-2 group-data-[collapsible=icon]:ring-theme-sidebar-item-hover">
                 {mode === "multi" ? <UserDisplay /> : <Person size={16} />}
               </span>
               <span className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
