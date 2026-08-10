@@ -94,7 +94,7 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
           onClick={() => setShowSelector(false)}
         />
       )}
-      <div className="hidden md:block absolute top-2 left-3 z-30 transition-all duration-500">
+      <div className="relative">
         <button
           type="button"
           onClick={() => setShowSelector(!showSelector)}

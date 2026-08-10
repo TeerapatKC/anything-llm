@@ -460,14 +460,16 @@ export default function ChatContainer({
           style={{ height: "100%" }}
           className="relative flex w-full h-full z-[2]"
         >
-          <ChatSettingsMenu
-            history={chatHistory}
-            workspace={workspace}
-            threadSlug={activeThreadSlug}
-          />
           <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
             {isMobile && <SidebarMobileHeader />}
-            <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+            <div className="absolute z-30 flex items-center gap-2 top-3 right-4 md:top-2 md:left-3 md:right-auto">
+              <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+              <ChatSettingsMenu
+                history={chatHistory}
+                workspace={workspace}
+                threadSlug={activeThreadSlug}
+              />
+            </div>
             <DnDFileUploaderWrapper>
               <div className="flex flex-col h-full w-full items-center justify-center">
                 <div className="flex flex-col items-center w-full max-w-[750px]">
@@ -516,14 +518,16 @@ export default function ChatContainer({
         style={{ height: "100%" }}
         className="relative flex w-full h-full z-[2]"
       >
-        <ChatSettingsMenu
-          history={chatHistory}
-          workspace={workspace}
-          threadSlug={activeThreadSlug}
-        />
         <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
           {isMobile && <SidebarMobileHeader />}
-          <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+          <div className="absolute z-30 flex items-center gap-2 top-3 right-4 md:top-2 md:left-3 md:right-auto">
+            <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+            <ChatSettingsMenu
+              history={chatHistory}
+              workspace={workspace}
+              threadSlug={activeThreadSlug}
+            />
+          </div>
           <DnDFileUploaderWrapper>
             <div className="flex flex-col h-full w-full pb-20 md:pb-0">
               <div className="contents">

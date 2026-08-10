@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { SlidersHorizontal } from "@phosphor-icons/react";
-import useLoginMode from "@/hooks/useLoginMode";
 import TextSizeRow from "./TextSize";
 import MemoriesRow from "./Memories";
 import CopyLinkToChatRow from "./CopyLinkToChat";
@@ -11,7 +10,6 @@ export default function ChatSettingsMenu({
   workspace = null,
   threadSlug = null,
 }) {
-  const mode = useLoginMode();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef(null);
   const buttonRef = useRef(null);
@@ -32,12 +30,8 @@ export default function ChatSettingsMenu({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showMenu]);
 
-  const hasUserIcon = mode !== null;
-
   return (
-    <div
-      className={`absolute top-3 md:top-5 z-30 ${hasUserIcon ? "right-[55px] md:right-[67px]" : "right-4 md:right-6"}`}
-    >
+    <div className="relative">
       <button
         ref={buttonRef}
         type="button"

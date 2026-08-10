@@ -287,10 +287,12 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
         style={{ height: "100%" }}
         className="relative flex w-full h-full z-[2]"
       >
-        <ChatSettingsMenu />
         <div className="flex-1 min-w-0 transition-all duration-500 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
           {isMobile && <SidebarMobileHeader />}
-          <WorkspaceModelPicker workspaceSlug={workspace?.slug} />
+          <div className="absolute z-30 flex items-center gap-2 top-3 right-4 md:top-2 md:left-3 md:right-auto">
+            <WorkspaceModelPicker workspaceSlug={workspace?.slug} />
+            <ChatSettingsMenu />
+          </div>
           <DnDFileUploaderWrapper>
             <div className="flex flex-col h-full w-full items-center justify-center">
               <div className="flex flex-col items-center w-full max-w-[750px]">
