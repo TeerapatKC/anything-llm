@@ -60,7 +60,7 @@ export default function Sidebar() {
   const canCreateWorkspace = !user || user?.role !== "default";
 
   return (
-    <SidebarPrimitive collapsible="icon" variant="floating" className="p-0">
+    <SidebarPrimitive collapsible="icon" className="p-0">
       <SidebarHeader className="gap-3 pt-4">
         <div className="flex items-center justify-between gap-2 group-data-[collapsible=icon]:justify-center">
           <Link
