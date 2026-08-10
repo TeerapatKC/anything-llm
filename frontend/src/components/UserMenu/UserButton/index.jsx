@@ -81,7 +81,7 @@ export default function UserButton() {
             <DropdownMenuTrigger
               type="button"
               aria-label={t("profile_settings.account")}
-              className="flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center"
+              className="flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:!rounded-full group-data-[collapsible=icon]:justify-center"
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800">
                 {mode === "multi" ? <UserDisplay /> : <Person size={16} />}
