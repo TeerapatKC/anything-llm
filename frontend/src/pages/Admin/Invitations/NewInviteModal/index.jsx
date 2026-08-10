@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { X, Copy, Check } from "@phosphor-icons/react";
+import { useEffect, useState } from "react";
+import { Copy, Check } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function NewInviteModal({ closeModal, onSuccess }) {
   const [invite, setInvite] = useState(null);
@@ -68,113 +73,89 @@ export default function NewInviteModal({ closeModal, onSuccess }) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Create new invite
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
-        <div className="p-6">
-          <form onSubmit={handleCreate}>
-            <div className="space-y-4">
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-              {invite && (
-                <div className="relative">
-                  <input
-                    type="url"
-                    defaultValue={`${window.location.origin}/accept-invite/${invite.code}`}
-                    disabled={true}
-                    className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={copyInviteLink}
-                    disabled={copied}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-theme-modal-border transition-all duration-300"
-                  >
-                    {copied ? (
-                      <Check
-                        size={20}
-                        className="text-green-400"
-                        weight="bold"
-                      />
-                    ) : (
-                      <Copy size={20} className="text-white" weight="bold" />
-                    )}
-                  </button>
-                </div>
-              )}
-              <p className="text-white text-opacity-60 text-xs md:text-sm">
-                After creation you will be able to copy the invite and send it
-                to a new user where they can create an account as the{" "}
-                <b>default</b> role and automatically be added to workspaces
-                selected.
-              </p>
+    <>
+      <DialogHeader>
+        <DialogTitle>Create new invite</DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleCreate}>
+        <div className="space-y-4">
+          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          {invite && (
+            <div className="relative">
+              <input
+                type="url"
+                defaultValue={`${window.location.origin}/accept-invite/${invite.code}`}
+                disabled={true}
+                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
+              />
+              <button
+                type="button"
+                onClick={copyInviteLink}
+                disabled={copied}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-theme-modal-border transition-all duration-300"
+              >
+                {copied ? (
+                  <Check size={20} className="text-green-400" weight="bold" />
+                ) : (
+                  <Copy size={20} className="text-white" weight="bold" />
+                )}
+              </button>
             </div>
+          )}
+          <p className="text-white text-opacity-60 text-xs md:text-sm">
+            After creation you will be able to copy the invite and send it to a
+            new user where they can create an account as the <b>default</b> role
+            and automatically be added to workspaces selected.
+          </p>
+        </div>
 
-            {workspaces.length > 0 && !invite && (
-              <div className="mt-6">
-                <div className="w-full">
-                  <div className="flex flex-col gap-y-1 mb-2">
-                    <Label
-                      variant="field"
-                      htmlFor="workspaces"
-                      className="block"
-                    >
-                      Auto-add invitee to workspaces
-                    </Label>
-                    <p className="text-white text-opacity-60 text-xs">
-                      You can optionally automatically assign the user to the
-                      workspaces below by selecting them. By default, the user
-                      will not have any workspaces visible. You can assign
-                      workspaces later post-invite acceptance.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-y-2 mt-2">
-                    {workspaces.map((workspace) => (
-                      <WorkspaceOption
-                        key={workspace.id}
-                        workspace={workspace}
-                        selected={selectedWorkspaceIds.includes(workspace.id)}
-                        toggleSelection={handleWorkspaceSelection}
-                      />
-                    ))}
-                  </div>
-                </div>
+        {workspaces.length > 0 && !invite && (
+          <div className="mt-6">
+            <div className="w-full">
+              <div className="flex flex-col gap-y-1 mb-2">
+                <Label variant="field" htmlFor="workspaces" className="block">
+                  Auto-add invitee to workspaces
+                </Label>
+                <p className="text-white text-opacity-60 text-xs">
+                  You can optionally automatically assign the user to the
+                  workspaces below by selecting them. By default, the user will
+                  not have any workspaces visible. You can assign workspaces
+                  later post-invite acceptance.
+                </p>
               </div>
-            )}
 
-            <div className="flex justify-end items-center mt-6 pt-6 border-t border-theme-modal-border">
-              {!invite ? (
-                <>
-                  <button
-                    onClick={closeModal}
-                    type="button"
-                    className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm mr-2"
-                  >
-                    Cancel
-                  </button>
-                  <Button variant="cta" type="submit">
-                    Create Invite
-                  </Button>
-                </>
-              ) : (
-                <Button variant="muted" onClick={closeModal} type="button">
-                  Close
-                </Button>
-              )}
+              <div className="flex flex-col gap-y-2 mt-2">
+                {workspaces.map((workspace) => (
+                  <WorkspaceOption
+                    key={workspace.id}
+                    workspace={workspace}
+                    selected={selectedWorkspaceIds.includes(workspace.id)}
+                    toggleSelection={handleWorkspaceSelection}
+                  />
+                ))}
+              </div>
             </div>
-          </form>
-        </div>
-      </div>
-    </div>
+          </div>
+        )}
+
+        <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
+          {!invite ? (
+            <>
+              <Button variant="muted" onClick={closeModal} type="button">
+                Cancel
+              </Button>
+              <Button variant="cta" type="submit">
+                Create Invite
+              </Button>
+            </>
+          ) : (
+            <Button variant="muted" onClick={closeModal} type="button">
+              Close
+            </Button>
+          )}
+        </DialogFooter>
+      </form>
+    </>
   );
 }
 

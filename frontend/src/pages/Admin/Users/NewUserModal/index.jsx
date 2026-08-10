@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { useState } from "react";
 import Admin from "@/models/admin";
 import { userFromStorage } from "@/utils/request";
 import { MessageLimitInput, RoleHintDisplay } from "..";
@@ -13,6 +12,11 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -46,123 +50,104 @@ export default function NewUserModal({ closeModal }) {
   const user = userFromStorage();
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Add user to instance
-            </h3>
+    <>
+      <DialogHeader>
+        <DialogTitle>Add user to instance</DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleCreate}>
+        <div className="space-y-4">
+          <div>
+            <Label variant="field" htmlFor="username" className="block mb-2">
+              Username
+            </Label>
+            <Input
+              variant="settings"
+              name="username"
+              type="text"
+              placeholder="User's username"
+              minLength={USERNAME_MIN_LENGTH}
+              maxLength={USERNAME_MAX_LENGTH}
+              pattern={USERNAME_PATTERN}
+              required={true}
+              autoComplete="off"
+            />
+            <p className="mt-2 text-xs text-white/60">
+              {t("common.username_requirements")}
+            </p>
           </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
+          <div>
+            <Label variant="field" htmlFor="password" className="block mb-2">
+              Password
+            </Label>
+            <Input
+              variant="settings"
+              name="password"
+              type="text"
+              placeholder="User's initial password"
+              required={true}
+              autoComplete="off"
+              minLength={8}
+            />
+            <p className="mt-2 text-xs text-white/60">
+              Password must be at least 8 characters long
+            </p>
+          </div>
+          <div>
+            <Label variant="field" htmlFor="bio" className="block mb-2">
+              Bio
+            </Label>
+            <Textarea
+              variant="settings"
+              name="bio"
+              placeholder="User's bio"
+              autoComplete="off"
+              rows={3}
+            />
+          </div>
+          <div>
+            <Label variant="field" htmlFor="role" className="block mb-2">
+              Role
+            </Label>
+            <Select
+              name="role"
+              required={true}
+              defaultValue={"default"}
+              onValueChange={setRole}
+            >
+              <SelectTrigger variant="settings">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+                {user?.role === "admin" && (
+                  <SelectItem value="admin">Administrator</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+            <RoleHintDisplay role={role} />
+          </div>
+          <MessageLimitInput
+            role={role}
+            enabled={messageLimit.enabled}
+            limit={messageLimit.limit}
+            updateState={setMessageLimit}
+          />
+          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          <p className="text-white text-xs md:text-sm">
+            After creating a user they will need to login with their initial
+            login to get access.
+          </p>
+        </div>
+        <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
+          <Button variant="muted" onClick={closeModal} type="button">
+            Cancel
           </Button>
-        </div>
-        <div className="p-6">
-          <form onSubmit={handleCreate}>
-            <div className="space-y-4">
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="username"
-                  className="block mb-2"
-                >
-                  Username
-                </Label>
-                <Input
-                  variant="settings"
-                  name="username"
-                  type="text"
-                  placeholder="User's username"
-                  minLength={USERNAME_MIN_LENGTH}
-                  maxLength={USERNAME_MAX_LENGTH}
-                  pattern={USERNAME_PATTERN}
-                  required={true}
-                  autoComplete="off"
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  {t("common.username_requirements")}
-                </p>
-              </div>
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="password"
-                  className="block mb-2"
-                >
-                  Password
-                </Label>
-                <Input
-                  variant="settings"
-                  name="password"
-                  type="text"
-                  placeholder="User's initial password"
-                  required={true}
-                  autoComplete="off"
-                  minLength={8}
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  Password must be at least 8 characters long
-                </p>
-              </div>
-              <div>
-                <Label variant="field" htmlFor="bio" className="block mb-2">
-                  Bio
-                </Label>
-                <Textarea
-                  variant="settings"
-                  name="bio"
-                  placeholder="User's bio"
-                  autoComplete="off"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <Label variant="field" htmlFor="role" className="block mb-2">
-                  Role
-                </Label>
-                <Select
-                  name="role"
-                  required={true}
-                  defaultValue={"default"}
-                  onValueChange={setRole}
-                >
-                  <SelectTrigger variant="settings">
-                    <SelectValue placeholder="Select an option" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    {user?.role === "admin" && (
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-                <RoleHintDisplay role={role} />
-              </div>
-              <MessageLimitInput
-                role={role}
-                enabled={messageLimit.enabled}
-                limit={messageLimit.limit}
-                updateState={setMessageLimit}
-              />
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-              <p className="text-white text-xs md:text-sm">
-                After creating a user they will need to login with their initial
-                login to get access.
-              </p>
-            </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <Button variant="muted" onClick={closeModal} type="button">
-                Cancel
-              </Button>
-              <Button variant="cta" type="submit">
-                Add user
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+          <Button variant="cta" type="submit">
+            Add user
+          </Button>
+        </DialogFooter>
+      </form>
+    </>
   );
 }

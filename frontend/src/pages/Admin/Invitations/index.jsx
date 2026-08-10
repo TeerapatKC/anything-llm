@@ -6,7 +6,7 @@ import Admin from "@/models/admin";
 import InviteRow from "./InviteRow";
 import NewInviteModal from "./NewInviteModal";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CTAButton from "@/components/lib/CTAButton";
 import {
   Table,
@@ -51,15 +51,25 @@ export default function AdminInvites() {
               and sign up with. Invitations can only be used by a single user.
             </p>
           </div>
-          <div className="w-full justify-end flex">
-            <CTAButton
-              onClick={openModal}
-              className="mt-3 mr-0 mb-4 md:-mb-12 z-10"
-            >
-              <EnvelopeSimple className="h-4 w-4" weight="bold" /> Create Invite
-              Link
-            </CTAButton>
-          </div>
+          <Dialog
+            open={isOpen}
+            onOpenChange={(open) => (open ? openModal() : closeModal())}
+          >
+            <div className="w-full justify-end flex">
+              <DialogTrigger asChild>
+                <CTAButton className="mt-3 mr-0 mb-4 md:-mb-12 z-10">
+                  <EnvelopeSimple className="h-4 w-4" weight="bold" /> Create
+                  Invite Link
+                </CTAButton>
+              </DialogTrigger>
+            </div>
+            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+              <NewInviteModal
+                closeModal={closeModal}
+                onSuccess={fetchInvites}
+              />
+            </DialogContent>
+          </Dialog>
           <div className="overflow-x-auto mt-6">
             {loading ? (
               <Skeleton
@@ -121,9 +131,6 @@ export default function AdminInvites() {
             )}
           </div>
         </div>
-        <ModalWrapper isOpen={isOpen}>
-          <NewInviteModal closeModal={closeModal} onSuccess={fetchInvites} />
-        </ModalWrapper>
       </div>
     </div>
   );

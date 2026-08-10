@@ -7,7 +7,7 @@ import UserRow from "./UserRow";
 import useUser from "@/hooks/useUser";
 import NewUserModal from "./NewUserModal";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import CTAButton from "@/components/lib/CTAButton";
 import Toggle from "@/components/lib/Toggle";
 import { Input } from "@/components/ui/input";
@@ -42,21 +42,25 @@ export default function AdminUsers() {
               instance.
             </p>
           </div>
-          <div className="w-full justify-end flex">
-            <CTAButton
-              onClick={openModal}
-              className="mt-3 mr-0 mb-4 md:-mb-6 z-10"
-            >
-              <UserPlus className="h-4 w-4" weight="bold" /> Add user
-            </CTAButton>
-          </div>
+          <Dialog
+            open={isOpen}
+            onOpenChange={(open) => (open ? openModal() : closeModal())}
+          >
+            <div className="w-full justify-end flex">
+              <DialogTrigger asChild>
+                <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
+                  <UserPlus className="h-4 w-4" weight="bold" /> Add user
+                </CTAButton>
+              </DialogTrigger>
+            </div>
+            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+              <NewUserModal closeModal={closeModal} />
+            </DialogContent>
+          </Dialog>
           <div className="overflow-x-auto">
             <UsersContainer />
           </div>
         </div>
-        <ModalWrapper isOpen={isOpen}>
-          <NewUserModal closeModal={closeModal} />
-        </ModalWrapper>
       </div>
     </div>
   );
