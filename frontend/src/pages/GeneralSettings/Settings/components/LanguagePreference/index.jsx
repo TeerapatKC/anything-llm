@@ -31,7 +31,7 @@ export default function LanguagePreference() {
           defaultValue={currentLanguage || "en"}
           onValueChange={changeLanguage}
         >
-          <SelectTrigger className="border-none bg-theme-settings-input-bg mt-2 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4">
+          <SelectTrigger className="border-none bg-theme-settings-input-bg mt-2 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none w-fit py-2 px-4">
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>

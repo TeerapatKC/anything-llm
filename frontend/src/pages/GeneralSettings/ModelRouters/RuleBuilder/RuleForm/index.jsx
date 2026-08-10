@@ -169,7 +169,7 @@ export default function RuleForm({
                   {t("model-router.rule-form.rule-type")}
                 </label>
                 <Select value={ruleType} onValueChange={setRuleType}>
-                  <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+                  <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
                   <SelectContent>

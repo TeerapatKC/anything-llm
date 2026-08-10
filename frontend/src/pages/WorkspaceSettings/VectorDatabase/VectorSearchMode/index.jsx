@@ -49,7 +49,7 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
         }}
         required={true}
       >
-        <SelectTrigger className="border-none bg-theme-settings-input-bg text-white text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5">
+        <SelectTrigger className="border-none bg-theme-settings-input-bg text-white text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none w-full p-2.5">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

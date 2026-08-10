@@ -243,7 +243,7 @@ function LanguagePreference() {
         defaultValue={currentLanguage || "en"}
         onValueChange={changeLanguage}
       >
-        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2">
+        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg py-2">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>
@@ -269,7 +269,7 @@ function ThemePreference() {
         {t("profile_settings.theme")}
       </Label>
       <Select name="theme" value={theme} onValueChange={setTheme}>
-        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg block py-2">
+        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg py-2">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

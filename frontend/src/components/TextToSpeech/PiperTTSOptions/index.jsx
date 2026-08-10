@@ -104,7 +104,7 @@ function PiperTTSModelSelection({ settings }) {
             onValueChange={setSelectedVoice}
             value={selectedVoice}
           >
-            <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5">
+            <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg w-full p-2.5">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>

@@ -211,7 +211,7 @@ function GiteaBranchSelection({ repo, accessToken }) {
           </p>
         </div>
         <Select name="branch" required={true}>
-          <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg block w-full p-2.5">
+          <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg w-full p-2.5">
             <SelectValue placeholder={t("connectors.gitea.branch_loading")} />
           </SelectTrigger>
           <SelectContent />
@@ -229,7 +229,7 @@ function GiteaBranchSelection({ repo, accessToken }) {
         </p>
       </div>
       <Select name="branch" required={true}>
-        <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg block w-full p-2.5">
+        <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-white focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg w-full p-2.5">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

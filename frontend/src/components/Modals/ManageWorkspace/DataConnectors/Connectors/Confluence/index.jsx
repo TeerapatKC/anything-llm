@@ -159,7 +159,7 @@ export default function ConfluenceOptions() {
                   defaultValue={accessType}
                   onValueChange={setAccessType}
                 >
-                  <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 border-gray-500 text-white text-sm rounded-lg block py-2">
+                  <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 border-gray-500 text-white text-sm rounded-lg py-2">
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
                   <SelectContent>

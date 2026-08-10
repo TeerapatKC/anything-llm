@@ -143,7 +143,7 @@ export default function LLMProviderModelPicker({
             onValueChange={handleProviderChange}
             required
           >
-            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
               <SelectValue
                 placeholder={t("model-router.provider-picker.select-provider")}
               />
@@ -182,7 +182,7 @@ export default function LLMProviderModelPicker({
               onValueChange={setSelectedModel}
               required
             >
-              <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+              <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
                 <SelectValue
                   placeholder={t("model-router.provider-picker.select-model")}
                 />

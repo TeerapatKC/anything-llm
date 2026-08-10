@@ -220,7 +220,7 @@ function ConditionRow({
             onValueChange={handlePropertyChange}
             required
           >
-            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
               <SelectValue
                 placeholder={t("model-router.rule-form.property-select")}
               />
@@ -285,7 +285,7 @@ function BooleanValueField({ value, onChange }) {
   const { t } = useTranslation();
   return (
     <Select value={value || "true"} onValueChange={onChange} required>
-      <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+      <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
         <SelectValue placeholder="Select an option" />
       </SelectTrigger>
       <SelectContent>
@@ -313,7 +313,7 @@ function ComparatorAndValueFields({ condition, onChange, showLabels }) {
           onValueChange={(value) => onChange({ comparator: value })}
           required
         >
-          <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5">
+          <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
             <SelectValue
               placeholder={t("model-router.rule-form.comparator-select")}
             />
