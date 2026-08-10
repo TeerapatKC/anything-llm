@@ -457,15 +457,15 @@ export default function ChatContainer({
     return (
       <ChatSidebarProvider>
         <div
-          style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-          className="relative flex md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full z-[2]"
+          style={{ height: "100%" }}
+          className="relative flex w-full h-full z-[2]"
         >
           <ChatSettingsMenu
             history={chatHistory}
             workspace={workspace}
             threadSlug={activeThreadSlug}
           />
-          <div className="flex-1 min-w-0 relative md:rounded-[16px] bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
+          <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
             {isMobile && <SidebarMobileHeader />}
             <WorkspaceModelPicker workspaceSlug={workspace.slug} />
             <DnDFileUploaderWrapper>
@@ -513,15 +513,15 @@ export default function ChatContainer({
   return (
     <ChatSidebarProvider>
       <div
-        style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative flex md:ml-[2px] md:mr-[16px] md:my-[16px] w-full h-full z-[2]"
+        style={{ height: "100%" }}
+        className="relative flex w-full h-full z-[2]"
       >
         <ChatSettingsMenu
           history={chatHistory}
           workspace={workspace}
           threadSlug={activeThreadSlug}
         />
-        <div className="flex-1 min-w-0 relative md:rounded-[16px] bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
+        <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
           {isMobile && <SidebarMobileHeader />}
           <WorkspaceModelPicker workspaceSlug={workspace.slug} />
           <DnDFileUploaderWrapper>

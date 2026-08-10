@@ -81,8 +81,8 @@ function ShowWorkspaceChat() {
     <SidebarPageLayout>
       {!isMobile && <Sidebar />}
       <div
-        style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="transition-all duration-500 relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll"
+        style={{ height: "100%" }}
+        className="transition-all duration-500 relative bg-theme-bg-secondary w-full h-full overflow-y-scroll"
       >
         <div className="flex gap-x-10 pt-6 pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10">
           <Link

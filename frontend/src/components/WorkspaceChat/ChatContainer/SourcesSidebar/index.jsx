@@ -39,7 +39,7 @@ export default function SourcesSidebar() {
     <>
       <ChatSidebar isOpen={sidebarOpen}>
         <div
-          className="ml-4 w-[350px] bg-zinc-900 light:bg-white light:border-2 light:border-slate-300 md:rounded-[16px] p-4 flex flex-col gap-4 overflow-hidden mt-[72px]"
+          className="ml-4 w-[350px] bg-zinc-900 light:bg-white light:border-2 light:border-slate-300 p-4 flex flex-col gap-4 overflow-hidden mt-[72px]"
           style={{ maxHeight: "calc(100% - 88px)" }}
         >
           <div className="flex items-start justify-between">
