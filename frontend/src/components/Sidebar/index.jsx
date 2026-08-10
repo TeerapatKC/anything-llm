@@ -19,7 +19,6 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarProvider,
-  SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
@@ -108,7 +107,9 @@ export default function Sidebar() {
       <SidebarFooter className="border-t border-theme-sidebar-border pt-2">
         <Footer />
       </SidebarFooter>
-      <SidebarRail />
+      {/* No SidebarRail — the icon button in the header is the only way to
+          toggle, deliberately, rather than also having a click/drag strip on
+          the sidebar's edge. */}
       {showingNewWsModal && <NewWorkspaceModal hideModal={hideNewWsModal} />}
     </SidebarPrimitive>
   );
