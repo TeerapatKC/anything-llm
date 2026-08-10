@@ -50,75 +50,9 @@ export default function Footer() {
 
   return (
     <div className="flex flex-col gap-y-2 w-full">
-      <div className="flex justify-center group-data-[collapsible=icon]:hidden">
+      <div className="flex justify-center group-data-[collapsible=icon]:invisible">
         <div className="flex space-x-4">
-          {!Array.isArray(footerData) || footerData.length === 0 ? (
-            <>
-              <div className="flex w-fit">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      to={paths.github()}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-                      aria-label="Find us on GitHub"
-                    >
-                      <GithubLogo
-                        weight="fill"
-                        className="h-5 w-5 text-white light:text-slate-800"
-                      />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[250px] text-xs">
-                    View Source Code
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-              <div className="flex w-fit">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      to={paths.docs()}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-                      aria-label="Docs"
-                    >
-                      <BookOpen
-                        weight="fill"
-                        className="h-5 w-5 text-white light:text-slate-800"
-                      />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[250px] text-xs">
-                    Open AnythingLLM help docs
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-              <div className="flex w-fit">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Link
-                      to={paths.discord()}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-                      aria-label="Join our Discord server"
-                    >
-                      <DiscordLogo
-                        weight="fill"
-                        className="h-5 w-5 text-white light:text-slate-800"
-                      />
-                    </Link>
-                  </TooltipTrigger>
-                  <TooltipContent side="top" className="max-w-[250px] text-xs">
-                    Join the AnythingLLM Discord
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </>
-          ) : (
+          {(
             footerData.map((item, index) => (
               <a
                 key={index}
