@@ -152,7 +152,7 @@ export default function UserButton() {
           )}
           <DropdownMenuItem
             asChild
-            className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
+            className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
           >
             <a href={supportEmail}>
               <Question size={16} />
@@ -169,7 +169,7 @@ export default function UserButton() {
               window.localStorage.removeItem(USER_PROMPT_INPUT_MAP);
               window.location.replace(paths.home());
             }}
-            className="text-white focus:bg-theme-action-menu-item-hover focus:text-white cursor-pointer"
+            className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
           >
             <SignOut size={16} />
             {t("profile_settings.signout")}
