@@ -232,7 +232,7 @@ function PreferenceSubmenu({ icon, label, value, onValueChange, options }) {
         {label}
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
-        <DropdownMenuSubContent className="max-h-72 min-w-48 overflow-y-auto bg-theme-action-menu-bg border-theme-modal-border">
+        <DropdownMenuSubContent className="min-w-48 bg-theme-action-menu-bg border-theme-modal-border">
           <DropdownMenuRadioGroup value={value} onValueChange={onValueChange}>
             {options.map((option) => (
               <DropdownMenuRadioItem
