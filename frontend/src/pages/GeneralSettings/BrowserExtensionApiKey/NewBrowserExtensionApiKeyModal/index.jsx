@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { X } from "@phosphor-icons/react";
 import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import { fullApiUrl, POPUP_BROWSER_EXTENSION_EVENT } from "@/utils/constants";
 import { Button } from "@/components/ui/button";
+import {
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function NewBrowserExtensionApiKeyModal({
-  closeModal,
   onSuccess,
   isMultiUser,
 }) {
@@ -49,71 +53,65 @@ export default function NewBrowserExtensionApiKeyModal({
   }, [copied]);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              New Browser Extension API Key
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
+    <>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          New Browser Extension API Key
+        </DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleCreate}>
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          {apiKey && (
+            <input
+              type="text"
+              defaultValue={apiKey}
+              disabled={true}
+              className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
+            />
+          )}
+          {isMultiUser && (
+            <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
+              Warning: You are in multi-user mode, this API key will allow
+              access to all workspaces associated with your account. Please
+              share it cautiously.
+            </p>
+          )}
+          <p className="text-white text-opacity-60 text-xs md:text-sm">
+            After clicking "Create API Key", AnythingLLM will attempt to connect
+            to your browser extension automatically.
+          </p>
+          <p className="text-white text-opacity-60 text-xs md:text-sm">
+            If you see "Connected to AnythingLLM" in the extension, the
+            connection was successful. If not, please copy the connection string
+            and paste it into the extension manually.
+          </p>
         </div>
-        <div className="px-7 py-6">
-          <form onSubmit={handleCreate}>
-            <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-              {apiKey && (
-                <input
-                  type="text"
-                  defaultValue={apiKey}
-                  disabled={true}
-                  className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
-                />
-              )}
-              {isMultiUser && (
-                <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
-                  Warning: You are in multi-user mode, this API key will allow
-                  access to all workspaces associated with your account. Please
-                  share it cautiously.
-                </p>
-              )}
-              <p className="text-white text-opacity-60 text-xs md:text-sm">
-                After clicking "Create API Key", AnythingLLM will attempt to
-                connect to your browser extension automatically.
-              </p>
-              <p className="text-white text-opacity-60 text-xs md:text-sm">
-                If you see "Connected to AnythingLLM" in the extension, the
-                connection was successful. If not, please copy the connection
-                string and paste it into the extension manually.
-              </p>
-            </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              {!apiKey ? (
-                <>
-                  <Button variant="muted" onClick={closeModal} type="button">
-                    Cancel
-                  </Button>
-                  <Button variant="cta" type="submit">
-                    Create API Key
-                  </Button>
-                </>
-              ) : (
-                <button
-                  onClick={copyApiKey}
-                  type="button"
-                  disabled={copied}
-                  className="w-full transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm cursor-pointer"
-                >
-                  {copied ? "API Key Copied!" : "Copy API Key"}
-                </button>
-              )}
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        <DialogFooter className="p-0 mt-4">
+          {!apiKey ? (
+            <>
+              <DialogClose asChild>
+                <Button variant="outline" type="button">
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button variant="default" type="submit">
+                Create API Key
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="default"
+              onClick={copyApiKey}
+              type="button"
+              disabled={copied}
+              className="w-full"
+            >
+              {copied ? "API Key Copied!" : "Copy API Key"}
+            </Button>
+          )}
+        </DialogFooter>
+      </form>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { X, Copy, Check } from "@phosphor-icons/react";
+import { Copy, Check } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
@@ -7,8 +7,14 @@ import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
-export default function NewApiKeyModal({ closeModal, onSuccess }) {
+export default function NewApiKeyModal({ onSuccess }) {
   const { t } = useTranslation();
   const [apiKey, setApiKey] = useState(null);
   const [name, setName] = useState("");
@@ -48,104 +54,91 @@ export default function NewApiKeyModal({ closeModal, onSuccess }) {
   }, [copied]);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {t("api.modal.title")}
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
-        <div className="px-7 py-6">
-          <form onSubmit={handleCreate}>
-            <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
-              {error && (
-                <p className="text-red-400 text-sm">
-                  {t("api.messages.error", { error })}
-                </p>
-              )}
-              {!apiKey && (
-                <div>
-                  <Label variant="field" className="block mb-2">
-                    {t("api.modal.name.label")}
-                  </Label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={t("api.modal.name.placeholder")}
-                    className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5"
-                  />
-                  <p className="text-white text-opacity-60 text-xs md:text-sm mt-2">
-                    {t("api.modal.name.helper")}
-                  </p>
-                </div>
-              )}
-              {apiKey && (
-                <div className="relative">
-                  <input
-                    type="text"
-                    defaultValue={`${apiKey.secret}`}
-                    disabled={true}
-                    className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={copyApiKey}
-                    disabled={copied}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-theme-modal-border transition-all duration-300"
-                  >
-                    {copied ? (
-                      <Check
-                        size={20}
-                        className="text-green-400"
-                        weight="bold"
-                      />
-                    ) : (
-                      <Copy size={20} className="text-white" weight="bold" />
-                    )}
-                  </button>
-                </div>
-              )}
-              <p className="text-white text-opacity-60 text-xs md:text-sm">
-                {t("api.modal.helper")}
+    <>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          {t("api.modal.title")}
+        </DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleCreate}>
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          {error && (
+            <p className="text-red-400 text-sm">
+              {t("api.messages.error", { error })}
+            </p>
+          )}
+          {!apiKey && (
+            <div>
+              <Label variant="field" className="block mb-2">
+                {t("api.modal.name.label")}
+              </Label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t("api.modal.name.placeholder")}
+                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5"
+              />
+              <p className="text-white text-opacity-60 text-xs md:text-sm mt-2">
+                {t("api.modal.name.helper")}
               </p>
-              <a
-                href={paths.apiDocs()}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-400 hover:underline"
+            </div>
+          )}
+          {apiKey && (
+            <div className="relative">
+              <input
+                type="text"
+                defaultValue={`${apiKey.secret}`}
+                disabled={true}
+                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
+              />
+              <button
+                type="button"
+                onClick={copyApiKey}
+                disabled={copied}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-theme-modal-border transition-all duration-300"
               >
-                Read the API documentation &rarr;
-              </a>
+                {copied ? (
+                  <Check size={20} className="text-green-400" weight="bold" />
+                ) : (
+                  <Copy size={20} className="text-white" weight="bold" />
+                )}
+              </button>
             </div>
-            <div className="flex justify-end items-center mt-6 pt-6 border-t border-theme-modal-border">
-              {!apiKey ? (
-                <>
-                  <button
-                    onClick={closeModal}
-                    type="button"
-                    className="transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm mr-2"
-                  >
-                    {t("api.modal.cancel")}
-                  </button>
-                  <Button variant="cta" type="submit">
-                    {t("api.modal.create")}
-                  </Button>
-                </>
-              ) : (
-                <Button variant="muted" onClick={closeModal} type="button">
-                  {t("api.modal.close")}
-                </Button>
-              )}
-            </div>
-          </form>
+          )}
+          <p className="text-white text-opacity-60 text-xs md:text-sm">
+            {t("api.modal.helper")}
+          </p>
+          <a
+            href={paths.apiDocs()}
+            target="_blank"
+            rel="noreferrer"
+            className="text-blue-400 hover:underline"
+          >
+            Read the API documentation &rarr;
+          </a>
         </div>
-      </div>
-    </div>
+        <DialogFooter className="p-0 mt-4">
+          {!apiKey ? (
+            <>
+              <DialogClose asChild>
+                <Button variant="outline" type="button">
+                  {t("api.modal.cancel")}
+                </Button>
+              </DialogClose>
+              <Button variant="default" type="submit">
+                {t("api.modal.create")}
+              </Button>
+            </>
+          ) : (
+            <DialogClose asChild>
+              <Button variant="default" type="button">
+                {t("api.modal.close")}
+              </Button>
+            </DialogClose>
+          )}
+        </DialogFooter>
+      </form>
+    </>
   );
 }

@@ -4,7 +4,13 @@ import Admin from "@/models/admin";
 import { FullScreenLoader } from "@/components/Preloader";
 import { CaretRight, Flask } from "@phosphor-icons/react";
 import { configurableFeatures } from "./features";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 
@@ -195,18 +201,23 @@ function FeatureVerification({ children }) {
 
     return (
       <>
-        <ModalWrapper isOpen={true}>
-          <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-            <div className="relative p-6 border-b rounded-t border-theme-modal-border">
+        <Dialog open={true}>
+          <DialogContent
+            className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden"
+            onEscapeKeyDown={(e) => e.preventDefault()}
+            onPointerDownOutside={(e) => e.preventDefault()}
+            onInteractOutside={(e) => e.preventDefault()}
+          >
+            <DialogHeader className="p-0">
               <div className="flex items-center gap-2">
-                <Flask size={24} className="text-theme-text-primary" />
-                <h3 className="text-xl font-semibold text-white">
+                <Flask size={18} className="text-theme-text-primary" />
+                <DialogTitle className="text-sm font-semibold">
                   Terms of use for experimental features
-                </h3>
+                </DialogTitle>
               </div>
-            </div>
+            </DialogHeader>
             <form onSubmit={acceptTos}>
-              <div className="py-7 px-9 space-y-4 flex-col">
+              <div className="space-y-4 flex-col">
                 <div className="w-full text-white text-md flex flex-col gap-y-4">
                   <p>
                     Experimental features of AnythingLLM are features that we
@@ -272,23 +283,17 @@ function FeatureVerification({ children }) {
                   </p>
                 </div>
               </div>
-              <div className="flex w-full justify-between items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-                <a
-                  href={paths.home()}
-                  className="transition-all duration-300 bg-transparent text-white hover:bg-red-500/50 light:hover:bg-red-300/50 px-4 py-2 rounded-lg text-sm border border-theme-modal-border"
-                >
-                  Reject & close
-                </a>
-                <button
-                  type="submit"
-                  className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm border border-theme-modal-border"
-                >
+              <div className="flex w-full justify-between items-center mt-6 space-x-2">
+                <Button variant="outline" type="button" asChild>
+                  <a href={paths.home()}>Reject &amp; close</a>
+                </Button>
+                <Button variant="default" type="submit">
                   I understand
-                </button>
+                </Button>
               </div>
             </form>
-          </div>
-        </ModalWrapper>
+          </DialogContent>
+        </Dialog>
         {children}
       </>
     );

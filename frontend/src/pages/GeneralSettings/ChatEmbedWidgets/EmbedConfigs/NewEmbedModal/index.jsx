@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { X } from "@phosphor-icons/react";
 import Workspace from "@/models/workspace";
 import { TagsInput } from "react-tag-input-component";
 import Embed from "@/models/embed";
@@ -13,6 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export function enforceSubmissionSchema(form) {
   const data = {};
@@ -34,7 +39,7 @@ export function enforceSubmissionSchema(form) {
   return data;
 }
 
-export default function NewEmbedModal({ closeModal }) {
+export default function NewEmbedModal() {
   const [error, setError] = useState(null);
 
   const handleCreate = async (e) => {
@@ -48,78 +53,71 @@ export default function NewEmbedModal({ closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Create new embed for workspace
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
-        <div className="px-7 py-6">
-          <form onSubmit={handleCreate}>
-            <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
-              <WorkspaceSelection />
-              <ChatModeSelection />
-              <PermittedDomains />
-              <NumberInput
-                name="max_chats_per_day"
-                title="Max chats per day"
-                hint="Limit the amount of chats this embedded chat can process in a 24 hour period. Zero is unlimited."
-              />
-              <NumberInput
-                name="max_chats_per_session"
-                title="Max chats per session"
-                hint="Limit the amount of chats a session user can send with this embed in a 24 hour period. Zero is unlimited."
-              />
-              <NumberInput
-                name="message_limit"
-                title="Message History Limit"
-                hint="The number of previous messages to include in the chat context. Default is 20."
-                defaultValue={20}
-              />
-              <BooleanInput
-                name="allow_model_override"
-                title="Enable dynamic model use"
-                hint="Allow setting of the preferred LLM model to override the workspace default."
-              />
-              <BooleanInput
-                name="allow_temperature_override"
-                title="Enable dynamic LLM temperature"
-                hint="Allow setting of the LLM temperature to override the workspace default."
-              />
-              <BooleanInput
-                name="allow_prompt_override"
-                title="Enable Prompt Override"
-                hint="Allow setting of the system prompt to override the workspace default."
-              />
+    <>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          Create new embed for workspace
+        </DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleCreate}>
+        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+          <WorkspaceSelection />
+          <ChatModeSelection />
+          <PermittedDomains />
+          <NumberInput
+            name="max_chats_per_day"
+            title="Max chats per day"
+            hint="Limit the amount of chats this embedded chat can process in a 24 hour period. Zero is unlimited."
+          />
+          <NumberInput
+            name="max_chats_per_session"
+            title="Max chats per session"
+            hint="Limit the amount of chats a session user can send with this embed in a 24 hour period. Zero is unlimited."
+          />
+          <NumberInput
+            name="message_limit"
+            title="Message History Limit"
+            hint="The number of previous messages to include in the chat context. Default is 20."
+            defaultValue={20}
+          />
+          <BooleanInput
+            name="allow_model_override"
+            title="Enable dynamic model use"
+            hint="Allow setting of the preferred LLM model to override the workspace default."
+          />
+          <BooleanInput
+            name="allow_temperature_override"
+            title="Enable dynamic LLM temperature"
+            hint="Allow setting of the LLM temperature to override the workspace default."
+          />
+          <BooleanInput
+            name="allow_prompt_override"
+            title="Enable Prompt Override"
+            hint="Allow setting of the system prompt to override the workspace default."
+          />
 
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-              <p className="text-white text-opacity-60 text-xs md:text-sm">
-                After creating an embed you will be provided a link that you can
-                publish on your website with a simple
-                <code className="light:bg-stone-300 bg-stone-900 text-white mx-1 px-1 rounded-sm">
-                  &lt;script&gt;
-                </code>{" "}
-                tag.
-              </p>
-            </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <Button variant="muted" onClick={closeModal} type="button">
-                Cancel
-              </Button>
-              <Button variant="cta" type="submit">
-                Create embed
-              </Button>
-            </div>
-          </form>
+          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          <p className="text-white text-opacity-60 text-xs md:text-sm">
+            After creating an embed you will be provided a link that you can
+            publish on your website with a simple
+            <code className="light:bg-stone-300 bg-stone-900 text-white mx-1 px-1 rounded-sm">
+              &lt;script&gt;
+            </code>{" "}
+            tag.
+          </p>
         </div>
-      </div>
-    </div>
+        <DialogFooter className="p-0 mt-4">
+          <DialogClose asChild>
+            <Button variant="outline" type="button">
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button variant="default" type="submit">
+            Create embed
+          </Button>
+        </DialogFooter>
+      </form>
+    </>
   );
 }
 

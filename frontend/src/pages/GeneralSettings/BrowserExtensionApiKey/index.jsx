@@ -6,7 +6,7 @@ import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import BrowserExtensionApiKeyRow from "./BrowserExtensionApiKeyRow";
 import CTAButton from "@/components/lib/CTAButton";
 import NewBrowserExtensionApiKeyModal from "./NewBrowserExtensionApiKeyModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
 import { fullApiUrl } from "@/utils/constants";
 import {
@@ -64,13 +64,23 @@ export default function BrowserExtensionApiKeys() {
             </p>
           </div>
           <div className="w-full justify-end flex">
-            <CTAButton
-              onClick={openModal}
-              className="mt-3 mr-0 mb-4 md:-mb-14 z-10"
+            <Dialog
+              open={isOpen}
+              onOpenChange={(open) => (open ? openModal() : closeModal())}
             >
-              <PlusCircle className="h-4 w-4" weight="bold" />
-              Generate New API Key
-            </CTAButton>
+              <DialogTrigger asChild>
+                <CTAButton className="mt-3 mr-0 mb-4 md:-mb-14 z-10">
+                  <PlusCircle className="h-4 w-4" weight="bold" />
+                  Generate New API Key
+                </CTAButton>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+                <NewBrowserExtensionApiKeyModal
+                  onSuccess={fetchExistingKeys}
+                  isMultiUser={isMultiUser}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="overflow-x-auto mt-6">
             {loading ? (
@@ -148,13 +158,6 @@ export default function BrowserExtensionApiKeys() {
           </div>
         </div>
       </div>
-      <ModalWrapper isOpen={isOpen}>
-        <NewBrowserExtensionApiKeyModal
-          closeModal={closeModal}
-          onSuccess={fetchExistingKeys}
-          isMultiUser={isMultiUser}
-        />
-      </ModalWrapper>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { Plus } from "@phosphor-icons/react";
 import Sidebar from "@/components/SettingsSidebar";
 import CTAButton from "@/components/lib/CTAButton";
 import VariableRow from "./VariableRow";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import AddVariableModal from "./AddVariableModal";
 import { useModal } from "@/hooks/useModal";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -61,12 +61,22 @@ export default function SystemPromptVariables() {
           </div>
 
           <div className="w-full justify-end flex">
-            <CTAButton
-              onClick={openModal}
-              className="mt-3 mr-0 mb-4 md:-mb-6 z-10"
+            <Dialog
+              open={isOpen}
+              onOpenChange={(open) => (open ? openModal() : closeModal())}
             >
-              <Plus className="h-4 w-4" weight="bold" /> Add Variable
-            </CTAButton>
+              <DialogTrigger asChild>
+                <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
+                  <Plus className="h-4 w-4" weight="bold" /> Add Variable
+                </CTAButton>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+                <AddVariableModal
+                  closeModal={closeModal}
+                  onRefresh={fetchVariables}
+                />
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="overflow-x-auto">
@@ -123,10 +133,6 @@ export default function SystemPromptVariables() {
           </div>
         </div>
       </div>
-
-      <ModalWrapper isOpen={isOpen}>
-        <AddVariableModal closeModal={closeModal} onRefresh={fetchVariables} />
-      </ModalWrapper>
     </div>
   );
 }

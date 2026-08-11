@@ -4,7 +4,7 @@ import Admin from "@/models/admin";
 import EditUserModal from "./EditUserModal";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 
@@ -102,13 +102,14 @@ export default function UserRow({ currUser, user }) {
           )}
         </TableCell>
       </TableRow>
-      <ModalWrapper isOpen={isOpen}>
-        <EditUserModal
-          currentUser={currUser}
-          user={user}
-          closeModal={closeModal}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <EditUserModal currentUser={currUser} user={user} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { DotsThreeOutline } from "@phosphor-icons/react";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Embed from "@/models/embed";
 import paths from "@/utils/paths";
 import { nFormatter } from "@/utils/numbers";
@@ -145,12 +145,26 @@ export default function EmbedRow({ embed }) {
           </button>
         </TableCell>
       </TableRow>
-      <ModalWrapper isOpen={isSettingsOpen}>
-        <EditEmbedModal embed={embed} closeModal={closeSettingsModal} />
-      </ModalWrapper>
-      <ModalWrapper isOpen={isSnippetOpen}>
-        <CodeSnippetModal embed={embed} closeModal={closeSnippetModal} />
-      </ModalWrapper>
+      <Dialog
+        open={isSettingsOpen}
+        onOpenChange={(open) =>
+          open ? openSettingsModal() : closeSettingsModal()
+        }
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <EditEmbedModal embed={embed} />
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isSnippetOpen}
+        onOpenChange={(open) =>
+          open ? openSnippetModal() : closeSnippetModal()
+        }
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <CodeSnippetModal embed={embed} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

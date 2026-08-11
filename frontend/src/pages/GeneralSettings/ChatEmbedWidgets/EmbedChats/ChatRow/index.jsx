@@ -1,6 +1,10 @@
 import truncate from "truncate";
-import { X } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
 import paths from "@/utils/paths";
 import Embed from "@/models/embed";
@@ -95,20 +99,32 @@ export default function ChatRow({ chat, onDelete }) {
           </button>
         </TableCell>
       </TableRow>
-      <ModalWrapper isOpen={isPromptOpen}>
-        <TextPreview text={chat.prompt} closeModal={closePromptModal} />
-      </ModalWrapper>
-      <ModalWrapper isOpen={isResponseOpen}>
+      <Dialog
+        open={isPromptOpen}
+        onOpenChange={(open) => (open ? openPromptModal() : closePromptModal())}
+      >
+        <TextPreview text={chat.prompt} />
+      </Dialog>
+      <Dialog
+        open={isResponseOpen}
+        onOpenChange={(open) =>
+          open ? openResponseModal() : closeResponseModal()
+        }
+      >
         <TextPreview
           text={
             <MarkdownRenderer
               content={safeJsonParse(chat.response, {})?.text}
             />
           }
-          closeModal={closeResponseModal}
         />
-      </ModalWrapper>
-      <ModalWrapper isOpen={isConnectionDetailsModalOpen}>
+      </Dialog>
+      <Dialog
+        open={isConnectionDetailsModalOpen}
+        onOpenChange={(open) =>
+          open ? openConnectionDetailsModal() : closeConnectionDetailsModal()
+        }
+      >
         <TextPreview
           text={
             <ConnectionDetails
@@ -117,34 +133,24 @@ export default function ChatRow({ chat, onDelete }) {
               connection_information={chat.connection_information}
             />
           }
-          closeModal={closeConnectionDetailsModal}
         />
-      </ModalWrapper>
+      </Dialog>
     </>
   );
 }
 
-const TextPreview = ({ text, closeModal }) => {
+const TextPreview = ({ text }) => {
   return (
-    <div className="relative w-full md:max-w-2xl max-h-full">
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b rounded-t border-theme-modal-border">
-          <h3 className="text-xl font-semibold text-white">Viewing Text</h3>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center bg-sidebar-button hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X className="text-white text-lg" />
-          </button>
-        </div>
-        <div className="w-full p-6">
-          <div className="w-full h-[60vh] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-white text-sm">
-            {text}
-          </div>
-        </div>
+    <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          Viewing Text
+        </DialogTitle>
+      </DialogHeader>
+      <div className="w-full h-[60vh] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-white text-sm">
+        {text}
       </div>
-    </div>
+    </DialogContent>
   );
 };
 

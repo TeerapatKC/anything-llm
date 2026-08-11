@@ -2,7 +2,7 @@ import { useRef } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import EditVariableModal from "./EditVariableModal";
 import { titleCase } from "text-case";
 import truncate from "truncate";
@@ -115,13 +115,18 @@ export default function VariableRow({ variable, onRefresh }) {
           )}
         </TableCell>
       </TableRow>
-      <ModalWrapper isOpen={isOpen}>
-        <EditVariableModal
-          variable={variable}
-          closeModal={closeModal}
-          onRefresh={onRefresh}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <EditVariableModal
+            variable={variable}
+            closeModal={closeModal}
+            onRefresh={onRefresh}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
-import ModalWrapper from "@/components/ModalWrapper";
-import { WarningOctagon, X } from "@phosphor-icons/react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog";
+import { WarningOctagon } from "@phosphor-icons/react";
 import { DB_LOGOS } from "./DBConnection";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
@@ -133,8 +139,6 @@ export default function SQLConnectionModal({
 
   // Track original database ID to send to server for updating if in edit mode
   const originalDatabaseId = isEditMode ? existingConnection.database_id : null;
-
-  if (!isOpen) return null;
 
   function handleClose() {
     setEngine(DEFAULT_ENGINE);
@@ -268,231 +272,219 @@ export default function SQLConnectionModal({
     return false;
   }
 
-  // Cannot do nested forms, it will cause all sorts of issues, so we portal this out
-  // to the parent container form so we don't have nested forms.
-  return createPortal(
-    <ModalWrapper isOpen={isOpen}>
-      <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-        <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-          <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-            <div className="w-full flex gap-x-2 items-center">
-              <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-                {isEditMode ? "Edit SQL Connection" : "New SQL Connection"}
-              </h3>
-            </div>
-            <Button variant="modalClose" onClick={handleClose} type="button">
-              <X size={24} weight="bold" className="text-white" />
-            </Button>
-          </div>
-          <form
-            id="sql-connection-form"
-            onChange={onFormChange}
-            onSubmit={handleUpdate}
-          >
-            <div className="px-7 py-6">
-              <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
-                <p className="text-sm text-white/60">
-                  {isEditMode
-                    ? "Update the connection information for your database below."
-                    : "Add the connection information for your database below and it will be available for future SQL agent calls."}
-                </p>
-                <div className="flex flex-col w-full">
-                  <div className="border border-red-800 bg-zinc-800 light:bg-red-200/50 p-4 rounded-lg flex items-center gap-x-2 text-sm text-red-400 light:text-red-500">
-                    <WarningOctagon size={28} className="shrink-0" />
-                    <p>
-                      <b>WARNING:</b> The SQL agent has been <i>instructed</i>{" "}
-                      to only perform non-modifying queries. This{" "}
-                      <b>does not</b> prevent a hallucination from still
-                      deleting data. Only connect with a user who has{" "}
-                      <b>READ_ONLY</b> permissions.
-                    </p>
-                  </div>
-
-                  <label className="block mb-2 text-sm font-medium text-white mt-4">
-                    Select your SQL engine
-                  </label>
-                  <div className="grid md:grid-cols-4 gap-4 grid-cols-2">
-                    <DBEngine
-                      provider="postgresql"
-                      active={engine === "postgresql"}
-                      onClick={() => setEngine("postgresql")}
-                    />
-                    <DBEngine
-                      provider="mysql"
-                      active={engine === "mysql"}
-                      onClick={() => setEngine("mysql")}
-                    />
-                    <DBEngine
-                      provider="sql-server"
-                      active={engine === "sql-server"}
-                      onClick={() => setEngine("sql-server")}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col w-full">
-                  <Label variant="field" className="block mb-2">
-                    Connection name
-                  </Label>
-                  <Input
-                    variant="settings"
-                    type="text"
-                    name="name"
-                    placeholder="a unique name to identify this SQL connection"
-                    required={true}
-                    autoComplete="off"
-                    spellCheck={false}
-                    defaultValue={config.name || ""}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="flex flex-col">
-                    <Label variant="field" className="block mb-2">
-                      Database user
-                    </Label>
-                    <Input
-                      variant="settings"
-                      type="text"
-                      name="username"
-                      placeholder="root"
-                      required={true}
-                      autoComplete="off"
-                      spellCheck={false}
-                      defaultValue={config.username || ""}
-                    />
-                  </div>
-                  <div className="flex flex-col">
-                    <Label variant="field" className="block mb-2">
-                      Database user password
-                    </Label>
-                    <Input
-                      variant="settings"
-                      type="password"
-                      name="password"
-                      placeholder="password123"
-                      required={true}
-                      autoComplete="off"
-                      spellCheck={false}
-                      defaultValue={config.password || ""}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                  <div className="sm:col-span-2">
-                    <Label variant="field" className="block mb-2">
-                      Server endpoint
-                    </Label>
-                    <Input
-                      variant="settings"
-                      type="text"
-                      name="host"
-                      placeholder="the hostname or endpoint for your database"
-                      required={true}
-                      autoComplete="off"
-                      spellCheck={false}
-                      defaultValue={config.host || ""}
-                    />
-                  </div>
-                  <div>
-                    <Label variant="field" className="block mb-2">
-                      Port
-                    </Label>
-                    <Input
-                      variant="settings"
-                      type="text"
-                      name="port"
-                      placeholder="3306"
-                      required={false}
-                      autoComplete="off"
-                      spellCheck={false}
-                      defaultValue={config.port || ""}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-col">
-                  <Label variant="field" className="block mb-2">
-                    Database
-                  </Label>
-                  <Input
-                    variant="settings"
-                    type="text"
-                    name="database"
-                    placeholder="the database the agent will interact with"
-                    required={true}
-                    autoComplete="off"
-                    spellCheck={false}
-                    defaultValue={config.database || ""}
-                  />
-                </div>
-
-                {engine === "postgresql" && (
-                  <div className="flex flex-col">
-                    <Label variant="field" className="block mb-2">
-                      Schema (optional)
-                    </Label>
-                    <Input
-                      variant="settings"
-                      type="text"
-                      name="schema"
-                      placeholder="public (default schema if not specified)"
-                      required={false}
-                      autoComplete="off"
-                      spellCheck={false}
-                      defaultValue={config.schema || ""}
-                    />
-                  </div>
-                )}
-
-                {engine === "sql-server" && (
-                  <Toggle
-                    name="encrypt"
-                    value="true"
-                    size="md"
-                    label="Enable Encryption"
-                    enabled={config.encrypt}
-                  />
-                )}
-
-                {engine === "postgresql" && (
-                  <Toggle
-                    name="ssl"
-                    value="true"
-                    size="md"
-                    label="Use SSL"
-                    enabled={config.ssl}
-                  />
-                )}
-
-                <p className="text-theme-text-secondary text-sm">
-                  {assembleConnectionString({ engine, ...config })}
+  // Cannot do nested forms, it will cause all sorts of issues. Radix's Dialog
+  // portals its content to document.body, so it naturally renders outside of
+  // any ancestor <form> and avoids the nesting problem.
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle className="text-sm font-semibold">
+            {isEditMode ? "Edit SQL Connection" : "New SQL Connection"}
+          </DialogTitle>
+        </DialogHeader>
+        <form
+          id="sql-connection-form"
+          onChange={onFormChange}
+          onSubmit={handleUpdate}
+        >
+          <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+            <p className="text-sm text-white/60">
+              {isEditMode
+                ? "Update the connection information for your database below."
+                : "Add the connection information for your database below and it will be available for future SQL agent calls."}
+            </p>
+            <div className="flex flex-col w-full">
+              <div className="border border-red-800 bg-zinc-800 light:bg-red-200/50 p-4 rounded-lg flex items-center gap-x-2 text-sm text-red-400 light:text-red-500">
+                <WarningOctagon size={28} className="shrink-0" />
+                <p>
+                  <b>WARNING:</b> The SQL agent has been <i>instructed</i> to
+                  only perform non-modifying queries. This <b>does not</b>{" "}
+                  prevent a hallucination from still deleting data. Only connect
+                  with a user who has <b>READ_ONLY</b> permissions.
                 </p>
               </div>
+
+              <label className="block mb-2 text-sm font-medium text-white mt-4">
+                Select your SQL engine
+              </label>
+              <div className="grid md:grid-cols-4 gap-4 grid-cols-2">
+                <DBEngine
+                  provider="postgresql"
+                  active={engine === "postgresql"}
+                  onClick={() => setEngine("postgresql")}
+                />
+                <DBEngine
+                  provider="mysql"
+                  active={engine === "mysql"}
+                  onClick={() => setEngine("mysql")}
+                />
+                <DBEngine
+                  provider="sql-server"
+                  active={engine === "sql-server"}
+                  onClick={() => setEngine("sql-server")}
+                />
+              </div>
             </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border px-7 pb-6">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="transition-all duration-300 text-white hover:bg-zinc-700 light:hover:bg-theme-bg-primary px-4 py-2 rounded-lg text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                form="sql-connection-form"
-                disabled={isValidating}
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm disabled:opacity-50"
-              >
-                {isValidating ? "Validating..." : "Save connection"}
-              </button>
+
+            <div className="flex flex-col w-full">
+              <Label variant="field" className="block mb-2">
+                Connection name
+              </Label>
+              <Input
+                variant="settings"
+                type="text"
+                name="name"
+                placeholder="a unique name to identify this SQL connection"
+                required={true}
+                autoComplete="off"
+                spellCheck={false}
+                defaultValue={config.name || ""}
+              />
             </div>
-          </form>
-        </div>
-      </div>
-    </ModalWrapper>,
-    document.getElementById("workspace-agent-settings-container")
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex flex-col">
+                <Label variant="field" className="block mb-2">
+                  Database user
+                </Label>
+                <Input
+                  variant="settings"
+                  type="text"
+                  name="username"
+                  placeholder="root"
+                  required={true}
+                  autoComplete="off"
+                  spellCheck={false}
+                  defaultValue={config.username || ""}
+                />
+              </div>
+              <div className="flex flex-col">
+                <Label variant="field" className="block mb-2">
+                  Database user password
+                </Label>
+                <Input
+                  variant="settings"
+                  type="password"
+                  name="password"
+                  placeholder="password123"
+                  required={true}
+                  autoComplete="off"
+                  spellCheck={false}
+                  defaultValue={config.password || ""}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="sm:col-span-2">
+                <Label variant="field" className="block mb-2">
+                  Server endpoint
+                </Label>
+                <Input
+                  variant="settings"
+                  type="text"
+                  name="host"
+                  placeholder="the hostname or endpoint for your database"
+                  required={true}
+                  autoComplete="off"
+                  spellCheck={false}
+                  defaultValue={config.host || ""}
+                />
+              </div>
+              <div>
+                <Label variant="field" className="block mb-2">
+                  Port
+                </Label>
+                <Input
+                  variant="settings"
+                  type="text"
+                  name="port"
+                  placeholder="3306"
+                  required={false}
+                  autoComplete="off"
+                  spellCheck={false}
+                  defaultValue={config.port || ""}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <Label variant="field" className="block mb-2">
+                Database
+              </Label>
+              <Input
+                variant="settings"
+                type="text"
+                name="database"
+                placeholder="the database the agent will interact with"
+                required={true}
+                autoComplete="off"
+                spellCheck={false}
+                defaultValue={config.database || ""}
+              />
+            </div>
+
+            {engine === "postgresql" && (
+              <div className="flex flex-col">
+                <Label variant="field" className="block mb-2">
+                  Schema (optional)
+                </Label>
+                <Input
+                  variant="settings"
+                  type="text"
+                  name="schema"
+                  placeholder="public (default schema if not specified)"
+                  required={false}
+                  autoComplete="off"
+                  spellCheck={false}
+                  defaultValue={config.schema || ""}
+                />
+              </div>
+            )}
+
+            {engine === "sql-server" && (
+              <Toggle
+                name="encrypt"
+                value="true"
+                size="md"
+                label="Enable Encryption"
+                enabled={config.encrypt}
+              />
+            )}
+
+            {engine === "postgresql" && (
+              <Toggle
+                name="ssl"
+                value="true"
+                size="md"
+                label="Use SSL"
+                enabled={config.ssl}
+              />
+            )}
+
+            <p className="text-theme-text-secondary text-sm">
+              {assembleConnectionString({ engine, ...config })}
+            </p>
+          </div>
+        </form>
+        <DialogFooter className="p-0 mt-4">
+          <DialogClose asChild>
+            <Button variant="outline" type="button" onClick={handleClose}>
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button
+            variant="default"
+            type="submit"
+            form="sql-connection-form"
+            disabled={isValidating}
+          >
+            {isValidating ? "Validating..." : "Save connection"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

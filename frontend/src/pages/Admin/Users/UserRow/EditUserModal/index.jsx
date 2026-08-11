@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import { MessageLimitInput, RoleHintDisplay } from "../..";
 import { AUTH_USER } from "@/utils/constants";
@@ -20,8 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DialogClose,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
-export default function EditUserModal({ currentUser, user, closeModal }) {
+export default function EditUserModal({ currentUser, user }) {
   const [role, setRole] = useState(user.role);
   const [error, setError] = useState(null);
   const [messageLimit, setMessageLimit] = useState({
@@ -61,120 +66,105 @@ export default function EditUserModal({ currentUser, user, closeModal }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Edit {user.username}
-            </h3>
+    <>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          Edit {user.username}
+        </DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleUpdate}>
+        <div className="space-y-4">
+          <div>
+            <Label variant="field" htmlFor="username" className="block mb-2">
+              Username
+            </Label>
+            <Input
+              variant="settings"
+              name="username"
+              type="text"
+              placeholder="User's username"
+              defaultValue={user.username}
+              minLength={USERNAME_MIN_LENGTH}
+              maxLength={USERNAME_MAX_LENGTH}
+              pattern={USERNAME_PATTERN}
+              required={true}
+              autoComplete="off"
+            />
+            <p className="mt-2 text-xs text-white/60">
+              {t("common.username_requirements")}
+            </p>
           </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
+          <div>
+            <Label variant="field" htmlFor="password" className="block mb-2">
+              New Password
+            </Label>
+            <Input
+              variant="settings"
+              name="password"
+              type="text"
+              placeholder={`${user.username}'s new password`}
+              autoComplete="off"
+              minLength={8}
+            />
+            <p className="mt-2 text-xs text-white/60">
+              Password must be at least 8 characters long
+            </p>
+          </div>
+          <div>
+            <Label variant="field" htmlFor="bio" className="block mb-2">
+              Bio
+            </Label>
+            <Textarea
+              variant="settings"
+              name="bio"
+              placeholder="User's bio"
+              defaultValue={user.bio}
+              autoComplete="off"
+              rows={3}
+            />
+          </div>
+          <div>
+            <Label variant="field" htmlFor="role" className="block mb-2">
+              Role
+            </Label>
+            <Select
+              name="role"
+              required={true}
+              defaultValue={user.role}
+              onValueChange={setRole}
+            >
+              <SelectTrigger variant="settings">
+                <SelectValue placeholder="Select an option" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Default</SelectItem>
+                <SelectItem value="manager">Manager</SelectItem>
+                {currentUser?.role === "admin" && (
+                  <SelectItem value="admin">Administrator</SelectItem>
+                )}
+              </SelectContent>
+            </Select>
+            <RoleHintDisplay role={role} />
+          </div>
+          <MessageLimitInput
+            role={role}
+            enabled={messageLimit.enabled}
+            limit={messageLimit.limit}
+            updateState={setMessageLimit}
+          />
+          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+        </div>
+        <DialogFooter className="p-0 mt-4">
+          <DialogClose asChild>
+            <Button variant="outline" type="button">
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button variant="default" type="submit">
+            Update user
           </Button>
-        </div>
-        <div className="p-6">
-          <form onSubmit={handleUpdate}>
-            <div className="space-y-4">
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="username"
-                  className="block mb-2"
-                >
-                  Username
-                </Label>
-                <Input
-                  variant="settings"
-                  name="username"
-                  type="text"
-                  placeholder="User's username"
-                  defaultValue={user.username}
-                  minLength={USERNAME_MIN_LENGTH}
-                  maxLength={USERNAME_MAX_LENGTH}
-                  pattern={USERNAME_PATTERN}
-                  required={true}
-                  autoComplete="off"
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  {t("common.username_requirements")}
-                </p>
-              </div>
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="password"
-                  className="block mb-2"
-                >
-                  New Password
-                </Label>
-                <Input
-                  variant="settings"
-                  name="password"
-                  type="text"
-                  placeholder={`${user.username}'s new password`}
-                  autoComplete="off"
-                  minLength={8}
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  Password must be at least 8 characters long
-                </p>
-              </div>
-              <div>
-                <Label variant="field" htmlFor="bio" className="block mb-2">
-                  Bio
-                </Label>
-                <Textarea
-                  variant="settings"
-                  name="bio"
-                  placeholder="User's bio"
-                  defaultValue={user.bio}
-                  autoComplete="off"
-                  rows={3}
-                />
-              </div>
-              <div>
-                <Label variant="field" htmlFor="role" className="block mb-2">
-                  Role
-                </Label>
-                <Select
-                  name="role"
-                  required={true}
-                  defaultValue={user.role}
-                  onValueChange={setRole}
-                >
-                  <SelectTrigger variant="settings">
-                    <SelectValue placeholder="Select an option" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="manager">Manager</SelectItem>
-                    {currentUser?.role === "admin" && (
-                      <SelectItem value="admin">Administrator</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-                <RoleHintDisplay role={role} />
-              </div>
-              <MessageLimitInput
-                role={role}
-                enabled={messageLimit.enabled}
-                limit={messageLimit.limit}
-                updateState={setMessageLimit}
-              />
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-            </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <Button variant="muted" onClick={closeModal} type="button">
-                Cancel
-              </Button>
-              <Button variant="cta" type="submit">
-                Update user
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+        </DialogFooter>
+      </form>
+    </>
   );
 }

@@ -5,7 +5,7 @@ import { CodeBlock } from "@phosphor-icons/react";
 import EmbedRow from "./EmbedRow";
 import NewEmbedModal from "./NewEmbedModal";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Embed from "@/models/embed";
 import CTAButton from "@/components/lib/CTAButton";
 import {
@@ -59,12 +59,20 @@ export default function EmbedConfigsView() {
             {t("embeddable.description")}
           </p>
 
-          <div>
-            <CTAButton onClick={openModal} className="text-theme-bg-chat">
-              <CodeBlock className="h-4 w-4" weight="bold" />{" "}
-              {t("embeddable.create")}
-            </CTAButton>
-          </div>
+          <Dialog
+            open={isOpen}
+            onOpenChange={(open) => (open ? openModal() : closeModal())}
+          >
+            <DialogTrigger asChild>
+              <CTAButton className="text-theme-bg-chat">
+                <CodeBlock className="h-4 w-4" weight="bold" />{" "}
+                {t("embeddable.create")}
+              </CTAButton>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+              <NewEmbedModal />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -98,9 +106,6 @@ export default function EmbedConfigsView() {
           </TableBody>
         </Table>
       </div>
-      <ModalWrapper isOpen={isOpen}>
-        <NewEmbedModal closeModal={closeModal} />
-      </ModalWrapper>
     </div>
   );
 }
