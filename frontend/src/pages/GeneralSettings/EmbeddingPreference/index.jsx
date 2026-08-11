@@ -37,7 +37,7 @@ import LemonadeOptions from "@/components/EmbeddingSelection/LemonadeOptions";
 import EmbedderItem from "@/components/EmbeddingSelection/EmbedderItem";
 import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import CTAButton from "@/components/lib/CTAButton";
 import { useTranslation } from "react-i18next";
 
@@ -386,13 +386,18 @@ export default function GeneralEmbeddingPreference() {
           </form>
         </div>
       )}
-      <ModalWrapper isOpen={isOpen}>
-        <ChangeWarningModal
-          warningText="Switching the embedding model will reset all previously embedded documents in all workspaces.\n\nConfirming will clear all embeddings from your vector database and remove all documents from your workspaces. Your uploaded documents will not be deleted, they will be available for re-embedding."
-          onClose={closeModal}
-          onConfirm={handleSaveSettings}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <ChangeWarningModal
+            warningText="Switching the embedding model will reset all previously embedded documents in all workspaces.\n\nConfirming will clear all embeddings from your vector database and remove all documents from your workspaces. Your uploaded documents will not be deleted, they will be available for re-embedding."
+            onClose={closeModal}
+            onConfirm={handleSaveSettings}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

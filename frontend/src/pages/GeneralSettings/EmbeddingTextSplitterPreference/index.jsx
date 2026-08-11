@@ -7,7 +7,7 @@ import showToast from "@/utils/toast";
 import { numberWithCommas } from "@/utils/numbers";
 import { useTranslation } from "react-i18next";
 import { useModal } from "@/hooks/useModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ChangeWarningModal from "@/components/ChangeWarning";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -194,13 +194,18 @@ export default function EmbeddingTextSplitterPreference() {
         </div>
       )}
 
-      <ModalWrapper isOpen={isOpen}>
-        <ChangeWarningModal
-          warningText="Changing text splitter settings will clear any previously cached documents.\n\nThese new settings will be applied to all documents when embedding them into a workspace."
-          onClose={closeModal}
-          onConfirm={handleSaveSettings}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <ChangeWarningModal
+            warningText="Changing text splitter settings will clear any previously cached documents.\n\nThese new settings will be applied to all documents when embedding them into a workspace."
+            onClose={closeModal}
+            onConfirm={handleSaveSettings}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CircleNotch, X } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
+import { CircleNotch } from "@phosphor-icons/react";
 import ModelRouterAPI from "@/models/modelRouter";
 import showToast from "@/utils/toast";
 import LLMProviderModelPicker from "../../LLMProviderModelPicker";
 import CalculatedFields from "./CalculatedFields";
 import LLMDescriptionField from "./LLMDescriptionField";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -14,6 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 function createRuleTypes(t) {
   return [
@@ -128,26 +136,17 @@ export default function RuleForm({
   };
 
   return (
-    <ModalWrapper isOpen={isOpen}>
-      <div className="relative w-full max-w-3xl bg-zinc-900 light:bg-white rounded-[8px] shadow border border-zinc-700 light:border-slate-300">
-        <form onSubmit={handleSubmit} className="flex flex-col gap-y-5 p-6">
-          <div className="flex flex-col gap-y-1">
-            <div className="flex items-start justify-between">
-              <h3 className="text-base font-semibold leading-6 text-white light:text-slate-950">
-                {t("model-router.rules.title")}
-              </h3>
-              <button
-                onClick={closeModal}
-                type="button"
-                className="border-none text-zinc-400 light:text-slate-500 hover:text-white light:hover:text-slate-900 transition-colors"
-              >
-                <X size={16} weight="bold" />
-              </button>
-            </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
+      <DialogContent className="max-w-3xl bg-zinc-900 light:bg-white border-zinc-700 light:border-slate-300">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
+          <DialogHeader className="p-0">
+            <DialogTitle className="text-sm font-semibold">
+              {t("model-router.rules.title")}
+            </DialogTitle>
             <p className="text-xs leading-4 text-zinc-400 light:text-slate-600">
               {t("model-router.rules.description")}
             </p>
-          </div>
+          </DialogHeader>
 
           <div className="flex flex-col gap-y-5 max-h-[60vh] overflow-y-auto">
             <div className="flex gap-x-5 items-start">
@@ -207,33 +206,27 @@ export default function RuleForm({
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <button
-              type="button"
-              onClick={closeModal}
-              className="border border-zinc-600 light:border-slate-600 text-white light:text-slate-900 text-sm font-medium leading-5 rounded-[8px] h-[34px] px-3.5 hover:opacity-90 transition-opacity"
-            >
-              {t("model-router.rule-form.cancel")}
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="border-none flex items-center gap-x-1.5 text-sm font-medium leading-5 bg-zinc-50 light:bg-slate-900 text-zinc-900 light:text-white rounded-[8px] h-[34px] px-3.5 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
-            >
+          <DialogFooter className="p-0">
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
+                {t("model-router.rule-form.cancel")}
+              </Button>
+            </DialogClose>
+            <Button variant="default" type="submit" disabled={loading}>
               {loading ? (
-                <>
+                <span className="flex items-center gap-x-1.5">
                   <CircleNotch className="h-4 w-4 animate-spin" />
                   {t("model-router.rule-form.saving")}
-                </>
+                </span>
               ) : isEditing ? (
                 t("model-router.rule-form.update-rule")
               ) : (
                 t("model-router.rule-form.create-rule")
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }

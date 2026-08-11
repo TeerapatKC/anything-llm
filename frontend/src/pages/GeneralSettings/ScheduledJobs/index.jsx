@@ -6,7 +6,7 @@ import { subscribeToPushNotifications } from "@/hooks/useWebPushNotifications";
 import useWebPushNotifications from "@/hooks/useWebPushNotifications";
 import usePolling from "@/hooks/usePolling";
 import JobFormModal from "./JobFormModal";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import JobRow from "./components/JobRow";
@@ -144,16 +144,20 @@ export default function ScheduledJobsPage() {
         )}
       </div>
 
-      <ModalWrapper isOpen={isOpen}>
-        <JobFormModal
-          job={editingJob}
-          onClose={closeModal}
-          onSaved={() => {
-            closeModal();
-            fetchJobs();
-          }}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <JobFormModal
+            job={editingJob}
+            onSaved={() => {
+              closeModal();
+              fetchJobs();
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </BaseLayout>
   );
 }

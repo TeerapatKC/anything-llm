@@ -2,13 +2,20 @@
 // "ready for use" and if not - will then highjack the click handler to show a modal
 // of the provider options that must be saved to continue.
 import { createPortal } from "react-dom";
-import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
-import { X, Gear } from "@phosphor-icons/react";
+import { Gear } from "@phosphor-icons/react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const NO_SETTINGS_NEEDED = ["default", "none"];
 export default function AgentLLMItem({
@@ -135,43 +142,34 @@ function SetupProvider({
   // Cannot do nested forms, it will cause all sorts of issues, so we portal this out
   // to the parent container form so we don't have nested forms.
   return createPortal(
-    <ModalWrapper isOpen={isOpen}>
-      <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-        <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-          <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-            <div className="w-full flex gap-x-2 items-center">
-              <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-                {LLMOption.name} Settings
-              </h3>
-            </div>
-            <Button variant="modalClose" onClick={closeModal} type="button">
-              <X size={24} weight="bold" className="text-white" />
-            </Button>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle className="text-sm font-semibold">
+            {LLMOption.name} Settings
+          </DialogTitle>
+        </DialogHeader>
+        <form id="provider-form" onSubmit={handleUpdate}>
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
+            <p className="text-sm text-white/60">
+              To use {LLMOption.name} as this workspace's agent LLM you need to
+              set it up first.
+            </p>
+            <div>{LLMOption.options(settings, { credentialsOnly: true })}</div>
           </div>
-          <form id="provider-form" onSubmit={handleUpdate}>
-            <div className="px-7 py-6">
-              <div className="space-y-6 max-h-[60vh] overflow-y-auto p-1">
-                <p className="text-sm text-white/60">
-                  To use {LLMOption.name} as this workspace's agent LLM you need
-                  to set it up first.
-                </p>
-                <div>
-                  {LLMOption.options(settings, { credentialsOnly: true })}
-                </div>
-              </div>
-            </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border px-7 pb-6">
-              <Button variant="muted" type="button" onClick={closeModal}>
+          <DialogFooter className="mt-4 p-0">
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
                 Cancel
               </Button>
-              <Button variant="cta" type="submit" form="provider-form">
-                Save {LLMOption.name} settings
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </ModalWrapper>,
+            </DialogClose>
+            <Button variant="default" type="submit" form="provider-form">
+              Save {LLMOption.name} settings
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>,
     document.getElementById("workspace-agent-settings-container")
   );
 }

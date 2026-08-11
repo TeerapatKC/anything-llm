@@ -1,5 +1,3 @@
-import { X } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
 import BG from "./bg.png";
 import { QRCodeSVG } from "qrcode.react";
 import { Link } from "react-router-dom";
@@ -9,25 +7,23 @@ import PreLoader from "@/components/Preloader";
 import Logo from "@/media/logo/anything-llm-infinity.png";
 import paths from "@/utils/paths";
 import GetOnGooglePlay from "./gplay-badge.svg";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export default function MobileConnectModal({ isOpen, onClose }) {
   return (
-    <ModalWrapper isOpen={isOpen}>
-      <div
-        className="relative w-full rounded-lg shadow"
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        className="relative w-full max-w-[70vw] p-0 border-none [&>button]:text-white [&>button]:opacity-100"
         style={{
           minHeight: "60vh",
-          maxWidth: "70vw",
           backgroundImage: `url(${BG})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <Button variant="modalClose" onClick={onClose} type="button">
-          <X size={24} weight="bold" className="text-[#FFF]" />
-        </Button>
-
+        <DialogTitle className="sr-only">
+          Connect AnythingLLM Mobile
+        </DialogTitle>
         <div className="flex w-full h-full justify-between p-[35px]">
           {/* left column */}
           <div className="flex flex-col w-1/2 gap-y-[16px]">
@@ -72,8 +68,8 @@ export default function MobileConnectModal({ isOpen, onClose }) {
             </p>
           </div>
         </div>
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }
 

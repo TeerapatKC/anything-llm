@@ -1,12 +1,17 @@
 import truncate from "truncate";
-import { X, Trash } from "@phosphor-icons/react";
+import { Trash } from "@phosphor-icons/react";
 import System from "@/models/system";
-import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { safeJsonParse } from "@/utils/request";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -78,42 +83,44 @@ export default function ChatRow({ chat, onDelete }) {
           </Button>
         </TableCell>
       </TableRow>
-      <ModalWrapper isOpen={isPromptOpen}>
-        <TextPreview text={chat.prompt} closeModal={closePromptModal} />
-      </ModalWrapper>
-      <ModalWrapper isOpen={isResponseOpen}>
-        <TextPreview
-          text={
-            <MarkdownRenderer
-              content={safeJsonParse(chat.response, {})?.text}
-            />
-          }
-          closeModal={closeResponseModal}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isPromptOpen}
+        onOpenChange={(open) => !open && closePromptModal()}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <TextPreview text={chat.prompt} />
+        </DialogContent>
+      </Dialog>
+      <Dialog
+        open={isResponseOpen}
+        onOpenChange={(open) => !open && closeResponseModal()}
+      >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <TextPreview
+            text={
+              <MarkdownRenderer
+                content={safeJsonParse(chat.response, {})?.text}
+              />
+            }
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
-const TextPreview = ({ text, closeModal }) => {
+const TextPreview = ({ text }) => {
   return (
-    <div className="relative w-full md:max-w-2xl max-h-full">
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b rounded-t border-theme-modal-border">
-          <h3 className="text-xl font-semibold text-white">Viewing Text</h3>
-          <button
-            onClick={closeModal}
-            type="button"
-            className="bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center bg-sidebar-button hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
-          >
-            <X className="text-white text-lg" />
-          </button>
-        </div>
-        <div className="w-full p-6">
-          <pre className="w-full h-[200px] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-white text-sm">
-            {text}
-          </pre>
-        </div>
+    <>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          Viewing Text
+        </DialogTitle>
+      </DialogHeader>
+      <div className="w-full">
+        <pre className="w-full h-[200px] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-white text-sm">
+          {text}
+        </pre>
       </div>
-    </div>
+    </>
   );
 };

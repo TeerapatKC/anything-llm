@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Invite from "@/models/invite";
 import paths from "@/utils/paths";
 import { useParams } from "react-router-dom";
@@ -11,6 +11,13 @@ import {
   USERNAME_PATTERN,
 } from "@/utils/username";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function NewUserModal() {
   const { code } = useParams();
@@ -39,72 +46,59 @@ export default function NewUserModal() {
   };
 
   return (
-    <div className="relative w-full max-w-2xl max-h-full">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="flex items-start justify-between p-4 border-b rounded-t border-theme-modal-border">
-          <h3 className="text-xl font-semibold text-theme-text-primary">
-            Create a new account
-          </h3>
+    <>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-sm font-semibold">
+          Create a new account
+        </DialogTitle>
+      </DialogHeader>
+      <form onSubmit={handleCreate}>
+        <div className="space-y-4">
+          <div>
+            <Label variant="field" htmlFor="username" className="block mb-2">
+              Username
+            </Label>
+            <Input
+              variant="settings"
+              name="username"
+              type="text"
+              placeholder="My username"
+              minLength={USERNAME_MIN_LENGTH}
+              maxLength={USERNAME_MAX_LENGTH}
+              pattern={USERNAME_PATTERN}
+              required={true}
+              autoComplete="off"
+            />
+            <p className="mt-2 text-xs text-theme-text-secondary">
+              {t("common.username_requirements")}
+            </p>
+          </div>
+          <div>
+            <Label variant="field" htmlFor="password" className="block mb-2">
+              Password
+            </Label>
+            <Input
+              variant="settings"
+              name="password"
+              type="password"
+              placeholder="Your password"
+              required={true}
+              minLength={8}
+              autoComplete="off"
+            />
+          </div>
+          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          <p className="text-theme-text-secondary text-xs md:text-sm">
+            After creating your account you will be able to login with these
+            credentials and start using workspaces.
+          </p>
         </div>
-        <form onSubmit={handleCreate}>
-          <div className="p-6 space-y-6 flex h-full w-full">
-            <div className="w-full flex flex-col gap-y-4">
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-theme-text-primary"
-                >
-                  Username
-                </label>
-                <Input
-                  variant="settings"
-                  name="username"
-                  type="text"
-                  placeholder="My username"
-                  minLength={USERNAME_MIN_LENGTH}
-                  maxLength={USERNAME_MAX_LENGTH}
-                  pattern={USERNAME_PATTERN}
-                  required={true}
-                  autoComplete="off"
-                />
-                <p className="mt-2 text-xs text-theme-text-secondary">
-                  {t("common.username_requirements")}
-                </p>
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-theme-text-primary"
-                >
-                  Password
-                </label>
-                <Input
-                  variant="settings"
-                  name="password"
-                  type="password"
-                  placeholder="Your password"
-                  required={true}
-                  minLength={8}
-                  autoComplete="off"
-                />
-              </div>
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-              <p className="text-theme-text-secondary text-xs md:text-sm">
-                After creating your account you will be able to login with these
-                credentials and start using workspaces.
-              </p>
-            </div>
-          </div>
-          <div className="flex w-full justify-between items-center p-6 space-x-2 border-t rounded-b border-theme-modal-border">
-            <button
-              type="submit"
-              className="w-full transition-all duration-300 border border-theme-text-primary px-4 py-2 rounded-lg text-theme-text-primary text-sm items-center flex gap-x-2 hover:bg-theme-text-primary hover:text-theme-bg-primary focus:ring-gray-800 text-center justify-center"
-            >
-              Accept Invitation
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <DialogFooter className="mt-4">
+          <Button type="submit" variant="default" className="w-full">
+            Accept Invitation
+          </Button>
+        </DialogFooter>
+      </form>
+    </>
   );
 }

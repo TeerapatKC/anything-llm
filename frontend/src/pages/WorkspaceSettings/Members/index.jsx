@@ -1,4 +1,3 @@
-import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import Admin from "@/models/admin";
 import { useEffect, useState } from "react";
@@ -6,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
 import CTAButton from "@/components/lib/CTAButton";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
@@ -104,14 +104,17 @@ export default function Members({ workspace }) {
           )}
         </TableBody>
       </Table>
-      <CTAButton onClick={openModal}>Manage Users</CTAButton>
-      <ModalWrapper isOpen={isOpen}>
-        <AddMemberModal
-          closeModal={closeModal}
-          users={users}
-          workspace={adminWorkspace}
-        />
-      </ModalWrapper>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
+      >
+        <DialogTrigger asChild>
+          <CTAButton>Manage Users</CTAButton>
+        </DialogTrigger>
+        <DialogContent className="max-w-[550px] bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
+          <AddMemberModal users={users} workspace={adminWorkspace} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
