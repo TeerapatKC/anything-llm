@@ -1,6 +1,5 @@
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
-import { X } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -53,28 +52,13 @@ export default function CopyLinkToChatRow() {
 }
 
 function CopyLinkModal({ isOpen, closeModal, url }) {
-  if (!isOpen) return null;
-
   return (
-    <ModalWrapper isOpen={isOpen}>
-      <div
-        onMouseDown={(e) => e.stopPropagation()}
-        onClick={(e) => e.stopPropagation()}
-        className="w-[500px] bg-theme-bg-sidebar px-6 py-4 rounded-lg flex flex-col items-center justify-between relative shadow-lg border border-white/10"
-      >
-        <div className="w-full flex items-center justify-between">
-          <div className="text-white text-left font-medium text-lg">
-            Chat link copied!
-          </div>
-          <button
-            onClick={closeModal}
-            className="text-white opacity-60 hover:text-white hover:opacity-100 border-none outline-none"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="flex flex-col w-full mt-4">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
+      <DialogContent className="max-w-[500px] bg-theme-bg-sidebar border-white/10">
+        <DialogTitle className="text-white text-left font-medium text-sm">
+          Chat link copied!
+        </DialogTitle>
+        <div className="flex flex-col w-full">
           <p className="text-sm text-zinc-400 light:text-slate-500">
             The link to this chat has been copied to your clipboard.
           </p>
@@ -86,7 +70,7 @@ function CopyLinkModal({ isOpen, closeModal, url }) {
             {url}
           </div>
         </div>
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }

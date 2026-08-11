@@ -1,13 +1,17 @@
 import { Fragment, useState, useEffect } from "react";
 import { decode as HTMLDecode } from "he";
 import truncate from "truncate";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   FileText,
   Info,
   ArrowSquareOut,
   GithubLogo,
-  X,
   YoutubeLogo,
   LinkSimple,
   GitlabLogo,
@@ -207,28 +211,28 @@ export function CitationDetailModal({ source, onClose }) {
   const { t } = useTranslation();
 
   return (
-    <ModalWrapper isOpen={!!source}>
-      <div className="w-full max-w-2xl bg-zinc-900 light:bg-white rounded-lg shadow border-2 border-zinc-700 light:border-slate-300 overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-zinc-700 light:border-slate-300">
+    <Dialog open={!!source} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl bg-zinc-900 light:bg-white border-zinc-700 light:border-slate-300">
+        <DialogHeader className="p-0">
           <div className="w-full flex gap-x-2 items-center">
             {isUrl ? (
               <a
                 href={linkTo}
                 target="_blank"
                 rel="noreferrer"
-                className="text-xl w-[90%] font-semibold text-white light:text-slate-900 whitespace-nowrap hover:underline hover:text-blue-300 light:hover:text-blue-600 flex items-center gap-x-1"
+                className="text-sm w-[90%] font-semibold text-white light:text-slate-900 whitespace-nowrap hover:underline hover:text-blue-300 light:hover:text-blue-600 flex items-center gap-x-1"
               >
                 <div className="flex items-center gap-x-1 max-w-full overflow-hidden">
-                  <h3 className="truncate text-ellipsis whitespace-nowrap overflow-hidden w-full">
+                  <DialogTitle className="truncate text-ellipsis whitespace-nowrap overflow-hidden w-full text-sm font-semibold">
                     {webpageUrl}
-                  </h3>
+                  </DialogTitle>
                   <ArrowSquareOut className="flex-shrink-0" />
                 </div>
               </a>
             ) : (
-              <h3 className="text-xl font-semibold text-white light:text-slate-900 overflow-hidden overflow-ellipsis whitespace-nowrap">
+              <DialogTitle className="text-sm font-semibold text-white light:text-slate-900 overflow-hidden overflow-ellipsis whitespace-nowrap">
                 {truncate(title, 45)}
-              </h3>
+              </DialogTitle>
             )}
           </div>
           {references > 1 && (
@@ -236,62 +240,45 @@ export function CitationDetailModal({ source, onClose }) {
               Referenced {references} times.
             </p>
           )}
-          <button
-            onClick={onClose}
-            type="button"
-            className="absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-zinc-700 light:hover:bg-slate-200 border-transparent border"
-          >
-            <X
-              size={24}
-              weight="bold"
-              className="text-white light:text-slate-900"
-            />
-          </button>
-        </div>
-        <div
-          className="h-full w-full overflow-y-auto"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
-        >
-          <div className="py-7 px-9 space-y-2 flex-col">
-            {chunks.map(({ text, score }, idx) => (
-              <Fragment key={idx}>
-                <div className="pt-6 text-white light:text-slate-900">
-                  <div className="flex flex-col w-full justify-start pb-6 gap-y-1">
-                    <p className="text-white light:text-slate-900 whitespace-pre-line">
-                      {HTMLDecode(omitChunkHeader(text))}
-                    </p>
+        </DialogHeader>
+        <div className="space-y-2 flex-col">
+          {chunks.map(({ text, score }, idx) => (
+            <Fragment key={idx}>
+              <div className="pt-6 text-white light:text-slate-900">
+                <div className="flex flex-col w-full justify-start pb-6 gap-y-1">
+                  <p className="text-white light:text-slate-900 whitespace-pre-line">
+                    {HTMLDecode(omitChunkHeader(text))}
+                  </p>
 
-                    {!!score && (
-                      <div className="w-full flex items-center text-xs text-white/60 light:text-slate-500 gap-x-2 cursor-default">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div className="flex items-center gap-x-1">
-                              <Info size={14} />
-                              <p>
-                                {toPercentString(score)}{" "}
-                                {t("chat_window.similarity_match")}
-                              </p>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="top"
-                            className="max-w-[250px] text-xs"
-                          >{`This is the semantic similarity score of this chunk of text compared to your query calculated by the vector database.`}</TooltipContent>
-                        </Tooltip>
-                      </div>
-                    )}
-                  </div>
+                  {!!score && (
+                    <div className="w-full flex items-center text-xs text-white/60 light:text-slate-500 gap-x-2 cursor-default">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center gap-x-1">
+                            <Info size={14} />
+                            <p>
+                              {toPercentString(score)}{" "}
+                              {t("chat_window.similarity_match")}
+                            </p>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="top"
+                          className="max-w-[250px] text-xs"
+                        >{`This is the semantic similarity score of this chunk of text compared to your query calculated by the vector database.`}</TooltipContent>
+                      </Tooltip>
+                    </div>
+                  )}
                 </div>
-                {idx !== chunks.length - 1 && (
-                  <hr className="border-zinc-700 light:border-slate-300" />
-                )}
-              </Fragment>
-            ))}
-            <div className="mb-6"></div>
-          </div>
+              </div>
+              {idx !== chunks.length - 1 && (
+                <hr className="border-zinc-700 light:border-slate-300" />
+              )}
+            </Fragment>
+          ))}
         </div>
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }
 

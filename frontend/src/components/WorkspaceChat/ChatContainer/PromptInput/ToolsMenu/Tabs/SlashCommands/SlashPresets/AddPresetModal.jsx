@@ -1,12 +1,18 @@
 import { useState } from "react";
-import { X } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
 import { CMD_REGEX } from "./constants";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogClose,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 export default function AddPresetModal({ isOpen, onClose, onSave }) {
   const [command, setCommand] = useState("");
@@ -30,102 +36,82 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
   };
 
   return (
-    <ModalWrapper isOpen={isOpen}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {t("chat_window.add_new_preset")}
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={onClose} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
-        <div
-          className="h-full w-full overflow-y-auto"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
-        >
-          <form onSubmit={handleSubmit}>
-            <div className="py-7 px-9 space-y-2 flex-col">
-              <div className="w-full flex flex-col gap-y-4">
-                <div>
-                  <Label
-                    variant="field"
-                    htmlFor="command"
-                    className="block mb-2"
-                  >
-                    {t("chat_window.command")}
-                  </Label>
-                  <div className="flex items-center">
-                    <span className="text-white text-sm mr-2 font-bold">/</span>
-                    <Input
-                      variant="settings"
-                      name="command"
-                      type="text"
-                      id="command"
-                      placeholder={t("chat_window.your_command")}
-                      value={command}
-                      onChange={handleCommandChange}
-                      maxLength={25}
-                      autoComplete="off"
-                      required={true}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label
-                    variant="field"
-                    htmlFor="prompt"
-                    className="block mb-2"
-                  >
-                    Prompt
-                  </Label>
-                  <Textarea
-                    variant="settings"
-                    name="prompt"
-                    id="prompt"
-                    autoComplete="off"
-                    placeholder={t("chat_window.placeholder_prompt")}
-                    required={true}
-                  ></Textarea>
-                </div>
-                <div>
-                  <Label
-                    variant="field"
-                    htmlFor="description"
-                    className="block mb-2"
-                  >
-                    {t("chat_window.description")}
-                  </Label>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle className="text-sm font-semibold">
+            {t("chat_window.add_new_preset")}
+          </DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <div className="space-y-2 flex-col">
+            <div className="w-full flex flex-col gap-y-4">
+              <div>
+                <Label variant="field" htmlFor="command" className="block mb-2">
+                  {t("chat_window.command")}
+                </Label>
+                <div className="flex items-center">
+                  <span className="text-white text-sm mr-2 font-bold">/</span>
                   <Input
                     variant="settings"
+                    name="command"
                     type="text"
-                    name="description"
-                    id="description"
-                    placeholder={t("chat_window.placeholder_description")}
-                    maxLength={80}
+                    id="command"
+                    placeholder={t("chat_window.your_command")}
+                    value={command}
+                    onChange={handleCommandChange}
+                    maxLength={25}
                     autoComplete="off"
                     required={true}
                   />
                 </div>
               </div>
+              <div>
+                <Label variant="field" htmlFor="prompt" className="block mb-2">
+                  Prompt
+                </Label>
+                <Textarea
+                  variant="settings"
+                  name="prompt"
+                  id="prompt"
+                  autoComplete="off"
+                  placeholder={t("chat_window.placeholder_prompt")}
+                  required={true}
+                ></Textarea>
+              </div>
+              <div>
+                <Label
+                  variant="field"
+                  htmlFor="description"
+                  className="block mb-2"
+                >
+                  {t("chat_window.description")}
+                </Label>
+                <Input
+                  variant="settings"
+                  type="text"
+                  name="description"
+                  id="description"
+                  placeholder={t("chat_window.placeholder_description")}
+                  maxLength={80}
+                  autoComplete="off"
+                  required={true}
+                />
+              </div>
             </div>
-            <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-              <button
-                onClick={onClose}
-                type="button"
-                className="transition-all duration-300 bg-transparent text-white hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-              >
+          </div>
+          <DialogFooter className="mt-6 p-0">
+            <DialogClose asChild>
+              <Button variant="outline" type="button">
                 {t("chat_window.cancel")}
-              </button>
-              <Button variant="cta" type="submit">
-                {t("chat_window.save")}
               </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </ModalWrapper>
+            </DialogClose>
+            <Button variant="default" type="submit">
+              {t("chat_window.save")}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,16 +1,16 @@
 import { Fragment } from "react";
-import { CaretLeft, Info, X } from "@phosphor-icons/react";
+import { CaretLeft, Info } from "@phosphor-icons/react";
 import { decode as HTMLDecode } from "he";
 import truncate from "truncate";
 import { useTranslation } from "react-i18next";
 import { omitChunkHeader } from "../../../ChatHistory/Citation";
 import { toPercentString } from "@/utils/numbers";
 
-export default function SourceDetailView({ source, onBack, onClose }) {
+export default function SourceDetailView({ source, onBack }) {
   const { t } = useTranslation();
   return (
     <>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pr-8">
         <button
           onClick={onBack}
           type="button"
@@ -21,13 +21,6 @@ export default function SourceDetailView({ source, onBack, onClose }) {
         <p className="font-semibold text-base leading-6 text-white light:text-slate-900 truncate px-2">
           {truncate(source.title, 30)}
         </p>
-        <button
-          onClick={onClose}
-          type="button"
-          className="text-white/60 light:text-slate-400 hover:text-white light:hover:text-slate-900 transition-colors"
-        >
-          <X size={16} weight="bold" />
-        </button>
       </div>
       <div className="flex flex-col overflow-y-auto no-scroll">
         {source.chunks.map(({ text, score }, idx) => (

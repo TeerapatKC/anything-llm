@@ -1,9 +1,14 @@
-import React, { useRef, useState } from "react";
-import { X } from "@phosphor-icons/react";
+import { useRef, useState } from "react";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -27,54 +32,42 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
   };
 
   return (
-    <ModalWrapper isOpen={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              {t("new-workspace.title")}
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={hideModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
-        <div
-          className="h-full w-full overflow-y-auto"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
-        >
-          <form ref={formEl} onSubmit={handleCreate}>
-            <div className="py-7 px-9 space-y-2 flex-col">
-              <div className="w-full flex flex-col gap-y-4">
-                <div>
-                  <Label variant="field" htmlFor="name" className="block mb-2">
-                    {t("common.workspaces-name")}
-                  </Label>
-                  <Input
-                    variant="settings"
-                    name="name"
-                    type="text"
-                    id="name"
-                    placeholder={t("new-workspace.placeholder")}
-                    required={true}
-                    autoComplete="off"
-                    autoFocus={true}
-                  />
-                </div>
-                {error && (
-                  <p className="text-red-400 text-sm">Error: {error}</p>
-                )}
+    <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle className="text-sm font-semibold">
+            {t("new-workspace.title")}
+          </DialogTitle>
+        </DialogHeader>
+        <form ref={formEl} onSubmit={handleCreate}>
+          <div className="space-y-2 flex-col">
+            <div className="w-full flex flex-col gap-y-4">
+              <div>
+                <Label variant="field" htmlFor="name" className="block mb-2">
+                  {t("common.workspaces-name")}
+                </Label>
+                <Input
+                  variant="settings"
+                  name="name"
+                  type="text"
+                  id="name"
+                  placeholder={t("new-workspace.placeholder")}
+                  required={true}
+                  autoComplete="off"
+                  autoFocus={true}
+                />
               </div>
+              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
             </div>
-            <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-              <Button variant="cta" type="submit">
-                Save
-              </Button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </ModalWrapper>
+          </div>
+          <DialogFooter className="mt-6 p-0">
+            <Button variant="default" type="submit">
+              Save
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

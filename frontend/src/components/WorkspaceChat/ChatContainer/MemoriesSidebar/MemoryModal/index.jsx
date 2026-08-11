@@ -1,7 +1,13 @@
 import { useState, useEffect, useMemo } from "react";
-import { X } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 /**
  * @param {Object} props
@@ -48,21 +54,12 @@ export default function MemoryModal({
   }
 
   return (
-    <ModalWrapper isOpen={isOpen}>
-      <div className="bg-zinc-900 light:bg-white border border-zinc-800 light:border-slate-300 rounded-lg p-6 w-[400px] flex flex-col gap-5">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-[400px] bg-zinc-900 light:bg-white border-zinc-800 light:border-slate-300">
         <div className="flex flex-col gap-1">
-          <div className="flex items-start justify-between">
-            <p className="font-semibold text-base leading-6 text-zinc-50 light:text-slate-800">
-              {title}
-            </p>
-            <button
-              onClick={onClose}
-              type="button"
-              className="text-zinc-400 light:text-slate-400 hover:text-zinc-50 light:hover:text-slate-900 transition-colors border-none bg-transparent cursor-pointer"
-            >
-              <X size={16} weight="bold" />
-            </button>
-          </div>
+          <DialogTitle className="text-sm font-semibold text-zinc-50 light:text-slate-800">
+            {title}
+          </DialogTitle>
           <p className="text-xs leading-4 text-zinc-400 light:text-slate-500">
             {description}
           </p>
@@ -84,24 +81,22 @@ export default function MemoryModal({
             className="w-full bg-zinc-800 light:bg-white text-zinc-50 light:border light:border-slate-300 light:text-slate-700 placeholder:text-zinc-500 light:placeholder:text-slate-400 text-sm rounded-lg p-3 resize-none outline-none focus:border-zinc-500 light:focus:border-slate-400"
           />
         </div>
-        <div className="flex items-start justify-between">
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-9 px-5 rounded-lg border border-zinc-500 light:border-slate-600 bg-transparent text-zinc-50 light:text-slate-900 text-sm font-medium cursor-pointer hover:bg-zinc-700 light:hover:bg-slate-100 transition-colors"
-          >
-            {t("chat_window.memories.modal.cancel")}
-          </button>
-          <button
+        <DialogFooter className="p-0 sm:justify-between">
+          <DialogClose asChild>
+            <Button variant="outline" type="button">
+              {t("chat_window.memories.modal.cancel")}
+            </Button>
+          </DialogClose>
+          <Button
+            variant="default"
             type="button"
             onClick={handleSubmit}
             disabled={!content.trim()}
-            className="h-9 px-5 rounded-lg border-none bg-zinc-50 light:bg-slate-900 text-zinc-900 light:text-white text-sm font-medium cursor-pointer hover:bg-white light:hover:bg-slate-800 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
           >
             {submitLabel}
-          </button>
-        </div>
-      </div>
-    </ModalWrapper>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

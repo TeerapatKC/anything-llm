@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import System from "../../../models/system";
 import { AUTH_TOKEN, AUTH_USER } from "../../../utils/constants";
 import paths from "../../../utils/paths";
 import showToast from "@/utils/toast";
-import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import RecoveryCodeModal from "@/components/Modals/DisplayRecoveryCodeModal";
 import { useTranslation } from "react-i18next";
@@ -353,13 +352,13 @@ export default function MultiUserAuth() {
         </div>
       </form>
 
-      <ModalWrapper isOpen={isRecoveryCodeModalOpen} noPortal={true}>
+      {isRecoveryCodeModalOpen && (
         <RecoveryCodeModal
           recoveryCodes={recoveryCodes}
           onDownloadComplete={handleDownloadComplete}
           onClose={closeRecoveryCodeModal}
         />
-      </ModalWrapper>
+      )}
     </>
   );
 }

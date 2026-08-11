@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from "react";
+import { useState, useEffect, memo } from "react";
 import { X } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
@@ -8,7 +8,13 @@ import { isMobileOnly } from "react-device-detect";
 import useUser from "../../../hooks/useUser";
 import DocumentSettings from "./Documents";
 import DataConnectors from "./DataConnectors";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
 import { Button } from "@/components/ui/button";
 
@@ -41,35 +47,23 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
 
   if (isMobileOnly) {
     return (
-      <ModalWrapper isOpen={true}>
-        <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-          <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-            <div className="w-full flex gap-x-2 items-center">
-              <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-                {t("connectors.manage.editing")} "{workspace.name}"
-              </h3>
-            </div>
-            <Button variant="modalClose" onClick={hideModal} type="button">
-              <X size={24} weight="bold" className="text-white" />
-            </Button>
+      <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <DialogHeader className="p-0">
+            <DialogTitle className="text-sm font-semibold">
+              {t("connectors.manage.editing")} "{workspace.name}"
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2 flex-col">
+            <p className="text-white">{t("connectors.manage.desktop-only")}</p>
           </div>
-          <div
-            className="h-full w-full overflow-y-auto"
-            style={{ maxHeight: "calc(100vh - 200px)" }}
-          >
-            <div className="py-7 px-9 space-y-2 flex-col">
-              <p className="text-white">
-                {t("connectors.manage.desktop-only")}
-              </p>
-            </div>
-          </div>
-          <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-            <Button variant="cta" onClick={hideModal} type="button">
+          <DialogFooter className="p-0">
+            <Button variant="default" onClick={hideModal} type="button">
               {t("connectors.manage.dismiss")}
             </Button>
-          </div>
-        </div>
-      </ModalWrapper>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     );
   }
 

@@ -1,5 +1,12 @@
 import { CircleNotch } from "@phosphor-icons/react";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import pluralize from "pluralize";
 import { numberWithCommas } from "@/utils/numbers";
 import useUser from "@/hooks/useUser";
@@ -24,10 +31,16 @@ export default function FileUploadWarningModal({
 
   if (isEmbedding) {
     return (
-      <ModalWrapper isOpen={show}>
-        <div className="relative max-w-[600px] bg-theme-bg-primary rounded-lg shadow border border-theme-modal-border">
-          <div className="p-6 flex flex-col items-center justify-center">
-            <p className="text-white text-lg font-semibold mb-4">
+      <Dialog open={show}>
+        <DialogContent
+          className="max-w-[600px] bg-theme-bg-primary border-theme-modal-border [&>button]:hidden"
+          onEscapeKeyDown={(e) => e.preventDefault()}
+          onPointerDownOutside={(e) => e.preventDefault()}
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogTitle className="sr-only">Embedding files</DialogTitle>
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-white text-sm font-semibold mb-4">
               Embedding {embedProgress + 1} of {fileCount}{" "}
               {pluralize("file", fileCount)}
             </p>
@@ -36,23 +49,21 @@ export default function FileUploadWarningModal({
               Please wait while we embed your files...
             </p>
           </div>
-        </div>
-      </ModalWrapper>
+        </DialogContent>
+      </Dialog>
     );
   }
 
   return (
-    <ModalWrapper isOpen={show}>
-      <div className="relative max-w-[600px] bg-theme-bg-primary rounded-lg shadow border border-theme-modal-border">
-        <div className="relative p-6 border-b border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Context Window Warning
-            </h3>
-          </div>
-        </div>
+    <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-[600px] bg-theme-bg-primary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle className="text-sm font-semibold">
+            Context Window Warning
+          </DialogTitle>
+        </DialogHeader>
 
-        <div className="py-7 px-9 space-y-4">
+        <div className="space-y-4">
           <p className="text-theme-text-primary text-sm">
             Your workspace is using {numberWithCommas(tokenCount)} of{" "}
             {numberWithCommas(maxTokens)} available tokens. We recommend keeping
@@ -72,35 +83,27 @@ export default function FileUploadWarningModal({
           </p>
         </div>
 
-        <div className="flex w-full justify-between items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-          <button
-            onClick={onClose}
-            type="button"
-            className="border-none transition-all duration-300 bg-theme-modal-border text-white hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-          >
+        <DialogFooter className="p-0 sm:justify-between">
+          <Button variant="outline" onClick={onClose} type="button">
             Cancel
-          </button>
-          <div className="flex w-full justify-end items-center space-x-2">
-            <button
-              onClick={onContinue}
-              type="button"
-              className="border-none transition-all duration-300 bg-theme-modal-border text-white hover:opacity-60 px-4 py-2 rounded-lg text-sm"
-            >
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" onClick={onContinue} type="button">
               Continue Anyway
-            </button>
+            </Button>
             {canEmbed && (
-              <button
+              <Button
+                variant="default"
                 onClick={onEmbed}
                 disabled={isEmbedding || !canEmbed}
                 type="button"
-                className="border-none transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm"
               >
                 Embed {pluralize("File", fileCount)}
-              </button>
+              </Button>
             )}
           </div>
-        </div>
-      </div>
-    </ModalWrapper>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
