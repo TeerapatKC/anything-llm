@@ -50,7 +50,7 @@ export default function SetupProvider({
           </DialogTitle>
         </DialogHeader>
         <form id="provider-form" onSubmit={handleUpdate}>
-          <div className="space-y-4 max-h-[60vh] overflow-y-auto p-1">
+          <div className="space-y-4 p-1">
             <p className="text-sm text-white/60">
               To use {llmProvider.name} as this workspace's LLM you need to set
               it up first.

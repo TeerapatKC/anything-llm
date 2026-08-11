@@ -61,7 +61,7 @@ export default function NewApiKeyModal({ onSuccess }) {
         </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleCreate}>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="space-y-4">
           {error && (
             <p className="text-red-400 text-sm">
               {t("api.messages.error", { error })}

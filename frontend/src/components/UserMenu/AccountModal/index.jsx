@@ -1,4 +1,3 @@
-import { useLanguageOptions } from "@/hooks/useLanguageOptions";
 import usePfp from "@/hooks/usePfp";
 import System from "@/models/system";
 import Appearance from "@/models/appearance";
@@ -13,7 +12,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { useTheme } from "@/hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import {
@@ -32,13 +30,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 export default function AccountModal({ user, hideModal }) {
   const { pfp, setPfp } = usePfp();
@@ -99,9 +90,12 @@ export default function AccountModal({ user, hideModal }) {
   };
   return (
     <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
-        <DialogHeader className="p-4">
-          <DialogTitle className="text-sm font-semibold">
+      <DialogContent
+        scrollable={false}
+        className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden"
+      >
+        <DialogHeader sticky={false} className="p-4">
+          <DialogTitle className="text-lg font-semibold">
             {t("profile_settings.edit_account")}
           </DialogTitle>
         </DialogHeader>
@@ -204,10 +198,6 @@ export default function AccountModal({ user, hideModal }) {
               </div>
               <div className="flex gap-x-8">
                 <div className="flex flex-col gap-y-3">
-                  <ThemePreference />
-                  <LanguagePreference />
-                </div>
-                <div className="flex flex-col gap-y-3">
                   <AutoSubmitPreference />
                   <AutoSpeakPreference />
                 </div>
@@ -227,65 +217,6 @@ export default function AccountModal({ user, hideModal }) {
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function LanguagePreference() {
-  const {
-    currentLanguage,
-    supportedLanguages,
-    getLanguageName,
-    changeLanguage,
-  } = useLanguageOptions();
-  const { t } = useTranslation();
-  return (
-    <div>
-      <Label variant="field" htmlFor="userLang" className="block mb-2">
-        {t("profile_settings.language")}
-      </Label>
-      <Select
-        name="userLang"
-        defaultValue={currentLanguage || "en"}
-        onValueChange={changeLanguage}
-      >
-        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg py-2">
-          <SelectValue placeholder="Select an option" />
-        </SelectTrigger>
-        <SelectContent>
-          {supportedLanguages.map((lang) => {
-            return (
-              <SelectItem key={lang} value={lang}>
-                {getLanguageName(lang)}
-              </SelectItem>
-            );
-          })}
-        </SelectContent>
-      </Select>
-    </div>
-  );
-}
-
-function ThemePreference() {
-  const { theme, setTheme, availableThemes } = useTheme();
-  const { t } = useTranslation();
-  return (
-    <div>
-      <Label variant="field" htmlFor="theme" className="block mb-2">
-        {t("profile_settings.theme")}
-      </Label>
-      <Select name="theme" value={theme} onValueChange={setTheme}>
-        <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit px-4 focus:outline-primary-button active:outline-primary-button outline-none text-white text-sm rounded-lg py-2">
-          <SelectValue placeholder="Select an option" />
-        </SelectTrigger>
-        <SelectContent>
-          {Object.entries(availableThemes).map(([key, value]) => (
-            <SelectItem key={key} value={key}>
-              {value}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
   );
 }
 

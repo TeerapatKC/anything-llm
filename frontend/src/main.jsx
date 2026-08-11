@@ -10,6 +10,7 @@ import PrivateRoute, {
 import Login from "@/pages/Login";
 import SimpleSSOPassthrough from "@/pages/Login/SSO/simple";
 import OnboardingFlow from "@/pages/OnboardingFlow";
+import { RouteErrorBoundary } from "@/components/ErrorBoundaryFallback";
 import "@/index.css";
 
 const isDev = import.meta.env.DEV;
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         path: "/",

@@ -31,7 +31,7 @@ export default function PublishEntityModal({
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[900px] bg-theme-bg-primary border-theme-modal-border p-6">
+      <DialogContent className="max-w-[900px] bg-theme-bg-primary border-theme-modal-border">
         <DialogTitle className="sr-only">Publish</DialogTitle>
         {renderEntityForm()}
       </DialogContent>

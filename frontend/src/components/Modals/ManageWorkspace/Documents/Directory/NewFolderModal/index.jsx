@@ -1,9 +1,16 @@
 import React, { useState } from "react";
-import { X } from "@phosphor-icons/react";
 import Document from "@/models/document";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function NewFolderModal({ closeModal, onCreated }) {
   const [error, setError] = useState(null);
@@ -24,57 +31,46 @@ export default function NewFolderModal({ closeModal, onCreated }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="relative w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
-          <div className="w-full flex gap-x-2 items-center">
-            <h3 className="text-xl font-semibold text-white overflow-hidden overflow-ellipsis whitespace-nowrap">
-              Create New Folder
-            </h3>
-          </div>
-          <Button variant="modalClose" onClick={closeModal} type="button">
-            <X size={24} weight="bold" className="text-white" />
-          </Button>
-        </div>
-        <div className="p-6">
-          <form onSubmit={handleCreate}>
-            <div className="space-y-4">
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="folderName"
-                  className="block mb-2"
-                >
-                  Folder Name
-                </Label>
-                <Input
-                  variant="settings"
-                  name="folderName"
-                  type="text"
-                  placeholder="Enter folder name"
-                  required={true}
-                  autoComplete="off"
-                  value={folderName}
-                  onChange={(e) => setFolderName(e.target.value)}
-                />
-              </div>
-              {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+    <Dialog open={true} onOpenChange={(open) => !open && closeModal()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle>Create New Folder</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleCreate}>
+          <div className="space-y-4">
+            <div>
+              <Label
+                variant="field"
+                htmlFor="folderName"
+                className="block mb-2"
+              >
+                Folder Name
+              </Label>
+              <Input
+                variant="settings"
+                name="folderName"
+                type="text"
+                placeholder="Enter folder name"
+                required={true}
+                autoComplete="off"
+                value={folderName}
+                onChange={(e) => setFolderName(e.target.value)}
+              />
             </div>
-            <div className="flex justify-between items-center mt-6 pt-6 border-t border-theme-modal-border">
-              <Button variant="muted" onClick={closeModal} type="button">
+            {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          </div>
+          <DialogFooter className="mt-4 p-0">
+            <DialogClose asChild>
+              <Button variant="muted" type="button">
                 Cancel
               </Button>
-              <button
-                type="submit"
-                disabled={creating}
-                className="transition-all duration-300 bg-white text-black hover:opacity-60 disabled:opacity-40 px-4 py-2 rounded-lg text-sm"
-              >
-                {creating ? "Creating..." : "Create Folder"}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
+            </DialogClose>
+            <Button type="submit" variant="default" disabled={creating}>
+              {creating ? "Creating..." : "Create Folder"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

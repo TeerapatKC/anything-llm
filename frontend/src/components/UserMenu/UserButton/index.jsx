@@ -6,9 +6,11 @@ import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
 import {
   CaretUpDown,
+  Palette,
   Person,
   Question,
   SignOut,
+  Translate,
   Wrench,
 } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
@@ -19,7 +21,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -35,6 +43,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTheme } from "@/hooks/useTheme";
+import { useLanguageOptions } from "@/hooks/useLanguageOptions";
 
 /**
  * Account button. Lives in the sidebar footer as a full-width row (avatar +
@@ -51,6 +61,13 @@ export default function UserButton() {
   const { t } = useTranslation();
   const mode = useLoginMode();
   const { user } = useUser();
+  const { theme, setTheme, availableThemes } = useTheme();
+  const {
+    currentLanguage,
+    supportedLanguages,
+    getLanguageName,
+    changeLanguage,
+  } = useLanguageOptions();
   const [showAccountSettings, setShowAccountSettings] = useState(false);
   const [supportEmail, setSupportEmail] = useState("");
 
@@ -139,6 +156,26 @@ export default function UserButton() {
               {t("profile_settings.account")}
             </DropdownMenuItem>
           )}
+          <PreferenceSubmenu
+            icon={<Palette size={16} />}
+            label={t("profile_settings.theme")}
+            value={theme}
+            onValueChange={setTheme}
+            options={Object.entries(availableThemes).map(([value, label]) => ({
+              value,
+              label,
+            }))}
+          />
+          <PreferenceSubmenu
+            icon={<Translate size={16} />}
+            label={t("profile_settings.language")}
+            value={currentLanguage || "en"}
+            onValueChange={changeLanguage}
+            options={supportedLanguages.map((language) => ({
+              value: language,
+              label: getLanguageName(language),
+            }))}
+          />
           {canSeeSettings && (
             <DropdownMenuItem
               asChild
@@ -184,6 +221,32 @@ export default function UserButton() {
         />
       )}
     </div>
+  );
+}
+
+function PreferenceSubmenu({ icon, label, value, onValueChange, options }) {
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className="cursor-pointer text-theme-text-primary focus:bg-theme-action-menu-item-hover data-[state=open]:bg-theme-action-menu-item-hover">
+        {icon}
+        {label}
+      </DropdownMenuSubTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent className="max-h-72 min-w-48 overflow-y-auto bg-theme-action-menu-bg border-theme-modal-border">
+          <DropdownMenuRadioGroup value={value} onValueChange={onValueChange}>
+            {options.map((option) => (
+              <DropdownMenuRadioItem
+                key={option.value}
+                value={option.value}
+                className="cursor-pointer text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary"
+              >
+                {option.label}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </DropdownMenuSub>
   );
 }
 

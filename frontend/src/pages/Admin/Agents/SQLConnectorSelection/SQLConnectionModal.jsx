@@ -288,7 +288,7 @@ export default function SQLConnectionModal({
           onChange={onFormChange}
           onSubmit={handleUpdate}
         >
-          <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+          <div className="space-y-6">
             <p className="text-sm text-white/60">
               {isEditMode
                 ? "Update the connection information for your database below."

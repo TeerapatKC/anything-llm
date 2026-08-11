@@ -35,7 +35,7 @@ const buttonVariants = cva("", {
       // --- stock shadcn/ui ---
       default: `${SHADCN_BASE} bg-primary text-primary-foreground hover:bg-primary/90`,
       destructive: `${SHADCN_BASE} bg-destructive text-destructive-foreground hover:bg-destructive/90`,
-      outline: `${SHADCN_BASE} border border-input bg-background hover:bg-accent hover:text-accent-foreground`,
+      outline: `${SHADCN_BASE} border border-input bg-background hover:bg-primary/10 hover:text-foreground`,
       secondary: `${SHADCN_BASE} bg-secondary text-secondary-foreground hover:bg-secondary/80`,
       ghost: `${SHADCN_BASE} hover:bg-accent hover:text-accent-foreground`,
       link: `${SHADCN_BASE} text-primary underline-offset-4 hover:underline`,

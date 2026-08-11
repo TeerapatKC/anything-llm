@@ -68,7 +68,10 @@ export default function AddMemberModal({ workspace, users }) {
 
   return (
     <>
-      <DialogHeader className="flex-row items-center space-y-0 gap-x-4 p-4">
+      <DialogHeader
+        sticky={false}
+        className="flex-row items-center space-y-0 gap-x-4 p-4"
+      >
         <DialogTitle className="text-sm font-semibold">Users</DialogTitle>
         <div className="relative">
           <input
@@ -84,10 +87,10 @@ export default function AddMemberModal({ workspace, users }) {
         </div>
       </DialogHeader>
       <form onSubmit={handleUpdate}>
-        <div className="py-[17px] px-[20px]">
+        <div className="py-[17px] pl-[20px]">
           <Table
             variant="none"
-            className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto no-scroll"
+            className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto pr-[20px]"
           >
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (

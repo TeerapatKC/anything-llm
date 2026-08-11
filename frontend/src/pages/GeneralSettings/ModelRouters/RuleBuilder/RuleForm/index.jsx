@@ -148,7 +148,7 @@ export default function RuleForm({
             </p>
           </DialogHeader>
 
-          <div className="flex flex-col gap-y-5 max-h-[60vh] overflow-y-auto">
+          <div className="flex flex-col gap-y-5">
             <div className="flex gap-x-5 items-start">
               <div className="flex flex-col gap-y-1.5 w-[500px]">
                 <label className="text-sm font-medium leading-5 text-white light:text-slate-950">

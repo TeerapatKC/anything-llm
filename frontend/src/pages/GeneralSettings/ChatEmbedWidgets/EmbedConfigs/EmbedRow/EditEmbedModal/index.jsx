@@ -44,7 +44,7 @@ export default function EditEmbedModal({ embed }) {
         </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleUpdate}>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="space-y-4">
           <WorkspaceSelection defaultValue={embed.workspace.id} />
           <ChatModeSelection defaultValue={embed.chat_mode} />
           <PermittedDomains

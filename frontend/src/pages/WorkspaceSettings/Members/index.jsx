@@ -111,7 +111,10 @@ export default function Members({ workspace }) {
         <DialogTrigger asChild>
           <CTAButton>Manage Users</CTAButton>
         </DialogTrigger>
-        <DialogContent className="max-w-[550px] bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
+        <DialogContent
+          scrollable={false}
+          className="max-w-[550px] bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden"
+        >
           <AddMemberModal users={users} workspace={adminWorkspace} />
         </DialogContent>
       </Dialog>

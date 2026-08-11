@@ -24,6 +24,11 @@ import System from "@/models/system";
 import Option from "./MenuOption";
 import { CanViewChatHistoryProvider } from "../CanViewChatHistory";
 import useAppVersion from "@/hooks/useAppVersion";
+import {
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+} from "@/components/ui/sidebar";
 
 export default function SettingsSidebar() {
   const { t } = useTranslation();
@@ -125,7 +130,7 @@ export default function SettingsSidebar() {
                   </div>
                 </div>
               </div>
-              <div className="absolute bottom-2 left-0 right-0 pt-2 bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md">
+              <div className="absolute bottom-0 left-0 right-0 pt-2 pb-6 rounded-br-[26px] bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md">
                 <Footer />
               </div>
             </div>
@@ -136,53 +141,46 @@ export default function SettingsSidebar() {
   }
 
   return (
-    <>
-      <div>
-        <Link
-          to={paths.home()}
-          className="flex shrink-0 max-w-[55%] items-center justify-start mx-[20.5px] my-[18px]"
-        >
-          <img
-            src={logo}
-            alt="Logo"
-            className="rounded max-h-[24px]"
-            style={{ objectFit: "contain" }}
-          />
-        </Link>
-        <div
-          ref={sidebarRef}
-          className="transition-all duration-500 relative bg-theme-bg-secondary min-w-[250px] p-[10px] h-[calc(100%-76px)]"
-        >
-          <div className="w-full h-full flex flex-col overflow-x-hidden items-between min-w-[235px]">
-            <div className="text-theme-text-secondary text-sm font-medium uppercase mt-[4px] mb-0 ml-2">
-              {t("settings.title")}
-            </div>
-            <div className="relative h-[calc(100%-60px)] flex flex-col w-full justify-between pt-[10px] overflow-y-scroll no-scroll">
-              <div className="h-auto sidebar-items">
-                <div className="flex flex-col gap-y-2 pb-[60px] overflow-y-scroll no-scroll">
-                  <SidebarOptions user={user} t={t} />
-                  <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
-                  <SupportEmail />
-                  <Link
-                    hidden={
-                      user?.hasOwnProperty("role") && user.role !== "admin"
-                    }
-                    to={paths.settings.privacy()}
-                    className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3"
-                  >
-                    {t("settings.privacy")}
-                  </Link>
-                  <AppVersion />
-                </div>
-              </div>
-            </div>
-            <div className="absolute bottom-0 left-0 right-0 pt-4 pb-3 bg-theme-bg-secondary bg-opacity-80 backdrop-filter backdrop-blur-md z-10">
-              <Footer />
-            </div>
+    <aside className="flex h-full w-[292px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground">
+      <SidebarHeader className="gap-3 pt-4">
+        <div className="flex h-7 items-center justify-between gap-2">
+          <Link
+            to={paths.home()}
+            aria-label="Home"
+            className="flex min-w-0 items-center justify-start"
+          >
+            <img
+              src={logo}
+              alt="Logo"
+              className="rounded max-h-[24px] object-contain"
+            />
+          </Link>
+        </div>
+        <div className="text-theme-text-secondary text-sm font-medium uppercase">
+          {t("settings.title")}
+        </div>
+      </SidebarHeader>
+      <SidebarContent ref={sidebarRef} className="px-2 no-scroll">
+        <div className="h-auto sidebar-items">
+          <div className="flex flex-col gap-y-2 pb-[60px]">
+            <SidebarOptions user={user} t={t} />
+            <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
+            <SupportEmail />
+            <Link
+              hidden={user?.hasOwnProperty("role") && user.role !== "admin"}
+              to={paths.settings.privacy()}
+              className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3"
+            >
+              {t("settings.privacy")}
+            </Link>
+            <AppVersion />
           </div>
         </div>
-      </div>
-    </>
+      </SidebarContent>
+      <SidebarFooter className="border-t border-theme-sidebar-border pt-2">
+        <Footer />
+      </SidebarFooter>
+    </aside>
   );
 }
 

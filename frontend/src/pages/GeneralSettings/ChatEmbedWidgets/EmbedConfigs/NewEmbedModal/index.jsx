@@ -60,7 +60,7 @@ export default function NewEmbedModal() {
         </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleCreate}>
-        <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="space-y-4">
           <WorkspaceSelection />
           <ChatModeSelection />
           <PermittedDomains />

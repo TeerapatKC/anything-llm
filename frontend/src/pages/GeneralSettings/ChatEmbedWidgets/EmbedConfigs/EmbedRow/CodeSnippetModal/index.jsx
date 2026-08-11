@@ -21,7 +21,7 @@ export default function CodeSnippetModal({ embed }) {
           Copy your embed code
         </DialogTitle>
       </DialogHeader>
-      <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+      <div className="space-y-4">
         <ScriptTag embed={embed} />
       </div>
       <DialogFooter className="p-0 mt-4">

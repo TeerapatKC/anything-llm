@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useRouteError } from "react-router-dom";
 import { House, ArrowClockwise, Copy, Check } from "@phosphor-icons/react";
 import { useState } from "react";
 
@@ -89,5 +89,16 @@ ${details.stack}
         </NavLink>
       </div>
     </div>
+  );
+}
+
+export function RouteErrorBoundary() {
+  const error = useRouteError();
+
+  return (
+    <ErrorBoundaryFallback
+      error={error}
+      resetErrorBoundary={() => window.location.reload()}
+    />
   );
 }
