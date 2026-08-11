@@ -1,37 +1,37 @@
-import { X } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
-import ModalWrapper from "@/components/ModalWrapper";
-import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function UnauthenticatedHubModal({ show, onClose }) {
   const { t } = useTranslation();
   if (!show) return null;
 
   return (
-    <ModalWrapper isOpen={show}>
-      <div className="relative w-[400px] max-w-full bg-theme-bg-primary rounded-lg shadow border border-theme-modal-border">
-        <div className="p-6">
-          <Button variant="modalClose" onClick={onClose} type="button">
-            <X size={18} weight="bold" className="text-white" />
-          </Button>
-          <div className="flex flex-col items-center justify-center gap-y-4">
-            <h3 className="text-lg font-semibold text-white">
-              {t("community_hub.publish.generic.unauthenticated.title")}
-            </h3>
-            <p className="text-lg text-white text-center max-w-[300px]">
-              {t("community_hub.publish.generic.unauthenticated.description")}
-            </p>
-            <Link
-              to={paths.communityHub.authentication()}
-              className="w-[265px] bg-theme-bg-secondary hover:bg-theme-sidebar-item-hover text-theme-text-primary py-2 px-4 rounded-lg transition-colors mt-4 text-sm font-semibold text-center"
-            >
-              {t("community_hub.publish.generic.unauthenticated.button")}
-            </Link>
-          </div>
+    <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-[400px] bg-theme-bg-primary border-theme-modal-border">
+        <DialogHeader className="p-0">
+          <DialogTitle className="text-sm font-semibold text-center">
+            {t("community_hub.publish.generic.unauthenticated.title")}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center justify-center gap-y-4">
+          <p className="text-sm text-white text-center max-w-[300px]">
+            {t("community_hub.publish.generic.unauthenticated.description")}
+          </p>
+          <Link
+            to={paths.communityHub.authentication()}
+            className="w-[265px] bg-theme-bg-secondary hover:bg-theme-sidebar-item-hover text-theme-text-primary py-2 px-4 rounded-lg transition-colors mt-4 text-sm font-semibold text-center"
+          >
+            {t("community_hub.publish.generic.unauthenticated.button")}
+          </Link>
         </div>
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }

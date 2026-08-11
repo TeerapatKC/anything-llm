@@ -1,7 +1,13 @@
 import PreLoader from "@/components/Preloader";
 import WorkspaceFileRow from "./WorkspaceFileRow";
 import { memo, useEffect, useState } from "react";
-import ModalWrapper from "@/components/ModalWrapper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import {
   Eye,
   PushPin,
@@ -322,20 +328,20 @@ const PinAlert = memo(() => {
   }, []);
 
   return (
-    <ModalWrapper isOpen={showAlert} noPortal={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
+    <Dialog open={showAlert} onOpenChange={(open) => !open && dismissAlert()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
           <div className="flex items-center gap-2">
             <PushPin
               className="text-theme-text-primary text-lg w-6 h-6"
               weight="regular"
             />
-            <h3 className="text-xl font-semibold text-white">
+            <DialogTitle className="text-sm font-semibold">
               {t("connectors.pinning.what_pinning")}
-            </h3>
+            </DialogTitle>
           </div>
-        </div>
-        <div className="py-7 px-9 space-y-2 flex-col">
+        </DialogHeader>
+        <div className="space-y-2 flex-col">
           <div className="w-full text-white text-md flex flex-col gap-y-2">
             <p>
               <span
@@ -354,13 +360,13 @@ const PinAlert = memo(() => {
             <p>{t("connectors.pinning.pin_explained_block3")}</p>
           </div>
         </div>
-        <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-          <Button variant="cta" onClick={dismissAlert}>
+        <DialogFooter className="p-0">
+          <Button variant="default" onClick={dismissAlert}>
             {t("connectors.pinning.accept")}
           </Button>
-        </div>
-      </div>
-    </ModalWrapper>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 });
 
@@ -384,20 +390,20 @@ const DocumentWatchAlert = memo(() => {
   }, []);
 
   return (
-    <ModalWrapper isOpen={showAlert} noPortal={true}>
-      <div className="w-full max-w-2xl bg-theme-bg-secondary rounded-lg shadow border-2 border-theme-modal-border overflow-hidden">
-        <div className="relative p-6 border-b rounded-t border-theme-modal-border">
+    <Dialog open={showAlert} onOpenChange={(open) => !open && dismissAlert()}>
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogHeader className="p-0">
           <div className="flex items-center gap-2">
             <Eye
               className="text-theme-text-primary text-lg w-6 h-6"
               weight="regular"
             />
-            <h3 className="text-xl font-semibold text-white">
+            <DialogTitle className="text-sm font-semibold">
               {t("connectors.watching.what_watching")}
-            </h3>
+            </DialogTitle>
           </div>
-        </div>
-        <div className="py-7 px-9 space-y-2 flex-col">
+        </DialogHeader>
+        <div className="space-y-2 flex-col">
           <div className="w-full text-white text-md flex flex-col gap-y-2">
             <p>
               <span
@@ -419,13 +425,13 @@ const DocumentWatchAlert = memo(() => {
             </p>
           </div>
         </div>
-        <div className="flex w-full justify-end items-center p-6 space-x-2 border-t border-theme-modal-border rounded-b">
-          <Button variant="cta" onClick={dismissAlert}>
+        <DialogFooter className="p-0">
+          <Button variant="default" onClick={dismissAlert}>
             {t("connectors.watching.accept")}
           </Button>
-        </div>
-      </div>
-    </ModalWrapper>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 });
 

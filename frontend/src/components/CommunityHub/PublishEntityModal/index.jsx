@@ -1,11 +1,9 @@
-import { X } from "@phosphor-icons/react";
 import { useCommunityHubAuth } from "@/hooks/useCommunityHubAuth";
 import UnauthenticatedHubModal from "@/components/CommunityHub/UnauthenticatedHubModal";
 import SystemPrompts from "./SystemPrompts";
-import ModalWrapper from "@/components/ModalWrapper";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import AgentFlows from "./AgentFlows";
 import SlashCommands from "./SlashCommands";
-import { Button } from "@/components/ui/button";
 
 export default function PublishEntityModal({
   show,
@@ -32,15 +30,11 @@ export default function PublishEntityModal({
   };
 
   return (
-    <ModalWrapper isOpen={show}>
-      <div className="relative max-w-[900px] bg-theme-bg-primary rounded-lg shadow border border-theme-modal-border">
-        <div className="relative p-6">
-          <Button variant="modalClose" onClick={onClose} type="button">
-            <X size={18} weight="bold" className="text-white" />
-          </Button>
-        </div>
+    <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-[900px] bg-theme-bg-primary border-theme-modal-border p-6">
+        <DialogTitle className="sr-only">Publish</DialogTitle>
         {renderEntityForm()}
-      </div>
-    </ModalWrapper>
+      </DialogContent>
+    </Dialog>
   );
 }
