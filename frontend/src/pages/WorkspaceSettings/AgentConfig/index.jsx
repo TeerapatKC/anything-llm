@@ -8,6 +8,7 @@ import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
 import paths from "@/utils/paths";
 import useUser from "@/hooks/useUser";
+import AgentSkillSelection from "./AgentSkillSelection";
 
 export default function WorkspaceAgentConfiguration({ workspace }) {
   const { user } = useUser();
@@ -84,26 +85,6 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           workspace={workspace}
           setHasChanges={setHasChanges}
         />
-        {(!user || user?.role === "admin") && (
-          <>
-            {!hasChanges && (
-              <div className="flex flex-col gap-y-4">
-                <a
-                  className="w-fit transition-all duration-300 border border-slate-200 px-5 py-2.5 rounded-lg text-white text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
-                  href={paths.settings.agentSkills()}
-                >
-                  Configure Agent Skills
-                </a>
-                <p className="text-white text-opacity-60 text-xs font-medium">
-                  Customize and enhance the default agent's capabilities by
-                  enabling or disabling specific skills. These settings will be
-                  applied across all workspaces.
-                </p>
-              </div>
-            )}
-          </>
-        )}
-
         {hasChanges && (
           <button
             type="submit"
@@ -114,6 +95,28 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           </button>
         )}
       </form>
+
+      {/* Kept outside the provider/model form: skills save through their own
+          endpoint, and nesting them would let their toggles mark the workspace
+          form dirty. */}
+      {(!user || user?.role === "admin") && (
+        <div className="w-1/2 flex flex-col gap-y-6 mt-6">
+          <div className="bg-white/10 h-[1px] w-full" />
+          <AgentSkillSelection workspace={workspace} />
+          <div className="flex flex-col gap-y-2">
+            <a
+              className="w-fit text-theme-text-secondary hover:text-white text-xs underline"
+              href={paths.settings.agentSkills()}
+            >
+              Manage instance-wide agent skills
+            </a>
+            <p className="text-white text-opacity-60 text-xs font-medium">
+              Instance-wide settings define what is available here and seed
+              workspaces that have not been configured yet.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

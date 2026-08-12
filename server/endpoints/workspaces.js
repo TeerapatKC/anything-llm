@@ -437,6 +437,59 @@ function workspaceEndpoints(app) {
     }
   );
 
+  // Returns the catalog of skills that can be toggled for this workspace plus the
+  // workspace's currently effective config. A workspace that has never been
+  // configured resolves to the instance-wide defaults, so the UI always renders a
+  // concrete selection rather than an empty state.
+  app.get(
+    "/workspace/:slug/agent-skills",
+    [
+      validatedRequest,
+      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const {
+          resolveConfigForWorkspace,
+        } = require("../utils/agents/workspaceSkills");
+        const AgentPlugins = require("../utils/agents/aibitat/plugins");
+        const ImportedPlugin = require("../utils/agents/imported");
+        const { AgentFlows } = require("../utils/agentFlows");
+        const MCPCompatibilityLayer = require("../utils/MCP");
+
+        const config = await resolveConfigForWorkspace(workspace);
+        const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
+
+        response.status(200).json({
+          // `configured` tells the UI whether this workspace is still inheriting
+          // the instance-wide defaults or has its own saved copy.
+          configured: !!workspace.agentSkillConfig,
+          config,
+          catalog: {
+            importedSkills: ImportedPlugin.listImportedPlugins()
+              .filter((plugin) => plugin.active)
+              .map((plugin) => ({
+                id: plugin.hubId,
+                name: plugin.name,
+              })),
+            flows: Object.entries(AgentFlows.getAllFlows())
+              .filter(([_, flow]) => flow.active !== false)
+              .map(([uuid, flow]) => ({ id: uuid, name: flow.name })),
+            mcpServers: mcpServers.map((id) => {
+              const name = id.replace(/^@@mcp_/, "");
+              return { id: name, name };
+            }),
+          },
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
   app.delete(
     "/workspace/:slug/delete-chats",
     [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],

@@ -140,6 +140,10 @@ model workspaces {
   queryRefusalResponse         String?
   vectorSearchMode             String?                        @default("default")
   router_id                    Int? // No relation to prevent whole table migration (SQLite limitation)
+  // Per-workspace agent skill configuration (JSON). NULL means this workspace has
+  // never been configured and falls back to the instance-wide defaults.
+  // See WorkspaceAgentSkills in utils/agents/workspaceSkills.js for the shape.
+  agentSkillConfig             String?
   workspace_users              workspace_users[]
   documents                    workspace_documents[]
   workspace_suggested_messages workspace_suggested_messages[]

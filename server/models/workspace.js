@@ -56,6 +56,7 @@ const Workspace = {
     "queryRefusalResponse",
     "vectorSearchMode",
     "router_id",
+    "agentSkillConfig",
   ],
 
   validations: {
@@ -142,6 +143,18 @@ const Workspace = {
       const date = new Date(value);
       if (isNaN(date.getTime())) return new Date();
       return date;
+    },
+    // Stored as a JSON string. Normalized so a malformed payload can never be
+    // persisted and break agent sessions for the workspace. `null` resets the
+    // workspace back to inheriting the instance-wide defaults.
+    agentSkillConfig: (value) => {
+      if (value === null || value === undefined || value === "") return null;
+      const {
+        normalizeConfig,
+      } = require("../utils/agents/workspaceSkills");
+      const normalized = normalizeConfig(value);
+      if (!normalized) return null;
+      return JSON.stringify(normalized);
     },
   },
 

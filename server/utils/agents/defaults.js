@@ -5,13 +5,10 @@ const Provider = require("./aibitat/providers/ai-provider");
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
-
-// This is a list of skills that are built-in and default enabled.
-const DEFAULT_SKILLS = [
-  AgentPlugins.memory.name,
-  AgentPlugins.docSummarizer.name,
-  AgentPlugins.webScraping.name,
-];
+const {
+  DEFAULT_SKILLS,
+  resolveConfigForWorkspace,
+} = require("./workspaceSkills");
 
 // Skills that must never be injected when the instance is running in multi-user mode.
 const SINGLE_USER_ONLY_SKILLS = new Set(["create-scheduled-job"]);
@@ -83,14 +80,15 @@ const WORKSPACE_AGENT = {
       role +=
         "\n\nWhen you need information from the user (URLs, file paths, preferences, choices, etc.), you MUST use the request-user-input tool. Do not ask questions in your text response - the user cannot reply to text. Only the tool can collect user input.";
 
+    const skillConfig = await resolveConfigForWorkspace(workspace);
     return {
       role,
       functions: [
-        ...(await agentSkillsFromSystemSettings()),
+        ...(await agentSkillsFromSystemSettings(workspace, skillConfig)),
         ...clarifyingQuestionsSkills,
-        ...ImportedPlugin.activeImportedPlugins(),
-        ...AgentFlows.activeFlowPlugins(),
-        ...(await new MCPCompatibilityLayer().activeMCPServers()),
+        ...importedPluginsForConfig(skillConfig),
+        ...flowPluginsForConfig(skillConfig),
+        ...(await mcpServersForConfig(skillConfig)),
       ],
     };
   },
@@ -119,49 +117,41 @@ async function clarifyingQuestionsSkillIfEnabled() {
 
 /**
  * Fetches and preloads the names/identifiers for plugins that will be dynamically
- * loaded later
+ * loaded later.
+ *
+ * Skill selection is per-workspace: `resolveConfigForWorkspace` returns either the
+ * workspace's own stored config or, for a workspace that has never been configured,
+ * the instance-wide defaults. Passing no workspace therefore preserves the original
+ * instance-wide behaviour (used by ephemeral/background agents).
+ * @param {import("@prisma/client").workspaces | null} workspace
+ * @param {object | null} preresolvedConfig - already-resolved config, to avoid a second lookup
  * @returns {Promise<string[]>}
  */
-async function agentSkillsFromSystemSettings() {
+async function agentSkillsFromSystemSettings(
+  workspace = null,
+  preresolvedConfig = null
+) {
   const systemFunctions = [];
   const isMultiUser = await SystemSettings.isMultiUserMode();
+  const config =
+    preresolvedConfig ?? (await resolveConfigForWorkspace(workspace));
 
-  // Load non-imported built-in skills that are configurable, but are default enabled.
-  const _disabledDefaultSkills = safeJsonParse(
-    await SystemSettings.getValueOrFallback(
-      { label: "disabled_agent_skills" },
-      "[]"
-    ),
-    []
-  );
+  // Built-in skills that are on by default unless turned off for this workspace.
   DEFAULT_SKILLS.forEach((skill) => {
-    if (!_disabledDefaultSkills.includes(skill))
+    if (config.activeDefaultSkills.includes(skill))
       systemFunctions.push(AgentPlugins[skill].name);
   });
 
-  // Load non-imported built-in skills that are configurable.
-  const _setting = safeJsonParse(
-    await SystemSettings.getValueOrFallback(
-      { label: "default_agent_skills" },
-      "[]"
-    ),
-    []
-  );
+  const _setting = config.activeSkills;
 
   // Pre-load disabled sub-skills and availability for configured skills
   const skillFilterState = {};
   for (const skillName of Object.keys(SKILL_FILTER_CONFIG)) {
     if (!_setting.includes(skillName)) continue;
-    const config = SKILL_FILTER_CONFIG[skillName];
+    const filterConfig = SKILL_FILTER_CONFIG[skillName];
     skillFilterState[skillName] = {
-      available: await config.getAvailability(),
-      disabledSubSkills: safeJsonParse(
-        await SystemSettings.getValueOrFallback(
-          { label: config.disabledSettingKey },
-          "[]"
-        ),
-        []
-      ),
+      available: await filterConfig.getAvailability(),
+      disabledSubSkills: config.disabledSubSkills[skillName] ?? [],
     };
   }
 
@@ -191,6 +181,50 @@ async function agentSkillsFromSystemSettings() {
     systemFunctions.push(AgentPlugins[skillName].name);
   }
   return systemFunctions;
+}
+
+/**
+ * Imported (community hub) plugins enabled for this workspace. The plugin's own
+ * `active` flag on disk still gates it — a workspace can only pick from plugins
+ * that are installed and active instance-wide.
+ * @param {object} config - resolved workspace skill config
+ * @returns {string[]}
+ */
+function importedPluginsForConfig(config) {
+  const available = ImportedPlugin.activeImportedPlugins();
+  if (!Array.isArray(config?.activeImportedSkills)) return available;
+  return available.filter((id) =>
+    config.activeImportedSkills.includes(id.replace(/^@@/, ""))
+  );
+}
+
+/**
+ * Agent flows enabled for this workspace, intersected with the flows that are
+ * active instance-wide.
+ * @param {object} config - resolved workspace skill config
+ * @returns {string[]}
+ */
+function flowPluginsForConfig(config) {
+  const available = AgentFlows.activeFlowPlugins();
+  if (!Array.isArray(config?.activeFlows)) return available;
+  return available.filter((id) =>
+    config.activeFlows.includes(id.replace(/^@@flow_/, ""))
+  );
+}
+
+/**
+ * MCP servers enabled for this workspace, intersected with the servers that
+ * actually booted. A null `activeMcpServers` means "every booted server", which
+ * is the pre-feature behaviour used by unconfigured workspaces.
+ * @param {object} config - resolved workspace skill config
+ * @returns {Promise<string[]>}
+ */
+async function mcpServersForConfig(config) {
+  const available = await new MCPCompatibilityLayer().activeMCPServers();
+  if (!Array.isArray(config?.activeMcpServers)) return available;
+  return available.filter((id) =>
+    config.activeMcpServers.includes(id.replace(/^@@mcp_/, ""))
+  );
 }
 
 /**
@@ -261,5 +295,8 @@ module.exports = {
   USER_AGENT,
   WORKSPACE_AGENT,
   agentSkillsFromSystemSettings,
+  importedPluginsForConfig,
+  flowPluginsForConfig,
+  mcpServersForConfig,
   resolveAgentSkill,
 };

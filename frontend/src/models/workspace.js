@@ -23,6 +23,42 @@ const Workspace = {
 
     return { workspace, message };
   },
+  /**
+   * Fetch the agent skill catalog and this workspace's effective skill config.
+   * A workspace that has never been configured resolves to the instance-wide
+   * defaults, so the returned `config` is always concrete.
+   * @param {string} slug
+   * @returns {Promise<{configured: boolean, config: object|null, catalog: object|null, error?: string}>}
+   */
+  agentSkills: async function (slug) {
+    return await fetch(`${API_BASE}/workspace/${slug}/agent-skills`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not fetch agent skills.");
+        return res.json();
+      })
+      .catch((e) => ({
+        configured: false,
+        config: null,
+        catalog: null,
+        error: e.message,
+      }));
+  },
+
+  /**
+   * Persist this workspace's agent skill config. Passing `null` resets the
+   * workspace back to inheriting the instance-wide defaults.
+   * @param {string} slug
+   * @param {object|null} config
+   */
+  updateAgentSkills: async function (slug, config) {
+    return await this.update(slug, {
+      agentSkillConfig: config === null ? null : JSON.stringify(config),
+    });
+  },
+
   update: async function (slug, data = {}) {
     const { workspace, message } = await fetch(
       `${API_BASE}/workspace/${slug}/update`,

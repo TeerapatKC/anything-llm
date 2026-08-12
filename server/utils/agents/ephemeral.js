@@ -14,7 +14,11 @@ const {
   USER_AGENT,
   WORKSPACE_AGENT,
   agentSkillsFromSystemSettings,
+  importedPluginsForConfig,
+  flowPluginsForConfig,
+  mcpServersForConfig,
 } = require("./defaults");
+const { resolveConfigForWorkspace } = require("./workspaceSkills");
 const { AgentHandler } = require(".");
 const {
   WorkspaceAgentInvocation,
@@ -413,11 +417,14 @@ class EphemeralAgentHandler extends AgentHandler {
       )
     );
 
+    // Skills resolve against this workspace's own config (falling back to the
+    // instance-wide defaults when it has never been configured).
+    const skillConfig = await resolveConfigForWorkspace(this.#workspace);
     this.#funcsToLoad = [
-      ...(await agentSkillsFromSystemSettings()),
-      ...ImportedPlugin.activeImportedPlugins(),
-      ...AgentFlows.activeFlowPlugins(),
-      ...(await new MCPCompatibilityLayer().activeMCPServers()),
+      ...(await agentSkillsFromSystemSettings(this.#workspace, skillConfig)),
+      ...importedPluginsForConfig(skillConfig),
+      ...flowPluginsForConfig(skillConfig),
+      ...(await mcpServersForConfig(skillConfig)),
     ];
   }
 
