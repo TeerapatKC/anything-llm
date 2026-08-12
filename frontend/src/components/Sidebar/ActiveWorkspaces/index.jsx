@@ -18,6 +18,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function ActiveWorkspaces() {
   const [selectedWs, setSelectedWs] = useState(null);
   const { showing, showModal, hideModal } = useManageWorkspaceModal();
   const { user } = useUser();
+  const { state: sidebarState } = useSidebar();
   const isInWorkspaceSettings = !!useMatch("/workspace/:slug/settings/:tab");
   const isHomePage = !!useMatch("/");
 
@@ -90,6 +92,42 @@ export default function ActiveWorkspaces() {
       return lastVisited.slug;
     return workspaces[0]?.slug ?? null;
   })();
+
+  if (sidebarState === "collapsed") {
+    return (
+      <div
+        role="list"
+        aria-label="Workspaces"
+        className="flex flex-col gap-y-2 items-center"
+      >
+        {workspaces.map((workspace) => {
+          const isActive =
+            workspace.slug === slug || workspace.slug === virtualActiveSlug;
+          return (
+            <Tooltip key={workspace.id}>
+              <TooltipTrigger asChild>
+                <Link
+                  to={paths.workspace.chat(workspace.slug)}
+                  aria-current={isActive ? "page" : ""}
+                  aria-label={workspace.name}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold uppercase transition-all duration-200 ${
+                    isActive
+                      ? "bg-white text-black light:bg-blue-200 light:text-blue-900"
+                      : "bg-theme-sidebar-item-default text-white hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"
+                  }`}
+                >
+                  {workspace.name?.slice(0, 2)}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-[250px] text-xs">
+                {workspace.name}
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
