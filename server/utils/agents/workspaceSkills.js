@@ -63,8 +63,34 @@ const EMPTY_CONFIG = {
  * @returns {object|null} normalized config, or null if it isn't usable
  */
 function normalizeConfig(config = null) {
-  const parsed = typeof config === "string" ? safeJsonParse(config, null) : config;
+  let parsed = config;
+  if (typeof config === "string") {
+    // Deliberately strict JSON.parse rather than the shared safeJsonParse:
+    // safeJsonParse runs jsonrepair, which would coerce a corrupted record into
+    // some unrelated object. That object then normalizes to an all-empty config,
+    // i.e. an agent with *zero* skills, instead of falling back to the instance
+    // defaults. This is our own machine-written JSON, so it should never need
+    // repairing - if it doesn't parse cleanly, treat it as absent.
+    try {
+      parsed = JSON.parse(config);
+    } catch {
+      return null;
+    }
+  }
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+
+  // Require at least one recognized key so an object that happens to parse but
+  // carries none of our fields is treated as absent rather than as "disable
+  // everything".
+  const KNOWN_KEYS = [
+    "activeDefaultSkills",
+    "activeSkills",
+    "disabledSubSkills",
+    "activeImportedSkills",
+    "activeFlows",
+    "activeMcpServers",
+  ];
+  if (!KNOWN_KEYS.some((key) => key in parsed)) return null;
 
   const stringArray = (value) =>
     Array.isArray(value) ? value.filter((v) => typeof v === "string") : [];
