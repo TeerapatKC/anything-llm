@@ -468,15 +468,17 @@ function workspaceEndpoints(app) {
           configured: !!workspace.agentSkillConfig,
           config,
           catalog: {
+            // `name` is not guaranteed on either config, so fall back to the id
+            // rather than rendering a blank row in the UI.
             importedSkills: ImportedPlugin.listImportedPlugins()
               .filter((plugin) => plugin.active)
               .map((plugin) => ({
                 id: plugin.hubId,
-                name: plugin.name,
+                name: plugin.name || plugin.hubId,
               })),
             flows: Object.entries(AgentFlows.getAllFlows())
               .filter(([_, flow]) => flow.active !== false)
-              .map(([uuid, flow]) => ({ id: uuid, name: flow.name })),
+              .map(([uuid, flow]) => ({ id: uuid, name: flow.name || uuid })),
             mcpServers: mcpServers.map((id) => {
               const name = id.replace(/^@@mcp_/, "");
               return { id: name, name };
