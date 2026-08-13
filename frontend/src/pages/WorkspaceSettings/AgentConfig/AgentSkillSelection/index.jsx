@@ -11,6 +11,7 @@ import {
   getConfigurableSkills,
   getAppIntegrationSkills,
 } from "@/pages/Admin/Agents/skills.jsx";
+import { getSubSkillsFor } from "./subSkills";
 
 /**
  * Per-workspace agent skill selection.
@@ -29,18 +30,31 @@ export default function AgentSkillSelection({ workspace }) {
   const [config, setConfig] = useState(null);
   const [catalog, setCatalog] = useState(null);
   const [systemSettings, setSystemSettings] = useState({});
+  // These two skills are only offered when the host actually supports them,
+  // mirroring the instance-wide agent settings page.
+  const [availability, setAvailability] = useState({
+    fileSystemAgentAvailable: false,
+    createFilesAgentAvailable: false,
+  });
 
   useEffect(() => {
     async function fetchSkills() {
       if (!workspace?.slug) return;
-      const [skills, settings] = await Promise.all([
-        Workspace.agentSkills(workspace.slug),
-        System.keys(),
-      ]);
+      const [skills, settings, fsAvailable, createFilesAvailable] =
+        await Promise.all([
+          Workspace.agentSkills(workspace.slug),
+          System.keys(),
+          System.isFileSystemAgentAvailable(),
+          System.isCreateFilesAgentAvailable(),
+        ]);
       setConfigured(skills?.configured ?? false);
       setConfig(skills?.config ?? null);
       setCatalog(skills?.catalog ?? null);
       setSystemSettings(settings ?? {});
+      setAvailability({
+        fileSystemAgentAvailable: fsAvailable,
+        createFilesAgentAvailable: createFilesAvailable,
+      });
       setLoading(false);
     }
     fetchSkills();
@@ -59,6 +73,28 @@ export default function AgentSkillSelection({ workspace }) {
         ? [...new Set([...current, id])]
         : current.filter((item) => item !== id);
       return { ...prev, [field]: next };
+    });
+    setHasChanges(true);
+  }
+
+  /**
+   * Enable/disable one child of a parent skill. Stored inverted (a list of
+   * *disabled* children) to match the server, so an unlisted child is on and a
+   * parent with no entry means "all children on".
+   * @param {string} parentSkill
+   * @param {string} subSkill
+   * @param {boolean} enabled
+   */
+  function toggleSubSkill(parentSkill, subSkill, enabled) {
+    setConfig((prev) => {
+      const map = { ...(prev?.disabledSubSkills ?? {}) };
+      const current = Array.isArray(map[parentSkill]) ? map[parentSkill] : [];
+      const next = enabled
+        ? current.filter((name) => name !== subSkill)
+        : [...new Set([...current, subSkill])];
+      if (next.length) map[parentSkill] = next;
+      else delete map[parentSkill];
+      return { ...prev, disabledSubSkills: map };
     });
     setHasChanges(true);
   }
@@ -119,7 +155,7 @@ export default function AgentSkillSelection({ workspace }) {
 
   const defaultSkills = getDefaultSkills(t);
   const configurableSkills = Object.fromEntries(
-    Object.entries(getConfigurableSkills(t)).filter(filterByMode)
+    Object.entries(getConfigurableSkills(t, availability)).filter(filterByMode)
   );
   const appIntegrationSkills = Object.fromEntries(
     Object.entries(getAppIntegrationSkills(t)).filter(filterByMode)
@@ -156,6 +192,9 @@ export default function AgentSkillSelection({ workspace }) {
         skills={configurableSkills}
         activeIds={config.activeSkills}
         onToggle={(id, enabled) => toggleInList("activeSkills", id, enabled)}
+        t={t}
+        disabledSubSkills={config.disabledSubSkills}
+        onToggleSubSkill={toggleSubSkill}
       />
 
       <SkillGroup
@@ -163,6 +202,9 @@ export default function AgentSkillSelection({ workspace }) {
         skills={appIntegrationSkills}
         activeIds={config.activeSkills}
         onToggle={(id, enabled) => toggleInList("activeSkills", id, enabled)}
+        t={t}
+        disabledSubSkills={config.disabledSubSkills}
+        onToggleSubSkill={toggleSubSkill}
       />
 
       <EntityGroup
@@ -221,7 +263,15 @@ export default function AgentSkillSelection({ workspace }) {
   );
 }
 
-function SkillGroup({ title, skills, activeIds = [], onToggle }) {
+function SkillGroup({
+  title,
+  skills,
+  activeIds = [],
+  onToggle,
+  t,
+  disabledSubSkills = {},
+  onToggleSubSkill,
+}) {
   const entries = Object.entries(skills);
   if (entries.length === 0) return null;
   return (
@@ -229,17 +279,44 @@ function SkillGroup({ title, skills, activeIds = [], onToggle }) {
       <p className="text-white text-xs font-semibold uppercase tracking-wide opacity-60">
         {title}
       </p>
-      {entries.map(([id, skill]) => (
-        <Toggle
-          key={id}
-          size="md"
-          variant="horizontal"
-          label={skill.title}
-          description={skill.description}
-          enabled={activeIds.includes(id)}
-          onChange={(checked) => onToggle(id, checked)}
-        />
-      ))}
+      {entries.map(([id, skill]) => {
+        const enabled = activeIds.includes(id);
+        // Sub-skills only make sense while the parent is on, and only the
+        // parents the server recognizes can be narrowed.
+        const subSkills =
+          enabled && onToggleSubSkill ? getSubSkillsFor(id, t) : [];
+        const disabledChildren = disabledSubSkills[id] ?? [];
+        return (
+          <div key={id} className="flex flex-col gap-y-2">
+            <Toggle
+              size="md"
+              variant="horizontal"
+              label={skill.title}
+              description={skill.description}
+              enabled={enabled}
+              onChange={(checked) => onToggle(id, checked)}
+            />
+            {subSkills.length > 0 && (
+              <div className="flex flex-col gap-y-2 ml-6 pl-3 border-l border-theme-sidebar-border">
+                {subSkills.map((sub) => (
+                  <Toggle
+                    key={sub.name}
+                    size="sm"
+                    variant="horizontal"
+                    label={sub.title}
+                    description={sub.description}
+                    // Stored as a *disabled* list, so a child is on unless listed.
+                    enabled={!disabledChildren.includes(sub.name)}
+                    onChange={(checked) =>
+                      onToggleSubSkill(id, sub.name, checked)
+                    }
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
