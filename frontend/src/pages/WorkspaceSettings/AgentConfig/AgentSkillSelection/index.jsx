@@ -12,6 +12,17 @@ import {
   getAppIntegrationSkills,
 } from "@/pages/Admin/Agents/skills.jsx";
 import { getSubSkillsFor } from "./subSkills";
+import { SEARCH_PROVIDERS } from "@/pages/Admin/Agents/WebSearchSelection";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+/** Sentinel for "inherit the instance-wide engine" (Radix Select rejects ""). */
+const INHERIT_SEARCH_PROVIDER = "__instance__";
 
 /**
  * Per-workspace agent skill selection.
@@ -29,6 +40,7 @@ export default function AgentSkillSelection({ workspace }) {
   const [configured, setConfigured] = useState(false);
   const [config, setConfig] = useState(null);
   const [catalog, setCatalog] = useState(null);
+  const [instanceSearchProvider, setInstanceSearchProvider] = useState(null);
   const [systemSettings, setSystemSettings] = useState({});
   // These two skills are only offered when the host actually supports them,
   // mirroring the instance-wide agent settings page.
@@ -50,6 +62,7 @@ export default function AgentSkillSelection({ workspace }) {
       setConfigured(skills?.configured ?? false);
       setConfig(skills?.config ?? null);
       setCatalog(skills?.catalog ?? null);
+      setInstanceSearchProvider(skills?.instanceSearchProvider ?? null);
       setSystemSettings(settings ?? {});
       setAvailability({
         fileSystemAgentAvailable: fsAvailable,
@@ -195,6 +208,16 @@ export default function AgentSkillSelection({ workspace }) {
         t={t}
         disabledSubSkills={config.disabledSubSkills}
         onToggleSubSkill={toggleSubSkill}
+        searchProvider={config.searchProvider}
+        instanceSearchProvider={instanceSearchProvider}
+        onSearchProviderChange={(value) => {
+          // Radix Select can't hold an empty value, so the "inherit" choice
+          // uses a sentinel that maps back to null.
+          const next =
+            !value || value === INHERIT_SEARCH_PROVIDER ? null : value;
+          setConfig((prev) => ({ ...prev, searchProvider: next }));
+          setHasChanges(true);
+        }}
       />
 
       <SkillGroup
@@ -271,6 +294,9 @@ function SkillGroup({
   t,
   disabledSubSkills = {},
   onToggleSubSkill,
+  searchProvider,
+  instanceSearchProvider,
+  onSearchProviderChange,
 }) {
   const entries = Object.entries(skills);
   if (entries.length === 0) return null;
@@ -296,6 +322,13 @@ function SkillGroup({
               enabled={enabled}
               onChange={(checked) => onToggle(id, checked)}
             />
+            {enabled && id === "web-browsing" && onSearchProviderChange && (
+              <SearchProviderPicker
+                value={searchProvider}
+                instanceProvider={instanceSearchProvider}
+                onChange={onSearchProviderChange}
+              />
+            )}
             {subSkills.length > 0 && (
               <div className="flex flex-col gap-y-2 ml-6 pl-3 border-l border-theme-sidebar-border">
                 {subSkills.map((sub) => (
@@ -317,6 +350,45 @@ function SkillGroup({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Per-workspace choice of search engine for the web-browsing skill.
+ *
+ * Only the engine choice is per-workspace — every engine's API key is an
+ * instance-wide setting, so this deliberately offers no key fields and an
+ * unset value falls back to whatever the instance is configured to use.
+ */
+function SearchProviderPicker({ value, instanceProvider, onChange }) {
+  const instanceName =
+    SEARCH_PROVIDERS.find((p) => p.value === instanceProvider)?.name ??
+    "not set";
+  return (
+    <div className="flex flex-col gap-y-1 ml-6 pl-3 border-l border-theme-sidebar-border">
+      <label className="text-theme-text-primary text-xs font-medium">
+        Search engine
+      </label>
+      <Select value={value ?? INHERIT_SEARCH_PROVIDER} onValueChange={onChange}>
+        <SelectTrigger variant="settings" className="w-fit min-w-[220px]">
+          <SelectValue placeholder="Select an engine" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value={INHERIT_SEARCH_PROVIDER}>
+            Use instance default ({instanceName})
+          </SelectItem>
+          {SEARCH_PROVIDERS.map((provider) => (
+            <SelectItem key={provider.value} value={provider.value}>
+              {provider.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <p className="text-white text-opacity-40 text-xs">
+        API keys for each engine are configured instance-wide under Agent
+        Skills.
+      </p>
     </div>
   );
 }

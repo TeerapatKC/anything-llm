@@ -1,4 +1,3 @@
-const { SystemSettings } = require("../../../../models/systemSettings");
 const { TokenManager } = require("../../../helpers/tiktoken");
 const tiktoken = new TokenManager();
 
@@ -63,9 +62,15 @@ const webBrowsing = {
            * https://programmablesearchengine.google.com/controlpanel/create
            */
           search: async function (query) {
-            const provider =
-              (await SystemSettings.get({ label: "agent_search_provider" }))
-                ?.value ?? "unknown";
+            // The engine is chosen per-workspace (falling back to the
+            // instance-wide setting when the workspace hasn't picked one, or
+            // when there's no workspace context e.g. an ephemeral run).
+            const {
+              resolveSearchProviderForWorkspace,
+            } = require("../../workspaceSkills");
+            const provider = await resolveSearchProviderForWorkspace(
+              this.super?.handlerProps?.invocation?.workspace_id ?? null
+            );
             let engine;
             switch (provider) {
               case "serpapi":

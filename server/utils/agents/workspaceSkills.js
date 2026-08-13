@@ -89,6 +89,7 @@ function normalizeConfig(config = null) {
     "activeImportedSkills",
     "activeFlows",
     "activeMcpServers",
+    "searchProvider",
   ];
   if (!KNOWN_KEYS.some((key) => key in parsed)) return null;
 
@@ -114,6 +115,13 @@ function normalizeConfig(config = null) {
     activeImportedSkills: stringArray(parsed.activeImportedSkills),
     activeFlows: stringArray(parsed.activeFlows),
     activeMcpServers: stringArray(parsed.activeMcpServers),
+    // Which search engine web-browsing uses for this workspace. The engines'
+    // API keys stay instance-wide; only the choice of engine is per-workspace.
+    // null => fall back to the instance-wide `agent_search_provider`.
+    searchProvider:
+      typeof parsed.searchProvider === "string" && parsed.searchProvider
+        ? parsed.searchProvider
+        : null,
   };
 }
 
@@ -164,7 +172,37 @@ async function instanceDefaultConfig() {
       id.replace(/^@@flow_/, "")
     ),
     activeMcpServers: null, // null => "all booted servers", resolved at call time
+    searchProvider:
+      (await SystemSettings.getValueOrFallback(
+        { label: "agent_search_provider" },
+        null
+      )) ?? null,
   };
+}
+
+/**
+ * Resolve which search engine web-browsing should use for a given workspace.
+ *
+ * Only the engine *choice* is per-workspace; every engine's API key remains an
+ * instance-wide setting, so a workspace can only pick between engines the
+ * instance has already been configured for.
+ * @param {number|string|null} workspaceId
+ * @returns {Promise<string>} provider key, or "unknown" when nothing is set
+ */
+async function resolveSearchProviderForWorkspace(workspaceId = null) {
+  const instanceProvider =
+    (await SystemSettings.getValueOrFallback(
+      { label: "agent_search_provider" },
+      null
+    )) ?? "unknown";
+  if (!workspaceId) return instanceProvider;
+
+  // Required lazily: models/workspace pulls this module in for field
+  // validation, so importing it at the top would be a cycle.
+  const { Workspace } = require("../../models/workspace");
+  const workspace = await Workspace.get({ id: Number(workspaceId) });
+  const stored = normalizeConfig(workspace?.agentSkillConfig ?? null);
+  return stored?.searchProvider || instanceProvider;
 }
 
 /**
@@ -185,4 +223,5 @@ module.exports = {
   normalizeConfig,
   instanceDefaultConfig,
   resolveConfigForWorkspace,
+  resolveSearchProviderForWorkspace,
 };

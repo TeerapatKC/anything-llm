@@ -458,6 +458,7 @@ function workspaceEndpoints(app) {
         const ImportedPlugin = require("../utils/agents/imported");
         const { AgentFlows } = require("../utils/agentFlows");
         const MCPCompatibilityLayer = require("../utils/MCP");
+        const { SystemSettings } = require("../models/systemSettings");
 
         const config = await resolveConfigForWorkspace(workspace);
         const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
@@ -467,6 +468,13 @@ function workspaceEndpoints(app) {
           // the instance-wide defaults or has its own saved copy.
           configured: !!workspace.agentSkillConfig,
           config,
+          // The engine this instance is configured for, so the UI can label the
+          // "inherit" option. Engine API keys stay instance-wide.
+          instanceSearchProvider:
+            (await SystemSettings.getValueOrFallback(
+              { label: "agent_search_provider" },
+              null
+            )) ?? null,
           catalog: {
             // `name` is not guaranteed on either config, so fall back to the id
             // rather than rendering a blank row in the UI.

@@ -40,7 +40,9 @@ import {
   YouSearchOptions,
 } from "./SearchProviderOptions";
 
-const SEARCH_PROVIDERS = [
+// Exported so the per-workspace agent settings can offer the same engines
+// without duplicating the list (their API keys stay instance-wide).
+export const SEARCH_PROVIDERS = [
   {
     name: "DuckDuckGo",
     value: "duckduckgo-engine",
