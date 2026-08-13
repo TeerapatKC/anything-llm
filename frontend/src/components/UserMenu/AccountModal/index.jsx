@@ -100,7 +100,7 @@ export default function AccountModal({ user, hideModal }) {
           </DialogTitle>
         </DialogHeader>
         <div
-          className="h-full w-full overflow-y-auto"
+          className="h-full w-full overflow-y-auto thin-scrollbar"
           style={{ maxHeight: "calc(100vh - 200px)" }}
         >
           <form onSubmit={handleUpdate} className="space-y-4">

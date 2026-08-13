@@ -63,7 +63,7 @@ const DialogContent = React.forwardRef(
                 className={cn(
                   // Same thin/translucent scrollbar the dropdown and select
                   // popups use, so every scrollable surface matches.
-                  "grid min-h-0 w-full max-h-[calc(100vh-200px)] flex-1 gap-4 overflow-y-auto p-4 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.3)_transparent] light:[scrollbar-color:rgba(0,0,0,0.3)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/30 light:[&::-webkit-scrollbar-thumb]:bg-black/30",
+                  "grid min-h-0 w-full max-h-[calc(100vh-200px)] flex-1 gap-4 overflow-y-auto p-4 thin-scrollbar",
                   scrollAreaClassName
                 )}
               >
