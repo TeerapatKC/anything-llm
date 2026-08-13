@@ -40,7 +40,13 @@ const DialogContent = React.forwardRef(
         <DialogPrimitive.Content
           ref={ref}
           className={cn(
-            "fixed left-[50%] top-[50%] z-50 grid grid-rows-[auto_minmax(0,1fr)] w-[calc(100%-2rem)] max-w-lg max-h-[calc(100%-2rem)] overflow-hidden translate-x-[-50%] translate-y-[-50%] gap-0 border bg-background p-0 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
+            // `text-foreground` is load-bearing: this content is portaled to
+            // document.body, and body sets no `color`, so without it every
+            // child inheriting its color (DialogTitle, the close X, outline
+            // buttons) falls back to the browser default black — invisible on a
+            // dark dialog surface. Every other portaled primitive (sheet,
+            // popover, tooltip, dropdown-menu, select) already sets one.
+            "fixed left-[50%] top-[50%] z-50 grid grid-rows-[auto_minmax(0,1fr)] w-[calc(100%-2rem)] max-w-lg max-h-[calc(100%-2rem)] overflow-hidden translate-x-[-50%] translate-y-[-50%] gap-0 border bg-background text-foreground p-0 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
             className
           )}
           {...props}
@@ -55,7 +61,9 @@ const DialogContent = React.forwardRef(
               <div
                 data-dialog="scroll-area"
                 className={cn(
-                  "grid min-h-0 w-full max-h-[calc(100vh-200px)] flex-1 gap-4 overflow-y-auto p-4",
+                  // Same thin/translucent scrollbar the dropdown and select
+                  // popups use, so every scrollable surface matches.
+                  "grid min-h-0 w-full max-h-[calc(100vh-200px)] flex-1 gap-4 overflow-y-auto p-4 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.3)_transparent] light:[scrollbar-color:rgba(0,0,0,0.3)_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/30 light:[&::-webkit-scrollbar-thumb]:bg-black/30",
                   scrollAreaClassName
                 )}
               >
