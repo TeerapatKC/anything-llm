@@ -7,32 +7,20 @@ import {
   useMemo,
 } from "react";
 import { useTranslation } from "react-i18next";
-import useUser from "@/hooks/useUser";
-import AgentSkillsTab from "./Tabs/AgentSkills";
 import SlashCommandsTab from "./Tabs/SlashCommands";
 
 export const TOOLS_MENU_KEYBOARD_EVENT = "tools-menu-keyboard";
-function getTabs(t, user) {
-  const tabs = [
+
+// Agent skills are configured per-workspace under Workspace Settings > Agent,
+// so they are intentionally not toggleable from this in-chat menu.
+function getTabs(t) {
+  return [
     {
       key: "slash-commands",
       label: t("chat_window.slash_commands"),
       component: SlashCommandsTab,
     },
   ];
-
-  // Only show agent skills tab for admins or when multiuser mode is off
-  const canSeeAgentSkills =
-    !user?.hasOwnProperty("role") || user.role === "admin";
-  if (canSeeAgentSkills) {
-    tabs.push({
-      key: "agent-skills",
-      label: t("chat_window.agent_skills"),
-      component: AgentSkillsTab,
-    });
-  }
-
-  return tabs;
 }
 
 /**
@@ -53,8 +41,7 @@ export default function ToolsMenu({
   highlightedIndexRef,
 }) {
   const { t } = useTranslation();
-  const { user } = useUser();
-  const TABS = useMemo(() => getTabs(t, user), [t, user]);
+  const TABS = useMemo(() => getTabs(t), [t]);
   const [activeTab, setActiveTab] = useState(TABS[0].key);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [maxHeight, setMaxHeight] = useState(360);
