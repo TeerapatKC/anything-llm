@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import strDistance from "js-levenshtein";
 import { Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
 import { LLM_PREFERENCE_CHANGED_EVENT } from "@/pages/GeneralSettings/LLMPreference";
 import ModelTable from "@/components/lib/ModelTable";
 import ModelTableLayout from "@/components/lib/ModelTable/layout";
@@ -10,6 +9,11 @@ import ModelTableLoadingSkeleton from "@/components/lib/ModelTable/loading";
 import FoundryUtils from "@/models/utils/foundryUtils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function FoundryOptions({ settings }) {
   const [basePath, setBasePath] = useState(settings?.FoundryBasePath);
@@ -45,30 +49,15 @@ export default function FoundryOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <Label variant="settings">Base URL</Label>
-            <Tooltip
-              id="foundry-base-url"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "300px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              The URL where the Foundry Local service is running. Run
-              <b> foundry status</b> on the host to find it.
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info size={18} className="text-theme-text-secondary cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[300px] text-xs">
+                The URL where the Foundry Local service is running. Run{" "}
+                <b>foundry status</b> on the host to find it.
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="foundry-base-url"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
           <Input
             variant="settings"
@@ -85,31 +74,16 @@ export default function FoundryOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <Label variant="settings">Model context window</Label>
-            <Tooltip
-              id="foundry-model-context-window"
-              place="top"
-              delayShow={300}
-              delayHide={800}
-              clickable={true}
-              className="tooltip !text-xs !opacity-100 z-99"
-              style={{
-                maxWidth: "350px",
-                whiteSpace: "normal",
-                wordWrap: "break-word",
-              }}
-            >
-              Override the context window limit. Leave empty to auto-detect from
-              the model, or lower it if large context windows slow your machine
-              down.
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info size={18} className="text-theme-text-secondary cursor-pointer" />
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[350px] text-xs">
+                Override the context window limit. Leave empty to auto-detect from
+                the model, or lower it if large context windows slow your machine
+                down.
+              </TooltipContent>
             </Tooltip>
-            <div
-              className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-              data-tooltip-id="foundry-model-context-window"
-              data-tooltip-place="top"
-              data-tooltip-delay-hide={800}
-            >
-              <Info size={18} className="text-theme-text-secondary" />
-            </div>
           </div>
           <Input
             variant="settings"
@@ -225,11 +199,6 @@ function FoundryModelSelection({
       setSearchQuery={setSearchQuery}
       loading={loading}
     >
-      <Tooltip
-        id="install-model-tooltip"
-        place="top"
-        className="tooltip !text-xs !opacity-100 z-99"
-      />
       <input
         type="hidden"
         name="FoundryModelPref"
