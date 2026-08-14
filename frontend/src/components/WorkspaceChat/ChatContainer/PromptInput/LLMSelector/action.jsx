@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import useUser from "@/hooks/useUser";
 import { useModal } from "@/hooks/useModal";
 import SetupProvider from "./SetupProvider";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export const TOGGLE_LLM_SELECTOR_EVENT = "toggle_llm_selector";
 export const SAVE_LLM_SELECTOR_EVENT = "save_llm_selector";
@@ -91,7 +92,7 @@ export default function LLMSelectorAction({ workspaceSlug = null }) {
 
   // This feature is disabled for multi-user instances where the user is not an admin
   // This is because of the limitations of model selection currently and other nuances in controls.
-  if (!!user && user.role !== "admin") return null;
+  if (!userCan(PERMISSIONS.WORKSPACES_MANAGE, user)) return null;
   if (!slug) return null;
 
   return (

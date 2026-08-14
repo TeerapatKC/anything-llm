@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import System from "../../../models/system";
 import { AUTH_TOKEN, AUTH_USER } from "../../../utils/constants";
+import { storePermissions } from "@/utils/permissions";
 import paths from "../../../utils/paths";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
@@ -206,6 +207,7 @@ export default function MultiUserAuth() {
       } else {
         window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
         window.localStorage.setItem(AUTH_TOKEN, token);
+        storePermissions(user.permissions);
         window.location = paths.home();
       }
     } else {
@@ -258,6 +260,7 @@ export default function MultiUserAuth() {
     if (downloadComplete && user && token) {
       window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
       window.localStorage.setItem(AUTH_TOKEN, token);
+      storePermissions(user.permissions);
       window.location = paths.home();
     }
   }, [downloadComplete, user, token]);

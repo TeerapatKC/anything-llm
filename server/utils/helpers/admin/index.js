@@ -1,34 +1,76 @@
 const { User } = require("../../../models/user");
-const { ROLES } = require("../../middleware/multiUserProtected");
+const { Role } = require("../../../models/role");
+const { PERMISSIONS } = require("../../permissions");
 
-// When a user is updating or creating a user in multi-user, we need to check if they
-// are allowed to do this and that the new or existing user will be at or below their permission level.
-// the user executing this function should be an admin or manager.
-function validRoleSelection(currentUser = {}, newUserParams = {}) {
-  if (!newUserParams.hasOwnProperty("role"))
-    return { valid: true, error: null }; // not updating role, so skip.
-  if (currentUser.role === ROLES.admin) return { valid: true, error: null };
-  if (currentUser.role === ROLES.manager) {
-    const validRoles = [ROLES.manager, ROLES.default];
-    if (!validRoles.includes(newUserParams.role))
-      return { valid: false, error: "Invalid role selection for user." };
-    return { valid: true, error: null };
-  }
-  return { valid: false, error: "Invalid condition for caller." };
+/**
+ * User administration used to be a fixed hierarchy (admin > manager > default). With
+ * operator-defined roles there is no hierarchy to walk, so the rule is the standard
+ * privilege-escalation guard instead: you can never hand out - or take away - a
+ * permission you do not hold yourself.
+ */
+
+/**
+ * Whether `actor` holds every permission in `permissions`.
+ * @param {{role?: string}} actor
+ * @param {string[]} permissions
+ * @returns {Promise<boolean>}
+ */
+async function holdsAll(actor, permissions) {
+  return Role.userCanAll(actor, permissions);
 }
 
-// Check to make sure with this update that includes a role change to an existing admin to a non-admin
-// that we still have at least one admin left or else they will lock themselves out.
-async function canModifyAdmin(userToModify, updates) {
-  // if updates don't include role property
-  // or the user being modified isn't an admin currently
-  // or the updates role is equal to the users current role.
-  // skip validation.
-  if (!updates.hasOwnProperty("role")) return { valid: true, error: null };
-  if (userToModify.role !== ROLES.admin) return { valid: true, error: null };
-  if (updates.role === userToModify.role) return { valid: true, error: null };
+/**
+ * A user may only assign a role whose permissions are a subset of their own, otherwise
+ * anyone who can edit users could promote themselves by inventing a role.
+ * @param {{role?: string}} currentUser
+ * @param {Object} newUserParams
+ * @returns {Promise<{valid: boolean, error: string|null}>}
+ */
+async function validRoleSelection(currentUser = {}, newUserParams = {}) {
+  if (!newUserParams.hasOwnProperty("role"))
+    return { valid: true, error: null }; // not updating role, so skip.
 
-  const adminCount = await User.count({ role: ROLES.admin });
+  if (!(await Role.userCan(currentUser, PERMISSIONS.USERS_ASSIGN_ROLES)))
+    return { valid: false, error: "You cannot assign roles to users." };
+
+  const targetRole = String(newUserParams.role);
+  if (!(await Role.exists(targetRole)))
+    return { valid: false, error: `The role "${targetRole}" does not exist.` };
+
+  // A super-admin can hand out anything, including permissions added by later updates.
+  if (await Role.userCan(currentUser, PERMISSIONS.SUPER_ADMIN))
+    return { valid: true, error: null };
+
+  const targetPermissions = await Role.permissionsFor(targetRole);
+  if (!(await holdsAll(currentUser, targetPermissions)))
+    return {
+      valid: false,
+      error:
+        "That role grants permissions you do not have, so you cannot assign it.",
+    };
+  return { valid: true, error: null };
+}
+
+/**
+ * Guards against the instance being left with nobody who can administer it. A user may
+ * not be moved off the super-admin role if they are the last one holding it.
+ * @param {{id: number, role: string}} userToModify
+ * @param {Object} updates
+ * @returns {Promise<{valid: boolean, error: string|null}>}
+ */
+async function canModifyAdmin(userToModify, updates) {
+  if (!updates.hasOwnProperty("role")) return { valid: true, error: null };
+  if (updates.role === userToModify.role) return { valid: true, error: null };
+  if (!(await Role.userCan(userToModify, PERMISSIONS.SUPER_ADMIN)))
+    return { valid: true, error: null };
+
+  // Only the roles that actually carry the super-admin grant count towards the tally.
+  const roles = await Role.where();
+  const superAdminRoles = roles
+    .filter((role) => role.permissions.includes(PERMISSIONS.SUPER_ADMIN))
+    .map((role) => role.name);
+  const adminCount = await User.count({ role: { in: superAdminRoles } });
+
   if (adminCount - 1 <= 0)
     return {
       valid: false,
@@ -37,16 +79,26 @@ async function canModifyAdmin(userToModify, updates) {
   return { valid: true, error: null };
 }
 
-function validCanModify(currentUser, existingUser) {
-  if (currentUser.role === ROLES.admin) return { valid: true, error: null };
-  if (currentUser.role === ROLES.manager) {
-    const validRoles = [ROLES.manager, ROLES.default];
-    if (!validRoles.includes(existingUser.role))
-      return { valid: false, error: "Cannot perform that action on user." };
+/**
+ * A user may only edit or delete users whose role does not grant more than their own,
+ * so a limited user-manager cannot delete an administrator.
+ * @param {{role?: string}} currentUser
+ * @param {{role?: string}} existingUser
+ * @returns {Promise<{valid: boolean, error: string|null}>}
+ */
+async function validCanModify(currentUser, existingUser) {
+  if (!(await Role.userCan(currentUser, PERMISSIONS.USERS_MANAGE)))
+    return { valid: false, error: "You cannot manage users." };
+  if (await Role.userCan(currentUser, PERMISSIONS.SUPER_ADMIN))
     return { valid: true, error: null };
-  }
 
-  return { valid: false, error: "Invalid condition for caller." };
+  const targetPermissions = await Role.permissionsFor(existingUser?.role);
+  if (!(await holdsAll(currentUser, targetPermissions)))
+    return {
+      valid: false,
+      error: "Cannot perform that action on user.",
+    };
+  return { valid: true, error: null };
 }
 
 module.exports = {

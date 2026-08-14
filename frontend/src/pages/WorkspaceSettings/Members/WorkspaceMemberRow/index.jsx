@@ -1,7 +1,13 @@
 import { titleCase } from "text-case";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import useRoles from "@/hooks/useRoles";
 
 export default function WorkspaceMemberRow({ user }) {
+  const { roles } = useRoles();
+  const roleLabel =
+    roles.find((role) => role.name === user.role)?.displayName ??
+    titleCase(user.role);
+
   return (
     <>
       <TableRow
@@ -16,7 +22,7 @@ export default function WorkspaceMemberRow({ user }) {
           {user.username}
         </TableHead>
         <TableCell variant="none" className="px-6 py-4">
-          {titleCase(user.role)}
+          {roleLabel}
         </TableCell>
         <TableCell variant="none" className="px-6 py-4">
           {user.lastUpdatedAt}

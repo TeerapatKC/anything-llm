@@ -73,6 +73,7 @@ const TRANSLATIONS = {
     title: "Instansindstillinger",
     invites: "Invitationer",
     users: "Brugere",
+    roles: "Roles & Permissions",
     workspaces: "Arbejdsområder",
     "workspace-chats": "Arbejdsområde-chat",
     customization: "Tilpasning",

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Admin from "@/models/admin";
 import { MessageLimitInput, RoleHintDisplay } from "../..";
 import { AUTH_USER } from "@/utils/constants";
+import { canManageRole } from "@/utils/permissions";
 import { useTranslation } from "react-i18next";
 import {
   USERNAME_MIN_LENGTH,
@@ -26,8 +27,19 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-export default function EditUserModal({ currentUser, user }) {
+export default function EditUserModal({
+  currentUser,
+  user,
+  roles = [],
+  permissionLabels = {},
+}) {
   const [role, setRole] = useState(user.role);
+  // You can only move a user onto a role that grants no more than your own does. The
+  // role they already hold stays listed so the dropdown is never empty.
+  const assignableRoles = roles.filter(
+    (entry) =>
+      entry.name === user.role || canManageRole(currentUser, entry.name, roles)
+  );
   const [error, setError] = useState(null);
   const [messageLimit, setMessageLimit] = useState({
     enabled: user.dailyMessageLimit !== null,
@@ -130,24 +142,29 @@ export default function EditUserModal({ currentUser, user }) {
             <Select
               name="role"
               required={true}
-              defaultValue={user.role}
+              value={role}
               onValueChange={setRole}
             >
               <SelectTrigger variant="settings">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                {currentUser?.role === "admin" && (
-                  <SelectItem value="admin">Administrator</SelectItem>
-                )}
+                {assignableRoles.map((entry) => (
+                  <SelectItem key={entry.id} value={entry.name}>
+                    {entry.displayName}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
-            <RoleHintDisplay role={role} />
+            <RoleHintDisplay
+              role={role}
+              roles={roles}
+              permissionLabels={permissionLabels}
+            />
           </div>
           <MessageLimitInput
             role={role}
+            roles={roles}
             enabled={messageLimit.enabled}
             limit={messageLimit.limit}
             updateState={setMessageLimit}

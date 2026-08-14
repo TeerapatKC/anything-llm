@@ -13,6 +13,7 @@ import useUser from "@/hooks/useUser";
 import { Link } from "react-router-dom";
 import Paths from "@/utils/paths";
 import Workspace from "@/models/workspace";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export default function FileUploadWarningModal({
   show,
@@ -26,7 +27,7 @@ export default function FileUploadWarningModal({
   embedProgress = 0,
 }) {
   const { user } = useUser();
-  const canEmbed = !user || user.role !== "default";
+  const canEmbed = userCan(PERMISSIONS.DOCUMENTS_UPLOAD, user);
   if (!show) return null;
 
   if (isEmbedding) {

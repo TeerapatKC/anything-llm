@@ -72,6 +72,7 @@ const TRANSLATIONS = {
     title: "Настройки экземпляра",
     invites: "Приглашение",
     users: "Пользователи",
+    roles: "Roles & Permissions",
     workspaces: "Рабочие пространства",
     "workspace-chats": "Чат рабочего пространства",
     customization: "Внешний вид",

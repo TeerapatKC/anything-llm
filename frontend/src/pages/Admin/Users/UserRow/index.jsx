@@ -7,16 +7,20 @@ import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import { PERMISSIONS, userCan, canManageRole } from "@/utils/permissions";
 
-const ModMap = {
-  admin: ["admin", "manager", "default"],
-  manager: ["manager", "default"],
-  default: [],
-};
-
-export default function UserRow({ currUser, user }) {
+export default function UserRow({
+  currUser,
+  user,
+  roles = [],
+  permissionLabels = {},
+}) {
   const rowRef = useRef(null);
-  const canModify = ModMap[currUser?.role || "default"].includes(user.role);
+  // Mirrors the server rule: you may only act on a user whose role grants no more
+  // than your own does.
+  const canModify =
+    userCan(PERMISSIONS.USERS_MANAGE, currUser) &&
+    canManageRole(currUser, user.role, roles);
   const [suspended, setSuspended] = useState(user.suspended === 1);
   const { isOpen, openModal, closeModal } = useModal();
   const handleSuspend = async () => {
@@ -70,7 +74,8 @@ export default function UserRow({ currUser, user }) {
           {user.username}
         </TableHead>
         <TableCell variant="none" className="px-6">
-          {titleCase(user.role)}
+          {roles.find((role) => role.name === user.role)?.displayName ??
+            titleCase(user.role)}
         </TableCell>
         <TableCell variant="none" className="px-6">
           {user.createdAt}
@@ -107,7 +112,12 @@ export default function UserRow({ currUser, user }) {
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
         <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-          <EditUserModal currentUser={currUser} user={user} />
+          <EditUserModal
+            currentUser={currUser}
+            user={user}
+            roles={roles}
+            permissionLabels={permissionLabels}
+          />
         </DialogContent>
       </Dialog>
     </>

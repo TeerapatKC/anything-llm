@@ -1,6 +1,8 @@
 const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 const { EventLogs } = require("./eventLogs");
+const { Role } = require("./role");
+const { PERMISSIONS, FALLBACK_ROLE } = require("../utils/permissions");
 
 /**
  * @typedef {Object} User
@@ -48,14 +50,14 @@ const User = {
         throw new Error(e.message);
       }
     },
-    role: (role = "default") => {
-      const VALID_ROLES = ["default", "admin", "manager"];
-      if (!VALID_ROLES.includes(role)) {
-        throw new Error(
-          `Invalid role. Allowed roles are: ${VALID_ROLES.join(", ")}`
-        );
-      }
-      return String(role);
+    // Roles live in the `roles` table so operators can define their own. The name is
+    // shape-checked here; that it actually exists is checked in `validateRole`.
+    role: (role = FALLBACK_ROLE) => {
+      const name = String(role ?? "").trim();
+      if (!name) return FALLBACK_ROLE;
+      if (!Role.nameRegex.test(name))
+        throw new Error(`Invalid role name: ${name}`);
+      return name;
     },
     dailyMessageLimit: (dailyMessageLimit = null) => {
       if (dailyMessageLimit === null) return null;
@@ -94,6 +96,20 @@ const User = {
     } = user;
     return { ...rest };
   },
+
+  /**
+   * The safe user payload plus the permission keys their role grants. Used for the
+   * session payloads the frontend caches so it can hide controls the role does not
+   * unlock - the server still enforces every permission on its own.
+   * @param {Object} user
+   * @returns {Promise<Object>}
+   */
+  withPermissions: async function (user = {}) {
+    return {
+      ...this.filterFields(user),
+      permissions: await Role.permissionsForUser(user),
+    };
+  },
   _identifyErrorAndFormatMessage: function (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // P2002 is the unique constraint violation error code
@@ -105,10 +121,22 @@ const User = {
     return error.message;
   },
 
+  /**
+   * Shape-checks a role name and confirms the role actually exists.
+   * @param {string} role
+   * @returns {Promise<string>} the normalized role name
+   */
+  validateRole: async function (role) {
+    const name = this.validations.role(role);
+    if (!(await Role.exists(name)))
+      throw new Error(`Role "${name}" does not exist.`);
+    return name;
+  },
+
   create: async function ({
     username,
     password,
-    role = "default",
+    role = FALLBACK_ROLE,
     dailyMessageLimit = null,
     bio = "",
   }) {
@@ -127,7 +155,7 @@ const User = {
         data: {
           username: validatedUsername,
           password: hashedPassword,
-          role: this.validations.role(role),
+          role: await this.validateRole(role),
           bio: this.validations.bio(bio),
           dailyMessageLimit:
             this.validations.dailyMessageLimit(dailyMessageLimit),
@@ -187,6 +215,9 @@ const User = {
 
       if (Object.keys(updates).length === 0)
         return { success: false, error: "No valid updates applied." };
+
+      if (updates.hasOwnProperty("role"))
+        updates.role = await this.validateRole(updates.role);
 
       // Handle password specific updates
       if (updates.hasOwnProperty("password")) {
@@ -356,15 +387,14 @@ const User = {
 
   /**
    * Check if a user can send a chat based on their daily message limit.
-   * This limit is system wide and not per workspace and only applies to
-   * multi-user mode AND non-admin users.
+   * This limit is system wide and not per workspace and does not apply to roles
+   * granted the `chats.unlimited` permission.
    * @param {User} user The user object record.
    * @returns {Promise<boolean>} True if the user can send a chat, false otherwise.
    */
   canSendChat: async function (user) {
-    const { ROLES } = require("../utils/middleware/multiUserProtected");
-    if (!user || user.dailyMessageLimit === null || user.role === ROLES.admin)
-      return true;
+    if (!user || user.dailyMessageLimit === null) return true;
+    if (await Role.userCan(user, PERMISSIONS.CHATS_UNLIMITED)) return true;
 
     const { WorkspaceChats } = require("./workspaceChats");
     const currentChatCount = await WorkspaceChats.count({

@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
 import { Button } from "@/components/ui/button";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 const noop = () => {};
 const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
@@ -82,7 +83,7 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </button>
           </div>
 
-          {user?.role !== "default" && (
+          {userCan(PERMISSIONS.DOCUMENTS_UPLOAD, user) && (
             <ModalTabSwitcher
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
@@ -139,7 +140,7 @@ export function useManageWorkspaceModal() {
   const [showing, setShowing] = useState(false);
 
   function showModal() {
-    if (user?.role !== "default") {
+    if (userCan(PERMISSIONS.DOCUMENTS_UPLOAD, user)) {
       setShowing(true);
     }
   }

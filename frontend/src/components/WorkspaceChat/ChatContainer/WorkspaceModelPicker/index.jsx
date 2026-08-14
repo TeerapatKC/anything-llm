@@ -13,6 +13,7 @@ import {
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
 import ModelRouterAPI from "@/models/modelRouter";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 async function resolveModelName(workspace, systemSettings, t) {
   const effectiveProvider =
@@ -83,7 +84,7 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
   }, []);
 
   // This feature is disabled for multi-user instances where the user is not an admin
-  if (!!user && user.role !== "admin") return null;
+  if (!userCan(PERMISSIONS.WORKSPACES_MANAGE, user)) return null;
   if (!slug || isMobile) return null;
 
   return (

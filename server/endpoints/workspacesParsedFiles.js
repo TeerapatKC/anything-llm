@@ -3,9 +3,9 @@ const { handleFileUpload } = require("../utils/files/multer");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
 const { EventLogs } = require("../models/eventLogs");
 const { validWorkspaceSlug } = require("../utils/middleware/validWorkspace");
 const { CollectorApi } = require("../utils/collectorApi");
@@ -17,7 +17,11 @@ function workspaceParsedFilesEndpoints(app) {
 
   app.get(
     "/workspace/:slug/parsed-files",
-    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.ANY]),
+      validWorkspaceSlug,
+    ],
     async (request, response) => {
       try {
         const threadSlug = request.query.threadSlug || null;
@@ -45,7 +49,11 @@ function workspaceParsedFilesEndpoints(app) {
 
   app.delete(
     "/workspace/:slug/delete-parsed-files",
-    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.ANY]),
+      validWorkspaceSlug,
+    ],
     async function (request, response) {
       try {
         const { fileIds = [] } = reqBody(request);
@@ -72,7 +80,7 @@ function workspaceParsedFilesEndpoints(app) {
     [
       validatedRequest,
       // Embed is still an admin/manager only feature
-      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_UPLOAD]),
       validWorkspaceSlug,
     ],
     async function (request, response) {
@@ -122,7 +130,7 @@ function workspaceParsedFilesEndpoints(app) {
     "/workspace/:slug/parse",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       handleFileUpload,
       validWorkspaceSlug,
     ],

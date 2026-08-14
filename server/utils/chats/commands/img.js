@@ -52,7 +52,10 @@ async function generateImage(
   try {
     getImageGeneratorProvider();
   } catch {
-    const canConfigure = !user || user.role === "admin";
+    const { Role } = require("../../../models/role");
+    const { PERMISSIONS } = require("../../permissions");
+    const canConfigure =
+      !user || (await Role.userCan(user, PERMISSIONS.SYSTEM_SETTINGS));
     return {
       uuid: msgUUID,
       type: "textResponse",

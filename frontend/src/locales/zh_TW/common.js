@@ -69,6 +69,7 @@ const TRANSLATIONS = {
     title: "系統設定",
     invites: "邀請",
     users: "使用者",
+    roles: "Roles & Permissions",
     workspaces: "工作區",
     "workspace-chats": "工作區對話紀錄",
     customization: "自訂",

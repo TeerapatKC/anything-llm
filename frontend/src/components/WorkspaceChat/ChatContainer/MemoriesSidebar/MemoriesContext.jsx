@@ -3,6 +3,7 @@ import { useMemoriesSidebar } from "../ChatSidebar";
 import useUser from "@/hooks/useUser";
 import System from "@/models/system";
 import Memory from "@/models/memory";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export const LIMITS = {
   workspace: 20,
@@ -22,7 +23,7 @@ export function useMemoriesContext() {
 export function MemoriesProvider({ workspace, children }) {
   const { sidebarOpen, closeSidebar } = useMemoriesSidebar();
   const { user } = useUser();
-  const canToggle = !user || user?.role === "admin";
+  const canToggle = userCan(PERMISSIONS.SYSTEM_SETTINGS, user);
 
   const [memories, setMemories] = useState({ global: [], workspace: [] });
   const [activeTab, setActiveTab] = useState("workspace");

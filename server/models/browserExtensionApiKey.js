@@ -1,6 +1,7 @@
 const prisma = require("../utils/prisma");
 const { SystemSettings } = require("./systemSettings");
-const { ROLES } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
+const { Role } = require("./role");
 
 const BrowserExtensionApiKey = {
   /**
@@ -144,8 +145,8 @@ const BrowserExtensionApiKey = {
     limit = null,
     orderBy = null
   ) {
-    // Admin can view and use any keys
-    if ([ROLES.admin].includes(user.role))
+    // A super-admin can view and use any keys; everyone else only sees their own.
+    if (await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))
       return await this.where(clause, limit, orderBy);
 
     try {

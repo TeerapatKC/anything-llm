@@ -45,10 +45,11 @@ const { ApiKey } = require("../models/apiKeys");
 const { getCustomModels } = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
   isMultiUserSetup,
 } = require("../utils/middleware/multiUserProtected");
+const { Role } = require("../models/role");
+const { PERMISSIONS } = require("../utils/permissions");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { EventLogs } = require("../models/eventLogs");
@@ -180,7 +181,7 @@ function systemEndpoints(app) {
 
         return response.status(200).json({
           success: true,
-          user: User.filterFields(user),
+          user: await User.withPermissions(user),
           message: null,
         });
       } catch (e) {
@@ -291,7 +292,7 @@ function systemEndpoints(app) {
           const plainTextCodes = await generateRecoveryCodes(existingUser.id);
           response.status(200).json({
             valid: true,
-            user: User.filterFields(existingUser),
+            user: await User.withPermissions(existingUser),
             token: sessionToken,
             message: null,
             recoveryCodes: plainTextCodes,
@@ -301,7 +302,7 @@ function systemEndpoints(app) {
 
         response.status(200).json({
           valid: true,
-          user: User.filterFields(existingUser),
+          user: await User.withPermissions(existingUser),
           token: sessionToken,
           message: null,
         });
@@ -382,7 +383,7 @@ function systemEndpoints(app) {
 
       response.status(200).json({
         valid: true,
-        user: User.filterFields(token.user),
+        user: await User.withPermissions(token.user),
         token: sessionToken,
         message: null,
       });
@@ -440,7 +441,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/system-vectors",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const query = queryParams(request);
@@ -458,7 +459,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-document",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { name } = reqBody(request);
@@ -473,7 +474,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-documents",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { names } = reqBody(request);
@@ -488,7 +489,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-folder",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { name } = reqBody(request);
@@ -503,7 +504,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/local-files",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { folder, offset, limit } = queryParams(request);
@@ -525,7 +526,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/local-files/search",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { q } = queryParams(request);
@@ -540,7 +541,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/local-files/by-docpaths",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { docpaths = [] } = reqBody(request);
@@ -588,7 +589,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/update-env",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const body = reqBody(request);
@@ -656,7 +657,7 @@ function systemEndpoints(app) {
         const { user, error } = await User.create({
           username,
           password,
-          role: ROLES.admin,
+          role: Role.superAdminRoleName(),
         });
 
         if (error || !user) {
@@ -789,7 +790,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/pfp/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async function (request, response) {
       try {
         const { id } = request.params;
@@ -818,7 +819,11 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/upload-pfp",
-    [validatedRequest, flexUserRoleValid([ROLES.all]), handlePfpUpload],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.ANY]),
+      handlePfpUpload,
+    ],
     async function (request, response) {
       try {
         const user = await userFromSession(request, response);
@@ -857,7 +862,7 @@ function systemEndpoints(app) {
   );
   app.get(
     "/system/default-system-prompt",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (_, response) => {
       try {
         const defaultSystemPrompt = await SystemSettings.get({
@@ -882,7 +887,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/default-system-prompt",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const { defaultSystemPrompt } = reqBody(request);
@@ -909,7 +914,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-pfp",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async function (request, response) {
       try {
         const user = await userFromSession(request, response);
@@ -947,7 +952,7 @@ function systemEndpoints(app) {
     "/system/upload-logo",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
       handleAssetUpload,
     ],
     async (request, response) => {
@@ -996,7 +1001,10 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/remove-logo",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
+    ],
     async (_request, response) => {
       try {
         const currentLogoFilename = await SystemSettings.currentLogoFilename();
@@ -1095,7 +1103,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/custom-models",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const {
@@ -1123,7 +1131,10 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/event-logs",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
+    ],
     async (request, response) => {
       try {
         const { offset = 0, limit = 10 } = reqBody(request);
@@ -1143,7 +1154,10 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/event-logs",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
+    ],
     async (_, response) => {
       try {
         await EventLogs.delete();
@@ -1165,7 +1179,7 @@ function systemEndpoints(app) {
     [
       chatHistoryViewable,
       validatedRequest,
-      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      flexUserPermissionValid([PERMISSIONS.CHATS_VIEW_ALL]),
     ],
     async (request, response) => {
       try {
@@ -1189,7 +1203,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/workspace-chats/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.CHATS_VIEW_ALL])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -1209,7 +1223,7 @@ function systemEndpoints(app) {
     [
       chatHistoryViewable,
       validatedRequest,
-      flexUserRoleValid([ROLES.manager, ROLES.admin]),
+      flexUserPermissionValid([PERMISSIONS.CHATS_VIEW_ALL]),
     ],
     async (request, response) => {
       try {
@@ -1272,7 +1286,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/slash-command-presets",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1287,7 +1301,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/slash-command-presets",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1325,7 +1339,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/slash-command-presets/:slashCommandId",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1371,7 +1385,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/slash-command-presets/:slashCommandId",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const { slashCommandId } = request.params;
@@ -1398,7 +1412,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/prompt-variables",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1416,7 +1430,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/prompt-variables",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1452,7 +1466,7 @@ function systemEndpoints(app) {
 
   app.put(
     "/system/prompt-variables/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -1494,7 +1508,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/prompt-variables/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -1522,7 +1536,11 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/transcribe-audio",
-    [validatedRequest, flexUserRoleValid([ROLES.all]), handleAudioUpload],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.ANY]),
+      handleAudioUpload,
+    ],
     async (request, response) => {
       try {
         if (!request.file?.buffer) {
@@ -1559,7 +1577,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/validate-sql-connection",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       const { engine, connectionString } = reqBody(request);
       try {

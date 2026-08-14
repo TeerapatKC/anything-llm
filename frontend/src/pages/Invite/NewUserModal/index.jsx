@@ -3,6 +3,7 @@ import Invite from "@/models/invite";
 import paths from "@/utils/paths";
 import { useParams } from "react-router-dom";
 import { AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
+import { storePermissions } from "@/utils/permissions";
 import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import {
@@ -36,6 +37,7 @@ export default function NewUserModal() {
       if (valid && !!token && !!user) {
         window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
         window.localStorage.setItem(AUTH_TOKEN, token);
+        storePermissions(user.permissions);
         window.location = paths.home();
       } else {
         setError(message);

@@ -9,8 +9,11 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import useRoles from "@/hooks/useRoles";
+import { PERMISSIONS, roleNamesWith } from "@/utils/permissions";
 
 export default function AddMemberModal({ workspace, users }) {
+  const { roles } = useRoles();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUsers, setSelectedUsers] = useState(workspace?.userIds || []);
 
@@ -59,12 +62,17 @@ export default function AddMemberModal({ workspace, users }) {
     setSearchTerm(event.target.value);
   };
 
+  const allWorkspaceRoles = roleNamesWith(
+    roles,
+    PERMISSIONS.WORKSPACES_VIEW_ALL
+  );
   const filteredUsers = users
     .filter((user) =>
       user.username.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((user) => user.role !== "admin")
-    .filter((user) => user.role !== "manager");
+    // Users whose role already grants access to every workspace do not need to be
+    // added to one individually.
+    .filter((user) => !allWorkspaceRoles.includes(user.role));
 
   return (
     <>

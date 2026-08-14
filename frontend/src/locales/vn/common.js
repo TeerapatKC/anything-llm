@@ -73,6 +73,7 @@ const TRANSLATIONS = {
     title: "Cài đặt hệ thống",
     invites: "Lời mời",
     users: "Người dùng",
+    roles: "Roles & Permissions",
     workspaces: "Không gian làm việc",
     "workspace-chats": "Hội thoại không gian làm việc",
     customization: "Tùy chỉnh",

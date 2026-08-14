@@ -27,6 +27,8 @@ logs/server.log
 storage/lancedb
 public/
 __tests__/**/models
+# ...but that pattern also matches the model unit tests, which are real source.
+!__tests__/models/
 
 # For legacy copies of repo
 documents

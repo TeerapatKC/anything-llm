@@ -73,6 +73,7 @@ const TRANSLATIONS = {
     title: "Setările instanței",
     invites: "Invitații",
     users: "Utilizatori",
+    roles: "Roles & Permissions",
     workspaces: "Spații de lucru",
     "workspace-chats": "Conversațiile spațiului de lucru",
     customization: "Personalizare",

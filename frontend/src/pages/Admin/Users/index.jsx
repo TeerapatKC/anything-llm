@@ -5,6 +5,8 @@ import { UserPlus } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import UserRow from "./UserRow";
 import useUser from "@/hooks/useUser";
+import useRoles from "@/hooks/useRoles";
+import { PERMISSIONS } from "@/utils/permissions";
 import NewUserModal from "./NewUserModal";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -68,6 +70,7 @@ export default function AdminUsers() {
 
 function UsersContainer() {
   const { user: currUser } = useUser();
+  const { roles, permissionLabels, loading: loadingRoles } = useRoles();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
 
@@ -80,7 +83,7 @@ function UsersContainer() {
     fetchUsers();
   }, []);
 
-  if (loading) {
+  if (loading || loadingRoles) {
     return (
       <Skeleton
         height="80vh"
@@ -122,48 +125,68 @@ function UsersContainer() {
       </TableHeader>
       <TableBody variant="none">
         {users.map((user) => (
-          <UserRow key={user.id} currUser={currUser} user={user} />
+          <UserRow
+            key={user.id}
+            currUser={currUser}
+            user={user}
+            roles={roles}
+            permissionLabels={permissionLabels}
+          />
         ))}
       </TableBody>
     </Table>
   );
 }
 
-const ROLE_HINT = {
-  default: [
-    "Can only send chats with workspaces they are added to by admin or managers.",
-    "Cannot modify any settings at all.",
-  ],
-  manager: [
-    "Can view, create, and delete any workspaces and modify workspace-specific settings.",
-    "Can create, update and invite new users to the instance.",
-    "Cannot modify LLM, vectorDB, embedding, or other connections.",
-  ],
-  admin: [
-    "Highest user level privilege.",
-    "Can see and do everything across the system.",
-  ],
-};
+/**
+ * Summarises what a role unlocks by listing the permissions it was ticked for, so the
+ * person assigning it can see the consequences without leaving the modal.
+ */
+export function RoleHintDisplay({ role, roles = [], permissionLabels = {} }) {
+  const selected = roles.find((entry) => entry.name === role);
+  const granted = selected?.permissions ?? [];
+  const isSuperAdmin = granted.includes("system.admin");
 
-export function RoleHintDisplay({ role }) {
   return (
     <div className="flex flex-col gap-y-1 py-1 pb-4">
       <p className="text-sm font-medium text-theme-text-primary">Permissions</p>
-      <ul className="flex flex-col gap-y-1 list-disc px-4">
-        {ROLE_HINT[role ?? "default"].map((hints, i) => {
-          return (
-            <li key={i} className="text-xs text-theme-text-secondary">
-              {hints}
+      {selected?.description && (
+        <p className="text-xs text-theme-text-secondary">
+          {selected.description}
+        </p>
+      )}
+      {isSuperAdmin ? (
+        <p className="text-xs text-theme-text-secondary">
+          Holds every permission on the instance.
+        </p>
+      ) : granted.length === 0 ? (
+        <p className="text-xs text-theme-text-secondary">
+          No elevated permissions - can only chat in the workspaces they are
+          added to.
+        </p>
+      ) : (
+        <ul className="flex flex-col gap-y-1 list-disc px-4 max-h-40 overflow-y-auto">
+          {granted.map((permission) => (
+            <li key={permission} className="text-xs text-theme-text-secondary">
+              {permissionLabels[permission] ?? permission}
             </li>
-          );
-        })}
-      </ul>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-export function MessageLimitInput({ enabled, limit, updateState, role }) {
-  if (role === "admin") return null;
+export function MessageLimitInput({
+  enabled,
+  limit,
+  updateState,
+  role,
+  roles = [],
+}) {
+  // A role that bypasses the daily limit has nothing to configure here.
+  const selected = roles.find((entry) => entry.name === role);
+  if (selected?.permissions?.includes(PERMISSIONS.CHATS_UNLIMITED)) return null;
   return (
     <div className="mt-4 mb-8">
       <Toggle

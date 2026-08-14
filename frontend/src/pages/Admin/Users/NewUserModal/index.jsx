@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Admin from "@/models/admin";
 import { userFromStorage } from "@/utils/request";
+import useRoles from "@/hooks/useRoles";
+import { canManageRole } from "@/utils/permissions";
 import { MessageLimitInput, RoleHintDisplay } from "..";
 import { useTranslation } from "react-i18next";
 import {
@@ -27,6 +29,7 @@ import {
 } from "@/components/ui/select";
 
 export default function NewUserModal() {
+  const { roles, permissionLabels } = useRoles();
   const [error, setError] = useState(null);
   const [role, setRole] = useState("default");
   const [messageLimit, setMessageLimit] = useState({
@@ -49,6 +52,10 @@ export default function NewUserModal() {
   };
 
   const user = userFromStorage();
+  // You can only create a user with a role that grants no more than your own does.
+  const assignableRoles = roles.filter((entry) =>
+    canManageRole(user, entry.name, roles)
+  );
 
   return (
     <>
@@ -112,24 +119,29 @@ export default function NewUserModal() {
             <Select
               name="role"
               required={true}
-              defaultValue={"default"}
+              value={role}
               onValueChange={setRole}
             >
               <SelectTrigger variant="settings">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="manager">Manager</SelectItem>
-                {user?.role === "admin" && (
-                  <SelectItem value="admin">Administrator</SelectItem>
-                )}
+                {assignableRoles.map((entry) => (
+                  <SelectItem key={entry.id} value={entry.name}>
+                    {entry.displayName}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
-            <RoleHintDisplay role={role} />
+            <RoleHintDisplay
+              role={role}
+              roles={roles}
+              permissionLabels={permissionLabels}
+            />
           </div>
           <MessageLimitInput
             role={role}
+            roles={roles}
             enabled={messageLimit.enabled}
             limit={messageLimit.limit}
             updateState={setMessageLimit}

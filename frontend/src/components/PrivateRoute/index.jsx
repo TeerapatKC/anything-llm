@@ -6,11 +6,28 @@ import paths from "@/utils/paths";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
 import { userFromStorage } from "@/utils/request";
 import System from "@/models/system";
+import Role from "@/models/role";
+import {
+  userCanAny,
+  storePermissions,
+  clearPermissions,
+} from "@/utils/permissions";
 import UserMenu from "../UserMenu";
 import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
 
-// Used only for Multi-user mode only as we permission specific pages based on auth role.
-// When in single user mode we just bypass any authchecks.
+/**
+ * Refreshes the cached permission list before any gated UI renders. This runs on every
+ * load so that changing what a role grants takes effect on the user's next page load,
+ * and so sessions predating the permission system are not left denied everything.
+ */
+async function hydratePermissions() {
+  if (!userFromStorage()) return; // single-user mode has no user record
+  const { permissions } = await Role.myPermissions();
+  storePermissions(permissions);
+}
+
+// Used only for Multi-user mode only as we permission specific pages based on the
+// permissions the user's role grants. When in single user mode we just bypass any authchecks.
 function useIsAuthenticated() {
   const [isAuthd, setIsAuthed] = useState(null);
   const [shouldRedirectToOnboarding, setShouldRedirectToOnboarding] =
@@ -62,10 +79,12 @@ function useIsAuthenticated() {
         localStorage.removeItem(AUTH_USER);
         localStorage.removeItem(AUTH_TOKEN);
         localStorage.removeItem(AUTH_TIMESTAMP);
+        clearPermissions();
         setIsAuthed(false);
         return;
       }
 
+      await hydratePermissions();
       setIsAuthed(true);
     };
     validateSession();
@@ -74,9 +93,16 @@ function useIsAuthenticated() {
   return { isAuthd, shouldRedirectToOnboarding, multiUserMode };
 }
 
-// Allows only admin to access the route and if in single user mode,
-// allows all users to access the route
-export function AdminRoute({ Component, hideUserMenu = false }) {
+/**
+ * Allows a route only to users whose role grants at least one of `permissions`. In
+ * single user mode there is one operator who holds everything, so the check is skipped.
+ * @param {{Component: React.ComponentType, permissions: string[], hideUserMenu?: boolean}} props
+ */
+export function PermissionRoute({
+  Component,
+  permissions = [],
+  hideUserMenu = false,
+}) {
   const { isAuthd, shouldRedirectToOnboarding, multiUserMode } =
     useIsAuthenticated();
   if (isAuthd === null) return <FullScreenLoader />;
@@ -86,43 +112,19 @@ export function AdminRoute({ Component, hideUserMenu = false }) {
   }
 
   const user = userFromStorage();
-  return isAuthd && (user?.role === "admin" || !multiUserMode) ? (
-    hideUserMenu ? (
-      <KeyboardShortcutWrapper>
-        <Component />
-      </KeyboardShortcutWrapper>
-    ) : (
-      <KeyboardShortcutWrapper>
-        <UserMenu>
-          <Component />
-        </UserMenu>
-      </KeyboardShortcutWrapper>
-    )
+  const allowed = !multiUserMode || userCanAny(permissions, user);
+  if (!isAuthd || !allowed) return <Navigate to={paths.home()} />;
+
+  return hideUserMenu ? (
+    <KeyboardShortcutWrapper>
+      <Component />
+    </KeyboardShortcutWrapper>
   ) : (
-    <Navigate to={paths.home()} />
-  );
-}
-
-// Allows manager and admin to access the route and if in single user mode,
-// allows all users to access the route
-export function ManagerRoute({ Component }) {
-  const { isAuthd, shouldRedirectToOnboarding, multiUserMode } =
-    useIsAuthenticated();
-  if (isAuthd === null) return <FullScreenLoader />;
-
-  if (shouldRedirectToOnboarding) {
-    return <Navigate to={paths.onboarding.home()} />;
-  }
-
-  const user = userFromStorage();
-  return isAuthd && (user?.role !== "default" || !multiUserMode) ? (
     <KeyboardShortcutWrapper>
       <UserMenu>
         <Component />
       </UserMenu>
     </KeyboardShortcutWrapper>
-  ) : (
-    <Navigate to={paths.home()} />
   );
 }
 

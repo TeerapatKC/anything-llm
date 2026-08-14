@@ -72,6 +72,7 @@ const TRANSLATIONS = {
     title: "インスタンス設定",
     invites: "招待",
     users: "ユーザー",
+    roles: "Roles & Permissions",
     workspaces: "ワークスペース",
     "workspace-chats": "ワークスペースチャット",
     customization: "カスタマイズ",

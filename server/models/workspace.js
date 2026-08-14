@@ -2,7 +2,8 @@ const prisma = require("../utils/prisma");
 const slugifyModule = require("slugify");
 const { Document } = require("./documents");
 const { WorkspaceUser } = require("./workspaceUsers");
-const { ROLES } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
+const { Role } = require("./role");
 const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
@@ -149,9 +150,7 @@ const Workspace = {
     // workspace back to inheriting the instance-wide defaults.
     agentSkillConfig: (value) => {
       if (value === null || value === undefined || value === "") return null;
-      const {
-        normalizeConfig,
-      } = require("../utils/agents/workspaceSkills");
+      const { normalizeConfig } = require("../utils/agents/workspaceSkills");
       const normalized = normalizeConfig(value);
       if (!normalized) return null;
       return JSON.stringify(normalized);
@@ -308,7 +307,7 @@ const Workspace = {
   },
 
   getWithUser: async function (user = null, clause = {}) {
-    if ([ROLES.admin, ROLES.manager].includes(user.role))
+    if (await Role.userCan(user, PERMISSIONS.WORKSPACES_VIEW_ALL))
       return this.get(clause);
 
     try {
@@ -434,7 +433,7 @@ const Workspace = {
     limit = null,
     orderBy = null
   ) {
-    if ([ROLES.admin, ROLES.manager].includes(user.role))
+    if (await Role.userCan(user, PERMISSIONS.WORKSPACES_VIEW_ALL))
       return await this.where(clause, limit, orderBy);
 
     try {

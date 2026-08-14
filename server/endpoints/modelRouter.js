@@ -4,9 +4,9 @@ const { Telemetry } = require("../models/telemetry");
 const { ModelRouterService } = require("../utils/router");
 const { reqBody, userFromSession } = require("../utils/http");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 
 function modelRouterEndpoints(app) {
@@ -14,7 +14,10 @@ function modelRouterEndpoints(app) {
 
   app.get(
     "/model-routers",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (_request, response) => {
       try {
         const routers = await ModelRouter.getAllWithCounts();
@@ -28,7 +31,10 @@ function modelRouterEndpoints(app) {
 
   app.get(
     "/model-routers/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -51,7 +57,10 @@ function modelRouterEndpoints(app) {
 
   app.post(
     "/model-routers/new",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -73,7 +82,10 @@ function modelRouterEndpoints(app) {
 
   app.put(
     "/model-routers/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -91,7 +103,10 @@ function modelRouterEndpoints(app) {
 
   app.delete(
     "/model-routers/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -111,7 +126,10 @@ function modelRouterEndpoints(app) {
 
   app.post(
     "/model-routers/:id/rules/new",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -137,7 +155,10 @@ function modelRouterEndpoints(app) {
 
   app.put(
     "/model-routers/:id/rules/reorder",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -161,7 +182,10 @@ function modelRouterEndpoints(app) {
 
   app.put(
     "/model-routers/:id/rules/:ruleId",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id, ruleId } = request.params;
@@ -182,7 +206,10 @@ function modelRouterEndpoints(app) {
 
   app.delete(
     "/model-routers/:id/rules/:ruleId",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+    ],
     async (request, response) => {
       try {
         const { id, ruleId } = request.params;

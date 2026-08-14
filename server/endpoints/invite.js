@@ -2,6 +2,7 @@ const { EventLogs } = require("../models/eventLogs");
 const { Invite } = require("../models/invite");
 const { User } = require("../models/user");
 const { reqBody } = require("../utils/http");
+const { FALLBACK_ROLE } = require("../utils/permissions");
 const {
   simpleSSOLoginDisabledMiddleware,
 } = require("../utils/middleware/simpleSSOEnabled");
@@ -52,7 +53,7 @@ function inviteEndpoints(app) {
         const { user, error } = await User.create({
           username,
           password,
-          role: "default",
+          role: FALLBACK_ROLE,
         });
         if (!user) {
           console.error("Accepting invite:", error);

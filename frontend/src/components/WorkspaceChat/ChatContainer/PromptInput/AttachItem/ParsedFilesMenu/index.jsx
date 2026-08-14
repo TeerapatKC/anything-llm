@@ -11,6 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export default function ParsedFilesMenu({
   onEmbeddingChange,
@@ -25,7 +26,7 @@ export default function ParsedFilesMenu({
   threadSlug = null,
 }) {
   const { user } = useUser();
-  const canEmbed = !user || user.role !== "default";
+  const canEmbed = userCan(PERMISSIONS.DOCUMENTS_UPLOAD, user);
   const initialContextWindowLimitExceeded =
     contextWindow &&
     currentTokens >= contextWindow * Workspace.maxContextWindowLimit;

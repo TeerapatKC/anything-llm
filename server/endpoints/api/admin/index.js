@@ -94,7 +94,7 @@ function apiAdminEndpoints(app) {
             example: {
               username: "sample-sam",
               password: 'hunter2',
-              role: 'default | admin'
+              role: 'default' // any role name defined under Settings > Roles & Permissions
             }
           }
         }
@@ -158,7 +158,7 @@ function apiAdminEndpoints(app) {
             example: {
               username: "sample-sam",
               password: 'hunter2',
-              role: 'default | admin',
+              role: 'default' // any role name defined under Settings > Roles & Permissions,
               suspended: 0,
             }
           }

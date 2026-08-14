@@ -4,9 +4,9 @@ const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const { streamChatWithWorkspace } = require("../utils/chats/stream");
 const {
-  ROLES,
-  flexUserRoleValid,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
 const { EventLogs } = require("../models/eventLogs");
 const {
   validWorkspaceAndThreadSlug,
@@ -22,7 +22,11 @@ function chatEndpoints(app) {
 
   app.post(
     "/workspace/:slug/stream-chat",
-    [validatedRequest, flexUserRoleValid([ROLES.all]), validWorkspaceSlug],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.CHATS_SEND]),
+      validWorkspaceSlug,
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -106,7 +110,7 @@ function chatEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug/stream-chat",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.CHATS_SEND]),
       validWorkspaceAndThreadSlug,
     ],
     async (request, response) => {

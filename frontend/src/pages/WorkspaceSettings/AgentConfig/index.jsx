@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import paths from "@/utils/paths";
 import useUser from "@/hooks/useUser";
 import AgentSkillSelection from "./AgentSkillSelection";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export default function WorkspaceAgentConfiguration({ workspace }) {
   const { user } = useUser();
@@ -99,7 +100,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
       {/* Kept outside the provider/model form: skills save through their own
           endpoint, and nesting them would let their toggles mark the workspace
           form dirty. */}
-      {(!user || user?.role === "admin") && (
+      {userCan(PERMISSIONS.AGENTS_MANAGE_SKILLS, user) && (
         <div className="w-1/2 flex flex-col gap-y-6 mt-6">
           <div className="bg-white/10 h-[1px] w-full" />
           <AgentSkillSelection workspace={workspace} />

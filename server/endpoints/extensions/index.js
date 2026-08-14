@@ -1,9 +1,9 @@
 const { Telemetry } = require("../../models/telemetry");
 const { CollectorApi } = require("../../utils/collectorApi");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../../utils/permissions");
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
 const {
   isSupportedRepoProvider,
@@ -16,7 +16,7 @@ function extensionEndpoints(app) {
     "/ext/:repo_platform/branches",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
       isSupportedRepoProvider,
     ],
     async (request, response) => {
@@ -40,7 +40,7 @@ function extensionEndpoints(app) {
     "/ext/:repo_platform/repo",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
       isSupportedRepoProvider,
     ],
     async (request, response) => {
@@ -65,7 +65,10 @@ function extensionEndpoints(app) {
 
   app.post(
     "/ext/youtube/transcript",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+    ],
     async (request, response) => {
       try {
         const responseFromProcessor =
@@ -87,7 +90,10 @@ function extensionEndpoints(app) {
 
   app.post(
     "/ext/confluence",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+    ],
     async (request, response) => {
       try {
         const responseFromProcessor =
@@ -108,7 +114,10 @@ function extensionEndpoints(app) {
   );
   app.post(
     "/ext/website-depth",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+    ],
     async (request, response) => {
       try {
         const responseFromProcessor =
@@ -129,7 +138,10 @@ function extensionEndpoints(app) {
   );
   app.post(
     "/ext/drupalwiki",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+    ],
     async (request, response) => {
       try {
         const responseFromProcessor =
@@ -151,7 +163,10 @@ function extensionEndpoints(app) {
 
   app.post(
     "/ext/obsidian/vault",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+    ],
     async (request, response) => {
       try {
         const responseFromProcessor =
@@ -173,7 +188,10 @@ function extensionEndpoints(app) {
 
   app.post(
     "/ext/paperless-ngx",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+    ],
     async (request, response) => {
       try {
         const responseFromProcessor =

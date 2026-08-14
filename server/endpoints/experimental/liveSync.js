@@ -8,9 +8,9 @@ const {
   featureFlagEnabled,
 } = require("../../utils/middleware/featureFlagEnabled");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../../utils/permissions");
 const { validWorkspaceSlug } = require("../../utils/middleware/validWorkspace");
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
 
@@ -19,7 +19,10 @@ function liveSyncEndpoints(app) {
 
   app.post(
     "/experimental/toggle-live-sync",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
+    ],
     async (request, response) => {
       try {
         const { updatedStatus = false } = reqBody(request);
@@ -61,7 +64,7 @@ function liveSyncEndpoints(app) {
     "/experimental/live-sync/queues",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.admin]),
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
       featureFlagEnabled(DocumentSyncQueue.featureKey),
     ],
     async (_, response) => {
@@ -86,7 +89,7 @@ function liveSyncEndpoints(app) {
     "/workspace/:slug/update-watch-status",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.admin, ROLES.manager]),
+      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
       validWorkspaceSlug,
       featureFlagEnabled(DocumentSyncQueue.featureKey),
     ],

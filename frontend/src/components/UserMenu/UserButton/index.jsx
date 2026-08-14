@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguageOptions } from "@/hooks/useLanguageOptions";
+import { userIsChatOnly, clearPermissions } from "@/utils/permissions";
 
 /**
  * Account button. Lives in the sidebar footer as a full-width row (avatar +
@@ -84,7 +85,7 @@ export default function UserButton() {
   }, []);
 
   if (mode === null) return null;
-  const canSeeSettings = !user || user?.role !== "default";
+  const canSeeSettings = !userIsChatOnly(user);
   const displayName =
     mode === "multi" && user?.username
       ? user.username
@@ -200,6 +201,7 @@ export default function UserButton() {
           <DropdownMenuItem
             onSelect={() => {
               window.localStorage.removeItem(AUTH_USER);
+              clearPermissions();
               window.localStorage.removeItem(AUTH_TOKEN);
               window.localStorage.removeItem(AUTH_TIMESTAMP);
               window.localStorage.removeItem(LAST_VISITED_WORKSPACE);

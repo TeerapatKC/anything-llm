@@ -79,6 +79,7 @@ const TRANSLATIONS = {
     title: "Sistemos nustatymai",
     invites: "Pakvietimai",
     users: "Vartotojai",
+    roles: "Roles & Permissions",
     workspaces: "Darbo sritys",
     "workspace-chats": "Darbo srities pokalbiai",
     customization: "Pritaikymas",

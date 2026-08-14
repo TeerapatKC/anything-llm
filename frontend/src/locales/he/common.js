@@ -70,6 +70,7 @@ const TRANSLATIONS = {
     title: "הגדרות מופע",
     invites: "הזמנות",
     users: "משתמשים",
+    roles: "Roles & Permissions",
     workspaces: "סביבות עבודה",
     "workspace-chats": "צ'אטים של סביבות עבודה",
     customization: "התאמה אישית",

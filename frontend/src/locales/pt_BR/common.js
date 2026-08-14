@@ -72,6 +72,7 @@ const TRANSLATIONS = {
     title: "Configurações da Instância",
     invites: "Convites",
     users: "Usuários",
+    roles: "Roles & Permissions",
     workspaces: "Workspaces",
     "workspace-chats": "Chats do Workspace",
     customization: "Personalização",

@@ -52,7 +52,7 @@ export default function SupportEmail() {
     setHasChanges(true);
   };
 
-  if (loading || !user?.role) return null;
+  if (loading || !user) return null;
   return (
     <form
       className="flex flex-col gap-y-0.5 mt-4"

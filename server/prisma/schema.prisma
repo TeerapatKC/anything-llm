@@ -89,6 +89,40 @@ model users {
   memories                     memories[]
 }
 
+model permissions {
+  id          Int                @id @default(autoincrement())
+  key         String             @unique
+  label       String
+  description String?
+  category    String             @default("system")
+  sortOrder   Int                @default(0)
+  createdAt   DateTime           @default(now())
+  roles       role_permissions[]
+}
+
+model roles {
+  id            Int                @id @default(autoincrement())
+  name          String             @unique
+  displayName   String
+  description   String?
+  isSystem      Boolean            @default(false)
+  createdAt     DateTime           @default(now())
+  lastUpdatedAt DateTime           @default(now())
+  permissions   role_permissions[]
+}
+
+model role_permissions {
+  id            Int         @id @default(autoincrement())
+  role_id       Int
+  permission_id Int
+  createdAt     DateTime    @default(now())
+  role          roles       @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  permission    permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@unique([role_id, permission_id])
+  @@index([role_id])
+}
+
 model recovery_codes {
   id        Int      @id @default(autoincrement())
   user_id   Int

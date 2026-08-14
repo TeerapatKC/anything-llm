@@ -73,6 +73,7 @@ const TRANSLATIONS = {
     title: "Instance Ayarları",
     invites: "Davetler",
     users: "Kullanıcılar",
+    roles: "Roles & Permissions",
     workspaces: "Çalışma Alanları",
     "workspace-chats": "Çalışma Alanı Sohbetleri",
     customization: "Özelleştirme",

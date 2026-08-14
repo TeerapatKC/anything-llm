@@ -8,12 +8,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { userIsChatOnly } from "@/utils/permissions";
 
 export default function SettingsButton() {
   const isInSettings = !!useMatch("/settings/*");
   const { user } = useUser();
 
-  if (user && user?.role === "default") return null;
+  if (userIsChatOnly(user)) return null;
 
   if (isInSettings)
     return (

@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSidebar } from "@/components/ui/sidebar";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -203,7 +204,7 @@ export default function ActiveWorkspaces() {
                                 {workspace.name}
                               </TooltipContent>
                             </Tooltip>
-                            {user?.role !== "default" && (
+                            {userCan(PERMISSIONS.WORKSPACES_MANAGE, user) && (
                               <div
                                 className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                               >

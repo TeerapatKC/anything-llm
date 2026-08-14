@@ -71,6 +71,7 @@ const TRANSLATIONS = {
     title: "إعدادات المثيل",
     invites: "دعوات",
     users: "مستعملون",
+    roles: "Roles & Permissions",
     workspaces: "مساحات العمل",
     "workspace-chats": "محادثات مساحة العمل",
     customization: "التخصيص",

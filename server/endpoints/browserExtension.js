@@ -8,9 +8,10 @@ const { CollectorApi } = require("../utils/collectorApi");
 const { reqBody, multiUserMode, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
+const { Role } = require("../models/role");
 const { Telemetry } = require("../models/telemetry");
 
 function browserExtensionEndpoints(app) {
@@ -154,7 +155,10 @@ function browserExtensionEndpoints(app) {
   // Internal endpoints for managing API keys
   app.get(
     "/browser-extension/api-keys",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -174,7 +178,10 @@ function browserExtensionEndpoints(app) {
 
   app.post(
     "/browser-extension/api-keys/new",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -194,13 +201,20 @@ function browserExtensionEndpoints(app) {
 
   app.delete(
     "/browser-extension/api-keys/:id",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
         const user = await userFromSession(request, response);
 
-        if (multiUserMode(response) && user.role !== ROLES.admin) {
+        // Without the super-admin grant a user may only revoke their own keys.
+        if (
+          multiUserMode(response) &&
+          !(await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))
+        ) {
           const apiKey = await BrowserExtensionApiKey.get({
             id: parseInt(id),
             user_id: user?.id,

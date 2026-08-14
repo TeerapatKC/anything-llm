@@ -4,6 +4,7 @@ import useUser from "@/hooks/useUser";
 import System from "@/models/system";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { useMemoriesSidebar, useSourcesSidebar } from "../../ChatSidebar";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export default function MemoriesRow() {
   const { t } = useTranslation();
@@ -12,7 +13,7 @@ export default function MemoriesRow() {
   const { closeSidebar } = useSourcesSidebar();
   const [memoryEnabled, setMemoryEnabled] = useState(null);
 
-  const isAdmin = !user || user?.role === "admin";
+  const isAdmin = userCan(PERMISSIONS.SYSTEM_SETTINGS, user);
 
   useEffect(() => {
     System.keys().then((settings) => {

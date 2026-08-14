@@ -11,6 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { userIsChatOnly } from "@/utils/permissions";
 
 const DEFAULT_SEARCH_RESULTS = {
   workspaces: [],
@@ -193,7 +194,7 @@ function SearchResultItem({ to, name, hint }) {
 
 function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
   const { t } = useTranslation();
-  if (!!user && user?.role === "default") return null;
+  if (userIsChatOnly(user)) return null;
 
   return (
     <>

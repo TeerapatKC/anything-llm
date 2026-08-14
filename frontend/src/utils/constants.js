@@ -4,6 +4,9 @@ export const ONBOARDING_SURVEY_URL = "https://onboarding.anythingllm.com";
 export const AUTH_USER = "anythingllm_user";
 export const AUTH_TOKEN = "anythingllm_authToken";
 export const AUTH_TIMESTAMP = "anythingllm_authTimestamp";
+// Permissions live outside the cached user object on purpose - many code paths
+// rewrite that object, and losing this field silently locks a user out of everything.
+export const AUTH_PERMISSIONS = "anythingllm_permissions";
 export const COMPLETE_QUESTIONNAIRE = "anythingllm_completed_questionnaire";
 export const SEEN_DOC_PIN_ALERT = "anythingllm_pinned_document_alert";
 export const SEEN_WATCH_ALERT = "anythingllm_watched_document_alert";

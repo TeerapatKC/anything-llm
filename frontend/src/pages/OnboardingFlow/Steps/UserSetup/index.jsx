@@ -5,6 +5,7 @@ import debounce from "lodash.debounce";
 import paths from "@/utils/paths";
 import { useNavigate } from "react-router-dom";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
+import { storePermissions, clearPermissions } from "@/utils/permissions";
 import { useTranslation } from "react-i18next";
 import { USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "@/utils/username";
 import { PW_REGEX } from "@/pages/GeneralSettings/Security";
@@ -148,6 +149,7 @@ const JustMe = ({
       password: formData.get("password"),
     });
     window.localStorage.removeItem(AUTH_USER);
+    clearPermissions();
     window.localStorage.removeItem(AUTH_TIMESTAMP);
     window.localStorage.setItem(AUTH_TOKEN, token);
 
@@ -268,6 +270,7 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
     // are not redirected to login after completion.
     const { user, token } = await System.requestToken(data);
     window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
+    storePermissions(user.permissions);
     window.localStorage.setItem(AUTH_TOKEN, token);
     window.localStorage.removeItem(AUTH_TIMESTAMP);
   };

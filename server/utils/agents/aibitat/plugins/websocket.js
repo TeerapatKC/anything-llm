@@ -3,12 +3,12 @@ const { Telemetry } = require("../../../../models/telemetry");
 const { v4: uuidv4 } = require("uuid");
 const { safeJsonParse } = require("../../../http");
 const { skillIsAutoApproved } = require("../../../helpers/agents");
-const { ROLES } = require("../../../middleware/multiUserProtected");
+const { PERMISSIONS } = require("../../../permissions");
 
 /**
- * Toggling an agent's tools mid-session is an admin-only action, mirroring the
- * Agent Skills settings which only admins can manage. In multi-user mode the
- * requesting user must be an admin; single-user mode (no userId) is allowed.
+ * Toggling an agent's tools mid-session requires the same permission as managing the
+ * Agent Skills settings. In multi-user mode the requesting user's role must grant
+ * `agents.manage_skills`; single-user mode (no userId) is allowed.
  * @param {number|null} userId - User id from the agent invocation.
  * @returns {Promise<boolean>}
  */
@@ -18,8 +18,9 @@ async function userCanToggleTools(userId = null) {
   if (!userId) return false;
 
   const { User } = require("../../../../models/user");
+  const { Role } = require("../../../../models/role");
   const user = await User.get({ id: Number(userId) });
-  return user?.role === ROLES.admin;
+  return Role.userCan(user, PERMISSIONS.AGENTS_MANAGE_SKILLS);
 }
 
 const SOCKET_TIMEOUT_MS = 300 * 1_000; // 5 mins

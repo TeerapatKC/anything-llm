@@ -74,6 +74,7 @@ const TRANSLATIONS = {
     title: "تنظیمات سامانه",
     invites: "دعوت‌نامه‌ها",
     users: "کاربران",
+    roles: "Roles & Permissions",
     workspaces: "فضاهای کاری",
     "workspace-chats": "گفتگوهای فضای کاری",
     customization: "شخصی‌سازی",

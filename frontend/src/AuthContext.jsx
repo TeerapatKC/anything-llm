@@ -8,6 +8,7 @@ import {
 import System from "./models/system";
 import { useNavigate } from "react-router-dom";
 import { safeJsonParse } from "@/utils/request";
+import { storePermissions, clearPermissions } from "@/utils/permissions";
 
 export const AuthContext = createContext(null);
 export function AuthProvider(props) {
@@ -37,6 +38,7 @@ export function AuthProvider(props) {
       localStorage.removeItem(AUTH_TOKEN);
       localStorage.removeItem(AUTH_TIMESTAMP);
       localStorage.removeItem(USER_PROMPT_INPUT_MAP);
+      clearPermissions();
       setStore({ user: null, authToken: null });
     },
   });
@@ -57,12 +59,15 @@ export function AuthProvider(props) {
         localStorage.removeItem(AUTH_TOKEN);
         localStorage.removeItem(AUTH_TIMESTAMP);
         localStorage.removeItem(USER_PROMPT_INPUT_MAP);
+        clearPermissions();
         setStore({ user: null, authToken: null });
         navigate("/login");
         return;
       }
 
       localStorage.setItem(AUTH_USER, JSON.stringify(refreshedUser));
+      // Keep the permission cache in step with the role the refreshed user now holds.
+      storePermissions(refreshedUser.permissions);
       setStore((prev) => ({
         ...prev,
         user: refreshedUser,

@@ -80,6 +80,7 @@ const TRANSLATIONS = {
     title: "ການຕັ້ງຄ່າລະບົບ",
     invites: "ການເຊື້ອເຊີນ",
     users: "ຜູ້ໃຊ້",
+    roles: "Roles & Permissions",
     workspaces: "ພື້ນທີ່ເຮັດວຽກ",
     "workspace-chats": "ປະຫວັດການສົນທະນາ",
     customization: "ການປັບແຕ່ງ",

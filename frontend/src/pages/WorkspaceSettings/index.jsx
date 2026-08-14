@@ -24,6 +24,7 @@ import WorkspaceAgentConfiguration from "./AgentConfig";
 import useUser from "@/hooks/useUser";
 import { useTranslation } from "react-i18next";
 import System from "@/models/system";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 const TABS = {
   "general-appearance": GeneralAppearance,
@@ -110,7 +111,7 @@ function ShowWorkspaceChat() {
             title={t("workspaces—settings.members")}
             icon={<User className="h-6 w-6" />}
             to={paths.workspace.settings.members(slug)}
-            visible={["admin", "manager"].includes(user?.role)}
+            visible={userCan(PERMISSIONS.WORKSPACES_MANAGE_MEMBERS, user)}
           />
           <TabItem
             title={t("workspaces—settings.agent")}

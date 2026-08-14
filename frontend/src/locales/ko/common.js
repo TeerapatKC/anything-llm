@@ -71,6 +71,7 @@ const TRANSLATIONS = {
     title: "인스턴스 설정",
     invites: "초대",
     users: "사용자",
+    roles: "Roles & Permissions",
     workspaces: "워크스페이스",
     "workspace-chats": "워크스페이스 채팅",
     customization: "사용자 정의",

@@ -81,6 +81,7 @@ const TRANSLATIONS = {
     title: "Pengaturan Instance",
     invites: "Undangan",
     users: "Pengguna",
+    roles: "Roles & Permissions",
     workspaces: "Ruang Kerja",
     "workspace-chats": "Obrolan Ruang Kerja",
     customization: "Kustomisasi",

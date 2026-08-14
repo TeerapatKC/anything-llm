@@ -73,6 +73,7 @@ const TRANSLATIONS = {
     title: "Instelling Instanties",
     invites: "Uitnodigingen",
     users: "Gebruikers",
+    roles: "Roles & Permissions",
     workspaces: "Werkruimten",
     "workspace-chats": "Werkruimte Chats",
     customization: "Aanpassing",

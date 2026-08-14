@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { safeJsonParse } from "@/utils/request";
 import { isPathMatch } from "@/utils/paths";
 import useScrollActiveItemIntoView from "@/hooks/useScrollActiveItemIntoView";
+import { userCanAny } from "@/utils/permissions";
 
 export default function MenuOption({
   btnText,
@@ -12,7 +13,7 @@ export default function MenuOption({
   childOptions = [],
   flex = false,
   user = null,
-  roles = [],
+  permissions = [],
   hidden = false,
   isChild = false,
 }) {
@@ -45,18 +46,14 @@ export default function MenuOption({
 
   // If this option is a parent level option
   if (!isChild) {
-    // and has no children then use its flex props and roles prop directly
-    if (!hasChildren) {
-      if (!flex && !roles.includes(user?.role)) return null;
-      if (flex && !!user && !roles.includes(user?.role)) return null;
-    }
+    // and has no children then use its flex props and permissions prop directly
+    if (!hasChildren && !isVisibleTo(user, permissions, flex)) return null;
 
     // if has children and no visible children - remove it.
     if (hasChildren && !hasVisibleChildren) return null;
   } else {
     // is a child so we use it's permissions
-    if (!flex && !roles.includes(user?.role)) return null;
-    if (flex && !!user && !roles.includes(user?.role)) return null;
+    if (!isVisibleTo(user, permissions, flex)) return null;
   }
 
   const handleClick = (e) => {
@@ -121,7 +118,7 @@ export default function MenuOption({
           {childOptions.map((childOption, index) => (
             <MenuOption
               key={index}
-              {...childOption} // flex and roles go here.
+              {...childOption} // flex and permissions go here.
               user={user}
               isChild={true}
             />
@@ -165,31 +162,31 @@ function useIsExpanded({
 }
 
 /**
- * Checks if the child options are visible to the user.
- * This hides the top level options if the child options are not visible
- * for either the users permissions or the child options hidden prop is set to true by other means.
- * If all child options return false for `isVisible` then the parent option will not be visible as well.
+ * Whether an option is shown to a user. `flex` marks options that also make sense in
+ * single-user mode, where there is no user record and the single operator holds
+ * everything; without it an option is only ever shown to a signed-in user whose role
+ * grants one of its permissions.
+ * @param {Object|null} user
+ * @param {string[]} permissions
+ * @param {boolean} flex
+ * @returns {boolean}
+ */
+function isVisibleTo(user, permissions = [], flex = false) {
+  if (!user) return flex;
+  return userCanAny(permissions, user);
+}
+
+/**
+ * Whether any child option is visible to the user. If none are, the parent option is
+ * hidden too rather than expanding into an empty list.
  * @param {object} user - The user object.
  * @param {array} childOptions - The child options.
- * @returns {boolean} - True if the child options are visible, false otherwise.
+ * @returns {boolean}
  */
 function hasVisibleOptions(user = null, childOptions = []) {
   if (!Array.isArray(childOptions) || childOptions?.length === 0) return false;
-
-  function isVisible({
-    roles = [],
-    user = null,
-    flex = false,
-    hidden = false,
-  }) {
-    if (hidden) return false;
-    if (!flex && !roles.includes(user?.role)) return false;
-    if (flex && !!user && !roles.includes(user?.role)) return false;
-    return true;
-  }
-
-  return childOptions.some((opt) =>
-    isVisible({ roles: opt.roles, user, flex: opt.flex, hidden: opt.hidden })
+  return childOptions.some(
+    (opt) => !opt.hidden && isVisibleTo(user, opt.permissions, opt.flex)
   );
 }
 

@@ -27,6 +27,7 @@ import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSetti
 import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/WorkspaceModelPicker";
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
+import { userIsChatOnly } from "@/utils/permissions";
 
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
@@ -141,7 +142,7 @@ export default function Home() {
     );
   }
 
-  if (!workspace && user?.role === "default") {
+  if (!workspace && userIsChatOnly(user)) {
     return <NoWorkspacesAssigned />;
   }
 

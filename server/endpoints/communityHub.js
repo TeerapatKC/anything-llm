@@ -9,16 +9,19 @@ const {
 const { EventLogs } = require("../models/eventLogs");
 const { Telemetry } = require("../models/telemetry");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
 
 function communityHubEndpoints(app) {
   if (!app) return;
 
   app.get(
     "/community-hub/settings",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+    ],
     async (_, response) => {
       try {
         const { connectionKey } = await SystemSettings.hubSettings();
@@ -32,7 +35,10 @@ function communityHubEndpoints(app) {
 
   app.post(
     "/community-hub/settings",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+    ],
     async (request, response) => {
       try {
         const data = reqBody(request);
@@ -48,7 +54,10 @@ function communityHubEndpoints(app) {
 
   app.get(
     "/community-hub/explore",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+    ],
     async (_, response) => {
       try {
         const exploreItems = await CommunityHub.fetchExploreItems();
@@ -66,7 +75,11 @@ function communityHubEndpoints(app) {
 
   app.post(
     "/community-hub/item",
-    [validatedRequest, flexUserRoleValid([ROLES.admin]), communityHubItem],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      communityHubItem,
+    ],
     async (_request, response) => {
       try {
         response.status(200).json({
@@ -90,7 +103,11 @@ function communityHubEndpoints(app) {
    */
   app.post(
     "/community-hub/apply",
-    [validatedRequest, flexUserRoleValid([ROLES.admin]), communityHubItem],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      communityHubItem,
+    ],
     async (request, response) => {
       try {
         const { options = {} } = reqBody(request);
@@ -131,7 +148,7 @@ function communityHubEndpoints(app) {
     "/community-hub/import",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.admin]),
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
       communityHubItem,
       communityHubDownloadsEnabled,
     ],
@@ -169,7 +186,10 @@ function communityHubEndpoints(app) {
 
   app.get(
     "/community-hub/items",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+    ],
     async (_, response) => {
       try {
         const { connectionKey } = await SystemSettings.hubSettings();
@@ -184,7 +204,10 @@ function communityHubEndpoints(app) {
 
   app.post(
     "/community-hub/:communityHubItemType/create",
-    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+    ],
     async (request, response) => {
       try {
         const { communityHubItemType } = request.params;

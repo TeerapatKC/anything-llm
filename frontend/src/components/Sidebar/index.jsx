@@ -26,6 +26,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PERMISSIONS, userCan, userIsChatOnly } from "@/utils/permissions";
 
 /**
  * Wraps a page's sidebar + main content in shadcn's SidebarProvider, which is
@@ -57,7 +58,7 @@ export default function Sidebar() {
     showModal: showNewWsModal,
     hideModal: hideNewWsModal,
   } = useNewWorkspaceModal();
-  const canCreateWorkspace = !user || user?.role !== "default";
+  const canCreateWorkspace = userCan(PERMISSIONS.WORKSPACES_CREATE, user);
 
   return (
     <SidebarPrimitive collapsible="icon" className="p-0">
@@ -193,7 +194,7 @@ export function SidebarMobileHeader() {
                   style={{ objectFit: "contain" }}
                 />
               </div>
-              {(!user || user?.role !== "default") && (
+              {userCan(PERMISSIONS.WORKSPACES_CREATE, user) && (
                 <div className="flex gap-x-2 items-center text-slate-500 shink-0">
                   <SettingsButton />
                 </div>
@@ -225,7 +226,7 @@ export function SidebarMobileHeader() {
 
 function NewWorkspaceButton({ user, showNewWsModal }) {
   const { t } = useTranslation();
-  if (!!user && user?.role === "default") return null;
+  if (userIsChatOnly(user)) return null;
 
   return (
     <div className="flex gap-x-2 items-center justify-between">

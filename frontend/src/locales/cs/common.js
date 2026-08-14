@@ -80,6 +80,7 @@ const TRANSLATIONS = {
     title: "Nastavení instance",
     invites: "Pozvánky",
     users: "Uživatelé",
+    roles: "Roles & Permissions",
     workspaces: "Pracovní prostory",
     "workspace-chats": "Chaty pracovních prostorů",
     customization: "Přizpůsobení",

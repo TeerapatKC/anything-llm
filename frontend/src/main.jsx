@@ -3,10 +3,10 @@ import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "@/App.jsx";
 import PrivateRoute, {
-  AdminRoute,
-  ManagerRoute,
+  PermissionRoute,
   SingleUserRoute,
 } from "@/components/PrivateRoute";
+import { PERMISSIONS } from "@/utils/permissions";
 import Login from "@/pages/Login";
 import SimpleSSOPassthrough from "@/pages/Login/SSO/simple";
 import OnboardingFlow from "@/pages/OnboardingFlow";
@@ -43,7 +43,14 @@ const router = createBrowserRouter([
           const { default: WorkspaceSettings } = await import(
             "@/pages/WorkspaceSettings"
           );
-          return { element: <ManagerRoute Component={WorkspaceSettings} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={WorkspaceSettings}
+                permissions={[PERMISSIONS.WORKSPACES_MANAGE]}
+              />
+            ),
+          };
         },
       },
       {
@@ -70,7 +77,14 @@ const router = createBrowserRouter([
           const { default: GeneralLLMPreference } = await import(
             "@/pages/GeneralSettings/LLMPreference"
           );
-          return { element: <AdminRoute Component={GeneralLLMPreference} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={GeneralLLMPreference}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -80,7 +94,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/TranscriptionPreference"
           );
           return {
-            element: <AdminRoute Component={GeneralTranscriptionPreference} />,
+            element: (
+              <PermissionRoute
+                Component={GeneralTranscriptionPreference}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
           };
         },
       },
@@ -91,7 +110,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/AudioPreference"
           );
           return {
-            element: <AdminRoute Component={GeneralAudioPreference} />,
+            element: (
+              <PermissionRoute
+                Component={GeneralAudioPreference}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
           };
         },
       },
@@ -102,7 +126,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/EmbeddingPreference"
           );
           return {
-            element: <AdminRoute Component={GeneralEmbeddingPreference} />,
+            element: (
+              <PermissionRoute
+                Component={GeneralEmbeddingPreference}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
           };
         },
       },
@@ -113,7 +142,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/ImageGenerationPreference"
           );
           return {
-            element: <AdminRoute Component={ImageGenerationPreference} />,
+            element: (
+              <PermissionRoute
+                Component={ImageGenerationPreference}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
           };
         },
       },
@@ -124,7 +158,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/EmbeddingTextSplitterPreference"
           );
           return {
-            element: <AdminRoute Component={EmbeddingTextSplitterPreference} />,
+            element: (
+              <PermissionRoute
+                Component={EmbeddingTextSplitterPreference}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
           };
         },
       },
@@ -135,7 +174,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/VectorDatabase"
           );
           return {
-            element: <AdminRoute Component={GeneralVectorDatabase} />,
+            element: (
+              <PermissionRoute
+                Component={GeneralVectorDatabase}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
           };
         },
       },
@@ -143,7 +187,14 @@ const router = createBrowserRouter([
         path: "/settings/agents",
         lazy: async () => {
           const { default: AdminAgents } = await import("@/pages/Admin/Agents");
-          return { element: <AdminRoute Component={AdminAgents} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminAgents}
+                permissions={[PERMISSIONS.AGENTS_MANAGE_SKILLS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -154,7 +205,11 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <AdminRoute Component={AgentBuilder} hideUserMenu={true} />
+              <PermissionRoute
+                Component={AgentBuilder}
+                permissions={[PERMISSIONS.AGENTS_FLOWS]}
+                hideUserMenu={true}
+              />
             ),
           };
         },
@@ -167,7 +222,11 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <AdminRoute Component={AgentBuilder} hideUserMenu={true} />
+              <PermissionRoute
+                Component={AgentBuilder}
+                permissions={[PERMISSIONS.AGENTS_FLOWS]}
+                hideUserMenu={true}
+              />
             ),
           };
         },
@@ -176,7 +235,14 @@ const router = createBrowserRouter([
         path: "/settings/event-logs",
         lazy: async () => {
           const { default: AdminLogs } = await import("@/pages/Admin/Logging");
-          return { element: <AdminRoute Component={AdminLogs} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminLogs}
+                permissions={[PERMISSIONS.SYSTEM_EVENT_LOGS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -185,7 +251,14 @@ const router = createBrowserRouter([
           const { default: ChatEmbedWidgets } = await import(
             "@/pages/GeneralSettings/ChatEmbedWidgets"
           );
-          return { element: <AdminRoute Component={ChatEmbedWidgets} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={ChatEmbedWidgets}
+                permissions={[PERMISSIONS.EMBEDS_MANAGE]}
+              />
+            ),
+          };
         },
       },
       // Manager routes
@@ -195,7 +268,14 @@ const router = createBrowserRouter([
           const { default: GeneralSecurity } = await import(
             "@/pages/GeneralSettings/Security"
           );
-          return { element: <ManagerRoute Component={GeneralSecurity} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={GeneralSecurity}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -204,7 +284,14 @@ const router = createBrowserRouter([
           const { default: PrivacyAndData } = await import(
             "@/pages/GeneralSettings/PrivacyAndData"
           );
-          return { element: <AdminRoute Component={PrivacyAndData} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={PrivacyAndData}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -213,7 +300,14 @@ const router = createBrowserRouter([
           const { default: InterfaceSettings } = await import(
             "@/pages/GeneralSettings/Settings/Interface"
           );
-          return { element: <ManagerRoute Component={InterfaceSettings} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={InterfaceSettings}
+                permissions={[PERMISSIONS.SYSTEM_APPEARANCE]}
+              />
+            ),
+          };
         },
       },
       {
@@ -222,7 +316,14 @@ const router = createBrowserRouter([
           const { default: BrandingSettings } = await import(
             "@/pages/GeneralSettings/Settings/Branding"
           );
-          return { element: <ManagerRoute Component={BrandingSettings} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={BrandingSettings}
+                permissions={[PERMISSIONS.SYSTEM_APPEARANCE]}
+              />
+            ),
+          };
         },
       },
       {
@@ -231,7 +332,14 @@ const router = createBrowserRouter([
           const { default: DefaultSystemPrompt } = await import(
             "@/pages/Admin/DefaultSystemPrompt"
           );
-          return { element: <AdminRoute Component={DefaultSystemPrompt} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={DefaultSystemPrompt}
+                permissions={[PERMISSIONS.SYSTEM_PROMPTS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -240,7 +348,14 @@ const router = createBrowserRouter([
           const { default: ChatSettings } = await import(
             "@/pages/GeneralSettings/Settings/Chat"
           );
-          return { element: <ManagerRoute Component={ChatSettings} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={ChatSettings}
+                permissions={[PERMISSIONS.SYSTEM_APPEARANCE]}
+              />
+            ),
+          };
         },
       },
       {
@@ -249,7 +364,14 @@ const router = createBrowserRouter([
           const { default: ExperimentalFeatures } = await import(
             "@/pages/Admin/ExperimentalFeatures"
           );
-          return { element: <AdminRoute Component={ExperimentalFeatures} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={ExperimentalFeatures}
+                permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
+              />
+            ),
+          };
         },
       },
       {
@@ -258,7 +380,14 @@ const router = createBrowserRouter([
           const { default: GeneralApiKeys } = await import(
             "@/pages/GeneralSettings/ApiKeys"
           );
-          return { element: <AdminRoute Component={GeneralApiKeys} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={GeneralApiKeys}
+                permissions={[PERMISSIONS.SYSTEM_API_KEYS]}
+              />
+            ),
+          };
         },
       },
       {
@@ -267,7 +396,14 @@ const router = createBrowserRouter([
           const { default: ModelRouters } = await import(
             "@/pages/GeneralSettings/ModelRouters"
           );
-          return { element: <AdminRoute Component={ModelRouters} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={ModelRouters}
+                permissions={[PERMISSIONS.SYSTEM_MODEL_ROUTING]}
+              />
+            ),
+          };
         },
       },
       {
@@ -276,7 +412,14 @@ const router = createBrowserRouter([
           const { default: RouterRulesPage } = await import(
             "@/pages/GeneralSettings/ModelRouters/RouterRulesPage"
           );
-          return { element: <AdminRoute Component={RouterRulesPage} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={RouterRulesPage}
+                permissions={[PERMISSIONS.SYSTEM_MODEL_ROUTING]}
+              />
+            ),
+          };
         },
       },
       {
@@ -286,7 +429,12 @@ const router = createBrowserRouter([
             "@/pages/Admin/SystemPromptVariables"
           );
           return {
-            element: <AdminRoute Component={SystemPromptVariables} />,
+            element: (
+              <PermissionRoute
+                Component={SystemPromptVariables}
+                permissions={[PERMISSIONS.SYSTEM_PROMPTS]}
+              />
+            ),
           };
         },
       },
@@ -297,7 +445,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/BrowserExtensionApiKey"
           );
           return {
-            element: <ManagerRoute Component={GeneralBrowserExtension} />,
+            element: (
+              <PermissionRoute
+                Component={GeneralBrowserExtension}
+                permissions={[PERMISSIONS.SYSTEM_BROWSER_EXTENSION]}
+              />
+            ),
           };
         },
       },
@@ -307,7 +460,14 @@ const router = createBrowserRouter([
           const { default: GeneralChats } = await import(
             "@/pages/GeneralSettings/Chats"
           );
-          return { element: <ManagerRoute Component={GeneralChats} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={GeneralChats}
+                permissions={[PERMISSIONS.CHATS_VIEW_ALL]}
+              />
+            ),
+          };
         },
       },
       {
@@ -316,14 +476,42 @@ const router = createBrowserRouter([
           const { default: AdminInvites } = await import(
             "@/pages/Admin/Invitations"
           );
-          return { element: <ManagerRoute Component={AdminInvites} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminInvites}
+                permissions={[PERMISSIONS.INVITES_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/settings/roles",
+        lazy: async () => {
+          const { default: AdminRoles } = await import("@/pages/Admin/Roles");
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminRoles}
+                permissions={[PERMISSIONS.ROLES_MANAGE]}
+              />
+            ),
+          };
         },
       },
       {
         path: "/settings/users",
         lazy: async () => {
           const { default: AdminUsers } = await import("@/pages/Admin/Users");
-          return { element: <ManagerRoute Component={AdminUsers} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminUsers}
+                permissions={[PERMISSIONS.USERS_VIEW]}
+              />
+            ),
+          };
         },
       },
       {
@@ -332,7 +520,14 @@ const router = createBrowserRouter([
           const { default: AdminWorkspaces } = await import(
             "@/pages/Admin/Workspaces"
           );
-          return { element: <ManagerRoute Component={AdminWorkspaces} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminWorkspaces}
+                permissions={[PERMISSIONS.WORKSPACES_VIEW_ALL]}
+              />
+            ),
+          };
         },
       },
       // Onboarding Flow
@@ -352,7 +547,12 @@ const router = createBrowserRouter([
             "@/pages/Admin/ExperimentalFeatures/Features/LiveSync/manage"
           );
           return {
-            element: <AdminRoute Component={LiveDocumentSyncManage} />,
+            element: (
+              <PermissionRoute
+                Component={LiveDocumentSyncManage}
+                permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
+              />
+            ),
           };
         },
       },
@@ -362,7 +562,14 @@ const router = createBrowserRouter([
           const { default: CommunityHubTrending } = await import(
             "@/pages/GeneralSettings/CommunityHub/Trending"
           );
-          return { element: <AdminRoute Component={CommunityHubTrending} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={CommunityHubTrending}
+                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
+              />
+            ),
+          };
         },
       },
       {
@@ -372,7 +579,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/CommunityHub/Authentication"
           );
           return {
-            element: <AdminRoute Component={CommunityHubAuthentication} />,
+            element: (
+              <PermissionRoute
+                Component={CommunityHubAuthentication}
+                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
+              />
+            ),
           };
         },
       },
@@ -383,7 +595,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/CommunityHub/ImportItem"
           );
           return {
-            element: <AdminRoute Component={CommunityHubImportItem} />,
+            element: (
+              <PermissionRoute
+                Component={CommunityHubImportItem}
+                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
+              />
+            ),
           };
         },
       },
@@ -393,7 +610,14 @@ const router = createBrowserRouter([
           const { default: MobileConnections } = await import(
             "@/pages/GeneralSettings/MobileConnections"
           );
-          return { element: <ManagerRoute Component={MobileConnections} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={MobileConnections}
+                permissions={[PERMISSIONS.SYSTEM_MOBILE]}
+              />
+            ),
+          };
         },
       },
       {
@@ -402,7 +626,14 @@ const router = createBrowserRouter([
           const { default: TelegramBotSettings } = await import(
             "@/pages/GeneralSettings/Connections/TelegramBot"
           );
-          return { element: <AdminRoute Component={TelegramBotSettings} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={TelegramBotSettings}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
+          };
         },
       },
       {

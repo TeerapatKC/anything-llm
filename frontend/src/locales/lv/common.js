@@ -72,6 +72,7 @@ const TRANSLATIONS = {
     title: "Instances iestatījumi",
     invites: "Ielūgumi",
     users: "Lietotāji",
+    roles: "Roles & Permissions",
     workspaces: "Darba telpas",
     "workspace-chats": "Darba telpas sarunas",
     customization: "Pielāgošana",

@@ -72,6 +72,7 @@ const TRANSLATIONS = {
     title: "Instantsi seaded",
     invites: "Kutsed",
     users: "Kasutajad",
+    roles: "Roles & Permissions",
     workspaces: "Tööruumid",
     "workspace-chats": "Tööruumi vestlused",
     customization: "Kohandamine",

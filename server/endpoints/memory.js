@@ -3,9 +3,9 @@ const { SystemSettings } = require("../models/systemSettings");
 const { userFromSession, reqBody } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
 const { validWorkspaceSlug } = require("../utils/middleware/validWorkspace");
 
 async function memoryFeatureEnabled(_req, response, next) {
@@ -45,7 +45,7 @@ function memoryEndpoints(app) {
     "/workspaces/:slug/memories",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validWorkspaceSlug,
     ],
@@ -72,7 +72,7 @@ function memoryEndpoints(app) {
     "/workspaces/:slug/memories",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validWorkspaceSlug,
     ],
@@ -101,7 +101,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
     ],
@@ -126,7 +126,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
     ],
@@ -146,7 +146,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId/promote",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
     ],
@@ -168,7 +168,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId/demote/:slug",
     [
       validatedRequest,
-      flexUserRoleValid([ROLES.all]),
+      flexUserPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
       validWorkspaceSlug,

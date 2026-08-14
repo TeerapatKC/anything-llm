@@ -19,10 +19,15 @@ const {
 } = require("../utils/helpers/admin");
 const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const {
-  strictMultiUserRoleValid,
-  flexUserRoleValid,
-  ROLES,
+  strictMultiUserPermissionValid,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const {
+  PERMISSIONS,
+  SETTINGS_ROUTE_PERMISSIONS,
+  permissionForSetting,
+} = require("../utils/permissions");
+const { Role } = require("../models/role");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const ImportedPlugin = require("../utils/agents/imported");
 const {
@@ -32,12 +37,30 @@ const {
   workspaceDeletionProtection,
 } = require("../utils/middleware/workspaceDeletionProtection");
 
+/**
+ * Builds a predicate that answers whether a user may read or write a given system
+ * setting label. In single-user mode there is only one operator, so everything passes.
+ * @param {import("express").Response} response
+ * @param {{role?: string}|null} user
+ * @returns {Promise<(label: string) => boolean>}
+ */
+async function settingPermissionChecker(response, user) {
+  const multiUserMode =
+    response.locals?.multiUserMode ?? (await SystemSettings.isMultiUserMode());
+  if (!multiUserMode) return () => true;
+  const granted = new Set(await Role.permissionsForUser(user));
+  return (label) => granted.has(permissionForSetting(label));
+}
+
 function adminEndpoints(app) {
   if (!app) return;
 
   app.get(
     "/admin/users",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.USERS_VIEW]),
+    ],
     async (_request, response) => {
       try {
         const users = await User.where();
@@ -51,12 +74,18 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/users/new",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
         const newUserParams = reqBody(request);
-        const roleValidation = validRoleSelection(currUser, newUserParams);
+        const roleValidation = await validRoleSelection(
+          currUser,
+          newUserParams
+        );
 
         if (!roleValidation.valid) {
           response
@@ -87,7 +116,10 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/user/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
@@ -95,13 +127,13 @@ function adminEndpoints(app) {
         const updates = reqBody(request);
         const user = await User.get({ id: Number(id) });
 
-        const canModify = validCanModify(currUser, user);
+        const canModify = await validCanModify(currUser, user);
         if (!canModify.valid) {
           response.status(200).json({ success: false, error: canModify.error });
           return;
         }
 
-        const roleValidation = validRoleSelection(currUser, updates);
+        const roleValidation = await validRoleSelection(currUser, updates);
         if (!roleValidation.valid) {
           response
             .status(200)
@@ -128,14 +160,17 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/user/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
         const { id } = request.params;
         const user = await User.get({ id: Number(id) });
 
-        const canModify = validCanModify(currUser, user);
+        const canModify = await validCanModify(currUser, user);
         if (!canModify.valid) {
           response.status(200).json({ success: false, error: canModify.error });
           return;
@@ -161,7 +196,10 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/invites",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.INVITES_MANAGE]),
+    ],
     async (_request, response) => {
       try {
         const invites = await Invite.whereWithUsers();
@@ -177,7 +215,7 @@ function adminEndpoints(app) {
     "/admin/invite/new",
     [
       validatedRequest,
-      strictMultiUserRoleValid([ROLES.admin, ROLES.manager]),
+      strictMultiUserPermissionValid([PERMISSIONS.INVITES_MANAGE]),
       simpleSSOLoginDisabledMiddleware,
     ],
     async (request, response) => {
@@ -207,7 +245,10 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/invite/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.INVITES_MANAGE]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -227,7 +268,10 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/workspaces",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_VIEW_ALL]),
+    ],
     async (_request, response) => {
       try {
         const workspaces = await Workspace.whereWithUsers();
@@ -241,7 +285,10 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/workspaces/:workspaceId/users",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE_MEMBERS]),
+    ],
     async (request, response) => {
       try {
         const { workspaceId } = request.params;
@@ -256,7 +303,10 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/workspaces/new",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -275,7 +325,10 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/workspaces/:workspaceId/update-users",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE_MEMBERS]),
+    ],
     async (request, response) => {
       try {
         const { workspaceId } = request.params;
@@ -296,7 +349,7 @@ function adminEndpoints(app) {
     "/admin/workspaces/:id",
     [
       validatedRequest,
-      strictMultiUserRoleValid([ROLES.admin, ROLES.manager]),
+      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_DELETE]),
       workspaceDeletionProtection,
     ],
     async (request, response) => {
@@ -330,7 +383,7 @@ function adminEndpoints(app) {
   // System preferences but only by array of labels
   app.get(
     "/admin/system-preferences-for",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -349,26 +402,16 @@ function adminEndpoints(app) {
           "meta_page_favicon",
         ];
 
-        // Managers can only read a limited set of settings.
-        // These match the ManagerRoute pages in the frontend.
-        const managerAllowedFields = [
-          "custom_app_name",
-          "footer_data",
-          "support_email",
-          "meta_page_title",
-          "meta_page_favicon",
-        ];
+        // Each setting is gated by its own permission, so a caller only ever sees the
+        // settings their role was ticked for.
+        const canRead = await settingPermissionChecker(response, user);
 
         for (const label of labels) {
           // Skip any settings that are not explicitly defined as public
           if (!SystemSettings.publicFields.includes(label)) continue;
 
-          // Managers can only read manager-allowed fields
-          if (
-            user?.role === ROLES.manager &&
-            !managerAllowedFields.includes(label)
-          )
-            continue;
+          // Skip settings this user's role was not granted
+          if (!canRead(label)) continue;
 
           // Only get the embedder if the setting actually needs it
           let embedder = needEmbedder.includes(label)
@@ -461,33 +504,22 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/system-preferences",
-    [validatedRequest, flexUserRoleValid([ROLES.admin, ROLES.manager])],
+    [validatedRequest, flexUserPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
-        let updates = reqBody(request);
+        const updates = reqBody(request);
 
-        // Managers can only update a limited set of settings.
-        // These match the ManagerRoute pages in the frontend.
-        // Admin users can update all supportedFields without restriction.
-        if (user?.role === ROLES.manager) {
-          const managerAllowedFields = [
-            "custom_app_name",
-            "footer_data",
-            "support_email",
-            "meta_page_title",
-            "meta_page_favicon",
-          ];
-          const filteredUpdates = {};
-          for (const key of Object.keys(updates)) {
-            if (managerAllowedFields.includes(key)) {
-              filteredUpdates[key] = updates[key];
-            }
-          }
-          updates = filteredUpdates;
+        // Drop any setting the caller's role was not granted permission over, so a role
+        // with only `system.appearance` cannot slip an LLM key change into the payload.
+        const canWrite = await settingPermissionChecker(response, user);
+        const permittedUpdates = {};
+        for (const key of Object.keys(updates)) {
+          if (!canWrite(key)) continue;
+          permittedUpdates[key] = updates[key];
         }
 
-        await SystemSettings.updateSettings(updates);
+        await SystemSettings.updateSettings(permittedUpdates);
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.error(e);
@@ -498,7 +530,10 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/api-keys",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
+    ],
     async (_request, response) => {
       try {
         const apiKeys = await ApiKey.whereWithUser({});
@@ -518,7 +553,10 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/generate-api-key",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -542,7 +580,10 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/delete-api-key/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin])],
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;

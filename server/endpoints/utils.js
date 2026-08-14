@@ -1,8 +1,8 @@
 const { SystemSettings } = require("../models/systemSettings");
 const {
-  flexUserRoleValid,
-  ROLES,
+  flexUserPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
   validExportTypes,
@@ -34,7 +34,7 @@ function utilEndpoints(app) {
 
   app.post(
     "/export-chat/:type",
-    [validatedRequest, flexUserRoleValid([ROLES.all])],
+    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const { type } = request.params;
