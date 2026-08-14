@@ -126,7 +126,19 @@ jest.mock("../../utils/prisma", () => ({
           (r.workspace_id ?? null) === where.workspace_id;
         return nameOk && defaultOk && wsOk && (nameOk || defaultOk);
       });
-      return row ? { ...row, permissions: mockWsGrantsFor(row.id) } : null;
+      return row
+        ? {
+            ...row,
+            permissions: mockWsGrantsFor(row.id),
+            workspace: row.workspace_id
+              ? {
+                  id: row.workspace_id,
+                  name: `Workspace ${row.workspace_id}`,
+                  slug: `workspace-${row.workspace_id}`,
+                }
+              : null,
+          }
+        : null;
     },
     findMany: async ({ where } = {}) =>
       mockDb.wsRoles
@@ -137,7 +149,17 @@ jest.mock("../../utils/prisma", () => ({
               (r.workspace_id ?? null) === (clause.workspace_id ?? null)
           );
         })
-        .map((r) => ({ ...r, permissions: mockWsGrantsFor(r.id) })),
+        .map((r) => ({
+          ...r,
+          permissions: mockWsGrantsFor(r.id),
+          workspace: r.workspace_id
+            ? {
+                id: r.workspace_id,
+                name: `Workspace ${r.workspace_id}`,
+                slug: `workspace-${r.workspace_id}`,
+              }
+            : null,
+        })),
     create: async ({ data }) => {
       const row = {
         workspace_id: null,
@@ -541,6 +563,11 @@ describe("workspace-owned roles", () => {
       workspaceId: ALPHA,
     });
     expect(role.workspace_id).toBe(ALPHA);
+    expect(role.workspace).toEqual({
+      id: ALPHA,
+      name: `Workspace ${ALPHA}`,
+      slug: `workspace-${ALPHA}`,
+    });
 
     const alphaNames = (await WorkspaceRole.availableFor(ALPHA)).map(
       (r) => r.name

@@ -201,6 +201,17 @@ function RolesPanel({ scope }) {
                           <Lock className="h-3 w-3" /> Built-in
                         </Badge>
                       )}
+                      {isWorkspace && !role.isSystem && (
+                        <Badge
+                          variant="outline"
+                          className="gap-x-1 text-[10px]"
+                        >
+                          {role.workspace_id === null
+                            ? "Shared"
+                            : (role.workspace?.name ??
+                              `Workspace #${role.workspace_id}`)}
+                        </Badge>
+                      )}
                       {role.isDefault && (
                         <Badge
                           variant="secondary"

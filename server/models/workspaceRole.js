@@ -364,7 +364,10 @@ const WorkspaceRole = {
       const roles = await prisma.workspace_roles.findMany({
         where: clause,
         orderBy: [{ isSystem: "desc" }, { id: "asc" }],
-        include: { permissions: { include: { permission: true } } },
+        include: {
+          permissions: { include: { permission: true } },
+          workspace: { select: { id: true, name: true, slug: true } },
+        },
       });
       return roles.map((role) => this._flatten(role));
     } catch (error) {
@@ -381,7 +384,10 @@ const WorkspaceRole = {
     try {
       const role = await prisma.workspace_roles.findFirst({
         where: clause,
-        include: { permissions: { include: { permission: true } } },
+        include: {
+          permissions: { include: { permission: true } },
+          workspace: { select: { id: true, name: true, slug: true } },
+        },
       });
       return role ? this._flatten(role) : null;
     } catch (error) {
