@@ -123,15 +123,18 @@ function DeviceTypeTagWrapper({ text, bgClass, textClass }) {
 }
 
 /**
- * @param {{deviceType: ModelDefinition["deviceType"]}} deviceType
+ * Colored by device class, labelled by runtime when the provider knows one —
+ * "CUDA" or "WebGPU" tells you far more about whether a build will run on your
+ * machine than a bare "GPU" does.
+ * @param {{deviceType: ModelDefinition["deviceType"], runtime?: string}} props
  * @returns {React.ReactNode}
  */
-function DeviceTypeTag({ deviceType }) {
+function DeviceTypeTag({ deviceType, runtime = null }) {
   switch (deviceType?.toLowerCase()) {
     case "cpu":
       return (
         <DeviceTypeTagWrapper
-          text="CPU"
+          text={runtime || "CPU"}
           bgClass="bg-zinc-800 light:bg-zinc-200"
           textClass="text-theme-text-primary"
         />
@@ -139,7 +142,7 @@ function DeviceTypeTag({ deviceType }) {
     case "gpu":
       return (
         <DeviceTypeTagWrapper
-          text="GPU"
+          text={runtime || "GPU"}
           bgClass="bg-green-800 light:bg-green-200"
           textClass="text-theme-text-primary"
         />
@@ -147,19 +150,13 @@ function DeviceTypeTag({ deviceType }) {
     case "npu":
       return (
         <DeviceTypeTagWrapper
-          text="NPU"
+          text={runtime || "NPU"}
           bgClass="bg-indigo-800 light:bg-indigo-200"
           textClass="text-theme-text-primary"
         />
       );
     default:
-      return (
-        <DeviceTypeTagWrapper
-          text="CPU"
-          bgClass="bg-zinc-800 light:bg-zinc-200"
-          textClass="text-theme-text-primary"
-        />
-      );
+      return null;
   }
 }
 
@@ -249,7 +246,12 @@ function ModelRow({
         disabled={processing}
         onClick={handleSetActiveModel}
       >
-        {ui.showRuntime && <DeviceTypeTag deviceType={model.deviceType} />}
+        {ui.showRuntime && (
+          <DeviceTypeTag
+            deviceType={model.deviceType}
+            runtime={model.runtime}
+          />
+        )}
         {!ui.showRuntime &&
           model.downloaded &&
           alias === "Downloaded Models" && (
@@ -299,7 +301,9 @@ function ModelRow({
             )}
           </>
         ) : null}
-        {!model.downloaded && !processing && (
+        {/* Only offer the install affordance when the caller can actually
+        install — a provider may list a catalog it cannot download from. */}
+        {!model.downloaded && !processing && !!downloadModel && (
           <Tooltip>
             <TooltipTrigger asChild>
               <button
