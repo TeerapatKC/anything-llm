@@ -1,0 +1,264 @@
+import { useEffect, useState } from "react";
+import { Plus, PencilSimple, Trash, Lock, Copy } from "@phosphor-icons/react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import CTAButton from "@/components/lib/CTAButton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import Role, { WorkspaceRole } from "@/models/role";
+import RoleModal from "@/pages/Admin/Roles/RoleModal";
+import showToast from "@/utils/toast";
+
+/**
+ * Roles defined inside one workspace.
+ *
+ * The shared roles (Viewer, Contributor, ...) are defined instance-wide and are shown
+ * here read-only - editing them from a workspace would silently change what every other
+ * workspace means by that role. Roles created here belong to this workspace alone.
+ */
+export default function WorkspaceRoles({ workspace }) {
+  const [loading, setLoading] = useState(true);
+  const [roles, setRoles] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [canDefine, setCanDefine] = useState(false);
+  // null = closed, {} = creating, {...role} = editing
+  const [editing, setEditing] = useState(null);
+
+  async function reload() {
+    const [{ roles: _roles, canDefineRoles }, { categories: _categories }] =
+      await Promise.all([
+        WorkspaceRole.forWorkspace(workspace.slug),
+        Role.permissionCatalog("workspace"),
+      ]);
+    setRoles(_roles || []);
+    setCanDefine(!!canDefineRoles);
+    setCategories(_categories || []);
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    reload();
+  }, [workspace.slug]);
+
+  async function handleDelete(role) {
+    if (
+      !window.confirm(
+        `Delete the "${role.displayName}" role?\n\n${
+          role.memberCount > 0
+            ? `${role.memberCount} member(s) holding it will be moved to the default role.`
+            : "No members currently hold this role."
+        }`
+      )
+    )
+      return;
+
+    const { success, error, reassigned } =
+      await WorkspaceRole.deleteInWorkspace(workspace.slug, role.id);
+    if (!success) return showToast(error, "error", { clear: true });
+    showToast(
+      reassigned > 0
+        ? `Role deleted. ${reassigned} member(s) moved to the default role.`
+        : "Role deleted.",
+      "success",
+      { clear: true }
+    );
+    reload();
+  }
+
+  /**
+   * Shared roles cannot be edited here, so the way to get a tweaked version is to take
+   * a copy that belongs to this workspace. Opens the editor in "create" mode with the
+   * shared role's permissions already ticked.
+   */
+  function handleDuplicate(role) {
+    setEditing({
+      ...role,
+      id: undefined,
+      isSystem: false,
+      isDefault: false,
+      // Identifiers are capped at 32 characters server-side.
+      name: `${role.name}-${workspace.slug}`.slice(0, 32).replace(/-+$/, ""),
+      displayName: `${role.displayName} (${workspace.name})`.slice(0, 64),
+      description: role.description,
+    });
+  }
+
+  if (loading) {
+    return (
+      <Skeleton
+        height="60vh"
+        width="100%"
+        highlightColor="var(--theme-bg-primary)"
+        baseColor="var(--theme-bg-secondary)"
+        count={1}
+        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
+        containerClassName="flex w-full"
+      />
+    );
+  }
+
+  const shared = roles.filter((role) => !role.editableHere);
+  const own = roles.filter((role) => role.editableHere);
+
+  return (
+    <div className="flex flex-col w-full">
+      <div className="flex items-start justify-between gap-x-4">
+        <p className="text-xs text-theme-text-secondary max-w-[640px]">
+          Roles decide what each member may do in <b>{workspace.name}</b>. The
+          shared roles below come from the instance settings and are the same
+          everywhere; roles you create here exist only in this workspace.
+        </p>
+        {canDefine && (
+          <CTAButton className="shrink-0" onClick={() => setEditing({})}>
+            <Plus className="h-4 w-4" weight="bold" /> New role
+          </CTAButton>
+        )}
+      </div>
+
+      <Table variant="none" className="w-full max-w-[760px] text-sm mt-6">
+        <TableHeader
+          variant="none"
+          className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white/10 border-b border-opacity-60"
+        >
+          <TableRow variant="none">
+            <TableHead variant="none" scope="col" className="px-6 py-3">
+              Role
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
+              Permissions
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
+              Members
+            </TableHead>
+            <TableHead variant="none" scope="col" className="px-6 py-3">
+              {" "}
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody variant="none">
+          {own.length === 0 && (
+            <TableRow variant="none">
+              <TableCell
+                variant="none"
+                colSpan="4"
+                className="px-6 py-3 text-xs text-theme-text-secondary"
+              >
+                {workspace.name} has no roles of its own yet — every role below
+                is shared with the rest of the instance.
+                {canDefine &&
+                  " Use “New role”, or duplicate a shared role, to add one that only applies here."}
+              </TableCell>
+            </TableRow>
+          )}
+          {[...own, ...shared].map((role) => (
+            <TableRow
+              key={role.id}
+              variant="none"
+              className="bg-transparent text-theme-text-primary border-b border-white/10"
+            >
+              <TableCell variant="none" className="px-6 py-4">
+                <div className="flex items-center gap-x-2">
+                  <span className="font-medium">{role.displayName}</span>
+                  {!role.editableHere && (
+                    <Badge variant="outline" className="gap-x-1 text-[10px]">
+                      <Lock className="h-3 w-3" /> Shared
+                    </Badge>
+                  )}
+                  {role.isDefault && (
+                    <Badge variant="secondary" className="text-[10px]">
+                      Default
+                    </Badge>
+                  )}
+                </div>
+                <p className="text-xs text-theme-text-secondary mt-0.5">
+                  {role.description || role.name}
+                </p>
+                {!role.editableHere && (
+                  <p className="text-xs text-theme-text-secondary/70 mt-1 italic">
+                    Defined in instance settings and used by every workspace, so
+                    it cannot be changed from here.
+                    {canDefine &&
+                      " Duplicate it to make a version you can edit."}
+                  </p>
+                )}
+              </TableCell>
+              <TableCell
+                variant="none"
+                className="px-6 py-4 text-theme-text-secondary"
+              >
+                {role.permissions.length}
+              </TableCell>
+              <TableCell
+                variant="none"
+                className="px-6 py-4 text-theme-text-secondary"
+              >
+                {role.memberCount}
+              </TableCell>
+              <TableCell variant="none" className="px-6 py-4">
+                <div className="flex items-center gap-x-2 justify-end">
+                  {canDefine && role.editableHere && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditing(role)}
+                      >
+                        <PencilSimple className="h-4 w-4" /> Edit
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-red-400 hover:text-red-300"
+                        onClick={() => handleDelete(role)}
+                      >
+                        <Trash className="h-4 w-4" /> Delete
+                      </Button>
+                    </>
+                  )}
+                  {canDefine && !role.editableHere && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDuplicate(role)}
+                    >
+                      <Copy className="h-4 w-4" /> Duplicate
+                    </Button>
+                  )}
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Dialog
+        open={editing !== null}
+        onOpenChange={(open) => !open && setEditing(null)}
+      >
+        <DialogContent className="max-w-3xl bg-theme-bg-secondary border-theme-modal-border">
+          {editing !== null && (
+            <RoleModal
+              role={editing}
+              scope="workspace"
+              workspaceSlug={workspace.slug}
+              categories={categories}
+              onClose={() => setEditing(null)}
+              onSaved={() => {
+                setEditing(null);
+                reload();
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

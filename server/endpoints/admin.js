@@ -21,11 +21,13 @@ const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const {
   strictMultiUserPermissionValid,
   flexUserPermissionValid,
+  workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
   PERMISSIONS,
   SETTINGS_ROUTE_PERMISSIONS,
   permissionForSetting,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
 } = require("../utils/permissions");
 const { Role } = require("../models/role");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -287,7 +289,7 @@ function adminEndpoints(app) {
     "/admin/workspaces/:workspaceId/users",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE_MEMBERS]),
+      workspacePermissionValid([WS_PERMISSIONS.MEMBERS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -327,7 +329,7 @@ function adminEndpoints(app) {
     "/admin/workspaces/:workspaceId/update-users",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE_MEMBERS]),
+      workspacePermissionValid([WS_PERMISSIONS.MEMBERS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -349,7 +351,7 @@ function adminEndpoints(app) {
     "/admin/workspaces/:id",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_DELETE]),
+      workspacePermissionValid([WS_PERMISSIONS.DELETE]),
       workspaceDeletionProtection,
     ],
     async (request, response) => {

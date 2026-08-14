@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { FullScreenLoader } from "../Preloader";
 import validateSessionTokenForUser from "@/utils/session";
 import paths from "@/utils/paths";
@@ -9,7 +9,9 @@ import System from "@/models/system";
 import Role from "@/models/role";
 import {
   userCanAny,
+  workspaceCanAny,
   storePermissions,
+  storeWorkspacePermissions,
   clearPermissions,
   storeRoleLabel,
   clearRoleLabel,
@@ -24,8 +26,10 @@ import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
  */
 async function hydratePermissions() {
   if (!userFromStorage()) return; // single-user mode has no user record
-  const { permissions, roleDisplayName } = await Role.myPermissions();
+  const { permissions, workspacePermissions, roleDisplayName } =
+    await Role.myPermissions();
   storePermissions(permissions);
+  storeWorkspacePermissions(workspacePermissions);
   storeRoleLabel(roleDisplayName);
 }
 
@@ -124,6 +128,35 @@ export function PermissionRoute({
       <Component />
     </KeyboardShortcutWrapper>
   ) : (
+    <KeyboardShortcutWrapper>
+      <UserMenu>
+        <Component />
+      </UserMenu>
+    </KeyboardShortcutWrapper>
+  );
+}
+
+/**
+ * Allows a route only to users who hold one of `permissions` *inside the workspace the
+ * URL names*. Used for `/workspace/:slug/settings/...`, where the answer depends on
+ * which workspace is being opened rather than on any instance-wide role.
+ * @param {{Component: React.ComponentType, permissions: string[]}} props
+ */
+export function WorkspacePermissionRoute({ Component, permissions = [] }) {
+  const { isAuthd, shouldRedirectToOnboarding, multiUserMode } =
+    useIsAuthenticated();
+  const { slug } = useParams();
+  if (isAuthd === null) return <FullScreenLoader />;
+
+  if (shouldRedirectToOnboarding) {
+    return <Navigate to={paths.onboarding.home()} />;
+  }
+
+  const user = userFromStorage();
+  const allowed = !multiUserMode || workspaceCanAny(permissions, slug, user);
+  if (!isAuthd || !allowed) return <Navigate to={paths.home()} />;
+
+  return (
     <KeyboardShortcutWrapper>
       <UserMenu>
         <Component />

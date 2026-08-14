@@ -4,8 +4,12 @@ const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
   flexUserPermissionValid,
+  workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../utils/permissions");
 const { EventLogs } = require("../models/eventLogs");
 const { validWorkspaceSlug } = require("../utils/middleware/validWorkspace");
 const { CollectorApi } = require("../utils/collectorApi");
@@ -19,7 +23,7 @@ function workspaceParsedFilesEndpoints(app) {
     "/workspace/:slug/parsed-files",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -51,7 +55,7 @@ function workspaceParsedFilesEndpoints(app) {
     "/workspace/:slug/delete-parsed-files",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
       validWorkspaceSlug,
     ],
     async function (request, response) {
@@ -80,7 +84,7 @@ function workspaceParsedFilesEndpoints(app) {
     [
       validatedRequest,
       // Embed is still an admin/manager only feature
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_UPLOAD]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_UPLOAD]),
       validWorkspaceSlug,
     ],
     async function (request, response) {
@@ -130,7 +134,7 @@ function workspaceParsedFilesEndpoints(app) {
     "/workspace/:slug/parse",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_UPLOAD]),
       handleFileUpload,
       validWorkspaceSlug,
     ],

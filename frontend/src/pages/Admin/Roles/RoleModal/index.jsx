@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import Role from "@/models/role";
+import Role, { WorkspaceRole } from "@/models/role";
 import { PERMISSIONS } from "@/utils/permissions";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -23,10 +23,31 @@ function slugify(value = "") {
 }
 
 /**
- * Create or edit a role and tick the permissions it grants.
- * @param {{role: Object, categories: Array, onClose: Function, onSaved: Function}} props
+ * Create or edit a role and tick the permissions it grants. The same editor serves both
+ * scopes - only the API it saves to and the half of the catalog it shows differ.
+ * @param {{role: Object, scope: "system"|"workspace", categories: Array, onClose: Function, onSaved: Function}} props
  */
-export default function RoleModal({ role, categories, onClose, onSaved }) {
+export default function RoleModal({
+  role,
+  scope = "system",
+  workspaceSlug = null,
+  categories,
+  onClose,
+  onSaved,
+}) {
+  const api = scope === "workspace" ? WorkspaceRole : Role;
+  // When opened from inside a workspace the role belongs to that workspace alone, so
+  // it is saved through the workspace-scoped endpoints.
+  const save = workspaceSlug
+    ? {
+        create: (payload) => api.createInWorkspace(workspaceSlug, payload),
+        update: (id, payload) =>
+          api.updateInWorkspace(workspaceSlug, id, payload),
+      }
+    : {
+        create: (payload) => api.create(payload),
+        update: (id, payload) => api.update(id, payload),
+      };
   const isNew = !role?.id;
   const [displayName, setDisplayName] = useState(role?.displayName || "");
   const [name, setName] = useState(role?.name || "");
@@ -36,7 +57,8 @@ export default function RoleModal({ role, categories, onClose, onSaved }) {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const isSuperAdmin = selected.has(PERMISSIONS.SUPER_ADMIN);
+  const isSuperAdmin =
+    scope === "system" && selected.has(PERMISSIONS.SUPER_ADMIN);
   const totalPermissions = useMemo(
     () =>
       categories.reduce(
@@ -75,8 +97,8 @@ export default function RoleModal({ role, categories, onClose, onSaved }) {
       permissions: [...selected],
     };
     const { error: saveError } = isNew
-      ? await Role.create({ ...payload, name: name || slugify(displayName) })
-      : await Role.update(role.id, payload);
+      ? await save.create({ ...payload, name: name || slugify(displayName) })
+      : await save.update(role.id, payload);
 
     setSaving(false);
     if (saveError) return setError(saveError);
@@ -87,7 +109,13 @@ export default function RoleModal({ role, categories, onClose, onSaved }) {
     <>
       <DialogHeader>
         <DialogTitle>
-          {isNew ? "Create a role" : `Edit ${role.displayName}`}
+          {isNew
+            ? scope === "workspace"
+              ? workspaceSlug
+                ? "Create a role for this workspace"
+                : "Create a shared workspace role"
+              : "Create a system role"
+            : `Edit ${role.displayName}`}
         </DialogTitle>
       </DialogHeader>
 

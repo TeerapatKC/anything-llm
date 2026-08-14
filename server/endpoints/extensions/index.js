@@ -2,8 +2,11 @@ const { Telemetry } = require("../../models/telemetry");
 const { CollectorApi } = require("../../utils/collectorApi");
 const {
   flexUserPermissionValid,
+  anyWorkspacePermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../../utils/permissions");
+const {
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../../utils/permissions");
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
 const {
   isSupportedRepoProvider,
@@ -16,7 +19,7 @@ function extensionEndpoints(app) {
     "/ext/:repo_platform/branches",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
       isSupportedRepoProvider,
     ],
     async (request, response) => {
@@ -40,7 +43,7 @@ function extensionEndpoints(app) {
     "/ext/:repo_platform/repo",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
       isSupportedRepoProvider,
     ],
     async (request, response) => {
@@ -67,7 +70,7 @@ function extensionEndpoints(app) {
     "/ext/youtube/transcript",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
     ],
     async (request, response) => {
       try {
@@ -92,7 +95,7 @@ function extensionEndpoints(app) {
     "/ext/confluence",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
     ],
     async (request, response) => {
       try {
@@ -116,7 +119,7 @@ function extensionEndpoints(app) {
     "/ext/website-depth",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
     ],
     async (request, response) => {
       try {
@@ -140,7 +143,7 @@ function extensionEndpoints(app) {
     "/ext/drupalwiki",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
     ],
     async (request, response) => {
       try {
@@ -165,7 +168,7 @@ function extensionEndpoints(app) {
     "/ext/obsidian/vault",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
     ],
     async (request, response) => {
       try {
@@ -190,7 +193,7 @@ function extensionEndpoints(app) {
     "/ext/paperless-ngx",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_DATA_CONNECTORS]),
+      anyWorkspacePermissionValid([WS_PERMISSIONS.DATA_CONNECTORS]),
     ],
     async (request, response) => {
       try {

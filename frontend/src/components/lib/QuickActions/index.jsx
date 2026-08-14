@@ -31,10 +31,7 @@ export default function QuickActions({
         onClick={onEditWorkspace}
         show={
           hasAvailableWorkspace &&
-          userCanAny(
-            [PERMISSIONS.WORKSPACES_CREATE, PERMISSIONS.WORKSPACES_MANAGE],
-            user
-          )
+          userCanAny([PERMISSIONS.WORKSPACES_CREATE], user)
         }
       />
       <QuickActionButton

@@ -3,6 +3,7 @@ import { X } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Workspace from "../../../models/workspace";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import System from "../../../models/system";
 import { isMobileOnly } from "react-device-detect";
 import useUser from "../../../hooks/useUser";
@@ -17,7 +18,6 @@ import {
 } from "@/components/ui/dialog";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
 import { Button } from "@/components/ui/button";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 const noop = () => {};
 const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
@@ -83,7 +83,7 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </button>
           </div>
 
-          {userCan(PERMISSIONS.DOCUMENTS_UPLOAD, user) && (
+          {workspaceCan(WS.DOCUMENTS_UPLOAD, workspace?.slug, user) && (
             <ModalTabSwitcher
               selectedTab={selectedTab}
               setSelectedTab={setSelectedTab}
@@ -139,8 +139,12 @@ export function useManageWorkspaceModal() {
   const { user } = useUser();
   const [showing, setShowing] = useState(false);
 
-  function showModal() {
-    if (userCan(PERMISSIONS.DOCUMENTS_UPLOAD, user)) {
+  /**
+   * @param {string|null} workspaceSlug - the workspace the modal would manage; uploading
+   * is a per-workspace permission, so it has to be checked against that workspace.
+   */
+  function showModal(workspaceSlug = null) {
+    if (workspaceCan(WS.DOCUMENTS_UPLOAD, workspaceSlug, user)) {
       setShowing(true);
     }
   }

@@ -5,8 +5,12 @@ const { Telemetry } = require("../models/telemetry");
 const { streamChatWithWorkspace } = require("../utils/chats/stream");
 const {
   flexUserPermissionValid,
+  workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../utils/permissions");
 const { EventLogs } = require("../models/eventLogs");
 const {
   validWorkspaceAndThreadSlug,
@@ -24,7 +28,7 @@ function chatEndpoints(app) {
     "/workspace/:slug/stream-chat",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.CHATS_SEND]),
+      workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -110,7 +114,7 @@ function chatEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug/stream-chat",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.CHATS_SEND]),
+      workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       validWorkspaceAndThreadSlug,
     ],
     async (request, response) => {

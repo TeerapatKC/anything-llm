@@ -3,6 +3,7 @@ const {
   PERMISSIONS,
   PERMISSION_CATALOG,
   ALL_PERMISSION_KEYS,
+  SYSTEM_PERMISSION_KEYS,
   SYSTEM_ROLES,
   FALLBACK_ROLE,
   SUPER_ADMIN_ROLE,
@@ -56,14 +57,18 @@ const Role = {
       if (!newValue || typeof newValue !== "string") return "";
       return String(newValue).trim().slice(0, 500);
     },
-    /** Drops anything that is not a key in the code-defined catalog. */
+    /**
+     * Drops anything that is not a system-scope key in the code-defined catalog.
+     * Workspace-scope permissions are deliberately rejected here - they are granted
+     * per workspace through a workspace role, never instance-wide.
+     */
     permissions: (permissions = []) => {
       if (!Array.isArray(permissions)) return [];
       return [
         ...new Set(
           permissions
             .map((permission) => String(permission))
-            .filter((permission) => ALL_PERMISSION_KEYS.includes(permission))
+            .filter((permission) => SYSTEM_PERMISSION_KEYS.includes(permission))
         ),
       ];
     },
@@ -84,6 +89,7 @@ const Role = {
             label: permission.label,
             description: permission.description,
             category: permission.category,
+            scope: permission.scope,
             sortOrder: permission.order,
           },
           create: {
@@ -91,6 +97,7 @@ const Role = {
             label: permission.label,
             description: permission.description,
             category: permission.category,
+            scope: permission.scope,
             sortOrder: permission.order,
           },
         });
@@ -198,7 +205,9 @@ const Role = {
         cache.set(
           role.name,
           new Set(
-            keys.includes(PERMISSIONS.SUPER_ADMIN) ? ALL_PERMISSION_KEYS : keys
+            keys.includes(PERMISSIONS.SUPER_ADMIN)
+              ? SYSTEM_PERMISSION_KEYS
+              : keys
           )
         );
       }

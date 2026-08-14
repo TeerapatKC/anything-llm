@@ -5,6 +5,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
 import CTAButton from "@/components/lib/CTAButton";
+import { WorkspaceRole } from "@/models/role";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
+import useUser from "@/hooks/useUser";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Table,
@@ -16,23 +19,36 @@ import {
 } from "@/components/ui/table";
 
 export default function Members({ workspace }) {
+  const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
-  const [workspaceUsers, setWorkspaceUsers] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [workspaceRoles, setWorkspaceRoles] = useState([]);
   const [adminWorkspace, setAdminWorkspace] = useState(null);
 
+  const canManageMembers = workspaceCan(
+    WS.MEMBERS_MANAGE,
+    workspace?.slug,
+    user
+  );
   const { isOpen, openModal, closeModal } = useModal();
+
   useEffect(() => {
     async function fetchData() {
-      const _users = await Admin.users();
-      const workspaceUsers = await Admin.workspaceUsers(workspace.id);
-      const adminWorkspaces = await Admin.workspaces();
+      const [_users, { members: _members }, { roles }, adminWorkspaces] =
+        await Promise.all([
+          Admin.users(),
+          WorkspaceRole.members(workspace.slug),
+          WorkspaceRole.all(),
+          Admin.workspaces(),
+        ]);
       setAdminWorkspace(
         adminWorkspaces.find(
           (adminWorkspace) => adminWorkspace.id === workspace.id
         )
       );
-      setWorkspaceUsers(workspaceUsers);
+      setMembers(_members || []);
+      setWorkspaceRoles(roles || []);
       setUsers(_users);
       setLoading(false);
     }
@@ -72,7 +88,7 @@ export default function Members({ workspace }) {
               Username
             </TableHead>
             <TableHead variant="none" scope="col" className="px-6 py-3">
-              Role
+              Workspace role
             </TableHead>
             <TableHead variant="none" scope="col" className="px-6 py-3">
               Date Added
@@ -87,9 +103,15 @@ export default function Members({ workspace }) {
           </TableRow>
         </TableHeader>
         <TableBody variant="none">
-          {workspaceUsers.length > 0 ? (
-            workspaceUsers.map((user, index) => (
-              <WorkspaceMemberRow key={index} user={user} />
+          {members.length > 0 ? (
+            members.map((member) => (
+              <WorkspaceMemberRow
+                key={member.user_id}
+                member={member}
+                workspaceSlug={workspace.slug}
+                workspaceRoles={workspaceRoles}
+                canManage={canManageMembers}
+              />
             ))
           ) : (
             <TableRow variant="none">

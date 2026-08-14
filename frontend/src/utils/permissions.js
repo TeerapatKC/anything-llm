@@ -1,5 +1,9 @@
 import { userFromStorage, safeJsonParse } from "@/utils/request";
-import { AUTH_PERMISSIONS, AUTH_ROLE_LABEL } from "@/utils/constants";
+import {
+  AUTH_PERMISSIONS,
+  AUTH_ROLE_LABEL,
+  AUTH_WORKSPACE_PERMISSIONS,
+} from "@/utils/constants";
 
 /**
  * Mirror of the server permission catalog (`server/utils/permissions/index.js`).
@@ -24,18 +28,14 @@ export const PERMISSIONS = {
   USERS_ASSIGN_ROLES: "users.assign_roles",
   INVITES_MANAGE: "invites.manage",
   ROLES_MANAGE: "roles.manage",
+  WORKSPACE_ROLES_MANAGE: "workspace_roles.manage",
 
-  WORKSPACES_VIEW_ALL: "workspaces.view_all",
   WORKSPACES_CREATE: "workspaces.create",
-  WORKSPACES_MANAGE: "workspaces.manage",
-  WORKSPACES_DELETE: "workspaces.delete",
-  WORKSPACES_MANAGE_MEMBERS: "workspaces.manage_members",
+  WORKSPACES_VIEW_ALL: "workspaces.view_all",
+  WORKSPACES_MANAGE_ALL: "workspaces.manage_all",
 
-  DOCUMENTS_UPLOAD: "documents.upload",
   DOCUMENTS_MANAGE: "documents.manage",
-  DOCUMENTS_DATA_CONNECTORS: "documents.data_connectors",
 
-  CHATS_SEND: "chats.send",
   CHATS_VIEW_ALL: "chats.view_all",
   CHATS_UNLIMITED: "chats.unlimited",
 
@@ -45,6 +45,27 @@ export const PERMISSIONS = {
 
   EMBEDS_MANAGE: "embeds.manage",
   EMBEDS_VIEW_CHATS: "embeds.view_chats",
+};
+
+/**
+ * Mirror of the workspace-scope catalog. These are held per workspace, never globally -
+ * always resolve them with `workspaceCan(permission, workspaceId)`.
+ */
+export const WORKSPACE_PERMISSIONS = {
+  VIEW: "workspace.view",
+  CHAT: "workspace.chat",
+  THREADS_MANAGE: "workspace.threads.manage",
+  CHATS_VIEW_ALL: "workspace.chats.view_all",
+  CHATS_DELETE: "workspace.chats.delete",
+  DOCUMENTS_VIEW: "workspace.documents.view",
+  DOCUMENTS_UPLOAD: "workspace.documents.upload",
+  DOCUMENTS_MANAGE: "workspace.documents.manage",
+  DATA_CONNECTORS: "workspace.data_connectors",
+  SETTINGS_MANAGE: "workspace.settings.manage",
+  AGENTS_MANAGE: "workspace.agents.manage",
+  MEMBERS_MANAGE: "workspace.members.manage",
+  ROLES_MANAGE: "workspace.roles.manage",
+  DELETE: "workspace.delete",
 };
 
 /**
@@ -61,6 +82,58 @@ export function storePermissions(permissions = []) {
 /** Drops the cached permissions - call whenever the session ends. */
 export function clearPermissions() {
   window.localStorage.removeItem(AUTH_PERMISSIONS);
+  window.localStorage.removeItem(AUTH_WORKSPACE_PERMISSIONS);
+}
+
+/**
+ * Caches what the signed-in user may do inside each workspace, keyed by workspace id.
+ * @param {Record<string, string[]>} byWorkspaceId
+ */
+export function storeWorkspacePermissions(byWorkspaceId = {}) {
+  if (!byWorkspaceId || typeof byWorkspaceId !== "object") return;
+  window.localStorage.setItem(
+    AUTH_WORKSPACE_PERMISSIONS,
+    JSON.stringify(byWorkspaceId)
+  );
+}
+
+/**
+ * Whether the user holds a workspace permission *in one specific workspace*. Instance
+ * operators pass everywhere, mirroring the server.
+ * @param {string|string[]} permissions - all of these must be held
+ * @param {number|string|null} workspaceId
+ * @param {Object|null} [user] - omit to read the cached session user
+ * @returns {boolean}
+ */
+export function workspaceCan(permissions, workspaceId, user) {
+  const required = Array.isArray(permissions) ? permissions : [permissions];
+  const currentUser = user === undefined ? userFromStorage() : user;
+
+  // Single-user mode: one operator who implicitly holds everything.
+  if (!currentUser) return true;
+  if (userCanAny([PERMISSIONS.WORKSPACES_MANAGE_ALL], currentUser)) return true;
+  if (!workspaceId) return false;
+
+  const byWorkspace = safeJsonParse(
+    window.localStorage.getItem(AUTH_WORKSPACE_PERMISSIONS),
+    null
+  );
+  const held = byWorkspace?.[String(workspaceId)];
+  if (!Array.isArray(held)) return false;
+  return required.every((permission) => held.includes(permission));
+}
+
+/**
+ * Whether the user holds at least one of the workspace permissions in a workspace.
+ * @param {string[]} permissions
+ * @param {number|string|null} workspaceId
+ * @param {Object|null} [user] - omit to read the cached session user
+ * @returns {boolean}
+ */
+export function workspaceCanAny(permissions = [], workspaceId, user) {
+  return permissions.some((permission) =>
+    workspaceCan(permission, workspaceId, user)
+  );
 }
 
 /**
@@ -173,8 +246,9 @@ export function canManageRole(actor, roleName, roles = []) {
 }
 
 /**
- * True when the user has no elevated permissions at all - the "chat only" case that
- * used to be expressed as `role === "default"`.
+ * True when the user holds no instance-wide powers at all, so nothing under Settings is
+ * worth showing them. What they can do inside individual workspaces is a separate
+ * question answered by `workspaceCan`.
  * @param {Object|null} [user] - omit to read the cached session user
  * @returns {boolean}
  */
@@ -182,16 +256,15 @@ export function userIsChatOnly(user) {
   return !userCanAny(
     [
       PERMISSIONS.WORKSPACES_CREATE,
-      PERMISSIONS.WORKSPACES_MANAGE,
-      PERMISSIONS.WORKSPACES_DELETE,
-      PERMISSIONS.WORKSPACES_MANAGE_MEMBERS,
       PERMISSIONS.WORKSPACES_VIEW_ALL,
-      PERMISSIONS.DOCUMENTS_UPLOAD,
+      PERMISSIONS.WORKSPACES_MANAGE_ALL,
       PERMISSIONS.DOCUMENTS_MANAGE,
       PERMISSIONS.USERS_VIEW,
       PERMISSIONS.USERS_MANAGE,
       PERMISSIONS.INVITES_MANAGE,
       PERMISSIONS.ROLES_MANAGE,
+      PERMISSIONS.WORKSPACE_ROLES_MANAGE,
+      PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_SETTINGS,
       PERMISSIONS.SYSTEM_APPEARANCE,
     ],

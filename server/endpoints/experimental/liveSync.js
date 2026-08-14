@@ -9,8 +9,12 @@ const {
 } = require("../../utils/middleware/featureFlagEnabled");
 const {
   flexUserPermissionValid,
+  workspacePermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../../utils/permissions");
+const {
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../../utils/permissions");
 const { validWorkspaceSlug } = require("../../utils/middleware/validWorkspace");
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
 
@@ -89,7 +93,7 @@ function liveSyncEndpoints(app) {
     "/workspace/:slug/update-watch-status",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
       validWorkspaceSlug,
       featureFlagEnabled(DocumentSyncQueue.featureKey),
     ],

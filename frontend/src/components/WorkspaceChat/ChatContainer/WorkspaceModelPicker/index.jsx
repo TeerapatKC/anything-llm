@@ -13,7 +13,7 @@ import {
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
 import ModelRouterAPI from "@/models/modelRouter";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 
 async function resolveModelName(workspace, systemSettings, t) {
   const effectiveProvider =
@@ -83,9 +83,9 @@ export default function WorkspaceModelPicker({ workspaceSlug = null }) {
       window.removeEventListener(PROVIDER_SETUP_EVENT, handleProviderSetup);
   }, []);
 
-  // This feature is disabled for multi-user instances where the user is not an admin
-  if (!userCan(PERMISSIONS.WORKSPACES_MANAGE, user)) return null;
+  // Only offered to people who may change this workspace's settings.
   if (!slug || isMobile) return null;
+  if (!workspaceCan(WS.SETTINGS_MANAGE, slug, user)) return null;
 
   return (
     <>

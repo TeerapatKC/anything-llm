@@ -4,9 +4,10 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "@/App.jsx";
 import PrivateRoute, {
   PermissionRoute,
+  WorkspacePermissionRoute,
   SingleUserRoute,
 } from "@/components/PrivateRoute";
-import { PERMISSIONS } from "@/utils/permissions";
+import { PERMISSIONS, WORKSPACE_PERMISSIONS } from "@/utils/permissions";
 import Login from "@/pages/Login";
 import SimpleSSOPassthrough from "@/pages/Login/SSO/simple";
 import OnboardingFlow from "@/pages/OnboardingFlow";
@@ -45,9 +46,15 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <PermissionRoute
+              <WorkspacePermissionRoute
                 Component={WorkspaceSettings}
-                permissions={[PERMISSIONS.WORKSPACES_MANAGE]}
+                permissions={[
+                  WORKSPACE_PERMISSIONS.SETTINGS_MANAGE,
+                  WORKSPACE_PERMISSIONS.MEMBERS_MANAGE,
+                  WORKSPACE_PERMISSIONS.ROLES_MANAGE,
+                  WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
+                  WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
+                ]}
               />
             ),
           };

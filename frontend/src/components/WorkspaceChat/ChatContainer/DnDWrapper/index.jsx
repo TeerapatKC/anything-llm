@@ -416,6 +416,7 @@ export function DnDFileUploaderProvider({
         fileCount={pendingFiles.length}
         isEmbedding={isEmbedding}
         embedProgress={embedProgress}
+        workspaceSlug={workspace?.slug}
       />
       {children}
     </DndUploaderContext.Provider>

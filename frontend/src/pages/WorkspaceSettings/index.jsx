@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 import Workspace from "@/models/workspace";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
 import { isMobile } from "react-device-detect";
 import { FullScreenLoader } from "@/components/Preloader";
@@ -10,6 +11,7 @@ import {
   ChatText,
   Database,
   Robot,
+  ShieldCheck,
   User,
   Wrench,
 } from "@phosphor-icons/react";
@@ -21,16 +23,17 @@ import ChatSettings from "./ChatSettings";
 import VectorDatabase from "./VectorDatabase";
 import Members from "./Members";
 import WorkspaceAgentConfiguration from "./AgentConfig";
+import WorkspaceRoles from "./Roles";
 import useUser from "@/hooks/useUser";
 import { useTranslation } from "react-i18next";
 import System from "@/models/system";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 const TABS = {
   "general-appearance": GeneralAppearance,
   "chat-settings": ChatSettings,
   "vector-database": VectorDatabase,
   members: Members,
+  roles: WorkspaceRoles,
   "agent-config": WorkspaceAgentConfiguration,
 };
 
@@ -111,7 +114,13 @@ function ShowWorkspaceChat() {
             title={t("workspaces—settings.members")}
             icon={<User className="h-6 w-6" />}
             to={paths.workspace.settings.members(slug)}
-            visible={userCan(PERMISSIONS.WORKSPACES_MANAGE_MEMBERS, user)}
+            visible={workspaceCan(WS.MEMBERS_MANAGE, workspace?.slug, user)}
+          />
+          <TabItem
+            title="Roles"
+            icon={<ShieldCheck className="h-6 w-6" />}
+            to={paths.workspace.settings.roles(slug)}
+            visible={workspaceCan(WS.ROLES_MANAGE, workspace?.slug, user)}
           />
           <TabItem
             title={t("workspaces—settings.agent")}

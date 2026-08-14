@@ -1,13 +1,19 @@
 const fs = require("fs");
 const path = require("path");
 const {
+  SCOPES,
   PERMISSIONS,
+  WORKSPACE_PERMISSIONS,
   PERMISSION_CATALOG,
   PERMISSION_CATEGORIES,
   ALL_PERMISSION_KEYS,
+  SYSTEM_PERMISSION_KEYS,
+  WORKSPACE_PERMISSION_KEYS,
   SYSTEM_ROLES,
+  WORKSPACE_ROLES,
   FALLBACK_ROLE,
   SUPER_ADMIN_ROLE,
+  FALLBACK_WORKSPACE_ROLE,
   SETTINGS_ROUTE_PERMISSIONS,
   permissionForSetting,
 } = require("../../utils/permissions");
@@ -25,24 +31,66 @@ describe("permission catalog", () => {
     }
   });
 
-  it("keeps the PERMISSIONS map and the catalog in sync", () => {
+  it("keeps the system PERMISSIONS map and the catalog in sync", () => {
     const mapped = Object.entries(PERMISSIONS)
       .filter(([name]) => name !== "ANY")
       .map(([, key]) => key);
-    expect(mapped.sort()).toEqual([...ALL_PERMISSION_KEYS].sort());
+    expect(mapped.sort()).toEqual([...SYSTEM_PERMISSION_KEYS].sort());
   });
 
-  it("only references real permissions from the system role presets", () => {
-    for (const role of SYSTEM_ROLES) {
+  it("keeps the WORKSPACE_PERMISSIONS map and the catalog in sync", () => {
+    expect(Object.values(WORKSPACE_PERMISSIONS).sort()).toEqual(
+      [...WORKSPACE_PERMISSION_KEYS].sort()
+    );
+  });
+});
+
+describe("scope separation", () => {
+  it("puts every permission in exactly one scope", () => {
+    const overlap = SYSTEM_PERMISSION_KEYS.filter((key) =>
+      WORKSPACE_PERMISSION_KEYS.includes(key)
+    );
+    expect(overlap).toEqual([]);
+    expect(
+      SYSTEM_PERMISSION_KEYS.length + WORKSPACE_PERMISSION_KEYS.length
+    ).toBe(ALL_PERMISSION_KEYS.length);
+  });
+
+  it("keeps each category wholly inside one scope", () => {
+    for (const permission of PERMISSION_CATALOG)
+      expect(PERMISSION_CATEGORIES[permission.category].scope).toBe(
+        permission.scope
+      );
+  });
+
+  it("namespaces workspace permissions so the two can never be confused", () => {
+    for (const key of WORKSPACE_PERMISSION_KEYS)
+      expect(key.startsWith("workspace.")).toBe(true);
+    for (const key of SYSTEM_PERMISSION_KEYS)
+      expect(key.startsWith("workspace.")).toBe(false);
+  });
+
+  it("exposes both scope names", () => {
+    expect(SCOPES.SYSTEM).toBe("system");
+    expect(SCOPES.WORKSPACE).toBe("workspace");
+  });
+});
+
+describe("built-in roles", () => {
+  it("only references real permissions, in the right scope", () => {
+    for (const role of SYSTEM_ROLES)
       for (const permission of [
         ...role.permissions,
         ...role.protectedPermissions,
       ])
-        expect(ALL_PERMISSION_KEYS).toContain(permission);
-    }
+        expect(SYSTEM_PERMISSION_KEYS).toContain(permission);
+
+    for (const role of WORKSPACE_ROLES)
+      for (const permission of role.permissions)
+        expect(WORKSPACE_PERMISSION_KEYS).toContain(permission);
   });
 
-  it("seeds the fallback and super-admin roles", () => {
+  it("seeds the fallback and super-admin system roles", () => {
     const names = SYSTEM_ROLES.map((role) => role.name);
     expect(names).toContain(FALLBACK_ROLE);
     expect(names).toContain(SUPER_ADMIN_ROLE);
@@ -52,17 +100,58 @@ describe("permission catalog", () => {
     ).toContain(PERMISSIONS.SUPER_ADMIN);
   });
 
+  it("seeds the workspace roles with exactly one default", () => {
+    const names = WORKSPACE_ROLES.map((role) => role.name);
+    expect(names).toContain(FALLBACK_WORKSPACE_ROLE);
+    expect(WORKSPACE_ROLES.filter((role) => role.isDefault)).toHaveLength(1);
+  });
+
+  it("gives the default workspace role what a plain member had before", () => {
+    const fallback = WORKSPACE_ROLES.find((role) => role.isDefault);
+    expect(fallback.permissions).toEqual(
+      expect.arrayContaining([
+        WORKSPACE_PERMISSIONS.VIEW,
+        WORKSPACE_PERMISSIONS.CHAT,
+      ])
+    );
+    // Plain members could not add documents or manage the workspace before.
+    expect(fallback.permissions).not.toContain(
+      WORKSPACE_PERMISSIONS.DOCUMENTS_UPLOAD
+    );
+    expect(fallback.permissions).not.toContain(
+      WORKSPACE_PERMISSIONS.MEMBERS_MANAGE
+    );
+    expect(fallback.permissions).not.toContain(WORKSPACE_PERMISSIONS.DELETE);
+  });
+
+  it("escalates cleanly from viewer to workspace manager", () => {
+    const of = (name) =>
+      WORKSPACE_ROLES.find((role) => role.name === name).permissions;
+    // Each rung is a superset of the one below it.
+    for (const [lower, higher] of [
+      ["viewer", "member"],
+      ["member", "contributor"],
+      ["contributor", "workspace-manager"],
+    ])
+      expect(of(higher)).toEqual(expect.arrayContaining(of(lower)));
+
+    expect(of("viewer")).not.toContain(WORKSPACE_PERMISSIONS.CHAT);
+    expect(of("workspace-manager")).toEqual(
+      expect.arrayContaining(WORKSPACE_PERMISSION_KEYS)
+    );
+  });
+
   it("preserves the legacy role boundaries so upgrades change nothing", () => {
     const manager = SYSTEM_ROLES.find((role) => role.name === "manager");
     const member = SYSTEM_ROLES.find((role) => role.name === "default");
 
-    // Managers ran workspaces, documents and people but never instance config.
+    // Managers ran every workspace and looked after people, never instance config.
     expect(manager.permissions).toEqual(
       expect.arrayContaining([
         PERMISSIONS.USERS_MANAGE,
         PERMISSIONS.INVITES_MANAGE,
         PERMISSIONS.WORKSPACES_CREATE,
-        PERMISSIONS.WORKSPACES_DELETE,
+        PERMISSIONS.WORKSPACES_MANAGE_ALL,
         PERMISSIONS.DOCUMENTS_MANAGE,
         PERMISSIONS.CHATS_VIEW_ALL,
       ])
@@ -71,8 +160,9 @@ describe("permission catalog", () => {
     expect(manager.permissions).not.toContain(PERMISSIONS.SYSTEM_SETTINGS);
     expect(manager.permissions).not.toContain(PERMISSIONS.ROLES_MANAGE);
 
-    // Default users could only chat in the workspaces they were added to.
-    expect(member.permissions).toEqual([PERMISSIONS.CHATS_SEND]);
+    // Default users hold nothing instance-wide - everything they can do now comes
+    // from the workspace role they hold in each workspace.
+    expect(member.permissions).toEqual([]);
   });
 });
 
@@ -123,26 +213,65 @@ describe("route guards", () => {
     return found;
   }
 
+  const sources = () =>
+    jsFilesIn(serverRoot).map((file) => ({
+      file: path.relative(serverRoot, file),
+      source: fs.readFileSync(file, "utf8"),
+    }));
+
   it("never references a permission that does not exist", () => {
     const unknown = [];
-    for (const file of jsFilesIn(serverRoot)) {
-      const source = fs.readFileSync(file, "utf8");
-      for (const match of source.matchAll(/PERMISSIONS\.([A-Z_]+)/g)) {
-        if (!PERMISSIONS.hasOwnProperty(match[1]))
-          unknown.push(`${path.relative(serverRoot, file)}: ${match[1]}`);
+    for (const { file, source } of sources()) {
+      // `WS_PERMISSIONS.X` resolves against the workspace scope, a bare
+      // `PERMISSIONS.X` against the system scope.
+      for (const match of source.matchAll(
+        /(WS_|WORKSPACE_)?PERMISSIONS\.([A-Z_]+)/g
+      )) {
+        const table = match[1] ? WORKSPACE_PERMISSIONS : PERMISSIONS;
+        if (!Object.prototype.hasOwnProperty.call(table, match[2]))
+          unknown.push(`${file}: ${match[1] || ""}${match[2]}`);
       }
     }
     expect(unknown).toEqual([]);
   });
 
+  it("gates workspace routes only with workspace-scope permissions", () => {
+    const misScoped = [];
+    for (const { file, source } of sources()) {
+      for (const guard of source.matchAll(
+        /workspacePermissionValid\(\[([^\]]*)\]\)/g
+      )) {
+        for (const ref of guard[1].matchAll(
+          /(WS_|WORKSPACE_)?PERMISSIONS\.([A-Z_]+)/g
+        ))
+          if (!ref[1]) misScoped.push(`${file}: ${ref[2]}`);
+      }
+    }
+    expect(misScoped).toEqual([]);
+  });
+
+  it("gates instance routes only with system-scope permissions", () => {
+    const misScoped = [];
+    for (const { file, source } of sources()) {
+      for (const guard of source.matchAll(
+        /(?:flexUserPermissionValid|strictMultiUserPermissionValid)\(\[([^\]]*)\]\)/g
+      )) {
+        for (const ref of guard[1].matchAll(
+          /(WS_|WORKSPACE_)?PERMISSIONS\.([A-Z_]+)/g
+        ))
+          if (ref[1]) misScoped.push(`${file}: ${ref[2]}`);
+      }
+    }
+    expect(misScoped).toEqual([]);
+  });
+
   it("no longer gates anything on a hardcoded role name", () => {
     const offenders = [];
-    for (const file of jsFilesIn(serverRoot)) {
-      const source = fs.readFileSync(file, "utf8");
+    for (const { file, source } of sources()) {
       if (/\brole\s*===\s*["'](admin|manager|default)["']/.test(source))
-        offenders.push(path.relative(serverRoot, file));
+        offenders.push(file);
       if (/\brole\s*!==\s*["'](admin|manager|default)["']/.test(source))
-        offenders.push(path.relative(serverRoot, file));
+        offenders.push(file);
     }
     expect(offenders).toEqual([]);
   });
@@ -158,5 +287,14 @@ describe("frontend mirror", () => {
       (match) => match[1]
     );
     expect(mirrored.sort()).toEqual([...ALL_PERMISSION_KEYS].sort());
+  });
+
+  it("keeps the two scopes in separate maps, as the server does", () => {
+    const mirror = fs.readFileSync(
+      path.resolve(__dirname, "../../../frontend/src/utils/permissions.js"),
+      "utf8"
+    );
+    expect(mirror).toContain("export const PERMISSIONS");
+    expect(mirror).toContain("export const WORKSPACE_PERMISSIONS");
   });
 });

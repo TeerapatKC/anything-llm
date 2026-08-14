@@ -90,14 +90,16 @@ model users {
 }
 
 model permissions {
-  id          Int                @id @default(autoincrement())
-  key         String             @unique
-  label       String
-  description String?
-  category    String             @default("system")
-  sortOrder   Int                @default(0)
-  createdAt   DateTime           @default(now())
-  roles       role_permissions[]
+  id             Int                          @id @default(autoincrement())
+  key            String                       @unique
+  label          String
+  description    String?
+  category       String                       @default("system")
+  scope          String                       @default("system")
+  sortOrder      Int                          @default(0)
+  createdAt      DateTime                     @default(now())
+  roles          role_permissions[]
+  workspaceRoles workspace_role_permissions[]
 }
 
 model roles {
@@ -121,6 +123,38 @@ model role_permissions {
 
   @@unique([role_id, permission_id])
   @@index([role_id])
+}
+
+model workspace_roles {
+  id            Int                          @id @default(autoincrement())
+  name          String
+  displayName   String
+  description   String?
+  isSystem      Boolean                      @default(false)
+  isDefault     Boolean                      @default(false)
+  // NULL means the role is shared with every workspace. A workspace id means the role
+  // was defined inside that workspace and is only assignable there.
+  workspace_id  Int?
+  createdAt     DateTime                     @default(now())
+  lastUpdatedAt DateTime                     @default(now())
+  workspace     workspaces?                  @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
+  permissions   workspace_role_permissions[]
+  members       workspace_users[]
+
+  @@unique([workspace_id, name])
+  @@index([workspace_id])
+}
+
+model workspace_role_permissions {
+  id                Int             @id @default(autoincrement())
+  workspace_role_id Int
+  permission_id     Int
+  createdAt         DateTime        @default(now())
+  workspaceRole     workspace_roles @relation(fields: [workspace_role_id], references: [id], onDelete: Cascade)
+  permission        permissions     @relation(fields: [permission_id], references: [id], onDelete: Cascade)
+
+  @@unique([workspace_role_id, permission_id])
+  @@index([workspace_role_id])
 }
 
 model recovery_codes {
@@ -179,6 +213,7 @@ model workspaces {
   // See WorkspaceAgentSkills in utils/agents/workspaceSkills.js for the shape.
   agentSkillConfig             String?
   workspace_users              workspace_users[]
+  workspace_roles              workspace_roles[]
   documents                    workspace_documents[]
   workspace_suggested_messages workspace_suggested_messages[]
   embed_configs                embed_configs[]
@@ -250,13 +285,17 @@ model workspace_agent_invocations {
 }
 
 model workspace_users {
-  id            Int        @id @default(autoincrement())
-  user_id       Int
-  workspace_id  Int
-  createdAt     DateTime   @default(now())
-  lastUpdatedAt DateTime   @default(now())
-  workspaces    workspaces @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  users         users      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  id                Int              @id @default(autoincrement())
+  user_id           Int
+  workspace_id      Int
+  workspace_role_id Int?
+  createdAt         DateTime         @default(now())
+  lastUpdatedAt     DateTime         @default(now())
+  workspaces        workspaces       @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  users             users            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  workspaceRole     workspace_roles? @relation(fields: [workspace_role_id], references: [id], onDelete: SetNull)
+
+  @@index([workspace_role_id])
 }
 
 model cache_data {

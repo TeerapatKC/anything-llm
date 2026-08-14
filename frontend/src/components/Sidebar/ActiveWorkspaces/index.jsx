@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Workspace from "@/models/workspace";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import ManageWorkspace, {
   useManageWorkspaceModal,
 } from "../../Modals/ManageWorkspace";
@@ -19,7 +20,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSidebar } from "@/components/ui/sidebar";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -204,7 +204,11 @@ export default function ActiveWorkspaces() {
                                 {workspace.name}
                               </TooltipContent>
                             </Tooltip>
-                            {userCan(PERMISSIONS.WORKSPACES_MANAGE, user) && (
+                            {workspaceCan(
+                              WS.SETTINGS_MANAGE,
+                              workspace.slug,
+                              user
+                            ) && (
                               <div
                                 className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
                               >
@@ -215,7 +219,7 @@ export default function ActiveWorkspaces() {
                                       onClick={(e) => {
                                         e.preventDefault();
                                         setSelectedWs(workspace);
-                                        showModal();
+                                        showModal(workspace.slug);
                                       }}
                                       className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
                                     >

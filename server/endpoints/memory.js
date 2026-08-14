@@ -4,8 +4,12 @@ const { userFromSession, reqBody } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
   flexUserPermissionValid,
+  workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../utils/permissions");
 const { validWorkspaceSlug } = require("../utils/middleware/validWorkspace");
 
 async function memoryFeatureEnabled(_req, response, next) {
@@ -45,7 +49,7 @@ function memoryEndpoints(app) {
     "/workspaces/:slug/memories",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       memoryFeatureEnabled,
       validWorkspaceSlug,
     ],
@@ -72,7 +76,7 @@ function memoryEndpoints(app) {
     "/workspaces/:slug/memories",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       memoryFeatureEnabled,
       validWorkspaceSlug,
     ],

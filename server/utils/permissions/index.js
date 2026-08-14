@@ -5,9 +5,21 @@
  * simply a named bag of permissions that an operator creates and ticks boxes for, so
  * nothing in the codebase should ever branch on a role name like "admin" or "manager".
  *
+ * Permissions come in two scopes that never overlap:
+ *
+ *   - `system`    - instance-wide capabilities. Granted by the single role on
+ *                   `users.role`, and they apply everywhere.
+ *   - `workspace` - capabilities inside one workspace. Granted by the workspace role on
+ *                   the user's `workspace_users` row, so the same account can be a
+ *                   manager of one workspace and a read-only member of another.
+ *
+ * A capability lives in exactly one scope. Anything that can differ per workspace
+ * (chatting, uploading, workspace settings, membership) is workspace-scoped; anything
+ * that configures the instance or crosses every workspace is system-scoped.
+ *
  * Permission keys are declared here (in code) because endpoints reference them directly,
  * and the catalog is mirrored into the `permissions` table on boot so the management UI
- * can render them and so `role_permissions` can foreign-key against them.
+ * can render them and so the role join tables can foreign-key against them.
  */
 
 /**
@@ -16,10 +28,13 @@
  */
 const ANY_PERMISSION = "<any>";
 
+const SCOPES = { SYSTEM: "system", WORKSPACE: "workspace" };
+
+/** Instance-wide permissions, granted by the role on `users.role`. */
 const PERMISSIONS = {
   ANY: ANY_PERMISSION,
 
-  // System
+  // System configuration
   SUPER_ADMIN: "system.admin",
   SYSTEM_SETTINGS: "system.settings",
   SYSTEM_MODEL_ROUTING: "system.model_routing",
@@ -38,42 +53,72 @@ const PERMISSIONS = {
   USERS_ASSIGN_ROLES: "users.assign_roles",
   INVITES_MANAGE: "invites.manage",
   ROLES_MANAGE: "roles.manage",
+  WORKSPACE_ROLES_MANAGE: "workspace_roles.manage",
 
-  // Workspaces
-  WORKSPACES_VIEW_ALL: "workspaces.view_all",
+  // Workspaces - only the instance-level facts about workspaces live here.
+  // Everything you can do *inside* a workspace is a workspace-scoped permission.
   WORKSPACES_CREATE: "workspaces.create",
-  WORKSPACES_MANAGE: "workspaces.manage",
-  WORKSPACES_DELETE: "workspaces.delete",
-  WORKSPACES_MANAGE_MEMBERS: "workspaces.manage_members",
+  WORKSPACES_VIEW_ALL: "workspaces.view_all",
+  WORKSPACES_MANAGE_ALL: "workspaces.manage_all",
 
-  // Documents
-  DOCUMENTS_UPLOAD: "documents.upload",
+  // Instance document library (the shared file store, not a workspace's embeddings)
   DOCUMENTS_MANAGE: "documents.manage",
-  DOCUMENTS_DATA_CONNECTORS: "documents.data_connectors",
 
-  // Chats
-  CHATS_SEND: "chats.send",
+  // Chats across the whole instance
   CHATS_VIEW_ALL: "chats.view_all",
   CHATS_UNLIMITED: "chats.unlimited",
 
-  // Agents
+  // Instance-level agent configuration
   AGENTS_MANAGE_SKILLS: "agents.manage_skills",
   AGENTS_FLOWS: "agents.flows",
   AGENTS_MCP_SERVERS: "agents.mcp_servers",
 
-  // Embeds
+  // Embedded chat widgets
   EMBEDS_MANAGE: "embeds.manage",
   EMBEDS_VIEW_CHATS: "embeds.view_chats",
 };
 
+/**
+ * Per-workspace permissions, granted by the workspace role on a `workspace_users` row.
+ * These are checked against a specific workspace, never globally.
+ */
+const WORKSPACE_PERMISSIONS = {
+  VIEW: "workspace.view",
+  CHAT: "workspace.chat",
+  THREADS_MANAGE: "workspace.threads.manage",
+  CHATS_VIEW_ALL: "workspace.chats.view_all",
+  CHATS_DELETE: "workspace.chats.delete",
+  DOCUMENTS_VIEW: "workspace.documents.view",
+  DOCUMENTS_UPLOAD: "workspace.documents.upload",
+  DOCUMENTS_MANAGE: "workspace.documents.manage",
+  DATA_CONNECTORS: "workspace.data_connectors",
+  SETTINGS_MANAGE: "workspace.settings.manage",
+  AGENTS_MANAGE: "workspace.agents.manage",
+  MEMBERS_MANAGE: "workspace.members.manage",
+  ROLES_MANAGE: "workspace.roles.manage",
+  DELETE: "workspace.delete",
+};
+
 const PERMISSION_CATEGORIES = {
-  system: { label: "System", order: 0 },
-  people: { label: "Users & Roles", order: 1 },
-  workspaces: { label: "Workspaces", order: 2 },
-  documents: { label: "Documents", order: 3 },
-  chats: { label: "Chats", order: 4 },
-  agents: { label: "Agents", order: 5 },
-  embeds: { label: "Embedded Chat", order: 6 },
+  system: { label: "System", scope: SCOPES.SYSTEM, order: 0 },
+  people: { label: "Users & Roles", scope: SCOPES.SYSTEM, order: 1 },
+  workspaces: {
+    label: "Workspaces (instance-wide)",
+    scope: SCOPES.SYSTEM,
+    order: 2,
+  },
+  library: { label: "Document Library", scope: SCOPES.SYSTEM, order: 3 },
+  chats: { label: "Chats (instance-wide)", scope: SCOPES.SYSTEM, order: 4 },
+  agents: { label: "Agents", scope: SCOPES.SYSTEM, order: 5 },
+  embeds: { label: "Embedded Chat", scope: SCOPES.SYSTEM, order: 6 },
+
+  workspace_access: { label: "Access", scope: SCOPES.WORKSPACE, order: 10 },
+  workspace_content: { label: "Documents", scope: SCOPES.WORKSPACE, order: 11 },
+  workspace_admin: {
+    label: "Administration",
+    scope: SCOPES.WORKSPACE,
+    order: 12,
+  },
 };
 
 /**
@@ -82,16 +127,18 @@ const PERMISSION_CATEGORIES = {
  * @property {string} label
  * @property {string} description
  * @property {string} category
+ * @property {string} scope
  * @property {number} order
  */
 
 /** @type {PermissionDefinition[]} */
 const PERMISSION_CATALOG = [
+  // ---------------------------------------------------------------- system scope
   {
     key: PERMISSIONS.SUPER_ADMIN,
     label: "Super administrator",
     description:
-      "Grants every permission, including ones added by future updates. Roles with this can never be locked out.",
+      "Grants every permission in both scopes, including ones added by future updates. Roles with this can never be locked out.",
     category: "system",
   },
   {
@@ -174,9 +221,9 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.USERS_ASSIGN_ROLES,
-    label: "Assign roles to users",
+    label: "Assign system roles to users",
     description:
-      "Change which role a user has. A role can only ever grant permissions the assigner already holds.",
+      "Change which instance-wide role a user has. A role can only ever grant permissions the assigner already holds.",
     category: "people",
   },
   {
@@ -187,78 +234,53 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.ROLES_MANAGE,
-    label: "Manage roles & permissions",
+    label: "Manage system roles",
     description:
-      "Create roles and tick the permissions they grant. This is a privileged permission.",
+      "Create instance-wide roles and tick the permissions they grant. This is a privileged permission.",
+    category: "people",
+  },
+  {
+    key: PERMISSIONS.WORKSPACE_ROLES_MANAGE,
+    label: "Manage workspace roles",
+    description:
+      "Define the reusable workspace roles (Viewer, Contributor, ...) that can be assigned to workspace members.",
     category: "people",
   },
 
   {
+    key: PERMISSIONS.WORKSPACES_CREATE,
+    label: "Create workspaces",
+    description: "Create new workspaces on the instance.",
+    category: "workspaces",
+  },
+  {
     key: PERMISSIONS.WORKSPACES_VIEW_ALL,
     label: "View all workspaces",
     description:
-      "See every workspace on the instance, not only the ones the user is a member of.",
+      "See every workspace on the instance, not only the ones they are a member of. Does not by itself grant any ability inside those workspaces.",
     category: "workspaces",
   },
   {
-    key: PERMISSIONS.WORKSPACES_CREATE,
-    label: "Create workspaces",
-    description: "Create new workspaces.",
-    category: "workspaces",
-  },
-  {
-    key: PERMISSIONS.WORKSPACES_MANAGE,
-    label: "Manage workspace settings",
+    key: PERMISSIONS.WORKSPACES_MANAGE_ALL,
+    label: "Full control of every workspace",
     description:
-      "Edit workspace settings, prompts, agent skills, pinned documents and prompt history.",
-    category: "workspaces",
-  },
-  {
-    key: PERMISSIONS.WORKSPACES_DELETE,
-    label: "Delete workspaces",
-    description: "Delete workspaces and reset their vector database.",
-    category: "workspaces",
-  },
-  {
-    key: PERMISSIONS.WORKSPACES_MANAGE_MEMBERS,
-    label: "Manage workspace members",
-    description: "Add and remove users from workspaces.",
+      "Acts as if holding every workspace permission in every workspace, without needing to be a member. Use for instance operators who look after all workspaces.",
     category: "workspaces",
   },
 
-  {
-    key: PERMISSIONS.DOCUMENTS_UPLOAD,
-    label: "Upload documents",
-    description: "Upload files and links into workspaces.",
-    category: "documents",
-  },
   {
     key: PERMISSIONS.DOCUMENTS_MANAGE,
-    label: "Manage document library",
+    label: "Manage the document library",
     description:
-      "Browse, move, embed, unembed and delete documents and folders in the instance library.",
-    category: "documents",
-  },
-  {
-    key: PERMISSIONS.DOCUMENTS_DATA_CONNECTORS,
-    label: "Use data connectors",
-    description:
-      "Import content through data connectors such as GitHub, Confluence, YouTube and website scraping.",
-    category: "documents",
+      "Browse, move, organise into folders and delete files in the shared instance document store.",
+    category: "library",
   },
 
-  {
-    key: PERMISSIONS.CHATS_SEND,
-    label: "Send chats",
-    description:
-      "Send messages to workspaces. Without this a user can read a workspace but not talk to it.",
-    category: "chats",
-  },
   {
     key: PERMISSIONS.CHATS_VIEW_ALL,
     label: "View all workspace chats",
     description:
-      "Read, export and delete chat history belonging to other users.",
+      "Read, export and delete chat history across every workspace from the admin console.",
     category: "chats",
   },
   {
@@ -272,7 +294,7 @@ const PERMISSION_CATALOG = [
     key: PERMISSIONS.AGENTS_MANAGE_SKILLS,
     label: "Manage agent skills",
     description:
-      "Enable or disable the default agent skills, search provider and SQL connections.",
+      "Enable or disable the default agent skills, search provider and SQL connections for the instance.",
     category: "agents",
   },
   {
@@ -300,15 +322,135 @@ const PERMISSION_CATALOG = [
     description: "Read and delete conversations captured by embed widgets.",
     category: "embeds",
   },
-].map((permission, index) => ({ ...permission, order: index }));
+
+  // ------------------------------------------------------------- workspace scope
+  {
+    key: WORKSPACE_PERMISSIONS.VIEW,
+    label: "View workspace",
+    description:
+      "Open the workspace and read its chat history. Without this the workspace is hidden entirely.",
+    category: "workspace_access",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.CHAT,
+    label: "Send chats",
+    description: "Send messages to the workspace and invoke agents in it.",
+    category: "workspace_access",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.THREADS_MANAGE,
+    label: "Manage own threads",
+    description: "Create, rename, fork and delete their own threads.",
+    category: "workspace_access",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.CHATS_VIEW_ALL,
+    label: "View other members' chats",
+    description:
+      "Read chat history belonging to other members of this workspace, not only their own.",
+    category: "workspace_access",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.CHATS_DELETE,
+    label: "Delete chat history",
+    description:
+      "Clear this workspace's chat history and remove individual messages.",
+    category: "workspace_access",
+    scope: SCOPES.WORKSPACE,
+  },
+
+  {
+    key: WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
+    label: "View attached documents",
+    description: "See which documents are embedded in this workspace.",
+    category: "workspace_content",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.DOCUMENTS_UPLOAD,
+    label: "Upload documents",
+    description: "Upload files and links into this workspace.",
+    category: "workspace_content",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
+    label: "Manage embeddings",
+    description:
+      "Add, remove, pin and re-embed the documents attached to this workspace.",
+    category: "workspace_content",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.DATA_CONNECTORS,
+    label: "Use data connectors",
+    description:
+      "Import content into this workspace through connectors such as GitHub, Confluence, YouTube and website scraping.",
+    category: "workspace_content",
+    scope: SCOPES.WORKSPACE,
+  },
+
+  {
+    key: WORKSPACE_PERMISSIONS.SETTINGS_MANAGE,
+    label: "Manage workspace settings",
+    description:
+      "Edit this workspace's name, LLM, prompt, suggested messages and other settings.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
+    label: "Manage workspace agent skills",
+    description: "Choose which agent skills are enabled inside this workspace.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.MEMBERS_MANAGE,
+    label: "Manage members",
+    description:
+      "Add and remove members of this workspace and set the workspace role they hold.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.ROLES_MANAGE,
+    label: "Define this workspace's roles",
+    description:
+      "Create roles that exist only inside this workspace and choose what they grant. The shared roles defined instance-wide stay read-only here.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.DELETE,
+    label: "Delete workspace",
+    description: "Delete this workspace or reset its vector database.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+].map((permission, index) => ({
+  scope: SCOPES.SYSTEM,
+  ...permission,
+  order: index,
+}));
 
 const ALL_PERMISSION_KEYS = PERMISSION_CATALOG.map(
   (permission) => permission.key
 );
+const SYSTEM_PERMISSION_KEYS = PERMISSION_CATALOG.filter(
+  (permission) => permission.scope === SCOPES.SYSTEM
+).map((permission) => permission.key);
+const WORKSPACE_PERMISSION_KEYS = PERMISSION_CATALOG.filter(
+  (permission) => permission.scope === SCOPES.WORKSPACE
+).map((permission) => permission.key);
 
 /**
- * The roles that ship with the instance. They are seeded on boot, cannot be deleted or
- * renamed, and their permission sets reproduce the behavior of the legacy hardcoded
+ * The instance-wide roles that ship with AnythingLLM. Seeded on boot, cannot be deleted
+ * or renamed, and their permission sets reproduce the behavior of the legacy hardcoded
  * admin/manager/default roles so upgrading an existing instance changes nothing.
  *
  * Their ticked permissions are only a starting point - operators can still change what a
@@ -320,29 +462,27 @@ const SYSTEM_ROLES = [
     displayName: "Admin",
     description:
       "Full control over the instance. Always holds every permission.",
-    protectedPermissions: [PERMISSIONS.SUPER_ADMIN],
-    permissions: ALL_PERMISSION_KEYS,
+    // Every system permission is protected, not just the super-admin grant, so a
+    // release that adds new permissions tops the admin role up instead of leaving it
+    // looking partially ticked in the management UI.
+    protectedPermissions: SYSTEM_PERMISSION_KEYS,
+    permissions: SYSTEM_PERMISSION_KEYS,
   },
   {
     name: "manager",
     displayName: "Manager",
     description:
-      "Runs workspaces, documents and people without access to instance configuration.",
+      "Runs every workspace and looks after people, without access to instance configuration.",
     protectedPermissions: [],
     permissions: [
       PERMISSIONS.USERS_VIEW,
       PERMISSIONS.USERS_MANAGE,
       PERMISSIONS.USERS_ASSIGN_ROLES,
       PERMISSIONS.INVITES_MANAGE,
-      PERMISSIONS.WORKSPACES_VIEW_ALL,
       PERMISSIONS.WORKSPACES_CREATE,
-      PERMISSIONS.WORKSPACES_MANAGE,
-      PERMISSIONS.WORKSPACES_DELETE,
-      PERMISSIONS.WORKSPACES_MANAGE_MEMBERS,
-      PERMISSIONS.DOCUMENTS_UPLOAD,
+      PERMISSIONS.WORKSPACES_VIEW_ALL,
+      PERMISSIONS.WORKSPACES_MANAGE_ALL,
       PERMISSIONS.DOCUMENTS_MANAGE,
-      PERMISSIONS.DOCUMENTS_DATA_CONNECTORS,
-      PERMISSIONS.CHATS_SEND,
       PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_APPEARANCE,
       PERMISSIONS.SYSTEM_BROWSER_EXTENSION,
@@ -353,17 +493,76 @@ const SYSTEM_ROLES = [
     name: "default",
     displayName: "Member",
     description:
-      "Chats in the workspaces they have been added to. The fallback role for new users.",
+      "No instance-wide powers. What they can do comes from the workspace role they hold in each workspace.",
     protectedPermissions: [],
-    permissions: [PERMISSIONS.CHATS_SEND],
+    permissions: [],
   },
 ];
 
-/** The role assigned when none is specified, and the fallback when a role is deleted. */
+/**
+ * The reusable workspace roles that ship with AnythingLLM. One of these is assigned to
+ * each `workspace_users` row, so the same account can hold different powers in
+ * different workspaces.
+ */
+const WORKSPACE_ROLES = [
+  {
+    name: "viewer",
+    displayName: "Viewer",
+    description:
+      "Reads the workspace but cannot chat in it or change anything.",
+    isDefault: false,
+    permissions: [
+      WORKSPACE_PERMISSIONS.VIEW,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
+    ],
+  },
+  {
+    name: "member",
+    displayName: "Member",
+    description:
+      "Chats in the workspace and manages their own threads. The role given to new members by default.",
+    isDefault: true,
+    permissions: [
+      WORKSPACE_PERMISSIONS.VIEW,
+      WORKSPACE_PERMISSIONS.CHAT,
+      WORKSPACE_PERMISSIONS.THREADS_MANAGE,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
+    ],
+  },
+  {
+    name: "contributor",
+    displayName: "Contributor",
+    description:
+      "Everything a member can do, plus adding and removing the workspace's documents.",
+    isDefault: false,
+    permissions: [
+      WORKSPACE_PERMISSIONS.VIEW,
+      WORKSPACE_PERMISSIONS.CHAT,
+      WORKSPACE_PERMISSIONS.THREADS_MANAGE,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_UPLOAD,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
+      WORKSPACE_PERMISSIONS.DATA_CONNECTORS,
+    ],
+  },
+  {
+    name: "workspace-manager",
+    displayName: "Workspace Manager",
+    description:
+      "Full control of this workspace, including members and settings.",
+    isDefault: false,
+    permissions: WORKSPACE_PERMISSION_KEYS,
+  },
+];
+
+/** The system role assigned when none is specified, and the fallback when one is deleted. */
 const FALLBACK_ROLE = "default";
 
-/** The role that must always have at least one non-suspended member holding it. */
+/** The system role that must always have at least one member holding it. */
 const SUPER_ADMIN_ROLE = "admin";
+
+/** The workspace role given to a member when none is specified. */
+const FALLBACK_WORKSPACE_ROLE = "member";
 
 /**
  * Maps each system setting label to the permission needed to read or write it.
@@ -410,13 +609,19 @@ const SETTINGS_ROUTE_PERMISSIONS = [
 
 module.exports = {
   ANY_PERMISSION,
+  SCOPES,
   PERMISSIONS,
+  WORKSPACE_PERMISSIONS,
   PERMISSION_CATALOG,
   PERMISSION_CATEGORIES,
   ALL_PERMISSION_KEYS,
+  SYSTEM_PERMISSION_KEYS,
+  WORKSPACE_PERMISSION_KEYS,
   SYSTEM_ROLES,
+  WORKSPACE_ROLES,
   FALLBACK_ROLE,
   SUPER_ADMIN_ROLE,
+  FALLBACK_WORKSPACE_ROLE,
   SETTINGS_ROUTE_PERMISSIONS,
   permissionForSetting,
 };

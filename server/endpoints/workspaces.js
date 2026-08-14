@@ -15,8 +15,13 @@ const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
   flexUserPermissionValid,
+  workspacePermissionValid,
+  anyWorkspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../utils/permissions");
 const { EventLogs } = require("../models/eventLogs");
 const {
   WorkspaceSuggestedMessages,
@@ -84,7 +89,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/update",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -117,7 +122,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/upload",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_UPLOAD]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_UPLOAD]),
       handleFileUpload,
     ],
     async function (request, response) {
@@ -184,7 +189,10 @@ function workspaceEndpoints(app) {
 
   app.post(
     "/workspace/:slug/upload-link",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_UPLOAD])],
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_UPLOAD]),
+    ],
     async (request, response) => {
       try {
         const Collector = new CollectorApi();
@@ -227,7 +235,10 @@ function workspaceEndpoints(app) {
 
   app.post(
     "/workspace/:slug/update-embeddings",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -295,7 +306,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_DELETE]),
+      workspacePermissionValid([WS_PERMISSIONS.DELETE]),
       workspaceDeletionProtection,
     ],
     async (request, response) => {
@@ -340,10 +351,7 @@ function workspaceEndpoints(app) {
 
   app.delete(
     "/workspace/:slug/reset-vector-db",
-    [
-      validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_DELETE]),
-    ],
+    [validatedRequest, workspacePermissionValid([WS_PERMISSIONS.DELETE])],
     async (request, response) => {
       try {
         const { slug = "" } = request.params;
@@ -402,7 +410,7 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/workspace/:slug",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, workspacePermissionValid([WS_PERMISSIONS.DELETE])],
     async (request, response) => {
       try {
         const { slug } = request.params;
@@ -421,7 +429,7 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/workspace/:slug/chats",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, workspacePermissionValid([WS_PERMISSIONS.VIEW])],
     async (request, response) => {
       try {
         const { slug } = request.params;
@@ -454,7 +462,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/agent-skills",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.AGENTS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -513,7 +521,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/delete-chats",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.CHATS_DELETE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -548,7 +556,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/delete-edited-chats",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.CHATS_DELETE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -576,7 +584,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/update-chat",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -622,7 +630,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/chat-feedback/:chatId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -650,7 +658,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/suggested-messages",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
       validWorkspaceSlug,
     ],
     async function (request, response) {
@@ -672,7 +680,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/suggested-messages",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -704,7 +712,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/update-pin",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -731,7 +739,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/tts/:chatId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       validWorkspaceSlug,
     ],
     async function (request, response) {
@@ -781,7 +789,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/thread/fork",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.THREADS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -887,7 +895,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/upload-and-embed",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_UPLOAD]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_UPLOAD]),
       handleFileUpload,
     ],
     async function (request, response) {
@@ -965,7 +973,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/remove-and-unembed",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
       handleFileUpload,
     ],
     async function (request, response) {
@@ -994,7 +1002,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/prompt-history",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (_, response) => {
@@ -1015,7 +1023,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/prompt-history",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (_, response) => {
@@ -1036,7 +1044,9 @@ function workspaceEndpoints(app) {
     "/workspace/prompt-history/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      // ":id" identifies a prompt-history row rather than a workspace, so the target
+      // workspace cannot be resolved from the URL - require the permission somewhere.
+      anyWorkspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -1082,7 +1092,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/embed-progress",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -1113,7 +1123,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/embed-queue",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_MANAGE]),
+      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -1141,7 +1151,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug/is-agent-command-available",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       validWorkspaceSlug,
     ],
     async (_, response) => {

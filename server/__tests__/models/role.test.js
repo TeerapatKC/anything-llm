@@ -1,4 +1,8 @@
-const { PERMISSIONS } = require("../../utils/permissions");
+const {
+  PERMISSIONS,
+  SYSTEM_PERMISSION_KEYS,
+  WORKSPACE_PERMISSIONS,
+} = require("../../utils/permissions");
 
 // An in-memory stand-in for the tables the Role model touches, so the permission
 // resolution and privilege-escalation rules can be exercised without a database.
@@ -126,12 +130,12 @@ describe("Role.seed", () => {
 
   it("is idempotent and does not clobber operator edits", async () => {
     const manager = await Role.get({ name: "manager" });
-    await Role.update(manager.id, { permissions: [PERMISSIONS.CHATS_SEND] });
+    await Role.update(manager.id, { permissions: [PERMISSIONS.USERS_VIEW] });
 
     await Role.seed();
 
     const after = await Role.get({ name: "manager" });
-    expect(after.permissions).toEqual([PERMISSIONS.CHATS_SEND]);
+    expect(after.permissions).toEqual([PERMISSIONS.USERS_VIEW]);
     expect((await Role.where()).length).toBe(3);
   });
 });
@@ -141,8 +145,8 @@ describe("permission resolution", () => {
     const admin = { role: "admin" };
     expect(await Role.userCan(admin, PERMISSIONS.EMBEDS_MANAGE)).toBe(true);
     expect(await Role.userCan(admin, PERMISSIONS.SYSTEM_SETTINGS)).toBe(true);
-    expect((await Role.permissionsFor("admin")).length).toBe(
-      mockDb.permissions.length
+    expect((await Role.permissionsFor("admin")).sort()).toEqual(
+      [...SYSTEM_PERMISSION_KEYS].sort()
     );
   });
 
@@ -151,23 +155,28 @@ describe("permission resolution", () => {
     expect(await Role.userCan(manager, PERMISSIONS.WORKSPACES_CREATE)).toBe(
       true
     );
+    expect(await Role.userCan(manager, PERMISSIONS.WORKSPACES_MANAGE_ALL)).toBe(
+      true
+    );
     expect(await Role.userCan(manager, PERMISSIONS.CHATS_VIEW_ALL)).toBe(true);
     expect(await Role.userCan(manager, PERMISSIONS.SYSTEM_SETTINGS)).toBe(
       false
     );
 
+    // A plain member holds nothing instance-wide now - their abilities come from the
+    // workspace role they hold in each workspace.
     const member = { role: "default" };
-    expect(await Role.userCan(member, PERMISSIONS.CHATS_SEND)).toBe(true);
     expect(await Role.userCan(member, PERMISSIONS.WORKSPACES_CREATE)).toBe(
       false
     );
+    expect(await Role.permissionsFor("default")).toEqual([]);
   });
 
   it("grants nothing to an unknown or missing role", async () => {
-    expect(await Role.userCan({ role: "ghost" }, PERMISSIONS.CHATS_SEND)).toBe(
-      false
-    );
-    expect(await Role.userCan(null, PERMISSIONS.CHATS_SEND)).toBe(false);
+    expect(
+      await Role.userCan({ role: "ghost" }, PERMISSIONS.WORKSPACES_CREATE)
+    ).toBe(false);
+    expect(await Role.userCan(null, PERMISSIONS.WORKSPACES_CREATE)).toBe(false);
   });
 
   it("requires all permissions for userCanAll and any for userCanAny", async () => {
@@ -185,18 +194,21 @@ describe("custom roles", () => {
       name: "editor",
       displayName: "Content Editor",
       permissions: [
-        PERMISSIONS.DOCUMENTS_UPLOAD,
-        PERMISSIONS.CHATS_SEND,
+        PERMISSIONS.DOCUMENTS_MANAGE,
+        PERMISSIONS.USERS_VIEW,
         "not.a.real.permission",
+        // a workspace-scope key must be rejected by a system role
+        WORKSPACE_PERMISSIONS.CHAT,
       ],
     });
 
     expect(error).toBeNull();
     expect(role.permissions.sort()).toEqual(
-      [PERMISSIONS.DOCUMENTS_UPLOAD, PERMISSIONS.CHATS_SEND].sort()
+      [PERMISSIONS.DOCUMENTS_MANAGE, PERMISSIONS.USERS_VIEW].sort()
     );
+    expect(role.permissions).not.toContain(WORKSPACE_PERMISSIONS.CHAT);
     expect(
-      await Role.userCan({ role: "editor" }, PERMISSIONS.DOCUMENTS_UPLOAD)
+      await Role.userCan({ role: "editor" }, PERMISSIONS.DOCUMENTS_MANAGE)
     ).toBe(true);
     expect(
       await Role.userCan({ role: "editor" }, PERMISSIONS.SYSTEM_SETTINGS)
@@ -215,17 +227,17 @@ describe("custom roles", () => {
     const { role } = await Role.create({
       name: "editor",
       displayName: "Content Editor",
-      permissions: [PERMISSIONS.DOCUMENTS_UPLOAD],
+      permissions: [PERMISSIONS.DOCUMENTS_MANAGE],
     });
     expect(
-      await Role.userCan({ role: "editor" }, PERMISSIONS.DOCUMENTS_UPLOAD)
+      await Role.userCan({ role: "editor" }, PERMISSIONS.DOCUMENTS_MANAGE)
     ).toBe(true);
 
-    await Role.update(role.id, { permissions: [PERMISSIONS.CHATS_SEND] });
+    await Role.update(role.id, { permissions: [PERMISSIONS.USERS_VIEW] });
     expect(
-      await Role.userCan({ role: "editor" }, PERMISSIONS.DOCUMENTS_UPLOAD)
+      await Role.userCan({ role: "editor" }, PERMISSIONS.DOCUMENTS_MANAGE)
     ).toBe(false);
-    expect(await Role.userCan({ role: "editor" }, PERMISSIONS.CHATS_SEND)).toBe(
+    expect(await Role.userCan({ role: "editor" }, PERMISSIONS.USERS_VIEW)).toBe(
       true
     );
   });
@@ -234,7 +246,7 @@ describe("custom roles", () => {
     const { role } = await Role.create({
       name: "editor",
       displayName: "Content Editor",
-      permissions: [PERMISSIONS.CHATS_SEND],
+      permissions: [PERMISSIONS.USERS_VIEW],
     });
     mockDb.users.push({ id: 1, role: "editor" }, { id: 2, role: "editor" });
 
@@ -255,7 +267,7 @@ describe("built-in role protection", () => {
 
   it("keeps the super-admin grant even if it is unticked", async () => {
     const admin = await Role.get({ name: "admin" });
-    await Role.update(admin.id, { permissions: [PERMISSIONS.CHATS_SEND] });
+    await Role.update(admin.id, { permissions: [PERMISSIONS.USERS_VIEW] });
     expect(await Role.userCan({ role: "admin" }, PERMISSIONS.SUPER_ADMIN)).toBe(
       true
     );
@@ -269,11 +281,7 @@ describe("privilege escalation guards", () => {
     await Role.create({
       name: "useradmin",
       displayName: "User Admin",
-      permissions: [
-        PERMISSIONS.USERS_MANAGE,
-        PERMISSIONS.USERS_ASSIGN_ROLES,
-        PERMISSIONS.CHATS_SEND,
-      ],
+      permissions: [PERMISSIONS.USERS_MANAGE, PERMISSIONS.USERS_ASSIGN_ROLES],
     });
   });
 
@@ -329,12 +337,14 @@ describe("last administrator guard", () => {
   it("refuses to demote the only user holding a super-admin role", async () => {
     mockDb.users.push({ id: 1, role: "admin" });
     expect(
-      (await canModifyAdmin({ id: 1, role: "admin" }, { role: "default" })).valid
+      (await canModifyAdmin({ id: 1, role: "admin" }, { role: "default" }))
+        .valid
     ).toBe(false);
 
     mockDb.users.push({ id: 2, role: "admin" });
     expect(
-      (await canModifyAdmin({ id: 1, role: "admin" }, { role: "default" })).valid
+      (await canModifyAdmin({ id: 1, role: "admin" }, { role: "default" }))
+        .valid
     ).toBe(true);
   });
 
@@ -348,7 +358,8 @@ describe("last administrator guard", () => {
     mockDb.users.push({ id: 2, role: "owner" });
 
     expect(
-      (await canModifyAdmin({ id: 1, role: "admin" }, { role: "default" })).valid
+      (await canModifyAdmin({ id: 1, role: "admin" }, { role: "default" }))
+        .valid
     ).toBe(true);
   });
 

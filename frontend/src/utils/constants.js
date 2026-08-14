@@ -11,6 +11,9 @@ export const AUTH_PERMISSIONS = "anythingllm_permissions";
 // separately from AUTH_USER for the same reason as AUTH_PERMISSIONS, and because
 // user.role only ever stores the role's identifier, not something fit to display.
 export const AUTH_ROLE_LABEL = "anythingllm_roleLabel";
+// What the user may do inside each workspace, keyed by workspace id. Workspace
+// permissions are per-workspace, so they cannot live in the flat permission list.
+export const AUTH_WORKSPACE_PERMISSIONS = "anythingllm_workspacePermissions";
 export const COMPLETE_QUESTIONNAIRE = "anythingllm_completed_questionnaire";
 export const SEEN_DOC_PIN_ALERT = "anythingllm_pinned_document_alert";
 export const SEEN_WATCH_ALERT = "anythingllm_watched_document_alert";

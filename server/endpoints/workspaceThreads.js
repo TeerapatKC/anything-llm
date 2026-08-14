@@ -8,8 +8,12 @@ const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
   flexUserPermissionValid,
+  workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
-const { PERMISSIONS } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
+} = require("../utils/permissions");
 const { EventLogs } = require("../models/eventLogs");
 const { WorkspaceThread } = require("../models/workspaceThread");
 const {
@@ -27,7 +31,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread/new",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.THREADS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -70,7 +74,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/threads",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -102,7 +106,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.THREADS_MANAGE]),
       validWorkspaceAndThreadSlug,
     ],
     async (_, response) => {
@@ -121,7 +125,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread-bulk-delete",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.THREADS_MANAGE]),
       validWorkspaceSlug,
     ],
     async (request, response) => {
@@ -148,7 +152,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug/chats",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.VIEW]),
       validWorkspaceAndThreadSlug,
     ],
     async (request, response) => {
@@ -180,7 +184,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug/update",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.THREADS_MANAGE]),
       validWorkspaceAndThreadSlug,
     ],
     async (request, response) => {
@@ -203,7 +207,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug/delete-edited-chats",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.CHATS_DELETE]),
       validWorkspaceAndThreadSlug,
     ],
     async (request, response) => {
@@ -232,7 +236,7 @@ function workspaceThreadEndpoints(app) {
     "/workspace/:slug/thread/:threadSlug/update-chat",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       validWorkspaceAndThreadSlug,
     ],
     async (request, response) => {
