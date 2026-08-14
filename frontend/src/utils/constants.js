@@ -7,6 +7,10 @@ export const AUTH_TIMESTAMP = "anythingllm_authTimestamp";
 // Permissions live outside the cached user object on purpose - many code paths
 // rewrite that object, and losing this field silently locks a user out of everything.
 export const AUTH_PERMISSIONS = "anythingllm_permissions";
+// The human-readable label of the role a user holds (e.g. "Content Editor") - cached
+// separately from AUTH_USER for the same reason as AUTH_PERMISSIONS, and because
+// user.role only ever stores the role's identifier, not something fit to display.
+export const AUTH_ROLE_LABEL = "anythingllm_roleLabel";
 export const COMPLETE_QUESTIONNAIRE = "anythingllm_completed_questionnaire";
 export const SEEN_DOC_PIN_ALERT = "anythingllm_pinned_document_alert";
 export const SEEN_WATCH_ALERT = "anythingllm_watched_document_alert";

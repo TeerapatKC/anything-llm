@@ -11,6 +11,8 @@ import {
   userCanAny,
   storePermissions,
   clearPermissions,
+  storeRoleLabel,
+  clearRoleLabel,
 } from "@/utils/permissions";
 import UserMenu from "../UserMenu";
 import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
@@ -22,8 +24,9 @@ import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
  */
 async function hydratePermissions() {
   if (!userFromStorage()) return; // single-user mode has no user record
-  const { permissions } = await Role.myPermissions();
+  const { permissions, roleDisplayName } = await Role.myPermissions();
   storePermissions(permissions);
+  storeRoleLabel(roleDisplayName);
 }
 
 // Used only for Multi-user mode only as we permission specific pages based on the
@@ -80,6 +83,7 @@ function useIsAuthenticated() {
         localStorage.removeItem(AUTH_TOKEN);
         localStorage.removeItem(AUTH_TIMESTAMP);
         clearPermissions();
+        clearRoleLabel();
         setIsAuthed(false);
         return;
       }

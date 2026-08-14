@@ -4,7 +4,7 @@ import showToast from "@/utils/toast";
 import System from "@/models/system";
 import paths from "@/utils/paths";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
-import { clearPermissions } from "@/utils/permissions";
+import { clearPermissions, clearRoleLabel } from "@/utils/permissions";
 import PreLoader from "@/components/Preloader";
 import CTAButton from "@/components/lib/CTAButton";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,7 @@ function MultiUserMode() {
         setTimeout(() => {
           window.localStorage.removeItem(AUTH_USER);
           clearPermissions();
-          clearPermissions();
+          clearRoleLabel();
           window.localStorage.removeItem(AUTH_TOKEN);
           window.localStorage.removeItem(AUTH_TIMESTAMP);
           window.location = paths.settings.users();
@@ -241,6 +241,7 @@ function PasswordProtection() {
       setTimeout(() => {
         window.localStorage.removeItem(AUTH_USER);
         clearPermissions();
+        clearRoleLabel();
         window.localStorage.removeItem(AUTH_TOKEN);
         window.localStorage.removeItem(AUTH_TIMESTAMP);
         window.location.reload();

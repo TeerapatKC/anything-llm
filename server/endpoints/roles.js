@@ -257,9 +257,11 @@ function roleEndpoints(app) {
           });
 
         const user = await userFromSession(request, response);
+        const role = user?.role ? await Role.get({ name: user.role }) : null;
         response.status(200).json({
           permissions: await Role.permissionsForUser(user),
           role: user?.role ?? null,
+          roleDisplayName: role?.displayName ?? user?.role ?? null,
           multiUserMode: true,
         });
       } catch (e) {

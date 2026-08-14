@@ -7,7 +7,7 @@ import {
   AUTH_USER,
   AUTH_TIMESTAMP,
 } from "../../../utils/constants";
-import { clearPermissions } from "@/utils/permissions";
+import { clearPermissions, clearRoleLabel } from "@/utils/permissions";
 import useLogo from "../../../hooks/useLogo";
 
 export default function PasswordModal({ mode = "single" }) {
@@ -60,6 +60,7 @@ export function usePasswordModal(notry = false) {
             });
             window.localStorage.removeItem(AUTH_USER);
             clearPermissions();
+            clearRoleLabel();
             window.localStorage.removeItem(AUTH_TOKEN);
             window.localStorage.removeItem(AUTH_TIMESTAMP);
             return;
@@ -104,6 +105,7 @@ export function usePasswordModal(notry = false) {
             window.localStorage.removeItem(AUTH_TOKEN);
             window.localStorage.removeItem(AUTH_USER);
             clearPermissions();
+            clearRoleLabel();
             window.localStorage.removeItem(AUTH_TIMESTAMP);
             return;
           } else {

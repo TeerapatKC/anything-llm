@@ -45,7 +45,12 @@ import {
 } from "@/components/ui/tooltip";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguageOptions } from "@/hooks/useLanguageOptions";
-import { userIsChatOnly, clearPermissions } from "@/utils/permissions";
+import {
+  userIsChatOnly,
+  clearPermissions,
+  clearRoleLabel,
+  roleLabel,
+} from "@/utils/permissions";
 
 /**
  * Account button. Lives in the sidebar footer as a full-width row (avatar +
@@ -90,6 +95,9 @@ export default function UserButton() {
     mode === "multi" && user?.username
       ? user.username
       : t("profile_settings.account");
+  // The role's label, e.g. "Content Editor" - never the raw identifier ("content-editor")
+  // a role is stored and looked up by.
+  const userRoleLabel = mode === "multi" ? roleLabel(user) : null;
 
   return (
     <div className="w-full">
@@ -108,9 +116,9 @@ export default function UserButton() {
                 <span className="truncate text-sm font-semibold text-theme-text-primary">
                   {displayName}
                 </span>
-                {mode === "multi" && !!user?.role && (
-                  <span className="truncate text-xs capitalize text-theme-text-secondary">
-                    {user.role}
+                {!!userRoleLabel && (
+                  <span className="truncate text-xs text-theme-text-secondary">
+                    {userRoleLabel}
                   </span>
                 )}
               </span>
@@ -139,9 +147,9 @@ export default function UserButton() {
                 <span className="truncate text-sm font-semibold text-theme-text-primary">
                   {displayName}
                 </span>
-                {mode === "multi" && !!user?.role && (
-                  <span className="truncate text-xs capitalize text-theme-text-secondary">
-                    {user.role}
+                {!!userRoleLabel && (
+                  <span className="truncate text-xs text-theme-text-secondary">
+                    {userRoleLabel}
                   </span>
                 )}
               </span>
@@ -202,6 +210,7 @@ export default function UserButton() {
             onSelect={() => {
               window.localStorage.removeItem(AUTH_USER);
               clearPermissions();
+              clearRoleLabel();
               window.localStorage.removeItem(AUTH_TOKEN);
               window.localStorage.removeItem(AUTH_TIMESTAMP);
               window.localStorage.removeItem(LAST_VISITED_WORKSPACE);

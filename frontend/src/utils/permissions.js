@@ -1,5 +1,5 @@
 import { userFromStorage, safeJsonParse } from "@/utils/request";
-import { AUTH_PERMISSIONS } from "@/utils/constants";
+import { AUTH_PERMISSIONS, AUTH_ROLE_LABEL } from "@/utils/constants";
 
 /**
  * Mirror of the server permission catalog (`server/utils/permissions/index.js`).
@@ -61,6 +61,34 @@ export function storePermissions(permissions = []) {
 /** Drops the cached permissions - call whenever the session ends. */
 export function clearPermissions() {
   window.localStorage.removeItem(AUTH_PERMISSIONS);
+}
+
+/**
+ * Caches the display name of the role the signed-in user currently holds (e.g.
+ * "Content Editor"), so the UI never has to show the raw role identifier.
+ * @param {string|null} label
+ */
+export function storeRoleLabel(label) {
+  if (!label) return window.localStorage.removeItem(AUTH_ROLE_LABEL);
+  window.localStorage.setItem(AUTH_ROLE_LABEL, label);
+}
+
+/** Drops the cached role label - call whenever the session ends. */
+export function clearRoleLabel() {
+  window.localStorage.removeItem(AUTH_ROLE_LABEL);
+}
+
+/**
+ * The display name of the role a user holds, for showing in the UI. Falls back to the
+ * raw role identifier (e.g. "content-editor") if the label has not been cached yet, so
+ * something reasonable still renders before the first permission fetch resolves.
+ * @param {Object|null} [user] - omit to read the cached session user
+ * @returns {string|null}
+ */
+export function roleLabel(user) {
+  const currentUser = user === undefined ? userFromStorage() : user;
+  if (!currentUser?.role) return null;
+  return window.localStorage.getItem(AUTH_ROLE_LABEL) || currentUser.role;
 }
 
 /**

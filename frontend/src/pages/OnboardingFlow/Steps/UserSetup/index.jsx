@@ -5,7 +5,11 @@ import debounce from "lodash.debounce";
 import paths from "@/utils/paths";
 import { useNavigate } from "react-router-dom";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
-import { storePermissions, clearPermissions } from "@/utils/permissions";
+import {
+  storePermissions,
+  clearPermissions,
+  clearRoleLabel,
+} from "@/utils/permissions";
 import { useTranslation } from "react-i18next";
 import { USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "@/utils/username";
 import { PW_REGEX } from "@/pages/GeneralSettings/Security";
@@ -150,6 +154,7 @@ const JustMe = ({
     });
     window.localStorage.removeItem(AUTH_USER);
     clearPermissions();
+    clearRoleLabel();
     window.localStorage.removeItem(AUTH_TIMESTAMP);
     window.localStorage.setItem(AUTH_TOKEN, token);
 
