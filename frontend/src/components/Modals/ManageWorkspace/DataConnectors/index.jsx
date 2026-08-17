@@ -1,5 +1,5 @@
 import ConnectorImages from "@/components/DataConnectorOption/media";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import GithubOptions from "./Connectors/Github";
 import GitlabOptions from "./Connectors/Gitlab";
@@ -12,6 +12,7 @@ import ConnectorOption from "./ConnectorOption";
 import WebsiteDepthOptions from "./Connectors/WebsiteDepth";
 import ObsidianOptions from "./Connectors/Obsidian";
 import PaperlessNgxOptions from "./Connectors/PaperlessNgx";
+import { Input } from "@/components/ui/input";
 
 export const getDataConnectors = (t) => ({
   github: {
@@ -81,24 +82,21 @@ export default function DataConnectors() {
   );
 
   return (
-    <div className="flex upload-modal -mt-10 relative h-[70vh] w-[70vw]">
-      <div className="w-full p-4 top-0 z-20 overflow-y-auto h-full">
-        <div className="w-full flex items-center sticky top-0 z-50">
-          <MagnifyingGlass
-            size={16}
-            weight="bold"
-            className="absolute left-4 z-30 text-white"
-          />
-          <input
+    <div className="w-full grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 items-start">
+      <div className="w-full flex flex-col gap-y-3 border border-theme-modal-border rounded-lg p-3 h-[560px]">
+        <div className="relative shrink-0">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-theme-text-secondary" />
+          <Input
+            variant="settings"
             type="text"
             placeholder={t("connectors.search-placeholder")}
-            className="border-none z-20 pl-10 h-[38px] rounded-full w-full px-4 py-1 text-sm border-2 border-slate-300/40 outline-none focus:outline-primary-button active:outline-primary-button outline-none placeholder:text-theme-settings-input-placeholder text-white bg-theme-settings-input-bg"
+            className="pl-9 h-9"
             autoComplete="off"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="mt-2 flex flex-col gap-y-2">
+        <div className="flex flex-col gap-y-1 overflow-y-auto">
           {filteredConnectors.length > 0 ? (
             filteredConnectors.map((slug, index) => (
               <ConnectorOption
@@ -112,14 +110,13 @@ export default function DataConnectors() {
               />
             ))
           ) : (
-            <div className="text-white text-center mt-4">
+            <div className="text-theme-text-secondary text-center mt-4 text-sm">
               {t("connectors.no-connectors")}
             </div>
           )}
         </div>
       </div>
-      <div className="xl:block hidden absolute left-1/2 top-0 bottom-0 w-[0.5px] bg-white/20 -translate-x-1/2"></div>
-      <div className="w-full p-4 pb-8 top-0 text-white min-w-[500px] overflow-y-auto h-full">
+      <div className="w-full text-theme-text-primary h-[560px] overflow-y-auto border border-theme-modal-border rounded-lg p-4">
         {DATA_CONNECTORS[selectedConnector].options}
       </div>
     </div>

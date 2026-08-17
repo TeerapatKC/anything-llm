@@ -3,7 +3,7 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import pluralize from "pluralize";
 import { TagsInput } from "react-tag-input-component";
-import { Info, Warning } from "@phosphor-icons/react";
+import { Info, AlertTriangle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -229,7 +229,7 @@ function GitLabBranchSelection({ repo, accessToken }) {
 
   if (loading) {
     return (
-      <div className="flex flex-col w-60">
+      <div className="flex flex-col w-full max-w-60">
         <div className="flex flex-col gap-y-1 mb-4">
           <Label variant="bold">{t("connectors.gitlab.branch")}</Label>
           <p className="text-xs font-normal text-theme-text-secondary">
@@ -278,7 +278,7 @@ function PATAlert({ accessToken }) {
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-white mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
       <div className="gap-x-2 flex items-center">
-        <Info className="shrink-0" size={25} />
+        <Info className="shrink-0 h-6 w-6" />
         <p className="text-sm">
           <span
             dangerouslySetInnerHTML={{
@@ -310,10 +310,7 @@ function PATTooltip({ accessToken }) {
       {!accessToken && (
         <Tooltip>
           <TooltipTrigger asChild>
-            <Warning
-              size={14}
-              className="ml-1 text-orange-500 cursor-pointer"
-            />
+            <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
           </TooltipTrigger>
           <TooltipContent side="right" className="max-w-[250px] text-xs">
             <p className="text-sm">

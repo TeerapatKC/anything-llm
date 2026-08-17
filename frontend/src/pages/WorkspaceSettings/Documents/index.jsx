@@ -31,9 +31,7 @@ export default function WorkspaceDocuments({ workspace }) {
           <DocumentSettings workspace={workspace} />
         </EmbeddingProgressProvider>
       ) : (
-        <div className="mt-10 overflow-x-auto">
-          <DataConnectors workspace={workspace} />
-        </div>
+        <DataConnectors workspace={workspace} />
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Info } from "@phosphor-icons/react";
+import { Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";

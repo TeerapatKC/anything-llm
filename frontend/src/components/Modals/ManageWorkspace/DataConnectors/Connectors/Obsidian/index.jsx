@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FolderOpen, Info } from "@phosphor-icons/react";
+import { FolderOpen, Info } from "lucide-react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { Label } from "@/components/ui/label";

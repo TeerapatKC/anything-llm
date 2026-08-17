@@ -8,17 +8,24 @@ export default function ConnectorOption({
 }) {
   return (
     <button
+      type="button"
       onClick={() => setSelectedConnector(slug)}
-      className={`border-none flex text-left gap-x-3.5 items-center py-2 px-4 hover:bg-theme-file-picker-hover ${
+      className={`border-none flex text-left gap-x-3 items-center py-2 px-2.5 hover:bg-theme-file-picker-hover ${
         selectedConnector === slug ? "bg-theme-file-picker-hover" : ""
-      } rounded-lg cursor-pointer w-full`}
+      } rounded-lg cursor-pointer w-full shrink-0`}
     >
-      <img src={image} alt={name} className="w-[40px] h-[40px] rounded-md" />
-      <div className="flex flex-col">
-        <div className="text-white font-bold text-[14px]">{name}</div>
-        <div>
-          <p className="text-[12px] text-white/60">{description}</p>
+      <img
+        src={image}
+        alt={name}
+        className="w-8 h-8 rounded-md shrink-0 object-cover"
+      />
+      <div className="flex flex-col min-w-0">
+        <div className="text-theme-text-primary font-semibold text-sm truncate">
+          {name}
         </div>
+        <p className="text-xs text-theme-text-secondary truncate">
+          {description}
+        </p>
       </div>
     </button>
   );

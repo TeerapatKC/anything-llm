@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Warning } from "@phosphor-icons/react";
+import { AlertTriangle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -214,10 +214,7 @@ export default function ConfluenceOptions() {
                         </p>
                         <Tooltip>
                           <TooltipTrigger asChild>
-                            <Warning
-                              size={14}
-                              className="ml-1 text-orange-500 cursor-pointer"
-                            />
+                            <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
                           </TooltipTrigger>
                           <TooltipContent
                             side="right"
