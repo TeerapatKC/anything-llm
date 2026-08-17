@@ -4,7 +4,7 @@ const { Telemetry } = require("../models/telemetry");
 const { ModelRouterService } = require("../utils/router");
 const { reqBody, userFromSession } = require("../utils/http");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -16,7 +16,7 @@ function modelRouterEndpoints(app) {
     "/model-routers",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (_request, response) => {
       try {
@@ -33,7 +33,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -59,7 +59,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/new",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -84,7 +84,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -105,7 +105,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -128,7 +128,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id/rules/new",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -157,7 +157,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id/rules/reorder",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -184,7 +184,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id/rules/:ruleId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {
@@ -208,7 +208,7 @@ function modelRouterEndpoints(app) {
     "/model-routers/:id/rules/:ruleId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
+      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
     ],
     async (request, response) => {
       try {

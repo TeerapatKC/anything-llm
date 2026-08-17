@@ -5,6 +5,7 @@ import PromptInput, {
   PROMPT_INPUT_EVENT,
   PROMPT_INPUT_ID,
 } from "./PromptInput";
+import InactiveWorkspaceNotice from "./InactiveWorkspaceNotice";
 import Workspace from "@/models/workspace";
 import handleChat, { ABORT_STREAM_EVENT } from "@/utils/chat";
 import { useNavigate } from "react-router-dom";
@@ -473,14 +474,18 @@ export default function ChatContainer({
                   <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
                     {t("main-page.greeting")}
                   </h1>
-                  <PromptInput
-                    workspace={workspace}
-                    submit={handleSubmit}
-                    isStreaming={loadingResponse}
-                    sendCommand={sendCommand}
-                    attachments={files}
-                    centered={true}
-                  />
+                  {workspace?.active === false ? (
+                    <InactiveWorkspaceNotice />
+                  ) : (
+                    <PromptInput
+                      workspace={workspace}
+                      submit={handleSubmit}
+                      isStreaming={loadingResponse}
+                      sendCommand={sendCommand}
+                      attachments={files}
+                      centered={true}
+                    />
+                  )}
                   <QuickActions
                     hasAvailableWorkspace={!!workspace}
                     onCreateAgent={() => navigate(paths.settings.agentSkills())}
@@ -538,14 +543,18 @@ export default function ChatContainer({
                     websocket={websocket}
                   />
                 </MetricsProvider>
-                <PromptInput
-                  workspace={workspace}
-                  submit={handleSubmit}
-                  isStreaming={loadingResponse}
-                  sendCommand={sendCommand}
-                  attachments={files}
-                  centered={false}
-                />
+                {workspace?.active === false ? (
+                  <InactiveWorkspaceNotice />
+                ) : (
+                  <PromptInput
+                    workspace={workspace}
+                    submit={handleSubmit}
+                    isStreaming={loadingResponse}
+                    sendCommand={sendCommand}
+                    attachments={files}
+                    centered={false}
+                  />
+                )}
               </div>
             </div>
           </DnDFileUploaderWrapper>

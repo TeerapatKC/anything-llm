@@ -1,27 +1,19 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Sidebar from "@/components/SettingsSidebar";
 import { CircleNotch } from "@phosphor-icons/react";
 import Telegram from "@/models/telegram";
 import ConnectedView from "./ConnectedView";
 import SetupView from "./SetupView";
 import { useTranslation } from "react-i18next";
-import System from "@/models/system";
 import paths from "@/utils/paths";
 
 export default function TelegramBotSettings() {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [config, setConfig] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
-      const [isMultiUserMode, configRes] = await Promise.all([
-        System.isMultiUserMode(),
-        Telegram.getConfig(),
-      ]);
-
-      if (isMultiUserMode) navigate(paths.home());
+      const configRes = await Telegram.getConfig();
       setConfig(configRes?.config || null);
       setLoading(false);
     }

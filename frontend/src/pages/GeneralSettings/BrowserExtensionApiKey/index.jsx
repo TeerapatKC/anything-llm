@@ -23,7 +23,6 @@ export default function BrowserExtensionApiKeys() {
   const [apiKeys, setApiKeys] = useState([]);
   const [error, setError] = useState(null);
   const { isOpen, openModal, closeModal } = useModal();
-  const [isMultiUser, setIsMultiUser] = useState(false);
 
   useEffect(() => {
     fetchExistingKeys();
@@ -33,7 +32,6 @@ export default function BrowserExtensionApiKeys() {
     const result = await BrowserExtensionApiKey.getAll();
     if (result.success) {
       setApiKeys(result.apiKeys);
-      setIsMultiUser(result.apiKeys.some((key) => key.user !== null));
     } else {
       setError(result.error || "Failed to fetch API keys");
     }
@@ -75,10 +73,7 @@ export default function BrowserExtensionApiKeys() {
                 </CTAButton>
               </DialogTrigger>
               <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-                <NewBrowserExtensionApiKeyModal
-                  onSuccess={fetchExistingKeys}
-                  isMultiUser={isMultiUser}
-                />
+                <NewBrowserExtensionApiKeyModal onSuccess={fetchExistingKeys} />
               </DialogContent>
             </Dialog>
           </div>
@@ -109,15 +104,9 @@ export default function BrowserExtensionApiKeys() {
                     >
                       Extension Connection String
                     </TableHead>
-                    {isMultiUser && (
-                      <TableHead
-                        variant="none"
-                        scope="col"
-                        className="px-6 py-2"
-                      >
-                        Created By
-                      </TableHead>
-                    )}
+                    <TableHead variant="none" scope="col" className="px-6 py-2">
+                      Created By
+                    </TableHead>
                     <TableHead variant="none" scope="col" className="px-6 py-2">
                       Created At
                     </TableHead>
@@ -135,7 +124,7 @@ export default function BrowserExtensionApiKeys() {
                     <TableRow variant="settings">
                       <TableCell
                         variant="none"
-                        colSpan={isMultiUser ? "4" : "3"}
+                        colSpan="4"
                         className="px-6 py-4 text-center"
                       >
                         No API keys found
@@ -148,7 +137,6 @@ export default function BrowserExtensionApiKeys() {
                         apiKey={apiKey}
                         removeApiKey={removeApiKey}
                         connectionString={`${fullApiUrl()}|${apiKey.key}`}
-                        isMultiUser={isMultiUser}
                       />
                     ))
                   )}

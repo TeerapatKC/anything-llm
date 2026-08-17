@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { FullScreenLoader } from "../Preloader";
-import validateSessionTokenForUser, {
-  sessionStateForUser,
-} from "@/utils/session";
+import { sessionStateForUser } from "@/utils/session";
 import paths from "@/utils/paths";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
 import { userFromStorage } from "@/utils/request";
@@ -27,7 +25,7 @@ import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
  * and so sessions predating the permission system are not left denied everything.
  */
 async function hydratePermissions() {
-  if (!userFromStorage()) return; // single-user mode has no user record
+  if (!userFromStorage()) return;
   const { permissions, workspacePermissions, roleDisplayName } =
     await Role.myPermissions();
   storePermissions(permissions);
@@ -35,20 +33,17 @@ async function hydratePermissions() {
   storeRoleLabel(roleDisplayName);
 }
 
-// Used only for Multi-user mode only as we permission specific pages based on the
-// permissions the user's role grants. When in single user mode we just bypass any authchecks.
+// Every page is permissioned off the signed-in user's role - there is no unauthenticated
+// mode, so a request without a valid session always lands on /login.
 function useIsAuthenticated() {
   const [isAuthd, setIsAuthed] = useState(null);
   const [shouldRedirectToOnboarding, setShouldRedirectToOnboarding] =
     useState(false);
-  const [multiUserMode, setMultiUserMode] = useState(false);
   const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
 
   useEffect(() => {
     const validateSession = async () => {
       const onboardingComplete = await System.isOnboardingComplete();
-      const { MultiUserMode, RequiresAuth } = await System.keys();
-      setMultiUserMode(MultiUserMode);
 
       // Check for the onboarding redirect condition
       if (onboardingComplete === false) {
@@ -57,26 +52,6 @@ function useIsAuthenticated() {
         return;
       }
 
-      // Single User mode without password - no auth required
-      if (!MultiUserMode && !RequiresAuth) {
-        setIsAuthed(true);
-        return;
-      }
-
-      // Single User password mode check
-      if (!MultiUserMode && RequiresAuth) {
-        const localAuthToken = localStorage.getItem(AUTH_TOKEN);
-        if (!localAuthToken) {
-          setIsAuthed(false);
-          return;
-        }
-
-        const isValid = await validateSessionTokenForUser();
-        setIsAuthed(isValid);
-        return;
-      }
-
-      // Multi-user mode checks
       const localUser = localStorage.getItem(AUTH_USER);
       const localAuthToken = localStorage.getItem(AUTH_TOKEN);
       if (!localUser || !localAuthToken) {
@@ -113,14 +88,12 @@ function useIsAuthenticated() {
   return {
     isAuthd,
     shouldRedirectToOnboarding,
-    multiUserMode,
     requiresPasswordChange,
   };
 }
 
 /**
- * Allows a route only to users whose role grants at least one of `permissions`. In
- * single user mode there is one operator who holds everything, so the check is skipped.
+ * Allows a route only to users whose role grants at least one of `permissions`.
  * @param {{Component: React.ComponentType, permissions: string[], hideUserMenu?: boolean}} props
  */
 export function PermissionRoute({
@@ -128,12 +101,8 @@ export function PermissionRoute({
   permissions = [],
   hideUserMenu = false,
 }) {
-  const {
-    isAuthd,
-    shouldRedirectToOnboarding,
-    multiUserMode,
-    requiresPasswordChange,
-  } = useIsAuthenticated();
+  const { isAuthd, shouldRedirectToOnboarding, requiresPasswordChange } =
+    useIsAuthenticated();
   if (isAuthd === null) return <FullScreenLoader />;
 
   if (shouldRedirectToOnboarding) {
@@ -143,7 +112,7 @@ export function PermissionRoute({
   if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
 
   const user = userFromStorage();
-  const allowed = !multiUserMode || userCanAny(permissions, user);
+  const allowed = userCanAny(permissions, user);
   if (!isAuthd || !allowed) return <Navigate to={paths.home()} />;
 
   return hideUserMenu ? (
@@ -166,12 +135,8 @@ export function PermissionRoute({
  * @param {{Component: React.ComponentType, permissions: string[]}} props
  */
 export function WorkspacePermissionRoute({ Component, permissions = [] }) {
-  const {
-    isAuthd,
-    shouldRedirectToOnboarding,
-    multiUserMode,
-    requiresPasswordChange,
-  } = useIsAuthenticated();
+  const { isAuthd, shouldRedirectToOnboarding, requiresPasswordChange } =
+    useIsAuthenticated();
   const { slug } = useParams();
   if (isAuthd === null) return <FullScreenLoader />;
 
@@ -182,7 +147,7 @@ export function WorkspacePermissionRoute({ Component, permissions = [] }) {
   if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
 
   const user = userFromStorage();
-  const allowed = !multiUserMode || workspaceCanAny(permissions, slug, user);
+  const allowed = workspaceCanAny(permissions, slug, user);
   if (!isAuthd || !allowed) return <Navigate to={paths.home()} />;
 
   return (
@@ -191,25 +156,6 @@ export function WorkspacePermissionRoute({ Component, permissions = [] }) {
         <Component />
       </UserMenu>
     </KeyboardShortcutWrapper>
-  );
-}
-
-// Allows access only in single user mode — redirects to home in multi-user mode
-export function SingleUserRoute({ Component }) {
-  const { isAuthd, shouldRedirectToOnboarding, multiUserMode } =
-    useIsAuthenticated();
-  if (isAuthd === null) return <FullScreenLoader />;
-
-  if (shouldRedirectToOnboarding) {
-    return <Navigate to={paths.onboarding.home()} />;
-  }
-
-  return isAuthd && !multiUserMode ? (
-    <KeyboardShortcutWrapper>
-      <Component />
-    </KeyboardShortcutWrapper>
-  ) : (
-    <Navigate to={paths.home()} />
   );
 }
 

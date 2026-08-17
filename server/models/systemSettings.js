@@ -37,7 +37,7 @@ const SystemSettings = {
   /** A default system prompt that is used when no other system prompt is set or available to the function caller. */
   saneDefaultSystemPrompt:
     "Given the following conversation, relevant context, and a follow up question, reply with an answer to the current question the user is asking. The current date and time is {datetime}. Return only your response to the question given the above information following the users instructions as needed.",
-  protectedFields: ["multi_user_mode", "hub_api_key", "onboarding_complete"],
+  protectedFields: ["hub_api_key", "onboarding_complete"],
   publicFields: [
     "footer_data",
     "support_email",
@@ -463,11 +463,8 @@ const SystemSettings = {
       // --------------------------------------------------------
       // General Settings
       // --------------------------------------------------------
-      RequiresAuth: !!process.env.AUTH_TOKEN,
-      AuthToken: !!process.env.AUTH_TOKEN,
       JWTSecret: !!process.env.JWT_SECRET,
       StorageDir: process.env.STORAGE_DIR,
-      MultiUserMode: await this.isMultiUserMode(),
       MemoryEnabled: await this.memoriesEnabled(),
       MemoryAutoExtraction: await this.memoryAutoExtractionSetting(),
       DisableTelemetry: process.env.DISABLE_TELEMETRY || "false",
@@ -739,16 +736,6 @@ const SystemSettings = {
     } catch (error) {
       console.error("FAILED TO UPDATE SYSTEM SETTINGS", error.message);
       return { success: false, error: error.message };
-    }
-  },
-
-  isMultiUserMode: async function () {
-    try {
-      const setting = await this.get({ label: "multi_user_mode" });
-      return setting?.value === "true";
-    } catch (error) {
-      console.error(error.message);
-      return false;
     }
   },
 

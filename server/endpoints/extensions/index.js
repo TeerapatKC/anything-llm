@@ -1,7 +1,7 @@
 const { Telemetry } = require("../../models/telemetry");
 const { CollectorApi } = require("../../utils/collectorApi");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   anyWorkspacePermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
 const {

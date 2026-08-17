@@ -1,9 +1,9 @@
-const { reqBody, multiUserMode, userFromSession } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 const { handleFileUpload } = require("../utils/files/multer");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -38,7 +38,7 @@ function workspaceParsedFilesEndpoints(app) {
           await WorkspaceParsedFiles.getContextMetadataAndLimits(
             workspace,
             thread || null,
-            multiUserMode(response) ? user : null
+            user
           );
 
         return response

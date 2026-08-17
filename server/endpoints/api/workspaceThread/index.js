@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const { WorkspaceThread } = require("../../../models/workspaceThread");
 const { Workspace } = require("../../../models/workspace");
 const { validApiKey } = require("../../../utils/middleware/validApiKey");
-const { reqBody, multiUserMode } = require("../../../utils/http");
+const { reqBody } = require("../../../utils/http");
 const { VALID_CHAT_MODE } = require("../../../utils/chats/stream");
 const { Telemetry } = require("../../../models/telemetry");
 const { EventLogs } = require("../../../models/eventLogs");
@@ -79,11 +79,6 @@ function apiWorkspaceThreadEndpoints(app) {
           return;
         }
 
-        // If the system is not multi-user and you pass in a userId
-        // it needs to be nullified as no users exist. This can still fail validation
-        // as we don't check if the userID is valid.
-        if (!response.locals.multiUserMode && !!userId) userId = null;
-
         const { thread, message } = await WorkspaceThread.new(
           workspace,
           userId ? Number(userId) : null,
@@ -91,7 +86,6 @@ function apiWorkspaceThreadEndpoints(app) {
         );
 
         await Telemetry.sendTelemetry("workspace_thread_created", {
-          multiUserMode: multiUserMode(response),
           LLMSelection: process.env.LLM_PROVIDER || "openai",
           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
           VectorDbSelection: process.env.VECTOR_DB || "lancedb",

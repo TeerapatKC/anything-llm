@@ -802,15 +802,6 @@ class OutlookBridge {
     if (this.#isInitialized) return { success: true };
 
     try {
-      const isMultiUser = await SystemSettings.isMultiUserMode();
-      if (isMultiUser) {
-        return {
-          success: false,
-          error:
-            "Outlook integration is not available in multi-user mode for security reasons.",
-        };
-      }
-
       const config = await OutlookBridge.getConfig();
 
       if (!config.clientId || !config.clientSecret) {
@@ -860,13 +851,10 @@ class OutlookBridge {
   }
 
   /**
-   * Checks if Outlook tools are available (not in multi-user mode and has configuration).
+   * Checks if Outlook tools are available (instance-wide credentials are configured).
    * @returns {Promise<boolean>}
    */
   static async isToolAvailable() {
-    const isMultiUser = await SystemSettings.isMultiUserMode();
-    if (isMultiUser) return false;
-
     const config = await OutlookBridge.getConfig();
 
     if (!config.clientId || !config.clientSecret || !config.accessToken) {

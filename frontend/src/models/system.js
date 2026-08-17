@@ -218,40 +218,35 @@ const System = {
         return { newValues: null, error: e.message };
       });
   },
-  updateSystemPassword: async (data) => {
-    return await fetch(`${API_BASE}/system/update-password`, {
-      method: "POST",
-      headers: baseHeaders(),
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .catch((e) => {
-        console.error(e);
-        return { success: false, error: e.message };
-      });
-  },
-  setupMultiUser: async (data) => {
-    return await fetch(`${API_BASE}/system/enable-multi-user`, {
-      method: "POST",
-      headers: baseHeaders(),
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .catch((e) => {
-        console.error(e);
-        return { success: false, error: e.message };
-      });
-  },
-  isMultiUserMode: async () => {
-    return await fetch(`${API_BASE}/system/multi-user-mode`, {
+  /**
+   * Whether the instance still needs its first system administrator created.
+   * @returns {Promise<boolean>}
+   */
+  needsAdminSetup: async () => {
+    return await fetch(`${API_BASE}/system/setup-state`, {
       method: "GET",
-      headers: baseHeaders(),
     })
       .then((res) => res.json())
-      .then((res) => res?.multiUserMode)
+      .then((res) => res?.needsAdminSetup ?? false)
       .catch((e) => {
         console.error(e);
         return false;
+      });
+  },
+  /**
+   * Creates the instance's first system administrator. Only valid on a fresh deploy -
+   * the server refuses once any account exists.
+   */
+  setupAdmin: async (data) => {
+    return await fetch(`${API_BASE}/system/setup-admin`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
       });
   },
   deleteDocument: async (name) => {
@@ -531,50 +526,6 @@ const System = {
       .catch((e) => {
         console.log(e);
         return { success: false, error: e.message };
-      });
-  },
-  getApiKeys: async function () {
-    return fetch(`${API_BASE}/system/api-keys`, {
-      method: "GET",
-      headers: baseHeaders(),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText || "Error fetching api key.");
-        }
-        return res.json();
-      })
-      .catch((e) => {
-        console.error(e);
-        return { apiKey: null, error: e.message };
-      });
-  },
-  generateApiKey: async function (data = {}) {
-    return fetch(`${API_BASE}/system/generate-api-key`, {
-      method: "POST",
-      headers: baseHeaders(),
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(res.statusText || "Error generating api key.");
-        }
-        return res.json();
-      })
-      .catch((e) => {
-        console.error(e);
-        return { apiKey: null, error: e.message };
-      });
-  },
-  deleteApiKey: async function (apiKeyId = "") {
-    return fetch(`${API_BASE}/system/api-key/${apiKeyId}`, {
-      method: "DELETE",
-      headers: baseHeaders(),
-    })
-      .then((res) => res.ok)
-      .catch((e) => {
-        console.error(e);
-        return false;
       });
   },
   customModels: async function (

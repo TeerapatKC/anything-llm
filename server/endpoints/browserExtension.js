@@ -5,10 +5,10 @@ const {
   validBrowserExtensionApiKey,
 } = require("../utils/middleware/validBrowserExtensionApiKey");
 const { CollectorApi } = require("../utils/collectorApi");
-const { reqBody, multiUserMode, userFromSession } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { Role } = require("../models/role");
@@ -23,9 +23,7 @@ function browserExtensionEndpoints(app) {
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
-        const workspaces = multiUserMode(response)
-          ? await Workspace.whereWithUser(user)
-          : await Workspace.where();
+        const workspaces = await Workspace.whereWithUser(user);
 
         const apiKeyId = response.locals.apiKey.id;
         response.status(200).json({
@@ -67,9 +65,7 @@ function browserExtensionEndpoints(app) {
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
-        const workspaces = multiUserMode(response)
-          ? await Workspace.whereWithUser(user)
-          : await Workspace.where();
+        const workspaces = await Workspace.whereWithUser(user);
 
         response.status(200).json({ workspaces });
       } catch (error) {
@@ -86,9 +82,9 @@ function browserExtensionEndpoints(app) {
       try {
         const { workspaceId, textContent, metadata } = reqBody(request);
         const user = await userFromSession(request, response);
-        const workspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { id: parseInt(workspaceId) })
-          : await Workspace.get({ id: parseInt(workspaceId) });
+        const workspace = await Workspace.getWithUser(user, {
+          id: parseInt(workspaceId),
+        });
 
         if (!workspace) {
           response.status(404).json({ error: "Workspace not found" });
@@ -157,14 +153,12 @@ function browserExtensionEndpoints(app) {
     "/browser-extension/api-keys",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
+      userPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
     ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
-        const apiKeys = multiUserMode(response)
-          ? await BrowserExtensionApiKey.whereWithUser(user)
-          : await BrowserExtensionApiKey.where();
+        const apiKeys = await BrowserExtensionApiKey.whereWithUser(user);
 
         response.status(200).json({ success: true, apiKeys });
       } catch (error) {
@@ -180,7 +174,7 @@ function browserExtensionEndpoints(app) {
     "/browser-extension/api-keys/new",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
+      userPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
     ],
     async (request, response) => {
       try {
@@ -203,7 +197,7 @@ function browserExtensionEndpoints(app) {
     "/browser-extension/api-keys/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
+      userPermissionValid([PERMISSIONS.SYSTEM_BROWSER_EXTENSION]),
     ],
     async (request, response) => {
       try {
@@ -211,10 +205,7 @@ function browserExtensionEndpoints(app) {
         const user = await userFromSession(request, response);
 
         // Without the super-admin grant a user may only revoke their own keys.
-        if (
-          multiUserMode(response) &&
-          !(await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))
-        ) {
+        if (!(await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))) {
           const apiKey = await BrowserExtensionApiKey.get({
             id: parseInt(id),
             user_id: user?.id,

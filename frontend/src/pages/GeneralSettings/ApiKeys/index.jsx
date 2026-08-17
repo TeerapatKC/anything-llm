@@ -6,8 +6,6 @@ import Admin from "@/models/admin";
 import ApiKeyRow from "./ApiKeyRow";
 import NewApiKeyModal from "./NewApiKeyModal";
 import paths from "@/utils/paths";
-import { userFromStorage } from "@/utils/request";
-import System from "@/models/system";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
 import CTAButton from "@/components/lib/CTAButton";
@@ -28,9 +26,7 @@ export default function AdminApiKeys() {
   const [apiKeys, setApiKeys] = useState([]);
 
   const fetchExistingKeys = async () => {
-    const user = userFromStorage();
-    const Model = !!user ? Admin : System;
-    const { apiKeys: foundKeys } = await Model.getApiKeys();
+    const { apiKeys: foundKeys } = await Admin.getApiKeys();
     setApiKeys(foundKeys);
     setLoading(false);
   };

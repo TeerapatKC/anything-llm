@@ -9,10 +9,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
-export default function NewBrowserExtensionApiKeyModal({
-  onSuccess,
-  isMultiUser,
-}) {
+export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
   const [apiKey, setApiKey] = useState(null);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -70,13 +67,10 @@ export default function NewBrowserExtensionApiKeyModal({
               className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
             />
           )}
-          {isMultiUser && (
-            <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
-              Warning: You are in multi-user mode, this API key will allow
-              access to all workspaces associated with your account. Please
-              share it cautiously.
-            </p>
-          )}
+          <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
+            Warning: this API key will allow access to all workspaces associated
+            with your account. Please share it cautiously.
+          </p>
           <p className="text-white text-opacity-60 text-xs md:text-sm">
             After clicking "Create API Key", AnythingLLM will attempt to connect
             to your browser extension automatically.

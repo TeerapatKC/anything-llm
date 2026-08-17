@@ -24,6 +24,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -168,15 +169,32 @@ export default function ActiveWorkspaces() {
                           </span>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <span className="truncate">{workspace.name}</span>
+                              <span
+                                className={cn(
+                                  "truncate",
+                                  workspace.active === false && "opacity-50"
+                                )}
+                              >
+                                {workspace.name}
+                              </span>
                             </TooltipTrigger>
                             <TooltipContent
                               side="right"
                               className="max-w-[250px] text-xs"
                             >
-                              {workspace.name}
+                              {workspace.active === false
+                                ? `${workspace.name} — inactive`
+                                : workspace.name}
                             </TooltipContent>
                           </Tooltip>
+                          {workspace.active === false && (
+                            <Badge
+                              variant="secondary"
+                              className="ml-auto shrink-0 px-1.5 py-0 text-[10px] font-medium"
+                            >
+                              Inactive
+                            </Badge>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                       {workspaceCan(

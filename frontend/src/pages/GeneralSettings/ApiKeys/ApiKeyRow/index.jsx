@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Admin from "@/models/admin";
 import { Trash } from "@phosphor-icons/react";
-import { userFromStorage } from "@/utils/request";
-import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -19,9 +17,7 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
       confirmText: t("common.delete", "Delete"),
       variant: "destructive",
       onConfirm: async () => {
-        const user = userFromStorage();
-        const Model = !!user ? Admin : System;
-        await Model.deleteApiKey(apiKey.id);
+        await Admin.deleteApiKey(apiKey.id);
         removeApiKey(apiKey.id);
       },
     });

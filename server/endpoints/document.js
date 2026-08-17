@@ -2,7 +2,7 @@ const { Document } = require("../models/documents");
 const { normalizePath, documentsPath, isWithin } = require("../utils/files");
 const { reqBody } = require("../utils/http");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -13,7 +13,7 @@ function documentEndpoints(app) {
   if (!app) return;
   app.post(
     "/document/create-folder",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { name } = reqBody(request);
@@ -43,7 +43,7 @@ function documentEndpoints(app) {
 
   app.post(
     "/document/move-files",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { files } = reqBody(request);

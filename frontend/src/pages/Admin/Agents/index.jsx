@@ -6,6 +6,8 @@ import Admin from "@/models/admin";
 import System from "@/models/system";
 import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
+import { userCan, PERMISSIONS } from "@/utils/permissions";
+import { userFromStorage } from "@/utils/request";
 import {
   CaretLeft,
   CaretRight,
@@ -76,16 +78,12 @@ export default function AdminAgents() {
   });
   const allAppIntegrationSkills = getAppIntegrationSkills(t);
 
-  // Filter skills based on mode restrictions
-  // singleUserOnly -> hidden in multi-user mode
-  // multiUserOnly -> hidden when NOT in multi-user mode
-  const isMultiUserMode = settings?.MultiUserMode ?? false;
+  // Skills marked `adminOnly` hold instance-wide third-party credentials (a single
+  // OAuth grant shared by everyone), so only a system administrator may configure them.
+  const isSystemAdmin = userCan(PERMISSIONS.SUPER_ADMIN, userFromStorage());
   const filterSkillsByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
-    if (skillConfig.mode.includes("singleUserOnly") && isMultiUserMode)
-      return false;
-    if (skillConfig.mode.includes("multiUserOnly") && !isMultiUserMode)
-      return false;
+    if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;
     return true;
   };
   const configurableSkills = Object.fromEntries(

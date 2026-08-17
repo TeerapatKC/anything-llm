@@ -254,7 +254,7 @@ describe("route guards", () => {
     const misScoped = [];
     for (const { file, source } of sources()) {
       for (const guard of source.matchAll(
-        /(?:flexUserPermissionValid|strictMultiUserPermissionValid)\(\[([^\]]*)\]\)/g
+        /(?:userPermissionValid|userPermissionValid)\(\[([^\]]*)\]\)/g
       )) {
         for (const ref of guard[1].matchAll(
           /(WS_|WORKSPACE_)?PERMISSIONS\.([A-Z_]+)/g

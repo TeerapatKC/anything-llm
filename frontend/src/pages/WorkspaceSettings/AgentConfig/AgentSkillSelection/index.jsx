@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
+import { userCan, PERMISSIONS } from "@/utils/permissions";
+import { userFromStorage } from "@/utils/request";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import Toggle from "@/components/lib/Toggle";
@@ -156,13 +158,12 @@ export default function AgentSkillSelection({ workspace }) {
       </p>
     );
 
-  const isMultiUserMode = systemSettings?.MultiUserMode ?? false;
+  // Skills marked `adminOnly` hold instance-wide third-party credentials, so only a
+  // system administrator sees them here.
+  const isSystemAdmin = userCan(PERMISSIONS.SUPER_ADMIN, userFromStorage());
   const filterByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
-    if (skillConfig.mode.includes("singleUserOnly") && isMultiUserMode)
-      return false;
-    if (skillConfig.mode.includes("multiUserOnly") && !isMultiUserMode)
-      return false;
+    if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;
     return true;
   };
 

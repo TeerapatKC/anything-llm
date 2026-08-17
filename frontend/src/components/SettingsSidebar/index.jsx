@@ -9,7 +9,6 @@ import {
   Gear,
   UserCircleGear,
   PencilSimpleLine,
-  Nut,
   Toolbox,
   Plugs,
 } from "@phosphor-icons/react";
@@ -223,49 +222,41 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.llm"),
               href: paths.settings.llmPreference(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.vector-database"),
               href: paths.settings.vectorDatabase(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.embedder"),
               href: paths.settings.embedder.modelPreference(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.text-splitting"),
               href: paths.settings.embedder.chunkingPreference(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.image-generation"),
               href: paths.settings.imageGenerationPreference(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.voice-speech"),
               href: paths.settings.audioPreference(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.transcription"),
               href: paths.settings.transcriptionPreference(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
             {
               btnText: t("settings.model-router"),
               href: paths.settings.modelRouters(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_MODEL_ROUTING],
             },
           ]}
@@ -294,7 +285,6 @@ const SidebarOptions = ({ user = null, t }) => (
               hidden: !canViewChatHistory,
               btnText: t("settings.workspace-chats"),
               href: paths.settings.chats(),
-              flex: true,
               permissions: [PERMISSIONS.CHATS_VIEW_ALL],
             },
             {
@@ -305,7 +295,6 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: "Default System Prompt",
               href: paths.settings.defaultSystemPrompt(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_PROMPTS],
             },
           ]}
@@ -321,7 +310,6 @@ const SidebarOptions = ({ user = null, t }) => (
           }
           href={paths.settings.agentSkills()}
           user={user}
-          flex={true}
           permissions={[PERMISSIONS.AGENTS_MANAGE_SKILLS]}
         />
         <Option
@@ -338,19 +326,16 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.community-hub.trending"),
               href: paths.communityHub.trending(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
             },
             {
               btnText: t("settings.community-hub.your-account"),
               href: paths.communityHub.authentication(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
             },
             {
               btnText: t("settings.community-hub.import-item"),
               href: paths.communityHub.importItem(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
             },
           ]}
@@ -363,19 +348,16 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.interface"),
               href: paths.settings.interface(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_APPEARANCE],
             },
             {
               btnText: t("settings.branding"),
               href: paths.settings.branding(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_APPEARANCE],
             },
             {
               btnText: t("settings.chat"),
               href: paths.settings.chat(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_APPEARANCE],
             },
           ]}
@@ -388,7 +370,6 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.available-channels.telegram"),
               href: paths.settings.telegram(),
-              flex: true,
               hidden: !!user,
             },
           ]}
@@ -402,55 +383,39 @@ const SidebarOptions = ({ user = null, t }) => (
               hidden: !canViewChatHistory,
               btnText: t("settings.embeds"),
               href: paths.settings.embedChatWidgets(),
-              flex: true,
               permissions: [PERMISSIONS.EMBEDS_MANAGE],
             },
             {
               btnText: t("settings.event-logs"),
               href: paths.settings.logs(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_EVENT_LOGS],
             },
             {
               btnText: t("settings.scheduled-jobs"),
               href: paths.settings.scheduledJobs(),
-              flex: true,
               hidden: !!user,
             },
             {
               btnText: t("settings.api-keys"),
               href: paths.settings.apiKeys(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_API_KEYS],
             },
             {
               btnText: t("settings.system-prompt-variables"),
               href: paths.settings.systemPromptVariables(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_PROMPTS],
             },
             {
               btnText: t("settings.browser-extension"),
               href: paths.settings.browserExtension(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_BROWSER_EXTENSION],
             },
             {
               btnText: t("settings.mobile-app"),
               href: paths.settings.mobile(),
-              flex: true,
               permissions: [PERMISSIONS.SYSTEM_MOBILE],
             },
           ]}
-        />
-        <Option
-          btnText={t("settings.security")}
-          icon={<Nut className="h-5 w-5 flex-shrink-0" />}
-          href={paths.settings.security()}
-          user={user}
-          flex={true}
-          permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
-          hidden={!!user}
         />
         <HoldToReveal key="exp_features">
           <Option
@@ -458,7 +423,6 @@ const SidebarOptions = ({ user = null, t }) => (
             icon={<Flask className="h-5 w-5 flex-shrink-0" />}
             href={paths.settings.experimental()}
             user={user}
-            flex={true}
             permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
           />
         </HoldToReveal>

@@ -5,11 +5,11 @@ import Home from "./Home";
 import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 
 export default function Main() {
-  const { loading, requiresAuth, mode } = usePasswordModal();
+  const { loading, requiresAuth } = usePasswordModal();
 
   if (loading) return <FullScreenLoader />;
   if (requiresAuth !== false)
-    return <>{requiresAuth !== null && <PasswordModal mode={mode} />}</>;
+    return <>{requiresAuth !== null && <PasswordModal />}</>;
 
   return (
     <SidebarPageLayout>

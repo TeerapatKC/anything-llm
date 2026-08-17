@@ -1,6 +1,5 @@
-const { SystemSettings } = require("../models/systemSettings");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -8,7 +7,7 @@ const {
   validExportTypes,
   sendChatHistoryFile,
 } = require("../utils/chats/exportChatToFile");
-const { multiUserMode, reqBody, userFromSession } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 
 function utilEndpoints(app) {
   if (!app) return;
@@ -18,9 +17,7 @@ function utilEndpoints(app) {
       const metrics = {
         online: true,
         version: getGitVersion(),
-        mode: (await SystemSettings.isMultiUserMode())
-          ? "multi-user"
-          : "single-user",
+        mode: "multi-user",
         vectorDB: process.env.VECTOR_DB || "lancedb",
         storage: await getDiskStorage(),
         appVersion: getDeploymentVersion(),
@@ -34,7 +31,7 @@ function utilEndpoints(app) {
 
   app.post(
     "/export-chat/:type",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const { type } = request.params;
@@ -47,9 +44,9 @@ function utilEndpoints(app) {
         const { WorkspaceChats } = require("../models/workspaceChats");
 
         const user = await userFromSession(request, response);
-        const workspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug: String(workspaceSlug) })
-          : await Workspace.get({ slug: String(workspaceSlug) });
+        const workspace = await Workspace.getWithUser(user, {
+          slug: String(workspaceSlug),
+        });
         if (!workspace) return response.sendStatus(404).end();
 
         let thread;

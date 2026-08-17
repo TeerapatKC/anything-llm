@@ -1,7 +1,7 @@
 const { reqBody } = require("../utils/http");
 const MCPCompatibilityLayer = require("../utils/MCP");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -13,7 +13,7 @@ function mcpServersEndpoints(app) {
     "/mcp-servers/force-reload",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
+      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
     ],
     async (_request, response) => {
       try {
@@ -39,7 +39,7 @@ function mcpServersEndpoints(app) {
     "/mcp-servers/list",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
+      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
     ],
     async (_request, response) => {
       try {
@@ -62,7 +62,7 @@ function mcpServersEndpoints(app) {
     "/mcp-servers/toggle",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
+      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
     ],
     async (request, response) => {
       try {
@@ -88,7 +88,7 @@ function mcpServersEndpoints(app) {
     "/mcp-servers/delete",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
+      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
     ],
     async (request, response) => {
       try {
@@ -112,7 +112,7 @@ function mcpServersEndpoints(app) {
     "/mcp-servers/toggle-tool",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
+      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
     ],
     async (request, response) => {
       try {

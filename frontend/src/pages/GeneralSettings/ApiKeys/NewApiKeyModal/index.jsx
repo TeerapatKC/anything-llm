@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Copy, Check } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
 import paths from "@/utils/paths";
-import { userFromStorage } from "@/utils/request";
-import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -24,10 +22,7 @@ export default function NewApiKeyModal({ onSuccess }) {
   const handleCreate = async (e) => {
     setError(null);
     e.preventDefault();
-    const user = userFromStorage();
-    const Model = !!user ? Admin : System;
-
-    const { apiKey: newApiKey, error } = await Model.generateApiKey({
+    const { apiKey: newApiKey, error } = await Admin.generateApiKey({
       name,
     });
     if (!!newApiKey) {

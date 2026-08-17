@@ -41,11 +41,12 @@ async function isLegacyOnboarded() {
   // Vector DB is set, so we can assume onboarding is complete since this is default null in SystemSettings.js (default is lancedb in frontend)
   if (!!process.env.VECTOR_DB) return true;
 
-  // Check if the AUTH_TOKEN/JWT_SECRET is set, so we can assume onboarding is complete since this is default null in SystemSettings.js
-  if (!!process.env.AUTH_TOKEN || !!process.env.JWT_SECRET) return true;
+  // Check if the JWT_SECRET is set, so we can assume onboarding is complete since this is default null in SystemSettings.js
+  if (!!process.env.JWT_SECRET) return true;
 
-  // Check multi-user mode is enabled, if it is, then they are already using the app.
-  if ((await SystemSettings.isMultiUserMode()) === true) return true;
+  // An admin account already exists, so the instance has been set up before.
+  const { User } = require("../../models/user");
+  if ((await User.count()) > 0) return true;
   return false;
 }
 

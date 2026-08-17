@@ -264,15 +264,6 @@ class GmailBridge {
     if (this.#isInitialized) return { success: true };
 
     try {
-      const isMultiUser = await SystemSettings.isMultiUserMode();
-      if (isMultiUser) {
-        return {
-          success: false,
-          error:
-            "Gmail integration is not available in multi-user mode for security reasons.",
-        };
-      }
-
       const config = await GmailBridge.getConfig();
       if (!config.deploymentId || !config.apiKey) {
         return {
@@ -301,13 +292,10 @@ class GmailBridge {
   }
 
   /**
-   * Checks if Gmail tools are available (not in multi-user mode and has configuration).
+   * Checks if Gmail tools are available (instance-wide credentials are configured).
    * @returns {Promise<boolean>}
    */
   static async isToolAvailable() {
-    const isMultiUser = await SystemSettings.isMultiUserMode();
-    if (isMultiUser) return false;
-
     const config = await GmailBridge.getConfig();
     return !!(config.deploymentId && config.apiKey);
   }

@@ -43,6 +43,7 @@ const Workspace = {
     "name",
     // "slug",
     // "vectorTag",
+    "active",
     "openAiTemp",
     "openAiHistory",
     "lastUpdatedAt",
@@ -66,6 +67,13 @@ const Workspace = {
       // as the name field is not nullable in the db schema or has a default value.
       if (!value || typeof value !== "string") return "My Workspace";
       return String(value).slice(0, 255);
+    },
+    // Accepts the string forms too - a checkbox posted through a form body arrives
+    // as "true"/"false" rather than a real boolean.
+    active: (value) => {
+      if (value === null || value === undefined) return true;
+      if (typeof value === "string") return value !== "false";
+      return Boolean(value);
     },
     openAiTemp: (value) => {
       if (value === null || value === undefined) return null;

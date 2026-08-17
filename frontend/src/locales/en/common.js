@@ -181,6 +181,22 @@ const TRANSLATIONS = {
       heading: "Explain to me",
       body: "the benefits of AnythingLLM",
     },
+    status: {
+      title: "Workspace Status",
+      description:
+        "An inactive workspace keeps all of its documents, chats and members, but nobody can chat in it and any embeds pointing at it stop responding.",
+      active: "Active",
+      inactive: "Inactive",
+      deactivate: "Deactivate",
+      activated: "Workspace is now active.",
+      deactivated: "Workspace is now inactive.",
+      "chat-disabled":
+        "This workspace is inactive. An admin must activate it before you can chat here.",
+      failed: "Failed to update workspace status.",
+      "confirm-title": "Deactivate this workspace?",
+      "confirm-description":
+        "Members will not be able to chat in this workspace until it is activated again. Nothing is deleted.",
+    },
     delete: {
       title: "Delete Workspace",
       description:

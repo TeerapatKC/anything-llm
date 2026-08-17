@@ -415,24 +415,6 @@ const Memory = {
   },
 
   /**
-   * Assign all unowned memories (userId null) to the admin account when the system enters multi-user mode.
-   * @param {number} adminUserId
-   * @returns {Promise<boolean>}
-   */
-  migrateToMultiUser: async function (adminUserId) {
-    try {
-      await prisma.memories.updateMany({
-        where: { userId: null },
-        data: { userId: this.validations.id(adminUserId) },
-      });
-      return true;
-    } catch (error) {
-      console.error(error.message);
-      return false;
-    }
-  },
-
-  /**
    * Fetch the first memory matching the given where clause.
    * @param {object} [clause] - Prisma where clause
    * @returns {Promise<Memory|null>}

@@ -143,8 +143,36 @@ WORKDIR /app/frontend
 COPY ./frontend/package.json ./frontend/yarn.lock ./
 RUN yarn install --network-timeout 100000 && yarn cache clean
 COPY ./frontend/ ./
+# Where the SPA should send API calls. "/api" (default) means "same origin as the page"
+# which is correct both for the single-container image and for the split frontend
+# container, since nginx proxies /api to the backend container.
+ARG VITE_API_BASE="/api"
+ENV VITE_API_BASE=${VITE_API_BASE}
 RUN yarn build
 WORKDIR /app
+
+#############################################
+# Standalone frontend image (split deployment)
+# Serves the built SPA with nginx and proxies /api (+ websockets) to the
+# backend container. Used by docker-compose.split.yml via `target: frontend-nginx`.
+#############################################
+FROM nginx:1.27-alpine AS frontend-nginx
+ENV BACKEND_HOST=backend
+ENV BACKEND_PORT=3001
+# Docker's embedded DNS server - used to resolve BACKEND_HOST at request time
+ENV DNS_RESOLVER=127.0.0.11
+# Templates in this dir are envsubst'd by the nginx entrypoint on boot
+COPY ./docker/nginx.conf.template /etc/nginx/templates/default.conf.template
+COPY --from=frontend-build /app/frontend/dist /usr/share/nginx/html
+# The vite build emits the entry document as `_index.html` (rollup deconflicts it
+# against the `index.{js,css}` names forced in vite.config.js). The single-container
+# image never needs it because the express server renders the index page itself,
+# but nginx does - so restore the conventional name, replacing nginx's welcome page.
+RUN test -f /usr/share/nginx/html/_index.html && \
+    mv -f /usr/share/nginx/html/_index.html /usr/share/nginx/html/index.html
+EXPOSE 80
+HEALTHCHECK --interval=1m --timeout=10s --start-period=10s \
+  CMD wget -q --spider http://localhost/ || exit 1
 
 # Install server layer
 # Also pull and build collector deps (chromium issues prevent bad bindings)
@@ -162,6 +190,24 @@ RUN yarn install --production --network-timeout 100000 && yarn cache clean
 
 WORKDIR /app
 USER anythingllm
+
+#############################################
+# Standalone backend image (split deployment)
+# Identical to the all-in-one image minus the bundled frontend - the SPA is served
+# by the frontend container instead. Runs the server + collector processes.
+# Used by docker-compose.split.yml via `target: backend-production`.
+#############################################
+FROM backend-build AS backend-production
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV ANYTHING_LLM_RUNTIME=docker
+ENV DEPLOYMENT_VERSION=1.16.0
+
+HEALTHCHECK --interval=1m --timeout=10s --start-period=1m \
+  CMD /bin/bash /usr/local/bin/docker-healthcheck.sh || exit 1
+
+ENTRYPOINT ["/bin/bash", "/usr/local/bin/docker-entrypoint.sh"]
 
 # Since we are building from backend-build we just need to move built frontend into server/public
 FROM backend-build AS production-build

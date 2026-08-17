@@ -17,7 +17,6 @@ import {
   Info,
 } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
-import System from "@/models/system";
 import GoogleAgentSkills from "@/models/googleAgentSkills";
 import { getGoogleCalendarSkills, filterSkillCategories } from "./utils";
 import {
@@ -44,7 +43,6 @@ export default function GoogleCalendarSkillPanel({
   const [loading, setLoading] = useState(true);
   const [deploymentId, setDeploymentId] = useState("");
   const [apiKey, setApiKey] = useState("");
-  const [isMultiUserMode, setIsMultiUserMode] = useState(false);
   const [configDefaultExpanded, setConfigDefaultExpanded] = useState(true);
   const prevHasChanges = useRef(hasChanges);
   const skillCategories = getGoogleCalendarSkills(t);
@@ -53,14 +51,12 @@ export default function GoogleCalendarSkillPanel({
     setLoading(true);
     Promise.all([
       Admin.systemPreferencesByFields(["disabled_google_calendar_skills"]),
-      System.keys(),
       GoogleAgentSkills.calendar.getStatus(),
     ])
-      .then(([prefsRes, settingsRes, statusRes]) => {
+      .then(([prefsRes, statusRes]) => {
         setDisabledSkills(
           prefsRes?.settings?.disabled_google_calendar_skills ?? []
         );
-        setIsMultiUserMode(settingsRes?.MultiUserMode ?? false);
 
         if (statusRes?.success && statusRes.config) {
           const loadedDeploymentId = statusRes.config.deploymentId || "";
@@ -127,19 +123,11 @@ export default function GoogleCalendarSkillPanel({
           <Toggle
             size="lg"
             enabled={enabled}
-            disabled={disabled || isMultiUserMode}
+            disabled={disabled}
             onChange={() => toggleSkill(skill)}
           />
         </div>
 
-        {isMultiUserMode && (
-          <div className="flex items-center gap-x-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <Warning size={20} className="text-yellow-500 shrink-0" />
-            <p className="text-yellow-500 text-xs">
-              {t("agent.skill.googleCalendar.multiUserWarning")}
-            </p>
-          </div>
-        )}
 
         <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium">
           <Trans
@@ -156,7 +144,7 @@ export default function GoogleCalendarSkillPanel({
           />
         </p>
 
-        {enabled && !isMultiUserMode && (
+        {enabled && (
           <>
             <HiddenFormInputs
               disabledSkills={disabledSkills}

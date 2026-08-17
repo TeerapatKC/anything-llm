@@ -3,7 +3,6 @@ import { Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useLogo from "@/hooks/useLogo";
 import paths from "@/utils/paths";
-import System from "@/models/system";
 import { sessionStateForUser } from "@/utils/session";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
 import { clearPermissions, clearRoleLabel } from "@/utils/permissions";
@@ -34,13 +33,6 @@ function useChangePasswordState() {
 
   useEffect(() => {
     async function resolve() {
-      const { MultiUserMode } = await System.keys();
-      // Single-user mode has no user records, so there is no password of one's own.
-      if (!MultiUserMode) {
-        setState({ loading: false, authed: false, forced: false });
-        return;
-      }
-
       if (!localStorage.getItem(AUTH_TOKEN)) {
         setState({ loading: false, authed: false, forced: false });
         return;

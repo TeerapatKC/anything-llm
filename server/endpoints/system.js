@@ -16,7 +16,6 @@ const {
   reqBody,
   makeJWT,
   userFromSession,
-  multiUserMode,
   queryParams,
 } = require("../utils/http");
 const {
@@ -24,7 +23,6 @@ const {
   handlePfpUpload,
   handleAudioUpload,
 } = require("../utils/files/multer");
-const { v4 } = require("uuid");
 const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -41,22 +39,17 @@ const {
   isDefaultFilename,
 } = require("../utils/files/logo");
 const { Telemetry } = require("../models/telemetry");
-const { ApiKey } = require("../models/apiKeys");
 const { getCustomModels } = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
-const { Role } = require("../models/role");
 const { PERMISSIONS } = require("../utils/permissions");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { EventLogs } = require("../models/eventLogs");
 const { CollectorApi } = require("../utils/collectorApi");
 const { SlashCommandPresets } = require("../models/slashCommandsPresets");
-const { EncryptionManager } = require("../utils/EncryptionManager");
-const { BrowserExtensionApiKey } = require("../models/browserExtensionApiKey");
-const { MobileDevice } = require("../models/mobileDevice");
 const {
   chatHistoryViewable,
 } = require("../utils/middleware/chatHistoryViewable");
@@ -67,8 +60,10 @@ const {
 const { TemporaryAuthToken } = require("../models/temporaryAuthToken");
 const { SystemPromptVariables } = require("../models/systemPromptVariables");
 const { VALID_COMMANDS } = require("../utils/chats");
-const { AgentSkillWhitelist } = require("../models/agentSkillWhitelist");
-const { Memory } = require("../models/memory");
+const {
+  hasAnyUser,
+  createInitialAdmin,
+} = require("../utils/boot/bootstrapAdmin");
 
 function systemEndpoints(app) {
   if (!app) return;
@@ -123,22 +118,17 @@ function systemEndpoints(app) {
     [validatedRequest],
     async (request, response) => {
       try {
-        if (multiUserMode(response)) {
-          const user = await userFromSession(request, response);
-          if (!user || user.suspended) {
-            response.sendStatus(403).end();
-            return;
-          }
-
-          // Reported here rather than read off the cached session user so that a reset
-          // performed by an admin takes hold on the user's very next page load.
-          response.status(200).json({
-            requiresPasswordChange: !!user.requiresPasswordChange,
-          });
+        const user = await userFromSession(request, response);
+        if (!user || user.suspended) {
+          response.sendStatus(403).end();
           return;
         }
 
-        response.status(200).json({ requiresPasswordChange: false });
+        // Reported here rather than read off the cached session user so that a reset
+        // performed by an admin takes hold on the user's very next page load.
+        response.status(200).json({
+          requiresPasswordChange: !!user.requiresPasswordChange,
+        });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
@@ -157,11 +147,6 @@ function systemEndpoints(app) {
     [validatedRequest],
     async (request, response) => {
       try {
-        if (!multiUserMode(response))
-          return response
-            .status(200)
-            .json({ success: true, user: null, message: null });
-
         const user = await userFromSession(request, response);
         if (!user)
           return response.status(200).json({
@@ -196,139 +181,98 @@ function systemEndpoints(app) {
     try {
       const bcrypt = require("bcryptjs");
 
-      if (await SystemSettings.isMultiUserMode()) {
-        if (simpleSSOLoginDisabled()) {
-          response.status(403).json({
-            user: null,
-            valid: false,
-            token: null,
-            message:
-              "[005] Login via credentials has been disabled by the administrator.",
-          });
-          return;
-        }
+      if (simpleSSOLoginDisabled()) {
+        response.status(403).json({
+          user: null,
+          valid: false,
+          token: null,
+          message:
+            "[005] Login via credentials has been disabled by the administrator.",
+        });
+        return;
+      }
 
-        const { username, password } = reqBody(request);
-        const existingUser = await User._get({ username: String(username) });
+      const { username, password } = reqBody(request);
+      const existingUser = await User._get({ username: String(username) });
 
-        if (!existingUser) {
-          await EventLogs.logEvent(
-            "failed_login_invalid_username",
-            {
-              ip: request.ip || "Unknown IP",
-              username: username || "Unknown user",
-            },
-            existingUser?.id
-          );
-          response.status(200).json({
-            user: null,
-            valid: false,
-            token: null,
-            message: "[001] Invalid login credentials.",
-          });
-          return;
-        }
-
-        if (!bcrypt.compareSync(String(password), existingUser.password)) {
-          await EventLogs.logEvent(
-            "failed_login_invalid_password",
-            {
-              ip: request.ip || "Unknown IP",
-              username: username || "Unknown user",
-            },
-            existingUser?.id
-          );
-          response.status(200).json({
-            user: null,
-            valid: false,
-            token: null,
-            message: "[002] Invalid login credentials.",
-          });
-          return;
-        }
-
-        if (existingUser.suspended) {
-          await EventLogs.logEvent(
-            "failed_login_account_suspended",
-            {
-              ip: request.ip || "Unknown IP",
-              username: username || "Unknown user",
-            },
-            existingUser?.id
-          );
-          response.status(200).json({
-            user: null,
-            valid: false,
-            token: null,
-            message: "[004] Account suspended by admin.",
-          });
-          return;
-        }
-
-        await Telemetry.sendTelemetry(
-          "login_event",
-          { multiUserMode: false },
-          existingUser?.id
-        );
-
+      if (!existingUser) {
         await EventLogs.logEvent(
-          "login_event",
+          "failed_login_invalid_username",
           {
             ip: request.ip || "Unknown IP",
-            username: existingUser.username || "Unknown user",
+            username: username || "Unknown user",
           },
           existingUser?.id
         );
-
-        // Generate a session token for the user. If they are still holding a password an
-        // admin generated for them, the token is issued but every other endpoint stays
-        // closed (see `validatedRequest`) until they set their own password.
-        const sessionToken = makeJWT(
-          { id: existingUser.id, username: existingUser.username },
-          process.env.JWT_EXPIRY
-        );
         response.status(200).json({
-          valid: true,
-          user: await User.withPermissions(existingUser),
-          token: sessionToken,
-          message: null,
-          requiresPasswordChange: !!existingUser.requiresPasswordChange,
+          user: null,
+          valid: false,
+          token: null,
+          message: "[001] Invalid login credentials.",
         });
         return;
-      } else {
-        const { password } = reqBody(request);
-        if (
-          !bcrypt.compareSync(
-            password,
-            bcrypt.hashSync(process.env.AUTH_TOKEN, 10)
-          )
-        ) {
-          await EventLogs.logEvent("failed_login_invalid_password", {
-            ip: request.ip || "Unknown IP",
-            multiUserMode: false,
-          });
-          response.status(401).json({
-            valid: false,
-            token: null,
-            message: "[003] Invalid password provided",
-          });
-          return;
-        }
-
-        await Telemetry.sendTelemetry("login_event", { multiUserMode: false });
-        await EventLogs.logEvent("login_event", {
-          ip: request.ip || "Unknown IP",
-          multiUserMode: false,
-        });
-        response.status(200).json({
-          valid: true,
-          token: makeJWT(
-            { p: new EncryptionManager().encrypt(password) },
-            process.env.JWT_EXPIRY
-          ),
-          message: null,
-        });
       }
+
+      if (!bcrypt.compareSync(String(password), existingUser.password)) {
+        await EventLogs.logEvent(
+          "failed_login_invalid_password",
+          {
+            ip: request.ip || "Unknown IP",
+            username: username || "Unknown user",
+          },
+          existingUser?.id
+        );
+        response.status(200).json({
+          user: null,
+          valid: false,
+          token: null,
+          message: "[002] Invalid login credentials.",
+        });
+        return;
+      }
+
+      if (existingUser.suspended) {
+        await EventLogs.logEvent(
+          "failed_login_account_suspended",
+          {
+            ip: request.ip || "Unknown IP",
+            username: username || "Unknown user",
+          },
+          existingUser?.id
+        );
+        response.status(200).json({
+          user: null,
+          valid: false,
+          token: null,
+          message: "[004] Account suspended by admin.",
+        });
+        return;
+      }
+
+      await Telemetry.sendTelemetry("login_event", {}, existingUser?.id);
+      await EventLogs.logEvent(
+        "login_event",
+        {
+          ip: request.ip || "Unknown IP",
+          username: existingUser.username || "Unknown user",
+        },
+        existingUser?.id
+      );
+
+      // Generate a session token for the user. If they are still holding a password an
+      // admin generated for them, the token is issued but every other endpoint stays
+      // closed (see `validatedRequest`) until they set their own password.
+      const sessionToken = makeJWT(
+        { id: existingUser.id, username: existingUser.username },
+        process.env.JWT_EXPIRY
+      );
+      response.status(200).json({
+        valid: true,
+        user: await User.withPermissions(existingUser),
+        token: sessionToken,
+        message: null,
+        requiresPasswordChange: !!existingUser.requiresPasswordChange,
+      });
     } catch (e) {
       console.error(e.message, e);
       response.sendStatus(500).end();
@@ -346,7 +290,6 @@ function systemEndpoints(app) {
       if (error) {
         await EventLogs.logEvent("failed_login_invalid_temporary_auth_token", {
           ip: request.ip || "Unknown IP",
-          multiUserMode: true,
         });
         return response.status(401).json({
           valid: false,
@@ -355,11 +298,7 @@ function systemEndpoints(app) {
         });
       }
 
-      await Telemetry.sendTelemetry(
-        "login_event",
-        { multiUserMode: true },
-        token.user.id
-      );
+      await Telemetry.sendTelemetry("login_event", {}, token.user.id);
       await EventLogs.logEvent(
         "login_event",
         {
@@ -380,7 +319,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/system-vectors",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const query = queryParams(request);
@@ -398,7 +337,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-document",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { name } = reqBody(request);
@@ -413,7 +352,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-documents",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { names } = reqBody(request);
@@ -428,7 +367,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-folder",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { name } = reqBody(request);
@@ -443,7 +382,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/local-files",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { folder, offset, limit } = queryParams(request);
@@ -465,7 +404,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/local-files/search",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { q } = queryParams(request);
@@ -480,7 +419,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/local-files/by-docpaths",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
     async (request, response) => {
       try {
         const { docpaths = [] } = reqBody(request);
@@ -528,7 +467,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/update-env",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const body = reqBody(request);
@@ -545,105 +484,48 @@ function systemEndpoints(app) {
     }
   );
 
-  app.post(
-    "/system/update-password",
-    [validatedRequest],
-    async (request, response) => {
-      try {
-        // Cannot update password in multi - user mode.
-        if (multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
-        let error = null;
-        const { usePassword, newPassword } = reqBody(request);
-        if (!usePassword) {
-          // Password is being disabled so directly unset everything to bypass validation.
-          process.env.AUTH_TOKEN = "";
-          process.env.JWT_SECRET = "";
-        } else {
-          error = await updateENV(
-            {
-              AuthToken: newPassword,
-              JWTSecret: v4(),
-            },
-            true
-          )?.error;
-        }
-        response.status(200).json({ success: !error, error });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500).end();
-      }
-    }
-  );
-
-  app.post(
-    "/system/enable-multi-user",
-    [validatedRequest],
-    async (request, response) => {
-      try {
-        if (response.locals.multiUserMode) {
-          response.status(200).json({
-            success: false,
-            error: "Multi-user mode is already enabled.",
-          });
-          return;
-        }
-
-        const { username, email, password } = reqBody(request);
-        const { user, error } = await User.create({
-          username,
-          email,
-          password,
-          role: Role.superAdminRoleName(),
-        });
-
-        if (error || !user) {
-          response.status(400).json({
-            success: false,
-            error: error || "Failed to enable multi-user mode.",
-          });
-          return;
-        }
-
-        await SystemSettings._updateSettings({
-          multi_user_mode: true,
-        });
-        await BrowserExtensionApiKey.migrateApiKeysToMultiUser(user.id);
-        await Memory.migrateToMultiUser(user.id);
-        await WorkspaceChats.migrateToMultiUser(user.id);
-        await MobileDevice.migrateDevicesToMultiUser(user.id);
-        await SlashCommandPresets.migrateToMultiUser(user.id);
-        await AgentSkillWhitelist.clearSingleUserWhitelist();
-        await updateENV(
-          {
-            JWTSecret: process.env.JWT_SECRET || v4(),
-          },
-          true
-        );
-        await Telemetry.sendTelemetry("enabled_multi_user_mode", {
-          multiUserMode: true,
-        });
-        await EventLogs.logEvent("multi_user_mode_enabled", {}, user?.id);
-        response.status(200).json({ success: !!user, error });
-      } catch (e) {
-        await User.delete({});
-        await SystemSettings._updateSettings({
-          multi_user_mode: false,
-        });
-
-        console.error(e.message, e);
-        response.sendStatus(500).end();
-      }
-    }
-  );
-
-  app.get("/system/multi-user-mode", async (_, response) => {
+  /**
+   * Reports whether the instance still needs its first system administrator. Public by
+   * necessity - the onboarding screen has to ask this before anyone can sign in.
+   */
+  app.get("/system/setup-state", async (_, response) => {
     try {
-      const multiUserMode = await SystemSettings.isMultiUserMode();
-      response.status(200).json({ multiUserMode });
+      response.status(200).json({ needsAdminSetup: !(await hasAnyUser()) });
+    } catch (e) {
+      console.error(e.message, e);
+      response.sendStatus(500).end();
+    }
+  });
+
+  /**
+   * Creates the instance's first system administrator on a fresh deploy. Public by
+   * necessity - there is no account to authenticate as yet - but `createInitialAdmin`
+   * refuses once any user exists, so this closes permanently after first use.
+   */
+  app.post("/system/setup-admin", async (request, response) => {
+    try {
+      const { username, email, password } = reqBody(request);
+      const { user, error } = await createInitialAdmin({
+        username,
+        email,
+        password,
+      });
+
+      if (error || !user) {
+        response.status(400).json({ success: false, user: null, error });
+        return;
+      }
+
+      const token = makeJWT(
+        { id: user.id, username: user.username },
+        process.env.JWT_EXPIRY
+      );
+      response.status(200).json({
+        success: true,
+        user: await User.withPermissions(user),
+        token,
+        error: null,
+      });
     } catch (e) {
       console.error(e.message, e);
       response.sendStatus(500).end();
@@ -730,7 +612,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/pfp/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async function (request, response) {
       try {
         const { id } = request.params;
@@ -761,7 +643,7 @@ function systemEndpoints(app) {
     "/system/upload-pfp",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      userPermissionValid([PERMISSIONS.ANY]),
       handlePfpUpload,
     ],
     async function (request, response) {
@@ -802,7 +684,7 @@ function systemEndpoints(app) {
   );
   app.get(
     "/system/default-system-prompt",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (_, response) => {
       try {
         const defaultSystemPrompt = await SystemSettings.get({
@@ -827,7 +709,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/default-system-prompt",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const { defaultSystemPrompt } = reqBody(request);
@@ -854,7 +736,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/remove-pfp",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async function (request, response) {
       try {
         const user = await userFromSession(request, response);
@@ -892,7 +774,7 @@ function systemEndpoints(app) {
     "/system/upload-logo",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
+      userPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
       handleAssetUpload,
     ],
     async (request, response) => {
@@ -943,7 +825,7 @@ function systemEndpoints(app) {
     "/system/remove-logo",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
+      userPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
     ],
     async (_request, response) => {
       try {
@@ -965,85 +847,9 @@ function systemEndpoints(app) {
     }
   );
 
-  app.get("/system/api-keys", [validatedRequest], async (_, response) => {
-    try {
-      if (response.locals.multiUserMode) {
-        return response.sendStatus(401).end();
-      }
-
-      const apiKeys = await ApiKey.where({});
-      return response.status(200).json({
-        apiKeys,
-        error: null,
-      });
-    } catch (error) {
-      console.error(error);
-      response.status(500).json({
-        apiKey: null,
-        error: "Could not find an API Key.",
-      });
-    }
-  });
-
-  app.post(
-    "/system/generate-api-key",
-    [validatedRequest],
-    async (request, response) => {
-      try {
-        if (response.locals.multiUserMode) {
-          return response.sendStatus(401).end();
-        }
-
-        const { name = null } = reqBody(request);
-        const { apiKey, error } = await ApiKey.create(null, name);
-        await EventLogs.logEvent(
-          "api_key_created",
-          { name: apiKey?.name },
-          response?.locals?.user?.id
-        );
-        return response.status(200).json({
-          apiKey,
-          error,
-        });
-      } catch (error) {
-        console.error(error);
-        response.status(500).json({
-          apiKey: null,
-          error: "Error generating api key.",
-        });
-      }
-    }
-  );
-
-  // TODO: This endpoint is replicated in the admin endpoints file.
-  // and should be consolidated to be a single endpoint with flexible role protection.
-  app.delete(
-    "/system/api-key/:id",
-    [validatedRequest],
-    async (request, response) => {
-      try {
-        if (response.locals.multiUserMode)
-          return response.sendStatus(401).end();
-        const { id } = request.params;
-        if (!id || isNaN(Number(id))) return response.sendStatus(400).end();
-
-        await ApiKey.delete({ id: Number(id) });
-        await EventLogs.logEvent(
-          "api_key_deleted",
-          { deletedBy: response.locals?.user?.username },
-          response?.locals?.user?.id
-        );
-        return response.status(200).end();
-      } catch (error) {
-        console.error(error);
-        response.status(500).end();
-      }
-    }
-  );
-
   app.post(
     "/system/custom-models",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const {
@@ -1073,7 +879,7 @@ function systemEndpoints(app) {
     "/system/event-logs",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
     ],
     async (request, response) => {
       try {
@@ -1096,7 +902,7 @@ function systemEndpoints(app) {
     "/system/event-logs",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
     ],
     async (_, response) => {
       try {
@@ -1119,7 +925,7 @@ function systemEndpoints(app) {
     [
       chatHistoryViewable,
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.CHATS_VIEW_ALL]),
+      userPermissionValid([PERMISSIONS.CHATS_VIEW_ALL]),
     ],
     async (request, response) => {
       try {
@@ -1143,7 +949,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/workspace-chats/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.CHATS_VIEW_ALL])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.CHATS_VIEW_ALL])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -1163,7 +969,7 @@ function systemEndpoints(app) {
     [
       chatHistoryViewable,
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.CHATS_VIEW_ALL]),
+      userPermissionValid([PERMISSIONS.CHATS_VIEW_ALL]),
     ],
     async (request, response) => {
       try {
@@ -1320,7 +1126,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/slash-command-presets",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1335,7 +1141,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/slash-command-presets",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1373,7 +1179,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/slash-command-presets/:slashCommandId",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1419,7 +1225,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/slash-command-presets/:slashCommandId",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const { slashCommandId } = request.params;
@@ -1446,7 +1252,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/prompt-variables",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1464,7 +1270,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/prompt-variables",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1500,7 +1306,7 @@ function systemEndpoints(app) {
 
   app.put(
     "/system/prompt-variables/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -1542,7 +1348,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/prompt-variables/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_PROMPTS])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -1572,7 +1378,7 @@ function systemEndpoints(app) {
     "/system/transcribe-audio",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      userPermissionValid([PERMISSIONS.ANY]),
       handleAudioUpload,
     ],
     async (request, response) => {
@@ -1611,7 +1417,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/validate-sql-connection",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       const { engine, connectionString } = reqBody(request);
       try {

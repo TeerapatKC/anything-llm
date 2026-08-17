@@ -3,10 +3,10 @@ const { WorkspaceRole } = require("../models/workspaceRole");
 const { WorkspaceUser } = require("../models/workspaceUsers");
 const { Workspace } = require("../models/workspace");
 const { EventLogs } = require("../models/eventLogs");
-const { reqBody, userFromSession, multiUserMode } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -15,7 +15,6 @@ const {
   WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
   PERMISSION_CATALOG,
   PERMISSION_CATEGORIES,
-  SYSTEM_PERMISSION_KEYS,
 } = require("../utils/permissions");
 
 /**
@@ -27,7 +26,6 @@ const {
  * @returns {Promise<{valid: boolean, error: string|null}>}
  */
 async function canGrantPermissions(request, response, requestedPermissions) {
-  if (!multiUserMode(response)) return { valid: true, error: null };
   const actor = await userFromSession(request, response);
   if (await Role.userCan(actor, PERMISSIONS.SUPER_ADMIN))
     return { valid: true, error: null };
@@ -60,7 +58,6 @@ async function canGrantWorkspacePermissions(
   workspaceId,
   requestedPermissions
 ) {
-  if (!multiUserMode(response)) return { valid: true, error: null };
   const actor = await userFromSession(request, response);
   const held = new Set(
     await WorkspaceRole.permissionsForUserInWorkspace(actor, workspaceId)
@@ -87,7 +84,7 @@ function roleEndpoints(app) {
     "/roles/permissions",
     [
       validatedRequest,
-      flexUserPermissionValid([
+      userPermissionValid([
         PERMISSIONS.ROLES_MANAGE,
         PERMISSIONS.WORKSPACE_ROLES_MANAGE,
         PERMISSIONS.USERS_ASSIGN_ROLES,
@@ -126,7 +123,7 @@ function roleEndpoints(app) {
     "/roles",
     [
       validatedRequest,
-      flexUserPermissionValid([
+      userPermissionValid([
         PERMISSIONS.ROLES_MANAGE,
         PERMISSIONS.USERS_ASSIGN_ROLES,
         PERMISSIONS.USERS_VIEW,
@@ -152,7 +149,7 @@ function roleEndpoints(app) {
 
   app.post(
     "/roles/new",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ROLES_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ROLES_MANAGE])],
     async (request, response) => {
       try {
         const {
@@ -194,7 +191,7 @@ function roleEndpoints(app) {
 
   app.post(
     "/roles/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ROLES_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ROLES_MANAGE])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -246,7 +243,7 @@ function roleEndpoints(app) {
 
   app.delete(
     "/roles/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ROLES_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ROLES_MANAGE])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -287,22 +284,13 @@ function roleEndpoints(app) {
 
   /**
    * The permissions the requesting user holds. The frontend caches this so it can hide
-   * controls the user's role does not unlock. Single-user mode has one operator who
-   * implicitly holds everything.
+   * controls the user's role does not unlock.
    */
   app.get(
     "/roles/me/permissions",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
-        if (!multiUserMode(response))
-          return response.status(200).json({
-            permissions: SYSTEM_PERMISSION_KEYS,
-            workspacePermissions: {},
-            role: null,
-            multiUserMode: false,
-          });
-
         const user = await userFromSession(request, response);
         const role = user?.role ? await Role.get({ name: user.role }) : null;
 
@@ -323,7 +311,6 @@ function roleEndpoints(app) {
           workspacePermissions,
           role: user?.role ?? null,
           roleDisplayName: role?.displayName ?? user?.role ?? null,
-          multiUserMode: true,
         });
       } catch (e) {
         console.error(e);
@@ -342,7 +329,7 @@ function roleEndpoints(app) {
     "/workspace-roles",
     [
       validatedRequest,
-      flexUserPermissionValid([
+      userPermissionValid([
         PERMISSIONS.WORKSPACE_ROLES_MANAGE,
         PERMISSIONS.WORKSPACES_VIEW_ALL,
         PERMISSIONS.WORKSPACES_MANAGE_ALL,
@@ -371,7 +358,7 @@ function roleEndpoints(app) {
     "/workspace-roles/new",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACE_ROLES_MANAGE]),
+      userPermissionValid([PERMISSIONS.WORKSPACE_ROLES_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -405,7 +392,7 @@ function roleEndpoints(app) {
     "/workspace-roles/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACE_ROLES_MANAGE]),
+      userPermissionValid([PERMISSIONS.WORKSPACE_ROLES_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -431,7 +418,7 @@ function roleEndpoints(app) {
     "/workspace-roles/:id",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACE_ROLES_MANAGE]),
+      userPermissionValid([PERMISSIONS.WORKSPACE_ROLES_MANAGE]),
     ],
     async (request, response) => {
       try {

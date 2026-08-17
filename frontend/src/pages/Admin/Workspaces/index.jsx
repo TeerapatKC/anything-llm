@@ -119,6 +119,9 @@ function WorkspacesContainer() {
             Users
           </TableHead>
           <TableHead variant="none" scope="col" className="px-6 py-3">
+            Status
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Created On
           </TableHead>
           <TableHead

@@ -1,40 +1,33 @@
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import debounce from "lodash.debounce";
 import paths from "@/utils/paths";
 import { useNavigate } from "react-router-dom";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
-import {
-  storePermissions,
-  clearPermissions,
-  clearRoleLabel,
-} from "@/utils/permissions";
+import { storePermissions } from "@/utils/permissions";
 import { useTranslation } from "react-i18next";
 import { USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "@/utils/username";
-import { PW_REGEX } from "@/pages/GeneralSettings/Security";
+import { PW_REGEX, PW_ALLOWED_SYMBOLS } from "@/utils/password";
+import { FullScreenLoader } from "@/components/Preloader";
 
+/**
+ * Creates the instance's first system administrator. Every instance is multi-user, so
+ * this step is unconditional - except on deploys that already created the admin from
+ * `ADMIN_USERNAME`/`ADMIN_PASSWORD`, where there is nothing left to ask and we move on.
+ */
 export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {
   const { t } = useTranslation();
-  const [selectedOption, setSelectedOption] = useState("");
-  const [singleUserPasswordValid, setSingleUserPasswordValid] = useState(false);
-  const [multiUserLoginValid, setMultiUserLoginValid] = useState(false);
-  const [enablePassword, setEnablePassword] = useState(false);
-  const myTeamSubmitRef = useRef(null);
-  const justMeSubmitRef = useRef(null);
+  const [checking, setChecking] = useState(true);
+  const [formValid, setFormValid] = useState(false);
+  const submitRef = useRef(null);
   const navigate = useNavigate();
 
   const TITLE = t("onboarding.userSetup.title");
   const DESCRIPTION = t("onboarding.userSetup.description");
 
   function handleForward() {
-    if (selectedOption === "just_me" && enablePassword) {
-      justMeSubmitRef.current?.click();
-    } else if (selectedOption === "just_me" && !enablePassword) {
-      navigate(paths.onboarding.dataHandling());
-    } else if (selectedOption === "my_team") {
-      myTeamSubmitRef.current?.click();
-    }
+    submitRef.current?.click();
   }
 
   function handleBack() {
@@ -42,216 +35,45 @@ export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {
   }
 
   useEffect(() => {
-    let isDisabled = true;
-    if (selectedOption === "just_me") {
-      isDisabled = !singleUserPasswordValid;
-    } else if (selectedOption === "my_team") {
-      isDisabled = !multiUserLoginValid;
+    async function checkSetupState() {
+      const needsAdminSetup = await System.needsAdminSetup();
+      if (!needsAdminSetup) {
+        // An admin was already created from the environment on first boot.
+        navigate(paths.onboarding.dataHandling(), { replace: true });
+        return;
+      }
+      setChecking(false);
     }
+    checkSetupState();
+  }, []);
 
+  useEffect(() => {
     setForwardBtn({
       showing: true,
-      disabled: isDisabled,
+      disabled: !formValid,
       onClick: handleForward,
     });
-  }, [selectedOption, singleUserPasswordValid, multiUserLoginValid]);
+  }, [formValid]);
 
   useEffect(() => {
     setHeader({ title: TITLE, description: DESCRIPTION });
     setBackBtn({ showing: true, disabled: false, onClick: handleBack });
   }, []);
 
+  if (checking) return <FullScreenLoader />;
+
   return (
     <div className="w-full flex items-center justify-center flex-col gap-y-6">
-      <div className="flex flex-col border rounded-lg border-white/20 light:border-theme-sidebar-border p-8 items-center gap-y-4 w-full max-w-[600px]">
-        <div className=" text-white text-sm font-semibold md:-ml-44">
-          {t("onboarding.userSetup.howManyUsers")}
-        </div>
-        <div className="flex flex-col md:flex-row gap-6 w-full justify-center">
-          <button
-            onClick={() => setSelectedOption("just_me")}
-            className={`${
-              selectedOption === "just_me"
-                ? "text-sky-400 border-sky-400/70"
-                : "text-theme-text-primary border-theme-sidebar-border"
-            } min-w-[230px] h-11 p-4 rounded-[10px] border-2  justify-center items-center gap-[100px] inline-flex hover:border-sky-400/70 hover:text-sky-400 transition-all duration-300`}
-          >
-            <div className="text-center text-sm font-bold">
-              {t("onboarding.userSetup.justMe")}
-            </div>
-          </button>
-          <button
-            onClick={() => setSelectedOption("my_team")}
-            className={`${
-              selectedOption === "my_team"
-                ? "text-sky-400 border-sky-400/70"
-                : "text-theme-text-primary border-theme-sidebar-border"
-            } min-w-[230px] h-11 p-4 rounded-[10px] border-2  justify-center items-center gap-[100px] inline-flex hover:border-sky-400/70 hover:text-sky-400 transition-all duration-300`}
-          >
-            <div className="text-center text-sm font-bold">
-              {t("onboarding.userSetup.myTeam")}
-            </div>
-          </button>
-        </div>
-      </div>
-      {selectedOption === "just_me" && (
-        <JustMe
-          setSingleUserPasswordValid={setSingleUserPasswordValid}
-          enablePassword={enablePassword}
-          setEnablePassword={setEnablePassword}
-          justMeSubmitRef={justMeSubmitRef}
-          navigate={navigate}
-        />
-      )}
-      {selectedOption === "my_team" && (
-        <MyTeam
-          setMultiUserLoginValid={setMultiUserLoginValid}
-          myTeamSubmitRef={myTeamSubmitRef}
-          navigate={navigate}
-        />
-      )}
+      <AdminAccount
+        setFormValid={setFormValid}
+        submitRef={submitRef}
+        navigate={navigate}
+      />
     </div>
   );
 }
 
-const JustMe = ({
-  setSingleUserPasswordValid,
-  enablePassword,
-  setEnablePassword,
-  justMeSubmitRef,
-  navigate,
-}) => {
-  const { t } = useTranslation();
-  const [itemSelected, setItemSelected] = useState(false);
-  const [password, setPassword] = useState("");
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-
-    if (!PW_REGEX.test(formData.get("password"))) {
-      showToast(
-        `Your password has restricted characters in it. Allowed symbols are _,-,!,@,$,%,^,&,*,(,),;`,
-        "error"
-      );
-      return;
-    }
-
-    const { error } = await System.updateSystemPassword({
-      usePassword: true,
-      newPassword: formData.get("password"),
-    });
-
-    if (error) {
-      showToast(`Failed to set password: ${error}`, "error");
-      return;
-    }
-
-    // Auto-request token with password that was just set so they
-    // are not redirected to login after completion.
-    const { token } = await System.requestToken({
-      password: formData.get("password"),
-    });
-    window.localStorage.removeItem(AUTH_USER);
-    clearPermissions();
-    clearRoleLabel();
-    window.localStorage.removeItem(AUTH_TIMESTAMP);
-    window.localStorage.setItem(AUTH_TOKEN, token);
-
-    navigate(paths.onboarding.dataHandling());
-  };
-
-  const setNewPassword = (e) => setPassword(e.target.value);
-  const handlePasswordChange = debounce(setNewPassword, 500);
-
-  function handleYes() {
-    setItemSelected(true);
-    setEnablePassword(true);
-  }
-
-  function handleNo() {
-    setItemSelected(true);
-    setEnablePassword(false);
-  }
-
-  useEffect(() => {
-    if (enablePassword && itemSelected && password.length >= 8) {
-      setSingleUserPasswordValid(true);
-    } else if (!enablePassword && itemSelected) {
-      setSingleUserPasswordValid(true);
-    } else {
-      setSingleUserPasswordValid(false);
-    }
-  });
-  return (
-    <div className="w-full flex items-center justify-center flex-col gap-y-6">
-      <div className="flex flex-col border rounded-lg border-white/20 light:border-theme-sidebar-border p-8 items-center gap-y-4 w-full max-w-[600px]">
-        <div className=" text-white text-sm font-semibold md:-ml-56">
-          {t("onboarding.userSetup.setPassword")}
-        </div>
-        <div className="flex flex-col md:flex-row gap-6 w-full justify-center">
-          <button
-            onClick={handleYes}
-            className={`${
-              enablePassword && itemSelected
-                ? "text-sky-400 border-sky-400/70"
-                : "text-theme-text-primary border-theme-sidebar-border"
-            } min-w-[230px] h-11 p-4 rounded-[10px] border-2  justify-center items-center gap-[100px] inline-flex hover:border-sky-400/70 hover:text-sky-400 transition-all duration-300`}
-          >
-            <div className="text-center text-sm font-bold">
-              {t("common.yes")}
-            </div>
-          </button>
-          <button
-            onClick={handleNo}
-            className={`${
-              !enablePassword && itemSelected
-                ? "text-sky-400 border-sky-400/70"
-                : "text-theme-text-primary border-theme-sidebar-border"
-            } min-w-[230px] h-11 p-4 rounded-[10px] border-2  justify-center items-center gap-[100px] inline-flex hover:border-sky-400/70 hover:text-sky-400 transition-all duration-300`}
-          >
-            <div className="text-center text-sm font-bold">
-              {t("common.no")}
-            </div>
-          </button>
-        </div>
-        {enablePassword && (
-          <form className="w-full mt-4" onSubmit={handleSubmit}>
-            <label
-              htmlFor="name"
-              className="block mb-3 text-sm font-medium text-white"
-            >
-              {t("onboarding.userSetup.instancePassword")}
-            </label>
-            <input
-              name="password"
-              type="password"
-              className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button outline-none placeholder:text-theme-text-secondary"
-              placeholder="Your admin password"
-              minLength={6}
-              required={true}
-              autoComplete="off"
-              onChange={handlePasswordChange}
-            />
-            <div className="mt-4 text-white text-opacity-80 text-xs font-base -mb-2">
-              {t("onboarding.userSetup.passwordReq")}
-              <br />
-              <i>{t("onboarding.userSetup.passwordWarn")}</i>{" "}
-            </div>
-            <button
-              type="submit"
-              ref={justMeSubmitRef}
-              hidden
-              aria-hidden="true"
-            ></button>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-};
-
-const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
+const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
   const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -260,41 +82,45 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
+
+    if (!PW_REGEX.test(formData.get("password"))) {
+      showToast(
+        `Your password has restricted characters in it. Allowed symbols are ${PW_ALLOWED_SYMBOLS}`,
+        "error"
+      );
+      return;
+    }
+
     const data = {
       username: formData.get("username"),
       email: formData.get("email"),
       password: formData.get("password"),
     };
-    const { success, error } = await System.setupMultiUser(data);
+
+    const { success, user, token, error } = await System.setupAdmin(data);
     if (!success) {
       showToast(`Error: ${error}`, "error");
       return;
     }
 
-    navigate(paths.onboarding.dataHandling());
-    // Auto-request token with credentials that was just set so they
-    // are not redirected to login after completion.
-    const { user, token } = await System.requestToken(data);
+    // The setup call issues a session token so the operator is not bounced to /login
+    // in the middle of onboarding.
     window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
     storePermissions(user.permissions);
     window.localStorage.setItem(AUTH_TOKEN, token);
     window.localStorage.removeItem(AUTH_TIMESTAMP);
+    navigate(paths.onboarding.dataHandling());
   };
 
-  const setNewUsername = (e) => setUsername(e.target.value);
-  const setNewPassword = (e) => setPassword(e.target.value);
-  const handleUsernameChange = debounce(setNewUsername, 500);
-  const handlePasswordChange = debounce(setNewPassword, 500);
+  const handleUsernameChange = debounce((e) => setUsername(e.target.value), 500);
+  const handlePasswordChange = debounce((e) => setPassword(e.target.value), 500);
 
   useEffect(() => {
-    // Enable button if there's any input, allowing users to attempt submission
-    // Validation errors will be shown via toast in handleSubmit
-    if (username.trim().length > 0 && password.length > 0) {
-      setMultiUserLoginValid(true);
-    } else {
-      setMultiUserLoginValid(false);
-    }
+    // Enable the button on any input, so submitting surfaces the server's validation
+    // errors rather than silently blocking on rules the user cannot see.
+    setFormValid(username.trim().length > 0 && password.length > 0);
   }, [username, password]);
+
   return (
     <div className="w-full flex items-center justify-center border max-w-[600px] rounded-lg border-white/20 light:border-theme-sidebar-border">
       <form onSubmit={handleSubmit}>
@@ -303,7 +129,7 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
             <div className="w-full flex flex-col gap-y-4">
               <div>
                 <label
-                  htmlFor="name"
+                  htmlFor="username"
                   className="block mb-3 text-sm font-medium text-white"
                 >
                   {t("onboarding.userSetup.adminUsername")}
@@ -342,7 +168,7 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
               </div>
               <div className="mt-4">
                 <label
-                  htmlFor="name"
+                  htmlFor="password"
                   className="block mb-3 text-sm font-medium text-white"
                 >
                   {t("onboarding.userSetup.adminPassword")}
@@ -371,7 +197,7 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
         </div>
         <button
           type="submit"
-          ref={myTeamSubmitRef}
+          ref={submitRef}
           hidden
           aria-hidden="true"
         ></button>

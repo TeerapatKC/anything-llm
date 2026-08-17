@@ -71,7 +71,8 @@ function truncateNotificationBody(bodyText = "") {
 }
 
 /**
- * Send a web push notification to the primary user.
+ * Send a web push notification to every subscribed system administrator. Scheduled jobs
+ * are instance-wide and admin-managed, so there is no single owner to notify.
  * @param {object} job - The scheduled job object.
  * @param {string} runId - The ID of the scheduled job run.
  * @param {string} textResponse - The text response from the agent.
@@ -89,14 +90,11 @@ async function sendWebPushNotification(job, runId, textResponse, logFn) {
     // if the response is longer than 100 characters.
     let notificationBody = stripThinkingFromText(textResponse);
     notificationBody = truncateNotificationBody(notificationBody);
-    await pushNotificationService.sendNotification({
-      to: "primary",
-      payload: {
-        title: `${job.name} completed`,
-        body: notificationBody,
-        data: {
-          onClickUrl: `/settings/scheduled-jobs/${job.id}/runs/${runId}`,
-        },
+    await pushNotificationService.sendNotificationToAdmins({
+      title: `${job.name} completed`,
+      body: notificationBody,
+      data: {
+        onClickUrl: `/settings/scheduled-jobs/${job.id}/runs/${runId}`,
       },
     });
   } catch (pushError) {

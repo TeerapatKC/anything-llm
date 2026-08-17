@@ -2,10 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  const settings = [
-    { label: "multi_user_mode", value: "false" },
-    { label: "logo_filename", value: "anything-llm.png" },
-  ];
+  const settings = [{ label: "logo_filename", value: "anything-llm.png" }];
 
   for (let setting of settings) {
     const existing = await prisma.system_settings.findUnique({

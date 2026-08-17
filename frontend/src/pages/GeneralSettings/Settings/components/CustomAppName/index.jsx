@@ -14,12 +14,6 @@ export default function CustomAppName() {
 
   useEffect(() => {
     const fetchInitialParams = async () => {
-      const settings = await System.keys();
-      if (!settings?.MultiUserMode && !settings?.RequiresAuth) {
-        setCanCustomize(false);
-        return false;
-      }
-
       const { appName } = await System.fetchCustomAppName();
       setCustomAppName(appName || "");
       setOriginalAppName(appName || "");

@@ -18,6 +18,9 @@ const { Telemetry } = require("../../models/telemetry");
 const { CollectorApi } = require("../collectorApi");
 const fs = require("fs");
 const path = require("path");
+
+const INACTIVE_WORKSPACE_ERROR =
+  "This workspace is inactive and cannot be chatted with.";
 const {
   hotdirPath,
   normalizePath,
@@ -127,6 +130,20 @@ async function chatSync({
 }) {
   const uuid = uuidv4();
   const chatMode = mode ?? workspace?.chatMode ?? "automatic";
+
+  // An admin can switch a workspace off; it then refuses chats on every surface,
+  // the developer API included.
+  if (workspace?.active === false) {
+    return {
+      id: uuid,
+      type: "abort",
+      textResponse: null,
+      sources: [],
+      close: true,
+      error: INACTIVE_WORKSPACE_ERROR,
+      metrics: {},
+    };
+  }
 
   // If the user wants to reset the chat history we do so pre-flight
   // and continue execution. If no message is provided then the user intended
@@ -491,6 +508,21 @@ async function streamChat({
 }) {
   const uuid = uuidv4();
   const chatMode = mode ?? workspace?.chatMode ?? "automatic";
+
+  // An admin can switch a workspace off; it then refuses chats on every surface,
+  // the developer API included.
+  if (workspace?.active === false) {
+    writeResponseChunk(response, {
+      id: uuid,
+      type: "abort",
+      textResponse: null,
+      sources: [],
+      close: true,
+      error: INACTIVE_WORKSPACE_ERROR,
+      metrics: {},
+    });
+    return;
+  }
 
   // If the user wants to reset the chat history we do so pre-flight
   // and continue execution. If no message is provided then the user intended

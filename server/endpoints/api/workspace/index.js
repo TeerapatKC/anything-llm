@@ -8,7 +8,7 @@ const {
   getVectorDbClass,
   resolveProviderConnector,
 } = require("../../../utils/helpers");
-const { multiUserMode, reqBody } = require("../../../utils/http");
+const { reqBody } = require("../../../utils/http");
 const { validApiKey } = require("../../../utils/middleware/validApiKey");
 const { VALID_CHAT_MODE } = require("../../../utils/chats/stream");
 const { EventLogs } = require("../../../models/eventLogs");
@@ -89,7 +89,6 @@ function apiWorkspaceEndpoints(app) {
       }
 
       await Telemetry.sendTelemetry("workspace_created", {
-        multiUserMode: multiUserMode(response),
         LLMSelection: process.env.LLM_PROVIDER || "openai",
         Embedder: process.env.EMBEDDING_ENGINE || "inherit",
         VectorDbSelection: process.env.VECTOR_DB || "lancedb",

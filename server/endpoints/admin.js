@@ -19,8 +19,7 @@ const {
 } = require("../utils/helpers/admin");
 const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const {
-  strictMultiUserPermissionValid,
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -45,15 +44,12 @@ const {
 
 /**
  * Builds a predicate that answers whether a user may read or write a given system
- * setting label. In single-user mode there is only one operator, so everything passes.
- * @param {import("express").Response} response
+ * setting label, based on the permissions their role grants.
+ * @param {import("express").Response} _response
  * @param {{role?: string}|null} user
  * @returns {Promise<(label: string) => boolean>}
  */
-async function settingPermissionChecker(response, user) {
-  const multiUserMode =
-    response.locals?.multiUserMode ?? (await SystemSettings.isMultiUserMode());
-  if (!multiUserMode) return () => true;
+async function settingPermissionChecker(_response, user) {
   const granted = new Set(await Role.permissionsForUser(user));
   return (label) => granted.has(permissionForSetting(label));
 }
@@ -65,7 +61,7 @@ function adminEndpoints(app) {
     "/admin/users",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.USERS_VIEW]),
+      userPermissionValid([PERMISSIONS.USERS_VIEW]),
     ],
     async (_request, response) => {
       try {
@@ -82,7 +78,7 @@ function adminEndpoints(app) {
     "/admin/users/new",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -135,7 +131,7 @@ function adminEndpoints(app) {
     "/admin/user/:id",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -186,7 +182,7 @@ function adminEndpoints(app) {
     "/admin/user/:id/reset-password",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -240,7 +236,7 @@ function adminEndpoints(app) {
     "/admin/user/:id",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -276,7 +272,7 @@ function adminEndpoints(app) {
     "/admin/invites",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.INVITES_MANAGE]),
+      userPermissionValid([PERMISSIONS.INVITES_MANAGE]),
     ],
     async (_request, response) => {
       try {
@@ -293,7 +289,7 @@ function adminEndpoints(app) {
     "/admin/invite/new",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.INVITES_MANAGE]),
+      userPermissionValid([PERMISSIONS.INVITES_MANAGE]),
       simpleSSOLoginDisabledMiddleware,
     ],
     async (request, response) => {
@@ -325,7 +321,7 @@ function adminEndpoints(app) {
     "/admin/invite/:id",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.INVITES_MANAGE]),
+      userPermissionValid([PERMISSIONS.INVITES_MANAGE]),
     ],
     async (request, response) => {
       try {
@@ -348,7 +344,7 @@ function adminEndpoints(app) {
     "/admin/workspaces",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_VIEW_ALL]),
+      userPermissionValid([PERMISSIONS.WORKSPACES_VIEW_ALL]),
     ],
     async (_request, response) => {
       try {
@@ -383,7 +379,7 @@ function adminEndpoints(app) {
     "/admin/workspaces/new",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
+      userPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
     ],
     async (request, response) => {
       try {
@@ -461,7 +457,7 @@ function adminEndpoints(app) {
   // System preferences but only by array of labels
   app.get(
     "/admin/system-preferences-for",
-    [validatedRequest, flexUserPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
+    [validatedRequest, userPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -582,7 +578,7 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/system-preferences",
-    [validatedRequest, flexUserPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
+    [validatedRequest, userPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -610,7 +606,7 @@ function adminEndpoints(app) {
     "/admin/api-keys",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
+      userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
     ],
     async (_request, response) => {
       try {
@@ -633,7 +629,7 @@ function adminEndpoints(app) {
     "/admin/generate-api-key",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
+      userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
     ],
     async (request, response) => {
       try {
@@ -660,7 +656,7 @@ function adminEndpoints(app) {
     "/admin/delete-api-key/:id",
     [
       validatedRequest,
-      strictMultiUserPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
+      userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
     ],
     async (request, response) => {
       try {

@@ -9,7 +9,7 @@ const {
 const { EventLogs } = require("../models/eventLogs");
 const { Telemetry } = require("../models/telemetry");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 
@@ -20,7 +20,7 @@ function communityHubEndpoints(app) {
     "/community-hub/settings",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
     ],
     async (_, response) => {
       try {
@@ -37,7 +37,7 @@ function communityHubEndpoints(app) {
     "/community-hub/settings",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
     ],
     async (request, response) => {
       try {
@@ -56,7 +56,7 @@ function communityHubEndpoints(app) {
     "/community-hub/explore",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
     ],
     async (_, response) => {
       try {
@@ -77,7 +77,7 @@ function communityHubEndpoints(app) {
     "/community-hub/item",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
       communityHubItem,
     ],
     async (_request, response) => {
@@ -105,7 +105,7 @@ function communityHubEndpoints(app) {
     "/community-hub/apply",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
       communityHubItem,
     ],
     async (request, response) => {
@@ -148,7 +148,7 @@ function communityHubEndpoints(app) {
     "/community-hub/import",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
       communityHubItem,
       communityHubDownloadsEnabled,
     ],
@@ -188,7 +188,7 @@ function communityHubEndpoints(app) {
     "/community-hub/items",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
     ],
     async (_, response) => {
       try {
@@ -206,7 +206,7 @@ function communityHubEndpoints(app) {
     "/community-hub/:communityHubItemType/create",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
+      userPermissionValid([PERMISSIONS.SYSTEM_COMMUNITY_HUB]),
     ],
     async (request, response) => {
       try {

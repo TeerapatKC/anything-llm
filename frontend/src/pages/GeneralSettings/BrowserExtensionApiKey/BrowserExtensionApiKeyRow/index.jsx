@@ -16,7 +16,6 @@ export default function BrowserExtensionApiKeyRow({
   apiKey,
   removeApiKey,
   connectionString,
-  isMultiUser,
 }) {
   const rowRef = useRef(null);
   const [copied, setCopied] = useState(false);
@@ -112,11 +111,9 @@ export default function BrowserExtensionApiKeyRow({
           </div>
         </div>
       </TableCell>
-      {isMultiUser && (
-        <TableCell variant="none" className="px-6 py-2">
-          {apiKey.user ? apiKey.user.username : "N/A"}
-        </TableCell>
-      )}
+      <TableCell variant="none" className="px-6 py-2">
+        {apiKey.user ? apiKey.user.username : "N/A"}
+      </TableCell>
       <TableCell variant="none" className="px-6 py-2">
         {new Date(apiKey.createdAt).toLocaleString()}
       </TableCell>

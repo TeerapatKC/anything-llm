@@ -8,7 +8,7 @@ const {
   featureFlagEnabled,
 } = require("../../utils/middleware/featureFlagEnabled");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
 const {
@@ -25,7 +25,7 @@ function liveSyncEndpoints(app) {
     "/experimental/toggle-live-sync",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
     ],
     async (request, response) => {
       try {
@@ -68,7 +68,7 @@ function liveSyncEndpoints(app) {
     "/experimental/live-sync/queues",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
       featureFlagEnabled(DocumentSyncQueue.featureKey),
     ],
     async (_, response) => {

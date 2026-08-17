@@ -15,6 +15,13 @@ async function validEmbedConfig(request, response, next) {
     return;
   }
 
+  // An embed is a public door into its workspace, so switching the workspace off has
+  // to close it too - otherwise deactivating would leave the widget still answering.
+  if (embed.workspace?.active === false) {
+    response.sendStatus(404).end();
+    return;
+  }
+
   response.locals.embedConfig = embed;
   next();
 }

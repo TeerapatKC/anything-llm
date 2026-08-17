@@ -4,7 +4,7 @@ const { EventLogs } = require("../models/eventLogs");
 const { reqBody, userFromSession } = require("../utils/http");
 const { validEmbedConfigId } = require("../utils/middleware/embedMiddleware");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -17,7 +17,7 @@ function embedManagementEndpoints(app) {
 
   app.get(
     "/embeds",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.EMBEDS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.EMBEDS_MANAGE])],
     async (_, response) => {
       try {
         const embeds = await EmbedConfig.whereWithWorkspace({}, null, {
@@ -33,7 +33,7 @@ function embedManagementEndpoints(app) {
 
   app.post(
     "/embeds/new",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.EMBEDS_MANAGE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.EMBEDS_MANAGE])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -56,7 +56,7 @@ function embedManagementEndpoints(app) {
     "/embed/update/:embedId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.EMBEDS_MANAGE]),
+      userPermissionValid([PERMISSIONS.EMBEDS_MANAGE]),
       validEmbedConfigId,
     ],
     async (request, response) => {
@@ -78,7 +78,7 @@ function embedManagementEndpoints(app) {
     "/embed/:embedId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.EMBEDS_MANAGE]),
+      userPermissionValid([PERMISSIONS.EMBEDS_MANAGE]),
       validEmbedConfigId,
     ],
     async (request, response) => {
@@ -103,7 +103,7 @@ function embedManagementEndpoints(app) {
     [
       chatHistoryViewable,
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.EMBEDS_VIEW_CHATS]),
+      userPermissionValid([PERMISSIONS.EMBEDS_VIEW_CHATS]),
     ],
     async (request, response) => {
       try {
@@ -128,7 +128,7 @@ function embedManagementEndpoints(app) {
     "/embed/chats/:chatId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.EMBEDS_VIEW_CHATS]),
+      userPermissionValid([PERMISSIONS.EMBEDS_VIEW_CHATS]),
     ],
     async (request, response) => {
       try {

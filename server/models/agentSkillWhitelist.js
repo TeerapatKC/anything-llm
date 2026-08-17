@@ -2,21 +2,21 @@ const prisma = require("../utils/prisma");
 const { safeJsonParse } = require("../utils/http");
 
 const AgentSkillWhitelist = {
-  SINGLE_USER_LABEL: "whitelisted_agent_skills",
+  FALLBACK_LABEL: "whitelisted_agent_skills",
 
   /**
    * Get the label for storing whitelist in system_settings
-   * @param {number|null} userId - User ID in multi-user mode, null for single-user
+   * @param {number|null} userId - User ID the whitelist belongs to
    * @returns {string}
    */
   _getLabel: function (userId = null) {
     if (userId) return `user_${userId}_whitelisted_agent_skills`;
-    return this.SINGLE_USER_LABEL;
+    return this.FALLBACK_LABEL;
   },
 
   /**
    * Get the whitelisted skills for a user or the system
-   * @param {number|null} userId - User ID in multi-user mode, null for single-user
+   * @param {number|null} userId - User ID the whitelist belongs to
    * @returns {Promise<string[]>} Array of whitelisted skill names
    */
   get: async function (userId = null) {
@@ -35,7 +35,7 @@ const AgentSkillWhitelist = {
   /**
    * Add a skill to the whitelist
    * @param {string} skillName - The skill name to whitelist
-   * @param {number|null} userId - User ID in multi-user mode, null for single-user
+   * @param {number|null} userId - User ID the whitelist belongs to
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
   add: async function (skillName, userId = null) {
@@ -69,31 +69,12 @@ const AgentSkillWhitelist = {
   /**
    * Check if a skill is whitelisted
    * @param {string} skillName - The skill name to check
-   * @param {number|null} userId - User ID in multi-user mode, null for single-user
+   * @param {number|null} userId - User ID the whitelist belongs to
    * @returns {Promise<boolean>}
    */
   isWhitelisted: async function (skillName, userId = null) {
     const whitelist = await this.get(userId);
     return whitelist.includes(skillName);
-  },
-
-  /**
-   * Clear the single-user whitelist (used when switching to multi-user mode)
-   * @returns {Promise<{success: boolean, error: string|null}>}
-   */
-  clearSingleUserWhitelist: async function () {
-    try {
-      await prisma.system_settings.deleteMany({
-        where: { label: this.SINGLE_USER_LABEL },
-      });
-      return { success: true, error: null };
-    } catch (error) {
-      console.error(
-        "AgentSkillWhitelist.clearSingleUserWhitelist error:",
-        error.message
-      );
-      return { success: false, error: error.message };
-    }
   },
 };
 

@@ -157,6 +157,46 @@ container rebuilds or pulls from Docker Hub.
 
 Your docker host will show the image as online once the build process is completed. This will build the app to `http://localhost:3001`.
 
+## Run frontend and backend as separate containers
+
+The default image is a single container that serves the built frontend from the same
+express server as the API. If you would rather run them apart - to scale, cache, or
+put the UI behind your own CDN/ingress - use `docker-compose.split.yml`:
+
+- `cd docker/`
+- `cp .env.example .env` **you must do this before building**
+- `docker-compose -f docker-compose.split.yml up -d --build`
+
+This starts two containers, both built from the same `docker/Dockerfile`:
+
+| Container               | Stage                | Contents                                       | Port         |
+| ----------------------- | -------------------- | ---------------------------------------------- | ------------ |
+| `anythingllm-frontend`  | `frontend-nginx`     | Vite build served by nginx, proxies `/api`      | `3000` → 80  |
+| `anythingllm-backend`   | `backend-production` | express server + document collector, SQLite/LanceDB | `3001`   |
+
+The UI is on `http://localhost:3000`. The browser only ever talks to the frontend
+container - nginx forwards `/api` (including the agent websocket upgrade and
+document uploads) to the backend over the compose network, so `VITE_API_BASE`
+stays `/api` and there are no CORS or mixed-origin concerns.
+
+Notes:
+
+- **The collector stays in the backend container.** The server reaches it over
+  loopback at a hardcoded `http://0.0.0.0:8888` and both processes share
+  `server/storage` (documents plus the rolling `comkey` RSA pair used to sign
+  requests), so splitting it out would need a code change, not just compose.
+- **Meta tags are static in this mode.** In the single-container setup the server
+  renders `index.html` on the fly and injects your custom title/description/favicon
+  (`MetaGenerator`). nginx serves the static `index.html` from the build instead, so
+  those customizations do not appear in link previews. `/manifest.json` is still
+  proxied to the backend, so the PWA name and icon remain dynamic.
+- **Publishing port 3001 is optional.** It is exposed in the compose file for direct
+  API access and debugging only; remove the `ports` block on `backend` to keep the
+  API reachable only from the frontend container.
+- If the browser must call the backend on a different origin (separate hostnames
+  rather than one nginx in front), rebuild the frontend with that URL baked in:
+  `VITE_API_BASE=https://api.example.com/api docker-compose -f docker-compose.split.yml build frontend`.
+
 ## Integrations and one-click setups
 
 The integrations below are templates or tooling built by the community to make running the docker experience of AnythingLLM easier.

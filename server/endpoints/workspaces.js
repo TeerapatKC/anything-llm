@@ -1,9 +1,4 @@
-const {
-  reqBody,
-  multiUserMode,
-  userFromSession,
-  safeJsonParse,
-} = require("../utils/http");
+const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const { moveProcessedDocsToFolder } = require("../utils/files");
 const { Workspace } = require("../models/workspace");
 const { Document } = require("../models/documents");
@@ -14,7 +9,7 @@ const { handleFileUpload } = require("../utils/files/multer");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
   anyWorkspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
@@ -50,7 +45,7 @@ function workspaceEndpoints(app) {
     "/workspace/new",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
+      userPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
     ],
     async (request, response) => {
       try {
@@ -60,7 +55,6 @@ function workspaceEndpoints(app) {
         await Telemetry.sendTelemetry(
           "workspace_created",
           {
-            multiUserMode: multiUserMode(response),
             LLMSelection: process.env.LLM_PROVIDER || "openai",
             Embedder: process.env.EMBEDDING_ENGINE || "inherit",
             VectorDbSelection: process.env.VECTOR_DB || "lancedb",
@@ -96,9 +90,7 @@ function workspaceEndpoints(app) {
         const user = await userFromSession(request, response);
         const { slug = null } = request.params;
         const data = reqBody(request);
-        const currWorkspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const currWorkspace = await Workspace.getWithUser(user, { slug });
 
         if (!currWorkspace) {
           response.sendStatus(400).end();
@@ -244,9 +236,7 @@ function workspaceEndpoints(app) {
         const user = await userFromSession(request, response);
         const { slug = null } = request.params;
         const { adds = [], deletes = [] } = reqBody(request);
-        const currWorkspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const currWorkspace = await Workspace.getWithUser(user, { slug });
 
         if (!currWorkspace) {
           response.sendStatus(400).end();
@@ -314,9 +304,7 @@ function workspaceEndpoints(app) {
         const { slug = "" } = request.params;
         const user = await userFromSession(request, response);
         const VectorDb = getVectorDbClass();
-        const workspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const workspace = await Workspace.getWithUser(user, { slug });
 
         if (!workspace) {
           response.sendStatus(400).end();
@@ -357,9 +345,7 @@ function workspaceEndpoints(app) {
         const { slug = "" } = request.params;
         const user = await userFromSession(request, response);
         const VectorDb = getVectorDbClass();
-        const workspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const workspace = await Workspace.getWithUser(user, { slug });
 
         if (!workspace) {
           response.sendStatus(400).end();
@@ -392,13 +378,11 @@ function workspaceEndpoints(app) {
 
   app.get(
     "/workspaces",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
-        const workspaces = multiUserMode(response)
-          ? await Workspace.whereWithUser(user)
-          : await Workspace.where();
+        const workspaces = await Workspace.whereWithUser(user);
 
         response.status(200).json({ workspaces });
       } catch (e) {
@@ -415,9 +399,7 @@ function workspaceEndpoints(app) {
       try {
         const { slug } = request.params;
         const user = await userFromSession(request, response);
-        const workspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const workspace = await Workspace.getWithUser(user, { slug });
 
         response.status(200).json({ workspace });
       } catch (e) {
@@ -434,18 +416,14 @@ function workspaceEndpoints(app) {
       try {
         const { slug } = request.params;
         const user = await userFromSession(request, response);
-        const workspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const workspace = await Workspace.getWithUser(user, { slug });
 
         if (!workspace) {
           response.sendStatus(400).end();
           return;
         }
 
-        const history = multiUserMode(response)
-          ? await WorkspaceChats.forWorkspaceByUser(workspace.id, user.id)
-          : await WorkspaceChats.forWorkspace(workspace.id);
+        const history = await WorkspaceChats.forWorkspaceByUser(workspace.id, user.id);
         response.status(200).json({ history: convertToChatHistory(history) });
       } catch (e) {
         console.error(e.message, e);
@@ -867,7 +845,7 @@ function workspaceEndpoints(app) {
 
   app.put(
     "/workspace/workspace-chats/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -902,9 +880,7 @@ function workspaceEndpoints(app) {
       try {
         const { slug = null } = request.params;
         const user = await userFromSession(request, response);
-        const currWorkspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const currWorkspace = await Workspace.getWithUser(user, { slug });
 
         if (!currWorkspace) {
           response.sendStatus(400).end();
@@ -981,9 +957,7 @@ function workspaceEndpoints(app) {
         const { slug = null } = request.params;
         const body = reqBody(request);
         const user = await userFromSession(request, response);
-        const currWorkspace = multiUserMode(response)
-          ? await Workspace.getWithUser(user, { slug })
-          : await Workspace.get({ slug });
+        const currWorkspace = await Workspace.getWithUser(user, { slug });
 
         if (!currWorkspace || !body.documentLocation)
           return response.sendStatus(400).end();
@@ -1071,7 +1045,7 @@ function workspaceEndpoints(app) {
    */
   app.post(
     "/workspace/search",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const { searchTerm } = reqBody(request);

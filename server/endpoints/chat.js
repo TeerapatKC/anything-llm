@@ -1,10 +1,10 @@
 const { v4: uuidv4 } = require("uuid");
-const { reqBody, userFromSession, multiUserMode } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const { streamChatWithWorkspace } = require("../utils/chats/stream");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -15,6 +15,7 @@ const { EventLogs } = require("../models/eventLogs");
 const {
   validWorkspaceAndThreadSlug,
   validWorkspaceSlug,
+  workspaceIsActive,
 } = require("../utils/middleware/validWorkspace");
 const { writeResponseChunk } = require("../utils/helpers/chat/responses");
 const { WorkspaceThread } = require("../models/workspaceThread");
@@ -30,6 +31,7 @@ function chatEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       validWorkspaceSlug,
+      workspaceIsActive,
     ],
     async (request, response) => {
       try {
@@ -55,7 +57,7 @@ function chatEndpoints(app) {
         response.setHeader("Connection", "keep-alive");
         response.flushHeaders();
 
-        if (multiUserMode(response) && !(await User.canSendChat(user))) {
+        if (!(await User.canSendChat(user))) {
           writeResponseChunk(response, {
             id: uuidv4(),
             type: "abort",
@@ -77,7 +79,6 @@ function chatEndpoints(app) {
           attachments
         );
         await Telemetry.sendTelemetry("sent_chat", {
-          multiUserMode: multiUserMode(response),
           LLMSelection: process.env.LLM_PROVIDER || "openai",
           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
           VectorDbSelection: process.env.VECTOR_DB || "lancedb",
@@ -116,6 +117,7 @@ function chatEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.CHAT]),
       validWorkspaceAndThreadSlug,
+      workspaceIsActive,
     ],
     async (request, response) => {
       try {
@@ -142,7 +144,7 @@ function chatEndpoints(app) {
         response.setHeader("Connection", "keep-alive");
         response.flushHeaders();
 
-        if (multiUserMode(response) && !(await User.canSendChat(user))) {
+        if (!(await User.canSendChat(user))) {
           writeResponseChunk(response, {
             id: uuidv4(),
             type: "abort",
@@ -182,7 +184,6 @@ function chatEndpoints(app) {
         });
 
         await Telemetry.sendTelemetry("sent_chat", {
-          multiUserMode: multiUserMode(response),
           LLMSelection: process.env.LLM_PROVIDER || "openai",
           Embedder: process.env.EMBEDDING_ENGINE || "inherit",
           VectorDbSelection: process.env.VECTOR_DB || "lancedb",

@@ -10,9 +10,6 @@ const {
   resolveConfigForWorkspace,
 } = require("./workspaceSkills");
 
-// Skills that must never be injected when the instance is running in multi-user mode.
-const SINGLE_USER_ONLY_SKILLS = new Set(["create-scheduled-job"]);
-
 /**
  * Configuration for agent skills that require availability checks and disabled sub-skill lists.
  * Each entry maps a skill name to its availability checker and disabled skills list key.
@@ -132,7 +129,6 @@ async function agentSkillsFromSystemSettings(
   preresolvedConfig = null
 ) {
   const systemFunctions = [];
-  const isMultiUser = await SystemSettings.isMultiUserMode();
   const config =
     preresolvedConfig ?? (await resolveConfigForWorkspace(workspace));
 
@@ -157,7 +153,6 @@ async function agentSkillsFromSystemSettings(
 
   for (const skillName of _setting) {
     if (!AgentPlugins.hasOwnProperty(skillName)) continue;
-    if (isMultiUser && SINGLE_USER_ONLY_SKILLS.has(skillName)) continue;
 
     // This is a plugin module with many sub-children plugins who
     // need to be named via `${parent}#${child}` naming convention

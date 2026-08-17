@@ -5,7 +5,6 @@ import App from "@/App.jsx";
 import PrivateRoute, {
   PermissionRoute,
   WorkspacePermissionRoute,
-  SingleUserRoute,
 } from "@/components/PrivateRoute";
 import { PERMISSIONS, WORKSPACE_PERMISSIONS } from "@/utils/permissions";
 import Login from "@/pages/Login";
@@ -278,22 +277,6 @@ const router = createBrowserRouter([
         },
       },
       // Manager routes
-      {
-        path: "/settings/security",
-        lazy: async () => {
-          const { default: GeneralSecurity } = await import(
-            "@/pages/GeneralSettings/Security"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={GeneralSecurity}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
-              />
-            ),
-          };
-        },
-      },
       {
         path: "/settings/privacy",
         lazy: async () => {
@@ -658,7 +641,14 @@ const router = createBrowserRouter([
           const { default: ScheduledJobs } = await import(
             "@/pages/GeneralSettings/ScheduledJobs"
           );
-          return { element: <SingleUserRoute Component={ScheduledJobs} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={ScheduledJobs}
+                permissions={[PERMISSIONS.SUPER_ADMIN]}
+              />
+            ),
+          };
         },
       },
       {
@@ -667,7 +657,14 @@ const router = createBrowserRouter([
           const { default: ScheduledJobRuns } = await import(
             "@/pages/GeneralSettings/ScheduledJobs/RunHistoryPage"
           );
-          return { element: <SingleUserRoute Component={ScheduledJobRuns} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={ScheduledJobRuns}
+                permissions={[PERMISSIONS.SUPER_ADMIN]}
+              />
+            ),
+          };
         },
       },
       {
@@ -677,7 +674,12 @@ const router = createBrowserRouter([
             "@/pages/GeneralSettings/ScheduledJobs/RunDetailPage"
           );
           return {
-            element: <SingleUserRoute Component={ScheduledJobRunDetail} />,
+            element: (
+              <PermissionRoute
+                Component={ScheduledJobRunDetail}
+                permissions={[PERMISSIONS.SUPER_ADMIN]}
+              />
+            ),
           };
         },
       },

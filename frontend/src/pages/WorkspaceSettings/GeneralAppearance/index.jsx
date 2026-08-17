@@ -4,6 +4,7 @@ import showToast from "@/utils/toast";
 import { useEffect, useRef, useState } from "react";
 import WorkspaceName from "./WorkspaceName";
 import SuggestedChatMessages from "./SuggestedChatMessages";
+import WorkspaceStatus from "./WorkspaceStatus";
 import DeleteWorkspace from "./DeleteWorkspace";
 import CTAButton from "@/components/lib/CTAButton";
 
@@ -64,6 +65,7 @@ export default function GeneralInfo({ slug, deletionProtected = false }) {
         />
       </form>
       <SuggestedChatMessages slug={workspace.slug} />
+      <WorkspaceStatus workspace={workspace} />
       <DeleteWorkspace workspace={workspace} visible={!deletionProtected} />
     </div>
   );

@@ -60,15 +60,6 @@ class GoogleCalendarBridge {
     if (this.#isInitialized) return { success: true };
 
     try {
-      const isMultiUser = await SystemSettings.isMultiUserMode();
-      if (isMultiUser) {
-        return {
-          success: false,
-          error:
-            "Google Calendar integration is not available in multi-user mode for security reasons.",
-        };
-      }
-
       const config = await GoogleCalendarBridge.getConfig();
       if (!config.deploymentId || !config.apiKey) {
         return {
@@ -97,13 +88,10 @@ class GoogleCalendarBridge {
   }
 
   /**
-   * Checks if Google Calendar tools are available (not in multi-user mode and has configuration).
+   * Checks if Google Calendar tools are available (instance-wide credentials are configured).
    * @returns {Promise<boolean>}
    */
   static async isToolAvailable() {
-    const isMultiUser = await SystemSettings.isMultiUserMode();
-    if (isMultiUser) return false;
-
     const config = await GoogleCalendarBridge.getConfig();
     return !!(config.deploymentId && config.apiKey);
   }

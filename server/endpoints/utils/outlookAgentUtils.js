@@ -1,7 +1,8 @@
 const { reqBody } = require("../../utils/http");
 const {
-  isSingleUserMode,
+  userPermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
+const { PERMISSIONS } = require("../../utils/permissions");
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
 
 /**
@@ -20,7 +21,7 @@ function outlookAgentEndpoints(app) {
 
   app.post(
     "/admin/agent-skills/outlook/auth-url",
-    [validatedRequest, isSingleUserMode],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
     async (request, response) => {
       try {
         const { clientId, tenantId, clientSecret, authType } = reqBody(request);
@@ -88,7 +89,7 @@ function outlookAgentEndpoints(app) {
 
   app.get(
     "/agent-skills/outlook/auth-callback",
-    [validatedRequest, isSingleUserMode],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
     async (request, response) => {
       try {
         const { code, error, error_description } = request.query;
@@ -133,7 +134,7 @@ function outlookAgentEndpoints(app) {
 
   app.get(
     "/admin/agent-skills/outlook/status",
-    [validatedRequest, isSingleUserMode],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
     async (_request, response) => {
       try {
         const outlookLib = require("../../utils/agents/aibitat/plugins/outlook/lib");
@@ -171,7 +172,7 @@ function outlookAgentEndpoints(app) {
 
   app.post(
     "/admin/agent-skills/outlook/revoke",
-    [validatedRequest, isSingleUserMode],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
     async (_request, response) => {
       try {
         const outlookLib = require("../../utils/agents/aibitat/plugins/outlook/lib");

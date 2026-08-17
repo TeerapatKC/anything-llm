@@ -192,6 +192,9 @@ model workspaces {
   id                           Int                            @id @default(autoincrement())
   name                         String
   slug                         String                         @unique
+  // An inactive workspace is retained in full (documents, chats, members) but is
+  // closed for chatting on every surface until an admin re-activates it.
+  active                       Boolean                        @default(true)
   vectorTag                    String?
   createdAt                    DateTime                       @default(now())
   openAiTemp                   Float?

@@ -1,16 +1,13 @@
-const {
-  userFromSession,
-  multiUserMode,
-  safeJsonParse,
-} = require("../utils/http");
+const { userFromSession, safeJsonParse } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const { Workspace } = require("../models/workspace");
 const { ScheduledJobRun } = require("../models/scheduledJobRun");
+const { Role } = require("../models/role");
 const createFilesLib = require("../utils/agents/aibitat/plugins/create-files/lib");
 const { Telemetry } = require("../models/telemetry");
 
@@ -28,7 +25,7 @@ function agentFileServerEndpoints(app) {
    */
   app.get(
     "/agent-skills/generated-files/:filename",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -45,10 +42,7 @@ function agentFileServerEndpoints(app) {
         }
 
         // Find a chat or scheduled job run that references this file
-        const fileSource = await findFileSource(filename, {
-          user,
-          isMultiUser: multiUserMode(response),
-        });
+        const fileSource = await findFileSource(filename, { user });
 
         if (!fileSource) {
           return response.status(404).json({
@@ -94,7 +88,7 @@ function agentFileServerEndpoints(app) {
    */
   app.get(
     "/image-generation/generated-images/:filename",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
     async (request, response) => {
       try {
         const fs = require("fs");
@@ -109,10 +103,7 @@ function agentFileServerEndpoints(app) {
         if (!filename || !GENERATED_IMAGE_FILENAME_PATTERN.test(filename))
           return response.status(400).json({ error: "Invalid filename" });
 
-        const fileSource = await findFileSource(filename, {
-          user,
-          isMultiUser: multiUserMode(response),
-        });
+        const fileSource = await findFileSource(filename, { user });
         if (!fileSource)
           return response
             .status(404)
@@ -143,23 +134,20 @@ function agentFileServerEndpoints(app) {
  * references the given storage filename, and confirms the requester has access.
  *
  * Search order:
- *   1. Workspace chats the user can access (per multi-user permissions).
- *   2. Scheduled job runs — single-user only, so no per-user access check.
+ *   1. Workspace chats the user is a member of.
+ *   2. Scheduled job runs — instance-wide and admin-managed, so only system
+ *      administrators may reach files those runs produced.
  *
  * @param {string} storageFilename
- * @param {{ user: object|null, isMultiUser: boolean }} ctx
+ * @param {{ user: object|null }} ctx
  * @returns {Promise<{workspaceId: number|null, displayFilename: string}|null>}
  */
-async function findFileSource(storageFilename, { user, isMultiUser }) {
+async function findFileSource(storageFilename, { user }) {
   try {
-    const fromChat = await findInWorkspaceChats(storageFilename, {
-      user,
-      isMultiUser,
-    });
+    const fromChat = await findInWorkspaceChats(storageFilename, { user });
     if (fromChat) return fromChat;
 
-    if (isMultiUser) return null;
-
+    if (!(await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))) return null;
     return await findInScheduledJobRuns(storageFilename);
   } catch (error) {
     console.error("[findFileSource] Error:", error.message);
@@ -167,14 +155,10 @@ async function findFileSource(storageFilename, { user, isMultiUser }) {
   }
 }
 
-// Search workspace chats the user has access to. In single-user mode all
-// workspaces are accessible; in multi-user mode only workspaces assigned to
-// the user are. Returns the matching chat's workspace + display filename.
-async function findInWorkspaceChats(storageFilename, { user, isMultiUser }) {
-  const workspaces =
-    isMultiUser && user
-      ? await Workspace.whereWithUser(user)
-      : await Workspace.where();
+// Search workspace chats the user has access to - only workspaces the user is a
+// member of. Returns the matching chat's workspace + display filename.
+async function findInWorkspaceChats(storageFilename, { user }) {
+  const workspaces = user ? await Workspace.whereWithUser(user) : [];
 
   const workspaceIds = workspaces.map((w) => w.id);
   if (workspaceIds.length === 0) return null;
@@ -202,8 +186,8 @@ async function findInWorkspaceChats(storageFilename, { user, isMultiUser }) {
   return null;
 }
 
-// Search completed scheduled job runs. Scheduled jobs are single-user only,
-// so this skips access control. Returns the matching run's display filename.
+// Search completed scheduled job runs. Access control happens in `findFileSource`,
+// which only reaches here for system administrators.
 async function findInScheduledJobRuns(storageFilename) {
   const runs = await ScheduledJobRun.where({
     status: "completed",

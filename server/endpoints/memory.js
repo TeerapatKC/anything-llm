@@ -3,7 +3,7 @@ const { SystemSettings } = require("../models/systemSettings");
 const { userFromSession, reqBody } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -20,16 +20,16 @@ async function memoryFeatureEnabled(_req, response, next) {
 }
 
 /**
- * Loads the memory by :memoryId and, in multi-user mode, scopes the query to the requester's userId.
+ * Loads the memory by :memoryId and scopes the query to the requester's userId.
  * A memory owned by another user returns null here and is indistinguishable from "not found" — 404 either way.
  */
 async function validateMemoryOwner(request, response, next) {
   try {
-    const clause = { id: Number(request.params.memoryId) };
-    if (response.locals.multiUserMode) {
-      const user = await userFromSession(request, response);
-      clause.userId = user?.id ?? null;
-    }
+    const user = await userFromSession(request, response);
+    const clause = {
+      id: Number(request.params.memoryId),
+      userId: user?.id ?? null,
+    };
 
     const memory = await Memory.get(clause);
     if (!memory)
@@ -105,7 +105,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      userPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
     ],
@@ -130,7 +130,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      userPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
     ],
@@ -150,7 +150,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId/promote",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      userPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
     ],
@@ -172,7 +172,7 @@ function memoryEndpoints(app) {
     "/memories/:memoryId/demote/:slug",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.ANY]),
+      userPermissionValid([PERMISSIONS.ANY]),
       memoryFeatureEnabled,
       validateMemoryOwner,
       validWorkspaceSlug,

@@ -2,7 +2,7 @@ const { AgentSkillWhitelist } = require("../models/agentSkillWhitelist");
 const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 
@@ -47,7 +47,7 @@ function agentSkillWhitelistEndpoints(app) {
 
   app.post(
     "/agent-skills/whitelist/add",
-    [validatedRequest, flexUserPermissionValid(PERMISSIONS.ANY)],
+    [validatedRequest, userPermissionValid(PERMISSIONS.ANY)],
     async (request, response) => {
       try {
         const { skillName } = reqBody(request);
@@ -59,7 +59,7 @@ function agentSkillWhitelistEndpoints(app) {
         }
 
         const user = await userFromSession(request, response);
-        if (!user && response.locals?.multiUserMode) {
+        if (!user) {
           return response
             .status(401)
             .json({ success: false, error: "Unauthorized" });

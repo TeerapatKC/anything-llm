@@ -559,10 +559,6 @@ const KEY_MAPPING = {
   },
 
   // System Settings
-  AuthToken: {
-    envKey: "AUTH_TOKEN",
-    checks: [requiresForceMode, noRestrictedChars],
-  },
   JWTSecret: {
     envKey: "JWT_SECRET",
     checks: [requiresForceMode],
@@ -1240,13 +1236,6 @@ async function validDockerizedUrl(input = "") {
   }
 
   return null;
-}
-
-function noRestrictedChars(input = "") {
-  const regExp = new RegExp(/^[a-zA-Z0-9_\-!@$%^&*();]+$/);
-  return !regExp.test(input)
-    ? `Your password has restricted characters in it. Allowed symbols are _,-,!,@,$,%,^,&,*,(,),;`
-    : null;
 }
 
 async function handleVectorStoreReset(key, prevValue, nextValue) {

@@ -1,7 +1,7 @@
 const ImportedPlugin = require("../../utils/agents/imported");
 const { reqBody } = require("../../utils/http");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../../utils/permissions");
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
@@ -13,7 +13,7 @@ function importedAgentPluginEndpoints(app) {
     "/experimental/agent-plugins/:hubId/toggle",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
     ],
     (request, response) => {
       try {
@@ -34,7 +34,7 @@ function importedAgentPluginEndpoints(app) {
     "/experimental/agent-plugins/:hubId/config",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
     ],
     (request, response) => {
       try {
@@ -56,7 +56,7 @@ function importedAgentPluginEndpoints(app) {
     "/experimental/agent-plugins/:hubId",
     [
       validatedRequest,
-      flexUserPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
+      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
     ],
     async (request, response) => {
       try {

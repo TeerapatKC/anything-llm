@@ -5,6 +5,7 @@ const { CommunicationKey } = require("../comKey");
 const setupTelemetry = require("../telemetry");
 const eagerLoadContextWindows = require("./eagerLoadContextWindows");
 const markOnboarded = require("./markOnboarded");
+const { bootstrapAdminFromEnv } = require("./bootstrapAdmin");
 const { PushNotifications } = require("../PushNotifications");
 const { TelegramBotService } = require("../telegramBot");
 const { Role } = require("../../models/role");
@@ -36,6 +37,8 @@ function bootSSL(app, port = 3001) {
         await markOnboarded();
         await Role.seed();
         await WorkspaceRole.seed();
+        // After role seeding - the admin role must exist before the account can be made.
+        await bootstrapAdminFromEnv();
         await setupTelemetry();
         new CommunicationKey(true);
         new EncryptionManager();
@@ -71,6 +74,8 @@ function bootHTTP(app, port = 3001) {
       await markOnboarded();
       await Role.seed();
       await WorkspaceRole.seed();
+      // After role seeding - the admin role must exist before the account can be made.
+      await bootstrapAdminFromEnv();
       await setupTelemetry();
       new CommunicationKey(true);
       new EncryptionManager();

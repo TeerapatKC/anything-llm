@@ -1,13 +1,8 @@
-const {
-  multiUserMode,
-  userFromSession,
-  reqBody,
-  safeJsonParse,
-} = require("../utils/http");
+const { userFromSession, reqBody, safeJsonParse } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { Telemetry } = require("../models/telemetry");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -45,7 +40,6 @@ function workspaceThreadEndpoints(app) {
         await Telemetry.sendTelemetry(
           "workspace_thread_created",
           {
-            multiUserMode: multiUserMode(response),
             LLMSelection: process.env.LLM_PROVIDER || "openai",
             Embedder: process.env.EMBEDDING_ENGINE || "inherit",
             VectorDbSelection: process.env.VECTOR_DB || "lancedb",

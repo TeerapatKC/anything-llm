@@ -41,11 +41,11 @@ const TABS = {
 };
 
 export default function WorkspaceSettings() {
-  const { loading, requiresAuth, mode } = usePasswordModal();
+  const { loading, requiresAuth } = usePasswordModal();
 
   if (loading) return <FullScreenLoader />;
   if (requiresAuth !== false) {
-    return <>{requiresAuth !== null && <PasswordModal mode={mode} />}</>;
+    return <>{requiresAuth !== null && <PasswordModal />}</>;
   }
 
   return <ShowWorkspaceChat />;

@@ -153,9 +153,6 @@ export default {
     vectorDatabase: () => {
       return "/settings/vector-database";
     },
-    security: () => {
-      return "/settings/security";
-    },
     interface: () => {
       return "/settings/interface";
     },

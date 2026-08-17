@@ -6,7 +6,7 @@ const { Workspace } = require("../../../models/workspace");
 const { WorkspaceChats } = require("../../../models/workspaceChats");
 const { WorkspaceUser } = require("../../../models/workspaceUsers");
 const { canModifyAdmin } = require("../../../utils/helpers/admin");
-const { multiUserMode, reqBody } = require("../../../utils/http");
+const { reqBody } = require("../../../utils/http");
 const { validApiKey } = require("../../../utils/middleware/validApiKey");
 
 function apiAdminEndpoints(app) {
@@ -15,7 +15,7 @@ function apiAdminEndpoints(app) {
   app.get("/v1/admin/is-multi-user-mode", [validApiKey], (_, response) => {
     /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Check to see if the instance is in multi-user-mode first. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'List all users in the instance.'
     #swagger.responses[200] = {
       content: {
         "application/json": {
@@ -34,14 +34,14 @@ function apiAdminEndpoints(app) {
       }
     }
     */
-    const isMultiUser = multiUserMode(response);
-    response.status(200).json({ isMultiUser });
+    // Retained for API compatibility - every instance is multi-user.
+    response.status(200).json({ isMultiUser: true });
   });
 
   app.get("/v1/admin/users", [validApiKey], async (request, response) => {
     /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Check to see if the instance is in multi-user-mode first. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'List all users in the instance.'
     #swagger.responses[200] = {
       content: {
         "application/json": {
@@ -64,16 +64,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
     try {
-      if (!multiUserMode(response)) {
-        response.sendStatus(401).end();
-        return;
-      }
-
       const users = await User.where();
       response.status(200).json({ users });
     } catch (e) {
@@ -85,7 +77,7 @@ function apiAdminEndpoints(app) {
   app.post("/v1/admin/users/new", [validApiKey], async (request, response) => {
     /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Create a new user with username and password. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Create a new user with username and password.'
     #swagger.requestBody = {
         description: 'Key pair object that will define the new user to add to the system.',
         required: true,
@@ -123,16 +115,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
     try {
-      if (!multiUserMode(response)) {
-        response.sendStatus(401).end();
-        return;
-      }
-
       const newUserParams = reqBody(request);
       const { user: newUser, error } = await User.create(newUserParams);
       response.status(newUser ? 200 : 400).json({ user: newUser, error });
@@ -151,7 +135,7 @@ function apiAdminEndpoints(app) {
       required: true,
       type: 'string'
     }
-    #swagger.description = 'Update existing user settings. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Update existing user settings.'
     #swagger.requestBody = {
         description: 'Key pair object that will update the found user. All fields are optional and will not update unless specified.',
         required: true,
@@ -184,16 +168,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
     try {
-      if (!multiUserMode(response)) {
-        response.sendStatus(401).end();
-        return;
-      }
-
       const { id } = request.params;
       const updates = reqBody(request);
       const user = await User.get({ id: Number(id) });
@@ -220,7 +196,7 @@ function apiAdminEndpoints(app) {
     async (request, response) => {
       /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Delete existing user by id. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Delete existing user by id.'
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'id of the user in the database.',
@@ -245,16 +221,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
       try {
-        if (!multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
         const { id } = request.params;
         const user = await User.get({ id: Number(id) });
         await User.delete({ id: user.id });
@@ -272,7 +240,7 @@ function apiAdminEndpoints(app) {
   app.get("/v1/admin/invites", [validApiKey], async (request, response) => {
     /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'List all existing invitations to instance regardless of status. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'List all existing invitations to instance regardless of status.'
     #swagger.responses[200] = {
       content: {
         "application/json": {
@@ -297,16 +265,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
     try {
-      if (!multiUserMode(response)) {
-        response.sendStatus(401).end();
-        return;
-      }
-
       const invites = await Invite.whereWithUsers();
       response.status(200).json({ invites });
     } catch (e) {
@@ -318,7 +278,7 @@ function apiAdminEndpoints(app) {
   app.post("/v1/admin/invite/new", [validApiKey], async (request, response) => {
     /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Create a new invite code for someone to use to register with instance. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Create a new invite code for someone to use to register with instance.'
     #swagger.requestBody = {
         description: 'Request body for creation parameters of the invitation',
         required: false,
@@ -352,16 +312,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
     try {
-      if (!multiUserMode(response)) {
-        response.sendStatus(401).end();
-        return;
-      }
-
       const body = reqBody(request);
       const { invite, error } = await Invite.create({
         workspaceIds: body?.workspaceIds ?? [],
@@ -379,7 +331,7 @@ function apiAdminEndpoints(app) {
     async (request, response) => {
       /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Deactivates (soft-delete) invite by id. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Deactivates (soft-delete) invite by id.'
     #swagger.parameters['id'] = {
       in: 'path',
       description: 'id of the invite in the database.',
@@ -404,16 +356,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
       try {
-        if (!multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
         const { id } = request.params;
         const parsedId = Number(id);
         if (isNaN(parsedId)) {
@@ -473,17 +417,9 @@ function apiAdminEndpoints(app) {
           "$ref": "#/definitions/InvalidAPIKey"
         }
       }
-       #swagger.responses[401] = {
-        description: "Instance is not in Multi-User mode. Method denied",
-      }
       */
 
       try {
-        if (!multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
         const workspaceId = request.params.workspaceId;
         const users = await Workspace.workspaceUsers(workspaceId);
 
@@ -508,7 +444,7 @@ function apiAdminEndpoints(app) {
       required: true,
       type: 'string'
     }
-    #swagger.description = 'Overwrite workspace permissions to only be accessible by the given user ids and admins. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Overwrite workspace permissions to only be accessible by the given user ids and admins.'
     #swagger.requestBody = {
         description: 'Entire array of user ids who can access the workspace. All fields are optional and will not update unless specified.',
         required: true,
@@ -538,16 +474,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
       try {
-        if (!multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
         const { workspaceId } = request.params;
         const { userIds } = reqBody(request);
         const { success, error } = await Workspace.updateUsers(
@@ -574,7 +502,7 @@ function apiAdminEndpoints(app) {
       required: true,
       type: 'string'
     }
-    #swagger.description = 'Set workspace permissions to be accessible by the given user ids and admins. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Set workspace permissions to be accessible by the given user ids and admins.'
     #swagger.requestBody = {
         description: 'Array of user ids who will be given access to the target workspace. <code>reset</code> will remove all existing users from the workspace and only add the new users - default <code>false</code>.',
         required: true,
@@ -609,16 +537,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
       try {
-        if (!multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
         const { workspaceSlug } = request.params;
         const { userIds: _uids, reset = false } = reqBody(request);
         const userIds = (
@@ -683,7 +603,7 @@ function apiAdminEndpoints(app) {
     async (request, response) => {
       /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'All chats in the system ordered by most recent. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'All chats in the system ordered by most recent.'
     #swagger.requestBody = {
         description: 'Page offset to show of workspace chats. All fields are optional and will not update unless specified.',
         required: false,
@@ -739,7 +659,7 @@ function apiAdminEndpoints(app) {
     async (request, response) => {
       /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Update multi-user preferences for instance. Methods are disabled until multi user mode is enabled via the UI.'
+    #swagger.description = 'Update multi-user preferences for instance.'
     #swagger.requestBody = {
       description: 'Object with setting key and new value to set. All keys are optional and will not update unless specified.',
       required: true,
@@ -769,16 +689,8 @@ function apiAdminEndpoints(app) {
         "$ref": "#/definitions/InvalidAPIKey"
       }
     }
-     #swagger.responses[401] = {
-      description: "Instance is not in Multi-User mode. Method denied",
-    }
     */
       try {
-        if (!multiUserMode(response)) {
-          response.sendStatus(401).end();
-          return;
-        }
-
         const updates = reqBody(request);
         await SystemSettings.updateSettings(updates);
         response.status(200).json({ success: true, error: null });

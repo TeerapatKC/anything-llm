@@ -1,6 +1,6 @@
 const { AgentFlows } = require("../utils/agentFlows");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -12,7 +12,7 @@ function agentFlowEndpoints(app) {
   // Save a flow configuration
   app.post(
     "/agent-flows/save",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
         const { name, config, uuid } = request.body;
@@ -53,7 +53,7 @@ function agentFlowEndpoints(app) {
   // List all available flows
   app.get(
     "/agent-flows/list",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (_request, response) => {
       try {
         const flows = AgentFlows.listFlows();
@@ -74,7 +74,7 @@ function agentFlowEndpoints(app) {
   // Get a specific flow by UUID
   app.get(
     "/agent-flows/:uuid",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
         const { uuid } = request.params;
@@ -103,7 +103,7 @@ function agentFlowEndpoints(app) {
   // Run a specific flow
   // app.post(
   //   "/agent-flows/:uuid/run",
-  //   [validatedRequest, flexUserPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+  //   [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
   //   async (request, response) => {
   //     try {
   //       const { uuid } = request.params;
@@ -137,7 +137,7 @@ function agentFlowEndpoints(app) {
   // Delete a specific flow
   app.delete(
     "/agent-flows/:uuid",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
         const { uuid } = request.params;
@@ -166,7 +166,7 @@ function agentFlowEndpoints(app) {
   // Toggle flow active status
   app.post(
     "/agent-flows/:uuid/toggle",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
         const { uuid } = request.params;

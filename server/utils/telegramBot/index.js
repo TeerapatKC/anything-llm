@@ -163,15 +163,6 @@ class TelegramBotService {
     this.#handleMessage(ctx, msg);
   }
 
-  /**
-   * Check if the instance is running in multi-user mode
-   * @returns {Promise<boolean>}
-   */
-  async checkMultiUserMode() {
-    const { SystemSettings } = require("../../models/systemSettings");
-    return await SystemSettings.isMultiUserMode();
-  }
-
   updateConfig(updates) {
     if (!this.#config) return;
     Object.assign(this.#config, updates);
@@ -409,25 +400,6 @@ class TelegramBotService {
   }
 
   /**
-   * Assert that the bot is running in single-user mode.
-   * If the instance is running in multi-user mode, it will stop the bot and delete the connector.
-   * - Returns true if the bot is running in single-user mode.
-   * - Returns false if the bot is running in multi-user mode.
-   * @returns {Promise<boolean>}
-   */
-  async #assertSingleUserMode() {
-    const isMultiUserMode = await this.checkMultiUserMode();
-    if (!isMultiUserMode) return true;
-
-    this.#log(
-      "Invalid state: Multi-user mode detected. Cleaning up and deleting connector."
-    );
-    await this.stop();
-    await ExternalCommunicationConnector.delete("telegram");
-    return false;
-  }
-
-  /**
    * Reset the polling retry state and clear the timer if it exists.
    */
   #resetPollingRetry() {
@@ -447,8 +419,6 @@ class TelegramBotService {
         return;
       }
 
-      const isSingleUserMode = await this.#assertSingleUserMode();
-      if (!isSingleUserMode) return;
       handler();
     };
 
@@ -821,11 +791,6 @@ class TelegramBotService {
       const connector = await ExternalCommunicationConnector.get("telegram");
       if (!connector || !connector.active || !connector.config?.bot_token)
         return;
-
-      // If there is a valid config, but the instance is running in multi-user mode - skip boot
-      // but also cleanup the config and approved users
-      const isSingleUserMode = await service.#assertSingleUserMode();
-      if (!isSingleUserMode) return;
 
       const config = { ...connector.config };
       config.bot_token = decryptToken(config.bot_token);

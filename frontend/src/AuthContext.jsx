@@ -49,16 +49,13 @@ export function AuthProvider(props) {
   });
 
   /*
-   * On initial mount and whenever the token changes, fetch a new user object
-   * If the user is suspended, (success === false and data === null) logout the user and redirect to the login page
-   * If success is true and data is not null, update the user object in the store (multi-user mode only)
-   * If success is true and data is null, do nothing (single-user mode only) with or without password protection
+   * On initial mount and whenever the token changes, fetch a new user object.
+   * If the session is dead or the user is suspended (success === false) log them out and
+   * redirect to the login page; otherwise refresh the cached user and their permissions.
    */
   useEffect(() => {
     async function refreshUser() {
       const { success, user: refreshedUser } = await System.refreshUser();
-      if (success && refreshedUser === null) return;
-
       if (!success) {
         localStorage.removeItem(AUTH_USER);
         localStorage.removeItem(AUTH_TOKEN);

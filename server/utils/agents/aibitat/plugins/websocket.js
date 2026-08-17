@@ -7,14 +7,11 @@ const { PERMISSIONS } = require("../../../permissions");
 
 /**
  * Toggling an agent's tools mid-session requires the same permission as managing the
- * Agent Skills settings. In multi-user mode the requesting user's role must grant
- * `agents.manage_skills`; single-user mode (no userId) is allowed.
+ * Agent Skills settings - the requesting user's role must grant `agents.manage_skills`.
  * @param {number|null} userId - User id from the agent invocation.
  * @returns {Promise<boolean>}
  */
 async function userCanToggleTools(userId = null) {
-  const { SystemSettings } = require("../../../../models/systemSettings");
-  if (!(await SystemSettings.isMultiUserMode())) return true;
   if (!userId) return false;
 
   const { User } = require("../../../../models/user");

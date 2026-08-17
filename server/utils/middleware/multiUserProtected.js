@@ -1,4 +1,3 @@
-const { SystemSettings } = require("../../models/systemSettings");
 const { Role } = require("../../models/role");
 const { userFromSession } = require("../http");
 const { PERMISSIONS, ANY_PERMISSION } = require("../permissions");
@@ -20,70 +19,16 @@ function normalizePermissions(permissions) {
 }
 
 /**
- * Explicitly check that single user mode is enabled as well as that the
- * requesting user has the appropriate permissions to modify or call the URL.
- * @returns {function}
- */
-async function isSingleUserMode(_request, response, next) {
-  const multiUserMode = await SystemSettings.isMultiUserMode();
-  if (multiUserMode) return response.sendStatus(401).end();
-  next();
-  return;
-}
-
-/**
- * Explicitly check that multi user mode is enabled as well as that the
- * requesting user holds at least one of the permissions that unlock the route.
+ * Gate a route on instance-wide permissions the caller must hold. Every instance is
+ * multi-user, so there is no implicit operator - the signed-in user's role decides.
  * @param {string[]} allowedPermissions - Permissions that grant access to the route
  * @returns {function}
  */
-function strictMultiUserPermissionValid(
-  allowedPermissions = DEFAULT_PERMISSIONS
-) {
+function userPermissionValid(allowedPermissions = DEFAULT_PERMISSIONS) {
   const permissions = normalizePermissions(allowedPermissions);
   return async (request, response, next) => {
     // If the access-control is allowable for any signed-in user - skip validations and continue;
     if (permissions.includes(ANY_PERMISSION)) {
-      next();
-      return;
-    }
-
-    const multiUserMode =
-      response.locals?.multiUserMode ??
-      (await SystemSettings.isMultiUserMode());
-    if (!multiUserMode) return response.sendStatus(401).end();
-
-    const user =
-      response.locals?.user ?? (await userFromSession(request, response));
-    if (await Role.userCanAny(user, permissions)) {
-      next();
-      return;
-    }
-    return response.sendStatus(401).end();
-  };
-}
-
-/**
- * Apply permission checks IF the current system is in multi-user mode.
- * This is relevant for routes that are shared between MUM and single-user mode.
- * @param {string[]} allowedPermissions - Permissions that grant access to the route
- * @returns {function}
- */
-function flexUserPermissionValid(allowedPermissions = DEFAULT_PERMISSIONS) {
-  const permissions = normalizePermissions(allowedPermissions);
-  return async (request, response, next) => {
-    // If the access-control is allowable for any signed-in user - skip validations and continue;
-    // It does not matter if multi-user or not.
-    if (permissions.includes(ANY_PERMISSION)) {
-      next();
-      return;
-    }
-
-    // Bypass if not in multi-user mode
-    const multiUserMode =
-      response.locals?.multiUserMode ??
-      (await SystemSettings.isMultiUserMode());
-    if (!multiUserMode) {
       next();
       return;
     }
@@ -128,7 +73,7 @@ async function workspaceFromRequest(request, response) {
 
 /**
  * Gate a route on permissions the caller must hold *inside the workspace the request
- * targets*. This is the workspace-scoped counterpart to `flexUserPermissionValid`, and
+ * targets*. This is the workspace-scoped counterpart to `userPermissionValid`, and
  * it is what lets one account be a manager of one workspace and a reader of another.
  *
  * Instance operators (`system.admin` or `workspaces.manage_all`) pass everywhere; the
@@ -141,15 +86,6 @@ function workspacePermissionValid(allowedPermissions = []) {
   const permissions = normalizePermissions(allowedPermissions);
   return async (request, response, next) => {
     if (permissions.includes(ANY_PERMISSION)) {
-      next();
-      return;
-    }
-
-    // Single-user mode has one operator who implicitly holds everything.
-    const multiUserMode =
-      response.locals?.multiUserMode ??
-      (await SystemSettings.isMultiUserMode());
-    if (!multiUserMode) {
       next();
       return;
     }
@@ -181,14 +117,6 @@ function workspacePermissionValid(allowedPermissions = []) {
 function anyWorkspacePermissionValid(allowedPermissions = []) {
   const permissions = normalizePermissions(allowedPermissions);
   return async (request, response, next) => {
-    const multiUserMode =
-      response.locals?.multiUserMode ??
-      (await SystemSettings.isMultiUserMode());
-    if (!multiUserMode) {
-      next();
-      return;
-    }
-
     const user =
       response.locals?.user ?? (await userFromSession(request, response));
     const { WorkspaceRole } = require("../../models/workspaceRole");
@@ -203,44 +131,22 @@ function anyWorkspacePermissionValid(allowedPermissions = []) {
 }
 
 /**
- * Whether the requesting user holds a permission. In single-user mode there is only
- * one operator and they implicitly hold everything.
+ * Whether the requesting user holds an instance-wide permission.
  * @param {import("express").Request} request
  * @param {import("express").Response} response
  * @param {string} permission
  * @returns {Promise<boolean>}
  */
 async function requestUserCan(request, response, permission) {
-  const multiUserMode =
-    response.locals?.multiUserMode ?? (await SystemSettings.isMultiUserMode());
-  if (!multiUserMode) return true;
   const user =
     response.locals?.user ?? (await userFromSession(request, response));
   return Role.userCan(user, permission);
 }
 
-// Middleware check on a public route if the instance is in a valid
-// multi-user set up.
-async function isMultiUserSetup(_request, response, next) {
-  const multiUserMode = await SystemSettings.isMultiUserMode();
-  if (!multiUserMode) {
-    response.status(403).json({
-      error: "Invalid request",
-    });
-    return;
-  }
-
-  next();
-  return;
-}
-
 module.exports = {
-  isSingleUserMode,
-  strictMultiUserPermissionValid,
-  flexUserPermissionValid,
+  userPermissionValid,
   workspacePermissionValid,
   anyWorkspacePermissionValid,
   workspaceFromRequest,
   requestUserCan,
-  isMultiUserSetup,
 };

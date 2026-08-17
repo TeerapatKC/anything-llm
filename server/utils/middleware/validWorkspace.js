@@ -1,14 +1,12 @@
 const { Workspace } = require("../../models/workspace");
 const { WorkspaceThread } = require("../../models/workspaceThread");
-const { userFromSession, multiUserMode } = require("../http");
+const { userFromSession } = require("../http");
 
 // Will pre-validate and set the workspace for a request if the slug is provided in the URL path.
 async function validWorkspaceSlug(request, response, next) {
   const { slug } = request.params;
   const user = await userFromSession(request, response);
-  const workspace = multiUserMode(response)
-    ? await Workspace.getWithUser(user, { slug })
-    : await Workspace.get({ slug });
+  const workspace = await Workspace.getWithUser(user, { slug });
 
   if (!workspace) {
     response.status(404).send("Workspace does not exist.");
@@ -23,9 +21,7 @@ async function validWorkspaceSlug(request, response, next) {
 async function validWorkspaceAndThreadSlug(request, response, next) {
   const { slug, threadSlug } = request.params;
   const user = await userFromSession(request, response);
-  const workspace = multiUserMode(response)
-    ? await Workspace.getWithUser(user, { slug })
-    : await Workspace.get({ slug });
+  const workspace = await Workspace.getWithUser(user, { slug });
 
   if (!workspace) {
     response.status(404).send("Workspace does not exist.");
@@ -47,7 +43,25 @@ async function validWorkspaceAndThreadSlug(request, response, next) {
   next();
 }
 
+/**
+ * Refuses chatting in a workspace an admin has switched off. Must run *after*
+ * `validWorkspaceSlug`/`validWorkspaceAndThreadSlug`, which is what puts the workspace
+ * on `response.locals`. Deliberately scoped to chat routes only - an inactive workspace
+ * stays fully readable and manageable so an admin can inspect or re-activate it.
+ */
+function workspaceIsActive(request, response, next) {
+  const workspace = response.locals.workspace;
+  if (workspace && workspace.active === false) {
+    response
+      .status(403)
+      .send("This workspace is inactive and cannot be chatted with.");
+    return;
+  }
+  next();
+}
+
 module.exports = {
   validWorkspaceSlug,
   validWorkspaceAndThreadSlug,
+  workspaceIsActive,
 };

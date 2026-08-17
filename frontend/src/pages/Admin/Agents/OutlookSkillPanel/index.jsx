@@ -19,7 +19,6 @@ import {
   XCircle,
 } from "@phosphor-icons/react";
 import Admin from "@/models/admin";
-import System from "@/models/system";
 import OutlookAgent from "@/models/outlookAgent";
 import { getOutlookSkills, filterSkillCategories } from "./utils";
 import OutlookIcon from "./outlook.png";
@@ -57,7 +56,6 @@ export default function OutlookSkillPanel({
   const [authType, setAuthType] = useState("common");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
-  const [isMultiUserMode, setIsMultiUserMode] = useState(false);
   const [configDefaultExpanded, setConfigDefaultExpanded] = useState(true);
   const prevHasChanges = useRef(hasChanges);
   const skillCategories = getOutlookSkills(t);
@@ -87,12 +85,10 @@ export default function OutlookSkillPanel({
     setLoading(true);
     Promise.all([
       Admin.systemPreferencesByFields(["disabled_outlook_skills"]),
-      System.keys(),
       OutlookAgent.getStatus(),
     ])
-      .then(([prefsRes, settingsRes, statusRes]) => {
+      .then(([prefsRes, statusRes]) => {
         setDisabledSkills(prefsRes?.settings?.disabled_outlook_skills ?? []);
-        setIsMultiUserMode(settingsRes?.MultiUserMode ?? false);
 
         // Load config from status endpoint
         if (statusRes?.success) {
@@ -216,19 +212,11 @@ export default function OutlookSkillPanel({
           <Toggle
             size="lg"
             enabled={enabled}
-            disabled={disabled || isMultiUserMode}
+            disabled={disabled}
             onChange={() => toggleSkill(skill)}
           />
         </div>
 
-        {isMultiUserMode && (
-          <div className="flex items-center gap-x-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <Warning size={20} className="text-yellow-500 shrink-0" />
-            <p className="text-yellow-500 text-xs">
-              {t("agent.skill.outlook.multiUserWarning")}
-            </p>
-          </div>
-        )}
 
         <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium">
           <Trans
@@ -245,7 +233,7 @@ export default function OutlookSkillPanel({
           />
         </p>
 
-        {enabled && !isMultiUserMode && (
+        {enabled && (
           <>
             <HiddenFormInputs disabledSkills={disabledSkills} />
 

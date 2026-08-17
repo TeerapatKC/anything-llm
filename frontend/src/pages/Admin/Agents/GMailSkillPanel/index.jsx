@@ -18,7 +18,6 @@ import {
 } from "@phosphor-icons/react";
 import GMailIcon from "./gmail.png";
 import Admin from "@/models/admin";
-import System from "@/models/system";
 import GoogleAgentSkills from "@/models/googleAgentSkills";
 import { getGmailSkills, filterSkillCategories } from "./utils";
 import {
@@ -44,7 +43,6 @@ export default function GMailSkillPanel({
   const [loading, setLoading] = useState(true);
   const [deploymentId, setDeploymentId] = useState("");
   const [apiKey, setApiKey] = useState("");
-  const [isMultiUserMode, setIsMultiUserMode] = useState(false);
   const [configDefaultExpanded, setConfigDefaultExpanded] = useState(true);
   const prevHasChanges = useRef(hasChanges);
   const skillCategories = getGmailSkills(t);
@@ -53,12 +51,10 @@ export default function GMailSkillPanel({
     setLoading(true);
     Promise.all([
       Admin.systemPreferencesByFields(["disabled_gmail_skills"]),
-      System.keys(),
       GoogleAgentSkills.gmail.getStatus(),
     ])
-      .then(([prefsRes, settingsRes, statusRes]) => {
+      .then(([prefsRes, statusRes]) => {
         setDisabledSkills(prefsRes?.settings?.disabled_gmail_skills ?? []);
-        setIsMultiUserMode(settingsRes?.MultiUserMode ?? false);
 
         if (statusRes?.success && statusRes.config) {
           const loadedDeploymentId = statusRes.config.deploymentId || "";
@@ -118,19 +114,11 @@ export default function GMailSkillPanel({
           <Toggle
             size="lg"
             enabled={enabled}
-            disabled={disabled || isMultiUserMode}
+            disabled={disabled}
             onChange={() => toggleSkill(skill)}
           />
         </div>
 
-        {isMultiUserMode && (
-          <div className="flex items-center gap-x-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <Warning size={20} className="text-yellow-500 shrink-0" />
-            <p className="text-yellow-500 text-xs">
-              {t("agent.skill.gmail.multiUserWarning")}
-            </p>
-          </div>
-        )}
 
         <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium">
           <Trans
@@ -147,7 +135,7 @@ export default function GMailSkillPanel({
           />
         </p>
 
-        {enabled && !isMultiUserMode && (
+        {enabled && (
           <>
             <HiddenFormInputs
               disabledSkills={disabledSkills}

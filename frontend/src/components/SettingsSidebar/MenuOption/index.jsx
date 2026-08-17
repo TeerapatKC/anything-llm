@@ -11,7 +11,6 @@ export default function MenuOption({
   icon,
   href,
   childOptions = [],
-  flex = false,
   user = null,
   permissions = [],
   hidden = false,
@@ -46,14 +45,14 @@ export default function MenuOption({
 
   // If this option is a parent level option
   if (!isChild) {
-    // and has no children then use its flex props and permissions prop directly
-    if (!hasChildren && !isVisibleTo(user, permissions, flex)) return null;
+    // and has no children then use its permissions prop directly
+    if (!hasChildren && !isVisibleTo(user, permissions)) return null;
 
     // if has children and no visible children - remove it.
     if (hasChildren && !hasVisibleChildren) return null;
   } else {
     // is a child so we use it's permissions
-    if (!isVisibleTo(user, permissions, flex)) return null;
+    if (!isVisibleTo(user, permissions)) return null;
   }
 
   const handleClick = (e) => {
@@ -118,7 +117,7 @@ export default function MenuOption({
           {childOptions.map((childOption, index) => (
             <MenuOption
               key={index}
-              {...childOption} // flex and permissions go here.
+              {...childOption} // permissions go here.
               user={user}
               isChild={true}
             />
@@ -162,17 +161,14 @@ function useIsExpanded({
 }
 
 /**
- * Whether an option is shown to a user. `flex` marks options that also make sense in
- * single-user mode, where there is no user record and the single operator holds
- * everything; without it an option is only ever shown to a signed-in user whose role
- * grants one of its permissions.
+ * Whether an option is shown to a user. An option is only ever shown to a signed-in user
+ * whose role grants one of its permissions.
  * @param {Object|null} user
  * @param {string[]} permissions
- * @param {boolean} flex
  * @returns {boolean}
  */
-function isVisibleTo(user, permissions = [], flex = false) {
-  if (!user) return flex;
+function isVisibleTo(user, permissions = []) {
+  if (!user) return false;
   return userCanAny(permissions, user);
 }
 
@@ -186,7 +182,7 @@ function isVisibleTo(user, permissions = [], flex = false) {
 function hasVisibleOptions(user = null, childOptions = []) {
   if (!Array.isArray(childOptions) || childOptions?.length === 0) return false;
   return childOptions.some(
-    (opt) => !opt.hidden && isVisibleTo(user, opt.permissions, opt.flex)
+    (opt) => !opt.hidden && isVisibleTo(user, opt.permissions)
   );
 }
 

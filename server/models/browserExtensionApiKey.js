@@ -1,5 +1,4 @@
 const prisma = require("../utils/prisma");
-const { SystemSettings } = require("./systemSettings");
 const { PERMISSIONS } = require("../utils/permissions");
 const { Role } = require("./role");
 
@@ -46,10 +45,7 @@ const BrowserExtensionApiKey = {
     });
     if (!apiKey) return false;
 
-    const multiUserMode = await SystemSettings.isMultiUserMode();
-    if (!multiUserMode) return apiKey; // In single-user mode, all keys are valid
-
-    // In multi-user mode, check if the key is associated with a user
+    // Keys are always owned by the user who minted them.
     return apiKey.user_id ? apiKey : false;
   },
 
@@ -163,27 +159,6 @@ const BrowserExtensionApiKey = {
     } catch (error) {
       console.error(error.message);
       return [];
-    }
-  },
-
-  /**
-   * Updates owner of all DB ids to new admin.
-   * @param {number} userId
-   * @returns {Promise<void>}
-   */
-  migrateApiKeysToMultiUser: async function (userId) {
-    try {
-      await prisma.browser_extension_api_keys.updateMany({
-        where: {
-          user_id: null,
-        },
-        data: {
-          user_id: userId,
-        },
-      });
-      console.log("Successfully migrated API keys to multi-user mode");
-    } catch (error) {
-      console.error("Error migrating API keys to multi-user mode:", error);
     }
   },
 };

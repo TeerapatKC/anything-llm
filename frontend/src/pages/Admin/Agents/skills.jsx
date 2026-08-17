@@ -113,7 +113,7 @@ export const getConfigurableSkills = (
     skill: "create-scheduled-job",
     icon: CalendarCheck,
     image: ScheduledJobsImage,
-    mode: ["singleUserOnly"],
+    mode: ["adminOnly"],
   },
 });
 
@@ -126,7 +126,7 @@ export const getAppIntegrationSkills = (t) => ({
     Icon: ({ size }) => (
       <img src={GMailIcon} alt="GMail" width={size} height={size} />
     ),
-    mode: ["singleUserOnly"],
+    mode: ["adminOnly"],
   },
   "google-calendar-agent": {
     title: t("agent.skill.googleCalendar.title"),
@@ -141,7 +141,7 @@ export const getAppIntegrationSkills = (t) => ({
         height={size}
       />
     ),
-    mode: ["singleUserOnly"],
+    mode: ["adminOnly"],
   },
   "outlook-agent": {
     title: t("agent.skill.outlook.title"),
@@ -151,6 +151,6 @@ export const getAppIntegrationSkills = (t) => ({
     Icon: ({ size }) => (
       <img src={OutlookIcon} alt="Outlook" width={size} height={size} />
     ),
-    mode: ["singleUserOnly"],
+    mode: ["adminOnly"],
   },
 });

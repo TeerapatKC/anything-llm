@@ -64,10 +64,6 @@ function decodeJWT(jwtToken) {
   return { p: null, id: null, username: null };
 }
 
-function multiUserMode(response) {
-  return response?.locals?.multiUserMode;
-}
-
 function parseAuthHeader(headerValue = null, apiKey = null) {
   if (headerValue === null || apiKey === null) return {};
   if (headerValue === "Authorization")
@@ -128,7 +124,6 @@ function decodeHtmlEntities(str) {
 
 module.exports = {
   reqBody,
-  multiUserMode,
   queryParams,
   makeJWT,
   decodeJWT,

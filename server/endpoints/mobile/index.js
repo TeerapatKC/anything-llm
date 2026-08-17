@@ -4,7 +4,7 @@ const { handleMobileCommand } = require("./utils");
 const { validDeviceToken, validRegistrationToken } = require("./middleware");
 const { reqBody } = require("../../utils/http");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../../utils/permissions");
 
@@ -18,7 +18,7 @@ function mobileEndpoints(app) {
    */
   app.get(
     "/mobile/devices",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
     async (_request, response) => {
       try {
         const devices = await MobileDevice.where({}, null, null, {
@@ -39,7 +39,7 @@ function mobileEndpoints(app) {
    */
   app.post(
     "/mobile/update/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
     async (request, response) => {
       try {
         const body = reqBody(request);
@@ -64,7 +64,7 @@ function mobileEndpoints(app) {
    */
   app.delete(
     "/mobile/:id",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
     async (request, response) => {
       try {
         const device = await MobileDevice.get({
@@ -83,7 +83,7 @@ function mobileEndpoints(app) {
 
   app.get(
     "/mobile/connect-info",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MOBILE])],
     async (_request, response) => {
       try {
         return response.status(200).json({

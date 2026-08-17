@@ -1,6 +1,6 @@
 const { validatedRequest } = require("../../utils/middleware/validatedRequest");
 const {
-  flexUserPermissionValid,
+  userPermissionValid,
 } = require("../../utils/middleware/multiUserProtected");
 const { PERMISSIONS } = require("../../utils/permissions");
 const { reqBody } = require("../../utils/http");
@@ -14,7 +14,7 @@ function dockerModelRunnerUtilsEndpoints(app) {
 
   app.post(
     "/utils/dmr/download-model",
-    [validatedRequest, flexUserPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const { modelId, basePath = "" } = reqBody(request);

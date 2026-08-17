@@ -1,0 +1,63 @@
+# Split deployment: frontend (nginx + built SPA) and backend (server + collector)
+# run as two separate containers built from the same ./docker/Dockerfile.
+#
+#   docker compose -f docker-compose.split.yml up -d --build
+#
+# The UI is served on http://localhost:3000 and proxies /api to the backend.
+# For the single-container setup use docker-compose.yml instead.
+name: anythingllm-split
+
+networks:
+  anything-llm:
+    driver: bridge
+
+services:
+  backend:
+    container_name: anythingllm-backend
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile
+      target: backend-production
+      args:
+        ARG_UID: ${UID:-1000}
+        ARG_GID: ${GID:-1000}
+    cap_add:
+      - SYS_ADMIN
+    volumes:
+      - "./.env:/app/server/.env"
+      - "../server/storage:/app/server/storage"
+      - "../collector/hotdir/:/app/collector/hotdir"
+      - "../collector/outputs/:/app/collector/outputs"
+    user: "${UID:-1000}:${GID:-1000}"
+    # Only needed if you want to hit the API directly - the frontend container
+    # reaches the backend over the compose network, not through this port.
+    ports:
+      - "${BACKEND_PUBLISH_PORT:-3001}:3001"
+    env_file:
+      - .env
+    networks:
+      - anything-llm
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  frontend:
+    container_name: anythingllm-frontend
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile
+      target: frontend-nginx
+      args:
+        # "/api" = same origin as the page, proxied to the backend by nginx.
+        # Only change this if the browser must call the backend on another origin.
+        VITE_API_BASE: ${VITE_API_BASE:-/api}
+    environment:
+      BACKEND_HOST: backend
+      BACKEND_PORT: 3001
+    ports:
+      - "${FRONTEND_PUBLISH_PORT:-3000}:80"
+    depends_on:
+      - backend
+    networks:
+      - anything-llm
+    restart: unless-stopped

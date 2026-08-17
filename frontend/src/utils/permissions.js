@@ -109,8 +109,7 @@ export function workspaceCan(permissions, workspaceId, user) {
   const required = Array.isArray(permissions) ? permissions : [permissions];
   const currentUser = user === undefined ? userFromStorage() : user;
 
-  // Single-user mode: one operator who implicitly holds everything.
-  if (!currentUser) return true;
+  if (!currentUser) return false;
   if (userCanAny([PERMISSIONS.WORKSPACES_MANAGE_ALL], currentUser)) return true;
   if (!workspaceId) return false;
 
@@ -165,14 +164,14 @@ export function roleLabel(user) {
 }
 
 /**
- * The permission keys held by the signed-in user. In single-user mode there is no user
- * record at all - that single operator implicitly holds everything.
+ * The permission keys held by the signed-in user. Every session is bound to a user, so
+ * no user means nothing is held.
  * @param {Object|null|undefined} user - the signed-in user; omit to read it from storage
- * @returns {string[]|null} null means "no user, everything allowed"
+ * @returns {string[]}
  */
 function permissionsOf(user) {
   const currentUser = user === undefined ? userFromStorage() : user;
-  if (!currentUser) return null;
+  if (!currentUser) return [];
 
   const cached = safeJsonParse(
     window.localStorage.getItem(AUTH_PERMISSIONS),
@@ -194,7 +193,6 @@ function permissionsOf(user) {
 export function userCan(permissions, user) {
   const required = Array.isArray(permissions) ? permissions : [permissions];
   const held = permissionsOf(user);
-  if (held === null) return true;
   if (held.includes(PERMISSIONS.SUPER_ADMIN)) return true;
   return required.every((permission) => held.includes(permission));
 }
@@ -208,7 +206,6 @@ export function userCan(permissions, user) {
  */
 export function userCanAny(permissions = [], user) {
   const held = permissionsOf(user);
-  if (held === null) return true;
   if (held.includes(PERMISSIONS.SUPER_ADMIN)) return true;
   return permissions.some((permission) => held.includes(permission));
 }

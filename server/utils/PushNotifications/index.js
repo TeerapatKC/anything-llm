@@ -2,7 +2,7 @@ const webpush = require("web-push");
 const fs = require("fs");
 const path = require("path");
 const { User } = require("../../models/user");
-const { SystemSettings } = require("../../models/systemSettings");
+const { Role } = require("../../models/role");
 const { safeJsonParse } = require("../http");
 
 /**
@@ -75,10 +75,6 @@ class PushNotifications {
       : path.resolve(process.env.STORAGE_DIR, "push-notifications");
   }
 
-  get primarySubscriptionPath() {
-    return path.resolve(this.storagePath, `primary-subscription.json`);
-  }
-
   get existingVapidKeys() {
     // Already loaded and binded to the instance
     if (this.#vapidKeys.publicKey && this.#vapidKeys.privateKey)
@@ -102,77 +98,52 @@ class PushNotifications {
   }
 
   /**
-   * Load the subscriptions for the push notification service.
-   * In single user mode, the subscription is stored in the primary-subscription.json file.
-   * In multi user mode, the subscriptions are stored in the database so we grab them from there
-   * and store them in the #subscriptions map for reference later.
+   * Load the subscriptions for the push notification service. Subscriptions live on the
+   * user record, so the map is always keyed by user id.
    * @returns {Promise<void>}
    */
   async loadSubscriptions() {
-    const isMultiUserMode = await SystemSettings.isMultiUserMode();
-    if (isMultiUserMode) {
-      const users = await User._where({
-        web_push_subscription_config: { not: null },
-      });
-      for (const user of users) {
-        const subscription = safeJsonParse(
-          user.web_push_subscription_config,
-          null
-        );
-        if (subscription) this.#subscriptions.set(user.id, subscription);
-      }
-      this.#log(`Loaded ${this.#subscriptions.size} existing subscriptions.`);
-      return;
+    const users = await User._where({
+      web_push_subscription_config: { not: null },
+    });
+    for (const user of users) {
+      const subscription = safeJsonParse(
+        user.web_push_subscription_config,
+        null
+      );
+      if (subscription) this.#subscriptions.set(user.id, subscription);
     }
-
-    this.#log("Loading single user mode subscriptions...");
-    if (!fs.existsSync(this.primarySubscriptionPath)) return;
-    const subscription = JSON.parse(
-      fs.readFileSync(this.primarySubscriptionPath, "utf8")
-    );
-    if (subscription) this.#subscriptions.set("primary", subscription);
-    this.#log(`Loaded primary user's existing subscription.`);
+    this.#log(`Loaded ${this.#subscriptions.size} existing subscriptions.`);
   }
 
   /**
    * Register a new subscription for a user.
-   * In single user mode, the userId is mapped to "primary"
-   * In multi user mode, the userId is the user's id in the database
-   *
-   * @param {Object|null} user - The user to register the subscription for.
+   * @param {Object} user - The user to register the subscription for.
    * @param {Object} subscription - The subscription to register.
    * @returns {Promise<PushNotifications>}
    */
   async registerSubscription(user = null, subscription) {
-    let userId = user?.id || "primary";
-    this.#subscriptions.set(userId, subscription);
-
-    // If this was a real user, write the subscription to the database
-    if (!!user) {
-      await User._update(user.id, {
-        web_push_subscription_config: JSON.stringify(subscription),
-      });
-      this.#log(`Registered or updated subscription for user - ${user.id}`);
-    } else {
-      if (!fs.existsSync(this.storagePath))
-        fs.mkdirSync(this.storagePath, { recursive: true });
-      fs.writeFileSync(
-        this.primarySubscriptionPath,
-        JSON.stringify(subscription, null, 2)
-      );
-      this.#log(`Registered or updated primary user's subscription.`);
+    if (!user?.id) {
+      this.#log(".registerSubscription() - No user to register subscription");
+      return this;
     }
+
+    this.#subscriptions.set(user.id, subscription);
+    await User._update(user.id, {
+      web_push_subscription_config: JSON.stringify(subscription),
+    });
+    this.#log(`Registered or updated subscription for user - ${user.id}`);
     return this;
   }
 
   /**
-   * Send a push notification to all subscribed clients.
+   * Send a push notification to a single subscribed user.
    * @param {Object} options - The options for the notification.
-   * @param {"primary"|number} [options.to] - The subscription to send the notification to. "all" sends to all subscriptions, "primary" sends to the primary user (single user mode only), a number sends subscription to specific user
+   * @param {number} [options.to] - The id of the user to notify.
    * @param {PushNotificationPayload} [options.payload] - The payload to send to the clients.
    * @returns {Promise<void>}
    */
-  sendNotification({ to = "primary", payload = {} } = {}) {
+  sendNotification({ to = null, payload = {} } = {}) {
     if (this.#subscriptions.size === 0)
       return this.#log(".sendNotification() - No subscriptions found");
     if (!this.#subscriptions.has(to))
@@ -183,13 +154,35 @@ class PushNotifications {
     return this.pushService
       .sendNotification(this.#subscriptions.get(to), JSON.stringify(payload))
       .then((res) => {
-        this.#log(
-          `.sendNotification() - Delivered (status: ${res.statusCode})`
-        );
+        this.#log(`.sendNotification() - Delivered (status: ${res.statusCode})`);
       })
       .catch((err) => {
         this.#log(`.sendNotification() - Failed: ${err.message}`);
       });
+  }
+
+  /**
+   * Notify every subscribed system administrator. Used by instance-wide background work
+   * (scheduled jobs) that is configured by admins and has no single owning user.
+   * @param {PushNotificationPayload} payload
+   * @returns {Promise<void>}
+   */
+  async sendNotificationToAdmins(payload = {}) {
+    if (this.#subscriptions.size === 0)
+      return this.#log(".sendNotificationToAdmins() - No subscriptions found");
+
+    const admins = await User._where({
+      role: Role.superAdminRoleName(),
+      web_push_subscription_config: { not: null },
+    });
+    if (admins.length === 0)
+      return this.#log(
+        ".sendNotificationToAdmins() - No subscribed administrators"
+      );
+
+    await Promise.all(
+      admins.map((admin) => this.sendNotification({ to: admin.id, payload }))
+    );
   }
 
   /**

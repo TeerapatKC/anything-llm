@@ -1,5 +1,4 @@
 const { MobileDevice } = require("../../../models/mobileDevice");
-const { SystemSettings } = require("../../../models/systemSettings");
 const { User } = require("../../../models/user");
 
 /**
@@ -64,23 +63,19 @@ async function validRegistrationToken(request, response, next) {
         .status(400)
         .json({ error: "Invalid or expired registration token" });
 
-    // If in multi-user mode, we need to validate the user id
-    // associated exists, is not banned and then associate with locals so we can reuse it later.
-    // If not in multi-user mode then simply having a valid token is enough.
-    const multiUserMode = await SystemSettings.isMultiUserMode();
-    if (multiUserMode) {
-      if (!tempTokenData.userId)
-        return response
-          .status(400)
-          .json({ error: "User id not found in registration token" });
-      const user = await User.get({ id: Number(tempTokenData.userId) });
-      if (!user) return response.status(400).json({ error: "User not found" });
-      if (user.suspended)
-        return response
-          .status(400)
-          .json({ error: "User is suspended - cannot register device" });
-      response.locals.user = user;
-    }
+    // Validate the user the token was minted for still exists and is not suspended, then
+    // associate them with locals so we can reuse it later.
+    if (!tempTokenData.userId)
+      return response
+        .status(400)
+        .json({ error: "User id not found in registration token" });
+    const user = await User.get({ id: Number(tempTokenData.userId) });
+    if (!user) return response.status(400).json({ error: "User not found" });
+    if (user.suspended)
+      return response
+        .status(400)
+        .json({ error: "User is suspended - cannot register device" });
+    response.locals.user = user;
 
     next();
   } catch (error) {
