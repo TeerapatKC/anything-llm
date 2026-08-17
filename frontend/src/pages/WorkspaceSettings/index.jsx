@@ -4,7 +4,6 @@ import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
-import { isMobile } from "react-device-detect";
 import { FullScreenLoader } from "@/components/Preloader";
 import {
   Bot,
@@ -87,7 +86,7 @@ function ShowWorkspaceChat() {
   const TabContent = TABS[tab];
   return (
     <SidebarPageLayout>
-      {!isMobile && <Sidebar />}
+      <Sidebar />
       <div
         style={{ height: "100%" }}
         className="transition-all duration-500 relative bg-theme-bg-secondary w-full h-full overflow-y-scroll"

@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { isMobile } from "react-device-detect";
-import { SidebarMobileHeader } from "@/components/Sidebar";
 import PromptInput, {
   PROMPT_INPUT_EVENT,
   PROMPT_INPUT_ID,
@@ -289,7 +287,6 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
         className="relative flex w-full h-full z-[2]"
       >
         <div className="flex-1 min-w-0 transition-all duration-500 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-          {isMobile && <SidebarMobileHeader />}
           <div className="absolute z-30 flex items-center justify-between top-3 left-4 right-4 md:top-2 md:left-3 md:right-3">
             <WorkspaceModelPicker workspaceSlug={workspace?.slug} />
             <ChatSettingsMenu />

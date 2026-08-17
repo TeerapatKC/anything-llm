@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { List, Plus } from "@phosphor-icons/react";
+import React from "react";
+import { Menu, Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import NewWorkspaceModal, {
@@ -9,7 +9,6 @@ import ActiveWorkspaces from "./ActiveWorkspaces";
 import useLogo from "@/hooks/useLogo";
 import useUser from "@/hooks/useUser";
 import Footer from "../Footer";
-import SettingsButton from "../SettingsButton";
 import paths from "@/utils/paths";
 import { cn } from "@/lib/utils";
 import SearchBox from "./SearchBox";
@@ -20,13 +19,14 @@ import {
   SidebarHeader,
   SidebarProvider,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { PERMISSIONS, userCan, userIsChatOnly } from "@/utils/permissions";
+import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 /**
  * Wraps a page's sidebar + main content in shadcn's SidebarProvider, which is
@@ -44,8 +44,42 @@ export function SidebarPageLayout({ className, children }) {
         className
       )}
     >
+      <MobileTopbar />
       {children}
     </SidebarProvider>
+  );
+}
+
+/**
+ * The mobile-only entry point for opening the sidebar. On mobile, `Sidebar`
+ * below renders as a closed Sheet (see ui/sidebar.jsx) with no trigger of its
+ * own — its `SidebarTrigger` lives inside the sheet's own header, so it isn't
+ * visible until the sheet is already open. This bar is the visible affordance
+ * that opens it, rendered once for every page via `SidebarPageLayout` rather
+ * than per-page, so it's always in sync with the shared sidebar state.
+ */
+function MobileTopbar() {
+  const { logo } = useLogo();
+  const { toggleSidebar } = useSidebar();
+
+  return (
+    <div className="md:hidden fixed top-0 inset-x-0 z-40 flex items-center justify-between gap-2 h-14 px-4 bg-theme-bg-sidebar light:bg-white light:border-b light:border-theme-sidebar-border">
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
+        className="flex h-9 w-9 items-center justify-center rounded-md text-theme-text-secondary hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
+      <img
+        src={logo}
+        alt="Logo"
+        className="h-6 w-auto object-contain"
+        style={{ maxHeight: "32px" }}
+      />
+      <div className="h-9 w-9" />
+    </div>
   );
 }
 
@@ -91,7 +125,7 @@ export default function Sidebar() {
               >
                 <Plus
                   size={16}
-                  weight="bold"
+                  strokeWidth={2.5}
                   className="text-black light:text-slate-500"
                 />
               </button>
@@ -113,132 +147,5 @@ export default function Sidebar() {
           the sidebar's edge. */}
       {showingNewWsModal && <NewWorkspaceModal hideModal={hideNewWsModal} />}
     </SidebarPrimitive>
-  );
-}
-
-export function SidebarMobileHeader() {
-  const { logo } = useLogo();
-  const sidebarRef = useRef(null);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [showBgOverlay, setShowBgOverlay] = useState(false);
-  const {
-    showing: showingNewWsModal,
-    showModal: showNewWsModal,
-    hideModal: hideNewWsModal,
-  } = useNewWorkspaceModal();
-  const { user } = useUser();
-
-  useEffect(() => {
-    // Darkens the rest of the screen
-    // when sidebar is open.
-    function handleBg() {
-      if (showSidebar) {
-        setTimeout(() => {
-          setShowBgOverlay(true);
-        }, 300);
-      } else {
-        setShowBgOverlay(false);
-      }
-    }
-    handleBg();
-  }, [showSidebar]);
-
-  return (
-    <>
-      <div
-        aria-label="Show sidebar"
-        className="fixed top-0 left-0 right-0 z-10 flex justify-between items-center px-4 py-2 bg-theme-bg-sidebar light:bg-white text-slate-200 shadow-lg h-16"
-      >
-        <button
-          onClick={() => setShowSidebar(true)}
-          className="rounded-md p-2 flex items-center justify-center text-theme-text-secondary"
-        >
-          <List className="h-6 w-6" />
-        </button>
-        <div className="flex items-center justify-center flex-grow">
-          <img
-            src={logo}
-            alt="Logo"
-            className="block mx-auto h-6 w-auto"
-            style={{ maxHeight: "40px", objectFit: "contain" }}
-          />
-        </div>
-        <div className="w-12"></div>
-      </div>
-      <div
-        style={{
-          transform: showSidebar ? `translateX(0vw)` : `translateX(-100vw)`,
-        }}
-        className={`z-99 fixed top-0 left-0 transition-all duration-500 w-[100vw] h-[100vh]`}
-      >
-        <div
-          className={`${
-            showBgOverlay
-              ? "transition-all opacity-1"
-              : "transition-none opacity-0"
-          }  duration-500 fixed top-0 left-0 bg-theme-bg-secondary bg-opacity-75 w-screen h-screen`}
-          onClick={() => setShowSidebar(false)}
-        />
-        <div
-          ref={sidebarRef}
-          className="relative h-[100vh] fixed top-0 left-0  rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px] "
-        >
-          <div className="w-full h-full flex flex-col overflow-x-hidden items-between">
-            {/* Header Information */}
-            <div className="flex w-full items-center justify-between gap-x-4">
-              <div className="flex shrink-1 w-fit items-center justify-start">
-                <img
-                  src={logo}
-                  alt="Logo"
-                  className="rounded w-full max-h-[40px]"
-                  style={{ objectFit: "contain" }}
-                />
-              </div>
-              {userCan(PERMISSIONS.WORKSPACES_CREATE, user) && (
-                <div className="flex gap-x-2 items-center text-slate-500 shink-0">
-                  <SettingsButton />
-                </div>
-              )}
-            </div>
-
-            {/* Primary Body */}
-            <div className="h-full flex flex-col w-full justify-between pt-4 ">
-              <div className="h-auto md:sidebar-items">
-                <div className=" flex flex-col gap-y-4 overflow-y-scroll no-scroll pb-[60px]">
-                  <NewWorkspaceButton
-                    user={user}
-                    showNewWsModal={showNewWsModal}
-                  />
-                  <ActiveWorkspaces />
-                </div>
-              </div>
-              <div className="z-99 absolute bottom-0 left-0 right-0 pt-2 pb-6 rounded-br-[26px] bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md">
-                <Footer />
-              </div>
-            </div>
-          </div>
-        </div>
-        {showingNewWsModal && <NewWorkspaceModal hideModal={hideNewWsModal} />}
-      </div>
-    </>
-  );
-}
-
-function NewWorkspaceButton({ user, showNewWsModal }) {
-  const { t } = useTranslation();
-  if (userIsChatOnly(user)) return null;
-
-  return (
-    <div className="flex gap-x-2 items-center justify-between">
-      <button
-        onClick={showNewWsModal}
-        className="flex flex-grow w-[75%] h-[44px] gap-x-2 py-[5px] px-4 bg-white rounded-lg text-[#25272C] justify-center items-center hover:bg-opacity-80 transition-all duration-300"
-      >
-        <Plus className="h-5 w-5" />
-        <p className="text-[#25272C] text-sm font-semibold">
-          {t("new-workspace.title")}
-        </p>
-      </button>
-    </div>
   );
 }

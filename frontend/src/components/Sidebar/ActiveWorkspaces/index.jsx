@@ -4,7 +4,7 @@ import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import paths from "@/utils/paths";
 import { Link, useParams, useNavigate, useMatch } from "react-router-dom";
-import { GearSix, DotsSixVertical } from "@phosphor-icons/react";
+import { GripVertical, Settings } from "lucide-react";
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -16,7 +16,14 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useSidebar } from "@/components/ui/sidebar";
+import {
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();
@@ -91,37 +98,36 @@ export default function ActiveWorkspaces() {
 
   if (sidebarState === "collapsed") {
     return (
-      <div
-        role="list"
-        aria-label="Workspaces"
-        className="flex flex-col gap-y-2 items-center"
-      >
+      <SidebarMenu aria-label="Workspaces" className="items-center gap-2">
         {workspaces.map((workspace) => {
           const isActive =
             workspace.slug === slug || workspace.slug === virtualActiveSlug;
           return (
-            <Tooltip key={workspace.id}>
-              <TooltipTrigger asChild>
-                <Link
-                  to={paths.workspace.chat(workspace.slug)}
-                  aria-current={isActive ? "page" : ""}
-                  aria-label={workspace.name}
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold uppercase transition-all duration-200 ${
-                    isActive
-                      ? "bg-white text-black light:bg-blue-200 light:text-blue-900"
-                      : "bg-theme-sidebar-item-default text-white hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"
-                  }`}
-                >
-                  {workspace.name?.slice(0, 2)}
-                </Link>
-              </TooltipTrigger>
-              <TooltipContent side="right" className="max-w-[250px] text-xs">
-                {workspace.name}
-              </TooltipContent>
-            </Tooltip>
+            <SidebarMenuItem key={workspace.id}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive}
+                    className="!size-8 !p-0 justify-center rounded-full text-xs font-semibold uppercase data-[active=true]:bg-sidebar-accent data-[active=true]:text-sidebar-accent-foreground"
+                  >
+                    <Link
+                      to={paths.workspace.chat(workspace.slug)}
+                      aria-current={isActive ? "page" : ""}
+                      aria-label={workspace.name}
+                    >
+                      {workspace.name?.slice(0, 2)}
+                    </Link>
+                  </SidebarMenuButton>
+                </TooltipTrigger>
+                <TooltipContent side="right" className="max-w-[250px] text-xs">
+                  {workspace.name}
+                </TooltipContent>
+              </Tooltip>
+            </SidebarMenuItem>
           );
         })}
-      </div>
+      </SidebarMenu>
     );
   }
 
@@ -129,10 +135,8 @@ export default function ActiveWorkspaces() {
     <DragDropContext onDragEnd={onDragEnd}>
       <Droppable droppableId="workspaces">
         {(provided) => (
-          <div
-            role="list"
+          <SidebarMenu
             aria-label="Workspaces"
-            className="flex flex-col gap-y-2"
             ref={provided.innerRef}
             {...provided.droppableProps}
           >
@@ -146,109 +150,75 @@ export default function ActiveWorkspaces() {
                   index={index}
                 >
                   {(provided, snapshot) => (
-                    <div
+                    <SidebarMenuItem
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className={`flex flex-col w-full group ${
-                        snapshot.isDragging ? "opacity-50" : ""
-                      }`}
-                      role="listitem"
+                      className={cn(snapshot.isDragging && "opacity-50")}
                     >
-                      <div className="flex gap-x-2 items-center justify-between">
+                      <SidebarMenuButton asChild isActive={isActive}>
                         <Link
                           to={paths.workspace.chat(workspace.slug)}
                           aria-current={isActive ? "page" : ""}
-                          className={`
-                            transition-all duration-[200ms]
-                            flex flex-grow w-[75%] gap-x-2 py-[6px] pl-[4px] pr-[6px] rounded-[4px] text-white justify-start items-center
-                            bg-theme-sidebar-item-default
-                            ${isActive ? "light:bg-blue-200 font-bold" : "hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"}
-                          `}
                         >
-                          <div className="flex flex-row justify-between w-full items-center">
-                            <div
-                              {...provided.dragHandleProps}
-                              className="cursor-grab mr-[3px]"
+                          <span
+                            {...provided.dragHandleProps}
+                            className="cursor-grab text-sidebar-foreground/40 hover:text-sidebar-foreground"
+                          >
+                            <GripVertical className="h-4 w-4 shrink-0" />
+                          </span>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="truncate">{workspace.name}</span>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="right"
+                              className="max-w-[250px] text-xs"
                             >
-                              <DotsSixVertical
-                                size={20}
-                                className={`${isActive ? "text-white light:text-blue-800" : ""}`}
-                                weight="bold"
-                              />
-                            </div>
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <div className="flex items-center space-x-2 overflow-hidden flex-grow">
-                                  <div className="w-[130px] overflow-hidden">
-                                    <p
-                                      className={`
-                                  text-[14px] leading-loose whitespace-nowrap overflow-hidden
-                                  ${isActive ? "font-bold text-white light:text-blue-900" : "font-medium "} truncate
-                                  w-full group-hover:w-[130px] group-hover:duration-200
-                                `}
-                                    >
-                                      {workspace.name}
-                                    </p>
-                                  </div>
-                                </div>
-                              </TooltipTrigger>
-                              <TooltipContent
-                                side="right"
-                                className="max-w-[250px] text-xs"
-                              >
-                                {workspace.name}
-                              </TooltipContent>
-                            </Tooltip>
-                            {workspaceCan(
-                              WS.SETTINGS_MANAGE,
-                              workspace.slug,
-                              user
-                            ) && (
-                              <div
-                                className={`flex items-center gap-x-[2px] transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
-                              >
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <button
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        navigate(
-                                          isInWorkspaceSettings
-                                            ? paths.workspace.chat(
-                                                workspace.slug
-                                              )
-                                            : paths.workspace.settings.generalAppearance(
-                                                workspace.slug
-                                              )
-                                        );
-                                      }}
-                                      className={`group/gear rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
-                                      aria-label="General appearance settings"
-                                    >
-                                      <GearSix
-                                        color={
-                                          isInWorkspaceSettings &&
-                                          workspace.slug === slug
-                                            ? "#46C8FF"
-                                            : undefined
-                                        }
-                                        className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/gear:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/gear:text-slate-950"}`}
-                                      />
-                                    </button>
-                                  </TooltipTrigger>
-                                  <TooltipContent
-                                    side="top"
-                                    className="max-w-[250px] text-xs"
-                                  >
-                                    General appearance settings
-                                  </TooltipContent>
-                                </Tooltip>
-                              </div>
-                            )}
-                          </div>
+                              {workspace.name}
+                            </TooltipContent>
+                          </Tooltip>
                         </Link>
-                      </div>
+                      </SidebarMenuButton>
+                      {workspaceCan(
+                        WS.SETTINGS_MANAGE,
+                        workspace.slug,
+                        user
+                      ) && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <SidebarMenuAction
+                              showOnHover={!isActive}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                navigate(
+                                  isInWorkspaceSettings
+                                    ? paths.workspace.chat(workspace.slug)
+                                    : paths.workspace.settings.generalAppearance(
+                                        workspace.slug
+                                      )
+                                );
+                              }}
+                              aria-label="General appearance settings"
+                            >
+                              <Settings
+                                className={cn(
+                                  "h-4 w-4",
+                                  isInWorkspaceSettings &&
+                                    workspace.slug === slug &&
+                                    "text-sky-400"
+                                )}
+                              />
+                            </SidebarMenuAction>
+                          </TooltipTrigger>
+                          <TooltipContent
+                            side="top"
+                            className="max-w-[250px] text-xs"
+                          >
+                            General appearance settings
+                          </TooltipContent>
+                        </Tooltip>
+                      )}
                       {isActive && (
                         <ThreadContainer
                           workspace={workspace}
@@ -256,13 +226,13 @@ export default function ActiveWorkspaces() {
                           isVirtualThread={isVirtuallyActive}
                         />
                       )}
-                    </div>
+                    </SidebarMenuItem>
                   )}
                 </Draggable>
               );
             })}
             {provided.placeholder}
-          </div>
+          </SidebarMenu>
         )}
       </Droppable>
     </DragDropContext>

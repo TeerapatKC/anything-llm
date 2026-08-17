@@ -2,11 +2,7 @@ import React from "react";
 import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
 import { FullScreenLoader } from "@/components/Preloader";
 import Home from "./Home";
-import { isMobile } from "react-device-detect";
-import Sidebar, {
-  SidebarMobileHeader,
-  SidebarPageLayout,
-} from "@/components/Sidebar";
+import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 
 export default function Main() {
   const { loading, requiresAuth, mode } = usePasswordModal();
@@ -17,7 +13,7 @@ export default function Main() {
 
   return (
     <SidebarPageLayout>
-      {!isMobile ? <Sidebar /> : <SidebarMobileHeader />}
+      <Sidebar />
       <Home />
     </SidebarPageLayout>
   );

@@ -7,8 +7,6 @@ import PromptInput, {
 } from "./PromptInput";
 import Workspace from "@/models/workspace";
 import handleChat, { ABORT_STREAM_EVENT } from "@/utils/chat";
-import { isMobile } from "react-device-detect";
-import { SidebarMobileHeader } from "../../Sidebar";
 import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import handleSocketResponse, {
@@ -461,7 +459,6 @@ export default function ChatContainer({
           className="relative flex w-full h-full z-[2]"
         >
           <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-            {isMobile && <SidebarMobileHeader />}
             <div className="absolute z-30 flex items-center justify-between top-3 left-4 right-4 md:top-2 md:left-3 md:right-3">
               <WorkspaceModelPicker workspaceSlug={workspace.slug} />
               <ChatSettingsMenu
@@ -519,7 +516,6 @@ export default function ChatContainer({
         className="relative flex w-full h-full z-[2]"
       >
         <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-          {isMobile && <SidebarMobileHeader />}
           <div className="absolute z-30 flex items-center justify-between top-3 left-4 right-4 md:top-2 md:left-3 md:right-3">
             <WorkspaceModelPicker workspaceSlug={workspace.slug} />
             <ChatSettingsMenu
