@@ -135,55 +135,57 @@ export default function WorkspaceChats() {
           >
             <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
               <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-                <div className="flex flex-wrap gap-4 items-center">
+                <div className="items-center flex gap-x-4">
                   <p className="text-lg leading-6 font-bold text-theme-text-primary">
                     {t("recorded.title")}
                   </p>
-                  <div className="relative">
-                    <button
-                      ref={openMenuButton}
-                      onClick={toggleMenu}
-                      className="flex items-center gap-x-2 px-4 py-1 rounded-lg bg-primary-button hover:light:bg-theme-bg-primary hover:text-theme-text-primary text-xs font-semibold hover:bg-secondary shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
-                    >
-                      <Download size={18} weight="bold" />
-                      {t("recorded.export")}
-                      <CaretDown size={18} weight="bold" />
-                    </button>
-                    <div
-                      ref={menuRef}
-                      className={`${
-                        showMenu ? "slide-down" : "slide-up hidden"
-                      } z-20 w-fit rounded-lg absolute top-full right-0 bg-secondary light:bg-theme-bg-secondary mt-2 shadow-md`}
-                    >
-                      <div className="py-2">
-                        {Object.entries(exportOptions).map(([key, data]) => (
-                          <button
-                            key={key}
-                            onClick={() => {
-                              handleDumpChats(key);
-                              setShowMenu(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-white text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
-                          >
-                            {data.name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                  {chats.length > 0 && (
-                    <button
-                      onClick={handleClearAllChats}
-                      className="flex items-center gap-x-2 px-4 py-1 border hover:border-transparent light:border-theme-sidebar-border border-white/40 text-white/40 light:text-theme-text-secondary rounded-lg bg-transparent hover:light:text-theme-bg-primary hover:text-theme-text-primary text-xs font-semibold hover:bg-red-500 shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
-                    >
-                      <Trash size={18} weight="bold" />
-                      Clear Chats
-                    </button>
-                  )}
                 </div>
-                <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
+                <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
                   {t("recorded.description")}
                 </p>
+              </div>
+              <div className="w-full justify-end flex gap-x-2 mt-4">
+                <div className="relative">
+                  <button
+                    ref={openMenuButton}
+                    onClick={toggleMenu}
+                    className="flex items-center gap-x-2 px-4 py-1 rounded-lg bg-primary-button light:text-[#ffffff] hover:brightness-90 hover:text-white text-xs font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit transition-[filter]"
+                  >
+                    <Download size={18} weight="bold" />
+                    {t("recorded.export")}
+                    <CaretDown size={18} weight="bold" />
+                  </button>
+                  <div
+                    ref={menuRef}
+                    className={`${
+                      showMenu ? "slide-down" : "slide-up hidden"
+                    } z-20 w-fit rounded-lg absolute top-full right-0 bg-secondary light:bg-theme-bg-secondary mt-2 shadow-md`}
+                  >
+                    <div className="py-2">
+                      {Object.entries(exportOptions).map(([key, data]) => (
+                        <button
+                          key={key}
+                          onClick={() => {
+                            handleDumpChats(key);
+                            setShowMenu(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-white text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
+                        >
+                          {data.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {chats.length > 0 && (
+                  <button
+                    onClick={handleClearAllChats}
+                    className="flex items-center gap-x-2 px-4 py-1 border light:border-theme-sidebar-border border-white/40 text-white/80 light:text-black/80 rounded-lg bg-transparent hover:light:text-red-500 hover:text-red-300 hover:bg-white hover:light:bg-red-50 hover:bg-opacity-10 text-xs font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
+                  >
+                    <Trash size={18} weight="bold" />
+                    Clear Chats
+                  </button>
+                )}
               </div>
               <div className="overflow-x-auto">
                 <ChatsContainer
