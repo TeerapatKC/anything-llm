@@ -7,14 +7,15 @@ import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
 import { isMobile } from "react-device-detect";
 import { FullScreenLoader } from "@/components/Preloader";
 import {
-  ArrowUUpLeft,
-  ChatText,
+  Bot,
   Database,
-  Robot,
+  MessageSquareText,
   ShieldCheck,
+  Undo2,
+  Upload,
   User,
   Wrench,
-} from "@phosphor-icons/react";
+} from "lucide-react";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
 import { NavLink } from "react-router-dom";
@@ -24,9 +25,11 @@ import VectorDatabase from "./VectorDatabase";
 import Members from "./Members";
 import WorkspaceAgentConfiguration from "./AgentConfig";
 import WorkspaceRoles from "./Roles";
+import WorkspaceDocuments from "./Documents";
 import useUser from "@/hooks/useUser";
 import { useTranslation } from "react-i18next";
 import System from "@/models/system";
+import { cn } from "@/lib/utils";
 
 const TABS = {
   "general-appearance": GeneralAppearance,
@@ -35,6 +38,7 @@ const TABS = {
   members: Members,
   roles: WorkspaceRoles,
   "agent-config": WorkspaceAgentConfiguration,
+  documents: WorkspaceDocuments,
 };
 
 export default function WorkspaceSettings() {
@@ -88,45 +92,53 @@ function ShowWorkspaceChat() {
         style={{ height: "100%" }}
         className="transition-all duration-500 relative bg-theme-bg-secondary w-full h-full overflow-y-scroll"
       >
-        <div className="flex gap-x-10 pt-6 pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10">
+        <div className="flex items-center gap-x-4 pt-6 pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10 overflow-x-auto overflow-y-hidden thin-scrollbar">
           <Link
             to={paths.workspace.chat(slug)}
             className="absolute top-2 left-2 md:top-4 md:left-4 transition-all duration-300 p-2 rounded-full text-white bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover z-10"
           >
-            <ArrowUUpLeft className="h-5 w-5" weight="fill" />
+            <Undo2 className="h-4 w-4" />
           </Link>
-          <TabItem
-            title={t("workspaces—settings.general")}
-            icon={<Wrench className="h-6 w-6" />}
-            to={paths.workspace.settings.generalAppearance(slug)}
-          />
-          <TabItem
-            title={t("workspaces—settings.chat")}
-            icon={<ChatText className="h-6 w-6" />}
-            to={paths.workspace.settings.chatSettings(slug)}
-          />
-          <TabItem
-            title={t("workspaces—settings.vector")}
-            icon={<Database className="h-6 w-6" />}
-            to={paths.workspace.settings.vectorDatabase(slug)}
-          />
-          <TabItem
-            title={t("workspaces—settings.members")}
-            icon={<User className="h-6 w-6" />}
-            to={paths.workspace.settings.members(slug)}
-            visible={workspaceCan(WS.MEMBERS_MANAGE, workspace?.slug, user)}
-          />
-          <TabItem
-            title="Roles"
-            icon={<ShieldCheck className="h-6 w-6" />}
-            to={paths.workspace.settings.roles(slug)}
-            visible={workspaceCan(WS.ROLES_MANAGE, workspace?.slug, user)}
-          />
-          <TabItem
-            title={t("workspaces—settings.agent")}
-            icon={<Robot className="h-6 w-6" />}
-            to={paths.workspace.settings.agentConfig(slug)}
-          />
+          <div className="inline-flex items-center gap-x-1 rounded-md bg-muted p-1 text-muted-foreground shrink-0">
+            <TabItem
+              title={t("workspaces—settings.general")}
+              icon={<Wrench className="h-4 w-4" />}
+              to={paths.workspace.settings.generalAppearance(slug)}
+            />
+            <TabItem
+              title={t("workspaces—settings.chat")}
+              icon={<MessageSquareText className="h-4 w-4" />}
+              to={paths.workspace.settings.chatSettings(slug)}
+            />
+            <TabItem
+              title={t("workspaces—settings.vector")}
+              icon={<Database className="h-4 w-4" />}
+              to={paths.workspace.settings.vectorDatabase(slug)}
+            />
+            <TabItem
+              title={t("workspaces—settings.members")}
+              icon={<User className="h-4 w-4" />}
+              to={paths.workspace.settings.members(slug)}
+              visible={workspaceCan(WS.MEMBERS_MANAGE, workspace?.slug, user)}
+            />
+            <TabItem
+              title="Roles"
+              icon={<ShieldCheck className="h-4 w-4" />}
+              to={paths.workspace.settings.roles(slug)}
+              visible={workspaceCan(WS.ROLES_MANAGE, workspace?.slug, user)}
+            />
+            <TabItem
+              title={t("workspaces—settings.agent")}
+              icon={<Bot className="h-4 w-4" />}
+              to={paths.workspace.settings.agentConfig(slug)}
+            />
+            <TabItem
+              title={t("workspaces—settings.upload-documents")}
+              icon={<Upload className="h-4 w-4" />}
+              to={paths.workspace.settings.documents(slug)}
+              visible={workspaceCan(WS.DOCUMENTS_UPLOAD, slug, user)}
+            />
+          </div>
         </div>
         <div className="px-16 py-6">
           <TabContent
@@ -146,11 +158,12 @@ function TabItem({ title, icon, to, visible = true }) {
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `${
+        cn(
+          "inline-flex items-center justify-center gap-x-1.5 whitespace-nowrap rounded-sm px-3 py-1.5 text-xs font-medium shrink-0 transition-all",
           isActive
-            ? "text-sky-400 pb-4 border-b-[4px] -mb-[19px] border-sky-400"
-            : "text-white/60 hover:text-sky-400"
-        } ` + " flex gap-x-2 items-center font-medium"
+            ? "bg-background text-foreground shadow-sm"
+            : "text-muted-foreground hover:text-foreground"
+        )
       }
     >
       {icon}

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -iE \"^\\(undo-2|message-square-text|database|bot|shield-check|upload|user|wrench\\)\\\\.js$\")",
+      "Bash(grep -iE \"^\\(undo-2|corner-up-left|message-square-text|database|bot|shield-check|upload|user|wrench\\)\\\\.mjs$\")",
+      "Bash(npx eslint *)"
+    ]
+  }
+}

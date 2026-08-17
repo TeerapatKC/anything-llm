@@ -160,6 +160,9 @@ const TRANSLATIONS = {
     vector: "Vector Database",
     members: "Members",
     agent: "Agent Configuration",
+    "upload-documents": "Upload Documents",
+    "upload-documents-tooltip":
+      "Upload documents to this workspace for RAG indexing",
   },
   general: {
     vector: {

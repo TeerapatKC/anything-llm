@@ -101,6 +101,9 @@ export default {
       roles: (slug) => {
         return `/workspace/${slug}/settings/roles`;
       },
+      documents: (slug) => {
+        return `/workspace/${slug}/settings/documents`;
+      },
     },
     thread: (wsSlug, threadSlug) => {
       return `/workspace/${wsSlug}/t/${threadSlug}`;

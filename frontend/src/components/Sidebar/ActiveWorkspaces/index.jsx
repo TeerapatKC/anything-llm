@@ -2,12 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
-import ManageWorkspace, {
-  useManageWorkspaceModal,
-} from "../../Modals/ManageWorkspace";
 import paths from "@/utils/paths";
 import { Link, useParams, useNavigate, useMatch } from "react-router-dom";
-import { GearSix, UploadSimple, DotsSixVertical } from "@phosphor-icons/react";
+import { GearSix, DotsSixVertical } from "@phosphor-icons/react";
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
@@ -26,8 +23,6 @@ export default function ActiveWorkspaces() {
   const { slug } = useParams();
   const [loading, setLoading] = useState(true);
   const [workspaces, setWorkspaces] = useState([]);
-  const [selectedWs, setSelectedWs] = useState(null);
-  const { showing, showModal, hideModal } = useManageWorkspaceModal();
   const { user } = useUser();
   const { state: sidebarState } = useSidebar();
   const isInWorkspaceSettings = !!useMatch("/workspace/:slug/settings/:tab");
@@ -215,30 +210,6 @@ export default function ActiveWorkspaces() {
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        setSelectedWs(workspace);
-                                        showModal(workspace.slug);
-                                      }}
-                                      className={`group/upload border-none rounded-md flex items-center justify-center ml-auto p-[2px] ${isActive ? "hover:bg-zinc-500 light:hover:bg-sky-800/30" : "hover:bg-zinc-500 light:hover:bg-slate-400"}`}
-                                    >
-                                      <UploadSimple
-                                        className={`h-[20px] w-[20px] ${isActive ? "text-zinc-400 hover:text-white light:text-blue-700 light:group-hover/upload:text-blue-900" : "text-zinc-400 hover:text-white light:text-slate-600 light:group-hover/upload:text-slate-950"}`}
-                                      />
-                                    </button>
-                                  </TooltipTrigger>
-                                  <TooltipContent
-                                    side="top"
-                                    className="max-w-[250px] text-xs"
-                                  >
-                                    Upload documents to this workspace for RAG
-                                    indexing
-                                  </TooltipContent>
-                                </Tooltip>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <button
                                       onClick={(e) => {
                                         e.preventDefault();
                                         e.stopPropagation();
@@ -291,12 +262,6 @@ export default function ActiveWorkspaces() {
               );
             })}
             {provided.placeholder}
-            {showing && (
-              <ManageWorkspace
-                hideModal={hideModal}
-                providedSlug={selectedWs ? selectedWs.slug : null}
-              />
-            )}
           </div>
         )}
       </Droppable>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FolderPlus } from "lucide-react";
 import Document from "@/models/document";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -34,7 +35,10 @@ export default function NewFolderModal({ closeModal, onCreated }) {
     <Dialog open={true} onOpenChange={(open) => !open && closeModal()}>
       <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
         <DialogHeader className="p-0">
-          <DialogTitle>Create New Folder</DialogTitle>
+          <div className="flex items-center gap-2">
+            <FolderPlus className="h-5 w-5 text-theme-text-primary" />
+            <DialogTitle>Create New Folder</DialogTitle>
+          </div>
         </DialogHeader>
         <form onSubmit={handleCreate}>
           <div className="space-y-4">

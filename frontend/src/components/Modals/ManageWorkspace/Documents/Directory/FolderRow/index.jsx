@@ -1,9 +1,10 @@
 import { useState } from "react";
 import FileRow from "../FileRow";
-import { CaretDown, FolderNotch, CircleNotch } from "@phosphor-icons/react";
+import { ChevronDown, Folder, FolderOpen, Loader2 } from "lucide-react";
 import { middleTruncate } from "@/utils/directories";
 import { useTranslation } from "react-i18next";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 
 /**
  * A folder in the document picker. Purely presentational - every piece of
@@ -103,39 +104,29 @@ export default function FolderRow({
         }`}
       >
         <div
-          className={`col-span-6 flex gap-x-[4px] items-center ${
+          className={`col-span-6 flex gap-x-2 items-center ${
             selected || partial ? "!text-white" : "text-theme-text-primary"
           }`}
         >
-          <div
-            className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
-              selected || partial
-                ? "text-white"
-                : "text-theme-text-primary light:invert"
-            } flex justify-center items-center cursor-pointer`}
-            role="checkbox"
-            aria-checked={partial ? "mixed" : selected}
-            tabIndex={0}
+          <Checkbox
+            checked={partial ? "indeterminate" : selected}
+            className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white data-[state=indeterminate]:border-white"
             onClick={(event) => {
               event.stopPropagation();
               onToggleFolder(item);
             }}
-          >
-            {selected && <div className="w-2 h-2 bg-white rounded-[2px]" />}
-            {partial && <div className="w-2 h-[2px] bg-white rounded-[2px]" />}
-          </div>
-          {/* No handler of its own - the row click already expands. */}
-          <div
-            className={`transform transition-transform duration-200 ${
-              expanded ? "rotate-360" : " rotate-270"
-            }`}
-          >
-            <CaretDown className="text-base font-bold w-4 h-4" />
-          </div>
-          <FolderNotch
-            className="shrink-0 text-base font-bold w-4 h-4 mr-[3px]"
-            weight="fill"
           />
+          {/* No handler of its own - the row click already expands. */}
+          <ChevronDown
+            className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ${
+              expanded ? "" : "-rotate-90"
+            }`}
+          />
+          {expanded ? (
+            <FolderOpen className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
+          ) : (
+            <Folder className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
+          )}
           <p className="whitespace-nowrap overflow-show max-w-[400px]">
             {middleTruncate(item.name, 35)}
           </p>
@@ -149,11 +140,7 @@ export default function FolderRow({
             </span>
           )}
           {loading && files.length > 0 && (
-            <CircleNotch
-              size={12}
-              className="animate-spin ml-1 shrink-0"
-              weight="bold"
-            />
+            <Loader2 className="h-3 w-3 animate-spin ml-1 shrink-0" />
           )}
         </div>
         <p className="col-span-2 pl-3.5" />
@@ -168,7 +155,7 @@ export default function FolderRow({
             variant="none"
             className="flex items-center gap-x-2 py-2 pl-8"
           >
-            <CircleNotch size={14} className="animate-spin" weight="bold" />
+            <Loader2 className="h-3.5 w-3.5 animate-spin" />
             <span>{t("common.loading")}...</span>
           </TableCell>
         </TableRow>

@@ -1,11 +1,16 @@
-import { ArrowsDownUp } from "@phosphor-icons/react";
 import { useCallback, useMemo, useState } from "react";
+import { ArrowRight } from "lucide-react";
 import Workspace from "../../../../models/workspace";
 import showToast from "../../../../utils/toast";
 import Directory from "./Directory";
 import WorkspaceDirectory from "./WorkspaceDirectory";
 import useDocumentPicker from "./hooks/useDocumentPicker";
 import { useWorkspaceEmbeddingProgress } from "@/EmbeddingProgressContext";
+
+// Both panels share this height so the two sides of the picker read as one
+// balanced layout instead of two boxes sized to whatever their old modal
+// context happened to need.
+export const PANEL_HEIGHT = "h-[420px]";
 
 export default function DocumentSettings({ workspace }) {
   const [highlightWorkspace, setHighlightWorkspace] = useState(false);
@@ -98,7 +103,7 @@ export default function DocumentSettings({ workspace }) {
   const initializing = picker.status === "initializing";
 
   return (
-    <div className="flex upload-modal -mt-6 z-10 relative">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 items-start">
       <Directory
         picker={picker}
         workspace={workspace}
@@ -106,8 +111,10 @@ export default function DocumentSettings({ workspace }) {
         setHighlightWorkspace={setHighlightWorkspace}
         moveToWorkspace={moveSelectedItemsToWorkspace}
       />
-      <div className="upload-modal-arrow">
-        <ArrowsDownUp className="text-white text-base font-bold rotate-90 w-11 h-11" />
+      <div className="hidden lg:flex items-center justify-center h-full pt-24">
+        <div className="flex items-center justify-center h-8 w-8 rounded-full border border-theme-modal-border text-theme-text-secondary">
+          <ArrowRight className="h-4 w-4" />
+        </div>
       </div>
       <WorkspaceDirectory
         workspace={workspace}

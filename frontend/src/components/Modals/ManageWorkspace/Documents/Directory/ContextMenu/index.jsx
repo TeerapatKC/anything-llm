@@ -1,4 +1,5 @@
 import { useRef, useEffect } from "react";
+import { CheckSquare, Square, X } from "lucide-react";
 
 export default function ContextMenu({
   contextMenu,
@@ -40,18 +41,24 @@ export default function ContextMenu({
         left: `${contextMenu.x}px`,
         zIndex: 1000,
       }}
-      className="bg-theme-bg-secondary border border-theme-modal-border rounded-md shadow-lg"
+      className="min-w-[160px] bg-theme-bg-secondary border border-theme-modal-border rounded-md shadow-lg py-1"
     >
       <button
         onClick={toggleSelectAll}
-        className="block w-full text-left px-4 py-2 text-sm text-theme-text-primary hover:bg-theme-file-picker-hover"
+        className="flex items-center gap-x-2 w-full text-left px-3 py-1.5 text-sm text-theme-text-primary hover:bg-theme-file-picker-hover"
       >
+        {allSelected ? (
+          <Square className="h-3.5 w-3.5" />
+        ) : (
+          <CheckSquare className="h-3.5 w-3.5" />
+        )}
         {allSelected ? "Unselect All" : "Select All"}
       </button>
       <button
         onClick={closeContextMenu}
-        className="block w-full text-left px-4 py-2 text-sm text-theme-text-primary hover:bg-theme-file-picker-hover"
+        className="flex items-center gap-x-2 w-full text-left px-3 py-1.5 text-sm text-theme-text-primary hover:bg-theme-file-picker-hover"
       >
+        <X className="h-3.5 w-3.5" />
         Cancel
       </button>
     </div>

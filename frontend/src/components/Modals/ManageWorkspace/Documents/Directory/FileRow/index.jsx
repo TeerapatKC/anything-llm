@@ -4,13 +4,14 @@ import {
   getFileExtension,
   middleTruncate,
 } from "@/utils/directories";
-import { File } from "@phosphor-icons/react";
+import { FileText } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function FileRow({ item, selected, folderName, toggleSelection }) {
   const tooltipContent = useMemo(
@@ -33,21 +34,13 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
     >
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="col-span-10 w-fit flex gap-x-[4px] items-center relative">
-            <div
-              className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
-                selected ? "text-white" : "text-theme-text-primary light:invert"
-              } flex justify-center items-center cursor-pointer`}
-              role="checkbox"
-              aria-checked={selected}
-              tabIndex={0}
-            >
-              {selected && <div className="w-2 h-2 bg-white rounded-[2px]" />}
-            </div>
-            <File
-              className="shrink-0 text-base font-bold w-4 h-4 mr-[3px]"
-              weight="fill"
+          <div className="col-span-10 w-fit flex gap-x-2 items-center relative">
+            <Checkbox
+              checked={selected}
+              className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
+              tabIndex={-1}
             />
+            <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
             <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
               {middleTruncate(item.title, 55)}
             </p>

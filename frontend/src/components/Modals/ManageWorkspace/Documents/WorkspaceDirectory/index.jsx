@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import {
   Eye,
-  PushPin,
-  CheckCircle,
+  Pin,
+  CheckCircle2,
   XCircle,
-  CircleNotch,
+  Loader2,
   Clock,
   X,
-} from "@phosphor-icons/react";
+} from "lucide-react";
 import { SEEN_DOC_PIN_ALERT, SEEN_WATCH_ALERT } from "@/utils/constants";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
@@ -25,6 +25,8 @@ import { useTranslation } from "react-i18next";
 import { middleTruncate } from "@/utils/directories";
 import { useEmbeddingProgress } from "@/EmbeddingProgressContext";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { PANEL_HEIGHT } from "..";
 
 function WorkspaceDirectory({
   workspace,
@@ -106,16 +108,20 @@ function WorkspaceDirectory({
     saveChanges(e);
   };
 
+  const allSelected =
+    Object.keys(selectedItems).length ===
+    files.items.reduce((sum, folder) => sum + folder.items.length, 0);
+
   if (loading) {
     return (
-      <div className="px-8">
-        <div className="flex items-center justify-start w-[560px]">
-          <h3 className="text-white text-base font-bold ml-5">
-            {workspace.name}
-          </h3>
-        </div>
-        <div className="relative w-[560px] h-[445px] bg-theme-settings-input-bg rounded-2xl mt-5 border border-theme-modal-border">
-          <div className="w-full h-[calc(100%-40px)] flex items-center justify-center flex-col gap-y-5">
+      <div className="w-full flex flex-col gap-y-4">
+        <h3 className="text-theme-text-primary text-base font-semibold">
+          {workspace.name}
+        </h3>
+        <div
+          className={`relative w-full ${PANEL_HEIGHT} bg-theme-settings-input-bg rounded-lg border border-theme-modal-border`}
+        >
+          <div className="w-full h-full flex items-center justify-center flex-col gap-y-5">
             <PreLoader />
             <p className="text-theme-text-primary text-sm font-semibold animate-pulse text-center w-1/3">
               {loadingMessage}
@@ -128,17 +134,17 @@ function WorkspaceDirectory({
 
   if (embeddingProgress) {
     return (
-      <div className="px-8">
-        <div className="flex items-center justify-start w-[560px]">
-          <h3 className="text-white text-base font-bold ml-5">
-            {workspace.name}
-          </h3>
-        </div>
-        <div className="relative w-[560px] h-[445px] bg-theme-settings-input-bg rounded-2xl mt-5 border border-theme-modal-border">
-          <div className="text-white/80 text-xs grid grid-cols-12 py-2 px-3.5 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg sticky top-0 z-10 rounded-t-2xl">
-            <div className="col-span-8 flex items-center gap-x-[4px]">
-              <div className="shrink-0 w-3 h-3" />
-              <p className="ml-[7px] text-theme-text-primary">Name</p>
+      <div className="w-full flex flex-col gap-y-4">
+        <h3 className="text-theme-text-primary text-base font-semibold">
+          {workspace.name}
+        </h3>
+        <div
+          className={`relative w-full ${PANEL_HEIGHT} bg-theme-settings-input-bg rounded-lg overflow-hidden border border-theme-modal-border`}
+        >
+          <div className="text-theme-text-primary/80 text-xs grid grid-cols-12 py-2 px-4 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg sticky top-0 z-10 rounded-t-lg">
+            <div className="col-span-8 flex items-center gap-x-2">
+              <div className="shrink-0 w-3.5 h-3.5" />
+              <p className="text-theme-text-primary">Name</p>
             </div>
             <p className="col-span-4 text-right text-theme-text-primary pr-1">
               Status
@@ -160,16 +166,13 @@ function WorkspaceDirectory({
           </div>
         </div>
         {hasChanges && movedItems.length > 0 && (
-          <div className="flex items-center justify-between w-[560px] mt-3">
+          <div className="flex items-center justify-between">
             <p className="text-theme-text-secondary text-sm">
               {movedItems.length} additional file(s) ready to embed
             </p>
-            <button
-              onClick={handleSaveChanges}
-              className="border border-slate-200 px-5 py-1.5 rounded-lg text-white text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
-            >
+            <Button type="button" variant="outline" onClick={handleSaveChanges}>
               Add to queue
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -178,46 +181,30 @@ function WorkspaceDirectory({
 
   return (
     <>
-      <div className="px-8">
-        <div className="flex items-center justify-start w-[560px]">
-          <h3 className="text-white text-base font-bold ml-5">
-            {workspace.name}
-          </h3>
-        </div>
-        <div className="relative w-[560px] h-[445px] mt-5">
+      <div className="w-full flex flex-col gap-y-4">
+        <h3 className="text-theme-text-primary text-base font-semibold">
+          {workspace.name}
+        </h3>
+        <div className={`relative w-full ${PANEL_HEIGHT}`}>
           <div
-            className={`absolute inset-0 rounded-2xl  ${
+            className={`absolute inset-0 rounded-lg ${
               highlightWorkspace ? "border-4 border-cyan-300/80 z-[999]" : ""
             }`}
           />
-          <div className="relative w-full h-full bg-theme-settings-input-bg rounded-2xl overflow-hidden border border-theme-modal-border">
-            <div className="text-white/80 text-xs grid grid-cols-12 py-2 px-3.5 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg sticky top-0 z-10">
-              <div className="col-span-10 flex items-center gap-x-[4px]">
+          <div className="relative w-full h-full bg-theme-settings-input-bg rounded-lg overflow-hidden border border-theme-modal-border">
+            <div className="text-theme-text-primary/80 text-xs grid grid-cols-12 py-2 px-4 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg sticky top-0 z-10">
+              <div className="col-span-10 flex items-center gap-x-2">
                 {!hasChanges &&
                 files.items.some((folder) => folder.items.length > 0) ? (
-                  <div
-                    className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white text-theme-text-primary light:invert flex justify-center items-center cursor-pointer`}
-                    role="checkbox"
-                    aria-checked={
-                      Object.keys(selectedItems).length ===
-                      files.items.reduce(
-                        (sum, folder) => sum + folder.items.length,
-                        0
-                      )
-                    }
-                    tabIndex={0}
+                  <Checkbox
+                    checked={allSelected}
+                    className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
                     onClick={toggleSelectAll}
-                  >
-                    {Object.keys(selectedItems).length ===
-                      files.items.reduce(
-                        (sum, folder) => sum + folder.items.length,
-                        0
-                      ) && <div className="w-2 h-2 bg-white rounded-[2px]" />}
-                  </div>
+                  />
                 ) : (
-                  <div className="shrink-0 w-3 h-3" />
+                  <div className="shrink-0 w-3.5 h-3.5" />
                 )}
-                <p className="ml-[7px] text-theme-text-primary">Name</p>
+                <p className="text-theme-text-primary">Name</p>
               </div>
               {embeddedDocCount > 0 && (
                 <p className="col-span-2 text-right text-theme-text-secondary pr-2">
@@ -255,7 +242,7 @@ function WorkspaceDirectory({
                 </RenderFileRows>
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <p className="text-white text-opacity-40 text-sm font-medium">
+                  <p className="text-theme-text-secondary text-sm font-medium">
                     {t("connectors.directory.no_docs")}
                   </p>
                 </div>
@@ -263,47 +250,47 @@ function WorkspaceDirectory({
             </div>
 
             {Object.keys(selectedItems).length > 0 && !hasChanges && (
-              <div className="absolute bottom-[12px] left-0 right-0 flex justify-center pointer-events-none">
-                <div className="mx-auto bg-white/40 light:bg-white rounded-lg py-1 px-2 pointer-events-auto light:shadow-lg">
-                  <div className="flex flex-row items-center gap-x-2">
-                    <button
-                      onClick={toggleSelectAll}
-                      className="border-none text-sm font-semibold bg-white light:bg-[#E0F2FE] h-[30px] px-2.5 rounded-lg hover:bg-neutral-800/80 hover:text-white light:text-[#026AA2] light:hover:bg-[#026AA2] light:hover:text-white"
-                    >
-                      {Object.keys(selectedItems).length ===
-                      files.items.reduce(
-                        (sum, folder) => sum + folder.items.length,
-                        0
-                      )
-                        ? t("connectors.directory.deselect_all")
-                        : t("connectors.directory.select_all")}
-                    </button>
-                    <button
-                      onClick={removeSelectedItems}
-                      className="border-none text-sm font-semibold bg-white light:bg-[#E0F2FE] h-[30px] px-2.5 rounded-lg hover:bg-neutral-800/80 hover:text-white light:text-[#026AA2] light:hover:bg-[#026AA2] light:hover:text-white"
-                    >
-                      {t("connectors.directory.remove_selected")}
-                    </button>
-                  </div>
+              <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
+                <div className="mx-auto flex items-center gap-x-1.5 bg-theme-bg-secondary border border-theme-modal-border rounded-lg py-1 px-1.5 pointer-events-auto shadow-lg">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2.5 text-xs"
+                    onClick={toggleSelectAll}
+                  >
+                    {allSelected
+                      ? t("connectors.directory.deselect_all")
+                      : t("connectors.directory.select_all")}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-7 px-2.5 text-xs"
+                    onClick={removeSelectedItems}
+                  >
+                    {t("connectors.directory.remove_selected")}
+                  </Button>
                 </div>
               </div>
             )}
           </div>
         </div>
         {hasChanges && (
-          <div className="flex items-center justify-end py-6">
-            <button
+          <div className="flex items-center justify-end">
+            <Button
+              type="button"
+              variant="outline"
               onClick={(e) => handleSaveChanges(e)}
-              className="border border-slate-200 px-5 py-2.5 rounded-lg text-white text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
             >
               {t("connectors.directory.save_embed")}
-            </button>
+            </Button>
           </div>
         )}
       </div>
       <PinAlert />
       <DocumentWatchAlert />
-      <WorkspaceDocumentTooltips />
     </>
   );
 }
@@ -332,10 +319,7 @@ const PinAlert = memo(() => {
       <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
         <DialogHeader className="p-0">
           <div className="flex items-center gap-2">
-            <PushPin
-              className="text-theme-text-primary text-lg w-6 h-6"
-              weight="regular"
-            />
+            <Pin className="text-theme-text-primary w-5 h-5" />
             <DialogTitle className="text-sm font-semibold">
               {t("connectors.pinning.what_pinning")}
             </DialogTitle>
@@ -394,10 +378,7 @@ const DocumentWatchAlert = memo(() => {
       <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
         <DialogHeader className="p-0">
           <div className="flex items-center gap-2">
-            <Eye
-              className="text-theme-text-primary text-lg w-6 h-6"
-              weight="regular"
-            />
+            <Eye className="text-theme-text-primary w-5 h-5" />
             <DialogTitle className="text-sm font-semibold">
               {t("connectors.watching.what_watching")}
             </DialogTitle>
@@ -461,14 +442,6 @@ function RenderFileRows({ files, movedItems, children, workspace }) {
 }
 
 /**
- * Tooltips for the workspace directory components. Renders when the workspace directory is shown
- * or updated so that tooltips are attached as the items are changed.
- */
-function WorkspaceDocumentTooltips() {
-  return <></>;
-}
-
-/**
  * @param {string} filename
  */
 const getDisplayName = (filename) => {
@@ -482,44 +455,28 @@ const getDisplayName = (filename) => {
 const STATUS_STYLES = {
   pending: {
     icon: (
-      <Clock
-        size={16}
-        className="text-slate-100 light:text-slate-900/40 shrink-0"
-        weight="regular"
-      />
+      <Clock className="h-4 w-4 text-slate-100 light:text-slate-900/40 shrink-0" />
     ),
     textColor: "text-slate-100 light:text-slate-900/70",
     label: "Queued",
   },
   embedding: {
     icon: (
-      <CircleNotch
-        size={16}
-        className="text-slate-100 light:text-slate-900/40 animate-spin shrink-0"
-        weight="bold"
-      />
+      <Loader2 className="h-4 w-4 text-slate-100 light:text-slate-900/40 animate-spin shrink-0" />
     ),
     textColor: "text-slate-100 light:text-slate-900/70",
     label: "Embedding",
   },
   complete: {
     icon: (
-      <CheckCircle
-        size={16}
-        className="text-green-400 light:text-green-600 shrink-0"
-        weight="fill"
-      />
+      <CheckCircle2 className="h-4 w-4 text-green-400 light:text-green-600 shrink-0" />
     ),
     textColor: "text-green-400 light:text-green-600",
     label: "Complete",
   },
   failed: {
     icon: (
-      <XCircle
-        size={16}
-        className="text-red-400 light:text-red-600 shrink-0"
-        weight="fill"
-      />
+      <XCircle className="h-4 w-4 text-red-400 light:text-red-600 shrink-0" />
     ),
     textColor: "text-red-400 light:text-red-600",
     label: "Failed",
@@ -572,10 +529,7 @@ function EmbeddingFileRow({ filename, status: fileStatus, onRemove }) {
                 className="border-none hover:bg-white/10 light:hover:bg-sky-900/10 rounded p-0.5 transition-colors"
                 title="Remove from queue"
               >
-                <X
-                  size={14}
-                  className="text-slate-100 light:text-slate-900/40 hover:text-slate-100 light:hover:text-slate-900"
-                />
+                <X className="h-3.5 w-3.5 text-slate-100 light:text-slate-900/40 hover:text-slate-100 light:hover:text-slate-900" />
               </button>
             )}
           </div>

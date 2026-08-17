@@ -4,7 +4,7 @@ import {
   getFileExtension,
   middleTruncate,
 } from "@/utils/directories";
-import { ArrowUUpLeft, Eye, File, PushPin } from "@phosphor-icons/react";
+import { Undo2, Eye, EyeOff, FileText, Pin } from "lucide-react";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function WorkspaceFileRow({
   item,
@@ -72,30 +73,17 @@ export default function WorkspaceFileRow({
     >
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className="col-span-10 w-fit flex gap-x-[2px] items-center relative">
-            <div className="shrink-0 w-3 h-3">
+          <div className="col-span-10 w-fit flex gap-x-2 items-center relative">
+            <div className="shrink-0 w-3.5 h-3.5">
               {!disableSelection ? (
-                <div
-                  className={`shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white ${
-                    selected
-                      ? "text-white"
-                      : "text-theme-text-primary light:invert"
-                  } flex justify-center items-center cursor-pointer`}
-                  role="checkbox"
-                  aria-checked={selected}
-                  tabIndex={0}
+                <Checkbox
+                  checked={selected}
+                  className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
                   onClick={handleRowSelection}
-                >
-                  {selected && (
-                    <div className="w-2 h-2 bg-white rounded-[2px]" />
-                  )}
-                </div>
+                />
               ) : null}
             </div>
-            <File
-              className="shrink-0 text-base font-bold w-4 h-4 mr-[3px] ml-1"
-              weight="fill"
-            />
+            <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px] ml-1" />
             <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
               {middleTruncate(item.title, 50)}
             </p>
@@ -186,11 +174,7 @@ const PinItemToWorkspace = memo(({ workspace, docPath, item }) => {
               </p>
             </div>
           ) : (
-            <PushPin
-              size={16}
-              weight="regular"
-              className="outline-none text-base font-bold flex-shrink-0"
-            />
+            <Pin className="h-4 w-4 outline-none flex-shrink-0" />
           )}
         </div>
       </TooltipTrigger>
@@ -253,18 +237,12 @@ const WatchForChanges = memo(({ workspace, docPath, item }) => {
         <div
           className="group flex gap-x-2 items-center hover:bg-theme-file-picker-hover p-[2px] rounded ml-2 cursor-pointer"
           onClick={updateWatchStatus}
-          data-active={watched}
         >
-          <Eye
-            size={16}
-            weight="regular"
-            className="outline-none text-base font-bold flex-shrink-0 group-hover:hidden group-data-[active=true]:hidden"
-          />
-          <Eye
-            size={16}
-            weight="fill"
-            className="outline-none text-base font-bold flex-shrink-0 hidden group-hover:block group-data-[active=true]:block"
-          />
+          {watched ? (
+            <Eye className="h-4 w-4 outline-none flex-shrink-0" />
+          ) : (
+            <EyeOff className="h-4 w-4 outline-none flex-shrink-0" />
+          )}
         </div>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
@@ -279,9 +257,9 @@ const RemoveItemFromWorkspace = ({ item: _item, onClick }) => {
     <div>
       <Tooltip>
         <TooltipTrigger asChild>
-          <ArrowUUpLeft
+          <Undo2
             onClick={onClick}
-            className="text-base font-bold w-4 h-4 ml-2 flex-shrink-0 cursor-pointer"
+            className="h-4 w-4 ml-2 flex-shrink-0 cursor-pointer"
           />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">

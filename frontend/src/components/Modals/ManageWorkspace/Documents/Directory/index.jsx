@@ -4,16 +4,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FolderRow from "./FolderRow";
 import System from "@/models/system";
-import {
-  CircleNotch,
-  MagnifyingGlass,
-  Plus,
-  Trash,
-} from "@phosphor-icons/react";
+import { Loader2, Search, Plus, Trash2, FolderInput } from "lucide-react";
 import Document from "@/models/document";
 import showToast from "@/utils/toast";
 import FolderSelectionPopup from "./FolderSelectionPopup";
-import MoveToFolderIcon from "./MoveToFolderIcon";
 import { useModal } from "@/hooks/useModal";
 import NewFolderModal from "./NewFolderModal";
 import debounce from "lodash.debounce";
@@ -21,6 +15,9 @@ import ContextMenu from "./ContextMenu";
 import useUploadQueue from "../hooks/useUploadQueue";
 import { getFilesFromUploadEvent } from "@/utils/folderUpload";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { PANEL_HEIGHT } from "..";
 
 const NO_FILES = [];
 
@@ -268,182 +265,182 @@ export default function Directory({
 
   return (
     <>
-      <div className="px-8 pb-8" onContextMenu={handleContextMenu}>
-        <div className="flex flex-col gap-y-6">
-          <div className="flex items-center justify-between w-[560px] px-5 relative">
-            <h3 className="text-white text-base font-bold">
-              {t("connectors.directory.my-documents")}
-            </h3>
+      <div
+        className="w-full flex flex-col gap-y-4"
+        onContextMenu={handleContextMenu}
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h3 className="text-theme-text-primary text-base font-semibold">
+            {t("connectors.directory.my-documents")}
+          </h3>
+          <div className="flex items-center gap-x-2">
             <div className="relative">
-              <input
+              <Input
+                variant="settings"
                 type="search"
                 placeholder={t("connectors.directory.search-document")}
                 onChange={handleSearch}
-                className="border-none search-input bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg pl-9 pr-2.5 py-2 w-[250px] h-[32px] light:border-theme-modal-border light:border"
+                className="pl-9 w-[200px] h-9"
               />
               {searching ? (
-                <CircleNotch
-                  size={14}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white animate-spin"
-                  weight="bold"
-                />
+                <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-theme-text-secondary" />
               ) : (
-                <MagnifyingGlass
-                  size={14}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white"
-                  weight="bold"
-                />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-theme-text-secondary" />
               )}
             </div>
-            <button
-              className="border-none flex items-center gap-x-2 cursor-pointer px-[14px] py-[7px] -mr-[14px] rounded-lg hover:bg-theme-sidebar-subitem-hover z-20 relative"
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
               onClick={openFolderModal}
+              className="gap-x-1.5"
             >
-              <Plus
-                size={18}
-                weight="bold"
-                className="text-theme-text-primary light:text-[#0ba5ec]"
-              />
-              <div className="text-theme-text-primary light:text-[#0ba5ec] text-xs font-bold leading-[18px]">
-                {t("connectors.directory.new-folder")}
-              </div>
-            </button>
+              <Plus className="h-4 w-4" />
+              {t("connectors.directory.new-folder")}
+            </Button>
           </div>
+        </div>
 
-          <div className="relative w-[560px] h-[310px] bg-theme-settings-input-bg rounded-2xl overflow-hidden border border-theme-modal-border">
-            <div className="absolute top-0 left-0 right-0 z-10 rounded-t-2xl text-theme-text-primary text-xs grid grid-cols-12 py-2 px-8 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg">
-              <p className="col-span-6">Name</p>
-              {searchResults ? (
+        <div
+          className={`relative w-full ${PANEL_HEIGHT} bg-theme-settings-input-bg rounded-lg overflow-hidden border border-theme-modal-border`}
+        >
+          <div className="absolute top-0 left-0 right-0 z-10 rounded-t-lg text-theme-text-primary text-xs grid grid-cols-12 py-2 px-4 border-b border-white/20 light:border-theme-modal-border bg-theme-settings-input-bg">
+            <p className="col-span-6">Name</p>
+            {searchResults ? (
+              <p className="col-span-6 text-right text-theme-text-secondary">
+                {t(`connectors.directory.search-results`, {
+                  count: searchResultCount,
+                })}
+              </p>
+            ) : (
+              totalDocCount > 0 && (
                 <p className="col-span-6 text-right text-theme-text-secondary">
-                  {t(`connectors.directory.search-results`, {
-                    count: searchResultCount,
+                  {t(`connectors.directory.total-documents`, {
+                    count: totalDocCount,
                   })}
                 </p>
-              ) : (
-                totalDocCount > 0 && (
-                  <p className="col-span-6 text-right text-theme-text-secondary">
-                    {t(`connectors.directory.total-documents`, {
-                      count: totalDocCount,
-                    })}
-                  </p>
-                )
-              )}
-            </div>
+              )
+            )}
+          </div>
 
-            <div className="overflow-y-auto h-full pt-8">
-              {status === "initializing" ? (
-                <div className="w-full h-full flex items-center justify-center flex-col gap-y-5">
-                  <PreLoader />
-                </div>
-              ) : rows.length > 0 ? (
-                rows.map((row) => (
-                  <FolderRow
-                    key={row.item.name}
-                    item={row.item}
-                    files={row.files}
-                    expanded={row.expanded}
-                    loading={row.loading}
-                    hasMore={row.hasMore}
-                    totalCount={row.totalCount}
-                    displayCount={row.displayCount}
-                    selectionState={folderSelectionState(
-                      row.item.name,
-                      row.files
-                    )}
-                    isFileSelected={(id) => isFileSelected(row.item.name, id)}
-                    onToggleExpanded={toggleExpanded}
-                    onToggleFolder={(folder) => toggleFolder(folder, row.files)}
-                    onToggleFile={toggleFile}
-                    onPrefetch={prefetchFolder}
-                    onLoadMore={loadMore}
-                    acceptsDrops={uploadQueue.ready}
-                    onDropFiles={handleFolderDrop}
-                  />
-                ))
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <p className="text-white text-opacity-40 text-sm font-medium">
-                    {t("connectors.directory.no-documents")}
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Non-blocking status strip - mutations never blank the tree. */}
-            {!!busyMessage && (
-              <div className="absolute top-8 left-0 right-0 z-20 flex items-center justify-center gap-x-2 bg-theme-bg-secondary/95 border-b border-theme-modal-border py-1.5">
-                <CircleNotch size={12} className="animate-spin" weight="bold" />
-                <p className="text-theme-text-primary text-xs font-medium">
-                  {busyMessage}
+          <div className="overflow-y-auto h-full pt-8">
+            {status === "initializing" ? (
+              <div className="w-full h-full flex items-center justify-center flex-col gap-y-5">
+                <PreLoader />
+              </div>
+            ) : rows.length > 0 ? (
+              rows.map((row) => (
+                <FolderRow
+                  key={row.item.name}
+                  item={row.item}
+                  files={row.files}
+                  expanded={row.expanded}
+                  loading={row.loading}
+                  hasMore={row.hasMore}
+                  totalCount={row.totalCount}
+                  displayCount={row.displayCount}
+                  selectionState={folderSelectionState(
+                    row.item.name,
+                    row.files
+                  )}
+                  isFileSelected={(id) => isFileSelected(row.item.name, id)}
+                  onToggleExpanded={toggleExpanded}
+                  onToggleFolder={(folder) => toggleFolder(folder, row.files)}
+                  onToggleFile={toggleFile}
+                  onPrefetch={prefetchFolder}
+                  onLoadMore={loadMore}
+                  acceptsDrops={uploadQueue.ready}
+                  onDropFiles={handleFolderDrop}
+                />
+              ))
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <p className="text-theme-text-secondary text-sm font-medium">
+                  {t("connectors.directory.no-documents")}
                 </p>
               </div>
             )}
+          </div>
 
-            {hasSelection && (
-              <div className="absolute bottom-[12px] left-0 right-0 flex justify-center pointer-events-none">
-                <div className="mx-auto bg-white/40 light:bg-white rounded-lg py-1 px-2 pointer-events-auto light:shadow-lg">
-                  <div className="flex flex-row items-center gap-x-2">
-                    <button
-                      onClick={moveToWorkspace}
-                      onMouseEnter={() => setHighlightWorkspace(true)}
-                      onMouseLeave={() => setHighlightWorkspace(false)}
-                      className="border-none text-sm font-semibold bg-white light:bg-[#E0F2FE] h-[30px] px-2.5 rounded-lg hover:bg-neutral-800/80 hover:text-white light:text-[#026AA2] light:hover:bg-[#026AA2] light:hover:text-white"
-                    >
-                      {t("connectors.directory.move-workspace")}
-                    </button>
-                    <div className="relative">
-                      <button
-                        onClick={() =>
-                          setShowFolderSelection(!showFolderSelection)
-                        }
-                        className="border-none text-sm font-semibold bg-white light:bg-[#E0F2FE] h-[32px] w-[32px] rounded-lg text-dark-text hover:bg-neutral-800/80 hover:text-white light:text-[#026AA2] light:hover:bg-[#026AA2] light:hover:text-white flex justify-center items-center group"
-                      >
-                        <MoveToFolderIcon className="text-dark-text light:text-[#026AA2] group-hover:text-white" />
-                      </button>
-                      {showFolderSelection && (
-                        <FolderSelectionPopup
-                          folders={folders}
-                          onSelect={moveToFolder}
-                          onClose={() => setShowFolderSelection(false)}
-                        />
-                      )}
-                    </div>
-                    <button
-                      onClick={deleteFiles}
-                      className="border-none text-sm font-semibold bg-white light:bg-[#E0F2FE] h-[32px] w-[32px] rounded-lg text-dark-text hover:bg-neutral-800/80 hover:text-white light:text-[#026AA2] light:hover:bg-[#026AA2] light:hover:text-white flex justify-center items-center"
-                    >
-                      <Trash size={18} weight="bold" />
-                    </button>
-                  </div>
+          {/* Non-blocking status strip - mutations never blank the tree. */}
+          {!!busyMessage && (
+            <div className="absolute top-8 left-0 right-0 z-20 flex items-center justify-center gap-x-2 bg-theme-bg-secondary/95 border-b border-theme-modal-border py-1.5">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              <p className="text-theme-text-primary text-xs font-medium">
+                {busyMessage}
+              </p>
+            </div>
+          )}
+
+          {hasSelection && (
+            <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
+              <div className="mx-auto flex items-center gap-x-1.5 bg-theme-bg-secondary border border-theme-modal-border rounded-lg py-1 px-1.5 pointer-events-auto shadow-lg">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-7 px-2.5 text-xs"
+                  onClick={moveToWorkspace}
+                  onMouseEnter={() => setHighlightWorkspace(true)}
+                  onMouseLeave={() => setHighlightWorkspace(false)}
+                >
+                  {t("connectors.directory.move-workspace")}
+                </Button>
+                <div className="relative">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => setShowFolderSelection(!showFolderSelection)}
+                  >
+                    <FolderInput className="h-4 w-4" />
+                  </Button>
+                  {showFolderSelection && (
+                    <FolderSelectionPopup
+                      folders={folders}
+                      onSelect={moveToFolder}
+                      onClose={() => setShowFolderSelection(false)}
+                    />
+                  )}
                 </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="h-7 w-7"
+                  onClick={deleteFiles}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
               </div>
-            )}
-          </div>
-          <UploadFile
-            workspace={workspace}
-            queue={uploadQueue}
-            onUploadComplete={syncAfterUpload}
-            onLinkScraped={syncAfterUpload}
-          />
+            </div>
+          )}
         </div>
-        {isFolderModalOpen && (
-          <div className="bg-black/60 backdrop-blur-sm fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-30">
-            <NewFolderModal
-              closeModal={closeFolderModal}
-              onCreated={handleFolderCreated}
-            />
-          </div>
-        )}
-        <ContextMenu
-          contextMenu={contextMenu}
-          closeContextMenu={closeContextMenu}
-          allSelected={
-            hasSelection && selectedFolderNames.length === folders.length
-          }
-          onSelectAll={selectAll}
-          onClearSelection={clearSelection}
+        <UploadFile
+          workspace={workspace}
+          queue={uploadQueue}
+          onUploadComplete={syncAfterUpload}
+          onLinkScraped={syncAfterUpload}
         />
       </div>
+      {isFolderModalOpen && (
+        <div className="bg-black/60 backdrop-blur-sm fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-30">
+          <NewFolderModal
+            closeModal={closeFolderModal}
+            onCreated={handleFolderCreated}
+          />
+        </div>
+      )}
+      <ContextMenu
+        contextMenu={contextMenu}
+        closeContextMenu={closeContextMenu}
+        allSelected={
+          hasSelection && selectedFolderNames.length === folders.length
+        }
+        onSelectAll={selectAll}
+        onClearSelection={clearSelection}
+      />
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );

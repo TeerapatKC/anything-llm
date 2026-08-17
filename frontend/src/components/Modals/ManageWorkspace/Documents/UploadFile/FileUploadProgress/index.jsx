@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, memo } from "react";
 import truncate from "truncate";
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
+import { CheckCircle2, XCircle } from "lucide-react";
 import Workspace from "../../../../../../models/workspace";
 import { humanFileSize, milliToHms } from "../../../../../../utils/numbers";
 import PreLoader from "../../../../../Preloader";
@@ -141,7 +141,7 @@ function FileUploadProgressComponent({
             <PreLoader size="6" />
           </div>
         ) : (
-          <CheckCircle
+          <CheckCircle2
             color="var(--theme-bg-primary)"
             className="w-6 h-6 stroke-white bg-green-500 rounded-full p-1 w-full h-full"
           />
