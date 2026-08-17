@@ -4,6 +4,7 @@ import PromptHistory from "@/models/promptHistory";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import truncate from "truncate";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const MAX_PROMPT_LENGTH = 200; // chars
 
@@ -21,16 +22,22 @@ export default function PromptHistoryItem({
   const menuRef = useRef(null);
   const menuButtonRef = useRef(null);
   const [expanded, setExpanded] = useState(false);
+  const [confirm, setConfirm] = useState(null);
 
-  const deleteHistory = async (id) => {
-    if (window.confirm(t("chat.prompt.history.deleteConfirm"))) {
-      const { success } = await PromptHistory.delete(id);
-      if (success) {
-        setHistory((prevHistory) =>
-          prevHistory.filter((item) => item.id !== id)
-        );
-      }
-    }
+  const deleteHistory = (id) => {
+    setConfirm({
+      title: t("chat.prompt.history.deleteConfirm"),
+      confirmText: t("chat.prompt.history.delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success } = await PromptHistory.delete(id);
+        if (success) {
+          setHistory((prevHistory) =>
+            prevHistory.filter((item) => item.id !== id)
+          );
+        }
+      },
+    });
   };
 
   useEffect(() => {
@@ -51,6 +58,7 @@ export default function PromptHistoryItem({
 
   return (
     <div className="text-white">
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
       <div className="flex items-center justify-between">
         <div className="text-xs">
           {user && (

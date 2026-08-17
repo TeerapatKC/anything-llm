@@ -76,6 +76,20 @@ export default function NewUserModal() {
             </p>
           </div>
           <div>
+            <Label variant="field" htmlFor="email" className="block mb-2">
+              Email
+            </Label>
+            <Input
+              variant="settings"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              maxLength={255}
+              required={true}
+              autoComplete="off"
+            />
+          </div>
+          <div>
             <Label variant="field" htmlFor="password" className="block mb-2">
               Password
             </Label>

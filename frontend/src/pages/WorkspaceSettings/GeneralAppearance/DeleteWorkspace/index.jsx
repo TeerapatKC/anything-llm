@@ -4,33 +4,34 @@ import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import { useTranslation } from "react-i18next";
 import showToast from "@/utils/toast";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function DeleteWorkspace({ workspace, visible = true }) {
   const { slug } = useParams();
   const [deleting, setDeleting] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   const { t } = useTranslation();
 
-  const deleteWorkspace = async () => {
-    if (
-      !window.confirm(
-        `${t("general.delete.confirm-start")} ${workspace.name} ${t(
-          "general.delete.confirm-end"
-        )}`
-      )
-    )
-      return false;
-
-    setDeleting(true);
-    const success = await Workspace.delete(workspace.slug);
-    if (!success) {
-      showToast("Workspace could not be deleted!", "error", { clear: true });
-      setDeleting(false);
-      return;
-    }
-
-    workspace.slug === slug
-      ? (window.location = paths.home())
-      : window.location.reload();
+  const deleteWorkspace = () => {
+    setConfirm({
+      title: `${t("general.delete.confirm-start")} ${workspace.name} ${t("general.delete.confirm-end")}`,
+      confirmText: t("general.delete.delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        setDeleting(true);
+        const success = await Workspace.delete(workspace.slug);
+        if (!success) {
+          showToast("Workspace could not be deleted!", "error", {
+            clear: true,
+          });
+          setDeleting(false);
+          return;
+        }
+        workspace.slug === slug
+          ? (window.location = paths.home())
+          : window.location.reload();
+      },
+    });
   };
 
   if (!visible) return null;
@@ -48,6 +49,7 @@ export default function DeleteWorkspace({ workspace, visible = true }) {
       >
         {deleting ? t("general.delete.deleting") : t("general.delete.delete")}
       </button>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

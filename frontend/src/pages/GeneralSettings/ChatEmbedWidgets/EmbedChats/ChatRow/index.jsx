@@ -5,12 +5,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import paths from "@/utils/paths";
 import Embed from "@/models/embed";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { safeJsonParse } from "@/utils/request";
 import { TableCell, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -28,16 +30,19 @@ export default function ChatRow({ chat, onDelete }) {
     openModal: openConnectionDetailsModal,
     closeModal: closeConnectionDetailsModal,
   } = useModal();
+  const [confirm, setConfirm] = useState(null);
 
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete this chat?\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    await Embed.deleteChat(chat.id);
-    onDelete(chat.id);
+    setConfirm({
+      title: "Delete this chat?",
+      description: "This action is irreversible.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        await Embed.deleteChat(chat.id);
+        onDelete(chat.id);
+      },
+    });
   };
 
   return (
@@ -135,6 +140,7 @@ export default function ChatRow({ chat, onDelete }) {
           }
         />
       </Dialog>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

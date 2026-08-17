@@ -6,17 +6,25 @@ import System from "@/models/system";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ApiKeyRow({ apiKey, removeApiKey }) {
   const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
-  const handleDelete = async () => {
-    if (!window.confirm(t("api.row.deleteConfirm"))) return false;
+  const [confirm, setConfirm] = useState(null);
 
-    const user = userFromStorage();
-    const Model = !!user ? Admin : System;
-    await Model.deleteApiKey(apiKey.id);
-    removeApiKey(apiKey.id);
+  const handleDelete = async () => {
+    setConfirm({
+      title: t("api.row.deleteConfirm"),
+      confirmText: t("common.delete", "Delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        const user = userFromStorage();
+        const Model = !!user ? Admin : System;
+        await Model.deleteApiKey(apiKey.id);
+        removeApiKey(apiKey.id);
+      },
+    });
   };
 
   const copyApiKey = () => {
@@ -81,6 +89,7 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
           </div>
         </TableCell>
       </TableRow>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

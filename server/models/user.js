@@ -8,7 +8,9 @@ const { PERMISSIONS, FALLBACK_ROLE } = require("../utils/permissions");
  * @typedef {Object} User
  * @property {number} id
  * @property {string} username
+ * @property {string|null} email
  * @property {string} password
+ * @property {boolean} requiresPasswordChange
  * @property {string} pfpFilename
  * @property {string} role
  * @property {boolean} suspended
@@ -17,9 +19,12 @@ const { PERMISSIONS, FALLBACK_ROLE } = require("../utils/permissions");
 
 const User = {
   usernameRegex: new RegExp(/^[a-z][a-z0-9._@-]*$/),
+  // Deliberately permissive - we only reject shapes that cannot be an address at all.
+  emailRegex: new RegExp(/^[^\s@]+@[^\s@.]+\.[^\s@]+$/),
   writable: [
     // Used for generic updates so we can validate keys in request body
     "username",
+    "email",
     "password",
     "pfpFilename",
     "role",
@@ -49,6 +54,21 @@ const User = {
       } catch (e) {
         throw new Error(e.message);
       }
+    },
+    /**
+     * Every user record carries an email so admins have a way to reach the account
+     * holder - most importantly to hand over a generated password.
+     */
+    email: (newValue = "") => {
+      const email = String(newValue ?? "")
+        .trim()
+        .toLowerCase();
+      if (!email) throw new Error("Email is required");
+      if (email.length > 255)
+        throw new Error("Email cannot be longer than 255 characters");
+      if (!User.emailRegex.test(email))
+        throw new Error("Email must be a valid email address");
+      return email;
     },
     // Roles live in the `roles` table so operators can define their own. The name is
     // shape-checked here; that it actually exists is checked in `validateRole`.
@@ -133,12 +153,19 @@ const User = {
     return name;
   },
 
+  /**
+   * Creates a user. When `requiresPasswordChange` is set the account is locked out of
+   * every endpoint except the change-password one until they pick their own password -
+   * this is how admin-issued initial passwords are handed over safely.
+   */
   create: async function ({
     username,
+    email,
     password,
     role = FALLBACK_ROLE,
     dailyMessageLimit = null,
     bio = "",
+    requiresPasswordChange = false,
   }) {
     const passwordCheck = this.checkPasswordComplexity(password);
     if (!passwordCheck.checkedOK) {
@@ -148,13 +175,16 @@ const User = {
     try {
       // Validate username format (validation function handles all checks)
       const validatedUsername = this.validations.username(username);
+      const validatedEmail = this.validations.email(email);
 
       const bcrypt = require("bcryptjs");
       const hashedPassword = bcrypt.hashSync(password, 10);
       const user = await prisma.users.create({
         data: {
           username: validatedUsername,
+          email: validatedEmail,
           password: hashedPassword,
+          requiresPasswordChange: Boolean(requiresPasswordChange),
           role: await this.validateRole(role),
           bio: this.validations.bio(bio),
           dailyMessageLimit:
@@ -195,6 +225,12 @@ const User = {
       // If they are not explictly changing the username, do not attempt to validate it.
       if (updates.hasOwnProperty("username")) {
         if (updates.username === currentUser.username) delete updates.username;
+      }
+
+      // Same reasoning as username - accounts created before email was collected have
+      // a null email, so only validate when the caller is actually setting one.
+      if (updates.hasOwnProperty("email")) {
+        if (updates.email === currentUser.email) delete updates.email;
       }
 
       // Removes non-writable fields for generic updates
@@ -350,6 +386,88 @@ const User = {
     } catch (error) {
       console.error(error.message);
       return [];
+    }
+  },
+
+  /**
+   * Compares a plaintext password against a user's stored hash.
+   * @param {number} userId
+   * @param {string} password
+   * @returns {Promise<boolean>}
+   */
+  verifyPassword: async function (userId = null, password = "") {
+    if (!userId || !password) return false;
+    const user = await this._get({ id: Number(userId) });
+    if (!user) return false;
+
+    const bcrypt = require("bcryptjs");
+    return bcrypt.compareSync(String(password), user.password);
+  },
+
+  /**
+   * Sets a brand new password for a user and clears the forced-change flag. Used by the
+   * self-service change-password flow once the current password has been verified.
+   * @param {number} userId
+   * @param {string} newPassword
+   * @returns {Promise<{success: boolean, error: string|null}>}
+   */
+  changePassword: async function (userId = null, newPassword = "") {
+    const password = String(newPassword ?? "").trim();
+    if (!password) return { success: false, error: "Invalid password." };
+
+    const passwordCheck = this.checkPasswordComplexity(password);
+    if (!passwordCheck.checkedOK)
+      return { success: false, error: passwordCheck.error };
+
+    try {
+      const bcrypt = require("bcryptjs");
+      await prisma.users.update({
+        where: { id: Number(userId) },
+        data: {
+          password: bcrypt.hashSync(password, 10),
+          requiresPasswordChange: false,
+        },
+      });
+      return { success: true, error: null };
+    } catch (error) {
+      console.error("FAILED TO CHANGE USER PASSWORD.", error.message);
+      return {
+        success: false,
+        error: this._identifyErrorAndFormatMessage(error),
+      };
+    }
+  },
+
+  /**
+   * Replaces a user's password with a freshly generated one and forces them to pick
+   * their own the next time they log in. The plaintext is returned to the caller once
+   * so an admin can hand it to the user - it is never recoverable afterwards.
+   * @param {number} userId
+   * @returns {Promise<{password: string|null, error: string|null}>}
+   */
+  resetPasswordToGenerated: async function (userId = null) {
+    if (!userId) return { password: null, error: "No user id provided" };
+
+    try {
+      const {
+        generateInitialPassword,
+      } = require("../utils/PasswordRecovery/generatePassword");
+      const password = generateInitialPassword();
+      const bcrypt = require("bcryptjs");
+      await prisma.users.update({
+        where: { id: Number(userId) },
+        data: {
+          password: bcrypt.hashSync(password, 10),
+          requiresPasswordChange: true,
+        },
+      });
+      return { password, error: null };
+    } catch (error) {
+      console.error("FAILED TO RESET USER PASSWORD.", error.message);
+      return {
+        password: null,
+        error: this._identifyErrorAndFormatMessage(error),
+      };
     }
   },
 

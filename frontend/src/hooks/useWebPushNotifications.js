@@ -1,6 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
+
+/** Fired when a newer service worker has been installed and is ready. */
+export const SERVICE_WORKER_UPDATE_EVENT = "anythingllm_sw_update_available";
 
 const PUSH_PUBKEY_URL = `${API_BASE}/web-push/pubkey`;
 const PUSH_USER_SUBSCRIBE_URL = `${API_BASE}/web-push/subscribe`;
@@ -70,10 +73,9 @@ export async function subscribeToPushNotifications(askToEnable = true) {
           // New service worker is installed and ready
           log("New service worker installed, ready to activate");
 
-          // Optionally show a notification to the user
-          if (confirm("A new version is available. Reload to update?")) {
-            window.location.reload();
-          }
+          // Surfaced as state for a component to confirm - this runs inside a
+          // service worker listener where there is no React tree to render into.
+          window.dispatchEvent(new CustomEvent(SERVICE_WORKER_UPDATE_EVENT));
         }
       });
     });
@@ -112,13 +114,29 @@ export async function subscribeToPushNotifications(askToEnable = true) {
 }
 
 /**
- * Hook that registers a service worker for push notifications.
- * @returns {void}
+ * Hook that registers a service worker for push notifications, and reports when a
+ * newer version of the app has been installed so the caller can offer a reload.
+ * @returns {{updateAvailable: boolean, applyUpdate: () => void, dismissUpdate: () => void}}
  */
 export default function useWebPushNotifications(askToEnable = true) {
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+
   useEffect(() => {
     subscribeToPushNotifications(askToEnable);
   }, []);
+
+  useEffect(() => {
+    const onUpdate = () => setUpdateAvailable(true);
+    window.addEventListener(SERVICE_WORKER_UPDATE_EVENT, onUpdate);
+    return () =>
+      window.removeEventListener(SERVICE_WORKER_UPDATE_EVENT, onUpdate);
+  }, []);
+
+  return {
+    updateAvailable,
+    applyUpdate: () => window.location.reload(),
+    dismissUpdate: () => setUpdateAvailable(false),
+  };
 }
 
 function urlBase64ToUint8Array(base64String) {

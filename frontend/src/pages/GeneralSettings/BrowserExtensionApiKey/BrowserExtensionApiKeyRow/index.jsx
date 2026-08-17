@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function BrowserExtensionApiKeyRow({
   apiKey,
@@ -19,26 +20,27 @@ export default function BrowserExtensionApiKeyRow({
 }) {
   const rowRef = useRef(null);
   const [copied, setCopied] = useState(false);
+  const [confirm, setConfirm] = useState(null);
 
   const handleRevoke = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to revoke this browser extension API key?\nAfter you do this it will no longer be useable.\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-
-    const result = await BrowserExtensionApiKey.revoke(apiKey.id);
-    if (result.success) {
-      removeApiKey(apiKey.id);
-      showToast("Browser Extension API Key permanently revoked", "info", {
-        clear: true,
-      });
-    } else {
-      showToast("Failed to revoke API Key", "error", {
-        clear: true,
-      });
-    }
+    setConfirm({
+      title: "Revoke this API key?",
+      description:
+        "After revoking it will no longer be useable. This action is irreversible.",
+      confirmText: "Revoke",
+      variant: "destructive",
+      onConfirm: async () => {
+        const result = await BrowserExtensionApiKey.revoke(apiKey.id);
+        if (result.success) {
+          removeApiKey(apiKey.id);
+          showToast("Browser Extension API Key permanently revoked", "info", {
+            clear: true,
+          });
+        } else {
+          showToast("Failed to revoke API Key", "error", { clear: true });
+        }
+      },
+    });
   };
 
   const handleCopy = () => {
@@ -123,6 +125,7 @@ export default function BrowserExtensionApiKeyRow({
           <Trash className="h-4 w-4" />
         </Button>
       </TableCell>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </TableRow>
   );
 }

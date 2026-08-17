@@ -39,6 +39,23 @@ const Admin = {
         return { success: false, error: e.message };
       });
   },
+  /**
+   * Generates a brand new password for a user and forces them to replace it on their
+   * next login. The plaintext comes back once so an admin can pass it along.
+   * @param {number} userId
+   * @returns {Promise<{success: boolean, password: string|null, error: string|null}>}
+   */
+  resetUserPassword: async (userId) => {
+    return await fetch(`${API_BASE}/admin/user/${userId}/reset-password`, {
+      method: "POST",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, password: null, error: e.message };
+      });
+  },
   deleteUser: async (userId) => {
     return await fetch(`${API_BASE}/admin/user/${userId}`, {
       method: "DELETE",

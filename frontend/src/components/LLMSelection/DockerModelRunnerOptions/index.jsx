@@ -19,6 +19,7 @@ import showToast from "@/utils/toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function DockerModelRunnerOptions({ settings }) {
   const {
@@ -166,6 +167,7 @@ function DockerModelRunnerModelSelection({
   const [filteredModels, setFilteredModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirm, setConfirm] = useState(null);
 
   async function fetchModels() {
     if (!basePath) {
@@ -218,13 +220,17 @@ function DockerModelRunnerModelSelection({
   }, [searchQuery]);
 
   async function downloadModel(modelId, fileSize, progressCallback) {
+    setConfirm({
+      title: "Download this model?",
+      description: `It is ${fileSize} in size and may take a while to download.`,
+      confirmText: "Download",
+      variant: "default",
+      onConfirm: () => downloadModelNow(modelId, progressCallback),
+    });
+  }
+
+  async function downloadModelNow(modelId, progressCallback) {
     try {
-      if (
-        !window.confirm(
-          `Are you sure you want to download this model? It is ${fileSize} in size and may take a while to download.`
-        )
-      )
-        return;
       const { success, error } = await DMRUtils.downloadModel(
         modelId,
         basePath,
@@ -354,6 +360,7 @@ function DockerModelRunnerModelSelection({
           />
         ))
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </ModelTableLayout>
   );
 }

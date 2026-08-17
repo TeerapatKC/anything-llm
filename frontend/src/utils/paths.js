@@ -26,6 +26,9 @@ export default {
   login: (noTry = false) => {
     return `/login${noTry ? "?nt=1" : ""}`;
   },
+  changePassword: () => {
+    return "/change-password";
+  },
   sso: {
     login: () => {
       return "/sso/simple";

@@ -31,6 +31,10 @@ const {
 } = require("../utils/permissions");
 const { Role } = require("../models/role");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
+const {
+  generateInitialPassword,
+} = require("../utils/PasswordRecovery/generatePassword");
+const { PasswordResetToken } = require("../models/passwordRecovery");
 const ImportedPlugin = require("../utils/agents/imported");
 const {
   simpleSSOLoginDisabledMiddleware,
@@ -96,7 +100,14 @@ function adminEndpoints(app) {
           return;
         }
 
-        const { user: newUser, error } = await User.create(newUserParams);
+        // Admins never pick the password - we generate one, hand back the plaintext
+        // exactly once, and force the user to replace it on their first login.
+        const initialPassword = generateInitialPassword();
+        const { user: newUser, error } = await User.create({
+          ...newUserParams,
+          password: initialPassword,
+          requiresPasswordChange: true,
+        });
         if (!!newUser) {
           await EventLogs.logEvent(
             "user_created",
@@ -108,7 +119,11 @@ function adminEndpoints(app) {
           );
         }
 
-        response.status(200).json({ user: newUser, error });
+        response.status(200).json({
+          user: newUser,
+          error,
+          initialPassword: !!newUser ? initialPassword : null,
+        });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();
@@ -128,6 +143,10 @@ function adminEndpoints(app) {
         const { id } = request.params;
         const updates = reqBody(request);
         const user = await User.get({ id: Number(id) });
+
+        // Editing a user can no longer set a password directly - admins use the
+        // reset-password route below, which generates one and forces a change on login.
+        delete updates.password;
 
         const canModify = await validCanModify(currUser, user);
         if (!canModify.valid) {
@@ -153,6 +172,63 @@ function adminEndpoints(app) {
 
         const { success, error } = await User.update(id, updates);
         response.status(200).json({ success, error });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  // Replaces the "I forgot my password" self-service flow: an admin generates a new
+  // password for the account, reads it out to the user, and the user is forced to
+  // replace it the moment they log back in.
+  app.post(
+    "/admin/user/:id/reset-password",
+    [
+      validatedRequest,
+      strictMultiUserPermissionValid([PERMISSIONS.USERS_MANAGE]),
+    ],
+    async (request, response) => {
+      try {
+        const currUser = await userFromSession(request, response);
+        const { id } = request.params;
+        const user = await User.get({ id: Number(id) });
+        if (!user) {
+          response
+            .status(200)
+            .json({ success: false, error: "User not found." });
+          return;
+        }
+
+        const canModify = await validCanModify(currUser, user);
+        if (!canModify.valid) {
+          response.status(200).json({ success: false, error: canModify.error });
+          return;
+        }
+
+        const { password, error } = await User.resetPasswordToGenerated(
+          user.id
+        );
+        if (!password) {
+          response.status(200).json({
+            success: false,
+            error: error || "Failed to reset password.",
+          });
+          return;
+        }
+
+        // Any outstanding reset tokens are meaningless now that the password moved.
+        await PasswordResetToken.deleteMany({ user_id: user.id });
+        await EventLogs.logEvent(
+          "user_password_reset",
+          {
+            userName: user.username,
+            resetBy: currUser.username,
+          },
+          currUser.id
+        );
+
+        response.status(200).json({ success: true, error: null, password });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

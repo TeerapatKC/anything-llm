@@ -2,6 +2,7 @@ import PostgreSQLLogo from "./icons/postgresql.png";
 import MySQLLogo from "./icons/mysql.png";
 import MSSQLLogo from "./icons/mssql.png";
 import { PencilSimple, X } from "@phosphor-icons/react";
+import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import EditSQLConnection from "./SQLConnectionModal";
 import {
@@ -9,6 +10,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export const DB_LOGOS = {
   postgresql: PostgreSQLLogo,
@@ -25,15 +27,17 @@ export default function DBConnection({
 }) {
   const { database_id, engine } = connection;
   const { isOpen, openModal, closeModal } = useModal();
+  const [confirm, setConfirm] = useState(null);
 
   function removeConfirmation() {
-    if (
-      !window.confirm(
-        `Delete ${database_id} from the list of available SQL connections? This cannot be undone.`
-      )
-    )
-      return false;
-    onRemove(database_id);
+    setConfirm({
+      title: `Delete ${database_id}?`,
+      description:
+        "It will be removed from the list of available SQL connections. This cannot be undone.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: () => onRemove(database_id),
+    });
   }
 
   return (
@@ -87,6 +91,7 @@ export default function DBConnection({
         setHasChanges={setHasChanges}
         connections={connections}
       />
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

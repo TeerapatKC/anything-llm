@@ -20,6 +20,7 @@ import LemonadeUtils from "@/models/utils/lemonadeUtils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function LemonadeOptions({ settings }) {
   const {
@@ -174,6 +175,7 @@ function LemonadeModelSelection({
   const [filteredModels, setFilteredModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [confirm, setConfirm] = useState(null);
 
   async function fetchModels() {
     if (!basePath) {
@@ -222,13 +224,17 @@ function LemonadeModelSelection({
   }, [searchQuery]);
 
   async function uninstallModel(modelId) {
+    setConfirm({
+      title: "Uninstall this model?",
+      description: "You will need to download it again to use it.",
+      confirmText: "Uninstall",
+      variant: "destructive",
+      onConfirm: () => uninstallModelNow(modelId),
+    });
+  }
+
+  async function uninstallModelNow(modelId) {
     try {
-      if (
-        !window.confirm(
-          `Are you sure you want to uninstall this model? You will need to download it again to use it.`
-        )
-      )
-        return;
       const { success, error } = await LemonadeUtils.deleteModel(
         modelId,
         basePath
@@ -258,13 +264,17 @@ function LemonadeModelSelection({
   }
 
   async function downloadModel(modelId, fileSize, progressCallback) {
+    setConfirm({
+      title: "Download this model?",
+      description: `It is ${fileSize} in size and may take a while to download.`,
+      confirmText: "Download",
+      variant: "default",
+      onConfirm: () => downloadModelNow(modelId, progressCallback),
+    });
+  }
+
+  async function downloadModelNow(modelId, progressCallback) {
     try {
-      if (
-        !window.confirm(
-          `Are you sure you want to download this model? It is ${fileSize} in size and may take a while to download.`
-        )
-      )
-        return;
       const { success, error } = await LemonadeUtils.downloadModel(
         modelId,
         basePath,
@@ -395,6 +405,7 @@ function LemonadeModelSelection({
           />
         ))
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </ModelTableLayout>
   );
 }

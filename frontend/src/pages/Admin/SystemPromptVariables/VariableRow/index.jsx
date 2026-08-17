@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
@@ -9,6 +9,7 @@ import truncate from "truncate";
 import { Trash } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 /**
  * A row component for displaying a system prompt variable
@@ -19,16 +20,20 @@ import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 export default function VariableRow({ variable, onRefresh }) {
   const rowRef = useRef(null);
   const { isOpen, openModal, closeModal } = useModal();
+  const [confirm, setConfirm] = useState(null);
 
   const handleDelete = async () => {
     if (!variable.id) return;
-    if (
-      !window.confirm(
-        `Are you sure you want to delete the variable "${variable.key}"?\nThis action is irreversible.`
-      )
-    )
-      return false;
+    setConfirm({
+      title: `Delete the variable "${variable.key}"?`,
+      description: "This action is irreversible.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: deleteVariable,
+    });
+  };
 
+  const deleteVariable = async () => {
     try {
       await System.promptVariables.delete(variable.id);
       rowRef?.current?.remove();
@@ -127,6 +132,7 @@ export default function VariableRow({ variable, onRefresh }) {
           />
         </DialogContent>
       </Dialog>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

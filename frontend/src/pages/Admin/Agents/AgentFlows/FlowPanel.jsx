@@ -6,27 +6,31 @@ import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 function ManageFlowMenu({ flow, onDelete }) {
   const [open, setOpen] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
   async function deleteFlow() {
     setOpen(false);
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this flow? This action cannot be undone."
-      )
-    )
-      return;
-    const { success, error } = await AgentFlows.deleteFlow(flow.uuid);
-    if (success) {
-      showToast("Flow deleted successfully.", "success");
-      onDelete(flow.uuid);
-    } else {
-      showToast(error || "Failed to delete flow.", "error");
-    }
+    setConfirm({
+      title: "Delete this flow?",
+      description: "This action cannot be undone.",
+      confirmText: "Delete flow",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await AgentFlows.deleteFlow(flow.uuid);
+        if (success) {
+          showToast("Flow deleted successfully.", "success");
+          onDelete(flow.uuid);
+        } else {
+          showToast(error || "Failed to delete flow.", "error");
+        }
+      },
+    });
   }
 
   useEffect(() => {
@@ -67,6 +71,7 @@ function ManageFlowMenu({ flow, onDelete }) {
           </Button>
         </div>
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

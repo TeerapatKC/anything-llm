@@ -35,6 +35,15 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: "/change-password",
+        lazy: async () => {
+          const { default: ChangePassword } = await import(
+            "@/pages/ChangePassword"
+          );
+          return { element: <ChangePassword /> };
+        },
+      },
+      {
         path: "/sso/simple",
         element: <SimpleSSOPassthrough />,
       },

@@ -6,6 +6,7 @@ import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import RuleForm from "./RuleForm";
 import RuleRow from "./RuleRow";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 function RulesList({
   rules,
@@ -120,6 +121,7 @@ export default function RuleBuilder({
   const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [editingRule, setEditingRule] = useState(null);
+  const [confirm, setConfirm] = useState(null);
 
   const openCreate = () => {
     setEditingRule(null);
@@ -137,15 +139,16 @@ export default function RuleBuilder({
   };
 
   const handleDelete = async (rule) => {
-    if (
-      !window.confirm(
-        t("model-router.rules.delete-confirm", { title: rule.title })
-      )
-    )
-      return;
-    const { success } = await ModelRouterAPI.deleteRule(routerId, rule.id);
-    if (success) onRulesChanged();
-    else showToast(t("model-router.rules.toast-delete-failed"), "error");
+    setConfirm({
+      title: t("model-router.rules.delete-confirm", { title: rule.title }),
+      confirmText: t("common.delete", "Delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success } = await ModelRouterAPI.deleteRule(routerId, rule.id);
+        if (success) onRulesChanged();
+        else showToast(t("model-router.rules.toast-delete-failed"), "error");
+      },
+    });
   };
 
   const handleToggle = async (rule) => {
@@ -234,6 +237,7 @@ export default function RuleBuilder({
           onSaved={onRulesChanged}
         />
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

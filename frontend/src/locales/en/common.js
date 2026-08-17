@@ -21,6 +21,7 @@ const TRANSLATIONS = {
       passwordWarn:
         "It's important to save this password because there is no recovery method.",
       adminUsername: "Admin account username",
+      adminEmail: "Admin account email",
       adminPassword: "Admin account password",
       adminPasswordReq: "Passwords must be at least 8 characters.",
       teamHint:
@@ -135,6 +136,8 @@ const TRANSLATIONS = {
       title: "Password Reset",
       description:
         "Provide the necessary information below to reset your password.",
+      "admin-reset-description":
+        "Ask an administrator to reset your password. They will generate a new one for you, and you will be asked to choose your own password the next time you log in.",
       "recovery-codes": "Recovery Codes",
       "back-to-login": "Back to Login",
     },
@@ -1668,6 +1671,8 @@ const TRANSLATIONS = {
     profile_picture: "Profile Picture",
     remove_profile_picture: "Remove Profile Picture",
     username: "Username",
+    email: "Email",
+    password: "Password",
     new_password: "New Password",
     password_description: "Password must be at least 8 characters long",
     cancel: "Cancel",
@@ -1682,6 +1687,23 @@ const TRANSLATIONS = {
     account: "Account",
     support: "Support",
     signout: "Sign out",
+  },
+  password_change: {
+    title: "Change password",
+    current_password: "Current password",
+    new_password: "New password",
+    confirm_password: "Confirm new password",
+    password_requirements: "Password must be at least 8 characters long",
+    mismatch: "New passwords do not match.",
+    success: "Your password has been changed.",
+    updating: "Updating...",
+    cancel: "Cancel",
+    page_description: "Choose a new password for your account.",
+    forced_title: "Set a new password",
+    forced_description:
+      "Your password was issued by an administrator. Choose a password of your own to continue.",
+    forced_submit: "Set password and continue",
+    sign_out: "Sign out instead",
   },
   "keyboard-shortcuts": {
     title: "Keyboard Shortcuts",

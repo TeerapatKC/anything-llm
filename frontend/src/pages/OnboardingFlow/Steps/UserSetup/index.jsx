@@ -262,6 +262,7 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
     const formData = new FormData(form);
     const data = {
       username: formData.get("username"),
+      email: formData.get("email"),
       password: formData.get("password"),
     };
     const { success, error } = await System.setupMultiUser(data);
@@ -322,6 +323,23 @@ const MyTeam = ({ setMultiUserLoginValid, myTeamSubmitRef, navigate }) => {
               <p className=" text-white text-opacity-80 text-xs font-base">
                 {t("common.username_requirements")}
               </p>
+              <div className="mt-4">
+                <label
+                  htmlFor="email"
+                  className="block mb-3 text-sm font-medium text-white"
+                >
+                  {t("onboarding.userSetup.adminEmail")}
+                </label>
+                <input
+                  name="email"
+                  type="email"
+                  className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
+                  placeholder="admin@example.com"
+                  maxLength={255}
+                  required={true}
+                  autoComplete="off"
+                />
+              </div>
               <div className="mt-4">
                 <label
                   htmlFor="name"

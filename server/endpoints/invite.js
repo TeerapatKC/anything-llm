@@ -41,7 +41,7 @@ function inviteEndpoints(app) {
     async (request, response) => {
       try {
         const { code } = request.params;
-        const { username, password } = reqBody(request);
+        const { username, email, password } = reqBody(request);
         const invite = await Invite.get({ code });
         if (!invite || invite.status !== "pending") {
           response
@@ -52,6 +52,7 @@ function inviteEndpoints(app) {
 
         const { user, error } = await User.create({
           username,
+          email,
           password,
           role: FALLBACK_ROLE,
         });

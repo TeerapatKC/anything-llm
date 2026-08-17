@@ -164,35 +164,25 @@ const System = {
         return { success: false, user: null, message: e.message };
       });
   },
-  recoverAccount: async function (username, recoveryCodes) {
-    return await fetch(`${API_BASE}/system/recover-account`, {
+  /**
+   * Changes the signed-in user's own password. The current password is always required,
+   * and this is the only call permitted while an account is flagged as needing a
+   * password change after an admin generated one for it.
+   */
+  changePassword: async function ({
+    currentPassword,
+    newPassword,
+    confirmPassword,
+  }) {
+    return await fetch(`${API_BASE}/system/user/change-password`, {
       method: "POST",
       headers: baseHeaders(),
-      body: JSON.stringify({ username, recoveryCodes }),
+      body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
     })
       .then(async (res) => {
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || "Error recovering account.");
-        }
-        return data;
-      })
-      .catch((e) => {
-        console.error(e);
-        return { success: false, error: e.message };
-      });
-  },
-  resetPassword: async function (token, newPassword, confirmPassword) {
-    return await fetch(`${API_BASE}/system/reset-password`, {
-      method: "POST",
-      headers: baseHeaders(),
-      body: JSON.stringify({ token, newPassword, confirmPassword }),
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.message || "Error resetting password.");
-        }
+        if (!res.ok)
+          throw new Error(data.error || "Error changing your password.");
         return data;
       })
       .catch((e) => {

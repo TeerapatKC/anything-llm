@@ -20,6 +20,7 @@ import debounce from "lodash.debounce";
 import ContextMenu from "./ContextMenu";
 import useUploadQueue from "../hooks/useUploadQueue";
 import { getFilesFromUploadEvent } from "@/utils/folderUpload";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const NO_FILES = [];
 
@@ -31,6 +32,7 @@ export default function Directory({
   moveToWorkspace,
 }) {
   const { t } = useTranslation();
+  const [confirm, setConfirm] = useState(null);
   const [showFolderSelection, setShowFolderSelection] = useState(false);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -147,8 +149,15 @@ export default function Directory({
 
   const deleteFiles = async (event) => {
     event.stopPropagation();
-    if (!window.confirm(t("connectors.directory.delete-confirmation"))) return;
+    setConfirm({
+      title: t("connectors.directory.delete-confirmation"),
+      confirmText: t("common.delete", "Delete"),
+      variant: "destructive",
+      onConfirm: deleteSelectedFiles,
+    });
+  };
 
+  const deleteSelectedFiles = async () => {
     const selected = await resolveSelection();
     const toRemove = selected.map((file) => `${file.folderName}/${file.name}`);
     const foldersToRemove = selectedFolderNames.filter(
@@ -435,6 +444,7 @@ export default function Directory({
           onClearSelection={clearSelection}
         />
       </div>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

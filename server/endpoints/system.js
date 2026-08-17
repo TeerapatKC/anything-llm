@@ -46,7 +46,6 @@ const { getCustomModels } = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   flexUserPermissionValid,
-  isMultiUserSetup,
 } = require("../utils/middleware/multiUserProtected");
 const { Role } = require("../models/role");
 const { PERMISSIONS } = require("../utils/permissions");
@@ -54,11 +53,6 @@ const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { EventLogs } = require("../models/eventLogs");
 const { CollectorApi } = require("../utils/collectorApi");
-const {
-  recoverAccount,
-  resetPassword,
-  generateRecoveryCodes,
-} = require("../utils/PasswordRecovery");
 const { SlashCommandPresets } = require("../models/slashCommandsPresets");
 const { EncryptionManager } = require("../utils/EncryptionManager");
 const { BrowserExtensionApiKey } = require("../models/browserExtensionApiKey");
@@ -136,11 +130,15 @@ function systemEndpoints(app) {
             return;
           }
 
-          response.sendStatus(200).end();
+          // Reported here rather than read off the cached session user so that a reset
+          // performed by an admin takes hold on the user's very next page load.
+          response.status(200).json({
+            requiresPasswordChange: !!user.requiresPasswordChange,
+          });
           return;
         }
 
-        response.sendStatus(200).end();
+        response.status(200).json({ requiresPasswordChange: false });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
@@ -282,29 +280,19 @@ function systemEndpoints(app) {
           existingUser?.id
         );
 
-        // Generate a session token for the user then check if they have seen the recovery codes
-        // and if not, generate recovery codes and return them to the frontend.
+        // Generate a session token for the user. If they are still holding a password an
+        // admin generated for them, the token is issued but every other endpoint stays
+        // closed (see `validatedRequest`) until they set their own password.
         const sessionToken = makeJWT(
           { id: existingUser.id, username: existingUser.username },
           process.env.JWT_EXPIRY
         );
-        if (!existingUser.seen_recovery_codes) {
-          const plainTextCodes = await generateRecoveryCodes(existingUser.id);
-          response.status(200).json({
-            valid: true,
-            user: await User.withPermissions(existingUser),
-            token: sessionToken,
-            message: null,
-            recoveryCodes: plainTextCodes,
-          });
-          return;
-        }
-
         response.status(200).json({
           valid: true,
           user: await User.withPermissions(existingUser),
           token: sessionToken,
           message: null,
+          requiresPasswordChange: !!existingUser.requiresPasswordChange,
         });
         return;
       } else {
@@ -387,55 +375,6 @@ function systemEndpoints(app) {
         token: sessionToken,
         message: null,
       });
-    }
-  );
-
-  app.post(
-    "/system/recover-account",
-    [isMultiUserSetup],
-    async (request, response) => {
-      try {
-        const { username, recoveryCodes } = reqBody(request);
-        const { success, resetToken, error } = await recoverAccount(
-          username,
-          recoveryCodes
-        );
-
-        if (success) {
-          response.status(200).json({ success, resetToken });
-        } else {
-          response.status(400).json({ success, message: error });
-        }
-      } catch (error) {
-        console.error("Error recovering account:", error);
-        response
-          .status(500)
-          .json({ success: false, message: "Internal server error" });
-      }
-    }
-  );
-
-  app.post(
-    "/system/reset-password",
-    [isMultiUserSetup],
-    async (request, response) => {
-      try {
-        const { token, newPassword, confirmPassword } = reqBody(request);
-        const { success, message, error } = await resetPassword(
-          token,
-          newPassword,
-          confirmPassword
-        );
-
-        if (success) {
-          response.status(200).json({ success, message });
-        } else {
-          response.status(400).json({ success, error });
-        }
-      } catch (error) {
-        console.error("Error resetting password:", error);
-        response.status(500).json({ success: false, message: error.message });
-      }
     }
   );
 
@@ -653,9 +592,10 @@ function systemEndpoints(app) {
           return;
         }
 
-        const { username, password } = reqBody(request);
+        const { username, email, password } = reqBody(request);
         const { user, error } = await User.create({
           username,
+          email,
           password,
           role: Role.superAdminRoleName(),
         });
@@ -1251,7 +1191,7 @@ function systemEndpoints(app) {
   app.post("/system/user", [validatedRequest], async (request, response) => {
     try {
       const sessionUser = await userFromSession(request, response);
-      const { username, password, bio } = reqBody(request);
+      const { username, email, bio } = reqBody(request);
       const id = Number(sessionUser.id);
 
       if (!id) {
@@ -1264,7 +1204,8 @@ function systemEndpoints(app) {
       // Otherwise, do not attempt to validate it to allow existing users to keep their username if not changing it.
       if (username !== sessionUser.username)
         updates.username = User.validations.username(String(username));
-      if (password) updates.password = String(password);
+      if (!!email && email !== sessionUser.email)
+        updates.email = User.validations.email(String(email));
       if (bio) updates.bio = String(bio);
 
       if (Object.keys(updates).length === 0) {
@@ -1283,6 +1224,99 @@ function systemEndpoints(app) {
         .json({ success: false, error: e.message || "Internal server error" });
     }
   });
+
+  // Changing your own password always requires proving you know the current one. This is
+  // also the single endpoint reachable while an account is flagged `requiresPasswordChange`,
+  // which is how admin-generated passwords get replaced.
+  app.post(
+    "/system/user/change-password",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const sessionUser = await userFromSession(request, response);
+        const id = Number(sessionUser?.id);
+        if (!id) {
+          response
+            .status(400)
+            .json({ success: false, error: "Invalid user ID" });
+          return;
+        }
+
+        const { currentPassword, newPassword, confirmPassword } =
+          reqBody(request);
+
+        // A user holding an admin-generated password proved they know it by logging in
+        // with it moments ago, so the forced flow does not ask for it a second time.
+        // Rotating your own password voluntarily always requires it.
+        const forcedChange = !!sessionUser.requiresPasswordChange;
+
+        if (!newPassword || (!forcedChange && !currentPassword)) {
+          response.status(400).json({
+            success: false,
+            error: forcedChange
+              ? "A new password is required."
+              : "Current and new password are both required.",
+          });
+          return;
+        }
+
+        if (String(newPassword) !== String(confirmPassword)) {
+          response
+            .status(400)
+            .json({ success: false, error: "Passwords do not match." });
+          return;
+        }
+
+        if (
+          !forcedChange &&
+          !(await User.verifyPassword(id, String(currentPassword)))
+        ) {
+          await EventLogs.logEvent(
+            "failed_password_change_invalid_password",
+            { username: sessionUser.username },
+            id
+          );
+          response.status(400).json({
+            success: false,
+            error: "Current password is incorrect.",
+          });
+          return;
+        }
+
+        // Checked against the stored hash rather than the submitted current password so
+        // it also catches a forced user trying to keep the password they were issued.
+        if (await User.verifyPassword(id, String(newPassword))) {
+          response.status(400).json({
+            success: false,
+            error: "New password must be different from the current password.",
+          });
+          return;
+        }
+
+        const { success, error } = await User.changePassword(
+          id,
+          String(newPassword)
+        );
+        if (!success) {
+          response.status(400).json({ success: false, error });
+          return;
+        }
+
+        await EventLogs.logEvent(
+          "user_password_changed",
+          { username: sessionUser.username },
+          id
+        );
+        response.status(200).json({ success: true, error: null });
+      } catch (e) {
+        console.error(e);
+        response.status(500).json({
+          success: false,
+          error: e.message || "Internal server error",
+        });
+      }
+    }
+  );
 
   app.get(
     "/system/slash-command-presets",

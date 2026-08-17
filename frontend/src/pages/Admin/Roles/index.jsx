@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import RoleModal from "./RoleModal";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import showToast from "@/utils/toast";
 
 /**
@@ -79,6 +80,8 @@ function RolesPanel({ scope }) {
   const [categories, setCategories] = useState([]);
   // null = closed, {} = creating, {...role} = editing
   const [editing, setEditing] = useState(null);
+  // null = closed, {...config} = open
+  const [confirm, setConfirm] = useState(null);
 
   async function reload() {
     const [{ roles: _roles }, { categories: _categories }] = await Promise.all([
@@ -100,40 +103,48 @@ function RolesPanel({ scope }) {
 
   async function handleDelete(role) {
     const count = holderCount(role);
-    if (
-      !window.confirm(
-        `Delete the "${role.displayName}" role?\n\n${
-          count > 0
-            ? `${count} ${holderLabel} holding it will be moved to the default role.`
-            : `No ${holderLabel} currently hold this role.`
-        }`
-      )
-    )
-      return;
-
-    const { success, error, reassigned } = await api.delete(role.id);
-    if (!success) return showToast(error, "error", { clear: true });
-    showToast(
-      reassigned > 0
-        ? `Role deleted. ${reassigned} ${holderLabel} moved to the default role.`
-        : "Role deleted.",
-      "success",
-      { clear: true }
-    );
-    reload();
+    setConfirm({
+      title: `Delete "${role.displayName}"?`,
+      description:
+        count > 0
+          ? `${count} ${holderLabel} holding it will be moved to the default role.`
+          : `No ${holderLabel} currently hold this role.`,
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error, reassigned } = await api.delete(role.id);
+        if (!success) return showToast(error, "error", { clear: true });
+        showToast(
+          reassigned > 0
+            ? `Role deleted. ${reassigned} ${holderLabel} moved to the default role.`
+            : "Role deleted.",
+          "success",
+          { clear: true }
+        );
+        reload();
+      },
+    });
   }
 
   async function handleMakeDefault(role) {
-    const { error } = await WorkspaceRole.update(role.id, { isDefault: true });
-    if (error) return showToast(error, "error", { clear: true });
-    showToast(
-      `New members will now get the "${role.displayName}" role.`,
-      "success",
-      {
-        clear: true,
-      }
-    );
-    reload();
+    setConfirm({
+      title: `Set "${role.displayName}" as default?`,
+      description: "New members will automatically be assigned this role.",
+      confirmText: "Set as default",
+      variant: "default",
+      onConfirm: async () => {
+        const { error } = await WorkspaceRole.update(role.id, {
+          isDefault: true,
+        });
+        if (error) return showToast(error, "error", { clear: true });
+        showToast(
+          `New members will now get the "${role.displayName}" role.`,
+          "success",
+          { clear: true }
+        );
+        reload();
+      },
+    });
   }
 
   return (
@@ -287,6 +298,8 @@ function RolesPanel({ scope }) {
           )}
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

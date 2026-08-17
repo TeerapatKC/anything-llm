@@ -10,6 +10,7 @@ import MCPLogo from "@/media/agents/mcp-logo.svg";
 import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export function MCPServerHeader({
   setMcpServers,
@@ -18,6 +19,7 @@ export function MCPServerHeader({
 }) {
   const { t } = useTranslation();
   const [loadingMcpServers, setLoadingMcpServers] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   useEffect(() => {
     async function fetchMCPServers() {
       setLoadingMcpServers(true);
@@ -30,25 +32,29 @@ export function MCPServerHeader({
 
   // Refresh the list of MCP servers
   const refreshMCPServers = () => {
-    if (
-      window.confirm(
-        "Are you sure you want to refresh the list of MCP servers? This will restart all MCP servers and reload their tools."
-      )
-    ) {
-      setLoadingMcpServers(true);
-      MCPServers.forceReload()
-        .then(({ servers = [] }) => {
-          setSelectedMcpServer(null);
-          setMcpServers(servers);
-        })
-        .catch((err) => {
-          console.error(err);
-          showToast(`Failed to refresh MCP servers.`, "error", { clear: true });
-        })
-        .finally(() => {
-          setLoadingMcpServers(false);
-        });
-    }
+    setConfirm({
+      title: "Refresh the list of MCP servers?",
+      description: "This will restart all MCP servers and reload their tools.",
+      confirmText: "Refresh",
+      variant: "default",
+      onConfirm: () => {
+        setLoadingMcpServers(true);
+        MCPServers.forceReload()
+          .then(({ servers = [] }) => {
+            setSelectedMcpServer(null);
+            setMcpServers(servers);
+          })
+          .catch((err) => {
+            console.error(err);
+            showToast(`Failed to refresh MCP servers.`, "error", {
+              clear: true,
+            });
+          })
+          .finally(() => {
+            setLoadingMcpServers(false);
+          });
+      },
+    });
   };
 
   return (
@@ -86,6 +92,7 @@ export function MCPServerHeader({
         </div>
       </div>
       {children({ loadingMcpServers })}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

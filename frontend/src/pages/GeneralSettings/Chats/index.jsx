@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const exportOptions = {
   csv: {
@@ -62,6 +63,7 @@ export default function WorkspaceChats() {
   const [offset, setOffset] = useState(Number(query.get("offset") || 0));
   const [canNext, setCanNext] = useState(false);
   const { t } = useTranslation();
+  const [confirm, setConfirm] = useState(null);
 
   const handleDumpChats = async (exportType) => {
     const chats = await System.exportChats(exportType, "workspace");
@@ -77,15 +79,17 @@ export default function WorkspaceChats() {
   };
 
   const handleClearAllChats = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to clear all chats?\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    await System.deleteChat(-1);
-    setChats([]);
-    showToast("Cleared all chats.", "success");
+    setConfirm({
+      title: "Clear all chats?",
+      description: "This action is irreversible.",
+      confirmText: "Clear all",
+      variant: "destructive",
+      onConfirm: async () => {
+        await System.deleteChat(-1);
+        setChats([]);
+        showToast("Cleared all chats.", "success");
+      },
+    });
   };
 
   const toggleMenu = () => {
@@ -121,80 +125,83 @@ export default function WorkspaceChats() {
   }, [offset]);
 
   return (
-    <CanViewChatHistory>
-      <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-        <Sidebar />
-        <div
-          style={{ height: "100%" }}
-          className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-        >
-          <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-            <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-              <div className="flex flex-wrap gap-4 items-center">
-                <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                  {t("recorded.title")}
-                </p>
-                <div className="relative">
-                  <button
-                    ref={openMenuButton}
-                    onClick={toggleMenu}
-                    className="flex items-center gap-x-2 px-4 py-1 rounded-lg bg-primary-button hover:light:bg-theme-bg-primary hover:text-theme-text-primary text-xs font-semibold hover:bg-secondary shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
-                  >
-                    <Download size={18} weight="bold" />
-                    {t("recorded.export")}
-                    <CaretDown size={18} weight="bold" />
-                  </button>
-                  <div
-                    ref={menuRef}
-                    className={`${
-                      showMenu ? "slide-down" : "slide-up hidden"
-                    } z-20 w-fit rounded-lg absolute top-full right-0 bg-secondary light:bg-theme-bg-secondary mt-2 shadow-md`}
-                  >
-                    <div className="py-2">
-                      {Object.entries(exportOptions).map(([key, data]) => (
-                        <button
-                          key={key}
-                          onClick={() => {
-                            handleDumpChats(key);
-                            setShowMenu(false);
-                          }}
-                          className="w-full text-left px-4 py-2 text-white text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
-                        >
-                          {data.name}
-                        </button>
-                      ))}
+    <>
+      <CanViewChatHistory>
+        <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
+          <Sidebar />
+          <div
+            style={{ height: "100%" }}
+            className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+          >
+            <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
+              <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
+                <div className="flex flex-wrap gap-4 items-center">
+                  <p className="text-lg leading-6 font-bold text-theme-text-primary">
+                    {t("recorded.title")}
+                  </p>
+                  <div className="relative">
+                    <button
+                      ref={openMenuButton}
+                      onClick={toggleMenu}
+                      className="flex items-center gap-x-2 px-4 py-1 rounded-lg bg-primary-button hover:light:bg-theme-bg-primary hover:text-theme-text-primary text-xs font-semibold hover:bg-secondary shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
+                    >
+                      <Download size={18} weight="bold" />
+                      {t("recorded.export")}
+                      <CaretDown size={18} weight="bold" />
+                    </button>
+                    <div
+                      ref={menuRef}
+                      className={`${
+                        showMenu ? "slide-down" : "slide-up hidden"
+                      } z-20 w-fit rounded-lg absolute top-full right-0 bg-secondary light:bg-theme-bg-secondary mt-2 shadow-md`}
+                    >
+                      <div className="py-2">
+                        {Object.entries(exportOptions).map(([key, data]) => (
+                          <button
+                            key={key}
+                            onClick={() => {
+                              handleDumpChats(key);
+                              setShowMenu(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-white text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
+                          >
+                            {data.name}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
+                  {chats.length > 0 && (
+                    <button
+                      onClick={handleClearAllChats}
+                      className="flex items-center gap-x-2 px-4 py-1 border hover:border-transparent light:border-theme-sidebar-border border-white/40 text-white/40 light:text-theme-text-secondary rounded-lg bg-transparent hover:light:text-theme-bg-primary hover:text-theme-text-primary text-xs font-semibold hover:bg-red-500 shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
+                    >
+                      <Trash size={18} weight="bold" />
+                      Clear Chats
+                    </button>
+                  )}
                 </div>
-                {chats.length > 0 && (
-                  <button
-                    onClick={handleClearAllChats}
-                    className="flex items-center gap-x-2 px-4 py-1 border hover:border-transparent light:border-theme-sidebar-border border-white/40 text-white/40 light:text-theme-text-secondary rounded-lg bg-transparent hover:light:text-theme-bg-primary hover:text-theme-text-primary text-xs font-semibold hover:bg-red-500 shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
-                  >
-                    <Trash size={18} weight="bold" />
-                    Clear Chats
-                  </button>
-                )}
+                <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
+                  {t("recorded.description")}
+                </p>
               </div>
-              <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
-                {t("recorded.description")}
-              </p>
-            </div>
-            <div className="overflow-x-auto">
-              <ChatsContainer
-                loading={loading}
-                chats={chats}
-                setChats={setChats}
-                offset={offset}
-                setOffset={setOffset}
-                canNext={canNext}
-                t={t}
-              />
+              <div className="overflow-x-auto">
+                <ChatsContainer
+                  loading={loading}
+                  chats={chats}
+                  setChats={setChats}
+                  offset={offset}
+                  setOffset={setOffset}
+                  canNext={canNext}
+                  t={t}
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </CanViewChatHistory>
+      </CanViewChatHistory>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+    </>
   );
 }
 

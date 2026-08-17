@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import GeneratedPasswordModal from "@/components/Modals/GeneratedPassword";
 import {
   DialogClose,
   DialogHeader,
@@ -32,6 +33,7 @@ export default function NewUserModal() {
   const { roles, permissionLabels } = useRoles();
   const [error, setError] = useState(null);
   const [role, setRole] = useState("default");
+  const [createdUser, setCreatedUser] = useState(null);
   const [messageLimit, setMessageLimit] = useState({
     enabled: false,
     limit: 10,
@@ -46,8 +48,10 @@ export default function NewUserModal() {
     for (var [key, value] of form.entries()) data[key] = value;
     data.dailyMessageLimit = messageLimit.enabled ? messageLimit.limit : null;
 
-    const { user, error } = await Admin.newUser(data);
-    if (!!user) window.location.reload();
+    const { user, initialPassword, error } = await Admin.newUser(data);
+    // The generated password is only ever returned here, so hold the page open until
+    // the admin has dismissed it - the reload happens once they close the dialog.
+    if (!!user) setCreatedUser({ username: user.username, initialPassword });
     setError(error);
   };
 
@@ -84,20 +88,20 @@ export default function NewUserModal() {
             </p>
           </div>
           <div>
-            <Label variant="field" htmlFor="password" className="block mb-2">
-              Password
+            <Label variant="field" htmlFor="email" className="block mb-2">
+              Email
             </Label>
             <Input
               variant="settings"
-              name="password"
-              type="text"
-              placeholder="User's initial password"
+              name="email"
+              type="email"
+              placeholder="user@example.com"
+              maxLength={255}
               required={true}
               autoComplete="off"
-              minLength={8}
             />
             <p className="mt-2 text-xs text-white/60">
-              Password must be at least 8 characters long
+              Used to identify and contact the account holder.
             </p>
           </div>
           <div>
@@ -148,8 +152,9 @@ export default function NewUserModal() {
           />
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
           <p className="text-white text-xs md:text-sm">
-            After creating a user they will need to login with their initial
-            login to get access.
+            An initial password is generated for you and shown once after the
+            user is created. The user must replace it before they can use the
+            instance.
           </p>
         </div>
         <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
@@ -163,6 +168,12 @@ export default function NewUserModal() {
           </Button>
         </DialogFooter>
       </form>
+      <GeneratedPasswordModal
+        open={!!createdUser}
+        username={createdUser?.username}
+        password={createdUser?.initialPassword}
+        onClose={() => window.location.reload()}
+      />
     </>
   );
 }

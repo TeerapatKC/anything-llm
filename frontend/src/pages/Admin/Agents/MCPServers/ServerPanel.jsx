@@ -7,39 +7,46 @@ import MCPServers from "@/models/mcpServers";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { useTranslation, Trans } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 function ManageServerMenu({ server, toggleServer, onDelete }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [running, setRunning] = useState(server.running);
+  const [confirm, setConfirm] = useState(null);
   const menuRef = useRef(null);
 
   async function deleteServer() {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this MCP server? It will be removed from your config file and you will need to add it back manually."
-      )
-    )
-      return;
-    const { success, error } = await MCPServers.deleteServer(server.name);
-    if (success) {
-      showToast("MCP server deleted successfully.", "success");
-      onDelete(server.name);
-    } else {
-      showToast(error || "Failed to delete MCP server.", "error");
-    }
+    setConfirm({
+      title: "Delete this MCP server?",
+      description:
+        "It will be removed from your config file and you will need to add it back manually.",
+      confirmText: "Delete server",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await MCPServers.deleteServer(server.name);
+        if (success) {
+          showToast("MCP server deleted successfully.", "success");
+          onDelete(server.name);
+        } else {
+          showToast(error || "Failed to delete MCP server.", "error");
+        }
+      },
+    });
   }
 
   async function handleToggleServer() {
-    if (
-      !window.confirm(
-        running
-          ? "Are you sure you want to stop this MCP server? It will be started automatically when you next start the server."
-          : "Are you sure you want to start this MCP server? It will be started automatically when you next start the server."
-      )
-    )
-      return;
+    setConfirm({
+      title: running ? "Stop this MCP server?" : "Start this MCP server?",
+      description:
+        "It will be started automatically when you next start the server.",
+      confirmText: running ? "Stop server" : "Start server",
+      variant: running ? "destructive" : "default",
+      onConfirm: toggleServerNow,
+    });
+  }
 
+  async function toggleServerNow() {
     const { success, error } = await MCPServers.toggleServer(server.name);
     if (success) {
       const newState = !running;
@@ -93,6 +100,7 @@ function ManageServerMenu({ server, toggleServer, onDelete }) {
           </Button>
         </div>
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

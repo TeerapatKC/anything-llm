@@ -71,6 +71,17 @@ async function validatedRequest(request, response, next) {
   next();
 }
 
+// The only endpoints a user with a pending forced password change may reach. Everything
+// else is refused until they replace the password an admin generated for them.
+// `refresh-user` and `check-token` are session-keepalive calls the app makes on every
+// boot - refusing them logs the user straight back out to /login (AuthContext treats a
+// failed refresh as a dead session) and they could never reach the change form.
+const PASSWORD_CHANGE_ALLOWED_PATHS = [
+  "/system/user/change-password",
+  "/system/check-token",
+  "/system/refresh-user",
+];
+
 async function validateMultiUserRequest(request, response, next) {
   const auth = request.header("Authorization");
   const token = auth ? auth.split(" ")[1] : null;
@@ -101,6 +112,20 @@ async function validateMultiUserRequest(request, response, next) {
   if (user.suspended) {
     response.status(401).json({
       error: "User is suspended from system",
+    });
+    return;
+  }
+
+  // Users holding an admin-generated password are frozen out of the rest of the app
+  // until they set their own. The frontend surfaces the change-password screen off the
+  // same flag, but this is what actually enforces it.
+  if (
+    user.requiresPasswordChange &&
+    !PASSWORD_CHANGE_ALLOWED_PATHS.includes(request.path)
+  ) {
+    response.status(403).json({
+      error: "You must change your password before continuing.",
+      requiresPasswordChange: true,
     });
     return;
   }

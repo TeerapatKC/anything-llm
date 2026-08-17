@@ -1,6 +1,7 @@
 import truncate from "truncate";
 import { Trash } from "@phosphor-icons/react";
 import System from "@/models/system";
+import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import MarkdownRenderer from "../MarkdownRenderer";
 import { safeJsonParse } from "@/utils/request";
@@ -12,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -24,16 +26,19 @@ export default function ChatRow({ chat, onDelete }) {
     openModal: openResponseModal,
     closeModal: closeResponseModal,
   } = useModal();
+  const [confirm, setConfirm] = useState(null);
 
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete this chat?\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    await System.deleteChat(chat.id);
-    onDelete(chat.id);
+    setConfirm({
+      title: "Delete this chat?",
+      description: "This action is irreversible.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        await System.deleteChat(chat.id);
+        onDelete(chat.id);
+      },
+    });
   };
 
   return (
@@ -105,6 +110,7 @@ export default function ChatRow({ chat, onDelete }) {
           />
         </DialogContent>
       </Dialog>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

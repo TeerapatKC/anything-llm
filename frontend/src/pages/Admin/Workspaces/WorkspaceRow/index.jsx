@@ -1,9 +1,11 @@
 import { useRef } from "react";
+import { useState } from "react";
 import Admin from "@/models/admin";
 import paths from "@/utils/paths";
 import { LinkSimple, Trash } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function WorkspaceRow({
   workspace,
@@ -11,15 +13,20 @@ export default function WorkspaceRow({
   deletionProtected = false,
 }) {
   const rowRef = useRef(null);
+  const [confirm, setConfirm] = useState(null);
+
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete ${workspace.name}?\nAfter you do this it will be unavailable in this instance of AnythingLLM.\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    rowRef?.current?.remove();
-    await Admin.deleteWorkspace(workspace.id);
+    setConfirm({
+      title: `Delete ${workspace.name}?`,
+      description:
+        "After deleting it will be unavailable in this instance of AnythingLLM. This action is irreversible.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        rowRef?.current?.remove();
+        await Admin.deleteWorkspace(workspace.id);
+      },
+    });
   };
 
   return (
@@ -65,6 +72,7 @@ export default function WorkspaceRow({
           )}
         </TableCell>
       </TableRow>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

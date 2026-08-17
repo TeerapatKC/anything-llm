@@ -8,6 +8,7 @@ import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
 import NewRouterModal from "./NewRouterModal";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ModelRouters() {
   const { t } = useTranslation();
@@ -177,17 +178,21 @@ function EmptyState({ onCreateClick, t }) {
 function RouterRow({ router, removeRouter, onEdit, showDivider }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [confirm, setConfirm] = useState(null);
 
   const handleDelete = async (e) => {
     e.stopPropagation();
-    if (
-      !window.confirm(t("model-router.delete-confirm", { name: router.name }))
-    )
-      return;
-
-    const { success, error } = await ModelRouter.delete(router.id);
-    if (success) removeRouter(router.id);
-    else showToast(t("model-router.toast-delete-failed", { error }), "error");
+    setConfirm({
+      title: t("model-router.delete-confirm", { name: router.name }),
+      confirmText: t("common.delete", "Delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await ModelRouter.delete(router.id);
+        if (success) removeRouter(router.id);
+        else
+          showToast(t("model-router.toast-delete-failed", { error }), "error");
+      },
+    });
   };
 
   const goToRules = () => navigate(paths.settings.modelRouterRules(router.id));
@@ -237,6 +242,7 @@ function RouterRow({ router, removeRouter, onEdit, showDivider }) {
       {showDivider && (
         <div className="border-t border-white/10 light:border-slate-200" />
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

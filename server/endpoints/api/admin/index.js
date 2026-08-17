@@ -93,6 +93,7 @@ function apiAdminEndpoints(app) {
           "application/json": {
             example: {
               username: "sample-sam",
+              email: 'sample-sam@example.com',
               password: 'hunter2',
               role: 'default' // any role name defined under Settings > Roles & Permissions
             }
@@ -108,6 +109,7 @@ function apiAdminEndpoints(app) {
               user: {
                 id: 1,
                 username: 'sample-sam',
+                email: 'sample-sam@example.com',
                 role: 'default',
               },
               error: null,

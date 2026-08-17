@@ -67,6 +67,7 @@ export default function EditUserModal({
       // Update local storage if we're editing our own user
       if (currentUser && currentUser.id === user.id) {
         currentUser.username = data.username;
+        currentUser.email = data.email;
         currentUser.bio = data.bio;
         currentUser.role = data.role;
         localStorage.setItem(AUTH_USER, JSON.stringify(currentUser));
@@ -107,19 +108,22 @@ export default function EditUserModal({
             </p>
           </div>
           <div>
-            <Label variant="field" htmlFor="password" className="block mb-2">
-              New Password
+            <Label variant="field" htmlFor="email" className="block mb-2">
+              Email
             </Label>
             <Input
               variant="settings"
-              name="password"
-              type="text"
-              placeholder={`${user.username}'s new password`}
+              name="email"
+              type="email"
+              placeholder="user@example.com"
+              defaultValue={user.email ?? ""}
+              maxLength={255}
+              required={true}
               autoComplete="off"
-              minLength={8}
             />
             <p className="mt-2 text-xs text-white/60">
-              Password must be at least 8 characters long
+              Passwords are not set here - use "Reset password" on the user list
+              to issue a new one.
             </p>
           </div>
           <div>

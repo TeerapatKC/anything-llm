@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { FullScreenLoader } from "../Preloader";
-import validateSessionTokenForUser from "@/utils/session";
+import validateSessionTokenForUser, {
+  sessionStateForUser,
+} from "@/utils/session";
 import paths from "@/utils/paths";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
 import { userFromStorage } from "@/utils/request";
@@ -40,6 +42,7 @@ function useIsAuthenticated() {
   const [shouldRedirectToOnboarding, setShouldRedirectToOnboarding] =
     useState(false);
   const [multiUserMode, setMultiUserMode] = useState(false);
+  const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
 
   useEffect(() => {
     const validateSession = async () => {
@@ -81,8 +84,8 @@ function useIsAuthenticated() {
         return;
       }
 
-      const isValid = await validateSessionTokenForUser();
-      if (!isValid) {
+      const session = await sessionStateForUser();
+      if (!session.valid) {
         localStorage.removeItem(AUTH_USER);
         localStorage.removeItem(AUTH_TOKEN);
         localStorage.removeItem(AUTH_TIMESTAMP);
@@ -92,13 +95,27 @@ function useIsAuthenticated() {
         return;
       }
 
+      // An account still holding an admin-generated password is refused by every other
+      // endpoint (including the permissions call below), so stop here and let the caller
+      // render the change-password screen.
+      if (session.requiresPasswordChange) {
+        setRequiresPasswordChange(true);
+        setIsAuthed(true);
+        return;
+      }
+
       await hydratePermissions();
       setIsAuthed(true);
     };
     validateSession();
   }, []);
 
-  return { isAuthd, shouldRedirectToOnboarding, multiUserMode };
+  return {
+    isAuthd,
+    shouldRedirectToOnboarding,
+    multiUserMode,
+    requiresPasswordChange,
+  };
 }
 
 /**
@@ -111,13 +128,19 @@ export function PermissionRoute({
   permissions = [],
   hideUserMenu = false,
 }) {
-  const { isAuthd, shouldRedirectToOnboarding, multiUserMode } =
-    useIsAuthenticated();
+  const {
+    isAuthd,
+    shouldRedirectToOnboarding,
+    multiUserMode,
+    requiresPasswordChange,
+  } = useIsAuthenticated();
   if (isAuthd === null) return <FullScreenLoader />;
 
   if (shouldRedirectToOnboarding) {
     return <Navigate to={paths.onboarding.home()} />;
   }
+
+  if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
 
   const user = userFromStorage();
   const allowed = !multiUserMode || userCanAny(permissions, user);
@@ -143,14 +166,20 @@ export function PermissionRoute({
  * @param {{Component: React.ComponentType, permissions: string[]}} props
  */
 export function WorkspacePermissionRoute({ Component, permissions = [] }) {
-  const { isAuthd, shouldRedirectToOnboarding, multiUserMode } =
-    useIsAuthenticated();
+  const {
+    isAuthd,
+    shouldRedirectToOnboarding,
+    multiUserMode,
+    requiresPasswordChange,
+  } = useIsAuthenticated();
   const { slug } = useParams();
   if (isAuthd === null) return <FullScreenLoader />;
 
   if (shouldRedirectToOnboarding) {
     return <Navigate to={paths.onboarding.home()} />;
   }
+
+  if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
 
   const user = userFromStorage();
   const allowed = !multiUserMode || workspaceCanAny(permissions, slug, user);
@@ -185,12 +214,15 @@ export function SingleUserRoute({ Component }) {
 }
 
 export default function PrivateRoute({ Component }) {
-  const { isAuthd, shouldRedirectToOnboarding } = useIsAuthenticated();
+  const { isAuthd, shouldRedirectToOnboarding, requiresPasswordChange } =
+    useIsAuthenticated();
   if (isAuthd === null) return <FullScreenLoader />;
 
   if (shouldRedirectToOnboarding) {
     return <Navigate to="/onboarding" />;
   }
+
+  if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
 
   return isAuthd ? (
     <KeyboardShortcutWrapper>

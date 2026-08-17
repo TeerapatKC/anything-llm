@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function AdminLogs() {
   const query = useQuery();
@@ -21,6 +22,7 @@ export default function AdminLogs() {
   const [logs, setLogs] = useState([]);
   const [offset, setOffset] = useState(Number(query.get("offset") || 0));
   const [canNext, setCanNext] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -34,21 +36,23 @@ export default function AdminLogs() {
   }, [offset]);
 
   const handleResetLogs = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to clear all event logs? This action is irreversible."
-      )
-    )
-      return;
-    const { success, error } = await System.clearEventLogs();
-    if (success) {
-      showToast("Event logs cleared successfully.", "success");
-      setLogs([]);
-      setCanNext(false);
-      setOffset(0);
-    } else {
-      showToast(`Failed to clear logs: ${error}`, "error");
-    }
+    setConfirm({
+      title: "Clear all event logs?",
+      description: "This action is irreversible.",
+      confirmText: "Clear logs",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await System.clearEventLogs();
+        if (success) {
+          showToast("Event logs cleared successfully.", "success");
+          setLogs([]);
+          setCanNext(false);
+          setOffset(0);
+        } else {
+          showToast(`Failed to clear logs: ${error}`, "error");
+        }
+      },
+    });
   };
 
   const handlePrevious = () => {
@@ -97,6 +101,7 @@ export default function AdminLogs() {
           </div>
         </div>
       </div>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

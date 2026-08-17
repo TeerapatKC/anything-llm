@@ -11,6 +11,7 @@ import CodeSnippetModal from "./CodeSnippetModal";
 import moment from "moment";
 import { safeJsonParse } from "@/utils/request";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function EmbedRow({ embed }) {
   const rowRef = useRef(null);
@@ -25,41 +26,49 @@ export default function EmbedRow({ embed }) {
     openModal: openSnippetModal,
     closeModal: closeSnippetModal,
   } = useModal();
+  const [confirm, setConfirm] = useState(null);
 
   const handleSuspend = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to disabled this embed?\nOnce disabled the embed will no longer respond to any chat requests.`
-      )
-    )
-      return false;
-
-    const { success, error } = await Embed.updateEmbed(embed.id, {
-      enabled: !enabled,
+    setConfirm({
+      title: enabled ? "Disable this embed?" : "Enable this embed?",
+      description: enabled
+        ? "Once disabled the embed will no longer respond to any chat requests."
+        : "The embed will resume responding to chat requests.",
+      confirmText: enabled ? "Disable" : "Enable",
+      variant: enabled ? "destructive" : "default",
+      onConfirm: async () => {
+        const { success, error } = await Embed.updateEmbed(embed.id, {
+          enabled: !enabled,
+        });
+        if (!success) showToast(error, "error", { clear: true });
+        if (success) {
+          showToast(
+            `Embed ${enabled ? "has been disabled" : "is active"}.`,
+            "success",
+            { clear: true }
+          );
+          setEnabled(!enabled);
+        }
+      },
     });
-    if (!success) showToast(error, "error", { clear: true });
-    if (success) {
-      showToast(
-        `Embed ${enabled ? "has been disabled" : "is active"}.`,
-        "success",
-        { clear: true }
-      );
-      setEnabled(!enabled);
-    }
   };
+
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to delete this embed?\nOnce deleted this embed will no longer respond to chats or be active.\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    const { success, error } = await Embed.deleteEmbed(embed.id);
-    if (!success) showToast(error, "error", { clear: true });
-    if (success) {
-      rowRef?.current?.remove();
-      showToast("Embed deleted from system.", "success", { clear: true });
-    }
+    setConfirm({
+      title: "Delete this embed?",
+      description:
+        "Once deleted this embed will no longer respond to chats or be active. This action is irreversible.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await Embed.deleteEmbed(embed.id);
+        if (!success) showToast(error, "error", { clear: true });
+        if (success) {
+          rowRef?.current?.remove();
+          showToast("Embed deleted from system.", "success", { clear: true });
+        }
+      },
+    });
   };
 
   return (
@@ -165,6 +174,7 @@ export default function EmbedRow({ embed }) {
           <CodeSnippetModal embed={embed} />
         </DialogContent>
       </Dialog>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

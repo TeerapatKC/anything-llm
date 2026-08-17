@@ -109,6 +109,9 @@ function UsersContainer() {
             Username
           </TableHead>
           <TableHead variant="none" scope="col" className="px-6 py-3">
+            Email
+          </TableHead>
+          <TableHead variant="none" scope="col" className="px-6 py-3">
             Role
           </TableHead>
           <TableHead variant="none" scope="col" className="px-6 py-3">

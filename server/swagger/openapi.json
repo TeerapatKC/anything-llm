@@ -147,62 +147,11 @@
         "description": "Create a new user with username and password. Methods are disabled until multi user mode is enabled via the UI.",
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "example": {
-                    "user": {
-                      "id": 1,
-                      "username": "sample-sam",
-                      "role": "default"
-                    },
-                    "error": null
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Instance is not in Multi-User mode. Method denied"
-          },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidAPIKey"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidAPIKey"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
+            "description": "Forbidden"
           }
         },
-        "requestBody": {
-          "description": "Key pair object that will define the new user to add to the system.",
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "username": "sample-sam",
-                "password": "hunter2",
-                "role": "default | admin"
-              }
-            }
-          }
-        }
+        "requestBody": {}
       }
     },
     "/v1/admin/users/{id}": {
@@ -223,56 +172,11 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "example": {
-                    "success": true,
-                    "error": null
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Instance is not in Multi-User mode. Method denied"
-          },
           "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidAPIKey"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidAPIKey"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error"
+            "description": "Forbidden"
           }
         },
-        "requestBody": {
-          "description": "Key pair object that will update the found user. All fields are optional and will not update unless specified.",
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "username": "sample-sam",
-                "password": "hunter2",
-                "role": "default | admin",
-                "suspended": 0
-              }
-            }
-          }
-        }
+        "requestBody": {}
       },
       "delete": {
         "tags": [

@@ -30,10 +30,12 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import ChangePasswordModal from "@/components/Modals/ChangePassword";
 
 export default function AccountModal({ user, hideModal }) {
   const { pfp, setPfp } = usePfp();
   const { t } = useTranslation();
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
@@ -77,6 +79,7 @@ export default function AccountModal({ user, hideModal }) {
       let storedUser = safeJsonParse(localStorage.getItem(AUTH_USER), null);
       if (storedUser) {
         storedUser.username = data.username;
+        storedUser.email = data.email;
         storedUser.bio = data.bio;
         localStorage.setItem(AUTH_USER, JSON.stringify(storedUser));
       }
@@ -89,134 +92,151 @@ export default function AccountModal({ user, hideModal }) {
     }
   };
   return (
-    <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
-      <DialogContent
-        scrollable={false}
-        className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden"
-      >
-        <DialogHeader sticky={false} className="p-4">
-          <DialogTitle className="text-lg font-semibold">
-            {t("profile_settings.edit_account")}
-          </DialogTitle>
-        </DialogHeader>
-        <div
-          className="h-full w-full overflow-y-auto thin-scrollbar"
-          style={{ maxHeight: "calc(100vh - 200px)" }}
+    <>
+      <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
+        <DialogContent
+          scrollable={false}
+          className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden"
         >
-          <form onSubmit={handleUpdate} className="space-y-4">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-              <div className="flex flex-col items-center">
-                <label className="group w-24 h-24 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
-                  <input
-                    id="logo-upload"
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileUpload}
-                  />
-                  {pfp ? (
-                    <img
-                      src={pfp}
-                      alt="User profile picture"
-                      className="w-24 h-24 rounded-full object-cover bg-white"
+          <DialogHeader sticky={false} className="p-4">
+            <DialogTitle className="text-lg font-semibold">
+              {t("profile_settings.edit_account")}
+            </DialogTitle>
+          </DialogHeader>
+          <div
+            className="h-full w-full overflow-y-auto thin-scrollbar"
+            style={{ maxHeight: "calc(100vh - 200px)" }}
+          >
+            <form onSubmit={handleUpdate} className="space-y-4">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  <label className="group w-24 h-24 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
+                    <input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleFileUpload}
                     />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-1">
-                      <Plus className="w-5 h-5 text-theme-text-secondary" />
-                      <span className="text-theme-text-secondary text-opacity-80 text-xs font-semibold">
-                        {t("profile_settings.profile_picture")}
-                      </span>
-                    </div>
+                    {pfp ? (
+                      <img
+                        src={pfp}
+                        alt="User profile picture"
+                        className="w-24 h-24 rounded-full object-cover bg-white"
+                      />
+                    ) : (
+                      <div className="flex flex-col items-center justify-center p-1">
+                        <Plus className="w-5 h-5 text-theme-text-secondary" />
+                        <span className="text-theme-text-secondary text-opacity-80 text-xs font-semibold">
+                          {t("profile_settings.profile_picture")}
+                        </span>
+                      </div>
+                    )}
+                  </label>
+                  {pfp && (
+                    <button
+                      type="button"
+                      onClick={handleRemovePfp}
+                      className="mt-2 text-theme-text-secondary text-opacity-60 text-xs font-medium hover:underline"
+                    >
+                      {t("profile_settings.remove_profile_picture")}
+                    </button>
                   )}
-                </label>
-                {pfp && (
-                  <button
-                    type="button"
-                    onClick={handleRemovePfp}
-                    className="mt-2 text-theme-text-secondary text-opacity-60 text-xs font-medium hover:underline"
-                  >
-                    {t("profile_settings.remove_profile_picture")}
-                  </button>
-                )}
-              </div>
-            </div>
-            <div className="flex flex-col gap-y-3 px-4">
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="username"
-                  className="block mb-2"
-                >
-                  {t("profile_settings.username")}
-                </Label>
-                <Input
-                  variant="settings"
-                  name="username"
-                  type="text"
-                  placeholder="User's username"
-                  minLength={USERNAME_MIN_LENGTH}
-                  maxLength={USERNAME_MAX_LENGTH}
-                  pattern={USERNAME_PATTERN}
-                  defaultValue={user.username}
-                  required
-                  autoComplete="off"
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  {t("common.username_requirements")}
-                </p>
-              </div>
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="password"
-                  className="block mb-2"
-                >
-                  {t("profile_settings.new_password")}
-                </Label>
-                <Input
-                  variant="settings"
-                  name="password"
-                  type="text"
-                  placeholder={`${user.username}'s new password`}
-                  minLength={8}
-                />
-                <p className="mt-2 text-xs text-white/60">
-                  {t("profile_settings.password_description")}
-                </p>
-              </div>
-              <div>
-                <Label variant="field" htmlFor="bio" className="block mb-2">
-                  Bio
-                </Label>
-                <Textarea
-                  variant="settings"
-                  name="bio"
-                  placeholder="Tell us about yourself..."
-                  defaultValue={user.bio}
-                  rows={3}
-                />
-              </div>
-              <div className="flex gap-x-8">
-                <div className="flex flex-col gap-y-3">
-                  <AutoSubmitPreference />
-                  <AutoSpeakPreference />
                 </div>
               </div>
-            </div>
-            <DialogFooter className="p-4">
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  {t("profile_settings.cancel")}
+              <div className="flex flex-col gap-y-3 px-4">
+                <div>
+                  <Label
+                    variant="field"
+                    htmlFor="username"
+                    className="block mb-2"
+                  >
+                    {t("profile_settings.username")}
+                  </Label>
+                  <Input
+                    variant="settings"
+                    name="username"
+                    type="text"
+                    placeholder="User's username"
+                    minLength={USERNAME_MIN_LENGTH}
+                    maxLength={USERNAME_MAX_LENGTH}
+                    pattern={USERNAME_PATTERN}
+                    defaultValue={user.username}
+                    required
+                    autoComplete="off"
+                  />
+                  <p className="mt-2 text-xs text-white/60">
+                    {t("common.username_requirements")}
+                  </p>
+                </div>
+                <div>
+                  <Label variant="field" htmlFor="email" className="block mb-2">
+                    {t("profile_settings.email")}
+                  </Label>
+                  <Input
+                    variant="settings"
+                    name="email"
+                    type="email"
+                    placeholder="user@example.com"
+                    defaultValue={user.email ?? ""}
+                    maxLength={255}
+                    required
+                    autoComplete="off"
+                  />
+                </div>
+                <div>
+                  <Label variant="field" className="block mb-2">
+                    {t("profile_settings.password")}
+                  </Label>
+                  <Button
+                    variant="outline"
+                    type="button"
+                    onClick={() => setShowChangePassword(true)}
+                  >
+                    {t("password_change.title")}
+                  </Button>
+                  <p className="mt-2 text-xs text-white/60">
+                    {t("profile_settings.password_description")}
+                  </p>
+                </div>
+                <div>
+                  <Label variant="field" htmlFor="bio" className="block mb-2">
+                    Bio
+                  </Label>
+                  <Textarea
+                    variant="settings"
+                    name="bio"
+                    placeholder="Tell us about yourself..."
+                    defaultValue={user.bio}
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-x-8">
+                  <div className="flex flex-col gap-y-3">
+                    <AutoSubmitPreference />
+                    <AutoSpeakPreference />
+                  </div>
+                </div>
+              </div>
+              <DialogFooter className="p-4">
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    {t("profile_settings.cancel")}
+                  </Button>
+                </DialogClose>
+                <Button variant="default" type="submit">
+                  {t("profile_settings.update_account")}
                 </Button>
-              </DialogClose>
-              <Button variant="default" type="submit">
-                {t("profile_settings.update_account")}
-              </Button>
-            </DialogFooter>
-          </form>
-        </div>
-      </DialogContent>
-    </Dialog>
+              </DialogFooter>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
+      <ChangePasswordModal
+        open={showChangePassword}
+        onClose={() => setShowChangePassword(false)}
+      />
+    </>
   );
 }
 

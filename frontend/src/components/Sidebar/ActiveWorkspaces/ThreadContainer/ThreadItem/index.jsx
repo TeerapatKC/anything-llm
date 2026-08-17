@@ -16,6 +16,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 const THREAD_CALLOUT_DETAIL_WIDTH = 26;
 export default function ThreadItem({
@@ -182,6 +183,7 @@ function OptionsMenu({
   currentThreadSlug,
 }) {
   const menuRef = useRef(null);
+  const [confirm, setConfirm] = useState(null);
 
   // Ref menu options
   const outsideClick = (e) => {
@@ -242,12 +244,16 @@ function OptionsMenu({
   };
 
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this thread? All of its chats will be deleted. You cannot undo this."
-      )
-    )
-      return;
+    setConfirm({
+      title: "Delete this thread?",
+      description: "All of its chats will be deleted. You cannot undo this.",
+      confirmText: "Delete thread",
+      variant: "destructive",
+      onConfirm: deleteThread,
+    });
+  };
+
+  const deleteThread = async () => {
     const success = await Workspace.threads.delete(workspace.slug, thread.slug);
     if (!success) {
       showToast("Thread could not be deleted!", "error", { clear: true });
@@ -285,6 +291,7 @@ function OptionsMenu({
         <Trash size={18} />
         <p className="text-sm">Delete Thread</p>
       </button>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

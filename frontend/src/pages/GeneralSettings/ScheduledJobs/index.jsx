@@ -16,14 +16,31 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ScheduledJobsPage() {
   const { t } = useTranslation();
-  useWebPushNotifications(false);
+  const { updateAvailable, applyUpdate, dismissUpdate } =
+    useWebPushNotifications(false);
   const { isOpen, openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState([]);
   const [editingJob, setEditingJob] = useState(null);
+  const [confirm, setConfirm] = useState(null);
+
+  // A newer build of the app finished installing in the background - ask before
+  // reloading so the user does not lose what they are in the middle of.
+  useEffect(() => {
+    if (!updateAvailable) return;
+    setConfirm({
+      title: "A new version is available",
+      description: "Reload now to update?",
+      confirmText: "Reload",
+      cancelText: "Not now",
+      variant: "default",
+      onConfirm: applyUpdate,
+    });
+  }, [updateAvailable]);
 
   const fetchJobs = async () => {
     const { jobs: foundJobs } = await ScheduledJobs.list();
@@ -39,10 +56,16 @@ export default function ScheduledJobsPage() {
   usePolling(fetchJobs, 5000);
 
   const handleDelete = async (id) => {
-    if (!window.confirm(t("scheduledJobs.confirmDelete"))) return;
-    await ScheduledJobs.delete(id);
-    showToast(t("scheduledJobs.toast.deleted"), "success", { clear: true });
-    fetchJobs();
+    setConfirm({
+      title: t("scheduledJobs.confirmDelete"),
+      confirmText: t("common.delete", "Delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        await ScheduledJobs.delete(id);
+        showToast(t("scheduledJobs.toast.deleted"), "success", { clear: true });
+        fetchJobs();
+      },
+    });
   };
 
   const handleToggle = async (id) => {
@@ -158,6 +181,13 @@ export default function ScheduledJobsPage() {
           />
         </DialogContent>
       </Dialog>
+      <ConfirmDialog
+        config={confirm}
+        onClose={() => {
+          setConfirm(null);
+          dismissUpdate();
+        }}
+      />
     </BaseLayout>
   );
 }

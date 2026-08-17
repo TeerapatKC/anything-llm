@@ -4,23 +4,28 @@ import Admin from "@/models/admin";
 import { Trash } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function InviteRow({ invite }) {
   const rowRef = useRef(null);
   const [status, setStatus] = useState(invite.status);
   const [copied, setCopied] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   const handleDelete = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to deactivate this invite?\nAfter you do this it will not longer be useable.\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    if (rowRef?.current) {
-      rowRef.current.children[0].innerText = "Disabled";
-    }
-    setStatus("disabled");
-    await Admin.disableInvite(invite.id);
+    setConfirm({
+      title: "Deactivate this invite?",
+      description:
+        "After you do this it will no longer be useable. This action is irreversible.",
+      confirmText: "Deactivate",
+      variant: "destructive",
+      onConfirm: async () => {
+        if (rowRef?.current) {
+          rowRef.current.children[0].innerText = "Disabled";
+        }
+        setStatus("disabled");
+        await Admin.disableInvite(invite.id);
+      },
+    });
   };
   const copyInviteLink = () => {
     if (!invite) return false;
@@ -85,6 +90,7 @@ export default function InviteRow({ invite }) {
           )}
         </TableCell>
       </TableRow>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </>
   );
 }

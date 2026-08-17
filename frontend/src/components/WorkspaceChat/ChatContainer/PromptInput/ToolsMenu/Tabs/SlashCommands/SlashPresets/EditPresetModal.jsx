@@ -12,6 +12,7 @@ import {
   DialogClose,
   DialogFooter,
 } from "@/components/ui/dialog";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function EditPresetModal({
   isOpen,
@@ -22,6 +23,7 @@ export default function EditPresetModal({
 }) {
   const [command, setCommand] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [confirm, setConfirm] = useState(null);
 
   useEffect(() => {
     if (preset && isOpen) {
@@ -47,96 +49,113 @@ export default function EditPresetModal({
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this preset?")) return;
-
-    setDeleting(true);
-    await onDelete(preset.id);
-    setDeleting(false);
-    onClose();
+    setConfirm({
+      title: "Delete this preset?",
+      description: "This action cannot be undone.",
+      confirmText: "Delete preset",
+      variant: "destructive",
+      onConfirm: async () => {
+        setDeleting(true);
+        await onDelete(preset.id);
+        setDeleting(false);
+        onClose();
+      },
+    });
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-        <DialogHeader className="p-0">
-          <DialogTitle className="text-sm font-semibold">
-            Edit Preset
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-2 flex-col">
-            <div className="w-full flex flex-col gap-y-4">
-              <div>
-                <Label variant="field" htmlFor="command" className="block mb-2">
-                  Command
-                </Label>
-                <div className="flex items-center">
-                  <span className="text-white text-sm mr-2 font-bold">/</span>
+    <>
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <DialogHeader className="p-0">
+            <DialogTitle className="text-sm font-semibold">
+              Edit Preset
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-2 flex-col">
+              <div className="w-full flex flex-col gap-y-4">
+                <div>
+                  <Label
+                    variant="field"
+                    htmlFor="command"
+                    className="block mb-2"
+                  >
+                    Command
+                  </Label>
+                  <div className="flex items-center">
+                    <span className="text-white text-sm mr-2 font-bold">/</span>
+                    <Input
+                      variant="settings"
+                      type="text"
+                      name="command"
+                      placeholder="your-command"
+                      value={command}
+                      onChange={handleCommandChange}
+                      required={true}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Label
+                    variant="field"
+                    htmlFor="prompt"
+                    className="block mb-2"
+                  >
+                    Prompt
+                  </Label>
+                  <Textarea
+                    variant="settings"
+                    name="prompt"
+                    placeholder="This is a test prompt. Please respond with a poem about LLMs."
+                    defaultValue={preset.prompt}
+                    required={true}
+                  ></Textarea>
+                </div>
+                <div>
+                  <Label
+                    variant="field"
+                    htmlFor="description"
+                    className="block mb-2"
+                  >
+                    Description
+                  </Label>
                   <Input
                     variant="settings"
                     type="text"
-                    name="command"
-                    placeholder="your-command"
-                    value={command}
-                    onChange={handleCommandChange}
+                    name="description"
+                    defaultValue={preset.description}
+                    placeholder="Responds with a poem about LLMs."
                     required={true}
                   />
                 </div>
               </div>
-              <div>
-                <Label variant="field" htmlFor="prompt" className="block mb-2">
-                  Prompt
-                </Label>
-                <Textarea
-                  variant="settings"
-                  name="prompt"
-                  placeholder="This is a test prompt. Please respond with a poem about LLMs."
-                  defaultValue={preset.prompt}
-                  required={true}
-                ></Textarea>
-              </div>
-              <div>
-                <Label
-                  variant="field"
-                  htmlFor="description"
-                  className="block mb-2"
-                >
-                  Description
-                </Label>
-                <Input
-                  variant="settings"
-                  type="text"
-                  name="description"
-                  defaultValue={preset.description}
-                  placeholder="Responds with a poem about LLMs."
-                  required={true}
-                />
-              </div>
             </div>
-          </div>
-          <DialogFooter className="mt-6 p-0 sm:justify-between">
-            <Button
-              variant="ghost"
-              disabled={deleting}
-              onClick={handleDelete}
-              type="button"
-              className="text-red-500 hover:bg-red-500/25 hover:text-red-500"
-            >
-              {deleting ? "Deleting..." : "Delete Preset"}
-            </Button>
-            <div className="flex space-x-2">
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button variant="default" type="submit">
-                Save
+            <DialogFooter className="mt-6 p-0 sm:justify-between">
+              <Button
+                variant="ghost"
+                disabled={deleting}
+                onClick={handleDelete}
+                type="button"
+                className="text-red-500 hover:bg-red-500/25 hover:text-red-500"
+              >
+                {deleting ? "Deleting..." : "Delete Preset"}
               </Button>
-            </div>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
+              <div className="flex space-x-2">
+                <DialogClose asChild>
+                  <Button variant="outline" type="button">
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button variant="default" type="submit">
+                  Save
+                </Button>
+              </div>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

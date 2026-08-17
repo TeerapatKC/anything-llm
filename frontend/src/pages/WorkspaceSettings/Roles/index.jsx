@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus, PencilSimple, Trash, Lock, Copy } from "@phosphor-icons/react";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -31,6 +32,8 @@ export default function WorkspaceRoles({ workspace }) {
   const [canDefine, setCanDefine] = useState(false);
   // null = closed, {} = creating, {...role} = editing
   const [editing, setEditing] = useState(null);
+  // null = closed, {...config} = open
+  const [confirm, setConfirm] = useState(null);
 
   async function reload() {
     const [{ roles: _roles, canDefineRoles }, { categories: _categories }] =
@@ -49,28 +52,28 @@ export default function WorkspaceRoles({ workspace }) {
   }, [workspace.slug]);
 
   async function handleDelete(role) {
-    if (
-      !window.confirm(
-        `Delete the "${role.displayName}" role?\n\n${
-          role.memberCount > 0
-            ? `${role.memberCount} member(s) holding it will be moved to the default role.`
-            : "No members currently hold this role."
-        }`
-      )
-    )
-      return;
-
-    const { success, error, reassigned } =
-      await WorkspaceRole.deleteInWorkspace(workspace.slug, role.id);
-    if (!success) return showToast(error, "error", { clear: true });
-    showToast(
-      reassigned > 0
-        ? `Role deleted. ${reassigned} member(s) moved to the default role.`
-        : "Role deleted.",
-      "success",
-      { clear: true }
-    );
-    reload();
+    setConfirm({
+      title: `Delete "${role.displayName}"?`,
+      description:
+        role.memberCount > 0
+          ? `${role.memberCount} member(s) holding it will be moved to the default role.`
+          : "No members currently hold this role.",
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error, reassigned } =
+          await WorkspaceRole.deleteInWorkspace(workspace.slug, role.id);
+        if (!success) return showToast(error, "error", { clear: true });
+        showToast(
+          reassigned > 0
+            ? `Role deleted. ${reassigned} member(s) moved to the default role.`
+            : "Role deleted.",
+          "success",
+          { clear: true }
+        );
+        reload();
+      },
+    });
   }
 
   /**
@@ -259,6 +262,8 @@ export default function WorkspaceRoles({ workspace }) {
           )}
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }

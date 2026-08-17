@@ -6,6 +6,7 @@ import { sentenceCase } from "text-case";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 /**
  * Converts setup_args to inputs for the form builder
@@ -193,15 +194,20 @@ export default function ImportedSkillConfig({
 
 function ManageSkillMenu({ config, setImportedSkills }) {
   const [open, setOpen] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   const menuRef = useRef(null);
 
   async function deleteSkill() {
-    if (
-      !window.confirm(
-        "Are you sure you want to delete this skill? This action cannot be undone."
-      )
-    )
-      return;
+    setConfirm({
+      title: "Delete this skill?",
+      description: "This action cannot be undone.",
+      confirmText: "Delete skill",
+      variant: "destructive",
+      onConfirm: deleteSkillNow,
+    });
+  }
+
+  async function deleteSkillNow() {
     const success = await System.experimentalFeatures.agentPlugins.deletePlugin(
       config.hubId
     );
@@ -244,6 +250,7 @@ function ManageSkillMenu({ config, setImportedSkills }) {
           </Button>
         </div>
       )}
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }
