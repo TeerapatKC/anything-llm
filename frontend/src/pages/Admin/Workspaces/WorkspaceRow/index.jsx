@@ -2,7 +2,7 @@ import { useRef } from "react";
 import { useState } from "react";
 import Admin from "@/models/admin";
 import paths from "@/utils/paths";
-import { LinkSimple, Trash } from "@phosphor-icons/react";
+import { GearSix, LinkSimple, Trash } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -65,11 +65,22 @@ export default function WorkspaceRow({
           {workspace.createdAt}
         </TableCell>
         <TableCell variant="none" className="px-6">
-          {!deletionProtected && (
-            <Button variant="danger" onClick={handleDelete}>
-              <Trash className="h-5 w-5" />
-            </Button>
-          )}
+          <div className="flex items-center gap-x-2">
+            <a
+              href={paths.workspace.settings.generalAppearance(
+                workspace.slug
+              )}
+              title="Workspace settings"
+              className="text-xs font-medium text-white/80 light:text-black/80 hover:text-white light:hover:text-black rounded-lg p-2 hover:bg-white hover:light:bg-black/10 hover:bg-opacity-10 inline-flex items-center"
+            >
+              <GearSix className="h-5 w-5" />
+            </a>
+            {!deletionProtected && (
+              <Button variant="danger" onClick={handleDelete}>
+                <Trash className="h-5 w-5" />
+              </Button>
+            )}
+          </div>
         </TableCell>
       </TableRow>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
