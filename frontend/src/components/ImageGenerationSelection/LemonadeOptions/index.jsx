@@ -100,7 +100,7 @@ export default function LemonadeImageOptions({ settings }) {
             value={authTokenValue.value || ""}
             onChange={authToken.onChange}
             onBlur={authToken.onBlur}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
           />
         </div>

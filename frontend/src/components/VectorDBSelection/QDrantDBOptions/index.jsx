@@ -30,7 +30,7 @@ export default function QDrantDBOptions({ settings }) {
             name="QdrantApiKey"
             placeholder="wOeqxsYP4....1244sba"
             defaultValue={settings?.QdrantApiKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
           />
         </div>

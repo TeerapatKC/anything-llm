@@ -34,7 +34,7 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
           defaultValue={
             settings?.WhisperGenericOpenAiApiKey ? "*".repeat(20) : ""
           }
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
         />
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">

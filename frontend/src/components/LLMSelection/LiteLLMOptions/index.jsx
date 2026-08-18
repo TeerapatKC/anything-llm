@@ -73,7 +73,7 @@ export default function LiteLLMOptions({ settings }) {
             name="LiteLLMAPIKey"
             placeholder="sk-mysecretkey"
             defaultValue={settings?.LiteLLMAPIKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
             onChange={(e) => setApiKeyValue(e.target.value)}
             onBlur={() => setApiKey(apiKeyValue)}

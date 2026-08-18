@@ -29,7 +29,7 @@ export default function SambaNovaOptions({ settings }) {
           placeholder="SambaNova AI API Key"
           defaultValue={settings?.SambaNovaLLMApiKey ? "*".repeat(20) : ""}
           required={true}
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={() => setApiKey(inputValue)}

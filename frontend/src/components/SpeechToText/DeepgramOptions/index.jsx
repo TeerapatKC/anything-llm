@@ -29,7 +29,7 @@ export default function DeepgramSpeechToTextOptions({ settings }) {
           placeholder="Deepgram API Key"
           defaultValue={settings?.STTDeepgramApiKey ? "*".repeat(20) : ""}
           required={true}
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={() => setDeepgramApiKey(inputValue)}

@@ -63,7 +63,7 @@ export default function KokoroTTSOptions({ settings }) {
             name="TTSKokoroKey"
             placeholder="Optional API Key"
             defaultValue={settings?.TTSKokoroKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
             onChange={(e) => setInputApiKey(e.target.value)}
             onBlur={() => setApiKey(inputApiKey)}

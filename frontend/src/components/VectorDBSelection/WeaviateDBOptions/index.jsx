@@ -30,7 +30,7 @@ export default function WeaviateDBOptions({ settings }) {
             name="WeaviateApiKey"
             placeholder="sk-123Abcweaviate"
             defaultValue={settings?.WeaviateApiKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
           />
         </div>

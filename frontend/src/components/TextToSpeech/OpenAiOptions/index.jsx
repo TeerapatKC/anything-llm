@@ -29,7 +29,7 @@ export default function OpenAiTextToSpeechOptions({ settings }) {
           placeholder="OpenAI API Key"
           defaultValue={apiKey ? "*".repeat(20) : ""}
           required={true}
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
         />
       </div>

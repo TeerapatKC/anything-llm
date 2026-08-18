@@ -54,7 +54,7 @@ export default function GenericOpenAiOptions({ settings }) {
             defaultValue={settings?.GenericOpenAiKey ? "*".repeat(20) : ""}
             onChange={(e) => setGenericOpenAiApiKey(e.target.value)}
             required={false}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
           />
         </div>

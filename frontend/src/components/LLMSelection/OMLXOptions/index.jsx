@@ -200,7 +200,7 @@ export default function OMLXOptions({ settings }) {
                 onChange={authToken.onChange}
                 onBlur={authToken.onBlur}
                 required={false}
-                autoComplete="off"
+                autoComplete="new-password"
                 spellCheck={false}
               />
             </div>

@@ -27,7 +27,7 @@ export default function MinimaxOptions({ settings }) {
           placeholder="Minimax API Key"
           defaultValue={settings?.MinimaxApiKey ? "*".repeat(20) : ""}
           required={true}
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
           onChange={(e) => setInputValue(e.target.value)}
           onBlur={() => setApiKey(inputValue)}

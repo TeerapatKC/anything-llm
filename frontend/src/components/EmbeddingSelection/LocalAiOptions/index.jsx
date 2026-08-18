@@ -71,7 +71,7 @@ export default function LocalAiOptions({ settings }) {
             name="LocalAiApiKey"
             placeholder="sk-mysecretkey"
             defaultValue={settings?.LocalAiApiKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
             onChange={(e) => setApiKeyValue(e.target.value)}
             onBlur={() => setApiKey(apiKeyValue)}

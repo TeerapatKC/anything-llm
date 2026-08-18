@@ -153,7 +153,7 @@ export default function LemonadeOptions({ settings }) {
             type="password"
             name="LemonadeLLMApiKey"
             defaultValue={settings?.LemonadeLLMApiKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
           />
         </div>
         <LemonadeModelSelection

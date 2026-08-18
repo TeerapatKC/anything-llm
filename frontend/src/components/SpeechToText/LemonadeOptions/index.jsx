@@ -110,7 +110,7 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
             type="password"
             name="LemonadeLLMApiKey"
             defaultValue={settings?.LemonadeLLMApiKey ? "*".repeat(20) : ""}
-            autoComplete="off"
+            autoComplete="new-password"
           />
         </div>
       </div>

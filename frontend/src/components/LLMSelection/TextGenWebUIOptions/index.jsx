@@ -44,7 +44,7 @@ export default function TextGenWebUIOptions({ settings }) {
           name="TextGenWebUIAPIKey"
           placeholder="TextGen Web UI API Key"
           defaultValue={settings?.TextGenWebUIAPIKey ? "*".repeat(20) : ""}
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
         />
       </div>

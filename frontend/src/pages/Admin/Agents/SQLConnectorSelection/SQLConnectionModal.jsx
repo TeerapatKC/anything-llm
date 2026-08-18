@@ -369,7 +369,7 @@ export default function SQLConnectionModal({
                   name="password"
                   placeholder="password123"
                   required={true}
-                  autoComplete="off"
+                  autoComplete="new-password" 
                   spellCheck={false}
                   defaultValue={config.password || ""}
                 />

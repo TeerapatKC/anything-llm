@@ -41,7 +41,7 @@ export default function ChromaDBOptions({ settings }) {
           <Input
             variant="settings"
             name="ChromaApiKey"
-            autoComplete="off"
+            autoComplete="new-password"
             type="password"
             defaultValue={settings?.ChromaApiKey ? "*".repeat(20) : ""}
             placeholder="sk-myApiKeyToAccessMyChromaInstance"

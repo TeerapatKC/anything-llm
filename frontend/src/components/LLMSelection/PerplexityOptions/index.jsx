@@ -26,7 +26,7 @@ export default function PerplexityOptions({ settings }) {
           placeholder="Perplexity API Key"
           defaultValue={settings?.PerplexityApiKey ? "*".repeat(20) : ""}
           required={true}
-          autoComplete="off"
+          autoComplete="new-password"
           spellCheck={false}
         />
       </div>

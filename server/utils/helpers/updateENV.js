@@ -1394,7 +1394,11 @@ async function updateENV(newENVs = {}, force = false, userId = null) {
     await runAfterAllFunc(newValues, userId);
 
   await logChangesToEventLog(newValues, userId);
-  if (process.env.NODE_ENV === "production") dumpENV();
+  // Persist in development too. Settings saved from the UI are env-backed, so
+  // skipping the dump here meant they lived only in this process and vanished on
+  // restart - the LLM provider had to be re-entered after every server start.
+  // Safe to always run now that dumpENV merges instead of rewriting the file.
+  dumpENV();
   return { newValues, error: error?.length > 0 ? error : false };
 }
 
@@ -1458,6 +1462,7 @@ function dumpENV() {
     "SIMPLE_SSO_NO_LOGIN_REDIRECT",
     // Community Hub
     "COMMUNITY_HUB_BUNDLE_DOWNLOADS_ENABLED",
+    "COMMUNITY_HUB_API_BASE",
 
     // Nvidia NIM Keys that are automatically managed
     "NVIDIA_NIM_LLM_MODEL_TOKEN_LIMIT",
@@ -1519,13 +1524,36 @@ function dumpENV() {
     frozenEnvs[key] = process.env?.[key] || null;
   }
 
-  var envResult = `# Auto-dump ENV from system call on ${new Date().toTimeString()}\n`;
-  envResult += Object.entries(frozenEnvs)
-    .map(([key, value]) => `${key}='${sanitizeValue(value)}'`)
-    .join("\n");
-
   const envPath = path.join(__dirname, "../../.env");
-  fs.writeFileSync(envPath, envResult, { encoding: "utf8", flag: "w" });
+  const existing = fs.existsSync(envPath)
+    ? fs.readFileSync(envPath, { encoding: "utf8" })
+    : "";
+
+  // Merge rather than overwrite. Only allowlisted keys are ever written *from*
+  // process.env - dumping all of it would leak unrelated OS environment into the
+  // file - but anything already in the file is kept as-is. Without this, a single
+  // settings save would silently drop hand-written keys and comments, which is
+  // exactly what someone editing .env by hand would not expect.
+  const pending = new Map(Object.entries(frozenEnvs));
+  const lines = existing.length ? existing.split(/\r?\n/) : [];
+  const merged = lines.map((line) => {
+    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/);
+    if (!match) return line; // comment, blank, or something we do not understand
+    const key = match[1];
+    if (!pending.has(key)) return line; // not ours to manage - leave it alone
+    const value = pending.get(key);
+    pending.delete(key);
+    return `${key}='${sanitizeValue(value)}'`;
+  });
+
+  if (!existing.length)
+    merged.push(
+      `# Auto-dump ENV from system call on ${new Date().toTimeString()}`
+    );
+  for (const [key, value] of pending)
+    merged.push(`${key}='${sanitizeValue(value)}'`);
+
+  fs.writeFileSync(envPath, merged.join("\n"), { encoding: "utf8", flag: "w" });
   return true;
 }
 
