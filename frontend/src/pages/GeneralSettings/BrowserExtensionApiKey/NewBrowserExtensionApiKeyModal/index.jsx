@@ -64,7 +64,7 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
               type="text"
               defaultValue={apiKey}
               disabled={true}
-              className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block w-full p-2.5"
+              className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block p-2.5"
             />
           )}
           <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">

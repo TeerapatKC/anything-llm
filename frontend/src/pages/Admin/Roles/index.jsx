@@ -219,7 +219,7 @@ function RolesPanel({ scope }) {
                         >
                           {role.workspace_id === null
                             ? "Shared"
-                            : (role.workspace?.name ??
+                            : (`Workspace: ${role.workspace?.name}` ??
                               `Workspace #${role.workspace_id}`)}
                         </Badge>
                       )}
