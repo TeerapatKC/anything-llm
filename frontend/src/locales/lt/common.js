@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Vartotojo nustatymas",
       description: "Konfigūruokite savo vartotojo nustatymus.",
-      howManyUsers: "Kiek vartotojų naudosis šia instancija?",
-      justMe: "Tik aš",
-      myTeam: "Mano komanda",
-      instancePassword: "Sistemos slaptažodis",
-      setPassword: "Ar norėtumėte nustatyti slaptažodį?",
-      passwordReq: "Slaptažodis turi būti bent 8 simbolių ilgio.",
-      passwordWarn:
-        "Svarbu išsisaugoti šį slaptažodį, nes nėra slaptažodžio atkūrimo būdo.",
       adminUsername: "Administratoriaus vartotojo vardas",
       adminPassword: "Administratoriaus slaptažodis",
       adminPasswordReq: "Slaptažodis turi būti bent 8 simbolių ilgio.",
@@ -94,7 +86,6 @@ const TRANSLATIONS = {
     "voice-speech": "Balsas ir kalba",
     "vector-database": "Vektorių duomenų bazė",
     embeds: "Pokalbių įskiepis",
-    security: "Saugumas",
     "event-logs": "Įvykių žurnalas",
     privacy: "Privatumas ir duomenys",
     "ai-providers": "DI tiekėjai",
@@ -121,7 +112,7 @@ const TRANSLATIONS = {
     "image-generation": "Vaizdų kūrimas",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Sveiki",
       "placeholder-username": "Vartotojo vardas",
       "placeholder-password": "Slaptažodis",
@@ -425,8 +416,6 @@ const TRANSLATIONS = {
         title: "GMail sąsaja",
         description:
           "Įgalinkite savo agentą, kad galėtų interaktuoti su Gmail – ieškoti pašto žinučių, skaityti pokalbius, kurti projekte, siųsti pašto žinučių ir valdyti savo pašto dėžę. <a>Peržiūrėkite dokumentaciją</a>.",
-        multiUserWarning:
-          "„Gmail“ integracija negali būti naudojama kelių vartotojų režimu dėl saugumo priežasčių. Norėdami naudoti šią funkciją, prašome išjungti kelių vartotojų režimą.",
         configuration: "Gmail konfigūracija",
         deploymentId: "Įrenginio ID",
         deploymentIdHelp: "Jūsų „Google Apps Script“ svetainės programos ID",
@@ -545,8 +534,6 @@ const TRANSLATIONS = {
         title: "„Outlook“ integracija",
         description:
           "Įgalinkite savo agentą, kad galėtų bendrauti su „Microsoft Outlook“ – ieškoti pašto, skaityti pokalbį, kurti projektus, siųsti paštą ir valdyti savo pašto dėžę per „Microsoft Graph“ API. <a>Peržiūrėkite dokumentaciją</a>.",
-        multiUserWarning:
-          "„Outlook“ integracija negalima naudoti kelių vartotojų režimu dėl saugumo priežasčių. Norėdami naudoti šią funkciją, prašome išjungti kelių vartotojų režimą.",
         configuration: "Outlook konfigūracija",
         authType: "Sąskaitos tipas",
         authTypeHelp:
@@ -647,8 +634,6 @@ const TRANSLATIONS = {
         title: "„Google Kalendoriaus“ integracija",
         description:
           "Įgalinkite savo agentą, kad galėtų bendradarbiauti su „Google Calendar“ – peržiūrėti kalendorius, gauti renginių informaciją, kurti ir atnaujinti renginius bei tvarkyti patvirtimus. <a>Peržiūrėkite dokumentaciją</a>.",
-        multiUserWarning:
-          "„Google Kalendro“ integracija negali būti naudojama kelių vartotojų režimu dėl saugumo priežasčių. Norėdami naudoti šią funkciją, prašome išjungti kelių vartotojų režimą.",
         configuration: "„Google Kalendoriaus“ konfigūracija",
         deploymentId: "Įrenginio ID",
         deploymentIdHelp: "Jūsų „Google Apps Script“ svetainės programos ID",
@@ -1019,28 +1004,6 @@ const TRANSLATIONS = {
       message: "Žinutė",
       response: "Atsakymas",
       at: "Išsiųsta",
-    },
-  },
-  security: {
-    title: "Saugumas",
-    multiuser: {
-      title: "Daugiavartotojiškas režimas",
-      description:
-        "Paruoškite savo instanciją komandiniam darbui įjungdami daugiavartotojišką režimą.",
-      enable: {
-        "is-enable": "Daugiavartotojiškas režimas įjungtas",
-        enable: "Įjungti daugiavartotojišką režimą",
-        description:
-          "Pagal numatytuosius nustatymus būsite vienintelis administratorius. Kaip administratorius turėsite sukurti paskyras visiems naujiems vartotojams ar administratoriams. Nepraraskite slaptažodžio, nes tik administratorius gali juos atstatyti.",
-        username: "Administratoriaus vartotojo vardas",
-        password: "Administratoriaus slaptažodis",
-      },
-    },
-    password: {
-      title: "Apsauga slaptažodžiu",
-      description:
-        "Apsaugokite savo AnythingLLM instanciją slaptažodžiu. Jei jį pamiršite, atkūrimo būdo nėra, todėl būtinai jį išsisaugokite.",
-      "password-label": "Sistemos slaptažodis",
     },
   },
   event: {

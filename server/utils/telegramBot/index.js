@@ -782,7 +782,6 @@ class TelegramBotService {
   /**
    * Boot the bot from database config on server startup.
    * Decrypts the stored bot token before starting.
-   * If the instance is running in multi-user mode, it will skip boot and delete the connector if it exists.
    * @returns {Promise<void>}
    */
   static async bootIfActive() {

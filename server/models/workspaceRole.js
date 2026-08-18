@@ -212,8 +212,8 @@ const WorkspaceRole = {
    * @returns {Promise<string[]>}
    */
   permissionsForUserInWorkspace: async function (user = null, workspaceId) {
-    // Single-user mode and instance operators are handled by the caller passing a null
-    // user or by the system-scope overrides below.
+    // Callers with no user in context pass null; instance operators are handled
+    // by the system-scope overrides below.
     if (!user?.id || !workspaceId) return [];
 
     const { Role } = require("./role");

@@ -5,7 +5,7 @@ const { validDeviceToken, validRegistrationToken } = require("./middleware");
 const { reqBody } = require("../../utils/http");
 const {
   userPermissionValid,
-} = require("../../utils/middleware/multiUserProtected");
+} = require("../../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../../utils/permissions");
 
 function mobileEndpoints(app) {

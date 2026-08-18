@@ -8,7 +8,7 @@ const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
   userPermissionValid,
   workspacePermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const {
   SCOPES,
   PERMISSIONS,

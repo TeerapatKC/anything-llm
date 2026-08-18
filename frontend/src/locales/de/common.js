@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Benutzer Setup",
       description: "Konfigurieren Sie Ihre Benutzereinstellungen.",
-      howManyUsers: "Wie viele Benutzer werden diese Instanz verwenden?",
-      justMe: "Nur ich",
-      myTeam: "Mein Team",
-      instancePassword: "Passwort für diese Instanz",
-      setPassword: "Möchten Sie ein Passwort einrichten?",
-      passwordReq: "Das Passwort muss mindestens 8 Zeichen enthalten.",
-      passwordWarn:
-        "Dieses Passwort sollte sicher aufbewahrt werden, da Wiederherstellung nicht möglich ist.",
       adminUsername: "Benutzername des Admin-Accounts",
       adminPassword: "Passwort des Admin-Accounts",
       adminPasswordReq: "Das Passwort muss mindestens 8 Zeichen enthalten.",
@@ -88,7 +80,6 @@ const TRANSLATIONS = {
     "voice-speech": "Sprache & Sprachausgabe",
     "vector-database": "Vektordatenbank",
     embeds: "Chat-Einbettung",
-    security: "Sicherheit",
     "event-logs": "Ereignisprotokolle",
     privacy: "Datenschutz & Datenverarbeitung",
     "ai-providers": "KI-Anbieter",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Bildgenerierung",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Willkommen",
       "placeholder-username": "Benutzername",
       "placeholder-password": "Passwort",
@@ -420,8 +411,6 @@ const TRANSLATIONS = {
         title: "Gmail-Verbindung",
         description:
           "Ermöglichen Sie Ihrem Agenten, mit Gmail zu interagieren: E-Mails durchsuchen, E-Mail-Threads lesen, Entwürfe erstellen, E-Mails senden und Ihren Posteingang verwalten. <a>Lesen Sie die Dokumentation</a>.",
-        multiUserWarning:
-          "Die Integration mit Gmail ist aus Sicherheitsgründen nicht im Mehrbenutzermodus verfügbar. Bitte deaktivieren Sie den Mehrbenutzermodus, um diese Funktion zu nutzen.",
         configuration: "Gmail-Konfiguration",
         deploymentId: "Deployment-ID",
         deploymentIdHelp:
@@ -545,8 +534,6 @@ const TRANSLATIONS = {
         title: "Outlook-Verbindung",
         description:
           "Ermöglichen Sie Ihrem Agenten, mit Microsoft Outlook zu interagieren – Suchen Sie E-Mails, lesen Sie Threads, erstellen Sie Entwürfe, senden Sie E-Mails und verwalten Sie Ihren Posteingang über die Microsoft Graph API. <a> Lesen Sie die Dokumentation</a>.",
-        multiUserWarning:
-          "Die Integration mit Outlook ist aus Sicherheitsgründen nicht im Mehrbenutzermodus verfügbar. Um diese Funktion nutzen zu können, bitte den Mehrbenutzermodus deaktivieren.",
         configuration: "Konfiguration von Outlook",
         authType: "Kontotyp",
         authTypeHelp:
@@ -649,8 +636,6 @@ const TRANSLATIONS = {
         title: "Google Kalender-Verbindung",
         description:
           "Ermöglichen Sie Ihrem Agenten, mit Google Kalender zu interagieren – Kalender anzeigen, Ereignisse einsehen, erstellen und aktualisieren, sowie Rückmeldungen verwalten. <a> Lesen Sie die Dokumentation </a>.",
-        multiUserWarning:
-          "Die Integration mit Google Kalender ist aus Sicherheitsgründen nicht im Mehrbenutzermodus verfügbar. Bitte deaktivieren Sie den Mehrbenutzermodus, um diese Funktion nutzen zu können.",
         configuration: "Konfiguration des Google Kalenders",
         deploymentId: "Deployment-ID",
         deploymentIdHelp:
@@ -1545,28 +1530,6 @@ const TRANSLATIONS = {
           "Dies ist der Befehl, der verwendet wird, wenn der Slash-Befehl ausgelöst wird.",
         prompt_placeholder: "Bitte geben Sie Ihre Anfrage hier ein...",
       },
-    },
-  },
-  security: {
-    title: "Sicherheit",
-    multiuser: {
-      title: "Mehrbenutzer-Modus",
-      description:
-        "Richten Sie Ihre Instanz ein, um Ihr Team zu unterstützen, indem Sie den Mehrbenutzer-Modus aktivieren.",
-      enable: {
-        "is-enable": "Mehrbenutzer-Modus ist aktiviert",
-        enable: "Mehrbenutzer-Modus aktivieren",
-        description:
-          "Standardmäßig sind Sie der einzige Administrator. Als Administrator müssen Sie Konten für alle neuen Benutzer oder Administratoren erstellen. Verlieren Sie Ihr Passwort nicht, da nur ein Administrator-Benutzer Passwörter zurücksetzen kann.",
-        username: "Administrator-Kontoname",
-        password: "Administrator-Kontopasswort",
-      },
-    },
-    password: {
-      title: "Passwortschutz",
-      description:
-        "Schützen Sie Ihre AnythingLLM-Instanz mit einem Passwort. Wenn Sie dieses vergessen, gibt es keine Wiederherstellungsmethode, also stellen Sie sicher, dass Sie dieses Passwort speichern.",
-      "password-label": "Instanzpasswort",
     },
   },
   home: {

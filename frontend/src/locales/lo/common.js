@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "ຕັ້ງຄ່າຜູ້ໃຊ້",
       description: "ຕັ້ງຄ່າຂໍ້ມູນຜູ້ໃຊ້ຂອງທ່ານ.",
-      howManyUsers: "ຈະມີຜູ້ໃຊ້ຈັກຄົນໃນລະບົບນີ້?",
-      justMe: "ແຕ່ຂ້ອຍຄົນດຽວ",
-      myTeam: "ທີມງານຂອງຂ້ອຍ",
-      instancePassword: "ລະຫັດຜ່ານລະບົບ",
-      setPassword: "ທ່ານຕ້ອງການຕັ້ງລະຫັດຜ່ານບໍ່?",
-      passwordReq: "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ.",
-      passwordWarn:
-        "ມັນສຳຄັນຫຼາຍທີ່ຕ້ອງບັນທຶກລະຫັດຜ່ານນີ້ໄວ້ ເພາະບໍ່ມີວິທີການກູ້ຄືນ.",
       adminUsername: "ຊື່ຜູ້ໃຊ້ຜູ້ດູແລ (Admin)",
       adminPassword: "ລະຫັດຜ່ານຜູ້ດູແລ (Admin)",
       adminPasswordReq: "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ.",
@@ -95,7 +87,6 @@ const TRANSLATIONS = {
     "voice-speech": "ສຽງ & ການເວົ້າ",
     "vector-database": "ຖານຂໍ້ມູນເວກເຕີ",
     embeds: "ການຝັງແຊັດ (Chat Embed)",
-    security: "ຄວາມປອດໄພ",
     "event-logs": "ບັນທຶກເຫດການ (Event Logs)",
     "scheduled-jobs": "ວຽກທີ່ຕັ້ງເວລາໄວ້",
     privacy: "ຄວາມເປັນສ່ວນຕົວ & ຂໍ້ມູນ",
@@ -122,7 +113,7 @@ const TRANSLATIONS = {
     "image-generation": "ການສ້າງຮູບພາບ",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "ຍິນດີຕ້ອນຮັບ",
       "placeholder-username": "ຊື່ຜູ້ໃຊ້",
       "placeholder-password": "ລະຫັດຜ່ານ",
@@ -416,8 +407,6 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "ໃຫ້ເອເຈນເຮັດວຽກກັບ Gmail - ຄົ້ນຫາອີເມວ, ອ່ານຂໍ້ຄວາມ, ຂຽນສະບັບຮ່າງ ແລະ ສົ່ງອີເມວ. <a>ອ່ານຄູ່ມື</a>.",
-        multiUserWarning:
-          "ການເຊື່ອມຕໍ່ Gmail ບໍ່ສາມາດໃຊ້ໄດ້ໃນໂໝດຫຼາຍຜູ້ໃຊ້ເພື່ອຄວາມປອດໄພ.",
         configuration: "ການຕັ້ງຄ່າ Gmail",
         deploymentId: "Deployment ID",
         deploymentIdHelp:
@@ -530,8 +519,6 @@ const TRANSLATIONS = {
         title: "Google Calendar",
         description:
           "ໃຫ້ເອເຈນເຮັດວຽກກັບ Google Calendar - ເບິ່ງປະຕິທິນ, ເຫດການ, ສ້າງ ແລະ ອັບເດດເຫດການ. <a>ອ່ານຄູ່ມື</a>.",
-        multiUserWarning:
-          "ການເຊື່ອມຕໍ່ Google Calendar ບໍ່ສາມາດໃຊ້ໄດ້ໃນໂໝດຫຼາຍຜູ້ໃຊ້.",
         configuration: "ການຕັ້ງຄ່າ Google Calendar",
         deploymentId: "Deployment ID",
         deploymentIdHelp: "Deployment ID ຈາກ Google Apps Script ຂອງທ່ານ",
@@ -608,7 +595,6 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "ໃຫ້ເອເຈນເຮັດວຽກກັບ Microsoft Outlook - ຄົ້ນຫາອີເມວ, ອ່ານຂໍ້ຄວາມ, ສົ່ງອີເມວ ຜ່ານ Microsoft Graph API. <a>ອ່ານຄູ່ມື</a>.",
-        multiUserWarning: "ການເຊື່ອມຕໍ່ Outlook ບໍ່ສາມາດໃຊ້ໄດ້ໃນໂໝດຫຼາຍຜູ້ໃຊ້.",
         configuration: "ການຕັ້ງຄ່າ Outlook",
         authType: "ປະເພດບັນຊີ",
         authTypeHelp: "ເລືອກປະເພດບັນຊີ Microsoft ທີ່ຈະໃຊ້.",
@@ -1201,27 +1187,6 @@ const TRANSLATIONS = {
       "pending-description":
         "ຜູ້ໃຊ້ທີ່ລໍຖ້າການຢືນຢັນ. ໃຫ້ກວດເບິ່ງລະຫັດຄູ່ (pairing code) ໃຫ້ກົງກັບທີ່ສະແດງໃນ Telegram ຂອງເຂົາເຈົ້າ.",
       unknown: "ບໍ່ຮູ້ຈັກ",
-    },
-  },
-  security: {
-    title: "ຄວາມປອດໄພ",
-    multiuser: {
-      title: "ໂໝດຫຼາຍຜູ້ໃຊ້ (Multi-User Mode)",
-      description: "ຕັ້ງຄ່າລະບົບຂອງທ່ານໃຫ້ຮອງຮັບທີມງານໂດຍການເປີດໂໝດຫຼາຍຜູ້ໃຊ້.",
-      enable: {
-        "is-enable": "ໂໝດຫຼາຍຜູ້ໃຊ້ຖືກເປີດແລ້ວ",
-        enable: "ເປີດໂໝດຫຼາຍຜູ້ໃຊ້",
-        description:
-          "ໂດຍເລີ່ມຕົ້ນ ທ່ານຈະເປັນຜູ້ດູແລພຽງຄົນດຽວ. ໃນຖານະຜູ້ດູແລ ທ່ານຕ້ອງສ້າງບັນຊີໃຫ້ຜູ້ໃຊ້ໃໝ່. ຫ້າມເຮັດລະຫັດຜ່ານເສຍ ເພາະມີພຽງຜູ້ດູແລເທົ່ານັ້ນທີ່ຕັ້ງລະຫັດໃໝ່ໄດ້.",
-        username: "ຊື່ຜູ້ໃຊ້ຜູ້ດູແລ (Admin)",
-        password: "ລະຫັດຜ່ານຜູ້ດູແລ (Admin)",
-      },
-    },
-    password: {
-      title: "ການປ້ອງກັນດ້ວຍລະຫັດຜ່ານ",
-      description:
-        "ປົກປ້ອງ AnythingLLM ຂອງທ່ານດ້ວຍລະຫັດຜ່ານ. ຖ້າທ່ານລືມ ຈະບໍ່ມີວິທີກູ້ຄືນ ດັ່ງນັ້ນກະລຸນາບັນທຶກໄວ້ໃຫ້ດີ.",
-      "password-label": "ລະຫັດຜ່ານລະບົບ",
     },
   },
   event: {

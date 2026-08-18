@@ -28,14 +28,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Thiết lập Người dùng",
       description: "Cấu hình cài đặt người dùng của bạn.",
-      howManyUsers: "Có bao nhiêu người sẽ sử dụng phiên bản này?",
-      justMe: "Chỉ mình tôi",
-      myTeam: "Nhóm của tôi",
-      instancePassword: "Mật khẩu Phiên bản",
-      setPassword: "Bạn có muốn thiết lập mật khẩu không?",
-      passwordReq: "Mật khẩu phải có ít nhất 8 ký tự.",
-      passwordWarn:
-        "Điều quan trọng là phải lưu mật khẩu này vì không có phương pháp khôi phục.",
       adminUsername: "Tên người dùng tài khoản Quản trị viên",
       adminPassword: "Mật khẩu tài khoản Quản trị viên",
       adminPasswordReq: "Mật khẩu phải có ít nhất 8 ký tự.",
@@ -85,7 +77,6 @@ const TRANSLATIONS = {
     "voice-speech": "Giọng nói & Phát âm",
     "vector-database": "Cơ sở dữ liệu Vector",
     embeds: "Nhúng hội thoại",
-    security: "Bảo mật",
     "event-logs": "Nhật ký sự kiện",
     privacy: "Quyền riêng tư & Dữ liệu",
     "ai-providers": "Nhà cung cấp AI",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Tạo ảnh",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Chào mừng đến với",
       "placeholder-username": "Tên người dùng",
       "placeholder-password": "Mật khẩu",
@@ -412,8 +403,6 @@ const TRANSLATIONS = {
         title: "Kết nối GMail",
         description:
           "Cho phép đại lý của bạn tương tác với Gmail – tìm kiếm email, đọc các cuộc trò chuyện, soạn thảo bản nháp, gửi email và quản lý hộp thư. Đọc tài liệu hướng dẫn<a>.",
-        multiUserWarning:
-          "Tính năng tích hợp với Gmail không khả dụng trong chế độ nhiều người dùng vì lý do bảo mật. Vui lòng tắt chế độ nhiều người dùng để sử dụng tính năng này.",
         configuration: "Cấu hình Gmail",
         deploymentId: "Mã triển khai",
         deploymentIdHelp:
@@ -531,8 +520,6 @@ const TRANSLATIONS = {
         title: "Kết nối Outlook",
         description:
           "Cho phép đại lý của bạn tương tác với Microsoft Outlook – tìm kiếm email, đọc các cuộc thảo luận, soạn thảo bản nháp, gửi email và quản lý hộp thư đến thông qua Microsoft Graph API. Đọc tài liệu hướng dẫn <a>.",
-        multiUserWarning:
-          "Tính năng tích hợp với Outlook không khả dụng trong chế độ nhiều người dùng vì lý do bảo mật. Vui lòng tắt chế độ nhiều người dùng để sử dụng tính năng này.",
         configuration: "Cấu hình Outlook",
         authType: "Loại tài khoản",
         authTypeHelp:
@@ -629,8 +616,6 @@ const TRANSLATIONS = {
         title: "Kết nối Google Calendar",
         description:
           "Cho phép đại lý của bạn tương tác với Google Calendar - xem lịch, lấy thông tin sự kiện, tạo và cập nhật sự kiện, và quản lý xác nhận tham dự. <a>Đọc tài liệu</a>.",
-        multiUserWarning:
-          "Tính năng tích hợp với Google Calendar không khả dụng ở chế độ nhiều người dùng vì lý do bảo mật. Vui lòng tắt chế độ nhiều người dùng để sử dụng tính năng này.",
         configuration: "Cấu hình Google Calendar",
         deploymentId: "Mã triển khai",
         deploymentIdHelp:
@@ -1514,28 +1499,6 @@ const TRANSLATIONS = {
           button: "Kết nối với Community Hub",
         },
       },
-    },
-  },
-  security: {
-    title: "Bảo mật",
-    multiuser: {
-      title: "Chế độ Đa Người dùng",
-      description:
-        "Thiết lập phiên bản của bạn để hỗ trợ nhóm bằng cách kích hoạt Chế độ Đa Người dùng.",
-      enable: {
-        "is-enable": "Chế độ Đa Người dùng đã Được Bật",
-        enable: "Bật Chế độ Đa Người dùng",
-        description:
-          "Theo mặc định, bạn sẽ là quản trị viên duy nhất. Với tư cách quản trị viên, bạn sẽ cần tạo tài khoản cho tất cả người dùng hoặc quản trị viên mới. Không được mất mật khẩu vì chỉ người dùng Quản trị viên mới có thể đặt lại mật khẩu.",
-        username: "Tên người dùng tài khoản Quản trị viên",
-        password: "Mật khẩu tài khoản Quản trị viên",
-      },
-    },
-    password: {
-      title: "Bảo vệ Mật khẩu",
-      description:
-        "Bảo vệ phiên bản AnythingLLM của bạn bằng mật khẩu. Nếu bạn quên mật khẩu này, không có phương pháp khôi phục nên hãy đảm bảo lưu mật khẩu này.",
-      "password-label": "Mật khẩu của phiên bản",
     },
   },
   home: {

@@ -13,13 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "사용자 설정",
       description: "사용자 설정을 구성하세요.",
-      howManyUsers: "이 인스턴스를 사용할 사용자는 몇 명인가요?",
-      justMe: "나만 사용",
-      myTeam: "팀 사용",
-      instancePassword: "인스턴스 비밀번호",
-      setPassword: "비밀번호를 설정하시겠습니까?",
-      passwordReq: "비밀번호는 최소 8자 이상이어야 합니다.",
-      passwordWarn: "이 비밀번호는 복구 방법이 없으니 꼭 안전하게 보관하세요.",
       adminUsername: "관리자 계정 사용자명",
       adminPassword: "관리자 계정 비밀번호",
       adminPasswordReq: "비밀번호는 최소 8자 이상이어야 합니다.",
@@ -83,7 +76,6 @@ const TRANSLATIONS = {
     "voice-speech": "음성과 말하기",
     "vector-database": "벡터 데이터베이스",
     embeds: "채팅 임베드",
-    security: "보안",
     "event-logs": "이벤트 로그",
     privacy: "사생활 보호와 데이터",
     "ai-providers": "AI 제공자",
@@ -113,7 +105,7 @@ const TRANSLATIONS = {
     "image-generation": "이미지 생성",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "웰컴!",
       "placeholder-username": "사용자 이름",
       "placeholder-password": "비밀번호",
@@ -413,8 +405,6 @@ const TRANSLATIONS = {
         title: "GMail 연결기",
         description:
           "제 에이전트가 Gmail과 상호 작용할 수 있도록 설정하세요 - 이메일 검색, 스레드 읽기, 초안 작성, 이메일 전송, 그리고 받은 메일 관리 기능을 사용하세요. <a>문서를 참조하세요</a>.",
-        multiUserWarning:
-          "Gmail 통합 기능은 보안상의 이유로 다중 사용자 모드에서는 사용할 수 없습니다. 이 기능을 사용하려면 다중 사용자 모드를 비활성화해 주세요.",
         configuration: "Gmail 설정",
         deploymentId: "배포 ID",
         deploymentIdHelp: "당신의 Google Apps Script 웹 앱의 배포 ID",
@@ -527,8 +517,6 @@ const TRANSLATIONS = {
         title: "아웃룩 연결",
         description:
           "Microsoft Outlook와 상호 작용할 수 있도록 에이전트에게 Microsoft Graph API를 사용하도록 설정합니다. 이메일 검색, 스레드 읽기, 초안 작성, 이메일 전송, 그리고 Microsoft Graph API를 통해 이메일함을 관리할 수 있습니다. 자세한 내용은 <a>문서를 참조하세요</a>.",
-        multiUserWarning:
-          "Outlook 통합 기능은 보안상의 이유로 다중 사용자 모드에서는 사용할 수 없습니다. 이 기능을 사용하려면 다중 사용자 모드를 비활성화해 주십시오.",
         configuration: "아웃룩 설정",
         authType: "계정 유형",
         authTypeHelp:
@@ -620,8 +608,6 @@ const TRANSLATIONS = {
         title: "구글 캘린더 연동",
         description:
           "에이전트가 Google 캘린더와 상호 작용할 수 있도록 설정하세요 - 캘린더 보기, 이벤트 확인, 이벤트 생성 및 업데이트, RSVP 관리 등을 수행할 수 있습니다. <a>문서를 참조하세요</a>.",
-        multiUserWarning:
-          "Google 캘린더 통합 기능은 보안상의 이유로 다중 사용자 모드에서는 사용할 수 없습니다. 이 기능을 사용하려면 다중 사용자 모드를 비활성화해주세요.",
         configuration: "구글 캘린더 설정",
         deploymentId: "배포 ID",
         deploymentIdHelp: "당신의 구글 앱스 스크립트 웹 앱의 배포 ID",
@@ -1479,28 +1465,6 @@ const TRANSLATIONS = {
           button: "커뮤니티 허브에 연결",
         },
       },
-    },
-  },
-  security: {
-    title: "보안",
-    multiuser: {
-      title: "다중 사용자 모드",
-      description:
-        "다중 사용자 모드를 활성화하여 인스턴스가 팀 사용을 지원하도록 설정합니다.",
-      enable: {
-        "is-enable": "다중 사용자 모드가 활성화되었습니다",
-        enable: "다중 사용자 모드 활성화",
-        description:
-          "당신은 기본 관리자가 됩니다. 관리자로서 모든 신규 사용자 또는 관리자의 계정을 생성해야 합니다. 비밀번호를 잃어버리면 관리자만 비밀번호를 재설정할 수 있습니다.",
-        username: "관리자 계정 사용자 이름",
-        password: "관리자 계정 비밀번호",
-      },
-    },
-    password: {
-      title: "비밀번호 보호",
-      description:
-        "AnythingLLM 인스턴스를 비밀번호로 보호하십시오. 이 비밀번호를 잊어버리면 복구 방법이 없으므로 반드시 저장하세요.",
-      "password-label": "인스턴스 비밀번호",
     },
   },
   home: {

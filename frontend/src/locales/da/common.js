@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Brugeropsætning",
       description: "Konfigurer dine brugerindstillinger.",
-      howManyUsers: "Hvor mange brugere vil benytte denne instans?",
-      justMe: "Kun mig",
-      myTeam: "Mit team",
-      instancePassword: "Instansadgangskode",
-      setPassword: "Vil du oprette en adgangskode?",
-      passwordReq: "Adgangskoder skal være på mindst 8 tegn.",
-      passwordWarn:
-        "Det er vigtigt at gemme denne adgangskode, da der ikke findes nogen metode til genoprettelse.",
       adminUsername: "Brugernavn til admin-konto",
       adminPassword: "Adgangskode til admin-konto",
       adminPasswordReq: "Adgangskoder skal være på mindst 8 tegn.",
@@ -85,7 +77,6 @@ const TRANSLATIONS = {
     "voice-speech": "Stemme & Tale",
     "vector-database": "Vektordatabase",
     embeds: "Chat-indlejring",
-    security: "Sikkerhed",
     "event-logs": "Hændelseslog",
     privacy: "Privatliv & Data",
     "ai-providers": "AI-udbydere",
@@ -116,7 +107,7 @@ const TRANSLATIONS = {
     "image-generation": "Billedgenerering",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Velkommen til",
       "placeholder-username": "Brugernavn",
       "placeholder-password": "Adgangskode",
@@ -414,8 +405,6 @@ const TRANSLATIONS = {
         title: "Gmail-forbindelse",
         description:
           "Giv din agent mulighed for at interagere med Gmail – søg efter e-mails, læs samtaler, oprette udkast, sende e-mails og administrere din indbakke. <a>Læs dokumentationen</a>.",
-        multiUserWarning:
-          "Integration med Gmail er ikke tilgængelig i multi-bruger-tilstand af sikkerhedsmæssige årsager. For at bruge denne funktion, bedes du deaktivere multi-bruger-tilstanden.",
         configuration: "Konfiguration af Gmail",
         deploymentId: "Implementerings-ID",
         deploymentIdHelp: "Deployment-ID'en fra din Google Apps Script webapp",
@@ -533,8 +522,6 @@ const TRANSLATIONS = {
         title: "Outlook-forbindelse",
         description:
           "Giv din agent mulighed for at interagere med Microsoft Outlook – søg efter e-mails, læs samtaler, oprette udkast, sende e-mails og administrer din indbakke via Microsoft Graph API. Se dokumentationen her: <a>.",
-        multiUserWarning:
-          "Integration med Outlook er ikke tilgængelig i multi-bruger-tilstand af sikkerhedsmæssige årsager. For at bruge denne funktion, bedes du deaktivere multi-bruger-tilstanden.",
         configuration: "Outlook-konfiguration",
         authType: "Kontotype",
         authTypeHelp:
@@ -630,8 +617,6 @@ const TRANSLATIONS = {
         title: "Google Kalender-tilslutning",
         description:
           "Giv din agent mulighed for at interagere med Google Kalender – se kalendere, få adgang til begivenheder, oprette og opdatere begivenheder, og administrere tilmeldinger. <a>Læs dokumentationen</a>.",
-        multiUserWarning:
-          "Integration med Google Kalender er ikke tilgængelig i multi-bruger-tilstand af sikkerhedsmæssige årsager. For at bruge denne funktion, bedes du deaktivere multi-bruger-tilstanden.",
         configuration: "Konfiguration af Google Kalender",
         deploymentId: "Identifikations-ID",
         deploymentIdHelp: "Deployment-ID fra din Google Apps Script webapp",
@@ -1516,28 +1501,6 @@ const TRANSLATIONS = {
           "Dette er den kommando, der vil blive brugt, når kommandoen med skråstreg aktiveres.",
         prompt_placeholder: "Indtast din forespørgsel her...",
       },
-    },
-  },
-  security: {
-    title: "Sikkerhed",
-    multiuser: {
-      title: "Multi-brugertilstand",
-      description:
-        "Opsæt din instans til at understøtte dit team ved at aktivere multi-brugertilstand.",
-      enable: {
-        "is-enable": "Multi-brugertilstand er aktiveret",
-        enable: "Aktivér multi-brugertilstand",
-        description:
-          "Som standard vil du være den eneste administrator. Som administrator skal du oprette konti til alle nye brugere eller administratorer. Glem ikke din adgangskode, da kun en administrator kan nulstille adgangskoder.",
-        username: "Brugernavn til admin-konto",
-        password: "Adgangskode til admin-konto",
-      },
-    },
-    password: {
-      title: "Adgangskodebeskyttelse",
-      description:
-        "Beskyt din AnythingLLM-instans med en adgangskode. Hvis du glemmer den, findes der ingen genoprettelsesmetode, så sørg for at gemme denne adgangskode.",
-      "password-label": "Instansadgangskode",
     },
   },
   home: {

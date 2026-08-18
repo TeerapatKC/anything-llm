@@ -13,15 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Pengaturan Pengguna",
       description: "Konfigurasikan pengaturan pengguna Anda.",
-      howManyUsers:
-        "Berapa banyak pengguna yang akan menggunakan instance ini?",
-      justMe: "Hanya saya",
-      myTeam: "Tim saya",
-      instancePassword: "Kata Sandi Instance",
-      setPassword: "Apakah Anda ingin mengatur kata sandi?",
-      passwordReq: "Kata sandi harus minimal 8 karakter.",
-      passwordWarn:
-        "Penting untuk menyimpan kata sandi ini karena tidak ada metode pemulihan.",
       adminUsername: "Nama pengguna akun admin",
       adminPassword: "Kata sandi akun admin",
       adminPasswordReq: "Kata sandi harus minimal 8 karakter.",
@@ -96,7 +87,6 @@ const TRANSLATIONS = {
     "voice-speech": "Suara & Ucapan",
     "vector-database": "Basis Data Vektor",
     embeds: "Chat Embed",
-    security: "Keamanan",
     "event-logs": "Log Peristiwa",
     "scheduled-jobs": "Pekerjaan Terjadwal",
     privacy: "Privasi & Data",
@@ -123,7 +113,7 @@ const TRANSLATIONS = {
     "image-generation": "Pembuatan Gambar",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Selamat Datang",
       "placeholder-username": "Nama Pengguna",
       "placeholder-password": "Kata Sandi",
@@ -430,8 +420,6 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "Aktifkan agen Anda untuk berinteraksi dengan Gmail - mencari email, membaca thread, menyusun draft, mengirim email, dan mengelola kotak masuk Anda. <a>Baca dokumentasi</a>.",
-        multiUserWarning:
-          "Integrasi Gmail tidak tersedia dalam mode multi-pengguna karena alasan keamanan. Silakan nonaktifkan mode multi-pengguna untuk menggunakan fitur ini.",
         configuration: "Konfigurasi Gmail",
         deploymentId: "ID Deployment",
         deploymentIdHelp:
@@ -549,8 +537,6 @@ const TRANSLATIONS = {
         title: "Google Calendar",
         description:
           "Aktifkan agen Anda untuk berinteraksi dengan Google Calendar - melihat kalender, mendapatkan acara, membuat dan memperbarui acara, dan mengelola RSVP. <a>Baca dokumentasi</a>.",
-        multiUserWarning:
-          "Integrasi Google Calendar tidak tersedia dalam mode multi-pengguna karena alasan keamanan. Silakan nonaktifkan mode multi-pengguna untuk menggunakan fitur ini.",
         configuration: "Konfigurasi Google Calendar",
         deploymentId: "ID Deployment",
         deploymentIdHelp:
@@ -633,8 +619,6 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "Aktifkan agen Anda untuk berinteraksi dengan Microsoft Outlook - mencari email, membaca thread, menyusun draft, mengirim email, dan mengelola kotak masuk melalui Microsoft Graph API. <a>Baca dokumentasi</a>.",
-        multiUserWarning:
-          "Integrasi Outlook tidak tersedia dalam mode multi-pengguna karena alasan keamanan. Silakan nonaktifkan mode multi-pengguna untuk menggunakan fitur ini.",
         configuration: "Konfigurasi Outlook",
         authType: "Tipe Akun",
         authTypeHelp:
@@ -1258,28 +1242,6 @@ const TRANSLATIONS = {
       "pending-description":
         "Pengguna yang menunggu untuk diverifikasi. Cocokkan kode pairing yang ditampilkan di sini dengan yang ditampilkan di obrolan Telegram mereka.",
       unknown: "Tidak Diketahui",
-    },
-  },
-  security: {
-    title: "Keamanan",
-    multiuser: {
-      title: "Mode Multi-Pengguna",
-      description:
-        "Atur instance Anda untuk mendukung tim Anda dengan mengaktifkan Mode Multi-Pengguna.",
-      enable: {
-        "is-enable": "Mode Multi-Pengguna Diaktifkan",
-        enable: "Aktifkan Mode Multi-Pengguna",
-        description:
-          "Secara bawaan, Anda akan menjadi satu-satunya admin. Sebagai admin, Anda perlu membuat akun untuk semua pengguna atau admin baru. Jangan kehilangan kata sandi Anda karena hanya pengguna Admin yang dapat mereset kata sandi.",
-        username: "Nama pengguna akun admin",
-        password: "Kata sandi akun admin",
-      },
-    },
-    password: {
-      title: "Perlindungan Kata Sandi",
-      description:
-        "Lindungi instance AnythingLLM Anda dengan kata sandi. Jika Anda lupa, tidak ada metode pemulihan, jadi pastikan Anda menyimpan kata sandi ini.",
-      "password-label": "Kata Sandi Instance",
     },
   },
   event: {

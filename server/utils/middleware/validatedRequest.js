@@ -14,8 +14,8 @@ const PASSWORD_CHANGE_ALLOWED_PATHS = [
 ];
 
 /**
- * Resolve the session user for a request. Every instance is multi-user, so a request
- * without a valid user-bound JWT never reaches a handler.
+ * Resolve the session user for a request. A request without a valid user-bound
+ * JWT never reaches a handler.
  * @param {import("express").Request} request
  * @param {import("express").Response} response
  * @param {import("express").NextFunction} next

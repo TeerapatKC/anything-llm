@@ -12,7 +12,7 @@ const {
   userPermissionValid,
   workspacePermissionValid,
   anyWorkspacePermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const {
   PERMISSIONS,
   WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
@@ -1041,7 +1041,7 @@ function workspaceEndpoints(app) {
 
   /**
    * Searches for workspaces and threads by thread name or workspace name.
-   * Only returns assets owned by the user (if multi-user mode is enabled).
+   * Only returns assets owned by the requesting user.
    */
   app.post(
     "/workspace/search",

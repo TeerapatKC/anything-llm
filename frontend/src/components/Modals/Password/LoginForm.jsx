@@ -39,7 +39,7 @@ const ForgotPasswordNotice = ({ setShowForgotPassword }) => {
   );
 };
 
-export default function MultiUserAuth() {
+export default function LoginForm() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -91,7 +91,7 @@ export default function MultiUserAuth() {
         <div className="flex items-center flex-col gap-y-[18px] max-w-[300px]">
           <div className="flex gap-x-1">
             <h3 className="text-white light:text-slate-950 text-[38px] leading-[28px] font-medium text-center white-space-nowrap block">
-              {t("login.multi-user.welcome")}
+              {t("login.form.welcome")}
             </h3>
           </div>
           <p className="text-zinc-400 light:text-zinc-600 text-sm text-center">
@@ -103,7 +103,7 @@ export default function MultiUserAuth() {
         <div className="w-full flex flex-col gap-y-3">
           <div className="w-full flex flex-col gap-y-2">
             <label className="text-zinc-300 light:text-slate-800 text-sm">
-              {t("login.multi-user.placeholder-username")}
+              {t("login.form.placeholder-username")}
             </label>
             <input
               name="username"
@@ -115,7 +115,7 @@ export default function MultiUserAuth() {
           </div>
           <div className="w-full px-0 flex flex-col gap-y-2">
             <label className="text-zinc-300 light:text-slate-800 text-sm">
-              {t("login.multi-user.placeholder-password")}
+              {t("login.form.placeholder-password")}
             </label>
             <input
               name="password"
@@ -135,17 +135,17 @@ export default function MultiUserAuth() {
           className="text-zinc-950 bg-white hover:bg-zinc-300 light:bg-sky-200 light:text-slate-950 light:hover:bg-sky-300 text-sm font-semibold rounded-lg border-primary-button h-[34px] w-full"
         >
           {loading
-            ? t("login.multi-user.validating")
-            : t("login.multi-user.login")}
+            ? t("login.form.validating")
+            : t("login.form.login")}
         </button>
         <button
           type="button"
           className="text-zinc-200 light:text-zinc-600 hover:text-sky-300 light:hover:text-sky-600 hover:underline text-sm flex gap-x-1"
           onClick={() => setShowForgotPassword(true)}
         >
-          {t("login.multi-user.forgot-pass")}?
+          {t("login.form.forgot-pass")}?
           <b className="font-semibold text-sky-300 light:text-sky-600">
-            {t("login.multi-user.reset")}
+            {t("login.form.reset")}
           </b>
         </button>
       </div>

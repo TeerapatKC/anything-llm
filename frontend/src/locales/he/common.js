@@ -13,13 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "הגדרת משתמש",
       description: "הגדר את הגדרות המשתמש שלך.",
-      howManyUsers: "כמה משתמשים ישתמשו במופע זה?",
-      justMe: "רק אני",
-      myTeam: "הצוות שלי",
-      instancePassword: "סיסמת מופע",
-      setPassword: "האם תרצה להגדיר סיסמה?",
-      passwordReq: "סיסמאות חייבות להכיל לפחות 8 תווים.",
-      passwordWarn: "חשוב לשמור סיסמה זו מכיוון שאין שיטת שחזור.",
       adminUsername: "שם משתמש של חשבון מנהל",
       adminPassword: "סיסמת חשבון מנהל",
       adminPasswordReq: "סיסמאות חייבות להכיל לפחות 8 תווים.",
@@ -85,7 +78,6 @@ const TRANSLATIONS = {
     "voice-speech": "קול ודיבור",
     "vector-database": "מסד נתונים וקטורי",
     embeds: "הטמעות צ'אט (Embeds)",
-    security: "אבטחה",
     "event-logs": "יומני אירועים",
     privacy: "פרטיות ונתונים",
     "ai-providers": "ספקי בינה מלאכותית",
@@ -112,7 +104,7 @@ const TRANSLATIONS = {
     "image-generation": "יצירת תמונות",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "ברוכים הבאים ל",
       "placeholder-username": "שם משתמש",
       "placeholder-password": "סיסמה",
@@ -409,8 +401,6 @@ const TRANSLATIONS = {
         title: "חיבור ל-GMail",
         description:
           'אפשר לאгент שלכם לתקשר עם Gmail – לחפש הודעות דוא"ל, לקרוא דיונים, ליצור טיוטות, לשלוח הודעות דוא"ל ולנהל תיבת הדואר. <a>קרא את התיעוד</a>.',
-        multiUserWarning:
-          "שילוב עם ג'ימל אינו זמין במצב רב משתמשים מטעמי אבטחה. אנא כבו את מצב רב משתמשים כדי להשתמש בתכונה זו.",
         configuration: "הגדרת חשבון Gmail",
         deploymentId: "מזהה הפריסה",
         deploymentIdHelp: "מזהה הפריסה מהאפליקציה שלך של Google Apps Script.",
@@ -526,8 +516,6 @@ const TRANSLATIONS = {
         title: "חיבור ל-Outlook",
         description:
           'אפשר לאגנט שלכם לתקשר עם Microsoft Outlook – לחפש הודעות דוא"ל, לקרוא דיונים, ליצור טיוטות, לשלוח הודעות דוא"ל ולנהל תיבת הדואר שלכם באמצעות Microsoft Graph API. <a>קראו את התיעוד</a>.',
-        multiUserWarning:
-          "שילוב עם Outlook אינו זמין במצב רב-משתמשים מטעמי אבטחה. אנא בטל את מצב רב-משתמשים כדי להשתמש בתכונה זו.",
         configuration: "הגדרת תצורה (Outlook)",
         authType: "סוג חשבון",
         authTypeHelp:
@@ -618,8 +606,6 @@ const TRANSLATIONS = {
         title: "חיבור ל-Google Calendar",
         description:
           "אפשרו לסוכן שלכם לתקשר עם גוגל קלנדר - לצפות בקלנדרים, לקבל אירועים, ליצור ולעדכן אירועים, ולנהל אישורי השתתפות. <a>קראו את התיעוד</a>.",
-        multiUserWarning:
-          "שילוב עם גוגל קלנדר אינו זמין במצב רב-משתמשים מטעמי אבטחה. אנא כבו את מצב רב-משתמשים כדי להשתמש בתכונה זו.",
         configuration: "הגדרת גלובל קלנדר",
         deploymentId: "מזהה הפריסה",
         deploymentIdHelp: "מזהה הפריסה מהאפליקציה שלך של Google Apps Script",
@@ -1461,28 +1447,6 @@ const TRANSLATIONS = {
           button: "התחבר למרכז הקהילה",
         },
       },
-    },
-  },
-  security: {
-    title: "אבטחה",
-    multiuser: {
-      title: "מצב ריבוי משתמשים",
-      description:
-        "הגדר את המופע שלך לתמיכה בצוות שלך על ידי הפעלת מצב ריבוי משתמשים.",
-      enable: {
-        "is-enable": "מצב ריבוי משתמשים מופעל",
-        enable: "הפעל מצב ריבוי משתמשים",
-        description:
-          "כברירת מחדל, אתה תהיה המנהל היחיד. כמנהל תצטרך ליצור חשבונות לכל המשתמשים או המנהלים החדשים. אל תאבד את סיסמתך, מכיוון שרק משתמש מנהל יכול לאפס סיסמאות.",
-        username: "שם משתמש של חשבון מנהל",
-        password: "סיסמת חשבון מנהל",
-      },
-    },
-    password: {
-      title: "הגנת סיסמה",
-      description:
-        "הגן על מופע ה-AnythingLLM שלך באמצעות סיסמה. אם תשכח אותה, אין שיטת שחזור, אז ודא שאתה שומר סיסמה זו.",
-      "password-label": "סיסמת מופע",
     },
   },
   home: {

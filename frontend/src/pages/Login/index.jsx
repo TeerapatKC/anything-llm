@@ -7,7 +7,7 @@ import useQuery from "@/hooks/useQuery";
 import useSimpleSSO from "@/hooks/useSimpleSSO";
 
 /**
- * Login page that handles both single and multi-user login.
+ * Login page.
  *
  * If Simple SSO is enabled and no login is allowed, the user will be redirected to the SSO login page
  * which may not have a token so the login will fail.

@@ -5,7 +5,7 @@ const { reqBody, userFromSession } = require("../utils/http");
 const { validEmbedConfigId } = require("../utils/middleware/embedMiddleware");
 const {
   userPermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {

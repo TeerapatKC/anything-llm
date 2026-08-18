@@ -15,7 +15,8 @@ function apiAdminEndpoints(app) {
   app.get("/v1/admin/is-multi-user-mode", [validApiKey], (_, response) => {
     /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'List all users in the instance.'
+    #swagger.deprecated = true
+    #swagger.description = 'Deprecated. Always returns true - authentication is always required, so there is no other mode to report. Kept so existing API clients keep working; do not use in new integrations.'
     #swagger.responses[200] = {
       content: {
         "application/json": {
@@ -34,7 +35,8 @@ function apiAdminEndpoints(app) {
       }
     }
     */
-    // Retained for API compatibility - every instance is multi-user.
+    // Deprecated. Retained only so existing API clients keep working - there is
+    // no mode to report, authentication is always required.
     response.status(200).json({ isMultiUser: true });
   });
 
@@ -659,7 +661,7 @@ function apiAdminEndpoints(app) {
     async (request, response) => {
       /*
     #swagger.tags = ['Admin']
-    #swagger.description = 'Update multi-user preferences for instance.'
+    #swagger.description = 'Update preferences for instance.'
     #swagger.requestBody = {
       description: 'Object with setting key and new value to set. All keys are optional and will not update unless specified.',
       required: true,

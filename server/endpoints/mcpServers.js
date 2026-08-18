@@ -2,7 +2,7 @@ const { reqBody } = require("../utils/http");
 const MCPCompatibilityLayer = require("../utils/MCP");
 const {
   userPermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 

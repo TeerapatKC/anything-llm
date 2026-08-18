@@ -55,7 +55,7 @@
         "tags": [
           "Admin"
         ],
-        "description": "List all users in the instance.",
+        "description": "Deprecated. Always returns true - authentication is always required, so there is no other mode to report. Kept so existing API clients keep working; do not use in new integrations.",
         "parameters": [],
         "responses": {
           "200": {
@@ -86,7 +86,8 @@
               }
             }
           }
-        }
+        },
+        "deprecated": true
       }
     },
     "/v1/admin/users": {
@@ -672,7 +673,7 @@
         "tags": [
           "Admin"
         ],
-        "description": "Update multi-user preferences for instance.",
+        "description": "Update preferences for instance.",
         "parameters": [],
         "responses": {
           "200": {

@@ -19,8 +19,8 @@ function normalizePermissions(permissions) {
 }
 
 /**
- * Gate a route on instance-wide permissions the caller must hold. Every instance is
- * multi-user, so there is no implicit operator - the signed-in user's role decides.
+ * Gate a route on instance-wide permissions the caller must hold.
+ * There is no implicit operator - the signed-in user's role decides.
  * @param {string[]} allowedPermissions - Permissions that grant access to the route
  * @returns {function}
  */

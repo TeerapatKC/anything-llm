@@ -7,7 +7,7 @@
 # - Name the space and select "Docker" as the SDK w/ a blank template
 # - The default 2vCPU/16GB machine is OK. The more the merrier.
 # - Decide if you want your AnythingLLM Space public or private.
-#   **You might want to stay private until you at least set a password or enable multi-user mode**
+#   **You might want to stay private until you have created your administrator account**
 # - Click "Create Space"
 # - Click on "Settings" on top of page (https://huggingface.co/spaces/<username>/<space-name>/settings)
 # - Scroll to "Persistent Storage" and select the lowest tier of now - you can upgrade if you run out.

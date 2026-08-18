@@ -13,13 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "用户设置",
       description: "配置你的用户设置。",
-      howManyUsers: "将有多少用户使用此实例？",
-      justMe: "只有我",
-      myTeam: "我的团队",
-      instancePassword: "实例密码",
-      setPassword: "你想要设置密码吗？",
-      passwordReq: "密码必须至少包含 8 个字符。",
-      passwordWarn: "保存此密码很重要，因为没有恢复方法。",
       adminUsername: "管理员账户用户名",
       adminPassword: "管理员账户密码",
       adminPasswordReq: "密码必须至少包含 8 个字符。",
@@ -84,7 +77,6 @@ const TRANSLATIONS = {
     "voice-speech": "语音和讲话",
     "vector-database": "向量数据库",
     embeds: "嵌入式对话",
-    security: "用户与安全",
     "event-logs": "事件日志",
     privacy: "隐私与数据",
     "ai-providers": "人工智能提供商",
@@ -111,7 +103,7 @@ const TRANSLATIONS = {
     "image-generation": "图像生成",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "欢迎！",
       "placeholder-username": "请输入用户名",
       "placeholder-password": "请输入密码",
@@ -398,8 +390,6 @@ const TRANSLATIONS = {
         title: "Gmail 连接器",
         description:
           "让您的代理能够与Gmail互动：搜索邮件、阅读邮件线程、撰写草稿、发送邮件以及管理您的收件箱。请参考相关文档。",
-        multiUserWarning:
-          "为了安全原因，在多用户模式下无法使用 Gmail 集成功能。请先禁用多用户模式，然后才能使用此功能。",
         configuration: "Gmail 设置",
         deploymentId: "部署 ID",
         deploymentIdHelp: "您的 Google Apps Script 网页应用的部署 ID",
@@ -510,8 +500,6 @@ const TRANSLATIONS = {
         title: "Outlook 连接器",
         description:
           "让您的代理通过 Microsoft Graph API 与 Microsoft Outlook 交互——搜索邮件、阅读邮件线程、撰写草稿、发送邮件以及管理您的收件箱。请查阅相关文档。",
-        multiUserWarning:
-          "由于安全原因，在多用户模式下无法使用 Outlook 集成功能。请先关闭多用户模式，然后再使用此功能。",
         configuration: "Outlook 设置",
         authType: "账户类型",
         authTypeHelp:
@@ -601,8 +589,6 @@ const TRANSLATIONS = {
         title: "Google 日历连接器",
         description:
           "让您的代理能够与 Google 日历互动：查看日历、获取活动、创建和更新活动，以及管理确认回复。请参考相关文档。",
-        multiUserWarning:
-          "由于安全原因，在多用户模式下无法使用 Google 日历集成功能。请先禁用多用户模式，然后再使用此功能。",
         configuration: "谷歌日历配置",
         deploymentId: "部署ID",
         deploymentIdHelp: "您的 Google Apps Script 网页应用的部署 ID",
@@ -1417,27 +1403,6 @@ const TRANSLATIONS = {
         prompt_description: "这是触发斜线指令时将使用的提示。",
         prompt_placeholder: "在此输入您的提示...",
       },
-    },
-  },
-  security: {
-    title: "用户与安全",
-    multiuser: {
-      title: "多用户模式",
-      description: "通过激活多用户模式来设置你的实例以支持你的团队。",
-      enable: {
-        "is-enable": "多用户模式已启用",
-        enable: "启用多用户模式",
-        description:
-          "默认情况下，你将是唯一的管理员。作为管理员，你需要为所有新用户或管理员创建账户。不要丢失你的密码，因为只有管理员用户可以重置密码。",
-        username: "管理员账户用户名",
-        password: "管理员账户密码",
-      },
-    },
-    password: {
-      title: "密码保护",
-      description:
-        "用密码保护你的AnythingLLM实例。如果你忘记了密码，那么没有恢复方法，所以请确保保存这个密码。",
-      "password-label": "实例密码",
     },
   },
   home: {

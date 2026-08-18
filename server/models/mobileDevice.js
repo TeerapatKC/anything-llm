@@ -55,7 +55,7 @@ const MobileDevice = {
    * @security Note: If we use a JWT the QR code that encodes it becomes extremely complex
    * and noisy as QR codes have byte limits that could be exceeded with JWTs. Since this is
    * a temporary token that is only used to register a device and is short lived we can use UUIDs.
-   * @param {import("@prisma/client").users|null} user - User to get connection URL for in Multi-User Mode
+   * @param {import("@prisma/client").users|null} user - User the connection URL is for
    * @returns {string} The temporary token
    */
   registerTempToken: function (user = null) {
@@ -93,7 +93,7 @@ const MobileDevice = {
    * Since you have to have a valid session to call /mobile/connect-info we can pre-register
    * a temporary token for the user that is passed back to /mobile/register and can lookup
    * who a device belongs to so we can scope it's access token.
-   * @param {import("@prisma/client").users|null} user - User to get connection URL for in Multi-User Mode
+   * @param {import("@prisma/client").users|null} user - User the connection URL is for
    * @returns {string}
    */
   connectionURL: function (user = null) {

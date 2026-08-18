@@ -113,7 +113,7 @@ export function initKeyboardShortcuts() {
 function useKeyboardShortcuts() {
   useEffect(() => {
     // If there is a user and the user is not an admin do not register the event listener
-    // since some of the shortcuts are only available in multi-user mode as admin
+    // since some of the shortcuts are admin-only
     const user = userFromStorage();
     if (!userCan(PERMISSIONS.SYSTEM_SETTINGS, user)) return;
     const cleanup = initKeyboardShortcuts();

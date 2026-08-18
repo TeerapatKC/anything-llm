@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import System from "../../../models/system";
-import MultiUserAuth from "./MultiUserAuth";
+import LoginForm from "./LoginForm";
 import {
   AUTH_TOKEN,
   AUTH_USER,
@@ -19,7 +19,7 @@ export default function PasswordModal() {
         className={`max-h-[80px] ${isCustomLogo ? "rounded-lg" : ""}`}
         style={{ objectFit: "contain" }}
       />
-      <MultiUserAuth />
+      <LoginForm />
     </div>
   );
 }

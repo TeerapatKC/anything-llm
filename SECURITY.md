@@ -32,15 +32,11 @@ Valid XXS Reports must be zero-action - like on loading a page or a image instan
 
 ### Any "Unauthenticated" actions
 
-If the basis of your report relies on the system not setting up a password or multi-user mode, this is not a valid report. AnythingLLM is designed to be used in this way so that it can be used in trusted and fully isolated environments for single user or internal user. There are three options for authentication:
+Authentication is always required. Every instance has named user accounts, and a request without a valid user-bound session never reaches a route handler. There is no unauthenticated or shared-password mode to opt out into.
 
-1. No authentication - this would have no endpoint authentication and would be accessible to anyone who knows the URL.
-2. Password - this would require a password to access the system.
-3. Multi-user mode - this would require a user to be logged in to the system with username and password and be given explicit access to the system by administrator.
+The first administrator is created either from `ADMIN_USERNAME`/`ADMIN_PASSWORD`/`ADMIN_EMAIL` at boot, or through the onboarding screen. Every account after that is created by an administrator, and access to each workspace is granted explicitly.
 
-During onboarding, the system will prompt the user to set up a password or multi-user mode. If the user does not opt to set up a password or multi-user mode, the system will be accessible to anyone who knows the URL. This is an intentional design choice and is not a vulnerability.
-
-If your report is about being able to access the system via _bypassing the authentication_ or lackthereof, that **is a valid report** and will be investigated and fixed.
+If your report is about being able to access the system by _bypassing_ authentication, that **is a valid report** and will be investigated and fixed.
 
 ### Reports requiring knowledge or guessing of a UUID
 

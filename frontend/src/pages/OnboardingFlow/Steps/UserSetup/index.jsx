@@ -12,8 +12,8 @@ import { PW_REGEX, PW_ALLOWED_SYMBOLS } from "@/utils/password";
 import { FullScreenLoader } from "@/components/Preloader";
 
 /**
- * Creates the instance's first system administrator. Every instance is multi-user, so
- * this step is unconditional - except on deploys that already created the admin from
+ * Creates the instance's first system administrator, so this step is
+ * unconditional - except on deploys that already created the admin from
  * `ADMIN_USERNAME`/`ADMIN_PASSWORD`, where there is nothing left to ask and we move on.
  */
 export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {

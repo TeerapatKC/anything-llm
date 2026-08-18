@@ -28,14 +28,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Gebruikersinstellingen",
       description: "Configureer uw gebruikersinstellingen.",
-      howManyUsers: "Hoeveel gebruikers zullen deze instantie gebruiken?",
-      justMe: "Alleen ik",
-      myTeam: "Mijn team",
-      instancePassword: "Instancewachtwoord",
-      setPassword: "Wilt u een wachtwoord instellen?",
-      passwordReq: "Wachtwoorden moeten minimaal 8 tekens lang zijn.",
-      passwordWarn:
-        "Het is belangrijk om dit wachtwoord te bewaren, omdat er geen herstelmethode is.",
       adminUsername: "Gebruikersnaam van het beheerdersaccount",
       adminPassword: "Wachtwoord van het beheerdersaccount",
       adminPasswordReq: "Wachtwoorden moeten minimaal 8 tekens lang zijn.",
@@ -85,7 +77,6 @@ const TRANSLATIONS = {
     "voice-speech": "Stem & Spraak",
     "vector-database": "Vector Database",
     embeds: "Chat Inbedden",
-    security: "Veiligheid",
     "event-logs": "Gebeurtenislogboeken",
     privacy: "Privacy & Gegevens",
     "ai-providers": "AI Providers",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Afbeelding genereren",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Welkom bij",
       "placeholder-username": "Gebruikersnaam",
       "placeholder-password": "Wachtwoord",
@@ -413,8 +404,6 @@ const TRANSLATIONS = {
         title: "GMail-verbinding",
         description:
           "Maak het mogelijk voor uw agent om met Gmail te communiceren: e-mails zoeken, threads lezen, e-mails opstellen, e-mails versturen en uw inbox beheren. <a>Bekijk de documentatie</a>.",
-        multiUserWarning:
-          "De integratie met Gmail is niet beschikbaar in de modus voor meerdere gebruikers, om veiligheidsredenen. Schakel de modus voor meerdere gebruikers uit om deze functie te gebruiken.",
         configuration: "Gmail-instellingen",
         deploymentId: "Identificatiecode voor de implementatie",
         deploymentIdHelp: "De deployment-ID van je Google Apps Script web-app",
@@ -533,8 +522,6 @@ const TRANSLATIONS = {
         title: "Outlook-connector",
         description:
           "Laat uw agent in staat zijn om met Microsoft Outlook te communiceren: e-mails zoeken, threads lezen, concepten opstellen, e-mails versturen en uw inbox beheren via de Microsoft Graph API. Raadpleeg de documentatie.",
-        multiUserWarning:
-          "De integratie met Outlook is niet beschikbaar in de modus voor meerdere gebruikers, vanwege veiligheidsoverwegingen. Om deze functie te gebruiken, moet u de modus voor meerdere gebruikers uitschakelen.",
         configuration: "Outlook-configuratie",
         authType: "Type account",
         authTypeHelp:
@@ -633,8 +620,6 @@ const TRANSLATIONS = {
         title: "Google Kalender-connector",
         description:
           "Maak het mogelijk voor uw agent om met Google Kalender te communiceren: kalenders bekijken, evenementen bekijken, evenementen aanmaken en bijwerken, en RSVP's beheren. <a>Lees de documentatie</a>.",
-        multiUserWarning:
-          "De integratie met Google Kalender is niet beschikbaar in de modus met meerdere gebruikers, vanwege beveiligingsredenen. Om deze functie te gebruiken, dient u de modus met meerdere gebruikers uit te schakelen.",
         configuration: "Google Kalender instellingen",
         deploymentId: "Identificatiecode voor de implementatie",
         deploymentIdHelp: "De deployment-ID van uw Google Apps Script web-app",
@@ -721,7 +706,7 @@ const TRANSLATIONS = {
       scheduledJob: {
         title: "Maak geplande taken aan",
         description:
-          'Laat de agent herhaalde geplande taken aanmaken vanuit het gesprek (bijvoorbeeld: "elke werkdag om 9 uur, vat mijn inbox samen en stuur me een e-mail"). Dit is alleen beschikbaar in single-user modus.',
+          'Laat de agent herhaalde geplande taken aanmaken vanuit het gesprek (bijvoorbeeld: "elke werkdag om 9 uur, vat mijn inbox samen en stuur me een e-mail").',
       },
     },
     mcp: {
@@ -1532,28 +1517,6 @@ const TRANSLATIONS = {
           "Dit is de prompt die wordt gebruikt wanneer de slash-opdracht wordt geactiveerd.",
         prompt_placeholder: "Voer hier je prompt in...",
       },
-    },
-  },
-  security: {
-    title: "Veiligheid",
-    multiuser: {
-      title: "Multi-Gebruikersmodus",
-      description:
-        "Stel je instantie in om je team te ondersteunen door Multi-Gebruikersmodus in te schakelen.",
-      enable: {
-        "is-enable": "Multi-Gebruikersmodus is Ingeschakeld",
-        enable: "Schakel Multi-Gebruikersmodus In",
-        description:
-          "Standaard ben je de enige beheerder. Als beheerder moet je accounts aanmaken voor alle nieuwe gebruikers of beheerders. Verlies je wachtwoord niet, want alleen een beheerdersgebruiker kan wachtwoorden resetten.",
-        username: "Beheerdersaccount gebruikersnaam",
-        password: "Beheerdersaccount wachtwoord",
-      },
-    },
-    password: {
-      title: "Wachtwoordbeveiliging",
-      description:
-        "Bescherm je AnythingLLM-instantie met een wachtwoord. Als je dit vergeet, is er geen herstelmethode, dus zorg ervoor dat je dit wachtwoord opslaat.",
-      "password-label": "Instances wachtwoord",
     },
   },
   home: {

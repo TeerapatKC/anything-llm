@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Configuració d'usuari",
       description: "Configura els paràmetres d'usuari.",
-      howManyUsers: "Quants usuaris faran servir aquesta instància?",
-      justMe: "Només jo",
-      myTeam: "El meu equip",
-      instancePassword: "Contrasenya de la instància",
-      setPassword: "Vols configurar una contrasenya?",
-      passwordReq: "Les contrasenyes han de tenir almenys 8 caràcters.",
-      passwordWarn:
-        "És important guardar aquesta contrasenya, ja que no hi ha cap mètode de recuperació.",
       adminUsername: "Nom d'usuari del compte d'administrador",
       adminPassword: "Contrasenya del compte d'administrador",
       adminPasswordReq: "Les contrasenyes han de tenir almenys 8 caràcters.",
@@ -95,7 +87,6 @@ const TRANSLATIONS = {
     "voice-speech": "Veu i parla",
     "vector-database": "Base de dades vectorial",
     embeds: "Widget de xat incrustat",
-    security: "Seguretat",
     "event-logs": "Registres d'esdeveniments",
     privacy: "Privadesa i dades",
     "ai-providers": "Proveïdors d'IA",
@@ -122,7 +113,7 @@ const TRANSLATIONS = {
     "image-generation": "Generació d'imatges",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Benvingut",
       "placeholder-username": "Nom d'usuari",
       "placeholder-password": "Contrasenya",
@@ -428,8 +419,6 @@ const TRANSLATIONS = {
         title: "Connector de Gmail",
         description:
           "Permet que el teu agent interaccioni amb Gmail: cerca correus, llegeix fils, redacta esborranys, envia correus i gestiona la teva safata d'entrada. <a>Llegeix la documentació</a>.",
-        multiUserWarning:
-          "La integració de Gmail no està disponible en mode multiusuari per raons de seguretat. Desactiva el mode multiusuari per usar aquesta funció.",
         configuration: "Configuració de Gmail",
         deploymentId: "ID de desplegament",
         deploymentIdHelp:
@@ -551,8 +540,6 @@ const TRANSLATIONS = {
         title: "Connector per a Outlook",
         description:
           "Permet que el teu agent interactuï amb Microsoft Outlook: cerca correus electrònics, llegeix converses, redacta esborranys, envia correus electrònics i gestiona la teva caixa de correu electrònic a través de l'API de Microsoft Graph. <a>Consulteu la documentació</a>.",
-        multiUserWarning:
-          "La integració d'Outlook no està disponible en mode multiusuari per raons de seguretat. Per utilitzar aquesta funció, feu que el mode multiusuari estigui desactivat.",
         configuration: "Configuració d'Outlook",
         authType: "Tipus de compte",
         authTypeHelp:
@@ -657,8 +644,6 @@ const TRANSLATIONS = {
         title: "Connector per a Google Calendar",
         description:
           "Permet que el teu agent interactuï amb Google Calendar: visualitza calendaris, obté esdeveniments, crea i actualitza esdeveniments, i gestiona les confirmacions de participació. <a>Consulteu la documentació</a>.",
-        multiUserWarning:
-          "La integració amb Google Calendar no està disponible en el mode multiusuari per raons de seguretat. Per utilitzar aquesta funció, feu que el mode multiusuari estigui desactivat.",
         configuration: "Configuració de Google Calendar",
         deploymentId: "Identificador de desplegament",
         deploymentIdHelp:
@@ -1104,28 +1089,6 @@ const TRANSLATIONS = {
       "pending-description":
         "Usuaris que esperen ser verificats. Fes coincidir el codi d'emparellament que es mostra aquí amb el que es mostra al seu xat de Telegram.",
       unknown: "Desconegut",
-    },
-  },
-  security: {
-    title: "Seguretat",
-    multiuser: {
-      title: "Mode multiusuari",
-      description:
-        "Configura la teva instància per donar suport al teu equip activant el mode multiusuari.",
-      enable: {
-        "is-enable": "El mode multiusuari està activat",
-        enable: "Activa el mode multiusuari",
-        description:
-          "Per defecte, seràs l'únic administrador. Com a administrador, hauràs de crear comptes per a tots els usuaris i administradors nous. No perdis la contrasenya, ja que només un usuari administrador pot restablir contrasenyes.",
-        username: "Nom d'usuari del compte d'administrador",
-        password: "Contrasenya del compte d'administrador",
-      },
-    },
-    password: {
-      title: "Protecció per contrasenya",
-      description:
-        "Protegeix la teva instància d'AnythingLLM amb una contrasenya. Si l'oblides, no hi ha cap mètode de recuperació, per la qual cosa assegura't de guardar-la.",
-      "password-label": "Contrasenya de la instància",
     },
   },
   event: {

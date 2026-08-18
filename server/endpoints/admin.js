@@ -21,7 +21,7 @@ const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const {
   userPermissionValid,
   workspacePermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const {
   PERMISSIONS,
   SETTINGS_ROUTE_PERMISSIONS,

@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Kasutaja seadistus",
       description: "Seadista oma kasutajasätted.",
-      howManyUsers: "Mitu kasutajat seda instantsi kasutab?",
-      justMe: "Ainult mina",
-      myTeam: "Minu meeskond",
-      instancePassword: "Instantsi parool",
-      setPassword: "Kas soovid parooli seadistada?",
-      passwordReq: "Parool peab olema vähemalt 8 märki.",
-      passwordWarn:
-        "Salvesta see parool hoolikalt, sest taastamisvõimalust ei ole.",
       adminUsername: "Admini kasutajanimi",
       adminPassword: "Admini parool",
       adminPasswordReq: "Parool peab olema vähemalt 8 märki.",
@@ -87,7 +79,6 @@ const TRANSLATIONS = {
     "voice-speech": "Hääle ja kõne seaded",
     "vector-database": "Vektoriandmebaas",
     embeds: "Vestluse embed",
-    security: "Turvalisus",
     "event-logs": "Sündmuste logid",
     privacy: "Privaatsus ja andmed",
     "ai-providers": "AI-pakkujad",
@@ -114,7 +105,7 @@ const TRANSLATIONS = {
     "image-generation": "Pildi genereerimine",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Tere tulemast",
       "placeholder-username": "Kasutajanimi",
       "placeholder-password": "Parool",
@@ -411,8 +402,6 @@ const TRANSLATIONS = {
         title: "GMail-iga ühendamine",
         description:
           "Lase oma esindajal interakteeruda Gmailiga – otsida e-kirju, lugeda teemasid, luua esialgseid versioone, saatada e-kirju ja hallata oma postkasti. <a>Vaata dokumentatsiooni</a>.",
-        multiUserWarning:
-          "Gmaili integreerimine ei ole saadaval mitme kasutaja režiimis turvalisuse huvides. Palun deaktiveerige mitme kasutaja režiim, et kasutada seda funktsiooni.",
         configuration: "Gmaili seadmine",
         deploymentId: "Paigaldamis ID",
         deploymentIdHelp: "Veebirakenduse Google Apps Scripti ID",
@@ -528,8 +517,6 @@ const TRANSLATIONS = {
         title: "Outlooki ühineja",
         description:
           "Laske oma agentil interakteeruda Microsoft Outlookiga – otsida e-kirju, lugeda teemasid, luua esialgseid versioone, saata e-kirju ja hallata oma postkasti Microsoft Graph API kaudu. <a>Vaata dokumentatsiooni</a>.",
-        multiUserWarning:
-          "Outlooki integratsioon ei ole saadaval mitme kasutaja režiimis turvalisuse huvides. Palun deaktiveeri mitme kasutaja režiim, et kasutada seda funktsiooni.",
         configuration: "Outlooki seadistamine",
         authType: "Kontoti tüüp",
         authTypeHelp:
@@ -625,8 +612,6 @@ const TRANSLATIONS = {
         title: "Google Kalendri ühendaja",
         description:
           "Lisage oma esindajale võimalus interakteeruda Google Kalendriga – vaadake kalendreid, hankige sündmusi, looge ja uuendage sündmusi ning hallake vastuvõtuid. <a>Vaadake dokumentatsiooni</a>.",
-        multiUserWarning:
-          "Google Kalendri integreerimine ei ole saadaval mitme kasutaja režiimis turvalisuse huvides. Palun deaktiveeri mitme kasutaja režiim, et kasutada seda funktsiooni.",
         configuration: "Google Kalendri seadistamine",
         deploymentId: "Paigutuse ID",
         deploymentIdHelp: "Veebirakenduse Google Apps Scripti ID",
@@ -1473,28 +1458,6 @@ const TRANSLATIONS = {
           button: "Ühendu Community Hubiga",
         },
       },
-    },
-  },
-  security: {
-    title: "Turvalisus",
-    multiuser: {
-      title: "Mitme kasutaja režiim",
-      description:
-        "Lülita mitme kasutaja tugi sisse, et meeskond saaks instantsi kasutada.",
-      enable: {
-        "is-enable": "Mitme kasutaja režiim on sisse lülitatud",
-        enable: "Lülita sisse",
-        description:
-          "Vaikimisi oled ainus administraator. Adminid loovad uued kasutajad ja paroole.",
-        username: "Admini kasutajanimi",
-        password: "Admini parool",
-      },
-    },
-    password: {
-      title: "Paroolikaitse",
-      description:
-        "Kaitse oma instantsi parooliga. Kui unustad selle, taastamisvõimalust ei ole.",
-      "password-label": "Instantsi parool",
     },
   },
   home: {

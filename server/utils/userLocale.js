@@ -2,9 +2,10 @@
  * UserMetaCache
  *
  * Singleton in-memory cache for per-user browser metadata (timezone, language).
- * Keyed by numeric user ID in multi-user mode, or the string 'primary' in
- * single-user mode. Populated from the X-Timezone / X-Language request headers
- * on every authenticated HTTP request via the validatedRequest middleware.
+ * Keyed by numeric user ID, or the string 'primary' for work that runs without
+ * a user in context (unattended agent jobs). Populated from the X-Timezone /
+ * X-Language request headers on every authenticated HTTP request via the
+ * validatedRequest middleware.
  *
  * Because every request repopulates the cache from headers, the data stays
  * fresh within a session without any database writes.
@@ -49,7 +50,7 @@ class _UserMetaCache {
    * Store or update locale metadata for a user.
    * Invalid timezone strings are silently ignored (existing/default value kept).
    *
-   * @param {number|null} userId - Numeric user ID, or null for single-user mode.
+   * @param {number|null} userId - Numeric user ID, or null when no user is in context.
    * @param {{ timezone?: string, lang?: string }} meta
    */
   set(userId, { timezone, lang } = {}) {
@@ -68,7 +69,7 @@ class _UserMetaCache {
    * Retrieve locale metadata for a user.
    * Returns defaults if nothing has been cached yet.
    *
-   * @param {number|null} userId - Numeric user ID, or null for single-user mode.
+   * @param {number|null} userId - Numeric user ID, or null when no user is in context.
    * @returns {{ timezone: string, lang: string }}
    */
   get(userId) {
@@ -85,7 +86,7 @@ class _UserMetaCache {
    * Intended to be called from the validatedRequest middleware after auth.
    *
    * @param {import('express').Request} request
-   * @param {number|null} userId - null for single-user mode (stored under 'primary')
+   * @param {number|null} userId - null when no user is in context (stored under 'primary')
    */
   setFromRequest(request, userId = null) {
     const timezone = request.header("X-Timezone");

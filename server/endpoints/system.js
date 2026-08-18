@@ -43,7 +43,7 @@ const { getCustomModels } = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   userPermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
@@ -992,7 +992,7 @@ function systemEndpoints(app) {
     }
   );
 
-  // Used for when a user in multi-user updates their own profile
+  // Used for when a user updates their own profile
   // from the UI.
   app.post("/system/user", [validatedRequest], async (request, response) => {
     try {

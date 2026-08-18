@@ -2,38 +2,39 @@ import useScrollActiveItemIntoView from "@/hooks/useScrollActiveItemIntoView";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import {
-  ArrowCounterClockwise,
-  DotsThree,
-  PencilSimple,
-  Trash,
-  X,
-} from "@phosphor-icons/react";
-import { useEffect, useRef, useState } from "react";
+import { MoreHorizontal, Pencil, RotateCcw, Trash2, X } from "lucide-react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+} from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { THREAD_RENAME_EVENT } from "../constants";
 
-const THREAD_CALLOUT_DETAIL_WIDTH = 26;
 export default function ThreadItem({
-  idx,
-  activeIdx,
   isActive,
   workspace,
   thread,
   onRemove,
   toggleMarkForDeletion,
-  hasNext,
   ctrlPressed = false,
 }) {
   const { slug: urlSlug, threadSlug = null } = useParams();
   const workspaceSlug = workspace?.slug ?? urlSlug;
-  const optionsContainer = useRef(null);
-  const [showOptions, setShowOptions] = useState(false);
+  const [confirm, setConfirm] = useState(null);
   const linkTo = thread.virtual
     ? "/"
     : !thread.slug
@@ -45,186 +46,98 @@ export default function ThreadItem({
     behavior: "instant",
     block: "center",
   });
-  return (
-    <div
-      className="w-full relative flex h-[38px] items-center border-none rounded-lg"
-      role="listitem"
-    >
-      {/* Curved line Element and leader if required */}
-      <div
-        style={{ width: THREAD_CALLOUT_DETAIL_WIDTH / 2 }}
-        className={`${
-          isActive
-            ? "border-l-2 border-b-2 border-white light:border-blue-800 z-[2]"
-            : "border-l border-b border-zinc-500 light:border-slate-400 z-[1]"
-        } h-[50%] absolute top-0 left-3 rounded-bl-lg`}
-      ></div>
-      {/* Downstroke border for next item */}
-      {hasNext && (
-        <div
-          style={{ width: THREAD_CALLOUT_DETAIL_WIDTH / 2 }}
-          className={`${
-            idx <= activeIdx && !isActive
-              ? "border-l-2 border-white light:border-blue-800 z-[2]"
-              : "border-l border-zinc-500 light:border-slate-400 z-[1]"
-          } h-[100%] absolute top-0 left-3`}
-        ></div>
-      )}
 
-      {/* Curved line inline placeholder for spacing - not visible */}
-      <div
-        style={{ width: THREAD_CALLOUT_DETAIL_WIDTH + 8 }}
-        className="h-full"
-      />
-      <div
-        className={`flex w-full items-center justify-between pr-2 group/thread relative ${isActive ? "bg-[var(--theme-sidebar-thread-selected)] light:bg-blue-200" : "hover:bg-theme-sidebar-subitem-hover light:hover:bg-slate-300"} rounded-[4px]`}
-      >
-        {thread.deleted ? (
-          <div className="w-full flex justify-between">
-            <div className="w-full pl-2 py-1">
-              <p
-                className={`text-left text-sm text-slate-400/50 light:text-slate-500 italic`}
-              >
-                deleted thread
-              </p>
-            </div>
-            {ctrlPressed && (
-              <button
-                type="button"
-                className="border-none"
-                onClick={() => toggleMarkForDeletion(thread.id)}
-              >
-                <ArrowCounterClockwise
-                  className="text-zinc-300 hover:text-white light:text-theme-text-secondary hover:light:text-theme-text-primary"
-                  size={18}
-                />
-              </button>
-            )}
-          </div>
-        ) : (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                ref={ref}
-                to={linkTo}
-                className="w-full pl-2 py-1 overflow-hidden"
-                aria-current={isActive ? "page" : ""}
-              >
-                <p
-                  className={`text-left text-sm truncate max-w-[150px] ${
-                    isActive
-                      ? "font-semibold text-theme-text-primary light:text-blue-900"
-                      : "text-theme-text-primary font-medium light:text-slate-800"
-                  }`}
-                >
-                  {thread.name}
-                </p>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right" className="max-w-[250px] text-xs">
-              {thread.name}
-            </TooltipContent>
-          </Tooltip>
+  const canManage = !!thread.slug && !thread.deleted && !thread.virtual;
+
+  if (thread.deleted) {
+    return (
+      <SidebarMenuSubItem className="flex items-center justify-between gap-1 pr-1">
+        <span className="truncate px-2 py-1 text-sm italic text-sidebar-foreground/40">
+          deleted thread
+        </span>
+        {ctrlPressed && (
+          <button
+            type="button"
+            onClick={() => toggleMarkForDeletion(thread.id)}
+            aria-label="Restore thread"
+            className="shrink-0 rounded-sm p-1 text-sidebar-foreground/60 hover:text-sidebar-foreground"
+          >
+            <RotateCcw className="size-3.5" />
+          </button>
         )}
-        {!!thread.slug && !thread.deleted && !thread.virtual && (
-          <div ref={optionsContainer} className="flex items-center">
-            {" "}
-            {/* Added flex and items-center */}
-            {ctrlPressed ? (
-              <button
-                type="button"
-                className="border-none"
-                onClick={() => toggleMarkForDeletion(thread.id)}
-              >
-                <X
-                  className="text-zinc-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
-                  weight="bold"
-                  size={18}
-                />
-              </button>
-            ) : (
-              <div className="flex items-center w-fit md:invisible md:group-hover/thread:visible md:group-focus-within/thread:visible gap-x-1">
-                <button
-                  type="button"
-                  className="border-none"
-                  onClick={() => setShowOptions(!showOptions)}
-                  aria-label="Thread options"
-                >
-                  <DotsThree
-                    className="text-slate-300 light:text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary"
-                    size={25}
-                  />
-                </button>
-              </div>
-            )}
-            {showOptions && (
-              <OptionsMenu
-                containerRef={optionsContainer}
-                workspace={workspace}
-                thread={thread}
-                onRemove={onRemove}
-                close={() => setShowOptions(false)}
-                currentThreadSlug={threadSlug}
+      </SidebarMenuSubItem>
+    );
+  }
+
+  return (
+    <SidebarMenuSubItem className="group/thread relative">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <SidebarMenuSubButton
+            asChild
+            isActive={isActive}
+            className={cn("pr-7", thread.virtual && "italic")}
+          >
+            <Link ref={ref} to={linkTo} aria-current={isActive ? "page" : ""}>
+              {/* Leading marker. Kept before the label so the name stays the
+                  button's last child, which is what carries the truncation. */}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "size-1.5 shrink-0 rounded-full transition-colors",
+                  isActive
+                    ? "bg-sidebar-primary"
+                    : "bg-sidebar-foreground/30 group-hover/thread:bg-sidebar-foreground/60"
+                )}
               />
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+              <span className={cn("truncate", isActive && "font-medium")}>
+                {thread.name}
+              </span>
+            </Link>
+          </SidebarMenuSubButton>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="max-w-[250px] text-xs">
+          {thread.name}
+        </TooltipContent>
+      </Tooltip>
+
+      {canManage &&
+        (ctrlPressed ? (
+          <button
+            type="button"
+            onClick={() => toggleMarkForDeletion(thread.id)}
+            aria-label="Mark thread for deletion"
+            className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          >
+            <X className="size-3.5" />
+          </button>
+        ) : (
+          <ThreadOptions
+            workspace={workspace}
+            thread={thread}
+            onRemove={onRemove}
+            currentThreadSlug={threadSlug}
+            onConfirm={setConfirm}
+          />
+        ))}
+
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+    </SidebarMenuSubItem>
   );
 }
 
-function OptionsMenu({
-  containerRef,
+function ThreadOptions({
   workspace,
   thread,
   onRemove,
-  close,
   currentThreadSlug,
+  onConfirm,
 }) {
-  const menuRef = useRef(null);
-  const [confirm, setConfirm] = useState(null);
-
-  // Ref menu options
-  const outsideClick = (e) => {
-    if (!menuRef.current) return false;
-    if (
-      !menuRef.current?.contains(e.target) &&
-      !containerRef.current?.contains(e.target)
-    )
-      close();
-    return false;
-  };
-
-  const isEsc = (e) => {
-    if (e.key === "Escape" || e.key === "Esc") close();
-  };
-
-  function cleanupListeners() {
-    window.removeEventListener("click", outsideClick);
-    window.removeEventListener("keyup", isEsc);
-  }
-  // end Ref menu options
-
-  useEffect(() => {
-    function setListeners() {
-      if (!menuRef?.current || !containerRef.current) return false;
-      window.document.addEventListener("click", outsideClick);
-      window.document.addEventListener("keyup", isEsc);
-    }
-
-    setListeners();
-    return cleanupListeners;
-  }, [menuRef.current, containerRef.current]);
-
   const renameThread = async () => {
     const name = window
       .prompt("What would you like to rename this thread to?")
       ?.trim();
-    if (!name || name.length === 0) {
-      close();
-      return;
-    }
+    if (!name || name.length === 0) return;
 
     const { message } = await Workspace.threads.update(
       workspace.slug,
@@ -235,22 +148,16 @@ function OptionsMenu({
       showToast(`Thread could not be updated! ${message}`, "error", {
         clear: true,
       });
-      close();
       return;
     }
 
-    thread.name = name;
-    close();
-  };
-
-  const handleDelete = async () => {
-    setConfirm({
-      title: "Delete this thread?",
-      description: "All of its chats will be deleted. You cannot undo this.",
-      confirmText: "Delete thread",
-      variant: "destructive",
-      onConfirm: deleteThread,
-    });
+    // The list owns thread state, so tell it to re-render rather than mutating
+    // the object it handed down.
+    window.dispatchEvent(
+      new CustomEvent(THREAD_RENAME_EVENT, {
+        detail: { threadSlug: thread.slug, newName: name },
+      })
+    );
   };
 
   const deleteThread = async () => {
@@ -259,39 +166,46 @@ function OptionsMenu({
       showToast("Thread could not be deleted!", "error", { clear: true });
       return;
     }
-    if (success) {
-      showToast("Thread deleted successfully!", "success", { clear: true });
-      onRemove(thread.id);
-      // Redirect if deleting the active thread
-      if (currentThreadSlug === thread.slug) {
-        window.location.href = paths.workspace.chat(workspace.slug);
-      }
-      return;
-    }
+    showToast("Thread deleted successfully!", "success", { clear: true });
+    onRemove(thread.id);
+    // Redirect if deleting the active thread
+    if (currentThreadSlug === thread.slug)
+      window.location.href = paths.workspace.chat(workspace.slug);
   };
 
   return (
-    <div
-      ref={menuRef}
-      className="absolute w-fit z-[20] top-[25px] right-[10px] bg-zinc-900 light:bg-theme-bg-sidebar light:border-[1px] light:border-theme-sidebar-border rounded-lg p-1"
-    >
-      <button
-        onClick={renameThread}
-        type="button"
-        className="w-full rounded-md flex items-center p-2 gap-x-2 hover:bg-slate-500/20 text-slate-300 light:text-theme-text-primary"
-      >
-        <PencilSimple size={18} />
-        <p className="text-sm">Rename</p>
-      </button>
-      <button
-        onClick={handleDelete}
-        type="button"
-        className="w-full rounded-md flex items-center p-2 gap-x-2 hover:bg-red-500/20 text-slate-300 light:text-theme-text-primary hover:text-red-100"
-      >
-        <Trash size={18} />
-        <p className="text-sm">Delete Thread</p>
-      </button>
-      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Thread options"
+          className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm text-sidebar-foreground/60 opacity-0 transition-opacity hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:opacity-100 group-hover/thread:opacity-100 data-[state=open]:opacity-100"
+        >
+          <MoreHorizontal className="size-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="right" align="start" className="w-44">
+        <DropdownMenuItem onSelect={renameThread}>
+          <Pencil className="mr-2 size-4" />
+          Rename
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="text-destructive focus:text-destructive"
+          onSelect={() =>
+            onConfirm({
+              title: "Delete this thread?",
+              description:
+                "All of its chats will be deleted. You cannot undo this.",
+              confirmText: "Delete thread",
+              variant: "destructive",
+              onConfirm: deleteThread,
+            })
+          }
+        >
+          <Trash2 className="mr-2 size-4" />
+          Delete thread
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

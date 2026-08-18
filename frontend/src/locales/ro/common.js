@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Configurare Utilizator",
       description: "Configurează setările utilizatorului tău.",
-      howManyUsers: "Câți utilizatori vor folosi această resursă?",
-      justMe: "Doar eu",
-      myTeam: "Echipa mea",
-      instancePassword: "Parola Resursei",
-      setPassword: "Dorești să setezi o parolă?",
-      passwordReq: "Parolele trebuie să aibă cel puțin 8 caractere.",
-      passwordWarn:
-        "Este important să salvezi această parolă deoarece nu există metodă de recuperare.",
       adminUsername: "Numele contului de administrator",
       adminPassword: "Parola contului de administrator",
       adminPasswordReq: "Parolele trebuie să aibă cel puțin 8 caractere.",
@@ -88,7 +80,6 @@ const TRANSLATIONS = {
     "voice-speech": "Voce & Vorbire",
     "vector-database": "Baza de date vectorială",
     embeds: "Chat Embed",
-    security: "Securitate",
     "event-logs": "Jurnale de evenimente",
     privacy: "Confidențialitate & Date",
     "ai-providers": "Furnizori AI",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Generarea de imagini",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Bine ai venit la",
       "placeholder-username": "Nume utilizator",
       "placeholder-password": "Parolă",
@@ -960,8 +951,6 @@ const TRANSLATIONS = {
         title: "Conectorul GMail",
         description:
           "Permite-i agentului tău să interacționeze cu Gmail: caută e-mailuri, citește conversații, redactează proiecte, trimite e-mailuri și gestionează folderul tău de e-mail. Consultă documentația disponibilă aici.",
-        multiUserWarning:
-          "Integrarea cu Gmail nu este disponibilă în modul multi-utilizator, din motive de securitate. Vă rugăm să dezactivați modul multi-utilizator pentru a utiliza această funcție.",
         configuration: "Configurarea contului Gmail",
         deploymentId: "Identificator de implementare",
         deploymentIdHelp:
@@ -1083,8 +1072,6 @@ const TRANSLATIONS = {
         title: "Conector Outlook",
         description:
           "Permiteți-i agentului dumneavoastră să interacționeze cu Microsoft Outlook – să caute e-mailuri, să citească conversații, să redacteze proiecte, să trimită e-mailuri și să gestioneze folderul de intrare, folosind Microsoft Graph API. Consultați documentația aici.",
-        multiUserWarning:
-          "Integrarea cu Outlook nu este disponibilă în modul pentru utilizatori multipli, din motive de securitate. Vă rugăm să dezactivați modul pentru utilizatori multipli pentru a utiliza această funcție.",
         configuration: "Configurarea Outlook-ului",
         authType: "Tip de cont",
         authTypeHelp:
@@ -1187,8 +1174,6 @@ const TRANSLATIONS = {
         title: "Conector Google Calendar",
         description:
           "Permite-ți agentului să interacționeze cu Google Calendar – vizualizează calendare, obține evenimente, creează și actualizează evenimente, și gestionează răspunsurile la invitații. Consultă documentația<a>.",
-        multiUserWarning:
-          "Integrarea cu Google Calendar nu este disponibilă în modul multi-utilizator, din motive de securitate. Vă rugăm să dezactivați modul multi-utilizator pentru a utiliza această funcție.",
         configuration: "Configurarea calendarului Google",
         deploymentId: "ID de implementare",
         deploymentIdHelp:
@@ -1536,28 +1521,6 @@ const TRANSLATIONS = {
       title: "Suprapunere fragment text",
       description:
         "Aceasta este suprapunerea maximă de caractere care apare în timpul fragmentării între două fragmente de text adiacente.",
-    },
-  },
-  security: {
-    title: "Securitate",
-    multiuser: {
-      title: "Mod multi-utilizator",
-      description:
-        "Configurează instanța ta să suporte echipa activând modul multi-utilizator.",
-      enable: {
-        "is-enable": "Modul multi-utilizator este activat",
-        enable: "Activează modul multi-utilizator",
-        description:
-          "Implicit, vei fi singurul administrator. Ca administrator, va trebui să creezi conturi pentru toți utilizatorii sau administratorii noi. Nu pierde parola, deoarece doar un utilizator administrator poate reseta parolele.",
-        username: "Numele contului de administrator",
-        password: "Parola contului de administrator",
-      },
-    },
-    password: {
-      title: "Protecție prin parolă",
-      description:
-        "Protejează instanța AnythingLLM cu o parolă. Dacă o uiți, nu există metode de recuperare, deci asigură-te că o salvezi.",
-      "password-label": "Parola instanței",
     },
   },
   home: {

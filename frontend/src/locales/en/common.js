@@ -12,14 +12,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "User Setup",
       description: "Configure your user settings.",
-      howManyUsers: "How many users will be using this instance?",
-      justMe: "Just me",
-      myTeam: "My team",
-      instancePassword: "Instance Password",
-      setPassword: "Would you like to set up a password?",
-      passwordReq: "Passwords must be at least 8 characters.",
-      passwordWarn:
-        "It's important to save this password because there is no recovery method.",
       adminUsername: "Admin account username",
       adminEmail: "Admin account email",
       adminPassword: "Admin account password",
@@ -95,7 +87,6 @@ const TRANSLATIONS = {
     "voice-speech": "Voice & Speech",
     "vector-database": "Vector Database",
     embeds: "Chat Embed",
-    security: "Security",
     "event-logs": "Event Logs",
     "scheduled-jobs": "Scheduled Jobs",
     privacy: "Privacy & Data",
@@ -121,7 +112,7 @@ const TRANSLATIONS = {
     },
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Welcome",
       "placeholder-username": "Username",
       "placeholder-password": "Password",
@@ -356,7 +347,7 @@ const TRANSLATIONS = {
       scheduledJob: {
         title: "Create scheduled jobs",
         description:
-          'Allow the agent to create recurring Scheduled Jobs from chat (e.g. "every weekday at 9am summarize my inbox and email me"). Available in single-user mode only.',
+          'Allow the agent to create recurring Scheduled Jobs from chat (e.g. "every weekday at 9am summarize my inbox and email me").',
       },
       filesystem: {
         title: "File System Access",
@@ -450,8 +441,6 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "Enable your agent to interact with Gmail - search emails, read threads, compose drafts, send emails, and manage your inbox. <a>Read the documentation</a>.",
-        multiUserWarning:
-          "Gmail integration is not available in multi-user mode for security reasons. Please disable multi-user mode to use this feature.",
         configuration: "Gmail Configuration",
         deploymentId: "Deployment ID",
         deploymentIdHelp:
@@ -566,8 +555,6 @@ const TRANSLATIONS = {
         title: "Google Calendar",
         description:
           "Enable your agent to interact with Google Calendar - view calendars, get events, create and update events, and manage RSVPs. <a>Read the documentation</a>.",
-        multiUserWarning:
-          "Google Calendar integration is not available in multi-user mode for security reasons. Please disable multi-user mode to use this feature.",
         configuration: "Google Calendar Configuration",
         deploymentId: "Deployment ID",
         deploymentIdHelp:
@@ -648,8 +635,6 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "Enable your agent to interact with Microsoft Outlook - search emails, read threads, compose drafts, send emails, and manage your inbox via Microsoft Graph API. <a>Read the documentation</a>.",
-        multiUserWarning:
-          "Outlook integration is not available in multi-user mode for security reasons. Please disable multi-user mode to use this feature.",
         configuration: "Outlook Configuration",
         authType: "Account Type",
         authTypeHelp:
@@ -1283,28 +1268,6 @@ const TRANSLATIONS = {
       "pending-description":
         "Users waiting to be verified. Match the pairing code shown here with the one displayed in their Telegram chat.",
       unknown: "Unknown",
-    },
-  },
-  security: {
-    title: "Security",
-    multiuser: {
-      title: "Multi-User Mode",
-      description:
-        "Set up your instance to support your team by activating Multi-User Mode.",
-      enable: {
-        "is-enable": "Multi-User Mode is Enabled",
-        enable: "Enable Multi-User Mode",
-        description:
-          "By default, you will be the only admin. As an admin you will need to create accounts for all new users or admins. Do not lose your password as only an Admin user can reset passwords.",
-        username: "Admin account username",
-        password: "Admin account password",
-      },
-    },
-    password: {
-      title: "Password Protection",
-      description:
-        "Protect your AnythingLLM instance with a password. If you forget this there is no recovery method so ensure you save this password.",
-      "password-label": "Instance Password",
     },
   },
   event: {

@@ -3,7 +3,7 @@ const { CollectorApi } = require("../../utils/collectorApi");
 const {
   userPermissionValid,
   anyWorkspacePermissionValid,
-} = require("../../utils/middleware/multiUserProtected");
+} = require("../../utils/middleware/authorizedRequest");
 const {
   WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
 } = require("../../utils/permissions");

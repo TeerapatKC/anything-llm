@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Configuração do Usuário",
       description: "Configure suas preferências de usuário.",
-      howManyUsers: "Quantos usuários usarão esta instância?",
-      justMe: "Apenas eu",
-      myTeam: "Minha equipe",
-      instancePassword: "Senha da Instância",
-      setPassword: "Deseja configurar uma senha?",
-      passwordReq: "Senhas devem ter pelo menos 8 caracteres.",
-      passwordWarn:
-        "É importante salvar esta senha pois não há método de recuperação.",
       adminUsername: "Nome de usuário admin",
       adminPassword: "Senha de admin",
       adminPasswordReq: "Senhas devem ter pelo menos 8 caracteres.",
@@ -87,7 +79,6 @@ const TRANSLATIONS = {
     "voice-speech": "Voz e Fala",
     "vector-database": "Banco de Dados Vetorial",
     embeds: "Vinculador de Chat",
-    security: "Segurança",
     "event-logs": "Logs de Eventos",
     privacy: "Privacidade e Dados",
     "ai-providers": "Provedores de IA",
@@ -114,7 +105,7 @@ const TRANSLATIONS = {
     "image-generation": "Geração de Imagens",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Bem-vindo ao",
       "placeholder-username": "Nome de usuário",
       "placeholder-password": "Senha",
@@ -419,8 +410,6 @@ const TRANSLATIONS = {
         title: "Conector do GMail",
         description:
           "Permita que seu agente interaja com o Gmail – pesquise e-mails, leia conversas, crie rascunhos, envie e-mails e gerencie sua caixa de entrada. <a>Consulte a documentação</a>.",
-        multiUserWarning:
-          "A integração com o Gmail não está disponível no modo multiusuário, por razões de segurança. Por favor, desative o modo multiusuário para utilizar esta funcionalidade.",
         configuration: "Configuração do Gmail",
         deploymentId: "ID de implantação",
         deploymentIdHelp:
@@ -543,8 +532,6 @@ const TRANSLATIONS = {
         title: "Conector do Outlook",
         description:
           "Permita que seu agente interaja com o Microsoft Outlook: pesquise e-mails, leia conversas, crie rascunhos, envie e-mails e gerencie sua caixa de entrada através da API Microsoft Graph. <a>Leia a documentação</a>.",
-        multiUserWarning:
-          "A integração com o Outlook não está disponível no modo multiusuário, por razões de segurança. Por favor, desative o modo multiusuário para utilizar esta funcionalidade.",
         configuration: "Configuração do Outlook",
         authType: "Tipo de conta",
         authTypeHelp:
@@ -645,8 +632,6 @@ const TRANSLATIONS = {
         title: "Conector do Google Calendar",
         description:
           "Permita que seu agente interaja com o Google Agenda – visualize agendas, obter eventos, criar e atualizar eventos, e gerenciar confirmações de presença. <a>Leia a documentação</a>.",
-        multiUserWarning:
-          "A integração com o Google Calendar não está disponível no modo multiusuário, por razões de segurança. Por favor, desative o modo multiusuário para utilizar esta funcionalidade.",
         configuration: "Configuração do Google Agenda",
         deploymentId: "ID de implantação",
         deploymentIdHelp:
@@ -1509,28 +1494,6 @@ const TRANSLATIONS = {
           "O prompt que será executado quando o comando for usado",
         prompt_placeholder: "Responda como um especialista em...",
       },
-    },
-  },
-  security: {
-    title: "Segurança",
-    multiuser: {
-      title: "Modo Multi-Usuário",
-      description:
-        "Configure sua instância para suportar sua equipe ativando o modo multi-usuário.",
-      enable: {
-        "is-enable": "Modo Multi-Usuário Ativo",
-        enable: "Ativar Modo Multi-Usuário",
-        description:
-          "Por padrão, você será o único administrador. Como administrador, você precisará criar contas para novos usuários. Não perca sua senha, pois apenas administradores podem redefini-la.",
-        username: "Nome de usuário admin",
-        password: "Senha de admin",
-      },
-    },
-    password: {
-      title: "Proteção por Senha",
-      description:
-        "Proteja sua instância com uma senha. Não há recuperação, então salve esta senha.",
-      "password-label": "Senha da instância",
     },
   },
   home: {

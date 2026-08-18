@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "ユーザー設定",
       description: "ユーザー設定を構成します。",
-      howManyUsers: "このインスタンスを使用するユーザー数は？",
-      justMe: "自分だけ",
-      myTeam: "チーム",
-      instancePassword: "インスタンスパスワード",
-      setPassword: "パスワードを設定しますか？",
-      passwordReq: "パスワードは8文字以上である必要があります。",
-      passwordWarn:
-        "このパスワードを保存することが重要です。回復方法はありません。",
       adminUsername: "管理者アカウントのユーザー名",
       adminPassword: "管理者アカウントのパスワード",
       adminPasswordReq: "パスワードは8文字以上である必要があります。",
@@ -84,7 +76,6 @@ const TRANSLATIONS = {
     "voice-speech": "音声とスピーチ",
     "vector-database": "ベクターデータベース",
     embeds: "チャット埋め込み",
-    security: "セキュリティ",
     "event-logs": "イベントログ",
     privacy: "プライバシーとデータ",
     "ai-providers": "AIプロバイダー",
@@ -114,7 +105,7 @@ const TRANSLATIONS = {
     "image-generation": "画像生成",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "ようこそ",
       "placeholder-username": "ユーザー名",
       "placeholder-password": "パスワード",
@@ -408,8 +399,6 @@ const TRANSLATIONS = {
         title: "Gmail 接続",
         description:
           "エージェントがGmailと連携できるようにする：メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を可能にします。詳細については、<a>ドキュメントを参照</a>。",
-        multiUserWarning:
-          "セキュリティ上の理由から、Gmailとの連携はマルチユーザーモードでは利用できません。この機能を使用するには、まずマルチユーザーモードを無効にしてください。",
         configuration: "Gmail の設定",
         deploymentId: "デプロイメントID",
         deploymentIdHelp:
@@ -523,8 +512,6 @@ const TRANSLATIONS = {
         title: "Outlook 連携機能",
         description:
           "エージェントがMicrosoft Outlookと連携できるようにする - Microsoft Graph APIを使用して、メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を行う。詳細については、ドキュメントを参照してください。",
-        multiUserWarning:
-          "Outlookとの連携は、セキュリティ上の理由から、複数ユーザーモードでは利用できません。この機能を使い始めるには、複数ユーザーモードを無効にする必要があります。",
         configuration: "Outlook の設定",
         authType: "アカウントの種類",
         authTypeHelp:
@@ -619,8 +606,6 @@ const TRANSLATIONS = {
         title: "Google カレンダー 連携機能",
         description:
           "エージェントがGoogleカレンダーと連携できるようにする - カレンダーの表示、イベントの取得、イベントの作成と更新、およびRSVPの管理を可能にする。詳細については、ドキュメントを参照してください。",
-        multiUserWarning:
-          "Google カレンダーとの連携は、セキュリティ上の理由から、複数ユーザーモードでは利用できません。この機能をご利用いただくには、複数ユーザーモードを無効にする必要があります。",
         configuration: "Google カレンダーの設定",
         deploymentId: "デプロイメントID",
         deploymentIdHelp:
@@ -1508,28 +1493,6 @@ const TRANSLATIONS = {
           "これは、スラッシュコマンドが実行されたときに使用されるプロンプトです。",
         prompt_placeholder: "ここに指示を入力してください...",
       },
-    },
-  },
-  security: {
-    title: "セキュリティ",
-    multiuser: {
-      title: "マルチユーザーモード",
-      description:
-        "マルチユーザーモードを有効にして、チームをサポートするようにインスタンスを設定します。",
-      enable: {
-        "is-enable": "マルチユーザーモードが有効です",
-        enable: "マルチユーザーモードを有効にする",
-        description:
-          "デフォルトでは、あなたが唯一の管理者になります。管理者として、すべての新しいユーザーまたは管理者のアカウントを作成する必要があります。管理者ユーザーのみがパスワードをリセットできるため、パスワードを紛失しないでください。",
-        username: "管理者アカウントのユーザー名",
-        password: "管理者アカウントのパスワード",
-      },
-    },
-    password: {
-      title: "パスワード保護",
-      description:
-        "AnythingLLMインスタンスをパスワードで保護します。これを忘れた場合、回復方法はないため、このパスワードを必ず保存してください。",
-      "password-label": "インスタンスパスワード",
     },
   },
   home: {

@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Configuración de usuario",
       description: "Configura los ajustes de tu usuario.",
-      howManyUsers: "¿Cuántos usuarios utilizarán esta instancia?",
-      justMe: "Solo yo",
-      myTeam: "Mi equipo",
-      instancePassword: "Contraseña de la instancia",
-      setPassword: "¿Deseas establecer una contraseña?",
-      passwordReq: "Las contraseñas deben tener al menos 8 caracteres.",
-      passwordWarn:
-        "Es importante guardar esta contraseña porque no hay método de recuperación.",
       adminUsername: "Nombre de usuario del administrador",
       adminPassword: "Contraseña de la cuenta de administrador",
       adminPasswordReq: "Las contraseñas deben tener al menos 8 caracteres.",
@@ -88,7 +80,6 @@ const TRANSLATIONS = {
     "voice-speech": "Voz y habla",
     "vector-database": "Base de datos vectorial",
     embeds: "Incrustaciones de chat",
-    security: "Seguridad",
     "event-logs": "Registros de eventos",
     privacy: "Privacidad y datos",
     "ai-providers": "Proveedores de IA",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Generación de imágenes",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Bienvenido a",
       "placeholder-username": "Nombre de usuario",
       "placeholder-password": "Contraseña",
@@ -426,8 +417,6 @@ const TRANSLATIONS = {
         title: "Conector de GMail",
         description:
           "Permita que su agente interactúe con Gmail: buscar correos electrónicos, leer hilos, redactar borradores, enviar correos electrónicos y gestionar su bandeja de entrada. <a>Consulte la documentación</a>.",
-        multiUserWarning:
-          "La integración con Gmail no está disponible en el modo para múltiples usuarios por razones de seguridad. Para utilizar esta función, por favor, desactive el modo para múltiples usuarios.",
         configuration: "Configuración de Gmail",
         deploymentId: "ID de despliegue",
         deploymentIdHelp:
@@ -553,8 +542,6 @@ const TRANSLATIONS = {
         title: "Conector de Outlook",
         description:
           "Permita que su agente interactúe con Microsoft Outlook: buscar correos electrónicos, leer hilos, redactar borradores, enviar correos electrónicos y administrar su bandeja de entrada a través de la API de Microsoft Graph. Consulte la documentación.",
-        multiUserWarning:
-          "La integración con Outlook no está disponible en el modo multiusuario por razones de seguridad. Para utilizar esta función, por favor, desactive el modo multiusuario.",
         configuration: "Configuración de Outlook",
         authType: "Tipo de cuenta",
         authTypeHelp:
@@ -658,8 +645,6 @@ const TRANSLATIONS = {
         title: "Conector para Google Calendar",
         description:
           "Permita que su agente interactúe con Google Calendar: visualice calendarios, obtenga información sobre eventos, cree y actualice eventos, y gestione las confirmaciones de asistencia. <a>Consulte la documentación</a>.",
-        multiUserWarning:
-          "La integración con Google Calendar no está disponible en el modo de varios usuarios por razones de seguridad. Para utilizar esta función, por favor, desactive el modo de varios usuarios.",
         configuration: "Configuración de Google Calendar",
         deploymentId: "ID de implementación",
         deploymentIdHelp:
@@ -1560,28 +1545,6 @@ const TRANSLATIONS = {
           button: "Conectar al Centro de la Comunidad",
         },
       },
-    },
-  },
-  security: {
-    title: "Seguridad",
-    multiuser: {
-      title: "Modo multiusuario",
-      description:
-        "Configura tu instancia para que sea compatible con tu equipo activando el modo multiusuario.",
-      enable: {
-        "is-enable": "El modo multiusuario está habilitado",
-        enable: "Habilitar modo multiusuario",
-        description:
-          "Por defecto, serás el único administrador. Como administrador, deberás crear cuentas para todos los nuevos usuarios o administradores. No pierdas tu contraseña, ya que solo un usuario administrador puede restablecer las contraseñas.",
-        username: "Nombre de usuario de la cuenta de administrador",
-        password: "Contraseña de la cuenta de administrador",
-      },
-    },
-    password: {
-      title: "Protección con contraseña",
-      description:
-        "Protege tu instancia de AnythingLLM con una contraseña. Si la olvidas, no hay método de recuperación, así que asegúrate de guardar esta contraseña.",
-      "password-label": "Contraseña de la instancia",
     },
   },
   home: {

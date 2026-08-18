@@ -54,7 +54,7 @@ const SlashCommandPresets = {
       const preset = await prisma.slash_command_presets.create({
         data: {
           ...presetData,
-          // This field (uid) is either the user_id or 0 (for non-multi-user mode).
+          // This field (uid) is the user_id, or 0 when the preset has no owner.
           // the UID field enforces the @@unique(userId, command) constraint since
           // the real relational field (userId) cannot be non-null so this 'dummy' field gives us something
           // to constrain against within the context of prisma and sqlite that works.

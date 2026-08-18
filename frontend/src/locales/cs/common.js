@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Nastavení uživatele",
       description: "Nakonfigurujte svá uživatelská nastavení.",
-      howManyUsers: "Kolik uživatelů bude používat tuto instanci?",
-      justMe: "Jen já",
-      myTeam: "Můj tým",
-      instancePassword: "Heslo instance",
-      setPassword: "Chcete nastavit heslo?",
-      passwordReq: "Hesla musí mít alespoň 8 znaků.",
-      passwordWarn:
-        "Je důležité toto heslo uložit, protože neexistuje způsob obnovení.",
       adminUsername: "Uživatelské jméno správce",
       adminPassword: "Heslo správce",
       adminPasswordReq: "Hesla musí mít alespoň 8 znaků.",
@@ -95,7 +87,6 @@ const TRANSLATIONS = {
     "voice-speech": "Hlas a řeč",
     "vector-database": "Vektorová databáze",
     embeds: "Vložený chat",
-    security: "Zabezpečení",
     "event-logs": "Protokoly událostí",
     privacy: "Soukromí a data",
     "ai-providers": "Poskytovatelé AI",
@@ -122,7 +113,7 @@ const TRANSLATIONS = {
     "image-generation": "Generování obrázků",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Vítejte v",
       "placeholder-username": "Uživatelské jméno",
       "placeholder-password": "Heslo",
@@ -427,8 +418,6 @@ const TRANSLATIONS = {
         title: "Připojení k GMail",
         description:
           "Umožněte svému agentovi, aby interagoval s Gmail – vyhledával e-maily, četl konverzace, vytvářel návrhy, posílal e-maily a spravoval vaši schránku. <a>Prostudujte dokumentaci</a>.",
-        multiUserWarning:
-          "Integrace s Gmailem není dostupná v režimu pro více uživatelů z bezpečnostních důvodů. Pro použití této funkce, prosím, deaktivujte režim pro více uživatelů.",
         configuration: "Konfigurace Gmailu",
         deploymentId: "ID nasazení",
         deploymentIdHelp:
@@ -547,8 +536,6 @@ const TRANSLATIONS = {
         title: "Připojení k Outlooku",
         description:
           "Umožněte svému agentovi interakci s Microsoft Outlook – vyhledávání e-mailů, čtení vláken, vytváření návrhů, odesílání e-mailů a správu vaší poštovní schránky prostřednictvím Microsoft Graph API. <a>Prostudujte dokumentaci</a>.",
-        multiUserWarning:
-          "Integrace s Outlookem není dostupná v režimu pro více uživatelů z důvodu bezpečnosti. Pro použití této funkce, prosím, deaktivujte režim pro více uživatelů.",
         configuration: "Konfigurace Outlooku",
         authType: "Typ účtu",
         authTypeHelp:
@@ -647,8 +634,6 @@ const TRANSLATIONS = {
         title: "Připojení k kalendáři Google",
         description:
           "Umožněte svému agentovi interakci s Google Kalendářem – prohlížení kalendářů, získávání událostí, vytváření a aktualizaci událostí a správu potvrzení účasti. <a>Přečtěte si dokumentaci</a>.",
-        multiUserWarning:
-          "Integrace s Google Kalendářem není dostupná v režimu pro více uživatelů z důvodu bezpečnosti. Pro použití této funkce, prosím, deaktivujte režim pro více uživatelů.",
         configuration: "Konfigurace kalendáře Google",
         deploymentId: "ID nasazení",
         deploymentIdHelp:
@@ -1018,28 +1003,6 @@ const TRANSLATIONS = {
       message: "Zpráva",
       response: "Odpověď",
       at: "Odesláno v",
-    },
-  },
-  security: {
-    title: "Zabezpečení",
-    multiuser: {
-      title: "Režim více uživatelů",
-      description:
-        "Nastavte svou instanci pro podporu týmu aktivováním režimu více uživatelů.",
-      enable: {
-        "is-enable": "Režim více uživatelů je povolen",
-        enable: "Povolit režim více uživatelů",
-        description:
-          "Ve výchozím nastavení budete jediným správcem. Jako správce budete muset vytvářet účty pro všechny nové uživatele nebo správce. Neztrácejte své heslo, protože pouze uživatel typu správce může resetovat hesla.",
-        username: "Uživatelské jméno účtu správce",
-        password: "Heslo účtu správce",
-      },
-    },
-    password: {
-      title: "Ochrana heslem",
-      description:
-        "Chraňte svou instanci AnythingLLM heslem. Pokud zapomenete, neexistuje způsob obnovení, proto se ujistěte, že heslo uložíte.",
-      "password-label": "Heslo instance",
     },
   },
   event: {

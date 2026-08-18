@@ -1,6 +1,6 @@
 const {
   userPermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
@@ -17,6 +17,8 @@ function utilEndpoints(app) {
       const metrics = {
         online: true,
         version: getGitVersion(),
+        // Deprecated and constant - kept so existing monitoring that reads this
+        // field does not break. Authentication is always required.
         mode: "multi-user",
         vectorDB: process.env.VECTOR_DB || "lancedb",
         storage: await getDiskStorage(),

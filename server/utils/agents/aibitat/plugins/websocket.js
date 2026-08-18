@@ -118,7 +118,7 @@ const websocket = {
     socket, // @type AIbitatWebSocket
     muteUserReply = true, // Do not post messages to "USER" back to frontend.
     introspection = false, // when enabled will attach socket to Aibitat object with .introspect method which reports status updates to frontend.
-    userId = null, // User ID for multi-user mode whitelist lookups
+    userId = null, // User ID for agent-skill whitelist lookups; null when no user is in context
   }) {
     return {
       name: this.name,

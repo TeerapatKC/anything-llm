@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Konfiguracja użytkownika",
       description: "Skonfiguruj ustawienia użytkownika.",
-      howManyUsers: "Ilu użytkowników będzie korzystać z tej instancji?",
-      justMe: "Tylko ja",
-      myTeam: "Mój zespół",
-      instancePassword: "Hasło instancji",
-      setPassword: "Czy chcesz ustawić hasło?",
-      passwordReq: "Hasła muszą składać się z co najmniej 8 znaków.",
-      passwordWarn:
-        "Ważne jest, aby zapisać to hasło, ponieważ nie ma metody jego odzyskania.",
       adminUsername: "Nazwa użytkownika konta administratora",
       adminPassword: "Hasło konta administratora",
       adminPasswordReq: "Hasła muszą składać się z co najmniej 8 znaków.",
@@ -88,7 +80,6 @@ const TRANSLATIONS = {
     "voice-speech": "Głos i mowa",
     "vector-database": "Wektorowa baza danych",
     embeds: "Osadzone czaty",
-    security: "Bezpieczeństwo",
     "event-logs": "Dzienniki zdarzeń",
     privacy: "Prywatność i dane",
     "ai-providers": "Dostawcy AI",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Generowanie obrazów",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Witamy w",
       "placeholder-username": "Nazwa użytkownika",
       "placeholder-password": "Hasło",
@@ -420,8 +411,6 @@ const TRANSLATIONS = {
         title: "Połączenie z GMail",
         description:
           "Pozwól swojemu agentowi na interakcję z Gmail – wyszukiwanie wiadomości e-mail, czytanie wątków, tworzenie projektów, wysyłanie wiadomości e-mail oraz zarządzanie skrzynką odbiorczą. <a>Przeczytaj dokumentację</a>.",
-        multiUserWarning:
-          "Integracja z Gmailem nie jest dostępna w trybie wieloosobowym z powodów bezpieczeństwa. Aby korzystać z tej funkcji, należy wyłączyć tryb wieloosobowy.",
         configuration: "Konfiguracja Gmaila",
         deploymentId: "Identyfikator wdrażania",
         deploymentIdHelp:
@@ -545,8 +534,6 @@ const TRANSLATIONS = {
         title: "Łącznik Outlook",
         description:
           "Pozwól swojemu agentowi na interakcję z Microsoft Outlook – wyszukiwanie wiadomości e-mail, czytanie wątków, tworzenie projektów, wysyłanie wiadomości e-mail oraz zarządzanie skrzynką odbiorczą za pomocą Microsoft Graph API. <a>Przeczytaj dokumentację</a>.",
-        multiUserWarning:
-          "Integracja z Outlookiem nie jest dostępna w trybie wieloosobowym z powodów bezpieczeństwa. Aby skorzystać z tej funkcji, należy wyłączyć tryb wieloosobowy.",
         configuration: "Konfiguracja Outlooka",
         authType: "Typ konta",
         authTypeHelp:
@@ -649,8 +636,6 @@ const TRANSLATIONS = {
         title: "Łącznik do Google Kalendarza",
         description:
           "Pozwól swojemu agentowi na interakcję z Google Calendar – przeglądaj kalendarze, sprawdzaj wydarzenia, twórz i aktualizuj wydarzenia oraz zarządzaj potwierdzeniami obecności. <a>Przeczytaj dokumentację</a>.",
-        multiUserWarning:
-          "Integracja z Google Calendar nie jest dostępna w trybie wieloosobowym z powodów bezpieczeństwa. Aby korzystać z tej funkcji, należy wyłączyć tryb wieloosobowy.",
         configuration: "Konfiguracja kalendarza Google",
         deploymentId: "Identyfikator wdrożenia",
         deploymentIdHelp:
@@ -1534,28 +1519,6 @@ const TRANSLATIONS = {
           button: "Połączenie z centrum społeczności",
         },
       },
-    },
-  },
-  security: {
-    title: "Bezpieczeństwo",
-    multiuser: {
-      title: "Tryb wielu użytkowników",
-      description:
-        "Skonfiguruj swoją instancję do obsługi zespołu, aktywując tryb wielu użytkowników.",
-      enable: {
-        "is-enable": "Tryb wielu użytkowników jest włączony",
-        enable: "Włącz tryb wielu użytkowników",
-        description:
-          "Domyślnie będziesz jedynym administratorem. Jako administrator będziesz musiał utworzyć konta dla wszystkich nowych użytkowników lub administratorów. Nie zgub hasła, ponieważ tylko administrator może je zresetować.",
-        username: "Nazwa użytkownika konta administratora",
-        password: "Hasło konta administratora",
-      },
-    },
-    password: {
-      title: "Ochrona hasłem",
-      description:
-        "Chroń swoją instancję AnythingLLM hasłem. Jeśli go zapomnisz, nie ma metody odzyskiwania, więc upewnij się, że zapisałeś to hasło.",
-      "password-label": "Hasło instancji",
     },
   },
   home: {

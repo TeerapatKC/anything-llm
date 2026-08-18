@@ -13,13 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Lietotāja iestatīšana",
       description: "Konfigurējiet savus lietotāja iestatījumus.",
-      howManyUsers: "Cik daudz lietotāju izmantos šo instanci?",
-      justMe: "Tikai es",
-      myTeam: "Mana komanda",
-      instancePassword: "Instances parole",
-      setPassword: "Vai vēlaties iestatīt paroli?",
-      passwordReq: "Parolēm jābūt vismaz 8 rakstzīmes garām.",
-      passwordWarn: "Svarīgi saglabāt šo paroli, jo nav atjaunošanas metodes.",
       adminUsername: "Administratora konta lietotājvārds",
       adminPassword: "Administratora konta parole",
       adminPasswordReq: "Parolēm jābūt vismaz 8 rakstzīmes garām.",
@@ -87,7 +80,6 @@ const TRANSLATIONS = {
     "voice-speech": "Balss un runa",
     "vector-database": "Vektoru datubāze",
     embeds: "Sarunas ietvere",
-    security: "Drošība",
     "event-logs": "Notikumu žurnāli",
     privacy: "Privātums un dati",
     "ai-providers": "AI pakalpojumu sniedzēji",
@@ -114,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Attēlu ģenerēšana",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Laipni lūgti",
       "placeholder-username": "Lietotājvārds",
       "placeholder-password": "Parole",
@@ -419,8 +411,6 @@ const TRANSLATIONS = {
         title: "GMail savienojums",
         description:
           "Ļauj savam pārstāvim interaktīvi strādāt ar Gmail – meklēt e-pastus, lasīt diskusijas, veidot projekte, nosūtīt e-pastus un pārvaldīt savu e-pasta kārtojumu. <a>Izlasiet dokumentāciju</a>.",
-        multiUserWarning:
-          "Gmail integrācija nav pieejama, kad izmantojat vairākus lietotājus, jo tas ir saistīts ar drošības apsvērumiem. Lūdzu, atslēgt vairāku lietotāju režimu, lai izmantotu šo funkciju.",
         configuration: "Gmail konfigurācija",
         deploymentId: "Ieraksta ID",
         deploymentIdHelp:
@@ -541,9 +531,6 @@ const TRANSLATIONS = {
         title: "Outlook savienojums",
         description:
           "Ļaujiet savam pārstāvim interaktīvi darboties ar Microsoft Outlook – meklēt e-pasta ziņojus, lasīt diskusijas, veidot projektejus, nosūtīt e-pasta ziņojus un pārvaldīt savu e-pasta skapis, izmantojot Microsoft Graph API. <a>Izlasiet dokumentāciju</a>.",
-        multiUserWarning:
-          '"Outlook integrācija nav pieejama vairāku lietotāju režīmā, lai nodrošinātu drošību. Lūdzu, atgrieziet multilietotāju režīmu, lai izmantotu šo funkciju."',
-        configuration: "Outlook iestatījumu konfigurēšana",
         authType: "Aģenta veids",
         authTypeHelp:
           'Izvēlieties, kādas Microsoft kontu tipus var autentificēt. "Visas kontas" atbalsta gan personiskus, gan darba/skolas kontus. "Tikai personiskie konti" ierobežo izmantošanu tikai ar personiskiem Microsoft kontiem. "Tikai organizācijas konti" ierobežo izmantošanu tikai ar darba/skolas kontiem no konkrēta Azure AD klienta.',
@@ -644,8 +631,6 @@ const TRANSLATIONS = {
         title: "Google Kalendāra integrācija",
         description:
           "Ļauj savam pārstāvim interaktīvi darboties ar Google Kalendāru – skatīt kalendārus, iegūt pasākumus, izveidot un atjaunot pasākumus, kā arī pārvaldīt reģistrāciju. <a>Lasiet dokumentāciju</a>.",
-        multiUserWarning:
-          "Google Kalendāra integrācija nav pieejama vairāku lietotāju režīmā, lai nodrošinātu drošību. Lūdzu, atgrieziet multilietotāju režīmu, lai izmantotu šo funkciju.",
         configuration: "Google kalendāra konfigurācija",
         deploymentId: "Ierīces identifikators",
         deploymentIdHelp: "Jūsu Google Apps Script veidlapas ID",
@@ -1527,28 +1512,6 @@ const TRANSLATIONS = {
           "Šis ir komandu, kas tiks izmantots, kad tiks aktivizēta slashes komanda.",
         prompt_placeholder: "Ievietojiet savu pieprasījumu šeit...",
       },
-    },
-  },
-  security: {
-    title: "Drošība",
-    multiuser: {
-      title: "Vairāklietotāju režīms",
-      description:
-        "Iestatiet savu instanci, lai atbalstītu jūsu komandu, aktivizējot vairāklietotāju režīmu.",
-      enable: {
-        "is-enable": "Vairāklietotāju režīms ir iespējots",
-        enable: "Iespējot vairāklietotāju režīmu",
-        description:
-          "Pēc noklusējuma jūs būsiet vienīgais administrators. Kā administrators jums būs jāizveido konti visiem jaunajiem lietotājiem vai administratoriem. Nezaudējiet savu paroli, jo tikai administratora lietotājs var atiestatīt paroles.",
-        username: "Administratora konta lietotājvārds",
-        password: "Administratora konta parole",
-      },
-    },
-    password: {
-      title: "Aizsardzība ar paroli",
-      description:
-        "Aizsargājiet savu AnythingLLM instanci ar paroli. Ja aizmirsīsiet šo paroli, nav atgūšanas metodes, tāpēc pārliecinieties, ka saglabājat šo paroli.",
-      "password-label": "Instances paroles",
     },
   },
   home: {

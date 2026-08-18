@@ -5,7 +5,7 @@ const { Telemetry } = require("../models/telemetry");
 const {
   userPermissionValid,
   workspacePermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const {
   PERMISSIONS,
   WORKSPACE_PERMISSIONS: WS_PERMISSIONS,

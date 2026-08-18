@@ -30,8 +30,6 @@ function makeJWT(info = {}, expiry = "30d") {
 
 /**
  * Gets the user from the session
- * Note: Only valid for multi-user mode
- * as single-user mode with password is not a "user"
  * @param {import("express").Request} request - The request object
  * @param {import("express").Response} response - The response object
  * @returns {Promise<import("@prisma/client").users | null>} The user

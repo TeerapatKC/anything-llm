@@ -28,14 +28,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Kullanıcı Kurulumu",
       description: "Kullanıcı ayarlarınızı yapılandırın.",
-      howManyUsers: "Bu örneği kaç kişi kullanacak?",
-      justMe: "Sadece ben",
-      myTeam: "Ekibim",
-      instancePassword: "Örnek Şifresi",
-      setPassword: "Bir şifre belirlemek ister misiniz?",
-      passwordReq: "Şifreler en az 8 karakter olmalıdır.",
-      passwordWarn:
-        "Kurtarma yöntemi olmadığı için bu şifreyi kaydetmeniz önemlidir.",
       adminUsername: "Yönetici hesap kullanıcı adı",
       adminPassword: "Yönetici hesap şifresi",
       adminPasswordReq: "Şifreler en az 8 karakter olmalıdır.",
@@ -85,7 +77,6 @@ const TRANSLATIONS = {
     "voice-speech": "Ses & Konuşma",
     "vector-database": "Vektör Veritabanı",
     embeds: "Sohbet Gömme",
-    security: "Güvenlik",
     "event-logs": "Olay Kayıtları",
     privacy: "Gizlilik & Veri",
     "ai-providers": "Yapay Zeka Sağlayıcıları",
@@ -115,7 +106,7 @@ const TRANSLATIONS = {
     "image-generation": "Görsel Oluşturma",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Hoş geldiniz",
       "placeholder-username": "Kullanıcı Adı",
       "placeholder-password": "Şifre",
@@ -413,8 +404,6 @@ const TRANSLATIONS = {
         title: "GMail Bağlantısı",
         description:
           "Ajantınızın Gmail ile etkileşim kurmasını sağlayın: e-postaları aratın, sohbetleri okuyun, taslaklar oluşturun, e-postalar gönderin ve posta kutunuzu yönetin. <a>Dokümantasyonu okuyun</a>.",
-        multiUserWarning:
-          "Gmail entegrasyonu, güvenlik nedenlerinden dolayı çoklu kullanıcı modunda mevcut değildir. Bu özelliği kullanmak için lütfen çoklu kullanıcı modunu devre dışı bırakın.",
         configuration: "Gmail Yapılandırma",
         deploymentId: "Dağıtım Kimliği",
         deploymentIdHelp:
@@ -538,8 +527,6 @@ const TRANSLATIONS = {
         title: "Outlook Bağlayıcı",
         description:
           "Ajantınızın Microsoft Outlook ile etkileşim kurmasını sağlayın: e-postaları arayın, tartışmaları okuyun, taslaklar oluşturun, e-posta gönderin ve Microsoft Graph API aracılığıyla posta kutunuzu yönetin. Dokümantasyonu okuyun.",
-        multiUserWarning:
-          "Outlook entegrasyonu, güvenlik nedenleriyle çoklu kullanıcı modunda mevcut değildir. Bu özelliği kullanmak için lütfen çoklu kullanıcı modunu devre dışı bırakın.",
         configuration: "Outlook Yapılandırması",
         authType: "Hesap Türü",
         authTypeHelp:
@@ -642,8 +629,6 @@ const TRANSLATIONS = {
         title: "Google Takvim Bağlayıcı",
         description:
           "Ajantınızın Google Takvim ile etkileşim kurmasını sağlayın - takvimleri görüntüleyin, etkinlikleri alın, etkinlikleri oluşturun ve güncelleyin, ve katılımcıların yanıtlarını yönetin. Dokümantasyonu okuyun.",
-        multiUserWarning:
-          "Google Takvim entegrasyonu, güvenlik nedeniyle çoklu kullanıcı modunda kullanılabilmektedir. Bu özelliği kullanmak için lütfen çoklu kullanıcı modunu devre dışı bırakın.",
         configuration: "Google Takvim Yapılandırması",
         deploymentId: "Dağıtım Kimliği",
         deploymentIdHelp:
@@ -1528,28 +1513,6 @@ const TRANSLATIONS = {
           button: "Topluluk Hub'ına Bağlan",
         },
       },
-    },
-  },
-  security: {
-    title: "Güvenlik",
-    multiuser: {
-      title: "Çoklu Kullanıcı Modu",
-      description:
-        "Takımınızı desteklemek için örneğinizi yapılandırın ve Çoklu Kullanıcı Modunu etkinleştirin.",
-      enable: {
-        "is-enable": "Çoklu Kullanıcı Modu Etkin",
-        enable: "Çoklu Kullanıcı Modunu Etkinleştir",
-        description:
-          "Varsayılan olarak tek yönetici sizsiniz. Yönetici olarak yeni kullanıcılar veya yöneticiler için hesap oluşturmanız gerekir. Şifrenizi kaybetmeyin çünkü yalnızca bir Yönetici kullanıcı şifreleri sıfırlayabilir.",
-        username: "Yönetici hesap kullanıcı adı",
-        password: "Yönetici hesap şifresi",
-      },
-    },
-    password: {
-      title: "Şifre Koruması",
-      description:
-        "AnythingLLM örneğinizi bir şifre ile koruyun. Bu şifreyi unutmanız hâlinde kurtarma yöntemi yoktur, bu yüzden mutlaka güvende saklayın.",
-      "password-label": "Örnek şifresi",
     },
   },
   home: {

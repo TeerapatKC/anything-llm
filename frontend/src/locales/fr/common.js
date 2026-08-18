@@ -27,14 +27,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Configuration utilisateur",
       description: "Configurez votre accès utilisateur.",
-      howManyUsers: "Combien de personnes utiliseront cette instance ?",
-      justMe: "Juste moi",
-      myTeam: "Mon équipe",
-      instancePassword: "Mot de passe de l'instance",
-      setPassword: "Définir un mot de passe",
-      passwordReq: "Le mot de passe doit contenir au moins 8 caractères.",
-      passwordWarn:
-        "Conservez ce mot de passe, il n'y a pas de récupération possible.",
       adminUsername: "Nom d'utilisateur administrateur",
       adminPassword: "Mot de passe administrateur",
       adminPasswordReq: "Le mot de passe doit contenir au moins 8 caractères.",
@@ -84,7 +76,6 @@ const TRANSLATIONS = {
     "voice-speech": "Voix et Parole",
     "vector-database": "Base de données vectorielle",
     embeds: "Widgets de chat intégrés",
-    security: "Sécurité",
     "event-logs": "Journaux d'événements",
     privacy: "Confidentialité et données",
     "ai-providers": "Fournisseurs d'IA",
@@ -114,7 +105,7 @@ const TRANSLATIONS = {
     "image-generation": "Génération d'images",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Bienvenue",
       "placeholder-username": "Nom d'utilisateur",
       "placeholder-password": "Mot de passe",
@@ -416,8 +407,6 @@ const TRANSLATIONS = {
         title: "Connecteur GMail",
         description:
           "Permettez à votre agent d'interagir avec Gmail : rechercher des e-mails, lire les conversations, rédiger des brouillons, envoyer des e-mails et gérer votre boîte de réception. <a>Consultez la documentation</a>.",
-        multiUserWarning:
-          "L'intégration avec Gmail n'est pas disponible en mode multi-utilisateurs pour des raisons de sécurité. Veuillez désactiver le mode multi-utilisateurs pour utiliser cette fonctionnalité.",
         configuration: "Configuration de Gmail",
         deploymentId: "Identifiant de déploiement",
         deploymentIdHelp:
@@ -542,8 +531,6 @@ const TRANSLATIONS = {
         title: "Connecteur Outlook",
         description:
           "Permettez à votre agent d'interagir avec Microsoft Outlook : rechercher des e-mails, lire les fils de discussion, rédiger des brouillons, envoyer des e-mails et gérer votre boîte de réception via l'API Microsoft Graph. <a>Consultez la documentation</a>.",
-        multiUserWarning:
-          "L'intégration avec Outlook n'est pas disponible en mode multi-utilisateurs pour des raisons de sécurité. Veuillez désactiver le mode multi-utilisateurs afin d'utiliser cette fonctionnalité.",
         configuration: "Configuration de Outlook",
         authType: "Type de compte",
         authTypeHelp:
@@ -646,8 +633,6 @@ const TRANSLATIONS = {
         title: "Connecteur Google Calendar",
         description:
           "Permettez à votre agent d'interagir avec Google Calendar : consulter les calendriers, afficher les événements, créer et modifier des événements, et gérer les confirmations de présence. <a>Consultez la documentation</a>.",
-        multiUserWarning:
-          "L'intégration avec Google Calendar n'est pas disponible en mode multi-utilisateurs pour des raisons de sécurité. Veuillez désactiver le mode multi-utilisateurs pour utiliser cette fonctionnalité.",
         configuration: "Configuration de Google Calendar",
         deploymentId: "ID de déploiement",
         deploymentIdHelp:
@@ -1540,28 +1525,6 @@ const TRANSLATIONS = {
         prompt_description: "Le prompt exécuté par cette commande.",
         prompt_placeholder: "Résumez le texte suivant : {{input}}",
       },
-    },
-  },
-  security: {
-    title: "Sécurité",
-    multiuser: {
-      title: "Mode multi-utilisateurs",
-      description:
-        "Configurez votre instance pour prendre en charge votre équipe en activant le mode multi-utilisateurs.",
-      enable: {
-        "is-enable": "Le mode multi-utilisateurs est activé",
-        enable: "Activer le mode multi-utilisateurs",
-        description:
-          "Par défaut, vous serez le seul administrateur. En tant qu'administrateur, vous devrez créer des comptes pour tous les nouveaux utilisateurs ou administrateurs. Ne perdez pas votre mot de passe car seul un utilisateur administrateur peut réinitialiser les mots de passe.",
-        username: "Nom d'utilisateur du compte administrateur",
-        password: "Mot de passe du compte administrateur",
-      },
-    },
-    password: {
-      title: "Protection par mot de passe",
-      description:
-        "Protégez votre instance AnythingLLM avec un mot de passe. Si vous oubliez ce mot de passe, il n'y a pas de méthode de récupération, donc assurez-vous de le sauvegarder.",
-      "password-label": "Mot de passe de l'instance",
     },
   },
   home: {

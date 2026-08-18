@@ -5,7 +5,7 @@ const { EventLogs } = require("../../models/eventLogs");
 const { updateENV } = require("../helpers/updateENV");
 
 /**
- * The instance is always multi-user, so the very first thing a fresh deployment needs is
+ * The very first thing a fresh deployment needs is
  * a system administrator to sign in as. That account can come from two places:
  *   1. `ADMIN_USERNAME`/`ADMIN_PASSWORD`/`ADMIN_EMAIL` in the environment, applied at boot.
  *      This is what makes an unattended (docker/compose) deploy usable with no clicking.

@@ -13,14 +13,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Postavljanje korisnika",
       description: "Konfigurirajte svoje korisničke postavke.",
-      howManyUsers: "Koliko će korisnika koristiti ovu instancu?",
-      justMe: "Samo ja",
-      myTeam: "Moj timu",
-      instancePassword: "Lozinka instance",
-      setPassword: "Želite li postaviti lozinku?",
-      passwordReq: "Lozinka mora imati najmanje 8 znakova.",
-      passwordWarn:
-        "Važno je da spremite ovu lozinku jer ne postoji način za njezino oporavljanje.",
       adminUsername: "Korisničko ime administratorskog računa",
       adminPassword: "Lozinka administratorskog računa",
       adminPasswordReq: "Lozinka mora imati najmanje 8 znakova.",
@@ -95,7 +87,6 @@ const TRANSLATIONS = {
     "voice-speech": "Glas i govor",
     "vector-database": "Vektorska baza podataka",
     embeds: "Ugrađeni razgovor",
-    security: "Sigurnost",
     "event-logs": "Zapisnici događaja",
     "scheduled-jobs": "Zakazani zadaci",
     privacy: "Privatnost i podaci",
@@ -122,7 +113,7 @@ const TRANSLATIONS = {
     "image-generation": "Generiranje slika",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Dobrodošli",
       "placeholder-username": "Korisničko ime",
       "placeholder-password": "Lozinka",
@@ -432,8 +423,6 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "Omogućite vašem agentu da radi s Gmailom - pretražuje e-mailove, čita niti razgovora, sastavlja nacrte, šalje e-mailove i upravlja vašom pristiglom poštom. <a>Pročitajte dokumentaciju</a>.",
-        multiUserWarning:
-          "Gmail integracija nije dostupna u načinu s više korisnika iz sigurnosnih razloga. Molimo isključite način s više korisnika za korištenje ove značajke.",
         configuration: "Gmail konfiguracija",
         deploymentId: "ID implementacije",
         deploymentIdHelp:
@@ -552,8 +541,6 @@ const TRANSLATIONS = {
         title: "Google kalendar",
         description:
           "Omogućite vašem agentu da radi s Google kalendarom - pregledava kalendare, dohvaća događaje, stvara i ažurira događaje te upravlja RSVP odgovorima. <a>Pročitajte dokumentaciju</a>.",
-        multiUserWarning:
-          "Integracija Google kalendara nije dostupna u načinu s više korisnika iz sigurnosnih razloga. Molimo isključite način s više korisnika za korištenje ove značajke.",
         configuration: "Konfiguracija Google kalendara",
         deploymentId: "ID implementacije",
         deploymentIdHelp:
@@ -635,8 +622,6 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "Omogućite vašem agentu da radi s Microsoft Outlookom - pretražuje e-mailove, čita niti razgovora, sastavlja nacrte, šalje e-mailove i upravlja vašom pristiglom poštom putem Microsoft Graph API-ja. <a>Pročitajte dokumentaciju</a>.",
-        multiUserWarning:
-          "Outlook integracija nije dostupna u načinu s više korisnika iz sigurnosnih razloga. Molimo isključite način s više korisnika za korištenje ove značajke.",
         configuration: "Outlook konfiguracija",
         authType: "Vrsta računa",
         authTypeHelp:
@@ -1264,28 +1249,6 @@ const TRANSLATIONS = {
       "pending-description":
         "Korisnici koji čekaju na verifikaciju. Uskladite kod za povezivanje prikazan ovdje s onim prikazanim u njihovom Telegram razgovoru.",
       unknown: "Nepoznato",
-    },
-  },
-  security: {
-    title: "Sigurnost",
-    multiuser: {
-      title: "Način s više korisnika",
-      description:
-        "Postavite svoju instancu za podršku vašem timu aktiviranjem načina s više korisnika.",
-      enable: {
-        "is-enable": "Način s više korisnika je omogućen",
-        enable: "Omogući način s više korisnika",
-        description:
-          "Prema zadanim postavkama, samo vi ćete biti administrator. Kao administrator morat ćete stvarati račune za sve nove korisnike ili administratore. Nemojte izgubiti svoju lozinku jer samo administrator može resetirati lozinke.",
-        username: "Korisničko ime administratorskog računa",
-        password: "Lozinka administratorskog računa",
-      },
-    },
-    password: {
-      title: "Zaštita lozinkom",
-      description:
-        "Zaštitite svoju AnythingLLM instancu lozinkom. Ako je zaboravite, ne postoji način oporavka, tako da svakako spremite ovu lozinku.",
-      "password-label": "Lozinka instance",
     },
   },
   event: {

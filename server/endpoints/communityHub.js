@@ -10,7 +10,7 @@ const { EventLogs } = require("../models/eventLogs");
 const { Telemetry } = require("../models/telemetry");
 const {
   userPermissionValid,
-} = require("../utils/middleware/multiUserProtected");
+} = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 
 function communityHubEndpoints(app) {

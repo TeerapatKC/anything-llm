@@ -28,14 +28,6 @@ const TRANSLATIONS = {
     userSetup: {
       title: "Configurazione dell'utente",
       description: "Configura le impostazioni del tuo account.",
-      howManyUsers: "Quanti utenti utilizzeranno questa istanza?",
-      justMe: "Solo io.",
-      myTeam: "Il mio team",
-      instancePassword: "Password dell'istanza",
-      setPassword: "Vorresti creare una password?",
-      passwordReq: "Le password devono essere di almeno 8 caratteri.",
-      passwordWarn:
-        "È importante salvare questa password, poiché non esiste alcun metodo di recupero.",
       adminUsername: "Nome utente dell'account amministratore",
       adminPassword: "Password per l'account amministratore",
       adminPasswordReq: "Le password devono essere di almeno 8 caratteri.",
@@ -85,7 +77,6 @@ const TRANSLATIONS = {
     "voice-speech": "Voce & discorso",
     "vector-database": "Database Vettoriale",
     embeds: "Chat incorporata",
-    security: "Sicurezza",
     "event-logs": "Log degli eventi",
     privacy: "Privacy & Dati",
     "ai-providers": "Provider IA",
@@ -116,7 +107,7 @@ const TRANSLATIONS = {
     "image-generation": "Generazione di immagini",
   },
   login: {
-    "multi-user": {
+    form: {
       welcome: "Benvenuto in",
       "placeholder-username": "Username",
       "placeholder-password": "Password",
@@ -417,8 +408,6 @@ const TRANSLATIONS = {
         title: "Connettore per GMail",
         description:
           "Permetti al tuo agente di interagire con Gmail: cercare email, leggere conversazioni, creare bozze, inviare email e gestire la tua casella di posta. <a>Consulta la documentazione</a>.",
-        multiUserWarning:
-          "L'integrazione con Gmail non è disponibile in modalità multi-utente per motivi di sicurezza. Per utilizzare questa funzione, è necessario disattivare la modalità multi-utente.",
         configuration: "Configurazione di Gmail",
         deploymentId: "ID di distribuzione",
         deploymentIdHelp:
@@ -543,8 +532,6 @@ const TRANSLATIONS = {
         title: "Connettore Outlook",
         description:
           "Permetti al tuo agente di interagire con Microsoft Outlook: ricerca email, leggi conversazioni, crea bozze, invia email e gestisci la tua casella di posta elettronica tramite l'API Microsoft Graph. Consulta la documentazione.",
-        multiUserWarning:
-          "L'integrazione con Outlook non è disponibile in modalità multiutente per motivi di sicurezza. Per utilizzare questa funzione, è necessario disattivare la modalità multiutente.",
         configuration: "Configurazione di Outlook",
         authType: "Tipo di account",
         authTypeHelp:
@@ -646,8 +633,6 @@ const TRANSLATIONS = {
         title: "Connettore per Google Calendar",
         description:
           "Permetti al tuo agente di interagire con Google Calendar: visualizza calendari, visualizza eventi, crea e aggiorna eventi, e gestisci le conferme di partecipazione. <a>Consulta la documentazione</a>.",
-        multiUserWarning:
-          "L'integrazione con Google Calendar non è disponibile in modalità multiutente per motivi di sicurezza. Per utilizzare questa funzione, è necessario disattivare la modalità multiutente.",
         configuration: "Configurazione del calendario Google",
         deploymentId: "ID di distribuzione",
         deploymentIdHelp:
@@ -1559,28 +1544,6 @@ const TRANSLATIONS = {
           "Questo è il comando che verrà utilizzato quando il comando con la barra verrà attivato.",
         prompt_placeholder: "Inserisci la tua richiesta qui...",
       },
-    },
-  },
-  security: {
-    title: "Sicurezza",
-    multiuser: {
-      title: "Modalità multi-utente",
-      description:
-        "Imposta la tua istanza per supportare il tuo team attivando la modalità multi-utente.",
-      enable: {
-        "is-enable": "La modalità multi-utente è abilitata",
-        enable: "Abilita la modalità multi-utente",
-        description:
-          "Per impostazione predefinita, sarai l'unico amministratore. Come amministratore dovrai creare account per tutti i nuovi utenti o amministratori. Non perdere la tua password poiché solo un utente amministratore può reimpostare le password.",
-        username: "Nome utente account amministratore",
-        password: "Password account amministratore",
-      },
-    },
-    password: {
-      title: "Protezione password",
-      description:
-        "Proteggi la tua istanza AnythingLLM con una password. Se la dimentichi, non esiste un metodo di recupero, quindi assicurati di salvare questa password.",
-      "password-label": "Password istanza",
     },
   },
   home: {

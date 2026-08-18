@@ -9,7 +9,7 @@ const moment = require("moment");
  * @property {string} description
  * @property {'system'|'user'|'workspace'|'static'} type
  * @property {number} userId
- * @property {boolean} multiUserRequired
+ * @property {boolean} requiresUser
  */
 
 const SystemPromptVariables = {
@@ -20,35 +20,35 @@ const SystemPromptVariables = {
       value: () => moment().format("LTS"),
       description: "Current time",
       type: "system",
-      multiUserRequired: false,
+      requiresUser: false,
     },
     {
       key: "time_24",
       value: () => moment().format("HH:mm:ss"),
       description: "Current time (24-hour format)",
       type: "system",
-      multiUserRequired: false,
+      requiresUser: false,
     },
     {
       key: "date",
       value: () => moment().format("LL"),
       description: "Current date",
       type: "system",
-      multiUserRequired: false,
+      requiresUser: false,
     },
     {
       key: "datetime",
       value: () => moment().format("LLLL"),
       description: "Current date and time",
       type: "system",
-      multiUserRequired: false,
+      requiresUser: false,
     },
     {
       key: "datetime_24",
       value: () => moment().format("YYYY-MM-DD HH:mm:ss"),
       description: "Current date and time (24-hour format)",
       type: "system",
-      multiUserRequired: false,
+      requiresUser: false,
     },
     {
       key: "user.id",
@@ -58,7 +58,7 @@ const SystemPromptVariables = {
       },
       description: "Current user's ID",
       type: "user",
-      multiUserRequired: true,
+      requiresUser: true,
     },
     {
       key: "user.name",
@@ -77,7 +77,7 @@ const SystemPromptVariables = {
       },
       description: "Current user's username",
       type: "user",
-      multiUserRequired: true,
+      requiresUser: true,
     },
     {
       key: "user.bio",
@@ -96,7 +96,7 @@ const SystemPromptVariables = {
       },
       description: "Current user's bio field from their profile",
       type: "user",
-      multiUserRequired: true,
+      requiresUser: true,
     },
     {
       key: "workspace.id",
@@ -106,7 +106,7 @@ const SystemPromptVariables = {
       },
       description: "Current workspace's ID",
       type: "workspace",
-      multiUserRequired: false,
+      requiresUser: false,
     },
     {
       key: "workspace.name",
@@ -120,7 +120,7 @@ const SystemPromptVariables = {
       },
       description: "Current workspace's name",
       type: "workspace",
-      multiUserRequired: false,
+      requiresUser: false,
     },
   ],
 
@@ -140,7 +140,7 @@ const SystemPromptVariables = {
   /**
    * Retrieves all system prompt variables with dynamic variables as well
    * as user defined variables
-   * @param {number|null} userId - the current user ID (determines if in multi-user mode)
+   * @param {number|null} userId - the acting user, or null when no user is in context
    * @returns {Promise<SystemPromptVariable[]>}
    */
   getAll: async function (userId = null) {
@@ -156,10 +156,10 @@ const SystemPromptVariables = {
       userId: v.userId,
     }));
 
-    // If userId is not provided, filter the default variables to only include non-multiUserRequired variables
-    // since we wont be able to dynamically inject user-related content.
+    // With no user in context (API key, embed widget, unattended agent job) the
+    // user-scoped variables cannot be resolved, so leave them out.
     const defaultSystemVariables = !userId
-      ? this.DEFAULT_VARIABLES.filter((v) => !v.multiUserRequired)
+      ? this.DEFAULT_VARIABLES.filter((v) => !v.requiresUser)
       : this.DEFAULT_VARIABLES;
 
     return [...defaultSystemVariables, ...formattedDbVars];
