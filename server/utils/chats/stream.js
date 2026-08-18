@@ -26,7 +26,7 @@ async function streamChatWithWorkspace(
   attachments = []
 ) {
   const uuid = uuidv4();
-  const updatedMessage = await grepCommand(message, user);
+  const updatedMessage = await grepCommand(message, workspace);
 
   if (Object.keys(VALID_COMMANDS).includes(updatedMessage)) {
     const data = await VALID_COMMANDS[updatedMessage](

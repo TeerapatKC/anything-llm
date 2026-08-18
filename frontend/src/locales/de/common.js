@@ -90,6 +90,7 @@ const TRANSLATIONS = {
     contact: "Support kontaktieren",
     "browser-extension": "Browser-Extension",
     "system-prompt-variables": "Systempromptvariablen",
+    "slash-commands": "Slash Commands",
     "mobile-app": "AnythingLLM Mobile",
     "community-hub": {
       title: "Community Hub",

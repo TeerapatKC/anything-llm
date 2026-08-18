@@ -86,6 +86,7 @@ const TRANSLATIONS = {
     contact: "Contacter le Support",
     "browser-extension": "Extension de navigateur",
     "system-prompt-variables": "Variables de prompt système",
+    "slash-commands": "Slash Commands",
     interface: "Interface",
     branding: "Personnalisation",
     chat: "Chat",

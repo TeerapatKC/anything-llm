@@ -87,6 +87,7 @@ const TRANSLATIONS = {
     contact: "Contact Ondersteuning",
     "browser-extension": "Browser Extensie",
     "system-prompt-variables": "Systeempromptvariabelen",
+    "slash-commands": "Slash Commands",
     interface: "UI-voorkeuren",
     branding: "Branding & Whitelabeling",
     chat: "Chat",

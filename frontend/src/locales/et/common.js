@@ -86,6 +86,7 @@ const TRANSLATIONS = {
     admin: "Admin",
     tools: "Tööriistad",
     "system-prompt-variables": "Süsteemprompti muutujad",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Eksperimentaalsed funktsioonid",
     contact: "Tugi",
     "browser-extension": "Brauserilaiend",

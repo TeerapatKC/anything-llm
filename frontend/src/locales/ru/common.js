@@ -86,6 +86,7 @@ const TRANSLATIONS = {
     contact: "Связаться с Поддержкой",
     "browser-extension": "Расширение браузера",
     "system-prompt-variables": "Переменные системного запроса",
+    "slash-commands": "Slash Commands",
     interface: "Предпочтения в пользовательском интерфейсе",
     branding: "Брендинг и создание продуктов с собственной меткой.",
     chat: "Чат",

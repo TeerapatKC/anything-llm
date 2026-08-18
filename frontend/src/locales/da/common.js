@@ -88,6 +88,7 @@ const TRANSLATIONS = {
     "browser-extension": "Browserudvidelse",
     "system-prompt-variables":
       "System Prompt Variables\n\nSystem Prompt Variabler",
+    "slash-commands": "Slash Commands",
     interface: "Brugerpræferencer",
     branding: "Brandstrategi og white-labeling",
     chat: "Chat",

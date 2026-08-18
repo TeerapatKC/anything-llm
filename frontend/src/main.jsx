@@ -422,6 +422,22 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/settings/slash-commands",
+        lazy: async () => {
+          const { default: BuiltInSlashCommands } = await import(
+            "@/pages/Admin/SlashCommands"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={BuiltInSlashCommands}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
+          };
+        },
+      },
+      {
         path: "/settings/system-prompt-variables",
         lazy: async () => {
           const { default: SystemPromptVariables } = await import(

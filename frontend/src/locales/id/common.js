@@ -102,6 +102,7 @@ const TRANSLATIONS = {
     admin: "Admin",
     tools: "Alat",
     "system-prompt-variables": "Variabel System Prompt",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Fitur Eksperimental",
     contact: "Hubungi Dukungan",
     "browser-extension": "Ekstensi Browser",

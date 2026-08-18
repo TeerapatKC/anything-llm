@@ -123,12 +123,29 @@ const CommunityHub = {
     }
 
     if (item.itemType === "slash-command") {
-      const { SlashCommandPresets } = require("./slashCommandsPresets");
-      await SlashCommandPresets.create(options?.currentUser?.id, {
-        command: SlashCommandPresets.formatCommand(String(item.command)),
-        prompt: String(item.prompt),
-        description: String(item.description),
+      // Slash commands are workspace scoped, so an import has to name the workspace
+      // it lands in - there is no per-user bucket to fall back on any more.
+      if (!options?.workspaceSlug)
+        return { success: false, error: "Workspace slug is required" };
+
+      const { Workspace } = require("./workspace");
+      const workspace = await Workspace.get({
+        slug: String(options.workspaceSlug),
       });
+      if (!workspace) return { success: false, error: "Workspace not found" };
+
+      const { SlashCommandPresets } = require("./slashCommandsPresets");
+      await SlashCommandPresets.create(
+        {
+          command: SlashCommandPresets.formatCommand(String(item.command)),
+          prompt: String(item.prompt),
+          description: String(item.description),
+        },
+        {
+          workspaceId: workspace.id,
+          userId: options?.currentUser?.id ?? null,
+        }
+      );
       return { success: true, error: null };
     }
 

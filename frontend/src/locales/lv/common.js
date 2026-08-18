@@ -87,6 +87,7 @@ const TRANSLATIONS = {
     admin: "Administrators",
     tools: "Rīki",
     "system-prompt-variables": "Sistēmas uzvednes mainīgie",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Eksperimentālās funkcijas",
     contact: "Sazināties ar atbalstu",
     "browser-extension": "Pārlūka paplašinājums",

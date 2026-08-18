@@ -84,6 +84,7 @@ const TRANSLATIONS = {
     contact: "聯絡支援",
     "browser-extension": "瀏覽器擴充功能",
     "system-prompt-variables": "系統提示變數",
+    "slash-commands": "Slash Commands",
     interface: "介面偏好",
     branding: "品牌與白標設定",
     chat: "對話",

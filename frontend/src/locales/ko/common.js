@@ -86,6 +86,7 @@ const TRANSLATIONS = {
     contact: "지원팀 연락",
     "browser-extension": "브라우저 확장 프로그램",
     "system-prompt-variables": "System Prompt Variables",
+    "slash-commands": "Slash Commands",
     interface: "UI 환경 설정",
     branding: "브랜딩 및 화이트라벨링",
     chat: "채팅",

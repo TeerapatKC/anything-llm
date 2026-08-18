@@ -87,6 +87,7 @@ const TRANSLATIONS = {
     contact: "تماس با پشتیبانی",
     "browser-extension": "افزونه مرورگر",
     "system-prompt-variables": "متغیرهای اعلان سیستم\n\n\nمتغیرهای اعلان سیستم",
+    "slash-commands": "Slash Commands",
     interface: "تنظیمات رابط کاربری",
     branding: "برندسازی و تولید محصولات با برچسب سفید",
     chat: "چت",

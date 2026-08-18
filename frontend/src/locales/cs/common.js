@@ -94,6 +94,7 @@ const TRANSLATIONS = {
     admin: "Správce",
     tools: "Nástroje",
     "system-prompt-variables": "Proměnné systémové výzvy",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Experimentální funkce",
     contact: "Kontaktovat podporu",
     "browser-extension": "Rozšíření prohlížeče",

@@ -11,8 +11,16 @@ const VALID_COMMANDS = {
   "/img": generateImage,
 };
 
-async function grepCommand(message, user = null) {
-  const userPresets = await SlashCommandPresets.getUserPresets(user?.id);
+/**
+ * Expands slash commands in a chat message. Which commands exist is a property of the
+ * workspace being chatted in - its own commands plus the instance-wide built-ins - so
+ * a command defined in one workspace is not usable from another.
+ * @param {string} message
+ * @param {import("@prisma/client").workspaces|null} workspace
+ * @returns {Promise<string>}
+ */
+async function grepCommand(message, workspace = null) {
+  const presets = await SlashCommandPresets.forWorkspace(workspace?.id);
   const availableCommands = Object.keys(VALID_COMMANDS);
 
   // Check if the message starts with any built-in command
@@ -27,7 +35,7 @@ async function grepCommand(message, user = null) {
   // Replace all preset commands with their corresponding prompts
   // Allows multiple commands in one message
   let updatedMessage = message;
-  for (const preset of userPresets) {
+  for (const preset of presets) {
     // Match the command when it starts the message or follows a space (`lead`),
     // and is not part of a longer command (e.g. don't match /weather in /weatherman).
     // `lead` is captured so we can keep the space when swapping in the prompt.
@@ -42,17 +50,20 @@ async function grepCommand(message, user = null) {
 }
 
 /**
- * @description This function will do recursive replacement of all slash commands with their corresponding prompts.
- * @notice This function is used for API calls and is not user-scoped. THIS FUNCTION DOES NOT SUPPORT PRESET COMMANDS.
+ * Expands slash commands for a developer-API chat. Scoped to the workspace the API
+ * call targets - it used to expand every preset on the instance, which would now let
+ * one workspace's commands fire inside another.
+ * @param {string} message
+ * @param {import("@prisma/client").workspaces|null} workspace
  * @returns {Promise<string>}
  */
-async function grepAllSlashCommands(message) {
-  const allPresets = await SlashCommandPresets.where({});
+async function grepAllSlashCommands(message, workspace = null) {
+  const presets = await SlashCommandPresets.forWorkspace(workspace?.id);
 
   // Replace all preset commands with their corresponding prompts
   // Allows multiple commands in one message
   let updatedMessage = message;
-  for (const preset of allPresets) {
+  for (const preset of presets) {
     // Match the command when it starts the message or follows a space (`lead`),
     // and is not part of a longer command (e.g. don't match /weather in /weatherman).
     // `lead` is captured so we can keep the space when swapping in the prompt.

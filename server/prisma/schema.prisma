@@ -227,6 +227,7 @@ model workspaces {
   prompt_history               prompt_history[]
   workspace_parsed_files       workspace_parsed_files[]
   memories                     memories[]
+  slash_command_presets        slash_command_presets[]
 }
 
 model workspace_threads {
@@ -360,17 +361,25 @@ model event_logs {
 }
 
 model slash_command_presets {
-  id            Int      @id @default(autoincrement())
-  command       String
-  prompt        String
-  description   String
-  uid           Int      @default(0) // 0 is null user
+  id          Int    @id @default(autoincrement())
+  command     String
+  prompt      String
+  description String
+  // NULL means the command is a built-in default, usable from every workspace. A
+  // workspace id means it was defined inside that workspace and is only usable there.
+  // A workspace command shadows a built-in of the same name - see
+  // SlashCommandPresets.forWorkspace.
+  workspaceId Int?
+  // Who created it. Kept for attribution only; it has no bearing on who can see or
+  // run the command, which is decided entirely by workspaceId.
   userId        Int?
-  createdAt     DateTime @default(now())
-  lastUpdatedAt DateTime @default(now())
-  user          users?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime    @default(now())
+  lastUpdatedAt DateTime    @default(now())
+  user          users?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  workspace     workspaces? @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  @@unique([uid, command])
+  @@unique([workspaceId, command])
+  @@index([workspaceId])
 }
 
 model document_sync_queues {

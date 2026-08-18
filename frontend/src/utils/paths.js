@@ -104,6 +104,9 @@ export default {
       documents: (slug) => {
         return `/workspace/${slug}/settings/documents`;
       },
+      slashCommands: (slug) => {
+        return `/workspace/${slug}/settings/slash-commands`;
+      },
     },
     thread: (wsSlug, threadSlug) => {
       return `/workspace/${wsSlug}/t/${threadSlug}`;
@@ -175,6 +178,7 @@ export default {
       return `/settings/model-routers/${id}`;
     },
     systemPromptVariables: () => "/settings/system-prompt-variables",
+    slashCommands: () => "/settings/slash-commands",
     logs: () => {
       return "/settings/event-logs";
     },

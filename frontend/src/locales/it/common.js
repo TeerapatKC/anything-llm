@@ -88,6 +88,7 @@ const TRANSLATIONS = {
     "browser-extension": "Estensione del browser",
     "system-prompt-variables":
       "Variabili delle variabili del sistema\n\nVariabili delle variabili del sistema",
+    "slash-commands": "Slash Commands",
     interface: "Preferenze dell'interfaccia utente",
     branding: "Branding e personalizzazione",
     chat: "Chat",

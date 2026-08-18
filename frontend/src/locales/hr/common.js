@@ -102,6 +102,7 @@ const TRANSLATIONS = {
     admin: "Administrator",
     tools: "Alati",
     "system-prompt-variables": "Varijable sistemskog upita",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Eksperimentalne značajke",
     contact: "Kontaktirajte podršku",
     "browser-extension": "Ekstenzija za preglednik",

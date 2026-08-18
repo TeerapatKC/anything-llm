@@ -99,6 +99,7 @@ const TRANSLATIONS = {
     admin: "Admin",
     tools: "Įrankiai",
     "system-prompt-variables": "Sistemos užklausų kintamieji",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Eksperimentinės funkcijos",
     contact: "Susisiekti su pagalba",
     "browser-extension": "Naršyklės plėtinys",

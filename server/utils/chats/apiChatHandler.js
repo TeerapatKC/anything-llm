@@ -169,8 +169,8 @@ async function chatSync({
   }
 
   // Process slash commands
-  // Since preset commands are not supported in API calls, we can just process the message here
-  const processedMessage = await grepAllSlashCommands(message);
+  // Scoped to this workspace, so only its own commands and the built-ins can fire.
+  const processedMessage = await grepAllSlashCommands(message, workspace);
   message = processedMessage;
 
   if (
@@ -550,8 +550,8 @@ async function streamChat({
   }
 
   // Check for and process slash commands
-  // Since preset commands are not supported in API calls, we can just process the message here
-  const processedMessage = await grepAllSlashCommands(message);
+  // Scoped to this workspace, so only its own commands and the built-ins can fire.
+  const processedMessage = await grepAllSlashCommands(message, workspace);
   message = processedMessage;
 
   if (

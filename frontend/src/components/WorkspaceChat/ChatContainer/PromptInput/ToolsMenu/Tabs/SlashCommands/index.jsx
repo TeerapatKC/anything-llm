@@ -1,58 +1,48 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { Plus } from "@phosphor-icons/react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
+import { SlidersHorizontal } from "lucide-react";
 import System from "@/models/system";
-import { useModal } from "@/hooks/useModal";
-import AddPresetModal from "./SlashPresets/AddPresetModal";
-import EditPresetModal from "./SlashPresets/EditPresetModal";
-import PublishEntityModal from "@/components/CommunityHub/PublishEntityModal";
-import showToast from "@/utils/toast";
+import Workspace from "@/models/workspace";
+import paths from "@/utils/paths";
+import useUser from "@/hooks/useUser";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import { PROMPT_INPUT_EVENT } from "@/components/WorkspaceChat/ChatContainer/PromptInput";
 import useToolsMenuItems from "../../useToolsMenuItems";
 import SlashCommandRow from "./SlashCommandRow";
 
+/**
+ * Lists the slash commands runnable in this workspace - its own plus the instance-wide
+ * built-ins. This menu is read-only on purpose: commands are managed in workspace
+ * settings, or in /settings/slash-commands for the built-ins, so that what a command
+ * does is a workspace decision rather than something any chatter can redefine.
+ */
 export default function SlashCommandsTab({
   sendCommand,
   setShowing,
   promptRef,
   highlightedIndex = -1,
   registerItemCount,
+  workspace,
 }) {
   const { t } = useTranslation();
-  const {
-    isOpen: isAddModalOpen,
-    openModal: openAddModal,
-    closeModal: closeAddModal,
-  } = useModal();
-  const {
-    isOpen: isEditModalOpen,
-    openModal: openEditModal,
-    closeModal: closeEditModal,
-  } = useModal();
-  const {
-    isOpen: isPublishModalOpen,
-    openModal: openPublishModal,
-    closeModal: closePublishModal,
-  } = useModal();
+  const { user } = useUser();
   const [presets, setPresets] = useState([]);
-  const [selectedPreset, setSelectedPreset] = useState(null);
-  const [presetToPublish, setPresetToPublish] = useState(null);
   const [imageGenEnabled, setImageGenEnabled] = useState(false);
+  const canManage = workspaceCan(WS.SETTINGS_MANAGE, workspace?.slug, user);
 
   useEffect(() => {
-    fetchPresets();
-    fetchImageGenStatus();
-  }, []);
-
-  const fetchPresets = async () => {
-    const presets = await System.getSlashCommandPresets();
-    setPresets(presets);
-  };
-
-  const fetchImageGenStatus = async () => {
-    const settings = await System.keys();
-    setImageGenEnabled(!!settings?.ImageGenerationProvider);
-  };
+    async function load() {
+      if (!workspace?.slug) return;
+      const [presets, settings] = await Promise.all([
+        Workspace.slashCommands.all(workspace.slug),
+        System.keys(),
+      ]);
+      setPresets(presets);
+      setImageGenEnabled(!!settings?.ImageGenerationProvider);
+    }
+    load();
+  }, [workspace?.slug]);
 
   const items = useMemo(
     () => [
@@ -123,53 +113,6 @@ export default function SlashCommandsTab({
     registerItemCount,
   });
 
-  const handleSavePreset = async (preset) => {
-    const { error } = await System.createSlashCommandPreset(preset);
-    if (error) {
-      showToast(error, "error");
-      return false;
-    }
-    fetchPresets();
-    closeAddModal();
-    return true;
-  };
-
-  const handleEditPreset = (preset) => {
-    setSelectedPreset(preset);
-    openEditModal();
-  };
-
-  const handleUpdatePreset = async (updatedPreset) => {
-    const { error } = await System.updateSlashCommandPreset(
-      updatedPreset.id,
-      updatedPreset
-    );
-    if (error) {
-      showToast(error, "error");
-      return;
-    }
-    fetchPresets();
-    closeEditModal();
-    setSelectedPreset(null);
-  };
-
-  const handleDeletePreset = async (presetId) => {
-    await System.deleteSlashCommandPreset(presetId);
-    fetchPresets();
-    closeEditModal();
-    setSelectedPreset(null);
-  };
-
-  const handlePublishPreset = (preset) => {
-    setPresetToPublish({
-      name: preset.command.slice(1),
-      description: preset.description,
-      command: preset.command,
-      prompt: preset.prompt,
-    });
-    openPublishModal();
-  };
-
   return (
     <>
       {items.map((item, index) => (
@@ -183,54 +126,22 @@ export default function SlashCommandsTab({
               item.autoSubmit
             )
           }
-          onEdit={item.preset ? () => handleEditPreset(item.preset) : undefined}
-          onPublish={
-            item.preset ? () => handlePublishPreset(item.preset) : undefined
-          }
-          showMenu={!!item.preset}
           highlighted={highlightedIndex === index}
         />
       ))}
 
-      {/* Add new */}
-      <div
-        onClick={openAddModal}
-        className="flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer hover:bg-zinc-700/50 light:hover:bg-slate-100"
-      >
-        <Plus
-          size={12}
-          weight="bold"
-          className="text-white light:text-slate-900"
-        />
-        <span className="text-xs text-white light:text-slate-900">
-          {t("chat_window.add_new")}
-        </span>
-      </div>
-
-      {/* Modals */}
-      <AddPresetModal
-        isOpen={isAddModalOpen}
-        onClose={closeAddModal}
-        onSave={handleSavePreset}
-      />
-      {selectedPreset && (
-        <EditPresetModal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            closeEditModal();
-            setSelectedPreset(null);
-          }}
-          onSave={handleUpdatePreset}
-          onDelete={handleDeletePreset}
-          preset={selectedPreset}
-        />
+      {canManage && workspace?.slug && (
+        <Link
+          to={paths.workspace.settings.slashCommands(workspace.slug)}
+          onClick={() => setShowing(false)}
+          className="flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer hover:bg-zinc-700/50 light:hover:bg-slate-100"
+        >
+          <SlidersHorizontal className="size-3 text-white light:text-slate-900" />
+          <span className="text-xs text-white light:text-slate-900">
+            Manage slash commands
+          </span>
+        </Link>
       )}
-      <PublishEntityModal
-        show={isPublishModalOpen}
-        onClose={closePublishModal}
-        entityType="slash-command"
-        entity={presetToPublish}
-      />
     </>
   );
 }

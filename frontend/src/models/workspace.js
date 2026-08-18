@@ -572,6 +572,108 @@ const Workspace = {
    * @param {string} searchTerm
    * @returns {Promise<{workspaces: [{slug: string, name: string}], threads: [{slug: string, name: string, workspace: {slug: string, name: string}}]}}>}
    */
+  /**
+   * Slash commands are scoped to a workspace. These read/write the workspace's own
+   * commands; the instance-wide built-ins live on the System model.
+   */
+  slashCommands: {
+    /** Everything runnable here - the workspace's own commands plus the built-ins. */
+    all: async function (slug) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/slash-command-presets`,
+        {
+          method: "GET",
+          headers: baseHeaders(),
+        }
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error("Could not fetch slash commands.");
+          return res.json();
+        })
+        .then((res) => res.presets)
+        .catch((e) => {
+          console.error(e);
+          return [];
+        });
+    },
+
+    /** Only the workspace's own commands - what the settings screen edits. */
+    owned: async function (slug) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/slash-command-presets/owned`,
+        { method: "GET", headers: baseHeaders() }
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error("Could not fetch slash commands.");
+          return res.json();
+        })
+        .then((res) => res.presets)
+        .catch((e) => {
+          console.error(e);
+          return [];
+        });
+    },
+
+    create: async function (slug, presetData) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/slash-command-presets`,
+        {
+          method: "POST",
+          headers: baseHeaders(),
+          body: JSON.stringify(presetData),
+        }
+      )
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.message || "Error creating slash command.");
+          return data;
+        })
+        .then((res) => ({ preset: res.preset, error: null }))
+        .catch((e) => {
+          console.error(e);
+          return { preset: null, error: e.message };
+        });
+    },
+
+    update: async function (slug, presetId, presetData) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/slash-command-presets/${presetId}`,
+        {
+          method: "POST",
+          headers: baseHeaders(),
+          body: JSON.stringify(presetData),
+        }
+      )
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok)
+            throw new Error(data.message || "Could not update slash command.");
+          return data;
+        })
+        .then((res) => ({ preset: res.preset, error: null }))
+        .catch((e) => {
+          console.error(e);
+          return { preset: null, error: e.message };
+        });
+    },
+
+    delete: async function (slug, presetId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/slash-command-presets/${presetId}`,
+        { method: "DELETE", headers: baseHeaders() }
+      )
+        .then((res) => {
+          if (!res.ok) throw new Error("Could not delete slash command.");
+          return true;
+        })
+        .catch((e) => {
+          console.error(e);
+          return false;
+        });
+    },
+  },
+
   searchWorkspaceOrThread: async function (searchTerm) {
     const response = await fetch(`${API_BASE}/workspace/search`, {
       method: "POST",

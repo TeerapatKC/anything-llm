@@ -83,6 +83,7 @@ const TRANSLATIONS = {
     admin: "管理者",
     tools: "ツール",
     "system-prompt-variables": "システムプロンプト変数",
+    "slash-commands": "Slash Commands",
     "experimental-features": "実験的機能",
     contact: "サポートに連絡",
     "browser-extension": "ブラウザ拡張",

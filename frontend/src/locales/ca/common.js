@@ -100,6 +100,7 @@ const TRANSLATIONS = {
     admin: "Administrador",
     tools: "Eines",
     "system-prompt-variables": "Variables del missatge del sistema",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Funcions experimentals",
     contact: "Contacta el suport",
     "browser-extension": "Extensió del navegador",

@@ -86,6 +86,7 @@ const TRANSLATIONS = {
     admin: "Admin",
     tools: "Ferramentas",
     "system-prompt-variables": "Variáveis de Prompt",
+    "slash-commands": "Slash Commands",
     "experimental-features": "Recursos Experimentais",
     contact: "Suporte",
     "browser-extension": "Extensão de Navegador",

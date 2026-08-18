@@ -10,6 +10,7 @@ import {
   Database,
   MessageSquareText,
   ShieldCheck,
+  SlashSquare,
   Undo2,
   Upload,
   User,
@@ -25,6 +26,7 @@ import Members from "./Members";
 import WorkspaceAgentConfiguration from "./AgentConfig";
 import WorkspaceRoles from "./Roles";
 import WorkspaceDocuments from "./Documents";
+import WorkspaceSlashCommands from "./SlashCommands";
 import useUser from "@/hooks/useUser";
 import { useTranslation } from "react-i18next";
 import System from "@/models/system";
@@ -38,6 +40,7 @@ const TABS = {
   roles: WorkspaceRoles,
   "agent-config": WorkspaceAgentConfiguration,
   documents: WorkspaceDocuments,
+  "slash-commands": WorkspaceSlashCommands,
 };
 
 export default function WorkspaceSettings() {
@@ -136,6 +139,12 @@ function ShowWorkspaceChat() {
               icon={<Upload className="h-4 w-4" />}
               to={paths.workspace.settings.documents(slug)}
               visible={workspaceCan(WS.DOCUMENTS_UPLOAD, slug, user)}
+            />
+            <TabItem
+              title="Slash Commands"
+              icon={<SlashSquare className="h-4 w-4" />}
+              to={paths.workspace.settings.slashCommands(slug)}
+              visible={workspaceCan(WS.SETTINGS_MANAGE, slug, user)}
             />
           </div>
         </div>

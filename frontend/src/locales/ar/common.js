@@ -86,6 +86,7 @@ const TRANSLATIONS = {
     contact: "اتصل بالدعم",
     "browser-extension": "ملحق المتصفح",
     "system-prompt-variables": "متغيرات المطالبات للنظام",
+    "slash-commands": "Slash Commands",
     interface: "تفضيلات واجهة المستخدم",
     branding: "التسويق بالعلامة التجارية ووضع العلامات التجارية",
     chat: "دردشة",

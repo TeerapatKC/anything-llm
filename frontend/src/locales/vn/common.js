@@ -87,6 +87,7 @@ const TRANSLATIONS = {
     contact: "Liên hệ hỗ trợ",
     "browser-extension": "Tiện ích trình duyệt",
     "system-prompt-variables": "Biến System Prompt",
+    "slash-commands": "Slash Commands",
     interface: "Tùy chọn Giao diện",
     branding: "Thương hiệu & Nhãn trắng",
     chat: "Trò chuyện",

@@ -87,6 +87,7 @@ const TRANSLATIONS = {
     contact: "Destekle İletişime Geçin",
     "browser-extension": "Tarayıcı Uzantısı",
     "system-prompt-variables": "Sistem Prompt Değişkenleri",
+    "slash-commands": "Slash Commands",
     interface: "Arayüz Tercihleri",
     branding: "Marka & Beyaz Etiketleme",
     chat: "Sohbet",

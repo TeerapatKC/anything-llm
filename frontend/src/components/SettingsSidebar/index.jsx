@@ -404,6 +404,11 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.SYSTEM_PROMPTS],
             },
             {
+              btnText: t("settings.slash-commands"),
+              href: paths.settings.slashCommands(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+            },
+            {
               btnText: t("settings.browser-extension"),
               href: paths.settings.browserExtension(),
               permissions: [PERMISSIONS.SYSTEM_BROWSER_EXTENSION],

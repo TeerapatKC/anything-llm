@@ -1,13 +1,42 @@
 import CTAButton from "@/components/lib/CTAButton";
 import CommunityHubImportItemSteps from "../..";
+import { useEffect, useState } from "react";
+import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
 import CommunityHub from "@/models/communityHub";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function SlashCommand({ item, setStep }) {
+  // Slash commands belong to a workspace, so an import has to pick one - the same
+  // shape as the system-prompt import above it.
+  const [destinationWorkspaceSlug, setDestinationWorkspaceSlug] =
+    useState(null);
+  const [workspaces, setWorkspaces] = useState([]);
+
+  useEffect(() => {
+    async function getWorkspaces() {
+      const workspaces = await Workspace.all();
+      setWorkspaces(workspaces);
+      setDestinationWorkspaceSlug(workspaces[0]?.slug ?? null);
+    }
+    getWorkspaces();
+  }, []);
+
   async function handleSubmit() {
     try {
-      const { error } = await CommunityHub.applyItem(item.importId);
+      const { error } = await CommunityHub.applyItem(item.importId, {
+        workspaceSlug: destinationWorkspaceSlug,
+      });
       if (error) throw new Error(error);
       showToast(
         `Slash command ${item.command} imported successfully!`,
@@ -67,13 +96,40 @@ export default function SlashCommand({ item, setStep }) {
             </p>
           </div>
         </div>
+
+        <div className="flex flex-col w-60">
+          <Label variant="settings" className="block mb-3">
+            Add to Workspace
+          </Label>
+          <Select
+            name="destinationWorkspaceSlug"
+            required={true}
+            onValueChange={setDestinationWorkspaceSlug}
+          >
+            <SelectTrigger variant="settings">
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Available workspaces</SelectLabel>
+                {workspaces.map((workspace) => (
+                  <SelectItem key={workspace.id} value={workspace.slug}>
+                    {workspace.name}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
-      <CTAButton
-        className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
-        onClick={handleSubmit}
-      >
-        Import slash command
-      </CTAButton>
+      {destinationWorkspaceSlug && (
+        <CTAButton
+          className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+          onClick={handleSubmit}
+        >
+          Import slash command to workspace
+        </CTAButton>
+      )}
     </div>
   );
 }

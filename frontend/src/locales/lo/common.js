@@ -102,6 +102,7 @@ const TRANSLATIONS = {
     admin: "ຜູ້ດູແລ",
     tools: "ເຄື່ອງມື",
     "system-prompt-variables": "ຕົວປ່ຽນ System Prompt",
+    "slash-commands": "Slash Commands",
     "experimental-features": "ຟີເຈີທົດລອງ",
     contact: "ຕິດຕໍ່ຝ່າຍຊ່ວຍເຫຼືອ",
     "browser-extension": "ສ່ວນເສີມບຣາວເຊີ",

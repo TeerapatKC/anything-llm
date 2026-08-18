@@ -641,11 +641,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/upload-pfp",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.ANY]),
-      handlePfpUpload,
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY]), handlePfpUpload],
     async function (request, response) {
       try {
         const user = await userFromSession(request, response);
@@ -823,10 +819,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/remove-logo",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_APPEARANCE])],
     async (_request, response) => {
       try {
         const currentLogoFilename = await SystemSettings.currentLogoFilename();
@@ -877,10 +870,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/event-logs",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS])],
     async (request, response) => {
       try {
         const { offset = 0, limit = 10 } = reqBody(request);
@@ -900,10 +890,7 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/event-logs",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS])],
     async (_, response) => {
       try {
         await EventLogs.delete();
@@ -1124,16 +1111,19 @@ function systemEndpoints(app) {
     }
   );
 
+  /**
+   * Built-in slash commands: the instance-wide defaults every workspace inherits.
+   * Workspace-scoped commands are managed under /workspace/:slug/slash-command-presets.
+   */
   app.get(
     "/system/slash-command-presets",
-    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
-    async (request, response) => {
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    async (_request, response) => {
       try {
-        const user = await userFromSession(request, response);
-        const userPresets = await SlashCommandPresets.getUserPresets(user?.id);
-        response.status(200).json({ presets: userPresets });
+        const presets = await SlashCommandPresets.builtins();
+        response.status(200).json({ presets });
       } catch (error) {
-        console.error("Error fetching slash command presets:", error);
+        console.error("Error fetching built-in slash commands:", error);
         response.status(500).json({ message: "Internal server error" });
       }
     }
@@ -1141,7 +1131,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/slash-command-presets",
-    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -1157,21 +1147,23 @@ function systemEndpoints(app) {
           });
         }
 
-        const presetData = {
-          command: formattedCommand,
-          prompt: String(prompt),
-          description: String(description),
-        };
-
-        const preset = await SlashCommandPresets.create(user?.id, presetData);
-        if (!preset) {
+        const preset = await SlashCommandPresets.create(
+          {
+            command: formattedCommand,
+            prompt: String(prompt),
+            description: String(description),
+          },
+          { workspaceId: null, userId: user?.id ?? null }
+        );
+        if (!preset)
           return response
             .status(500)
             .json({ message: "Failed to create preset" });
-        }
-        response.status(201).json({ preset });
+        response
+          .status(201)
+          .json({ preset: SlashCommandPresets.toPublic(preset) });
       } catch (error) {
-        console.error("Error creating slash command preset:", error);
+        console.error("Error creating built-in slash command:", error);
         response.status(500).json({ message: "Internal server error" });
       }
     }
@@ -1179,10 +1171,9 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/slash-command-presets/:slashCommandId",
-    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
-        const user = await userFromSession(request, response);
         const { slashCommandId } = request.params;
         const { command, prompt, description } = reqBody(request);
         const formattedCommand = SlashCommandPresets.formatCommand(
@@ -1196,12 +1187,13 @@ function systemEndpoints(app) {
           });
         }
 
-        // Valid user running owns the preset if user session is valid.
-        const ownsPreset = await SlashCommandPresets.get({
-          userId: user?.id ?? null,
+        // Scope-checked on purpose: this route may only touch built-ins, never a
+        // command that belongs to some workspace.
+        const existing = await SlashCommandPresets.get({
           id: Number(slashCommandId),
+          workspaceId: null,
         });
-        if (!ownsPreset)
+        if (!existing)
           return response.status(404).json({ message: "Preset not found" });
 
         const updates = {
@@ -1209,15 +1201,16 @@ function systemEndpoints(app) {
           prompt: String(prompt),
           description: String(description),
         };
-
         const preset = await SlashCommandPresets.update(
           Number(slashCommandId),
           updates
         );
         if (!preset) return response.sendStatus(422);
-        response.status(200).json({ preset: { ...ownsPreset, ...updates } });
+        response
+          .status(200)
+          .json({ preset: SlashCommandPresets.toPublic(preset) });
       } catch (error) {
-        console.error("Error updating slash command preset:", error);
+        console.error("Error updating built-in slash command:", error);
         response.status(500).json({ message: "Internal server error" });
       }
     }
@@ -1225,26 +1218,21 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/slash-command-presets/:slashCommandId",
-    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
     async (request, response) => {
       try {
         const { slashCommandId } = request.params;
-        const user = await userFromSession(request, response);
-
-        // Valid user running owns the preset if user session is valid.
-        const ownsPreset = await SlashCommandPresets.get({
-          userId: user?.id ?? null,
+        const existing = await SlashCommandPresets.get({
           id: Number(slashCommandId),
+          workspaceId: null,
         });
-        if (!ownsPreset)
-          return response
-            .status(403)
-            .json({ message: "Failed to delete preset" });
+        if (!existing)
+          return response.status(404).json({ message: "Preset not found" });
 
         await SlashCommandPresets.delete(Number(slashCommandId));
         response.sendStatus(204);
       } catch (error) {
-        console.error("Error deleting slash command preset:", error);
+        console.error("Error deleting built-in slash command:", error);
         response.status(500).json({ message: "Internal server error" });
       }
     }

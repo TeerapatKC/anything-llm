@@ -27,6 +27,8 @@ const { CollectorApi } = require("../utils/collectorApi");
 const { getTTSProvider } = require("../utils/TextToSpeech");
 const { getAudioFileInfo } = require("../utils/TextToSpeech/audioFormat");
 const { WorkspaceThread } = require("../models/workspaceThread");
+const { SlashCommandPresets } = require("../models/slashCommandsPresets");
+const { VALID_COMMANDS } = require("../utils/chats");
 
 const truncate = require("truncate");
 const { purgeDocument } = require("../utils/files/purgeDocument");
@@ -43,10 +45,7 @@ function workspaceEndpoints(app) {
 
   app.post(
     "/workspace/new",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.WORKSPACES_CREATE])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -423,7 +422,10 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const history = await WorkspaceChats.forWorkspaceByUser(workspace.id, user.id);
+        const history = await WorkspaceChats.forWorkspaceByUser(
+          workspace.id,
+          user.id
+        );
         response.status(200).json({ history: convertToChatHistory(history) });
       } catch (e) {
         console.error(e.message, e);
@@ -781,12 +783,12 @@ function workspaceEndpoints(app) {
         // Get threadId we are branching from if that request body is sent
         // and is a valid thread slug.
         const threadId = !!threadSlug
-          ? ((
+          ? (
               await WorkspaceThread.get({
                 slug: String(threadSlug),
                 workspace_id: workspace.id,
               })
-            )?.id ?? null)
+            )?.id ?? null
           : null;
         const chatsToFork = await WorkspaceChats.where(
           {
@@ -1138,6 +1140,172 @@ function workspaceEndpoints(app) {
       } catch (error) {
         console.error("Error checking if agent command is available:", error);
         response.status(500).json({ showAgentCommand: true });
+      }
+    }
+  );
+
+  /**
+   * Everything runnable in this workspace: its own commands plus the instance-wide
+   * built-ins. This is what the chat prompt menu reads, so it is open to anyone who
+   * can chat here - only the write routes below require settings rights.
+   */
+  app.get(
+    "/workspace/:slug/slash-command-presets",
+    [validatedRequest, validWorkspaceSlug],
+    async (_request, response) => {
+      try {
+        const presets = await SlashCommandPresets.forWorkspace(
+          response.locals.workspace.id
+        );
+        response.status(200).json({ presets });
+      } catch (error) {
+        console.error("Error fetching workspace slash commands:", error);
+        response.status(500).json({ message: "Internal server error" });
+      }
+    }
+  );
+
+  /** Only the workspace's own commands - what its settings screen lists and edits. */
+  app.get(
+    "/workspace/:slug/slash-command-presets/owned",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (_request, response) => {
+      try {
+        const presets = await SlashCommandPresets.ownedByWorkspace(
+          response.locals.workspace.id
+        );
+        response.status(200).json({ presets });
+      } catch (error) {
+        console.error("Error fetching workspace-owned slash commands:", error);
+        response.status(500).json({ message: "Internal server error" });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/slash-command-presets",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const workspace = response.locals.workspace;
+        const { command, prompt, description } = reqBody(request);
+        const formattedCommand = SlashCommandPresets.formatCommand(
+          String(command)
+        );
+
+        if (Object.keys(VALID_COMMANDS).includes(formattedCommand)) {
+          return response.status(400).json({
+            message:
+              "Cannot create a preset with a command that matches a system command",
+          });
+        }
+
+        const preset = await SlashCommandPresets.create(
+          {
+            command: formattedCommand,
+            prompt: String(prompt),
+            description: String(description),
+          },
+          { workspaceId: workspace.id, userId: user?.id ?? null }
+        );
+        if (!preset)
+          return response
+            .status(500)
+            .json({ message: "Failed to create preset" });
+        response
+          .status(201)
+          .json({ preset: SlashCommandPresets.toPublic(preset) });
+      } catch (error) {
+        console.error("Error creating workspace slash command:", error);
+        response.status(500).json({ message: "Internal server error" });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/slash-command-presets/:slashCommandId",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const { slashCommandId } = request.params;
+        const { command, prompt, description } = reqBody(request);
+        const formattedCommand = SlashCommandPresets.formatCommand(
+          String(command)
+        );
+
+        if (Object.keys(VALID_COMMANDS).includes(formattedCommand)) {
+          return response.status(400).json({
+            message:
+              "Cannot update a preset to use a command that matches a system command",
+          });
+        }
+
+        // Scoped to this workspace so a manager cannot reach a built-in, or another
+        // workspace's command, by guessing an id.
+        const existing = await SlashCommandPresets.get({
+          id: Number(slashCommandId),
+          workspaceId: workspace.id,
+        });
+        if (!existing)
+          return response.status(404).json({ message: "Preset not found" });
+
+        const updates = {
+          command: formattedCommand,
+          prompt: String(prompt),
+          description: String(description),
+        };
+        const preset = await SlashCommandPresets.update(
+          Number(slashCommandId),
+          updates
+        );
+        if (!preset) return response.sendStatus(422);
+        response
+          .status(200)
+          .json({ preset: SlashCommandPresets.toPublic(preset) });
+      } catch (error) {
+        console.error("Error updating workspace slash command:", error);
+        response.status(500).json({ message: "Internal server error" });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/slash-command-presets/:slashCommandId",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SETTINGS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const { slashCommandId } = request.params;
+        const existing = await SlashCommandPresets.get({
+          id: Number(slashCommandId),
+          workspaceId: workspace.id,
+        });
+        if (!existing)
+          return response.status(404).json({ message: "Preset not found" });
+
+        await SlashCommandPresets.delete(Number(slashCommandId));
+        response.sendStatus(204);
+      } catch (error) {
+        console.error("Error deleting workspace slash command:", error);
+        response.status(500).json({ message: "Internal server error" });
       }
     }
   );
