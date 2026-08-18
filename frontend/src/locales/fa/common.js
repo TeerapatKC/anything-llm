@@ -1195,7 +1195,6 @@ const TRANSLATIONS = {
     see_more: "بیشتر",
     tools: "ابزارها",
     text_size_label: "اندازه متن",
-    select_model: "انتخاب مدل",
     sources: "منابع",
     document: "اسناد",
     similarity_match: "مسابقه",
@@ -1416,7 +1415,6 @@ const TRANSLATIONS = {
       llmPreferences: "ترجیحات مدل‌های زبان بزرگ",
       chatSettings: "تنظیمات چت",
       help: "راهنمای کلیدهای میانبر",
-      showLLMSelector: "انتخاب فضای کاری برای مدل‌های زبانی بزرگ",
     },
   },
   community_hub: {

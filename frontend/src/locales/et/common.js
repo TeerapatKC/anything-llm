@@ -1269,7 +1269,6 @@ const TRANSLATIONS = {
     see_more: "Vaata rohkem",
     tools: "Vahendid",
     text_size_label: "Teksti suurus",
-    select_model: "Valige mudel",
     sources: "Allikasid",
     document: "Dokument",
     similarity_match: "mäng",
@@ -1391,7 +1390,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM-eelistused",
       chatSettings: "Vestluse seaded",
       help: "Näita otseteeabi",
-      showLLMSelector: "Näita tööruumi LLM-valikut",
     },
   },
   community_hub: {

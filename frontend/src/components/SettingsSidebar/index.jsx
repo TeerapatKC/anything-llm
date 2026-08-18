@@ -118,9 +118,7 @@ export default function SettingsSidebar() {
                     <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
                     <SupportEmail />
                     <Link
-                      hidden={
-                        !!user && !userCan(PERMISSIONS.SYSTEM_SETTINGS, user)
-                      }
+                      hidden={!userCan(PERMISSIONS.SYSTEM_SETTINGS, user)}
                       to={paths.settings.privacy()}
                       className="text-theme-text-secondary hover:text-white text-xs leading-[18px] mx-3"
                     >
@@ -167,7 +165,7 @@ export default function SettingsSidebar() {
             <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
             <SupportEmail />
             <Link
-              hidden={!!user && !userCan(PERMISSIONS.SYSTEM_SETTINGS, user)}
+              hidden={!userCan(PERMISSIONS.SYSTEM_SETTINGS, user)}
               to={paths.settings.privacy()}
               className="text-theme-text-secondary hover:text-white hover:light:text-theme-text-primary text-xs leading-[18px] mx-3"
             >
@@ -370,7 +368,7 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.available-channels.telegram"),
               href: paths.settings.telegram(),
-              hidden: !!user,
+              permissions: [PERMISSIONS.SUPER_ADMIN],
             },
           ]}
         />
@@ -393,7 +391,7 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.scheduled-jobs"),
               href: paths.settings.scheduledJobs(),
-              hidden: !!user,
+              permissions: [PERMISSIONS.SUPER_ADMIN],
             },
             {
               btnText: t("settings.api-keys"),

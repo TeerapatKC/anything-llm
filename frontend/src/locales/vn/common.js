@@ -1200,7 +1200,6 @@ const TRANSLATIONS = {
     see_more: "Xem thêm",
     tools: "Dụng cụ",
     text_size_label: "Kích thước văn bản",
-    select_model: "Chọn mẫu",
     sources: "Nguồn",
     document: "Tài liệu",
     similarity_match: "trận đấu",
@@ -1424,7 +1423,6 @@ const TRANSLATIONS = {
       llmPreferences: "Tùy chọn LLM",
       chatSettings: "Cài đặt Trò chuyện",
       help: "Hiện trợ giúp phím tắt",
-      showLLMSelector: "Hiện Bộ chọn LLM không gian làm việc",
     },
   },
   community_hub: {

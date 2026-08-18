@@ -22,7 +22,6 @@ import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import useUser from "@/hooks/useUser";
 import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSettingsMenu";
-import WorkspaceModelPicker from "@/components/WorkspaceChat/ChatContainer/WorkspaceModelPicker";
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
 import { userIsChatOnly } from "@/utils/permissions";
@@ -287,39 +286,43 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
         className="relative flex w-full h-full z-[2]"
       >
         <div className="flex-1 min-w-0 transition-all duration-500 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-          <div className="absolute z-30 flex items-center justify-between top-3 left-4 right-4 md:top-2 md:left-3 md:right-3">
-            <WorkspaceModelPicker workspaceSlug={workspace?.slug} />
+          <div className="absolute z-30 flex items-center justify-end top-[68px] left-4 right-4 md:top-2 md:left-3 md:right-3">
             <ChatSettingsMenu />
           </div>
           <DnDFileUploaderWrapper>
-            <div className="flex flex-col h-full w-full items-center justify-center">
-              <div className="flex flex-col items-center w-full max-w-[750px]">
-                <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
-                  {t("main-page.greeting")}
-                </h1>
-                <PromptInput
-                  workspace={workspace}
-                  submit={handleSubmit}
-                  isStreaming={loading}
+            {/* `min-h-full` rather than `h-full` so the inner column grows past the
+                viewport instead of letting `justify-center` push content out of both
+                ends of an unscrollable box - which clipped it beyond reach. */}
+            <div className="h-full w-full overflow-y-auto">
+              <div className="flex flex-col min-h-full w-full items-center justify-center py-6">
+                <div className="flex flex-col items-center w-full max-w-[750px]">
+                  <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
+                    {t("main-page.greeting")}
+                  </h1>
+                  <PromptInput
+                    workspace={workspace}
+                    submit={handleSubmit}
+                    isStreaming={loading}
+                    sendCommand={sendCommand}
+                    attachments={files}
+                    centered={true}
+                    workspaceSlug={workspace?.slug}
+                    threadSlug={threadSlug}
+                  />
+                  <QuickActions
+                    hasAvailableWorkspace={!!workspace}
+                    onCreateAgent={() => navigate(paths.settings.agentSkills())}
+                    onEditWorkspace={handleEditWorkspace}
+                    onUploadDocument={() =>
+                      document.getElementById("dnd-chat-file-uploader")?.click()
+                    }
+                  />
+                </div>
+                <SuggestedMessages
+                  suggestedMessages={workspace?.suggestedMessages}
                   sendCommand={sendCommand}
-                  attachments={files}
-                  centered={true}
-                  workspaceSlug={workspace?.slug}
-                  threadSlug={threadSlug}
-                />
-                <QuickActions
-                  hasAvailableWorkspace={!!workspace}
-                  onCreateAgent={() => navigate(paths.settings.agentSkills())}
-                  onEditWorkspace={handleEditWorkspace}
-                  onUploadDocument={() =>
-                    document.getElementById("dnd-chat-file-uploader")?.click()
-                  }
                 />
               </div>
-              <SuggestedMessages
-                suggestedMessages={workspace?.suggestedMessages}
-                sendCommand={sendCommand}
-              />
             </div>
           </DnDFileUploaderWrapper>
         </div>
@@ -336,10 +339,12 @@ function NoWorkspacesAssigned() {
       style={{ height: "100%" }}
       className="transition-all duration-500 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden"
     >
-      <div className="flex flex-col h-full w-full items-center justify-center">
-        <p className="text-white/60 text-sm text-center whitespace-pre-line">
-          {t("home.notAssigned")}
-        </p>
+      <div className="h-full w-full overflow-y-auto">
+        <div className="flex flex-col min-h-full w-full items-center justify-center p-6">
+          <p className="text-white/60 text-sm text-center whitespace-pre-line">
+            {t("home.notAssigned")}
+          </p>
+        </div>
       </div>
     </div>
   );

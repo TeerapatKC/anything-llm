@@ -1202,7 +1202,6 @@ const TRANSLATIONS = {
     see_more: "Se flere",
     tools: "Værktøj",
     text_size_label: "Tekststørrelse",
-    select_model: "Vælg model",
     sources: "Kilder",
     document: "Dokument",
     similarity_match: "kamp",
@@ -1428,7 +1427,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM-præferencer",
       chatSettings: "Opsætningsindstillinger",
       help: "Vis hjælp til tastaturgenveje",
-      showLLMSelector: "Vis arbejdsområde LLM-valg",
     },
   },
   community_hub: {

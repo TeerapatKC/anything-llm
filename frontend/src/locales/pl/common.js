@@ -1317,7 +1317,6 @@ const TRANSLATIONS = {
     see_more: "Zobacz więcej",
     tools: "Narzędzia",
     text_size_label: "Rozmiar czcionki",
-    select_model: "Wybierz model",
     sources: "Źródła",
     document: "Dokument",
     similarity_match: "mecz",
@@ -1442,7 +1441,6 @@ const TRANSLATIONS = {
       llmPreferences: "Preferencje LLM",
       chatSettings: "Ustawienia czatu",
       help: "Pokaż pomoc dotyczącą skrótów klawiaturowych",
-      showLLMSelector: "Pokaż selektor LLM obszaru roboczego",
     },
   },
   community_hub: {

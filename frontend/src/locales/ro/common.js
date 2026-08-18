@@ -577,7 +577,6 @@ const TRANSLATIONS = {
     see_more: "Vezi mai multe",
     tools: "Unelte",
     text_size_label: "Dimensiunea textului",
-    select_model: "Selectați modelul",
     sources: "Surse",
     document: "Document",
     similarity_match: "meci",
@@ -701,7 +700,6 @@ const TRANSLATIONS = {
       llmPreferences: "Preferințe LLM",
       chatSettings: "Setări chat",
       help: "Arată ajutor pentru scurtături de tastatură",
-      showLLMSelector: "Arată selectorul LLM pentru spațiu de lucru",
     },
   },
   community_hub: {

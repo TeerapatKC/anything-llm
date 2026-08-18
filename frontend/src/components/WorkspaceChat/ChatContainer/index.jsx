@@ -32,7 +32,6 @@ import paths from "@/utils/paths";
 import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import ChatSettingsMenu from "./ChatSettingsMenu";
-import WorkspaceModelPicker from "./WorkspaceModelPicker";
 import { ChatSidebarProvider } from "./ChatSidebar";
 import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
@@ -460,8 +459,7 @@ export default function ChatContainer({
           className="relative flex w-full h-full z-[2]"
         >
           <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-            <div className="absolute z-30 flex items-center justify-between top-3 left-4 right-4 md:top-2 md:left-3 md:right-3">
-              <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+            <div className="absolute z-30 flex items-center justify-end top-[68px] left-4 right-4 md:top-2 md:left-3 md:right-3">
               <ChatSettingsMenu
                 history={chatHistory}
                 workspace={workspace}
@@ -469,42 +467,47 @@ export default function ChatContainer({
               />
             </div>
             <DnDFileUploaderWrapper>
-              <div className="flex flex-col h-full w-full items-center justify-center">
-                <div className="flex flex-col items-center w-full max-w-[750px]">
-                  <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
-                    {t("main-page.greeting")}
-                  </h1>
-                  {workspace?.active === false ? (
-                    <InactiveWorkspaceNotice />
-                  ) : (
-                    <PromptInput
-                      workspace={workspace}
-                      submit={handleSubmit}
-                      isStreaming={loadingResponse}
-                      sendCommand={sendCommand}
-                      attachments={files}
-                      centered={true}
-                    />
-                  )}
-                  <QuickActions
-                    hasAvailableWorkspace={!!workspace}
-                    onCreateAgent={() => navigate(paths.settings.agentSkills())}
-                    onEditWorkspace={() =>
-                      navigate(
-                        paths.workspace.settings.generalAppearance(
-                          workspace.slug
+              {/* `min-h-full` rather than `h-full` so the inner column grows past the
+                  viewport instead of letting `justify-center` push content out of both
+                  ends of an unscrollable box - which clipped it beyond reach. */}
+              <div className="h-full w-full overflow-y-auto">
+                <div className="flex flex-col min-h-full w-full items-center justify-center py-6">
+                  <div className="flex flex-col items-center w-full max-w-[750px]">
+                    <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
+                      {t("main-page.greeting")}
+                    </h1>
+                    {workspace?.active === false ? (
+                      <InactiveWorkspaceNotice />
+                    ) : (
+                      <PromptInput
+                        workspace={workspace}
+                        submit={handleSubmit}
+                        isStreaming={loadingResponse}
+                        sendCommand={sendCommand}
+                        attachments={files}
+                        centered={true}
+                      />
+                    )}
+                    <QuickActions
+                      hasAvailableWorkspace={!!workspace}
+                      onCreateAgent={() => navigate(paths.settings.agentSkills())}
+                      onEditWorkspace={() =>
+                        navigate(
+                          paths.workspace.settings.generalAppearance(
+                            workspace.slug
+                          )
                         )
-                      )
-                    }
-                    onUploadDocument={() =>
-                      document.getElementById("dnd-chat-file-uploader")?.click()
-                    }
+                      }
+                      onUploadDocument={() =>
+                        document.getElementById("dnd-chat-file-uploader")?.click()
+                      }
+                    />
+                  </div>
+                  <SuggestedMessages
+                    suggestedMessages={workspace?.suggestedMessages}
+                    sendCommand={sendCommand}
                   />
                 </div>
-                <SuggestedMessages
-                  suggestedMessages={workspace?.suggestedMessages}
-                  sendCommand={sendCommand}
-                />
               </div>
             </DnDFileUploaderWrapper>
           </div>
@@ -521,8 +524,7 @@ export default function ChatContainer({
         className="relative flex w-full h-full z-[2]"
       >
         <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white text-white light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-          <div className="absolute z-30 flex items-center justify-between top-3 left-4 right-4 md:top-2 md:left-3 md:right-3">
-            <WorkspaceModelPicker workspaceSlug={workspace.slug} />
+          <div className="absolute z-30 flex items-center justify-end top-[68px] left-4 right-4 md:top-2 md:left-3 md:right-3">
             <ChatSettingsMenu
               history={chatHistory}
               workspace={workspace}

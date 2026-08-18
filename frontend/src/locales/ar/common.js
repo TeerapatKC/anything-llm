@@ -1189,7 +1189,6 @@ const TRANSLATIONS = {
     see_more: "عرض المزيد",
     tools: "الأدوات",
     text_size_label: "حجم النص",
-    select_model: "اختر الطراز",
     sources: "مصادر",
     document: "وثيقة",
     similarity_match: "مباراة",
@@ -1407,7 +1406,6 @@ const TRANSLATIONS = {
       llmPreferences: "تفضيلات نموذج اللغة الكبيرة",
       chatSettings: "إعدادات الدردشة",
       help: "عرض مسرّعات لوحة المفاتيح",
-      showLLMSelector: "اختر مساحة العمل",
     },
   },
   community_hub: {

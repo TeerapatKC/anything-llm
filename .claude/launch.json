@@ -6,6 +6,18 @@
       "runtimeExecutable": "yarn",
       "runtimeArgs": ["--cwd", "frontend", "dev"],
       "port": 3000
+    },
+    {
+      "name": "server",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["--cwd", "server", "dev"],
+      "port": 3001
+    },
+    {
+      "name": "collector",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["--cwd", "collector", "dev"],
+      "port": 8888
     }
   ]
 }

@@ -1211,7 +1211,6 @@ const TRANSLATIONS = {
     see_more: "Meer zien",
     tools: "Gereedschap",
     text_size_label: "Lettergrootte",
-    select_model: "Kies het model",
     sources: "Bronnen",
     document: "Document",
     similarity_match: "wedstrijd",
@@ -1440,7 +1439,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM-voorkeuren",
       chatSettings: "Chat-instellingen",
       help: "Help voor toetsenbordsneltoetsen weergeven",
-      showLLMSelector: "LLM-selector voor werkruimtes weergeven",
     },
   },
   community_hub: {

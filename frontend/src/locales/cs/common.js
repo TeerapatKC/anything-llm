@@ -1328,7 +1328,6 @@ const TRANSLATIONS = {
     see_more: "Více",
     tools: "Nářadí",
     text_size_label: "Velikost písma",
-    select_model: "Vyberte model",
     sources: "Zdroje",
     document: "Dokument",
     similarity_match: "zápas",
@@ -1451,7 +1450,6 @@ const TRANSLATIONS = {
       llmPreferences: "Preference LLM",
       chatSettings: "Nastavení chatu",
       help: "Zobrazit nápovědu klávesových zkratek",
-      showLLMSelector: "Zobrazit výběr LLM pracovního prostoru",
     },
   },
   community_hub: {

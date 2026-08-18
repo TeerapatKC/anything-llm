@@ -629,7 +629,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={TelegramBotSettings}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SUPER_ADMIN]}
               />
             ),
           };

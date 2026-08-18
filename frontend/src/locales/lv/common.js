@@ -1312,7 +1312,6 @@ const TRANSLATIONS = {
     see_more: "Skatīt vairāk",
     tools: "Rīki",
     text_size_label: "Teksta izmērs",
-    select_model: "Izvēlieties modeli",
     sources: "Avotus",
     document: "Dokuments",
     similarity_match: "spēle",
@@ -1435,7 +1434,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM prioritātes",
       chatSettings: "Pieskaites iestatījumi",
       help: "Rādīt tastatūras atvērto palīdzības",
-      showLLMSelector: "LLM izvēles rīks",
     },
   },
   community_hub: {

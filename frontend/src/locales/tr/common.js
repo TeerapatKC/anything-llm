@@ -1216,7 +1216,6 @@ const TRANSLATIONS = {
     see_more: "Daha Fazla",
     tools: "Araçlar",
     text_size_label: "Metin Boyutu",
-    select_model: "Model Seçimi",
     sources: "Kaynaklar",
     document: "Belge",
     similarity_match: "maç",
@@ -1441,7 +1440,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM Tercihleri",
       chatSettings: "Sohbet Ayarları",
       help: "Klavye kısayolları yardımını göster",
-      showLLMSelector: "Çalışma alanı LLM Seçicisini Göster",
     },
   },
   community_hub: {

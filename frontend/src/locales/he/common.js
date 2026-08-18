@@ -1256,7 +1256,6 @@ const TRANSLATIONS = {
     see_more: "לראות עוד",
     tools: "כלים",
     text_size_label: "גודל הטקסט",
-    select_model: "בחר מודל",
     sources: "מקורות",
     document: "מסמך",
     similarity_match: "משחק",
@@ -1378,7 +1377,6 @@ const TRANSLATIONS = {
       llmPreferences: "העדפות מודל שפה (LLM)",
       chatSettings: "הגדרות צ'אט",
       help: "הצג עזרה לקיצורי מקלדת",
-      showLLMSelector: "הצג בורר מודלי שפה לסביבת עבודה",
     },
   },
   community_hub: {

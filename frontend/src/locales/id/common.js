@@ -1575,7 +1575,6 @@ const TRANSLATIONS = {
     large: "Besar",
     tools: "Alat",
     text_size_label: "Ukuran Teks",
-    select_model: "Pilih Model",
     slash_commands: "Slash Commands",
     agent_skills: "Keterampilan Agen",
     manage_agent_skills: "Kelola Keterampilan Agen",
@@ -1694,7 +1693,6 @@ const TRANSLATIONS = {
       llmPreferences: "Preferensi LLM",
       chatSettings: "Pengaturan Obrolan",
       help: "Tampilkan bantuan pintasan keyboard",
-      showLLMSelector: "Tampilkan Pemilih LLM Ruang Kerja",
     },
   },
   community_hub: {

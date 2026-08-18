@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { SlidersHorizontal } from "@phosphor-icons/react";
-import useLoginMode from "@/hooks/useLoginMode";
+import useUser from "@/hooks/useUser";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 
@@ -15,7 +15,7 @@ function getTextSizes(t) {
 export default function TextSizeMenu() {
   const { t } = useTranslation();
   const TEXT_SIZES = useMemo(() => getTextSizes(t), [t]);
-  const mode = useLoginMode();
+  const { user } = useUser();
   const [showMenu, setShowMenu] = useState(false);
   const [selectedSize, setSelectedSize] = useState(
     window.localStorage.getItem("anythingllm_text_size") || "normal"
@@ -45,8 +45,8 @@ export default function TextSizeMenu() {
     window.dispatchEvent(new CustomEvent("textSizeChange", { detail: size }));
   }
 
-  // User icon is visible when login mode is active (single with password or multi-user)
-  const hasUserIcon = mode !== null;
+  // The user icon is only rendered for a signed-in user.
+  const hasUserIcon = !!user;
 
   if (isMobile) return null;
   return (

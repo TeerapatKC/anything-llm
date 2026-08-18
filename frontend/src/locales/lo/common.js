@@ -1495,7 +1495,6 @@ const TRANSLATIONS = {
     large: "ໃຫຍ່",
     tools: "ເຄື່ອງມື",
     text_size_label: "ຂະໜາດຕົວອັກສອນ",
-    select_model: "ເລືອກແບບຈຳລອງ",
     slash_commands: "ຄຳສັ່ງ Slash",
     agent_skills: "ທັກສະເອເຈນ",
     manage_agent_skills: "ຈັດການທັກສະເອເຈນ",
@@ -1612,7 +1611,6 @@ const TRANSLATIONS = {
       llmPreferences: "ການຕັ້ງຄ່າ LLM",
       chatSettings: "ການຕັ້ງຄ່າການສົນທະນາ",
       help: "ສະແດງວິທີໃຊ້ຄີລັດ",
-      showLLMSelector: "ສະແດງຕົວເລືອກ LLM ຂອງພື້ນທີ່",
     },
   },
   community_hub: {

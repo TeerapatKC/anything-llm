@@ -1270,7 +1270,6 @@ const TRANSLATIONS = {
     see_more: "더 보기",
     tools: "도구",
     text_size_label: "글자 크기",
-    select_model: "모델 선택",
     sources: "출처",
     document: "문서",
     similarity_match: "경쟁",
@@ -1392,7 +1391,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM 기본 설정",
       chatSettings: "채팅 설정",
       help: "단축키 도움말 보기",
-      showLLMSelector: "워크스페이스 LLM 선택기 열기",
     },
   },
   community_hub: {

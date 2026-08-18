@@ -1122,7 +1122,6 @@ const TRANSLATIONS = {
     see_more: "查看更多",
     tools: "工具",
     text_size_label: "文字大小",
-    select_model: "選擇模型",
     sources: "來源",
     document: "文件",
     similarity_match: "相符度",
@@ -1333,7 +1332,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM 偏好設定",
       chatSettings: "對話設定",
       help: "顯示快速鍵說明",
-      showLLMSelector: "顯示工作區 LLM 選擇器",
     },
   },
   community_hub: {

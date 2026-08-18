@@ -1330,7 +1330,6 @@ const TRANSLATIONS = {
     large: "Didelis",
     tools: "Įrankiai",
     text_size_label: "Teksto dydis",
-    select_model: "Pasirinkti modelį",
     slash_commands: "Komandos su „/“",
     agent_skills: "Agento įgūdžiai",
     manage_agent_skills: "Valdyti agento įgūdžius",
@@ -1455,7 +1454,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM nustatymai",
       chatSettings: "Pokalbių nustatymai",
       help: "Rodyti klaviatūros trumpinių pagalbą",
-      showLLMSelector: "Rodyti darbo srities LLM parinkiklį",
     },
   },
   community_hub: {

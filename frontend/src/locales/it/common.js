@@ -1231,7 +1231,6 @@ const TRANSLATIONS = {
     see_more: "Visualizza altro",
     tools: "Strumenti",
     text_size_label: "Dimensione del testo",
-    select_model: "Seleziona il modello",
     sources: "Sorgente",
     document: "Documento",
     similarity_match: "partita",
@@ -1464,7 +1463,6 @@ const TRANSLATIONS = {
       llmPreferences: "Preferenze LLM",
       chatSettings: "Impostazioni di chat",
       help: "Mostra le scorciatoie da tastiera",
-      showLLMSelector: "Seleziona l'ambiente di lavoro LLM",
     },
   },
   community_hub: {

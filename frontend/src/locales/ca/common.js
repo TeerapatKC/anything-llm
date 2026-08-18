@@ -1417,7 +1417,6 @@ const TRANSLATIONS = {
     large: "Gran",
     tools: "Eines",
     text_size_label: "Mida del text",
-    select_model: "Selecciona el model",
     slash_commands: "Ordres de barra",
     agent_skills: "Habilitats de l'agent",
     manage_agent_skills: "Gestiona les habilitats de l'agent",
@@ -1544,7 +1543,6 @@ const TRANSLATIONS = {
       llmPreferences: "Preferències de LLM",
       chatSettings: "Configuració del xat",
       help: "Mostra l'ajuda de dreceres de teclat",
-      showLLMSelector: "Mostra el selector de LLM de l'espai de treball",
     },
   },
   community_hub: {

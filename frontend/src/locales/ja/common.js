@@ -1185,7 +1185,6 @@ const TRANSLATIONS = {
     see_more: "詳細を見る",
     tools: "道具",
     text_size_label: "文字サイズ",
-    select_model: "モデルを選択",
     sources: "出典",
     document: "文書",
     similarity_match: "試合",
@@ -1411,7 +1410,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM の好み",
       chatSettings: "チャット設定",
       help: "キーボードショートカットのヘルプを表示する",
-      showLLMSelector: "LLM（大規模言語モデル）選択ツール",
     },
   },
   community_hub: {

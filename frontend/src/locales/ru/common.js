@@ -1219,7 +1219,6 @@ const TRANSLATIONS = {
     see_more: "Узнать больше",
     tools: "Инструменты",
     text_size_label: "Размер текста",
-    select_model: "Выберите модель",
     sources: "Источники",
     document: "Документ",
     similarity_match: "соревнование; игра",
@@ -1451,7 +1450,6 @@ const TRANSLATIONS = {
       llmPreferences: "Предпочтения LLM",
       chatSettings: "Настройки чата",
       help: "Показать справку о сочетаниях клавиш",
-      showLLMSelector: "Выбор рабочей среды для LLM",
     },
   },
   community_hub: {

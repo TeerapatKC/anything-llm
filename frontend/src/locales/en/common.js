@@ -1600,7 +1600,6 @@ const TRANSLATIONS = {
     large: "Large",
     tools: "Tools",
     text_size_label: "Text Size",
-    select_model: "Select Model",
     slash_commands: "Slash Commands",
     agent_skills: "Agent Skills",
     manage_agent_skills: "Manage Agent Skills",
@@ -1735,7 +1734,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM Preferences",
       chatSettings: "Chat Settings",
       help: "Show keyboard shortcuts help",
-      showLLMSelector: "Show workspace LLM Selector",
     },
   },
   community_hub: {

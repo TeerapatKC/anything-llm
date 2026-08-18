@@ -91,10 +91,10 @@ function ShowWorkspaceChat() {
         style={{ height: "100%" }}
         className="transition-all duration-500 relative bg-theme-bg-secondary w-full h-full overflow-y-scroll"
       >
-        <div className="flex items-center gap-x-4 pt-6 pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10 overflow-x-auto overflow-y-hidden thin-scrollbar">
+        <div className="flex items-center gap-x-4 pt-[80px] pb-4 ml-16 mr-8 border-b-2 border-white light:border-theme-chat-input-border border-opacity-10 overflow-x-auto overflow-y-hidden thin-scrollbar md:pt-6">
           <Link
             to={paths.workspace.chat(slug)}
-            className="absolute top-2 left-2 md:top-4 md:left-4 transition-all duration-300 p-2 rounded-full text-white bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover z-10"
+            className="absolute top-[64px] left-2 md:top-4 md:left-4 transition-all duration-300 p-2 rounded-full text-white bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover z-10"
           >
             <Undo2 className="h-4 w-4" />
           </Link>

@@ -1213,7 +1213,6 @@ const TRANSLATIONS = {
     see_more: "查看更多",
     tools: "工具",
     text_size_label: "字体大小",
-    select_model: "选择型号",
     sources: "来源",
     document: "文件",
     similarity_match: "比赛",
@@ -1334,7 +1333,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM 偏好设置",
       chatSettings: "聊天设置",
       help: "显示键盘快捷键说明",
-      showLLMSelector: "显示工作区 LLM 选择器",
     },
   },
   community_hub: {

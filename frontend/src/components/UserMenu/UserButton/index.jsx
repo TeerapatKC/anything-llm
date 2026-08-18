@@ -1,4 +1,3 @@
-import useLoginMode from "@/hooks/useLoginMode";
 import usePfp from "@/hooks/usePfp";
 import useUser from "@/hooks/useUser";
 import System from "@/models/system";
@@ -65,7 +64,6 @@ import {
  */
 export default function UserButton() {
   const { t } = useTranslation();
-  const mode = useLoginMode();
   const { user } = useUser();
   const { theme, setTheme, availableThemes } = useTheme();
   const {
@@ -89,15 +87,12 @@ export default function UserButton() {
     fetchSupportEmail();
   }, []);
 
-  if (mode === null) return null;
+  if (!user) return null;
   const canSeeSettings = !userIsChatOnly(user);
-  const displayName =
-    mode === "multi" && user?.username
-      ? user.username
-      : t("profile_settings.account");
+  const displayName = user.username || t("profile_settings.account");
   // The role's label, e.g. "Content Editor" - never the raw identifier ("content-editor")
   // a role is stored and looked up by.
-  const userRoleLabel = mode === "multi" ? roleLabel(user) : null;
+  const userRoleLabel = roleLabel(user);
 
   return (
     <div className="w-full">
@@ -110,7 +105,7 @@ export default function UserButton() {
               className="group/account flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:data-[state=open]:!bg-transparent"
             >
               <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800 group-data-[collapsible=icon]:group-hover/account:ring-2 group-data-[collapsible=icon]:group-data-[state=open]/account:ring-2 group-data-[collapsible=icon]:ring-theme-sidebar-item-hover">
-                {mode === "multi" ? <UserDisplay /> : <Person size={16} />}
+                <UserDisplay />
               </span>
               <span className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
                 <span className="truncate text-sm font-semibold text-theme-text-primary">
@@ -141,7 +136,7 @@ export default function UserButton() {
           <DropdownMenuLabel className="font-normal">
             <div className="flex items-center gap-2">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800">
-                {mode === "multi" ? <UserDisplay /> : <Person size={16} />}
+                <UserDisplay />
               </span>
               <span className="grid flex-1 leading-tight">
                 <span className="truncate text-sm font-semibold text-theme-text-primary">
@@ -156,15 +151,13 @@ export default function UserButton() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator className="bg-theme-modal-border" />
-          {mode === "multi" && !!user && (
-            <DropdownMenuItem
-              onSelect={() => setShowAccountSettings(true)}
-              className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
-            >
-              <Person size={16} />
-              {t("profile_settings.account")}
-            </DropdownMenuItem>
-          )}
+          <DropdownMenuItem
+            onSelect={() => setShowAccountSettings(true)}
+            className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
+          >
+            <Person size={16} />
+            {t("profile_settings.account")}
+          </DropdownMenuItem>
           <PreferenceSubmenu
             icon={<Palette size={16} />}
             label={t("profile_settings.theme")}

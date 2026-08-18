@@ -1580,7 +1580,6 @@ const TRANSLATIONS = {
     large: "Velika",
     tools: "Alati",
     text_size_label: "Veličina teksta",
-    select_model: "Odaberi model",
     slash_commands: "Kose naredbe (slash commands)",
     agent_skills: "Vještine agenta",
     manage_agent_skills: "Upravljaj vještinama agenta",
@@ -1698,7 +1697,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM postavke",
       chatSettings: "Postavke razgovora",
       help: "Prikaži pomoć za prečace na tipkovnici",
-      showLLMSelector: "Prikaži birač LLM-a za radni prostor",
     },
   },
   community_hub: {
