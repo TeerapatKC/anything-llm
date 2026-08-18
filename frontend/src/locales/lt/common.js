@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "Ankstesnis puslapis",
     next: "Kitas puslapis",
     optional: "Neprivaloma",
-    yes: "Taip",
-    no: "Ne",
     on: "Įjungta",
     none: "Nėra",
     stopped: "Sustabdyta",
@@ -126,8 +124,6 @@ const TRANSLATIONS = {
       "Įveskite savo vartotojo vardą ir slaptažodį, kad pasiektumėte savo {{appName}} instanciją.",
     "password-reset": {
       title: "Slaptažodžio atstatymas",
-      description: "Pateikite reikiamą informaciją slaptažodžiui atstatyti.",
-      "recovery-codes": "Atkūrimo kodai",
       "back-to-login": "Grįžti į prisijungimą",
     },
   },
@@ -1278,9 +1274,6 @@ const TRANSLATIONS = {
     preset_reset_description:
       "Išvalyti pokalbių istoriją ir pradėti naują pokalbį",
     add_new_preset: " Pridėti naują šabloną",
-    add_new: "Pridėti naują",
-    edit: "Redaguoti",
-    publish: "Paskelbti",
     stop_generating: "Sustabdyti atsakymo generavimą",
     command: "Komanda",
     your_command: "tavo-komanda",
@@ -1295,24 +1288,7 @@ const TRANSLATIONS = {
     tools: "Įrankiai",
     text_size_label: "Teksto dydis",
     slash_commands: "Komandos su „/“",
-    agent_skills: "Agento įgūdžiai",
-    manage_agent_skills: "Valdyti agento įgūdžius",
     start_agent_session: "Pradėti agento sesiją",
-    agent_skills_disabled_in_session:
-      "Negalima keisti įgūdžių aktyvios agento sesijos metu. Naudokite /exit, kad pirmiausia užbaigtumėte sesiją.",
-    use_agent_session_to_use_tools:
-      "Įrankius pokalbyje galite naudoti pradėdami agento sesiją su „@agent“ savo užklausos pradžioje.",
-    workspace_llm_manager: {
-      search: "Paieška",
-      loading_workspace_settings: "Kraunami darbo srities nustatymai...",
-      available_models: "Prieinami modeliai tiekėjui {{provider}}",
-      available_models_description:
-        "Pasirinkite modelį, kurį naudosite šiai darbo sričiai.",
-      save: "Naudoti šį modelį",
-      saving: "Nustatomas modelis kaip numatytasis darbo sričiai...",
-      missing_credentials: "Šiam tiekėjui trūksta duomenų!",
-      missing_credentials_description: "Nustatyti dabar",
-    },
     agent_invocation: {
       model_wants_to_call: "Modelis nori paskambinti",
       approve: "Patvirtinti",
@@ -1336,12 +1312,6 @@ const TRANSLATIONS = {
       batch_next: "Toliau",
       answer_skipped: "[naudotojas praleido]",
     },
-    custom_skills: "Individualūs įgūdžiai",
-    agent_flows: "Agentų srautai",
-    no_tools_found: "Nėra rasti atitikusių įrankių.",
-    loading_mcp_servers: "Įkrauname MCP serverius...",
-    app_integrations: "Programų integracijos",
-    sub_skills: "Pagrindinės įgūdžios",
     memories: {
       title: "Atmintys",
       empty:
@@ -1392,7 +1362,6 @@ const TRANSLATIONS = {
     profile_picture: "Profilio nuotrauka",
     remove_profile_picture: "Pašalinti profilio nuotrauką",
     username: "Vartotojo vardas",
-    new_password: "Naujas slaptažodis",
     password_description: "Slaptažodis turi būti bent 8 simbolių ilgio",
     cancel: "Atšaukti",
     update_account: "Atnaujinti paskyrą",
@@ -1904,16 +1873,8 @@ const TRANSLATIONS = {
       "select-router": "Pasirinkite maršrutizatorių",
       "select-description":
         "Pasirinkite, kurį maršrutizatorių naudoti šiam darbo ځایui.",
-      "no-routers-chat":
-        "Nėra konfigūruotų maršrutizatorių. Sukonfigūruokite vieną, spustelėję „Nustatymai > AI paslaugų teikėjai > Modelio maršrutizatorius“.",
-      "rule-count": "({{count}} taisykos)",
-    },
-    metrics: {
-      "model-router-default": "Modelio routeris",
     },
     chat: {
-      "select-router-error": "Pasirinkite maršrutizatorių",
-      "invalid-model": "Neteisingas modelio pasirinkimas",
       "routed-to": "Siųsta į <route>{{model}}</route>",
       "routed-to-rule":
         "Peradresuota per <route>{{model}}</route> pagal <rule>{{ruleTitle}}</rule>",

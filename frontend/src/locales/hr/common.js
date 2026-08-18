@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Prethodna stranica",
     next: "Sljedeća stranica",
     optional: "Neobavezno",
-    yes: "Da",
-    no: "Ne",
     on: "Uključeno",
     none: "Ništa",
     stopped: "Zaustavljeno",
@@ -127,9 +125,6 @@ const TRANSLATIONS = {
       "Unesite svoje korisničko ime i lozinku za pristup svojoj {{appName}} instanci.",
     "password-reset": {
       title: "Resetiranje lozinke",
-      description:
-        "Unesite potrebne podatke ispod za resetiranje svoje lozinke.",
-      "recovery-codes": "Kodovi za oporavak",
       "back-to-login": "Povratak na prijavu",
     },
   },
@@ -1099,16 +1094,8 @@ const TRANSLATIONS = {
       "select-router": "Odaberi usmjerivač",
       "select-description":
         "Odaberite koji usmjerivač koristiti za ovaj radni prostor.",
-      "no-routers-chat":
-        "Nema konfiguriranih usmjerivača. Stvorite jedan u Postavke > AI pružatelji usluga > Usmjerivač modela.",
-      "rule-count": "({{count}} pravila)",
-    },
-    metrics: {
-      "model-router-default": "Usmjerivač modela",
     },
     chat: {
-      "select-router-error": "Odaberi usmjerivač",
-      "invalid-model": "Nevažeći odabir modela",
       "routed-to": "Usmjereno na <route>{{model}}</route>",
       "routed-to-rule":
         "Usmjereno na <route>{{model}}</route> putem <rule>{{ruleTitle}}</rule>",
@@ -1528,9 +1515,6 @@ const TRANSLATIONS = {
     preset_reset_description:
       "Obriši svoju povijest razgovora i započni novi razgovor",
     add_new_preset: " Dodaj novi predložak",
-    add_new: "Dodaj novo",
-    edit: "Uredi",
-    publish: "Objavi",
     stop_generating: "Zaustavi generiranje odgovora",
     command: "Naredba",
     your_command: "vasa-naredba",
@@ -1545,30 +1529,7 @@ const TRANSLATIONS = {
     tools: "Alati",
     text_size_label: "Veličina teksta",
     slash_commands: "Kose naredbe (slash commands)",
-    agent_skills: "Vještine agenta",
-    manage_agent_skills: "Upravljaj vještinama agenta",
-    app_integrations: "Integracije aplikacija",
-    custom_skills: "Prilagođene vještine",
-    agent_flows: "Tokovi agenta",
-    sub_skills: "Podvještine",
-    no_tools_found: "Nema pronađenih odgovarajućih alata",
-    loading_mcp_servers: "Učitavanje MCP poslužitelja...",
     start_agent_session: "Pokreni sesiju agenta",
-    agent_skills_disabled_in_session:
-      "Nije moguće mijenjati vještine tijekom aktivne sesije agenta. Koristite /exit da prvo zavšite sesiju.",
-    use_agent_session_to_use_tools:
-      "Alate možete koristiti u razgovoru pokretanjem sesije agenta s '@agent' na početku svog upita.",
-    workspace_llm_manager: {
-      search: "Pretraži",
-      loading_workspace_settings: "Učitavanje postavki radnog prostora...",
-      available_models: "Dostupni modeli za {{provider}}",
-      available_models_description:
-        "Odaberite model koji se koristi za ovaj radni prostor.",
-      save: "Koristi ovaj model",
-      saving: "Postavljanje modela kao zadanog za radni prostor...",
-      missing_credentials: "Ovom pružatelju usluga nedostaju vjerodajnice!",
-      missing_credentials_description: "Postavi sada",
-    },
     agent_invocation: {
       model_wants_to_call: "Model želi pozvati",
       approve: "Prihvati",
@@ -1635,7 +1596,6 @@ const TRANSLATIONS = {
     profile_picture: "Profilna slika",
     remove_profile_picture: "Ukloni profilnu sliku",
     username: "Korisničko ime",
-    new_password: "Nova lozinka",
     password_description: "Lozinka mora imati najmanje 8 znakova",
     cancel: "Odustani",
     update_account: "Ažuriraj račun",

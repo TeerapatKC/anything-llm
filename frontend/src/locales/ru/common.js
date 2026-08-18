@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "Предыдущая страница",
     next: "Следующая страница",
     optional: "Необязательный",
-    yes: "Да",
-    no: "Нет",
     search: "Поиск",
     username_requirements:
       "Имя пользователя должно содержать от 2 до 64 символов, начинаться со строчной буквы и содержать только строчные буквы, цифры, символы подчёркивания, дефисы и точки.",
@@ -118,9 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "Войти в ваш {{appName}} аккаунт.",
     "password-reset": {
       title: "Сброс пароля",
-      description:
-        "Предоставьте необходимую информацию ниже, чтобы сбросить ваш пароль.",
-      "recovery-codes": "Коды восстановления",
       "back-to-login": "Вернуться к входу",
     },
   },
@@ -1182,20 +1177,6 @@ const TRANSLATIONS = {
     small: "Маленький",
     normal: "Нормальный",
     large: "Большой",
-    workspace_llm_manager: {
-      search: "Поиск поставщиков больших языковых моделей",
-      loading_workspace_settings: "Загрузка настроек рабочего пространства...",
-      available_models: "Доступные модели для {{provider}}",
-      available_models_description:
-        "Выберите модель, которую вы хотите использовать для этой рабочей среды.",
-      save: "Используйте эту модель.",
-      saving:
-        "Установка модели в качестве значения по умолчанию для рабочего пространства...",
-      missing_credentials:
-        "Этот поставщик не предоставляет никаких подтверждающих документов.",
-      missing_credentials_description:
-        "Нажмите, чтобы настроить учетные данные",
-    },
     submit: "Отправить",
     edit_info_user:
       '"Отправить" генерирует новый ответ от ИИ. "Сохранить" обновляет только ваше сообщение.',
@@ -1210,18 +1191,9 @@ const TRANSLATIONS = {
     similarity_match: "соревнование; игра",
     source_count_one: "{{count}} – ссылка",
     source_count_other: "Ссылки на {{count}}",
-    add_new: "Добавить новое",
-    edit: "Редактировать",
-    publish: "Опубликовать",
     stop_generating: "Прекратите генерацию ответа",
     slash_commands: "Команды, введенные сокращенной формой",
-    agent_skills: "Навыки агента",
-    manage_agent_skills: "Управление навыками агентов",
-    agent_skills_disabled_in_session:
-      "Невозможно изменять навыки во время активной сессии. Для завершения сессии сначала используйте команду /exit.",
     start_agent_session: "Начать сеанс для агента",
-    use_agent_session_to_use_tools:
-      "Вы можете использовать инструменты в чате, начав сеанс с агентом, добавив '@agent' в начало вашего сообщения.",
     agent_invocation: {
       model_wants_to_call: "Модель хочет позвонить",
       approve: "Одобрить",
@@ -1247,12 +1219,6 @@ const TRANSLATIONS = {
       batch_next: "Следующий",
       answer_skipped: "[пользователь пропустил]",
     },
-    custom_skills: "Индивидуальные навыки",
-    agent_flows: "Поток агентов",
-    no_tools_found: "Не найдено соответствующих инструментов.",
-    loading_mcp_servers: "Загрузка серверов MCP...",
-    app_integrations: "Интеграция с приложениями",
-    sub_skills: "Подквалификация",
     memories: {
       title: "Воспоминания",
       empty:
@@ -1305,7 +1271,6 @@ const TRANSLATIONS = {
     profile_picture: "Изображение профиля",
     remove_profile_picture: "Удалить изображение профиля",
     username: "Имя пользователя",
-    new_password: "Новый пароль",
     password_description: "Пароль должен содержать не менее 8 символов",
     cancel: "Отмена",
     update_account: "Обновить учётную запись",
@@ -1929,16 +1894,8 @@ const TRANSLATIONS = {
       "select-router": "Выберите маршрутизатор",
       "select-description":
         "Выберите, какой маршрутизатор использовать для этой рабочей среды.",
-      "no-routers-chat":
-        'Не настроены маршрутизаторы. Создайте один в разделе "Настройки" > "Поставщики ИИ" > "Маршрутизатор модели".',
-      "rule-count": "({{count}} правила)",
-    },
-    metrics: {
-      "model-router-default": "Типовой маршрутизатор",
     },
     chat: {
-      "select-router-error": "Выберите маршрутизатор",
-      "invalid-model": "Неверный выбор модели",
       "routed-to": "Перенаправлено в {{model}}<route></route>",
       "routed-to-rule":
         "Перенаправлено через <route>{{model}}</route> по маршруту <rule>{{ruleTitle}}</rule>",

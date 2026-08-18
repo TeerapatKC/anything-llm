@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Halaman Sebelumnya",
     next: "Halaman Berikutnya",
     optional: "Opsional",
-    yes: "Ya",
-    no: "Tidak",
     on: "Aktif",
     none: "Tidak Ada",
     stopped: "Dihentikan",
@@ -127,9 +125,6 @@ const TRANSLATIONS = {
       "Masukkan nama pengguna dan kata sandi Anda untuk mengakses instance {{appName}} Anda.",
     "password-reset": {
       title: "Reset Kata Sandi",
-      description:
-        "Berikan informasi yang diperlukan di bawah untuk mereset kata sandi Anda.",
-      "recovery-codes": "Kode Pemulihan",
       "back-to-login": "Kembali ke Login",
     },
   },
@@ -1092,16 +1087,8 @@ const TRANSLATIONS = {
       "select-router": "Pilih router",
       "select-description":
         "Pilih router mana yang akan digunakan untuk ruang kerja ini.",
-      "no-routers-chat":
-        "Tidak ada router yang dikonfigurasi. Buat satu di Pengaturan > Penyedia AI > Router Model.",
-      "rule-count": "({{count}} aturan)",
-    },
-    metrics: {
-      "model-router-default": "Router Model",
     },
     chat: {
-      "select-router-error": "Pilih router",
-      "invalid-model": "Pemilihan model tidak valid",
       "routed-to": "Dirutekan ke <route>{{model}}</route>",
       "routed-to-rule":
         "Dirutekan ke <route>{{model}}</route> melalui <rule>{{ruleTitle}}</rule>",
@@ -1522,9 +1509,6 @@ const TRANSLATIONS = {
     preset_reset_description:
       "Bersihkan riwayat obrolan Anda dan mulai obrolan baru",
     add_new_preset: " Tambah Preset Baru",
-    add_new: "Tambah baru",
-    edit: "Edit",
-    publish: "Publikasikan",
     stop_generating: "Hentikan menghasilkan respons",
     command: "Perintah",
     your_command: "perintah-anda",
@@ -1539,30 +1523,7 @@ const TRANSLATIONS = {
     tools: "Alat",
     text_size_label: "Ukuran Teks",
     slash_commands: "Slash Commands",
-    agent_skills: "Keterampilan Agen",
-    manage_agent_skills: "Kelola Keterampilan Agen",
-    app_integrations: "Integrasi Aplikasi",
-    custom_skills: "Keterampilan Kustom",
-    agent_flows: "Alur Agen",
-    sub_skills: "Sub-keterampilan",
-    no_tools_found: "Tidak ada alat yang cocok ditemukan",
-    loading_mcp_servers: "Memuat server MCP...",
     start_agent_session: "Mulai Sesi Agen",
-    agent_skills_disabled_in_session:
-      "Tidak dapat mengubah keterampilan selama sesi agen aktif. Gunakan /exit untuk mengakhiri sesi terlebih dahulu.",
-    use_agent_session_to_use_tools:
-      "Anda dapat menggunakan alat dalam obrolan dengan memulai sesi agen dengan '@agent' di awal prompt Anda.",
-    workspace_llm_manager: {
-      search: "Cari",
-      loading_workspace_settings: "Memuat pengaturan ruang kerja...",
-      available_models: "Model Tersedia untuk {{provider}}",
-      available_models_description:
-        "Pilih model untuk digunakan pada ruang kerja ini.",
-      save: "Gunakan model ini",
-      saving: "Mengatur model sebagai bawaan ruang kerja...",
-      missing_credentials: "Penyedia ini tidak memiliki kredensial!",
-      missing_credentials_description: "Atur sekarang",
-    },
     agent_invocation: {
       model_wants_to_call: "Model ingin memanggil",
       approve: "Setujui",
@@ -1630,7 +1591,6 @@ const TRANSLATIONS = {
     profile_picture: "Foto Profil",
     remove_profile_picture: "Hapus Foto Profil",
     username: "Nama Pengguna",
-    new_password: "Kata Sandi Baru",
     password_description: "Kata sandi harus minimal 8 karakter",
     cancel: "Batal",
     update_account: "Perbarui Akun",

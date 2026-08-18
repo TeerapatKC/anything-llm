@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Vorige pagina",
     next: "Volgende pagina",
     optional: "Optioneel",
-    yes: "Ja",
-    no: "Nee",
     search: "Zoeken",
     username_requirements:
       "De gebruikersnaam moet 2-64 tekens bevatten, beginnen met een kleine letter en mag alleen kleine letters, cijfers, underscores, koppeltekens en punten bevatten.",
@@ -119,9 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Meld je aan bij je {{appName}} account.",
     "password-reset": {
       title: "Wachtwoord Resetten",
-      description:
-        "Geef de benodigde informatie hieronder om je wachtwoord te resetten.",
-      "recovery-codes": "Herstelcodes",
       "back-to-login": "Terug naar Inloggen",
     },
   },
@@ -1178,16 +1173,6 @@ const TRANSLATIONS = {
     small: "Klein",
     normal: "Normaal",
     large: "Groot",
-    workspace_llm_manager: {
-      search: "Zoek naar LLM-aanbieders",
-      loading_workspace_settings: "Werkruimte-instellingen laden...",
-      available_models: "Beschikbare modellen voor {{provider}}",
-      available_models_description: "Selecteer een model voor deze werkruimte.",
-      save: "Gebruik dit model",
-      saving: "Model instellen als standaard voor de werkruimte...",
-      missing_credentials: "Deze aanbieder mist logingegevens!",
-      missing_credentials_description: "Klik om logingegevens in te stellen",
-    },
     submit: "Indienen",
     edit_info_user:
       '"Verzenden" herstelt het antwoord van de AI. "Opslaan" wijzigt alleen uw bericht.',
@@ -1202,18 +1187,9 @@ const TRANSLATIONS = {
     similarity_match: "wedstrijd",
     source_count_one: "{{count}} verwijzing",
     source_count_other: "{{count}} referenties",
-    add_new: "Voeg toe",
-    edit: "Bewerk",
-    publish: "Publiceren",
     stop_generating: "Stoppen met het genereren van antwoorden",
     slash_commands: "Korte commando's",
-    agent_skills: "Vaardigheden van agenten",
-    manage_agent_skills: "Beheer van de vaardigheden van de agent",
-    agent_skills_disabled_in_session:
-      "Het is niet mogelijk om vaardigheden aan te passen tijdens een actieve sessie. Gebruik eerst de commando `/exit` om de sessie te beëindigen.",
     start_agent_session: "Start Agent Sessie",
-    use_agent_session_to_use_tools:
-      'U kunt tools in de chat gebruiken door een sessie met een agent te starten, beginnend met "@agent" aan het begin van uw bericht.',
     agent_invocation: {
       model_wants_to_call: "De klant wil een gesprek plannen.",
       approve: "Goedkeuren",
@@ -1239,12 +1215,6 @@ const TRANSLATIONS = {
       batch_next: "Volgende",
       answer_skipped: "[gebruiker heeft overgeslagen]",
     },
-    custom_skills: "Aangepaste vaardigheden",
-    agent_flows: "Stroom van agenten",
-    no_tools_found: "Geen overeenkomende gereedschappen gevonden.",
-    loading_mcp_servers: "MCP-servers worden geladen...",
-    app_integrations: "Integraties met apps",
-    sub_skills: "Specifieke vaardigheden",
     memories: {
       title: "Herinneringen",
       empty:
@@ -1297,7 +1267,6 @@ const TRANSLATIONS = {
     profile_picture: "Profielafbeelding",
     remove_profile_picture: "Profielafbeelding verwijderen",
     username: "Gebruikersnaam",
-    new_password: "Nieuw wachtwoord",
     password_description: "Wachtwoord moet minimaal 8 tekens lang zijn",
     cancel: "Annuleren",
     update_account: "Account bijwerken",
@@ -1922,16 +1891,8 @@ const TRANSLATIONS = {
       "select-router": "Kies een router",
       "select-description":
         "Kies welke router u wilt gebruiken voor deze werkruimte.",
-      "no-routers-chat":
-        "Geen routers zijn geconfigureerd. Maak er een aan in Instellingen > AI-leveranciers > Router.",
-      "rule-count": "({{count}} regels)",
-    },
-    metrics: {
-      "model-router-default": "Modelrouter",
     },
     chat: {
-      "select-router-error": "Kies een router",
-      "invalid-model": "Ongeldige modelselectie",
       "routed-to": "Verwezen naar <route>{{model}}</route>",
       "routed-to-rule":
         "Verzonden via <route>{{model}}</route> via <rule>{{ruleTitle}}</rule>",

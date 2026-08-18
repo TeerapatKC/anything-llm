@@ -5,10 +5,17 @@ const ImportedPlugin = require("../utils/agents/imported");
  */
 const CommunityHub = {
   importPrefix: "allm-community-id",
+  /**
+   * The dev default points at the hub's own Firebase emulator, which only exists on
+   * a machine working on the hub itself - everyone else running `NODE_ENV=development`
+   * just gets ECONNREFUSED on :5001. Set COMMUNITY_HUB_API_BASE to use the real hub
+   * (or any other host) without touching NODE_ENV.
+   */
   apiBase:
-    process.env.NODE_ENV === "development"
+    process.env.COMMUNITY_HUB_API_BASE ||
+    (process.env.NODE_ENV === "development"
       ? "http://127.0.0.1:5001/anythingllm-hub/us-central1/external/v1"
-      : "https://hub.external.anythingllm.com/v1",
+      : "https://hub.external.anythingllm.com/v1"),
   supportedStaticItemTypes: ["system-prompt", "agent-flow", "slash-command"],
 
   /**

@@ -558,13 +558,22 @@ const Workspace = {
     const workspaceOrderPreference =
       safeJsonParse(localStorage.getItem(this.workspaceOrderStorageKey)) || [];
     if (workspaceOrderPreference.length === 0) return workspaces;
-    const orderedWorkspaces = Array.from(workspaces);
-    orderedWorkspaces.sort(
-      (a, b) =>
-        workspaceOrderPreference.indexOf(a.id) -
-        workspaceOrderPreference.indexOf(b.id)
-    );
-    return orderedWorkspaces;
+
+    // A workspace created since the last manual reorder is not in the stored list.
+    // `indexOf` returns -1 for those, which would sort them above everything the
+    // user actually arranged, so send them to the end instead - and keep them in
+    // the order the server returned rather than tied at -1.
+    const rank = (workspace) => {
+      const index = workspaceOrderPreference.indexOf(workspace.id);
+      return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+    };
+
+    return Array.from(workspaces)
+      .map((workspace, index) => ({ workspace, index }))
+      .sort(
+        (a, b) => rank(a.workspace) - rank(b.workspace) || a.index - b.index // stable for unranked
+      )
+      .map(({ workspace }) => workspace);
   },
 
   /**

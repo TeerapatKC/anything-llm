@@ -47,8 +47,6 @@ const TRANSLATIONS = {
     previous: "上一頁",
     next: "下一頁",
     optional: "選填",
-    yes: "是",
-    no: "否",
     search: "搜尋",
     username_requirements:
       "使用者名稱必須為64 個字元，以小寫字母開頭，且只能包含小寫字母、數字、底線、連字號和句點。",
@@ -116,8 +114,6 @@ const TRANSLATIONS = {
     "sign-in": "輸入使用者名稱與密碼，以存取您的 {{appName}} 系統。",
     "password-reset": {
       title: "重設密碼",
-      description: "請在下方提供必要資訊以重設您的密碼。",
-      "recovery-codes": "復原碼",
       "back-to-login": "返回登入",
     },
   },
@@ -1092,16 +1088,6 @@ const TRANSLATIONS = {
     small: "小",
     normal: "一般",
     large: "大",
-    workspace_llm_manager: {
-      search: "搜尋 LLM 提供者",
-      loading_workspace_settings: "正在載入工作區設定...",
-      available_models: "{{provider}} 可用模型",
-      available_models_description: "選擇要在此工作區使用的模型。",
-      save: "使用此模型",
-      saving: "正在將模型設為工作區預設值...",
-      missing_credentials: "此提供者缺少憑證！",
-      missing_credentials_description: "點選以設定認證資訊",
-    },
     submit: "送出",
     edit_info_user: "「送出」會重新產生 AI 回應。「儲存」只會更新訊息內容。",
     edit_info_assistant: "您的修改將直接儲存到此處。",
@@ -1114,18 +1100,9 @@ const TRANSLATIONS = {
     similarity_match: "相符度",
     source_count_one: "{{count}} 筆參考資料",
     source_count_other: "{{count}} 筆參考資料",
-    add_new: "新增",
-    edit: "編輯",
-    publish: "發佈",
     stop_generating: "停止產生回應",
     slash_commands: "斜線指令",
-    agent_skills: "智慧代理人技能",
-    manage_agent_skills: "管理智慧代理人技能",
-    agent_skills_disabled_in_session:
-      "啟用智慧代理人工作階段時無法修改技能。請先使用 /exit 指令結束目前工作階段。",
     start_agent_session: "開始智慧代理人工作階段",
-    use_agent_session_to_use_tools:
-      "若要在對話中使用工具，請在提示詞開頭加上 '@agent'，即可開始智慧代理人工作階段。",
     agent_invocation: {
       model_wants_to_call: "模型想要撥打電話",
       approve: "批准",
@@ -1149,12 +1126,6 @@ const TRANSLATIONS = {
       batch_next: "接下來",
       answer_skipped: "[使用者跳過]",
     },
-    custom_skills: "客製化技能",
-    agent_flows: "代理人流",
-    no_tools_found: "未找到匹配的工具",
-    loading_mcp_servers: "正在載入 MCP 伺服器...",
-    app_integrations: "應用程式整合",
-    sub_skills: "細項技能",
     memories: {
       title: "回憶",
       empty:
@@ -1202,7 +1173,6 @@ const TRANSLATIONS = {
     profile_picture: "個人資料圖片",
     remove_profile_picture: "移除個人資料圖片",
     username: "使用者名稱",
-    new_password: "新密碼",
     password_description: "密碼長度必須至少為 8 個字元",
     cancel: "取消",
     update_account: "更新帳戶",
@@ -1780,16 +1750,8 @@ const TRANSLATIONS = {
       "model-router-label": "模型路由器",
       "select-router": "選擇一個路由器",
       "select-description": "請選擇用於此工作空間的路由器。",
-      "no-routers-chat":
-        "目前沒有設定任何路由器。請前往「設定」>「AI 提供者」>「模型路由器」處建立一個。",
-      "rule-count": "({{count}} 規則)",
-    },
-    metrics: {
-      "model-router-default": "模型路由器",
     },
     chat: {
-      "select-router-error": "選擇一個路由器",
-      "invalid-model": "模型選擇無效",
       "routed-to": "已路由至 <route>{{model}}</route>",
       "routed-to-rule":
         "經由 <route> {{model}} </route>，並通過 <rule> {{ruleTitle}} </rule> 進行。",

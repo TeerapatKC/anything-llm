@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "صفحه قبلی",
     next: "صفحه بعدی",
     optional: "اختیاری",
-    yes: "بله",
-    no: "نه",
     search: "جستجو",
     username_requirements:
       "نام کاربری باید 2 تا 32 کاراکتر باشد، با حرف کوچک شروع شود و فقط شامل حروف کوچک، اعداد، زیرخط، خط تیره و نقطه باشد.",
@@ -119,8 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "ورود به حساب {{appName}} کاربری شما.",
     "password-reset": {
       title: "بازنشانی رمز عبور",
-      description: "برای بازنشانی رمز عبور خود، اطلاعات لازم را وارد کنید.",
-      "recovery-codes": "کدهای بازیابی",
       "back-to-login": "بازگشت به صفحه ورود",
     },
   },
@@ -1160,18 +1156,6 @@ const TRANSLATIONS = {
     small: "کوچک",
     normal: "عادی",
     large: "بزرگ",
-    workspace_llm_manager: {
-      search: "پیدا کردن ارائه‌دهندگان مدل‌های زبانی بزرگ (LLM)",
-      loading_workspace_settings: "بارگذاری تنظیمات فضای کاری...",
-      available_models: "مدل‌های موجود برای {{provider}}",
-      available_models_description:
-        "یک مدل را برای استفاده در این محیط کاری انتخاب کنید.",
-      save: "از این مدل استفاده کنید.",
-      saving: "تنظیم مدل به عنوان پیش‌فرض فضای کاری...",
-      missing_credentials: "این ارائه دهنده فاقد مدارک لازم است!",
-      missing_credentials_description:
-        "برای تنظیم اعتبارها، اینجا را کلیک کنید",
-    },
     submit: "ارسال",
     edit_info_user:
       '"ارسال" پاسخ تولید شده توسط هوش مصنوعی را دوباره ایجاد می‌کند. "ذخیره" فقط پیام شما را به‌روز می‌کند.',
@@ -1185,18 +1169,9 @@ const TRANSLATIONS = {
     similarity_match: "مسابقه",
     source_count_one: "{{count}}، مرجع",
     source_count_other: "{{count}}، منابع",
-    add_new: "اضافه کردن موارد جدید",
-    edit: "ویرایش",
-    publish: "انتشار",
     stop_generating: "متوقف کردن تولید پاسخ",
     slash_commands: "دستورات کوتاه‌شده",
-    agent_skills: "مهارت‌های کارگزار",
-    manage_agent_skills: "مدیریت مهارت‌های نمایندگان",
-    agent_skills_disabled_in_session:
-      "امکان تغییر مهارت‌ها در حین یک جلسه فعال با یک عامل وجود ندارد. ابتدا با استفاده از دستور /exit، جلسه را به پایان برسانید.",
     start_agent_session: "شروع جلسه با نماینده",
-    use_agent_session_to_use_tools:
-      "شما می‌توانید از ابزارهای موجود در چت با شروع یک جلسه با یک عامل از طریق استفاده از '@agent' در ابتدای پیام خود استفاده کنید.",
     agent_invocation: {
       model_wants_to_call: "مدل می‌خواهد تماس بگیرد",
       approve: "تایید",
@@ -1220,12 +1195,6 @@ const TRANSLATIONS = {
       batch_next: "بعد",
       answer_skipped: "[کاربر این گزینه را رد کرد]",
     },
-    custom_skills: "مهارت‌های تخصصی",
-    agent_flows: "جریان‌های نمایندگی",
-    no_tools_found: "هیچ ابزار مشابهی یافت نشد.",
-    loading_mcp_servers: "بارگذاری سرورهای MCP...",
-    app_integrations: "ادغام با برنامه‌ها",
-    sub_skills: "مهارت‌های پایه",
     memories: {
       title: "یادها",
       empty:
@@ -1276,7 +1245,6 @@ const TRANSLATIONS = {
     profile_picture: "تصویر پروفایل",
     remove_profile_picture: "حذف تصویر پروفایل",
     username: "نام کاربری",
-    new_password: "رمز عبور جدید",
     password_description: "رمز عبور باید حداقل 8 کاراکتر طول داشته باشد.",
     cancel: "ยกد",
     update_account: "به‌روزرسانی حساب",
@@ -1887,16 +1855,8 @@ const TRANSLATIONS = {
       "select-router": "یک روتر را انتخاب کنید",
       "select-description":
         "انتخاب کنید که کدام روتر برای این محیط کاری باید استفاده شود.",
-      "no-routers-chat":
-        "هیچ روتر تنظیم نشده است. یک روتر را در قسمت تنظیمات > ارائه دهندگان هوش مصنوعی > روتر مدل ایجاد کنید.",
-      "rule-count": "(قوانین {{count}})",
-    },
-    metrics: {
-      "model-router-default": "روتر نمونه",
     },
     chat: {
-      "select-router-error": "یک روتر را انتخاب کنید",
-      "invalid-model": "انتخاب مدل نامعتبر",
       "routed-to": "به {{model}} ارسال شده، مربوط به <route> و </route>",
       "routed-to-rule":
         "به <route>{{model}}</route> از طریق <rule>{{ruleTitle}}</rule> ارسال شد.",

@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Vorherige Seite",
     next: "Nächste Seite",
     optional: "Optional",
-    yes: "Ja",
-    no: "Nein",
     search: "Suchen",
     username_requirements:
       "Der Benutzername muss 2-64 Zeichen lang sein, mit einem Kleinbuchstaben beginnen und darf nur Kleinbuchstaben, Zahlen, Unterstriche, Bindestriche und Punkte enthalten.",
@@ -119,9 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Melden Sie sich bei Ihrem {{appName}} Konto an.",
     "password-reset": {
       title: "Passwort zurücksetzen",
-      description:
-        "Geben Sie die erforderlichen Informationen unten ein, um Ihr Passwort zurückzusetzen.",
-      "recovery-codes": "Wiederherstellungscodes",
       "back-to-login": "Zurück zur Anmeldung",
     },
   },
@@ -1290,17 +1285,6 @@ const TRANSLATIONS = {
     small: "Klein",
     normal: "Standard",
     large: "Groß",
-    workspace_llm_manager: {
-      search: "LLM-Provider durchsuchen",
-      loading_workspace_settings: "Workspace-Einstellungen werden geladen",
-      available_models: "Verfügbare Modelle von {{provider}}",
-      available_models_description:
-        "Wählen Sie ein Modell für diesen Workspace",
-      save: "Modell verwenden",
-      saving: "Standardmodell für Workspace wird eingestellt...",
-      missing_credentials: "Für diesen Anbieter fehlen Anmeldedaten!",
-      missing_credentials_description: "Klicken, um Zugangsdaten einzurichten",
-    },
     submit: "Absenden",
     edit_info_user:
       '"Absenden" generiert die Antwort des KI-Systems neu. "Speichern" aktualisiert lediglich Ihre Nachricht.',
@@ -1315,18 +1299,9 @@ const TRANSLATIONS = {
     similarity_match: "Spiel",
     source_count_one: "{{count}} Referenz",
     source_count_other: "{{count}} Verweise",
-    add_new: "Neu hinzufügen",
-    edit: "Bearbeiten",
-    publish: "Veröffentlichen",
     stop_generating: "Stoppen Sie die Generierung von Antworten",
     slash_commands: "Befehlszeilen",
-    agent_skills: "Fähigkeiten von Agenten",
-    manage_agent_skills: "Verwalten Sie die Fähigkeiten von Agenten",
-    agent_skills_disabled_in_session:
-      "Es ist nicht möglich, während einer aktiven Sitzung die Fähigkeiten zu ändern. Verwenden Sie zuerst den Befehl `/exit`, um die Sitzung zu beenden.",
     start_agent_session: "Starte eine Agent-Sitzung",
-    use_agent_session_to_use_tools:
-      'Sie können Tools im Chat nutzen, indem Sie eine Agentensitzung mit "@agent" am Anfang Ihrer Anfrage starten.',
     agent_invocation: {
       model_wants_to_call: "Das Modell möchte anrufen.",
       approve: "Genehmigen",
@@ -1351,12 +1326,6 @@ const TRANSLATIONS = {
       batch_next: "Nächster",
       answer_skipped: "[Benutzer übersprungen]",
     },
-    custom_skills: "Individuelle Fähigkeiten",
-    agent_flows: "Datenströme",
-    no_tools_found: "Keine passenden Werkzeuge gefunden.",
-    loading_mcp_servers: "MCP-Server laden...",
-    app_integrations: "Anwendungen und Integrationen",
-    sub_skills: "Spezifische Fähigkeiten",
     memories: {
       title: "Erinnerungen",
       empty:
@@ -1409,7 +1378,6 @@ const TRANSLATIONS = {
     profile_picture: "Profilbild",
     remove_profile_picture: "Profilbild entfernen",
     username: "Nutzername",
-    new_password: "Neues Passwort",
     password_description: "Das Passwort muss mindestens 8 Zeichen haben.",
     cancel: "Abbrechen",
     update_account: "Account updaten",
@@ -1939,16 +1907,8 @@ const TRANSLATIONS = {
       "select-router": "Wählen Sie einen Router aus.",
       "select-description":
         "Wählen Sie den Router, den Sie für diesen Arbeitsbereich verwenden möchten.",
-      "no-routers-chat":
-        'Keine Router konfiguriert. Erstellen Sie einen im Menü "Einstellungen > KI-Anbieter > Modell-Router".',
-      "rule-count": "({{count}} Regeln)",
-    },
-    metrics: {
-      "model-router-default": "Modell-Router",
     },
     chat: {
-      "select-router-error": "Wählen Sie einen Router aus.",
-      "invalid-model": "Ungültige Modellauswahl",
       "routed-to": "Weitergeleitet am <route>{{model}}</route>",
       "routed-to-rule":
         "Weitergeleitet über <route>{{model}}</route> nach <rule>{{ruleTitle}}</rule>",

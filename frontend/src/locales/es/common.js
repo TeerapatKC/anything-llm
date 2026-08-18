@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Página anterior",
     next: "Página siguiente",
     optional: "Opcional",
-    yes: "Sí",
-    no: "No",
     search: "Buscar",
     username_requirements:
       "El nombre de usuario debe tener entre 2 y 64 caracteres, comenzar con una letra minúscula y solo contener letras minúsculas, números, guiones bajos, guiones y puntos.",
@@ -119,9 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Inicia sesión en tu cuenta de {{appName}}.",
     "password-reset": {
       title: "Restablecimiento de contraseña",
-      description:
-        "Proporciona la información necesaria a continuación para restablecer tu contraseña.",
-      "recovery-codes": "Códigos de recuperación",
       "back-to-login": "Volver al inicio de sesión",
     },
   },
@@ -1303,20 +1298,6 @@ const TRANSLATIONS = {
     small: "Pequeño",
     normal: "Normal",
     large: "Grande",
-    workspace_llm_manager: {
-      search: "Buscar proveedores de LLM",
-      loading_workspace_settings:
-        "Cargando la configuración del espacio de trabajo...",
-      available_models: "Modelos disponibles para {{provider}}",
-      available_models_description:
-        "Selecciona un modelo para usar en este espacio de trabajo.",
-      save: "Usar este modelo",
-      saving:
-        "Estableciendo el modelo como predeterminado del espacio de trabajo...",
-      missing_credentials: "¡A este proveedor le faltan credenciales!",
-      missing_credentials_description:
-        "Haz clic para configurar las credenciales",
-    },
     submit: "Enviar",
     edit_info_user:
       '"Enviar" regenera la respuesta de la IA. "Guardar" actualiza solo tu mensaje.',
@@ -1331,18 +1312,9 @@ const TRANSLATIONS = {
     similarity_match: "partido",
     source_count_one: "{{count}} de referencia",
     source_count_other: "{{count}} referencias",
-    add_new: "Añadir nuevo",
-    edit: "Editar",
-    publish: "Publicar",
     stop_generating: "Dejar de generar respuestas",
     slash_commands: "Comandos abreviados",
-    agent_skills: "Habilidades del agente",
-    manage_agent_skills: "Gestionar las habilidades del agente.",
-    agent_skills_disabled_in_session:
-      "No es posible modificar las habilidades durante una sesión con un agente activo. Primero, utilice el comando `/exit` para finalizar la sesión.",
     start_agent_session: "Iniciar sesión como agente",
-    use_agent_session_to_use_tools:
-      "Puede utilizar las herramientas disponibles en el chat iniciando una sesión con un agente utilizando el prefijo '@agent' al principio de su mensaje.",
     agent_invocation: {
       model_wants_to_call: "El modelo quiere llamar",
       approve: "Aprobar",
@@ -1366,12 +1338,6 @@ const TRANSLATIONS = {
       batch_next: "Siguiente",
       answer_skipped: "[el usuario saltó la sección]",
     },
-    custom_skills: "Habilidades personalizadas",
-    agent_flows: "Flujos de agentes",
-    no_tools_found: "No se encontraron herramientas coincidentes.",
-    loading_mcp_servers: "Cargando servidores de MCP...",
-    app_integrations: "Integraciones de aplicaciones",
-    sub_skills: "Habilidades específicas",
     memories: {
       title: "Recuerdos",
       empty:
@@ -1424,7 +1390,6 @@ const TRANSLATIONS = {
     profile_picture: "Foto de perfil",
     remove_profile_picture: "Eliminar foto de perfil",
     username: "Nombre de usuario",
-    new_password: "Nueva contraseña",
     password_description: "La contraseña debe tener al menos 8 caracteres",
     cancel: "Cancelar",
     update_account: "Actualizar cuenta",
@@ -1946,16 +1911,8 @@ const TRANSLATIONS = {
       "select-router": "Seleccione un enrutador.",
       "select-description":
         "Seleccione el enrutador que desea utilizar para este espacio de trabajo.",
-      "no-routers-chat":
-        "No hay enrutadores configurados. Cree uno en la sección Configuración > Proveedores de IA > Enrutador de Modelo.",
-      "rule-count": "({{count}} reglas)",
-    },
-    metrics: {
-      "model-router-default": "Router de modelo",
     },
     chat: {
-      "select-router-error": "Seleccione un router",
-      "invalid-model": "Selección de modelo no válida",
       "routed-to": "Dirigido a <route>{{model}}</route>",
       "routed-to-rule":
         "Enviado a <route>{{model}}</route> a través de <rule>{{ruleTitle}}</rule>",

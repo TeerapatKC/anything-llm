@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Poprzednia strona",
     next: "Następna strona",
     optional: "Opcjonalnie",
-    yes: "Tak",
-    no: "Nie",
     search: "Wyszukaj",
     username_requirements:
       "Nazwa użytkownika musi mieć od 2 do 64 znaków, zaczynać się małą literą i zawierać tylko małe litery, cyfry, podkreślenia, myślniki i kropki.",
@@ -119,8 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Zaloguj się do {{appName}}.",
     "password-reset": {
       title: "Resetowanie hasła",
-      description: "Podaj poniżej niezbędne informacje, aby zresetować hasło.",
-      "recovery-codes": "Kody odzyskiwania",
       "back-to-login": "Powrót do logowania",
     },
   },
@@ -1282,18 +1278,6 @@ const TRANSLATIONS = {
     small: "Mały",
     normal: "Normalny",
     large: "Duży",
-    workspace_llm_manager: {
-      search: "Wyszukaj dostawców LLM",
-      loading_workspace_settings: "Ładowanie ustawień obszaru roboczego...",
-      available_models: "Dostępne modele dla {{provider}}",
-      available_models_description:
-        "Wybierz model, który będzie używany w tym obszarze roboczym.",
-      save: "Użyj tego modelu",
-      saving: "Ustawienie modelu jako domyślnego dla obszaru roboczego...",
-      missing_credentials: "Temu dostawcy brakuje poświadczeń!",
-      missing_credentials_description:
-        "Kliknij, aby skonfigurować poświadczenia",
-    },
     submit: "Prześlij",
     edit_info_user:
       '"Wyślij" powoduje ponowne wygenerowanie odpowiedzi przez sztuczną inteligencję. "Zapisz" aktualizuje tylko Twoje wiadomości.',
@@ -1308,18 +1292,9 @@ const TRANSLATIONS = {
     similarity_match: "mecz",
     source_count_one: "{{count}} – odniesienie",
     source_count_other: "{{count}} – odnośniki",
-    add_new: "Dodaj nowe",
-    edit: "Edytuj",
-    publish: "Opublikować",
     stop_generating: "Przestań generować odpowiedź",
     slash_commands: "Polecenia skrótowe",
-    agent_skills: "Umiejętności agenta",
-    manage_agent_skills: "Zarządzanie umiejętnościami agentów",
-    agent_skills_disabled_in_session:
-      "Nie można modyfikować umiejętności podczas trwającej sesji. Aby zakończyć sesję, należy najpierw użyć komendy /exit.",
     start_agent_session: "Rozpocznij sesję dla agenta",
-    use_agent_session_to_use_tools:
-      "Możesz korzystać z narzędzi w czacie, inicjując sesję z agentem, wpisując '@agent' na początku swojego zapytania.",
     agent_invocation: {
       model_wants_to_call: "Model chce zadzwonić",
       approve: "Zaakceptować",
@@ -1344,12 +1319,6 @@ const TRANSLATIONS = {
       batch_next: "Następne",
       answer_skipped: "[użytkownik pominął]",
     },
-    custom_skills: "Dostosowane umiejętności",
-    agent_flows: "Przepływy agencji",
-    no_tools_found: "Nie znaleziono odpowiadających narzędzi.",
-    loading_mcp_servers: "Ładowanie serwerów MCP...",
-    app_integrations: "Integracje z aplikacjami",
-    sub_skills: "Specyficzne umiejętności",
     memories: {
       title: "Wspomnienia",
       empty:
@@ -1401,7 +1370,6 @@ const TRANSLATIONS = {
     profile_picture: "Zdjęcie profilowe",
     remove_profile_picture: "Usuń zdjęcie profilowe",
     username: "Nazwa użytkownika",
-    new_password: "Nowe hasło",
     password_description: "Hasz do 8 znaków.",
     cancel: "Anuluj",
     update_account: "Zaktualizuj konto",
@@ -1920,16 +1888,8 @@ const TRANSLATIONS = {
       "select-router": "Wybierz router",
       "select-description":
         "Wybierz, który router ma być używany w tym miejscu pracy.",
-      "no-routers-chat":
-        "Brak skonfigurowanych routerów. Utwórz nowy router w ustawieniach > Dostawcy AI > Router modelu.",
-      "rule-count": "({{count}} zasady)",
-    },
-    metrics: {
-      "model-router-default": "Model routera",
     },
     chat: {
-      "select-router-error": "Wybierz router",
-      "invalid-model": "Nieprawidłowy wybór modelu",
       "routed-to": "Przekazane do <route>{{model}}</route>",
       "routed-to-rule": "Przekazane do <route> przez <rule>",
     },

@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "이전",
     next: "다음",
     optional: "선택 사항",
-    yes: "예",
-    no: "아니오",
     search: "검색",
     username_requirements:
       "사용자 이름은 2-64자여야 하고, 소문자로 시작해야 하며, 소문자, 숫자, 밑줄, 하이픈, 마침표만 포함할 수 있습니다.",
@@ -118,8 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "{{appName}}에 로그인하세요.",
     "password-reset": {
       title: "비밀번호 재설정",
-      description: "비밀번호를 재설정하려면 아래에 필요한 정보를 입력하세요.",
-      "recovery-codes": "복구 코드",
       "back-to-login": "로그인으로 돌아가기",
     },
   },
@@ -1238,17 +1234,6 @@ const TRANSLATIONS = {
     small: "작게",
     normal: "보통",
     large: "크게",
-    workspace_llm_manager: {
-      search: "LLM 제공자 검색",
-      loading_workspace_settings: "워크스페이스 설정을 불러오는 중...",
-      available_models: "{{provider}}의 사용 가능한 모델",
-      available_models_description:
-        "이 워크스페이스에서 사용할 모델을 선택하세요.",
-      save: "이 모델 사용하기",
-      saving: "모델을 워크스페이스 기본값으로 설정 중...",
-      missing_credentials: "이 제공자의 인증 정보가 없습니다!",
-      missing_credentials_description: "클릭하여 인증 정보를 설정하세요",
-    },
     submit: "제출",
     edit_info_user:
       '"제출"은 AI 응답을 다시 생성합니다. "저장"은 사용자 메시지만 업데이트합니다.',
@@ -1262,18 +1247,9 @@ const TRANSLATIONS = {
     similarity_match: "경쟁",
     source_count_one: "{{count}} 참조",
     source_count_other: "{{count}} 관련 참고 자료",
-    add_new: "새로운 항목 추가",
-    edit: "수정",
-    publish: "출판",
     stop_generating: "응답 생성 중단",
     slash_commands: "슬래시 명령어",
-    agent_skills: "에이전트의 역량",
-    manage_agent_skills: "에이전트 역량 관리",
-    agent_skills_disabled_in_session:
-      "활성 에이전트 세션 중에 기술을 변경할 수 없습니다. 먼저 /exit 명령을 사용하여 세션을 종료하십시오.",
     start_agent_session: "에이전트 세션 시작",
-    use_agent_session_to_use_tools:
-      "채팅에서 도구를 사용하려면, 프롬프트의 시작 부분에 '@agent'을 사용하여 에이전트 세션을 시작할 수 있습니다.",
     agent_invocation: {
       model_wants_to_call: "모델이 통화하고 싶어",
       approve: "승인",
@@ -1297,12 +1273,6 @@ const TRANSLATIONS = {
       batch_next: "다음",
       answer_skipped: "[사용자가 건너뛰었습니다]",
     },
-    custom_skills: "맞춤형 기술",
-    agent_flows: "에이전트 흐름",
-    no_tools_found: "일치하는 도구가 없습니다.",
-    loading_mcp_servers: "MCP 서버 로딩 중...",
-    app_integrations: "앱 통합",
-    sub_skills: "세부 기술",
     memories: {
       title: "추억",
       empty:
@@ -1352,7 +1322,6 @@ const TRANSLATIONS = {
     profile_picture: "프로필 사진",
     remove_profile_picture: "프로필 사진 삭제",
     username: "사용자명",
-    new_password: "새 비밀번호",
     password_description: "비밀번호는 최소 8자 이상이어야 합니다.",
     cancel: "취소",
     update_account: "계정 정보 업데이트",
@@ -1855,16 +1824,8 @@ const TRANSLATIONS = {
       "model-router-label": "모델 라우터",
       "select-router": "라우터를 선택하세요",
       "select-description": "이 작업 공간에 사용할 라우터를 선택하세요.",
-      "no-routers-chat":
-        "라우터가 구성되지 않았습니다. 설정 > AI 제공업체 > 모델 라우터에서 새 라우터를 만드세요.",
-      "rule-count": "({{count}} 규칙)",
-    },
-    metrics: {
-      "model-router-default": "모델 라우터",
     },
     chat: {
-      "select-router-error": "라우터를 선택하세요",
-      "invalid-model": "유효하지 않은 모델 선택",
       "routed-to": "<route> 정보가 {{model}}에 전달되었습니다.",
       "routed-to-rule": "<route>에서 {{model}}를 통해 </route>로 연결",
     },

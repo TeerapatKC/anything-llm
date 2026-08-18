@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Pagina precedente",
     next: "Pagina successiva",
     optional: "Opzionale",
-    yes: "Sì",
-    no: "No.",
     search: "Cerca",
     username_requirements:
       "Il nome utente deve essere compreso tra 2 e 64 caratteri, iniziare con una lettera minuscola e contenere solo lettere minuscole, numeri, trattini bassi, trattini e punti.",
@@ -120,9 +118,6 @@ const TRANSLATIONS = {
     "sign-in": "Accedi al tuo {{appName}} account.",
     "password-reset": {
       title: "Reset Password",
-      description:
-        "Fornisci le informazioni necessarie qui sotto per reimpostare la tua password.",
-      "recovery-codes": "Codici di recupero",
       "back-to-login": "Torna al Login",
     },
   },
@@ -1193,21 +1188,6 @@ const TRANSLATIONS = {
     small: "Piccolo",
     normal: "Normale",
     large: "Grande",
-    workspace_llm_manager: {
-      search: "Cerca fornitori di modelli linguistici di grandi dimensioni",
-      loading_workspace_settings:
-        "Caricamento delle impostazioni dell'ambiente di lavoro...",
-      available_models: "Modelli disponibili per {{provider}}",
-      available_models_description:
-        "Seleziona un modello da utilizzare per questo ambiente di lavoro.",
-      save: "Utilizza questo modello.",
-      saving:
-        "Impostazione del modello come impostazione predefinita per l'area di lavoro...",
-      missing_credentials:
-        "Questo fornitore non dispone delle credenziali necessarie.",
-      missing_credentials_description:
-        "Fare clic per configurare le credenziali",
-    },
     submit: "Invia",
     edit_info_user:
       '"Invia" rigenera la risposta dell AI. "Salva" aggiorna solo il tuo messaggio.',
@@ -1222,18 +1202,9 @@ const TRANSLATIONS = {
     similarity_match: "partita",
     source_count_one: "Riferimento {{count}}",
     source_count_other: "Riferimenti a {{count}}",
-    add_new: "Aggiungi nuovo",
-    edit: "Modifica",
-    publish: "Pubblicare",
     stop_generating: "Interrompi la generazione della risposta",
     slash_commands: "Comandi abbreviati",
-    agent_skills: "Competenze dell'agente",
-    manage_agent_skills: "Gestire le competenze degli agenti",
-    agent_skills_disabled_in_session:
-      "Non è possibile modificare le competenze durante una sessione di agente attivo. Per terminare la sessione, utilizzare il comando `/exit`.",
     start_agent_session: "Avvia sessione agente",
-    use_agent_session_to_use_tools:
-      'È possibile utilizzare gli strumenti disponibili tramite chat avviando una sessione con un agente utilizzando il prefisso "@agent" all\'inizio del messaggio.',
     agent_invocation: {
       model_wants_to_call: "Il modello desidera effettuare una chiamata.",
       approve: "Approvato",
@@ -1259,12 +1230,6 @@ const TRANSLATIONS = {
       batch_next: "Prossimo",
       answer_skipped: "[utente ha saltato]",
     },
-    custom_skills: "Competenze personalizzate",
-    agent_flows: "Flussi di agenti",
-    no_tools_found: "Nessuno strumento corrispondente trovato.",
-    loading_mcp_servers: "Inizio caricamento dei server MCP...",
-    app_integrations: "Integrazioni di applicazioni",
-    sub_skills: "Competenze specifiche",
     memories: {
       title: "Ricordi",
       empty:
@@ -1316,7 +1281,6 @@ const TRANSLATIONS = {
     profile_picture: "Immagine del profilo",
     remove_profile_picture: "Rimuovi la foto del profilo",
     username: "Username\n\n<|start_pad|>\nNome utente",
-    new_password: "Nuova password",
     password_description: "La password deve essere lunga almeno 8 caratteri.",
     cancel: "Annulla",
     update_account: "Aggiorna il profilo",
@@ -1948,16 +1912,8 @@ const TRANSLATIONS = {
       "select-router": "Seleziona un router",
       "select-description":
         "Seleziona il router da utilizzare per questo ambiente di lavoro.",
-      "no-routers-chat":
-        "Nessun router configurato. Creare uno nella sezione Impostazioni > Fornitori di AI > Router del modello.",
-      "rule-count": "({{count}} regole)",
-    },
-    metrics: {
-      "model-router-default": "Router di esempio",
     },
     chat: {
-      "select-router-error": "Seleziona un router",
-      "invalid-model": "Selezione del modello non valida",
       "routed-to": "Inviato a <route>{{model}}</route>",
       "routed-to-rule":
         "Instradato tramite <route>{{model}}</route> seguendo il percorso <rule>{{ruleTitle}}</rule>",

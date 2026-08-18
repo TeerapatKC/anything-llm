@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Önceki Sayfa",
     next: "Sonraki Sayfa",
     optional: "İsteğe bağlı",
-    yes: "Evet",
-    no: "Hayır",
     search: "Ara",
     username_requirements:
       "Kullanıcı adı 2-64 karakter uzunluğunda olmalı, küçük harfle başlamalı ve yalnızca küçük harfler, rakamlar, alt çizgiler, tireler ve noktalar içermelidir.",
@@ -119,8 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "{{appName}} hesabınıza giriş yapın.",
     "password-reset": {
       title: "Şifre Sıfırlama",
-      description: "Şifrenizi sıfırlamak için gerekli bilgileri aşağıya girin.",
-      "recovery-codes": "Kurtarma Kodları",
       "back-to-login": "Girişe Geri Dön",
     },
   },
@@ -1181,18 +1177,6 @@ const TRANSLATIONS = {
     small: "Küçük",
     normal: "Normal",
     large: "Büyük",
-    workspace_llm_manager: {
-      search: "LLM sağlayıcılarını ara",
-      loading_workspace_settings: "Çalışma alanı ayarları yükleniyor...",
-      available_models: "{{provider}} için Mevcut Modeller",
-      available_models_description:
-        "Bu çalışma alanı için kullanılacak bir model seçin.",
-      save: "Bu modeli kullan",
-      saving: "Model çalışma alanı varsayılanı olarak ayarlanıyor...",
-      missing_credentials: "Bu sağlayıcının kimlik bilgileri eksik!",
-      missing_credentials_description:
-        "Kimlik bilgilerini ayarlamak için tıklayın",
-    },
     submit: "Gönder",
     edit_info_user:
       '"Gönder" seçeneği, yapay zeka yanıtını yeniden oluşturur. "Kaydet" seçeneği, yalnızca sizin mesajınızı günceller.',
@@ -1207,18 +1191,9 @@ const TRANSLATIONS = {
     similarity_match: "maç",
     source_count_one: "{{count}} ile ilgili bilgi",
     source_count_other: "{{count}} referansları",
-    add_new: "Yeni ekle",
-    edit: "Düzenle",
-    publish: "Yayınla",
     stop_generating: "Yanıt üretmeyi durdurun",
     slash_commands: "Komut Satırı Komutları",
-    agent_skills: "Ajansın Yetenekleri",
-    manage_agent_skills: "Temsilcinin becerilerini yönetin",
-    agent_skills_disabled_in_session:
-      "Aktif bir ajan oturumunda becerileri değiştirilemez. İlk olarak /exit komutunu kullanarak oturumu sonlandırın.",
     start_agent_session: "Temsilci Oturumu Başlat",
-    use_agent_session_to_use_tools:
-      'Çatınızdaki araçları kullanmak için, isteminizin başında "@agent" ile bir ajan oturumu başlatabilirsiniz.',
     agent_invocation: {
       model_wants_to_call: "Model, arama yapmak istiyor",
       approve: "Onayla",
@@ -1242,12 +1217,6 @@ const TRANSLATIONS = {
       batch_next: "Sonra",
       answer_skipped: "[Kullanıcı atladı]",
     },
-    custom_skills: "Özel Beceri",
-    agent_flows: "Ajans Akışları",
-    no_tools_found: "Uyumlu herhangi bir araç bulunamadı",
-    loading_mcp_servers: "MCP sunucularının yüklenmesi...",
-    app_integrations: "Uygulama Entegrasyonları",
-    sub_skills: "Alt beceriler",
     memories: {
       title: "Anılar",
       empty:
@@ -1298,7 +1267,6 @@ const TRANSLATIONS = {
     profile_picture: "Profil Resmi",
     remove_profile_picture: "Profil Resmini Kaldır",
     username: "Kullanıcı Adı",
-    new_password: "Yeni Şifre",
     password_description: "Şifre en az 8 karakter uzunluğunda olmalıdır",
     cancel: "İptal",
     update_account: "Hesabı Güncelle",
@@ -1910,16 +1878,8 @@ const TRANSLATIONS = {
       "select-router": "Bir yönlendirici seçin",
       "select-description":
         "Bu çalışma alanı için hangi yönlendiriciyi kullanacağınızı seçin.",
-      "no-routers-chat":
-        "Hiçbir yönlendirici yapılandırılmamış. Ayarlar > Yapay Zeka Sağlayıcıları > Model Yönlendirici bölümünde bir tane oluşturun.",
-      "rule-count": "({{count}} kuralları)",
-    },
-    metrics: {
-      "model-router-default": "Model Router",
     },
     chat: {
-      "select-router-error": "Bir yönlendirici seçin",
-      "invalid-model": "Geçersiz model seçimi",
       "routed-to": "Yönlendirildi: <route> {{model}} </route>",
       "routed-to-rule":
         "Yönlendirildi: <route> aracılığıyla {{model}} üzerinden </route>, <rule> aracılığıyla {{ruleTitle}} üzerinden </rule>",

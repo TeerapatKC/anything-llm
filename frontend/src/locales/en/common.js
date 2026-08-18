@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "Previous Page",
     next: "Next Page",
     optional: "Optional",
-    yes: "Yes",
-    no: "No",
     on: "On",
     none: "None",
     stopped: "Stopped",
@@ -126,11 +124,8 @@ const TRANSLATIONS = {
       "Enter your username and password to access your {{appName}} instance.",
     "password-reset": {
       title: "Password Reset",
-      description:
-        "Provide the necessary information below to reset your password.",
       "admin-reset-description":
         "Ask an administrator to reset your password. They will generate a new one for you, and you will be asked to choose your own password the next time you log in.",
-      "recovery-codes": "Recovery Codes",
       "back-to-login": "Back to Login",
     },
   },
@@ -153,8 +148,6 @@ const TRANSLATIONS = {
     members: "Members",
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
-    "upload-documents-tooltip":
-      "Upload documents to this workspace for RAG indexing",
   },
   general: {
     vector: {
@@ -1102,16 +1095,8 @@ const TRANSLATIONS = {
       "model-router-label": "Model Router",
       "select-router": "Select a router",
       "select-description": "Select which router to use for this workspace.",
-      "no-routers-chat":
-        "No routers configured. Create one in Settings > AI Providers > Model Router.",
-      "rule-count": "({{count}} rules)",
-    },
-    metrics: {
-      "model-router-default": "Model Router",
     },
     chat: {
-      "select-router-error": "Select a router",
-      "invalid-model": "Invalid model selection",
       "routed-to": "Routed to <route>{{model}}</route>",
       "routed-to-rule":
         "Routed to <route>{{model}}</route> via <rule>{{ruleTitle}}</rule>",
@@ -1548,9 +1533,6 @@ const TRANSLATIONS = {
     preset_reset_description: "Clear your chat history and begin a new chat",
     preset_img_description: "Generate an image from a text prompt",
     add_new_preset: " Add New Preset",
-    add_new: "Add new",
-    edit: "Edit",
-    publish: "Publish",
     stop_generating: "Stop generating response",
     command: "Command",
     your_command: "your-command",
@@ -1565,29 +1547,7 @@ const TRANSLATIONS = {
     tools: "Tools",
     text_size_label: "Text Size",
     slash_commands: "Slash Commands",
-    agent_skills: "Agent Skills",
-    manage_agent_skills: "Manage Agent Skills",
-    app_integrations: "App Integrations",
-    custom_skills: "Custom Skills",
-    agent_flows: "Agent Flows",
-    sub_skills: "Sub-skills",
-    no_tools_found: "No matching tools found",
-    loading_mcp_servers: "Loading MCP servers...",
     start_agent_session: "Start Agent Session",
-    agent_skills_disabled_in_session:
-      "Can't modify skills during an active agent session. Use /exit to end the session first.",
-    use_agent_session_to_use_tools:
-      "You can use tools in chat by starting an agent session with '@agent' at the beginning of your prompt.",
-    workspace_llm_manager: {
-      search: "Search",
-      loading_workspace_settings: "Loading workspace settings...",
-      available_models: "Available Models for {{provider}}",
-      available_models_description: "Select a model to use for this workspace.",
-      save: "Use this model",
-      saving: "Setting model as workspace default...",
-      missing_credentials: "This provider is missing credentials!",
-      missing_credentials_description: "Set up now",
-    },
     agent_invocation: {
       model_wants_to_call: "Model wants to call",
       approve: "Approve",
@@ -1655,7 +1615,6 @@ const TRANSLATIONS = {
     username: "Username",
     email: "Email",
     password: "Password",
-    new_password: "New Password",
     password_description: "Password must be at least 8 characters long",
     cancel: "Cancel",
     update_account: "Update Account",

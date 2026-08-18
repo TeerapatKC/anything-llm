@@ -1,3 +1,9 @@
+// Set required env vars before requiring modules. The agentSkillConfig validation
+// lazily pulls in utils/agents/workspaceSkills, which resolves storage paths at
+// require time.
+process.env.STORAGE_DIR = __dirname;
+process.env.NODE_ENV = "test";
+
 const { Workspace } = require("../../models/workspace");
 
 describe("Workspace.validations coverage check", () => {
@@ -28,6 +34,71 @@ describeValidation("name", () => {
     expect(Workspace.validations.name(undefined)).toBe("My Workspace");
     expect(Workspace.validations.name("")).toBe("My Workspace");
     expect(Workspace.validations.name(123)).toBe("My Workspace");
+  });
+});
+
+describeValidation("active", () => {
+  it("defaults to active when the value is missing", () => {
+    expect(Workspace.validations.active(null)).toBe(true);
+    expect(Workspace.validations.active(undefined)).toBe(true);
+  });
+
+  it("passes booleans through", () => {
+    expect(Workspace.validations.active(true)).toBe(true);
+    expect(Workspace.validations.active(false)).toBe(false);
+  });
+
+  // Form posts and query strings arrive as strings, where a bare Boolean()
+  // would read "false" as true.
+  it("treats only the string 'false' as inactive", () => {
+    expect(Workspace.validations.active("false")).toBe(false);
+    expect(Workspace.validations.active("true")).toBe(true);
+    expect(Workspace.validations.active("")).toBe(true);
+  });
+
+  it("coerces other truthy/falsy values", () => {
+    expect(Workspace.validations.active(1)).toBe(true);
+    expect(Workspace.validations.active(0)).toBe(false);
+  });
+});
+
+describeValidation("agentSkillConfig", () => {
+  it("returns null for null, undefined, or empty string", () => {
+    expect(Workspace.validations.agentSkillConfig(null)).toBeNull();
+    expect(Workspace.validations.agentSkillConfig(undefined)).toBeNull();
+    expect(Workspace.validations.agentSkillConfig("")).toBeNull();
+  });
+
+  it("normalizes an object into a JSON string with every known key", () => {
+    const result = Workspace.validations.agentSkillConfig({
+      activeSkills: ["web-browsing", 42],
+    });
+    expect(typeof result).toBe("string");
+    expect(JSON.parse(result)).toEqual({
+      activeDefaultSkills: [],
+      activeSkills: ["web-browsing"], // non-strings dropped
+      disabledSubSkills: {},
+      activeImportedSkills: [],
+      activeFlows: [],
+      activeMcpServers: [],
+      searchProvider: null,
+    });
+  });
+
+  it("accepts a JSON string", () => {
+    const result = Workspace.validations.agentSkillConfig(
+      JSON.stringify({ activeFlows: ["flow-1"] })
+    );
+    expect(JSON.parse(result).activeFlows).toEqual(["flow-1"]);
+  });
+
+  it("returns null for malformed JSON rather than an all-empty config", () => {
+    expect(Workspace.validations.agentSkillConfig("{not json")).toBeNull();
+  });
+
+  it("returns null for an object carrying none of the known keys", () => {
+    expect(Workspace.validations.agentSkillConfig({ nope: true })).toBeNull();
+    expect(Workspace.validations.agentSkillConfig([])).toBeNull();
   });
 });
 

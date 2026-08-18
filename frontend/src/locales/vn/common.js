@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Trang trước",
     next: "Trang tiếp theo",
     optional: "Tùy chọn",
-    yes: "Có",
-    no: "Không",
     search: "Tìm kiếm",
     username_requirements:
       "Tên người dùng phải có 2-64 ký tự, bắt đầu bằng chữ cái thường và chỉ chứa chữ cái thường, số, dấu gạch dưới, dấu gạch ngang và dấu chấm.",
@@ -119,8 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Đăng nhập vào {{appName}} tài khoản của bạn.",
     "password-reset": {
       title: "Đặt lại Mật khẩu",
-      description: "Cung cấp thông tin cần thiết dưới đây để đặt lại mật khẩu.",
-      "recovery-codes": "Mã khôi phục",
       "back-to-login": "Quay lại Đăng nhập",
     },
   },
@@ -1166,17 +1162,6 @@ const TRANSLATIONS = {
     small: "Nhỏ",
     normal: "Bình thường",
     large: "Lớn",
-    workspace_llm_manager: {
-      search: "Tìm kiếm nhà cung cấp LLM",
-      loading_workspace_settings: "Đang tải cài đặt không gian làm việc...",
-      available_models: "Mô hình Có sẵn cho {{provider}}",
-      available_models_description:
-        "Chọn một mô hình để sử dụng cho không gian làm việc này.",
-      save: "Sử dụng mô hình này",
-      saving: "Đang đặt mô hình làm mặc định không gian làm việc...",
-      missing_credentials: "Nhà cung cấp này thiếu thông tin đăng nhập!",
-      missing_credentials_description: "Nhấp để thiết lập thông tin đăng nhập",
-    },
     submit: "Gửi",
     edit_info_user:
       '"Gửi" sẽ tạo lại phản hồi của AI. "Lưu" chỉ cập nhật tin nhắn của bạn.',
@@ -1191,18 +1176,9 @@ const TRANSLATIONS = {
     similarity_match: "trận đấu",
     source_count_one: "{{count}} tham khảo",
     source_count_other: "{{count}} – Tham khảo",
-    add_new: "Thêm mới",
-    edit: "Chỉnh sửa",
-    publish: "Đăng tải",
     stop_generating: "Dừng tạo ra phản hồi",
     slash_commands: "Lệnh tắt/bật",
-    agent_skills: "Kỹ năng của đại lý",
-    manage_agent_skills: "Quản lý kỹ năng của đại lý",
-    agent_skills_disabled_in_session:
-      "Không thể thay đổi kỹ năng trong khi đang tham gia phiên làm việc. Trước tiên, hãy sử dụng lệnh /exit để kết thúc phiên làm việc.",
     start_agent_session: "Bắt đầu phiên làm việc với đại lý",
-    use_agent_session_to_use_tools:
-      "Bạn có thể sử dụng các công cụ trong cuộc trò chuyện bằng cách bắt đầu một phiên với trợ lý bằng cách sử dụng '@agent' ở đầu yêu cầu của bạn.",
     agent_invocation: {
       model_wants_to_call: "Người mẫu muốn gọi",
       approve: "Chấp thuận",
@@ -1226,12 +1202,6 @@ const TRANSLATIONS = {
       batch_next: "Tiếp theo",
       answer_skipped: "[người dùng bỏ qua]",
     },
-    custom_skills: "Kỹ năng tùy chỉnh",
-    agent_flows: "Dòng chảy của đại lý",
-    no_tools_found: "Không tìm thấy công cụ tương ứng.",
-    loading_mcp_servers: "Đang tải các máy chủ MCP...",
-    app_integrations: "Tích hợp ứng dụng",
-    sub_skills: "Kỹ năng chuyên môn",
     memories: {
       title: "Những kỷ niệm",
       empty:
@@ -1282,7 +1252,6 @@ const TRANSLATIONS = {
     profile_picture: "Ảnh Hồ sơ",
     remove_profile_picture: "Xóa Ảnh Hồ sơ",
     username: "Tên người dùng",
-    new_password: "Mật khẩu Mới",
     password_description: "Mật khẩu phải có ít nhất 8 ký tự",
     cancel: "Hủy",
     update_account: "Cập nhật Tài khoản",
@@ -1898,16 +1867,8 @@ const TRANSLATIONS = {
       "select-router": "Chọn một bộ định tuyến",
       "select-description":
         "Chọn router nào để sử dụng cho không gian làm việc này.",
-      "no-routers-chat":
-        "Không có bộ định tuyến nào được cấu hình. Tạo một bộ định tuyến trong mục Cài đặt > Nhà cung cấp AI > Bộ định tuyến Mô hình.",
-      "rule-count": "({{count}} quy tắc)",
-    },
-    metrics: {
-      "model-router-default": "Mẫu Router",
     },
     chat: {
-      "select-router-error": "Chọn một bộ định tuyến",
-      "invalid-model": "Lựa chọn mô hình không hợp lệ",
       "routed-to": "Được chuyển đến <route>{{model}}</route>",
       "routed-to-rule":
         "Được chuyển đến <route>{{model}}</route> thông qua <rule>{{ruleTitle}}</rule>",

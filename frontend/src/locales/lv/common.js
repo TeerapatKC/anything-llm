@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Iepriekšējā lapa",
     next: "Nākamā lapa",
     optional: "Neobligāti",
-    yes: "Jā",
-    no: "Nē",
     search: "Meklēšana",
     username_requirements:
       "Lietotājvārdam jābūt 2–64 rakstzīmju garam, jāsākas ar mazo burtu un jāsatur tikai mazie burti, cipari, apakšsvītras, domuzīmes un punkti.",
@@ -119,9 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Piesakieties savā {{appName}} kontā.",
     "password-reset": {
       title: "Paroles atiestatīšana",
-      description:
-        "Sniedziet nepieciešamo informāciju zemāk, lai atiestatītu savu paroli.",
-      "recovery-codes": "Atjaunošanas kodi",
       "back-to-login": "Atpakaļ uz pieteikšanos",
     },
   },
@@ -1276,19 +1271,6 @@ const TRANSLATIONS = {
     small: "Mazs.",
     normal: "Normāls",
     large: "Liels",
-    workspace_llm_manager: {
-      search: "Izmeklē LLM sniedzējus",
-      loading_workspace_settings: "Ielāde darba vidējās iestatījumi...",
-      available_models: "Pieejamās modeļi: {{provider}}",
-      available_models_description:
-        "Izvēlieties modeli, ko izmantot šim darba zonai.",
-      save: "Izmantojiet šo modeli.",
-      saving: "Iestata modeli kā noklusēto darba vietai...",
-      missing_credentials:
-        "Šim pakalpojuma sniedzējam nav sniegta nekur dokumentēta informācija.",
-      missing_credentials_description:
-        "Noklikšķiniet, lai konfigurētu autentifikācijas datus",
-    },
     submit: "Iesniegt",
     edit_info_user:
       '"Sūtīt" atjauno AI atbildi. "Saglabāt" atjauno tikai jūsu ziņu.',
@@ -1303,18 +1285,9 @@ const TRANSLATIONS = {
     similarity_match: "spēle",
     source_count_one: "{{count}} – atsauce",
     source_count_other: "Atsauces uz {{count}}",
-    add_new: "Pievienot jaunu",
-    edit: "Rediģēt",
-    publish: "Publicēt",
     stop_generating: "Atsauciet atbildes ģenerēšanu",
     slash_commands: "Īs termini komandās",
-    agent_skills: "Aģenta prasmes",
-    manage_agent_skills: "Iesaista aģenta prasmes",
-    agent_skills_disabled_in_session:
-      "Nav iespējams mainīt prasmes aktīvā lietotāja sesijā. Pirmais, jāizmanto komandu `/exit`, lai beigtu sesiju.",
     start_agent_session: "Sākt aģenta sesiju",
-    use_agent_session_to_use_tools:
-      'Jūs varat izmantot rīkus čatā, sākot aģenta sesiju, ievietojot "@agent" jūsu iniciālajā tekstā.',
     agent_invocation: {
       model_wants_to_call: "Modeļa vēlējas izrunāt",
       approve: "Aizmaksā, apstiprināts",
@@ -1339,12 +1312,6 @@ const TRANSLATIONS = {
       batch_next: "Nākamais",
       answer_skipped: "[lietotājs nepiespēra]",
     },
-    custom_skills: "Pielāgotas prasmes",
-    agent_flows: "Aģentu plūsmas",
-    no_tools_found: "Neatradusies atbilstošas instrumentus",
-    loading_mcp_servers: "Ielāde MCP serverus...",
-    app_integrations: "Dienvidligzdas integrācijas",
-    sub_skills: "Īpašās prasmes",
     memories: {
       title: "Atgādinājumi",
       empty:
@@ -1394,7 +1361,6 @@ const TRANSLATIONS = {
     profile_picture: "Profila attēls",
     remove_profile_picture: "Noņemt profila attēlu",
     username: "Lietotājvārds",
-    new_password: "Jauna parole",
     password_description: "Parolei jābūt vismaz 8 rakstzīmes garai",
     cancel: "Atcelt",
     update_account: "Atjaunināt kontu",
@@ -1912,16 +1878,8 @@ const TRANSLATIONS = {
       "select-router": "Izvēlieties maršrutizatoru",
       "select-description":
         "Izvēlieties, kuru routeru izmantot šim darba vietai.",
-      "no-routers-chat":
-        'Neizveidoti nekādi maršrutētāji. Izveidoiet vienu, izmantojot "Iestatījumi > AI nodrošinātāji > Maršrutētāja modelis".',
-      "rule-count": "({{count}} noteikumos)",
-    },
-    metrics: {
-      "model-router-default": "Modeļa routers",
     },
     chat: {
-      "select-router-error": "Izvēlieties routeri",
-      "invalid-model": "Neizdevusies modeļa izvēle",
       "routed-to": "Sūtīts uz <route>{{model}}</route>",
       "routed-to-rule":
         "Aizvedēts pa <route>{{model}}</route> ceļu, izmantojot <rule>{{ruleTitle}}</rule>",

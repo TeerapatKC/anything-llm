@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "前のページ",
     next: "次のページ",
     optional: "任意",
-    yes: "はい",
-    no: "いいえ",
     search: "検索",
     username_requirements:
       "ユーザー名は2〜64文字で、小文字で始まり、小文字、数字、アンダースコア、ハイフン、ピリオドのみを含む必要があります。",
@@ -118,9 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "{{appName}} アカウントにサインインします。",
     "password-reset": {
       title: "パスワードリセット",
-      description:
-        "以下に必要な情報を入力してパスワードをリセットしてください。",
-      "recovery-codes": "回復コード",
       "back-to-login": "ログイン画面に戻る",
     },
   },
@@ -1151,18 +1146,6 @@ const TRANSLATIONS = {
     small: "小さい",
     normal: "通常",
     large: "大規模",
-    workspace_llm_manager: {
-      search: "LLMプロバイダーを検索する",
-      loading_workspace_settings: "作業スペースの設定を読み込んでいます...",
-      available_models: "{{provider}} の利用可能なモデル",
-      available_models_description:
-        "このワークスペースで使用するモデルを選択してください。",
-      save: "このモデルを使用してください。",
-      saving: "デフォルトワークスペースとしてモデルを設定...",
-      missing_credentials: "このプロバイダーには資格がありません。",
-      missing_credentials_description:
-        "認証情報を設定するには、ここをクリックしてください。",
-    },
     submit: "送信",
     edit_info_user:
       "「送信」はAIの応答を再生成します。「保存」は、あなたのメッセージのみを更新します。",
@@ -1176,18 +1159,9 @@ const TRANSLATIONS = {
     similarity_match: "試合",
     source_count_one: "{{count}} 参照",
     source_count_other: "{{count}} への参照",
-    add_new: "新しいものを追加する",
-    edit: "編集",
-    publish: "出版",
     stop_generating: "応答の生成を停止する",
     slash_commands: "スラッシュコマンド",
-    agent_skills: "エージェントのスキル",
-    manage_agent_skills: "エージェントのスキル管理",
-    agent_skills_disabled_in_session:
-      "アクティブなセッション中にスキルを変更することはできません。まず、`/exit`コマンドを使用してセッションを終了してください。",
     start_agent_session: "エージェントセッションを開始",
-    use_agent_session_to_use_tools:
-      "チャットでツールを使用するには、プロンプトの冒頭に'@agent'を使用してエージェントセッションを開始してください。",
     agent_invocation: {
       model_wants_to_call: "モデルは電話をかけたい。",
       approve: "承認",
@@ -1211,12 +1185,6 @@ const TRANSLATIONS = {
       batch_next: "次",
       answer_skipped: "[ユーザーがこの項目をスキップしました]",
     },
-    custom_skills: "カスタマイズ可能なスキル",
-    agent_flows: "エージェント間の流れ",
-    no_tools_found: "一致するツールは見つかりませんでした",
-    loading_mcp_servers: "MCP サーバーの読み込み中...",
-    app_integrations: "アプリケーション連携",
-    sub_skills: "専門スキル",
     memories: {
       title: "思い出",
       empty:
@@ -1268,7 +1236,6 @@ const TRANSLATIONS = {
     profile_picture: "プロフィール画像",
     remove_profile_picture: "プロフィール画像を削除",
     username: "ユーザー名",
-    new_password: "新しいパスワード",
     password_description: "パスワードは8文字以上である必要があります",
     cancel: "キャンセル",
     update_account: "アカウントを更新",
@@ -1887,16 +1854,8 @@ const TRANSLATIONS = {
       "select-router": "ルーターを選択する",
       "select-description":
         "この作業スペースで使用するルーターを選択してください。",
-      "no-routers-chat":
-        "ルーターは設定されていません。設定 > AI プロバイダ > モデルルーターで作成してください。",
-      "rule-count": "({{count}}のルール)",
-    },
-    metrics: {
-      "model-router-default": "モデルルーター",
     },
     chat: {
-      "select-router-error": "ルーターを選択する",
-      "invalid-model": "無効なモデルの選択",
       "routed-to": "<route>、{{model}}、</route> 宛にルーティング",
       "routed-to-rule":
         "<route>～</route>を経由して、<rule>～</rule>へルーティング",

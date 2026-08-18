@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "Página Anterior",
     next: "Próxima Página",
     optional: "Opcional",
-    yes: "Sim",
-    no: "Não",
     search: "Pesquisar",
     username_requirements:
       "O nome de usuário deve ter de 2 a 64 caracteres, começar com uma letra minúscula e conter apenas letras minúsculas, números, sublinhados, hífens e pontos.",
@@ -118,9 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "Acesse sua {{appName}} conta.",
     "password-reset": {
       title: "Redefinição de Senha",
-      description:
-        "Forneça as informações necessárias para redefinir sua senha.",
-      "recovery-codes": "Códigos de Recuperação",
       "back-to-login": "Voltar ao Login",
     },
   },
@@ -1266,17 +1261,6 @@ const TRANSLATIONS = {
     small: "Pequeno",
     normal: "Normal",
     large: "Grande",
-    workspace_llm_manager: {
-      search: "Buscar provedores de LLM",
-      loading_workspace_settings: "Carregando configurações do workspace...",
-      available_models: "Modelos Disponíveis",
-      available_models_description: "Selecione um modelo para este workspace",
-      save: "Salvar modelo do workspace",
-      saving: "Salvando...",
-      missing_credentials: "Credenciais em falta",
-      missing_credentials_description:
-        "Configure as credenciais do LLM primeiro",
-    },
     submit: "Enviar",
     edit_info_user:
       '"Enviar" recria a resposta da IA. "Salvar" atualiza apenas sua mensagem.',
@@ -1291,18 +1275,9 @@ const TRANSLATIONS = {
     similarity_match: "jogo",
     source_count_one: "Referência a {{count}}",
     source_count_other: "Referências a {{count}}",
-    add_new: "Adicionar novo",
-    edit: "Editar",
-    publish: "Publicar",
     stop_generating: "Pare de gerar respostas",
     slash_commands: "Comandos Rápidos",
-    agent_skills: "Habilidades do Agente",
-    manage_agent_skills: "Gerenciar as habilidades dos agentes",
-    agent_skills_disabled_in_session:
-      "Não é possível modificar as habilidades durante uma sessão de agente ativa. Utilize o comando `/exit` para encerrar a sessão primeiro.",
     start_agent_session: "Iniciar Sessão de Agente",
-    use_agent_session_to_use_tools:
-      'Você pode utilizar as ferramentas disponíveis no chat iniciando uma sessão com um agente, adicionando "@agent" no início da sua mensagem.',
     agent_invocation: {
       model_wants_to_call: "O modelo deseja fazer uma ligação.",
       approve: "Aprovar",
@@ -1328,12 +1303,6 @@ const TRANSLATIONS = {
       batch_next: "Próximo",
       answer_skipped: "[usuário pulou]",
     },
-    custom_skills: "Habilidades personalizadas",
-    agent_flows: "Fluxo de Agentes",
-    no_tools_found: "Nenhuma ferramenta correspondente encontrada.",
-    loading_mcp_servers: "Carregando servidores MCP...",
-    app_integrations: "Integrações de aplicativos",
-    sub_skills: "Habilidades específicas",
     memories: {
       title: "Memórias",
       empty:
@@ -1384,7 +1353,6 @@ const TRANSLATIONS = {
     profile_picture: "Foto de perfil",
     remove_profile_picture: "Remover foto de perfil",
     username: "Nome de usuário",
-    new_password: "Nova senha",
     password_description: "A senha deve ter no mínimo 8 caracteres",
     cancel: "Cancelar",
     update_account: "Atualizar conta",
@@ -1894,16 +1862,8 @@ const TRANSLATIONS = {
       "select-router": "Selecione um roteador",
       "select-description":
         "Selecione o roteador que você deseja utilizar para esta área de trabalho.",
-      "no-routers-chat":
-        "Sem roteadores configurados. Crie um em Configurações > Fornecedores de IA > Roteador de Modelo.",
-      "rule-count": "({{count}} regras)",
-    },
-    metrics: {
-      "model-router-default": "Roteador de modelo",
     },
     chat: {
-      "select-router-error": "Selecione um roteador",
-      "invalid-model": "Seleção de modelo inválida",
       "routed-to": "Encaminhado para <route>{{model}}</route>",
       "routed-to-rule":
         "Direcionado para <route>{{model}}</route> através de <rule>{{ruleTitle}}</rule>",

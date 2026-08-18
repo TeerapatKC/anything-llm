@@ -47,8 +47,6 @@ const TRANSLATIONS = {
     previous: "上一页",
     next: "下一页",
     optional: "可选",
-    yes: "是",
-    no: "否",
     search: "搜索",
     username_requirements:
       "用户名必须为 2-64 个字符，以小写字母开头，只能包含小写字母、数字、下划线、连字符和句点。",
@@ -116,8 +114,6 @@ const TRANSLATIONS = {
     "sign-in": "登录你的 {{appName}} 账户",
     "password-reset": {
       title: "重置密码",
-      description: "请提供以下必要信息以重置你的密码。",
-      "recovery-codes": "恢复代码",
       "back-to-login": "返回登录",
     },
   },
@@ -1183,16 +1179,6 @@ const TRANSLATIONS = {
     small: "小",
     normal: "一般",
     large: "大",
-    workspace_llm_manager: {
-      search: "搜索",
-      loading_workspace_settings: "正在载入工作区设置",
-      available_models: "可用模型",
-      available_models_description: "可用模型说明",
-      save: "保存",
-      saving: "正在保存",
-      missing_credentials: "缺少凭证",
-      missing_credentials_description: "缺少凭证说明",
-    },
     submit: "提交",
     edit_info_user: "“提交”会重新生成 AI 的回复。 “保存”只会更新您的消息。",
     edit_info_assistant: "您所做的修改将直接保存到此处。",
@@ -1205,18 +1191,9 @@ const TRANSLATIONS = {
     similarity_match: "比赛",
     source_count_one: "{{count}} 参考",
     source_count_other: "{{count}} 相关资料",
-    add_new: "添加新",
-    edit: "编辑",
-    publish: "出版",
     stop_generating: "停止生成回复",
     slash_commands: "快捷命令",
-    agent_skills: "代理人技能",
-    manage_agent_skills: "管理代理人技能",
-    agent_skills_disabled_in_session:
-      "在活动会话期间，无法修改技能。首先使用 /exit 命令结束会话。",
     start_agent_session: "开始代理会",
-    use_agent_session_to_use_tools:
-      "您可以通过在提示词的开头使用'@agent'来启动与代理的聊天，从而使用聊天工具。",
     agent_invocation: {
       model_wants_to_call: "该型号希望进行通话。",
       approve: "批准",
@@ -1240,12 +1217,6 @@ const TRANSLATIONS = {
       batch_next: "接下来",
       answer_skipped: "[用户已跳过]",
     },
-    custom_skills: "定制技能",
-    agent_flows: "代理人流动",
-    no_tools_found: "未找到匹配的工具",
-    loading_mcp_servers: "正在加载 MCP 服务器…",
-    app_integrations: "应用程序集成",
-    sub_skills: "基本技能",
     memories: {
       title: "回忆",
       empty:
@@ -1294,7 +1265,6 @@ const TRANSLATIONS = {
     profile_picture: "头像",
     remove_profile_picture: "移除头像",
     username: "用户名",
-    new_password: "新密码",
     password_description: "密码长度必须至少为 8 个字符",
     cancel: "取消",
     update_account: "更新帐号",
@@ -1786,16 +1756,8 @@ const TRANSLATIONS = {
       "model-router-label": "型号路由器",
       "select-router": "选择一个路由器",
       "select-description": "选择用于此工作区域的路由器。",
-      "no-routers-chat":
-        "没有配置任何路由器。请在“设置 > AI 提供方 > 路由器”中创建一个。",
-      "rule-count": "({{count}} 的规则)",
-    },
-    metrics: {
-      "model-router-default": "型号路由器",
     },
     chat: {
-      "select-router-error": "选择一个路由器",
-      "invalid-model": "无效的模型选择",
       "routed-to": "已发送至 <route>{{model}}</route>",
       "routed-to-rule":
         "通过<route>、{{model}}、</route>，到达<rule>、{{ruleTitle}}、</rule>",

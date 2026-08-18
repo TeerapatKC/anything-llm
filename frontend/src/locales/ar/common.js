@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "الصفحة السابقة",
     next: "الصفحة التالية",
     optional: "اختياري",
-    yes: "نعم",
-    no: "لا",
     search: "بحث",
     username_requirements:
       "يجب أن يتكون اسم المستخدم من 2 إلى 32 حرفًا، ويبدأ بحرف صغير، ويحتوي فقط على حروف وأرقام وعلامات التسطير والنقاط.",
@@ -118,9 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "تسجيل الدخول إلى حساب {{appName}}.",
     "password-reset": {
       title: "إعادة تعيين كلمة المرور",
-      description:
-        "قم بإدخال المعلومات اللازمة أدناه لإعادة تعيين كلمة المرور الخاصة بك.",
-      "recovery-codes": "رموز الاسترداد",
       "back-to-login": "العودة إلى تسجيل الدخول",
     },
   },
@@ -1157,16 +1152,6 @@ const TRANSLATIONS = {
     small: "صغير",
     normal: "طبيعي",
     large: "كبير",
-    workspace_llm_manager: {
-      search: "البحث عن مزودي نماذج اللغة الكبيرة",
-      loading_workspace_settings: "تحميل إعدادات مساحة العمل...",
-      available_models: "الموديلات المتاحة لـ {{provider}}",
-      available_models_description: "حدد نموذجًا للاستخدام في هذا المساحة.",
-      save: "استخدم هذا النموذج.",
-      saving: "تعيين النموذج كإعداد افتراضي للمساحة العملية...",
-      missing_credentials: "هذا المزود لا يمتلك المؤهلات اللازمة!",
-      missing_credentials_description: "انقر لإعداد بيانات الاعتماد",
-    },
     submit: "إرسال",
     edit_info_user:
       '"إرسال" يعيد إنشاء استجابة الذكاء الاصطناعي. "حفظ" يقوم بتحديث رسالتك فقط.',
@@ -1180,18 +1165,9 @@ const TRANSLATIONS = {
     similarity_match: "مباراة",
     source_count_one: "{{count}}، المرجع",
     source_count_other: "{{count}} المرجع",
-    add_new: "أضف جديدًا",
-    edit: "تحرير",
-    publish: "نشر",
     stop_generating: "توقف عن إنشاء رد",
     slash_commands: "أوامر مختصرة",
-    agent_skills: "مهارات الوكيل",
-    manage_agent_skills: "إدارة مهارات الوكلاء",
-    agent_skills_disabled_in_session:
-      'لا يمكن تعديل المهارات أثناء جلسة مع عامل. يجب عليك أولاً استخدام الأمر "/exit" لإنهاء الجلسة.',
     start_agent_session: "ابدأ جلسة الممثل",
-    use_agent_session_to_use_tools:
-      "يمكنك استخدام الأدوات المتاحة في الدردشة عن طريق بدء جلسة مع ممثل خدمة العملاء باستخدام الرمز '@agent' في بداية رسالتك.",
     agent_invocation: {
       model_wants_to_call: "النموذج يرغب في الاتصال.",
       approve: "الموافقة",
@@ -1215,12 +1191,6 @@ const TRANSLATIONS = {
       batch_next: "التالي",
       answer_skipped: "[تم تخطي المستخدم]",
     },
-    custom_skills: "المهارات المخصصة",
-    agent_flows: "تدفقات الوكلاء",
-    no_tools_found: "لم يتم العثور على أدوات مطابقة.",
-    loading_mcp_servers: "تحميل خوادم MCP...",
-    app_integrations: "تكامل التطبيقات",
-    sub_skills: "مهارات فرعية",
     memories: {
       title: "ذكريات",
       empty:
@@ -1270,7 +1240,6 @@ const TRANSLATIONS = {
     profile_picture: "صورة الملف الشخصي",
     remove_profile_picture: "حذف صورة الملف الشخصي",
     username: "اسم المستخدم",
-    new_password: "كلمة مرور جديدة",
     password_description: "يجب أن يكون طول كلمة المرور 8 أحرف على الأقل.",
     cancel: "إلغاء",
     update_account: "تحديث الحساب",
@@ -1872,16 +1841,8 @@ const TRANSLATIONS = {
       "select-router": "اختر جهاز توجيه.",
       "select-description":
         "اختر جهاز التوجيه الذي ستستخدمه لهذا الموقف العملي.",
-      "no-routers-chat":
-        'لا توجد أجهزة توجيه مُكوّنة. قم بإنشاء واحدة في قسم "إعدادات" > "مقدمو الخدمات" > "جهاز توجيه النموذج".',
-      "rule-count": "(قواعد {{count}})",
-    },
-    metrics: {
-      "model-router-default": "نموذج جهاز التوجيه",
     },
     chat: {
-      "select-router-error": "اختر جهاز توجيه.",
-      "invalid-model": "اختيار نموذج غير صالح",
       "routed-to": "تم توجيهه إلى <route>{{model}}</route>",
       "routed-to-rule":
         "تم توجيهه إلى <route>{{model}}</route> عبر <rule>{{ruleTitle}}</rule>",

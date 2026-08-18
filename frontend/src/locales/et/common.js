@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "Eelmine leht",
     next: "Järgmine leht",
     optional: "Valikuline",
-    yes: "Jah",
-    no: "Ei",
     search: "otsing",
     username_requirements:
       "Kasutajanimi peab olema 2–64 tähemärki, algama väiketähega ning sisaldama ainult väiketähti, numbreid, alakriipse, sidekriipse ja punkte.",
@@ -118,8 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "Logi sisse oma {{appName}} kontosse.",
     "password-reset": {
       title: "Parooli lähtestamine",
-      description: "Sisesta all vajalik info, et parool lähtestada.",
-      "recovery-codes": "Taastamiskoodid",
       "back-to-login": "Tagasi sisselogimisele",
     },
   },
@@ -1237,16 +1233,6 @@ const TRANSLATIONS = {
     small: "Väike",
     normal: "Tavaline",
     large: "Suur",
-    workspace_llm_manager: {
-      search: "Otsi LLM-pakkujaid",
-      loading_workspace_settings: "Laen tööruumi seadeid…",
-      available_models: "Saadaval mudelid pakkujalt {{provider}}",
-      available_models_description: "Vali mudel, mida tööruumis kasutada.",
-      save: "Kasuta seda mudelit",
-      saving: "Määran mudelit vaikimisi…",
-      missing_credentials: "Sellel pakkujal puuduvad võtmed!",
-      missing_credentials_description: "Klõpsa, et määrata võtmed",
-    },
     submit: "Saada",
     edit_info_user:
       '"Saada" taastab AI vastuse. "Salvesta" muudab ainult teie sõnumi.',
@@ -1260,18 +1246,9 @@ const TRANSLATIONS = {
     similarity_match: "mäng",
     source_count_one: "{{count}} viidatud",
     source_count_other: "Viidatud allikad",
-    add_new: "Lisada uus",
-    edit: "Redigeerimine",
-    publish: "Avaldada",
     stop_generating: "Lõpeta vastuste genereerimine",
     slash_commands: "Lihtsasti kasutatavad käsud",
-    agent_skills: "Agentide oskused",
-    manage_agent_skills: "Halda agentide oskusi",
-    agent_skills_disabled_in_session:
-      "Ei ole võimalik muuta oskusi aktiivse agenti seanssi ajal. Enne seanssi lõpetamist kasutage käsku /exit.",
     start_agent_session: "Alusta agenti sessiooni",
-    use_agent_session_to_use_tools:
-      "Saate kasutada vahendeid vestluses, alustades agenti sessiooni, lisades käskile '@agent' sõna.",
     agent_invocation: {
       model_wants_to_call: "Mudel soovib helistada",
       approve: "Heakskiid",
@@ -1295,12 +1272,6 @@ const TRANSLATIONS = {
       batch_next: "Järgmine",
       answer_skipped: "[kasutaja jäi vahele]",
     },
-    custom_skills: "Kohandatud oskused",
-    agent_flows: "Agentide liiklus",
-    no_tools_found: "Välja ei leitud sobivaid tööriistu",
-    loading_mcp_servers: "MCP-serverite laadimine...",
-    app_integrations: "Rakenduste integreerimine",
-    sub_skills: "Alamspetsid",
     memories: {
       title: "Mälestused",
       empty:
@@ -1350,7 +1321,6 @@ const TRANSLATIONS = {
     profile_picture: "Profiilipilt",
     remove_profile_picture: "Eemalda profiilipilt",
     username: "Kasutajanimi",
-    new_password: "Uus parool",
     password_description: "Parool peab olema vähemalt 8 märki",
     cancel: "Tühista",
     update_account: "Uuenda kontot",
@@ -1856,16 +1826,8 @@ const TRANSLATIONS = {
       "model-router-label": "Mudel: Router",
       "select-router": "Valige ruuter",
       "select-description": "Valige, millist ruuterit selle töökojas kasutada.",
-      "no-routers-chat":
-        "Ei ole konfigureeritud mitte ühtegi ruutrit. Loomitage uus ruuter seadetes > AI pakettide seadistustes > Mudeli ruuter.",
-      "rule-count": "({{count}} reeglid)",
-    },
-    metrics: {
-      "model-router-default": "Mudel: Router",
     },
     chat: {
-      "select-router-error": "Valige ruuter",
-      "invalid-model": "Väärtuslik mudeli valik",
       "routed-to": "Saadetakse <route>{{model}}</route>",
       "routed-to-rule":
         "Saadetakse <route>{{model}}</route> kaudu <rule>{{ruleTitle}}</rule>",

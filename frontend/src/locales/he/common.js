@@ -48,8 +48,6 @@ const TRANSLATIONS = {
     previous: "עמוד קודם",
     next: "עמוד הבא",
     optional: "אופציונלי",
-    yes: "כן",
-    no: "לא",
     search: "חיפוש",
     username_requirements:
       "שם המשתמש חייב להיות באורך 2-64 תווים, להתחיל באות קטנה ולהכיל רק אותיות קטנות, מספרים, קווים תחתונים, מקפים ונקודות.",
@@ -117,8 +115,6 @@ const TRANSLATIONS = {
     "sign-in": "התחבר לחשבון {{appName}} שלך.",
     "password-reset": {
       title: "איפוס סיסמה",
-      description: "ספק את המידע הדרוש למטה כדי לאפס את סיסמתך.",
-      "recovery-codes": "קודיי שחזור",
       "back-to-login": "חזרה להתחברות",
     },
   },
@@ -1225,16 +1221,6 @@ const TRANSLATIONS = {
     small: "קטן",
     normal: "רגיל",
     large: "גדול",
-    workspace_llm_manager: {
-      search: "חפש ספקי LLM",
-      loading_workspace_settings: "טוען הגדרות סביבת עבודה...",
-      available_models: "מודלים זמינים עבור {{provider}}",
-      available_models_description: "בחר מודל לשימוש בסביבת עבודה זו.",
-      save: "השתמש במודל זה",
-      saving: "מגדיר מודל כברירת מחדל של סביבת העבודה...",
-      missing_credentials: "חסרים אישורים לספק זה!",
-      missing_credentials_description: "לחץ להגדרת אישורים",
-    },
     submit: "הגש",
     edit_info_user:
       '"שלח" מחזיר את התגובה של הבינה המלאכותית. "שמור" מעדכן רק את ההודעה שלך.',
@@ -1248,18 +1234,9 @@ const TRANSLATIONS = {
     similarity_match: "משחק",
     source_count_one: "{{count}} - הפניה",
     source_count_other: "{{count}} – מקורות",
-    add_new: "הוסף חדש",
-    edit: "עריכה",
-    publish: "להוציא לאור",
     stop_generating: "הפסיקו ליצור תגובה",
     slash_commands: "פקודות קיצור",
-    agent_skills: "כישורים של סוכן",
-    manage_agent_skills: "ניהול מיומנויות של סוכנים",
-    agent_skills_disabled_in_session:
-      'לא ניתן לשנות כישורים במהלך סשן פעיל. יש להשתמש בפקודה "/exit" כדי לסיים את הסשן תחילה.',
     start_agent_session: "התחלת סשן עם סוכן",
-    use_agent_session_to_use_tools:
-      "ניתן להשתמש בכלי הדיון באמצעות פתיחת סשן עם נציג על ידי שימוש בסימן '@agent' בתחילת ההודעה.",
     agent_invocation: {
       model_wants_to_call: "המודל רוצה להתקשר",
       approve: "אישור",
@@ -1283,12 +1260,6 @@ const TRANSLATIONS = {
       batch_next: "הבא",
       answer_skipped: "[המשתמש עבר לשלב הבא]",
     },
-    custom_skills: "כישורים מותאמים אישית",
-    agent_flows: "זרימת סוכנים",
-    no_tools_found: "לא נמצאו כלים תואמים.",
-    loading_mcp_servers: "טעינת שרתי ה-MCP...",
-    app_integrations: "אינטגרציות עם אפליקציות",
-    sub_skills: "כישורים ספציפיים",
     memories: {
       title: "זיכרונות",
       empty:
@@ -1338,7 +1309,6 @@ const TRANSLATIONS = {
     profile_picture: "תמונת פרופיל",
     remove_profile_picture: "הסר תמונת פרופיל",
     username: "שם משתמש",
-    new_password: "סיסמה חדשה",
     password_description: "הסיסמה חייבת להכיל לפחות 8 תווים",
     cancel: "בטל",
     update_account: "עדכן חשבון",
@@ -1836,16 +1806,8 @@ const TRANSLATIONS = {
       "select-router": "בחר נתב",
       "select-description":
         "בחר את הראוטר שתרצה להשתמש בו עבור אזור העבודה הזה.",
-      "no-routers-chat":
-        'אין מכשירי רשת מוגדרים. צרו אחד בתפריט "הגדרות" > "ספקי בינה מלאכותית" > "מכשיר רשת".',
-      "rule-count": "({{count}} כללים)",
-    },
-    metrics: {
-      "model-router-default": "מודל של רשת אלחוטית",
     },
     chat: {
-      "select-router-error": "בחר/י נתב",
-      "invalid-model": "בחירת מודל לא תקינה",
       "routed-to": "מופנה ל-{{model}} בתוך <route>",
       "routed-to-rule":
         "נשלח דרך <route>{{model}}</route> באמצעות <rule>{{ruleTitle}}</rule>",

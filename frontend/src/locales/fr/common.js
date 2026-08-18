@@ -49,8 +49,6 @@ const TRANSLATIONS = {
     previous: "Page précédente",
     next: "Page suivante",
     optional: "Optionnel",
-    yes: "Oui",
-    no: "Non",
     search: "Rechercher",
     username_requirements:
       "Le nom d'utilisateur doit comporter entre 2 et 64 caractères, commencer par une lettre minuscule et ne contenir que des lettres minuscules, des chiffres, des tirets bas, des tirets et des points.",
@@ -118,9 +116,6 @@ const TRANSLATIONS = {
     "sign-in": "Connectez-vous à votre compte {{appName}}.",
     "password-reset": {
       title: "Réinitialisation du mot de passe",
-      description:
-        "Fournissez les informations nécessaires ci-dessous pour réinitialiser votre mot de passe.",
-      "recovery-codes": "Codes de récupération",
       "back-to-login": "Retour à la connexion",
     },
   },
@@ -1193,19 +1188,6 @@ const TRANSLATIONS = {
     small: "Petit",
     normal: "Normal",
     large: "Grand",
-    workspace_llm_manager: {
-      search: "Rechercher des modèles",
-      loading_workspace_settings:
-        "Chargement des paramètres de l'espace de travail...",
-      available_models: "Modèles disponibles",
-      available_models_description:
-        "Sélectionnez un modèle à utiliser pour cet espace de travail.",
-      save: "Sauvegarder",
-      saving: "Sauvegarde...",
-      missing_credentials: "Identifiants manquants",
-      missing_credentials_description:
-        "Vous devez configurer vos identifiants de fournisseur LLM avant de pouvoir sélectionner un modèle.",
-    },
     submit: "Soumettre",
     edit_info_user:
       '"Soumettre" permet de régénérer la réponse de l\'IA. "Enregistrer" met uniquement à jour votre message.',
@@ -1220,18 +1202,9 @@ const TRANSLATIONS = {
     similarity_match: "match",
     source_count_one: "{{count}} référence",
     source_count_other: "Références à {{count}}",
-    add_new: "Ajouter",
-    edit: "Modifier",
-    publish: "Publier",
     stop_generating: "Arrêtez de générer des réponses",
     slash_commands: "Commandes abrégées",
-    agent_skills: "Compétences des agents",
-    manage_agent_skills: "Gérer les compétences des agents",
-    agent_skills_disabled_in_session:
-      "Il n'est pas possible de modifier les compétences pendant une session avec un agent actif. Utilisez la commande `/exit` pour terminer la session en premier.",
     start_agent_session: "Démarrer la session de l'agent",
-    use_agent_session_to_use_tools:
-      'Vous pouvez utiliser des outils via le chat en lançant une session avec un agent en utilisant le préfixe "@agent" au début de votre requête.',
     agent_invocation: {
       model_wants_to_call: "Le modèle souhaite passer un appel.",
       approve: "Approuver",
@@ -1256,12 +1229,6 @@ const TRANSLATIONS = {
       batch_next: "Suivant",
       answer_skipped: "[l'utilisateur a manqué]",
     },
-    custom_skills: "Compétences spécifiques",
-    agent_flows: "Flux des agents",
-    no_tools_found: "Aucun outil correspondant n'a été trouvé.",
-    loading_mcp_servers: "Chargement des serveurs MCP...",
-    app_integrations: "Intégrations d'applications",
-    sub_skills: "Compétences spécifiques",
     memories: {
       title: "Souvenirs",
       empty:
@@ -1314,7 +1281,6 @@ const TRANSLATIONS = {
     profile_picture: "Photo de profil",
     remove_profile_picture: "Supprimer la photo de profil",
     username: "Nom d'utilisateur",
-    new_password: "Nouveau mot de passe",
     password_description:
       "Le mot de passe doit contenir au moins 8 caractères.",
     cancel: "Annuler",
@@ -1927,16 +1893,8 @@ const TRANSLATIONS = {
       "select-router": "Choisissez un routeur",
       "select-description":
         "Choisissez le routeur à utiliser pour cet espace de travail.",
-      "no-routers-chat":
-        "Aucun routeur n'est configuré. Créez-en un dans les paramètres > Fournisseurs d'IA > Routeur de modèle.",
-      "rule-count": "({{count}} règles)",
-    },
-    metrics: {
-      "model-router-default": "Routeur modèle",
     },
     chat: {
-      "select-router-error": "Choisissez un routeur",
-      "invalid-model": "Sélection de modèle non valide",
       "routed-to": "Dirigé vers <route>{{model}}</route>",
       "routed-to-rule":
         "Dirigé vers <route>{{model}}</route> via <rule>{{ruleTitle}}</rule>",

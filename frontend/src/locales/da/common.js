@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Forrige side",
     next: "Næste side",
     optional: "Valgfrit",
-    yes: "Ja",
-    no: "Nej",
     search: "Søg",
     username_requirements:
       "Brugernavnet skal bestå af 2-64 tegn, starte med et lille bogstav, og kun indeholde små bogstaver, tal, understregninger, bindestreger og punktummer.",
@@ -120,9 +118,6 @@ const TRANSLATIONS = {
     "sign-in": "Log ind på din {{appName}} konto.",
     "password-reset": {
       title: "Nulstilling af adgangskode",
-      description:
-        "Angiv de nødvendige oplysninger nedenfor for at nulstille din adgangskode.",
-      "recovery-codes": "Gendannelseskoder",
       "back-to-login": "Tilbage til log ind",
     },
   },
@@ -1167,18 +1162,6 @@ const TRANSLATIONS = {
     small: "Lille",
     normal: "Normal",
     large: "Stor",
-    workspace_llm_manager: {
-      search: "Søg efter LLM-udbydere",
-      loading_workspace_settings: "Indlæser arbejdsområdets indstillinger...",
-      available_models: "Tilgængelige modeller for {{provider}}",
-      available_models_description:
-        "Vælg en model, der skal bruges til dette arbejdsområde.",
-      save: "Brug denne model",
-      saving: "Indstil modellen som standard for arbejdsområdet...",
-      missing_credentials: "Denne udbyder har ikke de nødvendige beviser!",
-      missing_credentials_description:
-        "Klik for at oprette legitimationsoplysninger",
-    },
     submit: "Indsend",
     edit_info_user:
       '"Send" genopretter AI-responsen. "Gem" opdaterer kun dit budskab.',
@@ -1193,18 +1176,9 @@ const TRANSLATIONS = {
     similarity_match: "kamp",
     source_count_one: "{{count}} henvisning",
     source_count_other: "{{count}} referencer",
-    add_new: "Tilføj nyt",
-    edit: "Rediger",
-    publish: "Udgive",
     stop_generating: "Stop med at generere svar",
     slash_commands: "Kommandoer",
-    agent_skills: "Agenters kompetencer",
-    manage_agent_skills: "Administrer agenters kompetencer",
-    agent_skills_disabled_in_session:
-      "Det er ikke muligt at ændre færdigheder under en aktiv agent-session. Brug kommandoen `/exit` for at afslutte sessionen først.",
     start_agent_session: "Start Agent-session",
-    use_agent_session_to_use_tools:
-      "Du kan bruge værktøjer i chat ved at starte en agent-session med '@agent' i starten af din forespørgsel.",
     agent_invocation: {
       model_wants_to_call: "Modellen ønsker at ringe",
       approve: "Godkend",
@@ -1229,12 +1203,6 @@ const TRANSLATIONS = {
       batch_next: "Næste",
       answer_skipped: "[bruger hopped over]",
     },
-    custom_skills: "Skræddersyede færdigheder",
-    agent_flows: "Agentstrømme",
-    no_tools_found: "Ingen matchende værktøjer fundet",
-    loading_mcp_servers: "Indlæser MCP-servere...",
-    app_integrations: "App-integrationer",
-    sub_skills: "Specifikke færdigheder",
     memories: {
       title: "Erindringer",
       empty:
@@ -1285,7 +1253,6 @@ const TRANSLATIONS = {
     profile_picture: "Profilbillede",
     remove_profile_picture: "Fjern profilbillede",
     username: "Brugernavn",
-    new_password: "Ny adgangskode",
     password_description: "Adgangskoden skal være mindst 8 tegn lang",
     cancel: "Annuller",
     update_account: "Opdater konto",
@@ -1899,16 +1866,8 @@ const TRANSLATIONS = {
       "select-router": "Vælg en router",
       "select-description":
         "Vælg hvilken router, der skal bruges til dette arbejdsområde.",
-      "no-routers-chat":
-        "Ingen routere er konfigureret. Opret en i Indstillinger > AI-udbydere > Model Router.",
-      "rule-count": "({{count}} regler)",
-    },
-    metrics: {
-      "model-router-default": "Modelrouter",
     },
     chat: {
-      "select-router-error": "Vælg en router",
-      "invalid-model": "Forkert modelvalg",
       "routed-to": "Henvist til <route>{{model}}</route>",
       "routed-to-rule":
         "Rute via <route>{{model}}</route> gennem <rule>{{ruleTitle}}</rule>",

@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Pàgina anterior",
     next: "Pàgina següent",
     optional: "Opcional",
-    yes: "Sí",
-    no: "No",
     on: "Activat",
     none: "Cap",
     stopped: "Aturat",
@@ -127,9 +125,6 @@ const TRANSLATIONS = {
       "Introdueix el teu nom d'usuari i contrasenya per accedir a la teva instància de {{appName}}.",
     "password-reset": {
       title: "Restabliment de contrasenya",
-      description:
-        "Proporciona la informació necessària a continuació per restablir la teva contrasenya.",
-      "recovery-codes": "Codis de recuperació",
       "back-to-login": "Torna a l'inici de sessió",
     },
   },
@@ -1365,9 +1360,6 @@ const TRANSLATIONS = {
     preset_reset_description:
       "Esborra l'historial del xat i comença un xat nou",
     add_new_preset: " Afegeix una nova ordre predefinida",
-    add_new: "Afegeix nou",
-    edit: "Edita",
-    publish: "Publica",
     stop_generating: "Atura la generació de la resposta",
     command: "Ordre",
     your_command: "la-teva-ordre",
@@ -1382,25 +1374,7 @@ const TRANSLATIONS = {
     tools: "Eines",
     text_size_label: "Mida del text",
     slash_commands: "Ordres de barra",
-    agent_skills: "Habilitats de l'agent",
-    manage_agent_skills: "Gestiona les habilitats de l'agent",
     start_agent_session: "Inicia la sessió de l'agent",
-    agent_skills_disabled_in_session:
-      "No es poden modificar les habilitats durant una sessió de l'agent activa. Usa /exit per acabar la sessió primer.",
-    use_agent_session_to_use_tools:
-      "Pots usar eines al xat iniciant una sessió de l'agent amb '@agent' al principi del teu missatge.",
-    workspace_llm_manager: {
-      search: "Cerca",
-      loading_workspace_settings:
-        "Carregant la configuració de l'espai de treball...",
-      available_models: "Models disponibles per a {{provider}}",
-      available_models_description:
-        "Selecciona un model per usar en aquest espai de treball.",
-      save: "Usa aquest model",
-      saving: "Establint el model com a predeterminat de l'espai de treball...",
-      missing_credentials: "Falta les credencials d'aquest proveïdor!",
-      missing_credentials_description: "Configura ara",
-    },
     agent_invocation: {
       model_wants_to_call: "El model vol cridar",
       approve: "Aprova",
@@ -1424,12 +1398,6 @@ const TRANSLATIONS = {
       batch_next: "Següent",
       answer_skipped: "[l'usuari va saltar]",
     },
-    custom_skills: "Habilitats personalitzades",
-    agent_flows: "Fluxos d'agents",
-    no_tools_found: "No s'han trobat eines corresponents.",
-    loading_mcp_servers: "Carregant servidors MCP...",
-    app_integrations: "Integracions d'aplicacions",
-    sub_skills: "Habilitats específiques",
     memories: {
       title: "Records",
       empty:
@@ -1481,7 +1449,6 @@ const TRANSLATIONS = {
     profile_picture: "Foto de perfil",
     remove_profile_picture: "Elimina la foto de perfil",
     username: "Nom d'usuari",
-    new_password: "Nova contrasenya",
     password_description: "La contrasenya ha de tenir almenys 8 caràcters",
     cancel: "Cancel·la",
     update_account: "Actualitza el compte",
@@ -1927,16 +1894,8 @@ const TRANSLATIONS = {
       "select-router": "Seleccioneu un rúter",
       "select-description":
         "Seleccioneu el rúter que vulgueu utilitzar per a aquesta zona de treball.",
-      "no-routers-chat":
-        "No s'han configurat cap enllaç. Creeu un nou enllaç a les opcions > Proveïdors d'IA > Rúter de model.",
-      "rule-count": "({{count}} normes)",
-    },
-    metrics: {
-      "model-router-default": "Rúter de model",
     },
     chat: {
-      "select-router-error": "Seleccioneu un rúter",
-      "invalid-model": "Selecció de model incorrecta",
       "routed-to": "Enviat a <route>{{model}}</route>",
       "routed-to-rule":
         "Enviat a través de <route>{{model}}</route> a través de <rule>{{ruleTitle}}</rule>",

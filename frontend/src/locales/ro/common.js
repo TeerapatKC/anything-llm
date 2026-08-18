@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Pagina anterioară",
     next: "Pagina următoare",
     optional: "Opțional",
-    yes: "Da",
-    no: "Nu",
     search: "Caută",
     username_requirements:
       "Numele de utilizator trebuie să aibă între 2 și 64 de caractere, să înceapă cu o literă mică și să conțină doar litere mici, cifre, liniuțe de subliniere, cratime și puncte.",
@@ -119,9 +117,6 @@ const TRANSLATIONS = {
     "sign-in": "Autentifică-te în {{appName}} cont.",
     "password-reset": {
       title: "Resetare parolă",
-      description:
-        "Introdu informațiile necesare mai jos pentru a reseta parola.",
-      "recovery-codes": "Coduri de recuperare",
       "back-to-login": "Înapoi la autentificare",
     },
   },
@@ -549,17 +544,6 @@ const TRANSLATIONS = {
     small: "Mic",
     normal: "Normal",
     large: "Mare",
-    workspace_llm_manager: {
-      search: "Caută furnizori LLM",
-      loading_workspace_settings: "Se încarcă setările spațiului de lucru...",
-      available_models: "Modele disponibile pentru {{provider}}",
-      available_models_description:
-        "Selectează un model pentru acest spațiu de lucru.",
-      save: "Folosește acest model",
-      saving: "Setez modelul ca implicit pentru spațiu de lucru...",
-      missing_credentials: "Acest furnizor lipsește credențiale!",
-      missing_credentials_description: "Click pentru a configura credențialele",
-    },
     submit: "Trimite",
     edit_info_user:
       "„Trimite” recreează răspunsul generat de inteligența artificială. „Salvează” actualizează doar mesajul dumneavoastră.",
@@ -574,18 +558,9 @@ const TRANSLATIONS = {
     similarity_match: "meci",
     source_count_one: "{{count}} – referință",
     source_count_other: "Referințe către {{count}}",
-    add_new: "Adaugă",
-    edit: "Editează",
-    publish: "Publica",
     stop_generating: "Opriți generarea răspunsului",
     slash_commands: "Comenzi scurte",
-    agent_skills: "Abilități ale agentului",
-    manage_agent_skills: "Gestionarea competențelor agenților",
-    agent_skills_disabled_in_session:
-      "Nu este posibil să modificați abilitățile în timpul unei sesiuni cu un agent activ. Pentru a încheia sesiunea, utilizați comanda /exit.",
     start_agent_session: "Începe sesiunea de agent",
-    use_agent_session_to_use_tools:
-      'Puteți utiliza instrumentele disponibile în chat, inițiind o sesiune cu un agent, începând mesajul cu "@agent".',
     agent_invocation: {
       model_wants_to_call: "Persoana respectivă dorește să facă o telefonare.",
       approve: "Aprobă",
@@ -610,12 +585,6 @@ const TRANSLATIONS = {
       batch_next: "Următorul",
       answer_skipped: "[utilizatorul a sărit peste]",
     },
-    custom_skills: "Abilități personalizate",
-    agent_flows: "Fluxuri de agenți",
-    no_tools_found: "Nu au fost găsite instrumente corespunzătoare.",
-    loading_mcp_servers: "Încărcare servere MCP...",
-    app_integrations: "Integrarea aplicațiilor",
-    sub_skills: "Abilități specifice",
     memories: {
       title: "Amintiri",
       empty:
@@ -666,7 +635,6 @@ const TRANSLATIONS = {
     profile_picture: "Poză profil",
     remove_profile_picture: "Șterge poza profil",
     username: "Nume utilizator",
-    new_password: "Parolă nouă",
     password_description: "Parola trebuie să aibă cel puțin 8 caractere",
     cancel: "Anulează",
     update_account: "Actualizează contul",
@@ -1925,16 +1893,8 @@ const TRANSLATIONS = {
       "select-router": "Alege un router",
       "select-description":
         "Alege router-ul pe care dorești să-l folosești pentru acest spațiu de lucru.",
-      "no-routers-chat":
-        "Nu există routere configurate. Creați unul în secțiunea Setări > Furnizori de AI > Router de model.",
-      "rule-count": "({{count}} reguli)",
-    },
-    metrics: {
-      "model-router-default": "Model de router",
     },
     chat: {
-      "select-router-error": "Alege un router",
-      "invalid-model": "Selectarea incorectă a modelului",
       "routed-to": "Trimis către <route>{{model}}</route>",
       "routed-to-rule":
         "Trasează spre <route>{{model}}</route> prin intermediul <rule>{{ruleTitle}}</rule>",

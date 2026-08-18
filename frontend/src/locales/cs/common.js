@@ -50,8 +50,6 @@ const TRANSLATIONS = {
     previous: "Předchozí stránka",
     next: "Další stránka",
     optional: "Volitelné",
-    yes: "Ano",
-    no: "Ne",
     search: "Hledat",
     username_requirements:
       "Uživatelské jméno musí mít 2–64 znaků, začínat malým písmenem a obsahovat pouze malá písmena, číslice, podtržítka, pomlčky a tečky.",
@@ -126,8 +124,6 @@ const TRANSLATIONS = {
     "sign-in": "Přihlaste se do svého {{appName}} účtu.",
     "password-reset": {
       title: "Reset hesla",
-      description: "Níže uveďte potřebné informace pro resetování hesla.",
-      "recovery-codes": "Záchranné kódy",
       "back-to-login": "Zpět k přihlášení",
     },
   },
@@ -1272,18 +1268,6 @@ const TRANSLATIONS = {
     small: "Malé",
     normal: "Normální",
     large: "Velké",
-    workspace_llm_manager: {
-      search: "Hledat poskytovatele LLM",
-      loading_workspace_settings: "Načítání nastavení pracovního prostoru...",
-      available_models: "Dostupné modely pro {{provider}}",
-      available_models_description:
-        "Vyberte model k použití pro tento pracovní prostor.",
-      save: "Použít tento model",
-      saving: "Nastavování modelu jako výchozího pro pracovní prostor...",
-      missing_credentials: "Tomuto poskytovateli chybí přihlašovací údaje!",
-      missing_credentials_description:
-        "Klikněte pro nastavení přihlašovacích údajů",
-    },
     submit: "Odeslat",
     edit_info_user:
       "„Odeslat“ znovu vygeneruje odpověď od AI. „Uložit“ aktualizuje pouze vaši zprávu.",
@@ -1297,18 +1281,9 @@ const TRANSLATIONS = {
     similarity_match: "zápas",
     source_count_one: "{{count}} – odkaz",
     source_count_other: "{{count}} – odkazy",
-    add_new: "Přidat nové",
-    edit: "Upravit",
-    publish: "Publikovat",
     stop_generating: "Zastavte generování odpovědi",
     slash_commands: "Příkazy v řádku",
-    agent_skills: "Dovednosti agenta",
-    manage_agent_skills: "Řízení dovedností agentů",
-    agent_skills_disabled_in_session:
-      "Není možné upravovat dovednosti během aktivního sezení s agentem. Nejprve použijte příkaz `/exit` pro ukončení sezení.",
     start_agent_session: "Spustit relaci s agentem",
-    use_agent_session_to_use_tools:
-      "Můžete využít nástroje v chatu spuštěním sezení s agentem pomocí příkazu '@agent' na začátku vašeho vstupu.",
     agent_invocation: {
       model_wants_to_call: "Model chce zavolat",
       approve: "Schválit",
@@ -1332,12 +1307,6 @@ const TRANSLATIONS = {
       batch_next: "Další",
       answer_skipped: "[uživatel přeskočil]",
     },
-    custom_skills: "Vlastní dovednosti",
-    agent_flows: "Toky agentů",
-    no_tools_found: "Nebyla nalezena žádná odpovídající nářadí.",
-    loading_mcp_servers: "Načítají se servery pro MCP...",
-    app_integrations: "Integrace aplikací",
-    sub_skills: "Specifické dovednosti",
     memories: {
       title: "Paměti",
       empty:
@@ -1388,7 +1357,6 @@ const TRANSLATIONS = {
     profile_picture: "Profilový obrázek",
     remove_profile_picture: "Odebrat profilový obrázek",
     username: "Uživatelské jméno",
-    new_password: "Nové heslo",
     password_description: "Heslo musí mít délku alespoň 8 znaků",
     cancel: "Zrušit",
     update_account: "Aktualizovat účet",
@@ -1898,16 +1866,8 @@ const TRANSLATIONS = {
       "select-router": "Vyberte si router",
       "select-description":
         "Vyberte, který router chcete použít pro tuto pracovní stanici.",
-      "no-routers-chat":
-        "Nejsou nakonfigurovány žádné routery. Vytvořte jeden v části Nastavení > Poskytovatelé AI > Router modelu.",
-      "rule-count": "({{count}} pravidla)",
-    },
-    metrics: {
-      "model-router-default": "Modelový router",
     },
     chat: {
-      "select-router-error": "Vyberte si router",
-      "invalid-model": "Neplatná volba modelu",
       "routed-to": "Přesměrováno na <route>{{model}}</route>",
       "routed-to-rule":
         "Přesměrováno na <route>{{model}}</route> prostřednictvím <rule>{{ruleTitle}}</rule>",

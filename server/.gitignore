@@ -24,6 +24,8 @@ storage/direct-uploads
 logs/server.log
 *.db
 *.db-journal
+# Ad-hoc backups taken before migrations - real data, never commit these.
+*.db.bak*
 storage/lancedb
 public/
 __tests__/**/models
