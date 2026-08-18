@@ -48,7 +48,13 @@ const CommunityHub = {
     })
       .then((response) => response.json())
       .catch((error) => {
-        console.error("Error fetching explore items:", error);
+        // Handled: the hub is optional and the caller degrades to empty lists, so
+        // log one line rather than dumping a stack for an unreachable host.
+        console.error(
+          `Community Hub unreachable at ${this.apiBase} (${
+            error?.cause?.code || error?.message
+          }) - explore items will be empty.`
+        );
         return {
           agentSkills: {
             items: [],
