@@ -22,7 +22,7 @@ export default function ChatTemperatureSettings({
         <label htmlFor="name" className="block input-label">
           {t("chat.temperature.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {t("chat.temperature.desc-end")}
         </p>
       </div>

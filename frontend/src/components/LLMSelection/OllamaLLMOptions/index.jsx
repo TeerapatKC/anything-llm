@@ -311,7 +311,7 @@ function OllamaLLMModelSelection({
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           Select the Ollama model you want to use. Models will load after
           entering a valid Ollama URL.
         </p>
@@ -345,7 +345,7 @@ function OllamaLLMModelSelection({
           )}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+      <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
         Choose the Ollama model you want to use for your conversations.
       </p>
     </div>

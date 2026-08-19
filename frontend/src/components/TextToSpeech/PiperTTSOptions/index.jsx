@@ -19,7 +19,7 @@ import {
 export default function PiperTTSOptions({ settings }) {
   return (
     <>
-      <p className="text-sm font-base text-theme-text-primary text-opacity-60 mb-4">
+      <p className="text-sm/60 font-base text-theme-text-primary mb-4">
         All PiperTTS models will run in your browser locally. This can be
         resource intensive on lower-end devices.
       </p>

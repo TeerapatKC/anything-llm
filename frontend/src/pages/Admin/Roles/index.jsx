@@ -160,24 +160,18 @@ function RolesPanel({ scope }) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-                  Role
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  Permissions
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
+                <TableHead scope="col">Role</TableHead>
+                <TableHead scope="col">Permissions</TableHead>
+                <TableHead scope="col">
                   {isWorkspace ? "Members" : "Users"}
                 </TableHead>
-                <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-                  {" "}
-                </TableHead>
+                <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {roles.map((role) => (
                 <TableRow key={role.id}>
-                  <TableCell className="px-6 py-4">
+                  <TableCell>
                     <div className="flex items-center gap-x-2">
                       <span className="text-theme-text-primary font-medium">
                         {role.displayName}
@@ -214,13 +208,13 @@ function RolesPanel({ scope }) {
                       {role.description || role.name}
                     </p>
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-theme-text-secondary">
+                  <TableCell className="text-theme-text-secondary">
                     {role.permissions.length}
                   </TableCell>
-                  <TableCell className="px-6 py-4 text-theme-text-secondary">
+                  <TableCell className="text-theme-text-secondary">
                     {holderCount(role)}
                   </TableCell>
-                  <TableCell className="px-6 py-4">
+                  <TableCell>
                     <div className="flex items-center gap-x-2 justify-end">
                       {isWorkspace && !role.isDefault && (
                         <Button

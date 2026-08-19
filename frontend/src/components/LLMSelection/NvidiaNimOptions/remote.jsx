@@ -63,7 +63,7 @@ export default function RemoteNvidiaNimOptions({ settings }) {
           onChange={basePath.onChange}
           onBlur={basePath.onBlur}
         />
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           Enter the URL where NVIDIA NIM is running.
         </p>
       </div>

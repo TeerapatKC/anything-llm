@@ -83,21 +83,13 @@ export default function BrowserExtensionApiKeys() {
         ) : error ? (
           <div className="text-red-500 mt-6">Error: {error}</div>
         ) : (
-          <Table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0">
+          <Table className="text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0">
             <TableHeader>
               <TableRow>
-                <TableHead scope="col" className="px-6 py-2 rounded-tl-lg">
-                  Extension Connection String
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-2">
-                  Created By
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-2">
-                  Created At
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-2 rounded-tr-lg">
-                  Actions
-                </TableHead>
+                <TableHead scope="col">Extension Connection String</TableHead>
+                <TableHead scope="col">Created By</TableHead>
+                <TableHead scope="col">Created At</TableHead>
+                <TableHead scope="col">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

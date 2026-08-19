@@ -8,7 +8,7 @@ export default function MaxContextSnippets({ workspace, setHasChanges }) {
         <label htmlFor="name" className="block input-label">
           {t("vector-workspace.snippets.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {t("vector-workspace.snippets.description")}
           <br />
           <i>{t("vector-workspace.snippets.recommend")}</i>

@@ -185,24 +185,16 @@ export default function EmbedChatsView() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-                {t("embed-chats.table.embed")}
-              </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
-                {t("embed-chats.table.sender")}
-              </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
+              <TableHead scope="col">{t("embed-chats.table.embed")}</TableHead>
+              <TableHead scope="col">{t("embed-chats.table.sender")}</TableHead>
+              <TableHead scope="col">
                 {t("embed-chats.table.message")}
               </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
+              <TableHead scope="col">
                 {t("embed-chats.table.response")}
               </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
-                {t("embed-chats.table.at")}
-              </TableHead>
-              <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-                {" "}
-              </TableHead>
+              <TableHead scope="col">{t("embed-chats.table.at")}</TableHead>
+              <TableHead scope="col"> </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

@@ -76,23 +76,15 @@ export default function EmbedConfigsView() {
       </div>
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="text-theme-text-secondary text-xs leading-[18px] uppercase border-theme-sidebar-border border-b">
+          <TableHeader className="text-theme-text-secondary leading-[18px] uppercase">
             <TableRow>
-              <TableHead scope="col" className="px-6 py-3">
+              <TableHead scope="col">
                 {t("embeddable.table.workspace")}
               </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
-                {t("embeddable.table.chats")}
-              </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
-                {t("embeddable.table.active")}
-              </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
-                {t("embeddable.table.created")}
-              </TableHead>
-              <TableHead scope="col" className="px-6 py-3">
-                {" "}
-              </TableHead>
+              <TableHead scope="col">{t("embeddable.table.chats")}</TableHead>
+              <TableHead scope="col">{t("embeddable.table.active")}</TableHead>
+              <TableHead scope="col">{t("embeddable.table.created")}</TableHead>
+              <TableHead scope="col"> </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

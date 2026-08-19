@@ -148,7 +148,7 @@ export default function DefaultSystemPrompt() {
                 System Prompt
               </label>
               <div className="space-y-1">
-                <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+                <p className="text-theme-text-primary/60 text-xs font-medium">
                   A system prompt provides instructions that shape the AI’s
                   responses and behavior. This prompt will be automatically
                   applied to all newly created workspaces. To change the system
@@ -159,7 +159,7 @@ export default function DefaultSystemPrompt() {
                   restore the system prompt to our sane default, leave this
                   field empty and save changes.
                 </p>
-                <p className="text-theme-text-primary text-opacity-60 text-xs font-medium mb-2">
+                <p className="text-theme-text-primary/60 text-xs font-medium mb-2">
                   You can insert{" "}
                   <Link
                     to={paths.settings.systemPromptVariables()}

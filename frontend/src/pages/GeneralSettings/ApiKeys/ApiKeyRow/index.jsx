@@ -41,30 +41,23 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
 
   return (
     <>
-      <TableRow className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border">
-        <TableCell
-          scope="row"
-          className="px-6 py-3 whitespace-nowrap align-middle"
-        >
-          {apiKey.name || t("api.row.unnamed")}
-        </TableCell>
-        <TableCell scope="row" className="px-6 py-3 align-middle">
+      <TableRow>
+        <TableCell scope="row">{apiKey.name || t("api.row.unnamed")}</TableCell>
+        <TableCell scope="row">
           <code className="font-mono text-[11px] break-all text-theme-text-primary">
             {apiKey.secret}
           </code>
         </TableCell>
-        <TableCell className="px-6 py-3 text-left align-middle">
+        <TableCell className="text-left">
           {apiKey.createdBy?.username || "--"}
         </TableCell>
-        <TableCell className="px-6 py-3 whitespace-nowrap align-middle">
-          {new Date(apiKey.createdAt).toLocaleString()}
-        </TableCell>
-        <TableCell className="px-6 py-3 align-middle">
+        <TableCell>{new Date(apiKey.createdAt).toLocaleString()}</TableCell>
+        <TableCell>
           <div className="flex items-center gap-x-6">
             <button
               onClick={copyApiKey}
               disabled={copied}
-              className="text-xs font-medium text-blue-300 rounded-lg hover:text-white hover:light:text-blue-500 hover:text-opacity-60 hover:underline"
+              className="text-xs font-medium text-blue-300 rounded-lg hover:text-white/60 hover:light:text-blue-500 hover:underline"
             >
               {copied ? t("api.row.copied") : t("api.row.copy")}
             </button>

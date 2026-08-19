@@ -128,7 +128,7 @@ export default function AgentLLMSelection({
         <label htmlFor="name" className="block input-label">
           {t("agent.provider.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {t("agent.provider.description")}
         </p>
       </div>

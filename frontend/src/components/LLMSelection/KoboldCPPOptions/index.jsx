@@ -64,7 +64,7 @@ export default function KoboldCPPOptions({ settings }) {
             required={true}
             autoComplete="off"
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Maximum number of tokens for context and response.
           </p>
         </div>
@@ -81,7 +81,7 @@ export default function KoboldCPPOptions({ settings }) {
             required={true}
             autoComplete="off"
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Maximum number of tokens for the response.
           </p>
         </div>
@@ -136,7 +136,7 @@ export default function KoboldCPPOptions({ settings }) {
               onChange={basePath.onChange}
               onBlur={basePath.onBlur}
             />
-            <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+            <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
               Enter the URL where KoboldCPP is running.
             </p>
           </div>
@@ -190,7 +190,7 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           Select the KoboldCPP model you want to use. Models will load after
           entering a valid KoboldCPP URL.
         </p>
@@ -217,7 +217,7 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
           ))}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+      <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
         Choose the KoboldCPP model you want to use for your conversations.
       </p>
     </div>

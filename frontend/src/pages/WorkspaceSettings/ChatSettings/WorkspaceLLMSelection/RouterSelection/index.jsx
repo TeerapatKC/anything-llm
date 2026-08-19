@@ -28,7 +28,7 @@ export default function RouterSelection({ workspace, setHasChanges }) {
   if (loading) {
     return (
       <div className="flex flex-col gap-y-[8px]">
-        <p className="text-sm text-theme-text-primary text-opacity-60">
+        <p className="text-sm/60 text-theme-text-primary">
           {t("model-router.router-selection.loading-routers")}
         </p>
       </div>
@@ -38,7 +38,7 @@ export default function RouterSelection({ workspace, setHasChanges }) {
   if (routers.length === 0) {
     return (
       <div className="flex flex-col gap-y-[8px]">
-        <p className="text-sm text-theme-text-primary text-opacity-60">
+        <p className="text-sm/60 text-theme-text-primary">
           {t("model-router.router-selection.no-routers-prefix-workspace")}{" "}
           <Link
             to={paths.settings.modelRouters()}
@@ -57,7 +57,7 @@ export default function RouterSelection({ workspace, setHasChanges }) {
       <label className="block input-label">
         {t("model-router.router-selection.model-router-label")}
       </label>
-      <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+      <p className="text-theme-text-primary/60 text-xs font-medium">
         {t("model-router.router-selection.select-description")}
       </p>
       <Select

@@ -39,7 +39,7 @@ export default function DefaultSkillPanel({
           />
         </div>
         <img src={image} alt={title} className="w-full rounded-md" />
-        <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium py-1.5">
+        <p className="text-theme-text-secondary/60 text-xs font-medium py-1.5">
           {description}
           <br />
           <br />

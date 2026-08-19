@@ -136,7 +136,7 @@ export default function ImportedSkillConfig({
               />
             </div>
           </div>
-          <p className="text-theme-text-primary text-opacity-60 text-xs font-medium py-1.5">
+          <p className="text-theme-text-primary/60 text-xs font-medium py-1.5">
             {config.description} by{" "}
             <a
               href={config.author_url}
@@ -167,7 +167,7 @@ export default function ImportedSkillConfig({
                     placeholder={props?.input?.placeholder || ""}
                     className="border-solid bg-transparent border border-white light:border-black rounded-md p-2 text-theme-text-primary text-sm"
                   />
-                  <p className="text-theme-text-primary text-opacity-60 text-xs font-medium py-1.5">
+                  <p className="text-theme-text-primary/60 text-xs font-medium py-1.5">
                     {props?.input?.hint}
                   </p>
                 </div>
@@ -183,7 +183,7 @@ export default function ImportedSkillConfig({
               )}
             </div>
           ) : (
-            <p className="text-theme-text-primary text-opacity-60 text-sm font-medium py-1.5">
+            <p className="text-theme-text-primary/60 text-sm font-medium py-1.5">
               There are no options to modify for this skill.
             </p>
           )}

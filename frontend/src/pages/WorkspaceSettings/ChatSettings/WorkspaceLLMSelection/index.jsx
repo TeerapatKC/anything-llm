@@ -84,7 +84,7 @@ export default function WorkspaceLLMSelection({
         <label htmlFor="name" className="block input-label">
           {t("chat.llm.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {t("chat.llm.description")}
         </p>
       </div>
@@ -179,7 +179,7 @@ function ModelSelector({ selectedLLM, workspace, setHasChanges }) {
     if (selectedLLM !== "default") {
       return (
         <div className="w-full h-10 justify-center items-center flex">
-          <p className="text-sm font-base text-theme-text-primary text-opacity-60 text-center">
+          <p className="text-sm/60 font-base text-theme-text-primary text-center">
             Multi-model support is not supported for this provider yet.
             <br />
             This workspace will use{" "}
@@ -213,7 +213,7 @@ function FreeFormLLMInput({ workspace, setHasChanges }) {
   return (
     <div className="flex flex-col gap-y-[8px]">
       <label className="block input-label">{t("chat.model.title")}</label>
-      <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+      <p className="text-theme-text-primary/60 text-xs font-medium">
         {t("chat.model.description")}
       </p>
       <Input

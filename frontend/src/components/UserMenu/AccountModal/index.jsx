@@ -124,7 +124,7 @@ export default function AccountModal({ user, hideModal }) {
                     ) : (
                       <div className="flex flex-col items-center justify-center p-1">
                         <Plus className="w-5 h-5 text-theme-text-secondary" />
-                        <span className="text-theme-text-secondary text-opacity-80 text-xs font-semibold">
+                        <span className="text-theme-text-secondary/80 text-xs font-semibold">
                           {t("profile_settings.profile_picture")}
                         </span>
                       </div>
@@ -134,7 +134,7 @@ export default function AccountModal({ user, hideModal }) {
                     <button
                       type="button"
                       onClick={handleRemovePfp}
-                      className="mt-2 text-theme-text-secondary text-opacity-60 text-xs font-medium hover:underline"
+                      className="mt-2 text-theme-text-secondary/60 text-xs font-medium hover:underline"
                     >
                       {t("profile_settings.remove_profile_picture")}
                     </button>

@@ -40,7 +40,7 @@ export default function CustomSiteSettings() {
 
   return (
     <form
-      className="flex flex-col gap-y-0.5 my-4 border-t border-white border-opacity-20 light:border-black/20 pt-6"
+      className="flex flex-col gap-y-0.5 my-4 border-t/20 border-white light:border-black/20 pt-6"
       onChange={() => setHasChanges(true)}
       onSubmit={handleSiteSettingUpdate}
     >

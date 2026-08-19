@@ -64,24 +64,14 @@ function WatchedDocumentsContainer() {
   }
 
   return (
-    <Table className="w-full text-sm text-left rounded-lg mt-6 min-w-[640px]">
+    <Table className="text-left rounded-lg mt-6 min-w-[640px]">
       <TableHeader>
         <TableRow>
-          <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-            Document Name
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Last Synced
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Time until next refresh
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Created On
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-            {" "}
-          </TableHead>
+          <TableHead scope="col">Document Name</TableHead>
+          <TableHead scope="col">Last Synced</TableHead>
+          <TableHead scope="col">Time until next refresh</TableHead>
+          <TableHead scope="col">Created On</TableHead>
+          <TableHead scope="col"> </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

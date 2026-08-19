@@ -185,7 +185,7 @@ export default function FileSystemSkillPanel({
         <img src={image} alt={title} className="w-full rounded-md" />
         <WarningBanner />
         <div className="flex flex-col gap-y-1">
-          <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium">
+          <p className="text-theme-text-secondary/60 text-xs font-medium">
             {t("agent.skill.filesystem.description")}
           </p>
           <Link

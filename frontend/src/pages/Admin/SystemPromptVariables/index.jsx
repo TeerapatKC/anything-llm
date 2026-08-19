@@ -86,21 +86,13 @@ export default function SystemPromptVariables() {
             No variables found
           </div>
         ) : (
-          <Table className="w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0">
+          <Table className="text-left rounded-lg min-w-[640px] border-spacing-0">
             <TableHeader>
               <TableRow>
-                <TableHead scope="col" className="px-4 py-2 rounded-tl-lg">
-                  Key
-                </TableHead>
-                <TableHead scope="col" className="px-4 py-2">
-                  Value
-                </TableHead>
-                <TableHead scope="col" className="px-4 py-2">
-                  Description
-                </TableHead>
-                <TableHead scope="col" className="px-4 py-2">
-                  Type
-                </TableHead>
+                <TableHead scope="col">Key</TableHead>
+                <TableHead scope="col">Value</TableHead>
+                <TableHead scope="col">Description</TableHead>
+                <TableHead scope="col">Type</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

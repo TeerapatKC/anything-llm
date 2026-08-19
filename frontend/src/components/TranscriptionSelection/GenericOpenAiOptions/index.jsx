@@ -14,7 +14,7 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
           autoComplete="off"
           spellCheck={false}
         />
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           The base URL of the OpenAI-compatible service used to transcribe
           audio.
         </p>
@@ -31,7 +31,7 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
           autoComplete="new-password"
           spellCheck={false}
         />
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           Optional - Only required if your service enforces authentication.
         </p>
       </div>
@@ -46,7 +46,7 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
           autoComplete="off"
           spellCheck={false}
         />
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           The model identifier to be used for transcription.
         </p>
       </div>

@@ -95,7 +95,7 @@ export default function FolderRow({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`text-theme-text-primary text-xs grid grid-cols-12 py-2 pl-3.5 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
+        className={`grid grid-cols-12 py-2 pl-3.5 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
           selected || partial ? "selected light:text-white text-white!" : ""
         } ${
           isDropTarget
@@ -147,8 +147,8 @@ export default function FolderRow({
         <p className="col-span-2 pl-2" />
       </TableRow>
       {expanded && loading && files.length === 0 && (
-        <TableRow className="text-theme-text-secondary text-xs py-2 pl-8 pr-8">
-          <TableCell className="flex items-center gap-x-2 py-2 pl-8">
+        <TableRow className="text-theme-text-secondary py-2 pl-8 pr-8">
+          <TableCell className="flex items-center gap-x-2 pl-8">
             <Spinner size="xs" />
             <span>{t("common.loading")}...</span>
           </TableCell>
@@ -165,7 +165,7 @@ export default function FolderRow({
           />
         ))}
       {expanded && hasMore && (
-        <TableRow className="text-theme-text-secondary text-xs py-1 pl-8 pr-8">
+        <TableRow className="text-theme-text-secondary py-1 pl-8 pr-8">
           <TableCell className="py-1 pl-8">
             <button
               onClick={(event) => {

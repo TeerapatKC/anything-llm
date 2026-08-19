@@ -3,7 +3,7 @@ export default function LanceDBOptions() {
   const { t } = useTranslation();
   return (
     <div className="w-full h-10 items-center flex">
-      <p className="text-sm font-base text-theme-text-primary text-opacity-60">
+      <p className="text-sm/60 font-base text-theme-text-primary">
         {t("vector.provider.description")}
       </p>
     </div>

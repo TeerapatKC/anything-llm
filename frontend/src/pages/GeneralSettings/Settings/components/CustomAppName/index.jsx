@@ -78,7 +78,7 @@ export default function CustomAppName() {
           <button
             type="button"
             onClick={(e) => updateCustomAppName(e, "")}
-            className="text-theme-text-primary text-base font-medium hover:text-opacity-60"
+            className="text-theme-text-primary text-base font-medium hover:text-theme-text-primary/60"
           >
             Clear
           </button>

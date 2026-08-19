@@ -36,7 +36,7 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
         <label htmlFor="name" className="block input-label">
           Search Preference
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {hint[selection]?.description}
         </p>
       </div>

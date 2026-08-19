@@ -73,14 +73,8 @@ export default function EmbedRow({ embed }) {
 
   return (
     <>
-      <TableRow
-        ref={rowRef}
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-      >
-        <TableHead
-          scope="row"
-          className="px-6 whitespace-nowrap flex item-center gap-x-1"
-        >
+      <TableRow ref={rowRef}>
+        <TableHead scope="row" className="flex item-center gap-x-1">
           <a
             href={paths.workspace.chat(embed.workspace.slug)}
             target="_blank"
@@ -90,15 +84,15 @@ export default function EmbedRow({ embed }) {
             {embed.workspace.name}
           </a>
         </TableHead>
-        <TableHead scope="row" className="px-6 whitespace-nowrap">
+        <TableHead scope="row">
           {nFormatter(embed._count.embed_chats)}
         </TableHead>
-        <TableHead scope="row" className="px-6 whitespace-nowrap">
+        <TableHead scope="row">
           <ActiveDomains domainList={embed.allowlist_domains} />
         </TableHead>
         <TableHead
           scope="row"
-          className="px-6 whitespace-nowrap text-theme-text-secondary font-normal!"
+          className="text-theme-text-secondary font-normal!"
         >
           {
             // If the embed was created more than a day ago, show the date, otherwise show the time ago
@@ -107,7 +101,7 @@ export default function EmbedRow({ embed }) {
               : moment(embed.createdAt).fromNow()
           }
         </TableHead>
-        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
+        <TableCell className="flex items-center gap-x-6 h-full mt-1">
           <button
             onClick={openSnippetModal}
             className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-code-hover-bg"

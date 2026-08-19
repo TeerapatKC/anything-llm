@@ -129,30 +129,19 @@ export default function WorkspaceRoles({ workspace }) {
         )}
       </div>
 
-      <Table className="w-full max-w-[760px] text-sm mt-6">
-        <TableHeader className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60">
+      <Table className="max-w-[760px] mt-6">
+        <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
           <TableRow>
-            <TableHead scope="col" className="px-6 py-3">
-              Role
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              Permissions
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              Members
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {" "}
-            </TableHead>
+            <TableHead scope="col">Role</TableHead>
+            <TableHead scope="col">Permissions</TableHead>
+            <TableHead scope="col">Members</TableHead>
+            <TableHead scope="col"> </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {own.length === 0 && (
             <TableRow>
-              <TableCell
-                colSpan="4"
-                className="px-6 py-3 text-xs text-theme-text-secondary"
-              >
+              <TableCell colSpan="4" className="text-theme-text-secondary">
                 {workspace.name} has no roles of its own yet — every role below
                 is shared with the rest of the instance.
                 {canDefine &&
@@ -161,11 +150,8 @@ export default function WorkspaceRoles({ workspace }) {
             </TableRow>
           )}
           {[...own, ...shared].map((role) => (
-            <TableRow
-              key={role.id}
-              className="bg-transparent text-theme-text-primary border-b border-theme-sidebar-border"
-            >
-              <TableCell className="px-6 py-4">
+            <TableRow key={role.id}>
+              <TableCell>
                 <div className="flex items-center gap-x-2">
                   <span className="font-medium">{role.displayName}</span>
                   {!role.editableHere && (
@@ -191,13 +177,13 @@ export default function WorkspaceRoles({ workspace }) {
                   </p>
                 )}
               </TableCell>
-              <TableCell className="px-6 py-4 text-theme-text-secondary">
+              <TableCell className="text-theme-text-secondary">
                 {role.permissions.length}
               </TableCell>
-              <TableCell className="px-6 py-4 text-theme-text-secondary">
+              <TableCell className="text-theme-text-secondary">
                 {role.memberCount}
               </TableCell>
-              <TableCell className="px-6 py-4">
+              <TableCell>
                 <div className="flex items-center gap-x-2 justify-end">
                   {canDefine && role.editableHere && (
                     <>

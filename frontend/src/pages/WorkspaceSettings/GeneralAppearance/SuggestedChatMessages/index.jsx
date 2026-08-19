@@ -110,10 +110,10 @@ export default function SuggestedChatMessages({ slug }) {
         <label className="block input-label">
           {t("general.message.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium py-1.5">
+        <p className="text-theme-text-primary/60 text-xs font-medium py-1.5">
           {t("general.message.description")}
         </p>
-        <div className="text-theme-text-primary text-opacity-60 text-sm font-medium">
+        <div className="text-theme-text-primary/60 text-sm font-medium">
           <PreLoader size="4" />
         </div>
       </div>
@@ -125,7 +125,7 @@ export default function SuggestedChatMessages({ slug }) {
         <label className="block input-label">
           {t("general.message.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {t("general.message.description")}
         </p>
       </div>

@@ -153,7 +153,7 @@ export default function AgentSkillSelection({ workspace }) {
   if (loading) return <LoadingSkeleton />;
   if (!config)
     return (
-      <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+      <p className="text-theme-text-primary/60 text-xs font-medium">
         Could not load agent skills for this workspace.
       </p>
     );
@@ -188,7 +188,7 @@ export default function AgentSkillSelection({ workspace }) {
             </span>
           )}
         </div>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           Choose which skills this workspace's agent can use. These apply to
           this workspace only — other workspaces keep their own selection.
         </p>
@@ -388,7 +388,7 @@ function SearchProviderPicker({ value, instanceProvider, onChange }) {
           ))}
         </SelectContent>
       </Select>
-      <p className="text-theme-text-primary text-opacity-40 text-xs">
+      <p className="text-theme-text-primary/40 text-xs">
         API keys for each engine are configured instance-wide under Agent
         Skills.
       </p>
@@ -409,9 +409,7 @@ function EntityGroup({
         {title}
       </p>
       {items.length === 0 ? (
-        <p className="text-theme-text-primary text-opacity-40 text-xs">
-          {emptyText}
-        </p>
+        <p className="text-theme-text-primary/40 text-xs">{emptyText}</p>
       ) : (
         items.map((item) => (
           <Toggle

@@ -17,7 +17,7 @@ export default function UserItems({ connectionKey }) {
   return (
     <div className="flex flex-col gap-y-8">
       {/* Created By Me Section */}
-      <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
+      <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
         <div className="flex items-center justify-between">
           <p className="text-lg leading-6 font-bold text-theme-text-primary">
             Created by me
@@ -31,7 +31,7 @@ export default function UserItems({ connectionKey }) {
             Why can't I see my private items?
           </a>
         </div>
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary">
           Items you have created and shared publicly on the AnythingLLM
           Community Hub.
         </p>
@@ -60,13 +60,13 @@ export default function UserItems({ connectionKey }) {
       </div>
 
       {/* Team Items Section */}
-      <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
+      <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
         <div className="items-center">
           <p className="text-lg leading-6 font-bold text-theme-text-primary">
             Items by team
           </p>
         </div>
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary">
           Public and private items shared with teams you belong to.
         </p>
         <div className="flex flex-col gap-4 mt-4">

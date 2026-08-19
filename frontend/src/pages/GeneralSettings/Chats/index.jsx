@@ -169,7 +169,7 @@ export default function WorkspaceChats() {
             {chats.length > 0 && (
               <button
                 onClick={handleClearAllChats}
-                className="flex items-center gap-x-2 px-4 py-1 border light:border-theme-sidebar-border border-white/40 text-white/80 light:text-black/80 rounded-lg bg-transparent hover:light:text-red-500 hover:text-red-300 hover:bg-white hover:light:bg-red-50 hover:bg-opacity-10 text-xs font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
+                className="flex items-center gap-x-2 px-4 py-1 border light:border-theme-sidebar-border border-white/40 text-white/80 light:text-black/80 rounded-lg bg-transparent hover:light:text-red-500 hover:text-red-300 hover:bg-white/10 hover:light:bg-red-50 text-xs font-semibold shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
               >
                 <Trash2 size={18} />
                 Clear Chats
@@ -234,27 +234,13 @@ function ChatsContainer({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-              {t("recorded.table.id")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("recorded.table.by")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("recorded.table.workspace")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("recorded.table.prompt")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("recorded.table.response")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("recorded.table.at")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-              {" "}
-            </TableHead>
+            <TableHead scope="col">{t("recorded.table.id")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.by")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.workspace")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.prompt")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.response")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.at")}</TableHead>
+            <TableHead scope="col"> </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

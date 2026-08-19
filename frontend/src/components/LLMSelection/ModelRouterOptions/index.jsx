@@ -29,7 +29,7 @@ export default function ModelRouterOptions({ settings }) {
   if (loading) {
     return (
       <div className="w-full flex flex-col gap-y-4">
-        <p className="text-sm text-theme-text-primary text-opacity-60">
+        <p className="text-sm/60 text-theme-text-primary">
           {t("model-router.router-selection.loading-routers")}
         </p>
       </div>
@@ -39,7 +39,7 @@ export default function ModelRouterOptions({ settings }) {
   if (routers.length === 0) {
     return (
       <div className="w-full flex flex-col gap-y-4">
-        <p className="text-sm text-theme-text-primary text-opacity-60">
+        <p className="text-sm/60 text-theme-text-primary">
           {t("model-router.router-selection.no-routers-prefix-settings")}{" "}
           <Link
             to={paths.settings.modelRouters()}

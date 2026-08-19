@@ -128,7 +128,7 @@ export default function GoogleCalendarSkillPanel({
           />
         </div>
 
-        <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-secondary/60 text-xs font-medium">
           <Trans
             i18nKey="agent.skill.googleCalendar.description"
             components={{

@@ -81,15 +81,9 @@ export default function MobileDevices() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col" className="px-6 py-3">
-                  Device Name
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  Registered
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  {" "}
-                </TableHead>
+                <TableHead scope="col">Device Name</TableHead>
+                <TableHead scope="col">Registered</TableHead>
+                <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

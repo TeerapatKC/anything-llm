@@ -47,23 +47,16 @@ export default function InviteRow({ invite }) {
 
   return (
     <>
-      <TableRow
-        ref={rowRef}
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-      >
-        <TableCell scope="row" className="px-6 whitespace-nowrap">
-          {titleCase(status)}
-        </TableCell>
-        <TableCell className="px-6">
+      <TableRow ref={rowRef}>
+        <TableCell scope="row">{titleCase(status)}</TableCell>
+        <TableCell>
           {invite.claimedBy
             ? invite.claimedBy?.username || "deleted user"
             : "--"}
         </TableCell>
-        <TableCell className="px-6">
-          {invite.createdBy?.username || "deleted user"}
-        </TableCell>
-        <TableCell className="px-6">{invite.createdAt}</TableCell>
-        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
+        <TableCell>{invite.createdBy?.username || "deleted user"}</TableCell>
+        <TableCell>{invite.createdAt}</TableCell>
+        <TableCell className="flex items-center gap-x-6 h-full mt-1">
           {status === "pending" && (
             <>
               <button

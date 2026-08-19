@@ -96,20 +96,20 @@ export default function UploadFile({
         {ready === false ? (
           <div className="flex flex-col items-center justify-center h-full">
             <UploadCloud className="w-8 h-8 text-white/80 light:invert" />
-            <div className="text-theme-text-primary text-opacity-80 text-sm font-semibold py-1">
+            <div className="text-theme-text-primary/80 text-sm font-semibold py-1">
               {t("connectors.upload.processor-offline")}
             </div>
-            <div className="text-theme-text-primary text-opacity-60 text-xs font-medium py-1 px-4 text-center">
+            <div className="text-theme-text-primary/60 text-xs font-medium py-1 px-4 text-center">
               {t("connectors.upload.processor-offline-desc")}
             </div>
           </div>
         ) : files.length === 0 ? (
           <div className="flex flex-col items-center justify-center">
             <UploadCloud className="w-8 h-8 text-white/80 light:invert" />
-            <div className="text-theme-text-primary text-opacity-80 text-sm font-semibold py-1">
+            <div className="text-theme-text-primary/80 text-sm font-semibold py-1">
               {t("connectors.upload.click-upload")}
             </div>
-            <div className="text-theme-text-primary text-opacity-60 text-xs font-medium py-1">
+            <div className="text-theme-text-primary/60 text-xs font-medium py-1">
               {t("connectors.upload.file-types")}
             </div>
           </div>
@@ -132,7 +132,7 @@ export default function UploadFile({
           </div>
         )}
       </div>
-      <div className="text-center text-theme-text-primary text-opacity-50 text-xs font-medium w-full py-2">
+      <div className="text-center/50 text-theme-text-primary text-xs font-medium w-full py-2">
         {t("connectors.upload.or-submit-link")}
       </div>
       <form onSubmit={handleSendLink} className="flex gap-x-2">
@@ -157,7 +157,7 @@ export default function UploadFile({
             : t("connectors.upload.fetch-website")}
         </Button>
       </form>
-      <div className="mt-6 text-center text-theme-text-primary text-opacity-80 text-xs font-medium w-full">
+      <div className="mt-6 text-center/80 text-theme-text-primary text-xs font-medium w-full">
         {t("connectors.upload.privacy-notice")}
       </div>
     </div>

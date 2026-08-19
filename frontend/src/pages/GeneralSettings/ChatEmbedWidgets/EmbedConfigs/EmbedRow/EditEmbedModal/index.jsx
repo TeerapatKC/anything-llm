@@ -88,7 +88,7 @@ export default function EditEmbedModal({ embed }) {
           />
 
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary/60 text-xs md:text-sm">
             After creating an embed you will be provided a link that you can
             publish on your website with a simple
             <code className="border-none bg-theme-settings-input-bg text-theme-text-primary mx-1 px-1 rounded-sm">

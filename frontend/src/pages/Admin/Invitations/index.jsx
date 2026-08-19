@@ -73,21 +73,11 @@ export default function AdminInvites() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-                  Status
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  Accepted By
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  Created By
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  Created
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-                  {" "}
-                </TableHead>
+                <TableHead scope="col">Status</TableHead>
+                <TableHead scope="col">Accepted By</TableHead>
+                <TableHead scope="col">Created By</TableHead>
+                <TableHead scope="col">Created</TableHead>
+                <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

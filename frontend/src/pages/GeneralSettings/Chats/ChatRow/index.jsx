@@ -43,28 +43,24 @@ export default function ChatRow({ chat, onDelete }) {
 
   return (
     <>
-      <TableRow className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10">
-        <TableCell className="px-6 font-medium whitespace-nowrap text-theme-text-primary">
-          {chat.id}
-        </TableCell>
-        <TableCell className="px-6 font-medium whitespace-nowrap text-theme-text-primary">
-          {chat.user?.username}
-        </TableCell>
-        <TableCell className="px-6">{chat.workspace?.name}</TableCell>
+      <TableRow>
+        <TableCell className="font-medium">{chat.id}</TableCell>
+        <TableCell className="font-medium">{chat.user?.username}</TableCell>
+        <TableCell>{chat.workspace?.name}</TableCell>
         <TableCell
           onClick={openPromptModal}
-          className="px-6 border-transparent cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
+          className="border-transparent cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
         >
           {truncate(chat.prompt, 40)}
         </TableCell>
         <TableCell
           onClick={openResponseModal}
-          className="px-6 cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
+          className="cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
         </TableCell>
-        <TableCell className="px-6">{chat.createdAt}</TableCell>
-        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
+        <TableCell>{chat.createdAt}</TableCell>
+        <TableCell className="flex items-center gap-x-6 h-full mt-1">
           <Button variant="destructive" onClick={handleDelete}>
             <Trash2 className="h-5 w-5" />
           </Button>

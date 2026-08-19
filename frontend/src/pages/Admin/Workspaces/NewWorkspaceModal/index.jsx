@@ -46,7 +46,7 @@ export default function NewWorkspaceModal() {
             />
           </div>
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary/60 text-xs md:text-sm">
             After creating this workspace only admins will be able to see it.
             You can add users after it has been created.
           </p>

@@ -18,24 +18,17 @@ export default function DocumentSyncQueueRow({ queue }) {
 
   return (
     <>
-      <TableRow
-        ref={rowRef}
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-sm font-medium"
-      >
-        <TableCell scope="row" className="px-6 py-4 whitespace-nowrap">
+      <TableRow ref={rowRef}>
+        <TableCell scope="row">
           {stripUuidAndJsonFromString(queue.workspaceDoc.filename)}
         </TableCell>
-        <TableCell className="px-6 py-4">
-          {moment(queue.lastSyncedAt).fromNow()}
-        </TableCell>
-        <TableCell className="px-6 py-4">
+        <TableCell>{moment(queue.lastSyncedAt).fromNow()}</TableCell>
+        <TableCell>
           {moment(queue.nextSyncAt).format("lll")}
           <i className="text-xs px-2">({moment(queue.nextSyncAt).fromNow()})</i>
         </TableCell>
-        <TableCell className="px-6 py-4">
-          {moment(queue.createdAt).format("lll")}
-        </TableCell>
-        <TableCell className="px-6 py-4 flex items-center gap-x-6">
+        <TableCell>{moment(queue.createdAt).format("lll")}</TableCell>
+        <TableCell className="flex items-center gap-x-6">
           <button
             onClick={handleDelete}
             className="border-none font-medium px-2 py-1 rounded-lg text-theme-text-primary hover:text-red-500"

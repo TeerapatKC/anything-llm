@@ -259,7 +259,7 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           Select the OMLX model you want to use. Models will load after entering
           a valid OMLX URL.
         </p>
@@ -293,7 +293,7 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
           )}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+      <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
         Choose the OMLX model you want to use for your conversations.
       </p>
     </div>

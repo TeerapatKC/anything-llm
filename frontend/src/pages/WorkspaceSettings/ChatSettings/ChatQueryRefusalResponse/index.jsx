@@ -8,7 +8,7 @@ export default function ChatQueryRefusalResponse({ workspace, setHasChanges }) {
         <label htmlFor="name" className="block input-label">
           {t("chat.refusal.title")}
         </label>
-        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary/60 text-xs font-medium">
           {t("chat.refusal.desc-start")}{" "}
           <code className="border-none bg-theme-settings-input-bg p-0.5 rounded-sm">
             {t("chat.refusal.query")}

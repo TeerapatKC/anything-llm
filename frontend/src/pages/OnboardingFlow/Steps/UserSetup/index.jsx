@@ -152,7 +152,7 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
                   onChange={handleUsernameChange}
                 />
               </div>
-              <p className=" text-theme-text-primary text-opacity-80 text-xs font-base">
+              <p className=" text-theme-text-primary/80 text-xs font-base">
                 {t("common.username_requirements")}
               </p>
               <div className="mt-4">
@@ -190,14 +190,14 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
                   onChange={handlePasswordChange}
                 />
               </div>
-              <p className=" text-theme-text-primary text-opacity-80 text-xs font-base">
+              <p className=" text-theme-text-primary/80 text-xs font-base">
                 {t("onboarding.userSetup.adminPasswordReq")}
               </p>
             </div>
           </div>
         </div>
         <div className="flex w-full justify-between items-center px-6 py-4 space-x-6 border-t rounded-b border-theme-sidebar-border">
-          <div className="text-theme-text-secondary text-opacity-80 text-xs font-base">
+          <div className="text-theme-text-secondary/80 text-xs font-base">
             {t("onboarding.userSetup.teamHint")}
           </div>
         </div>

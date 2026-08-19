@@ -117,7 +117,7 @@ export default function AgentSQLConnectorSelection({
             alt="SQL Agent"
             className="w-full rounded-md"
           />
-          <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium py-1.5">
+          <p className="text-theme-text-secondary/60 text-xs font-medium py-1.5">
             {description}
           </p>
           {enabled && (

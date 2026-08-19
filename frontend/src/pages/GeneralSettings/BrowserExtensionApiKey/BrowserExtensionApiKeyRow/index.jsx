@@ -64,11 +64,8 @@ export default function BrowserExtensionApiKeyRow({
   };
 
   return (
-    <TableRow
-      ref={rowRef}
-      className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-    >
-      <TableCell scope="row" className="px-6 py-2 whitespace-nowrap">
+    <TableRow ref={rowRef}>
+      <TableCell scope="row">
         <div className="flex items-center">
           <span className="mr-2 font-mono">{connectionString}</span>
           <div className="flex items-center space-x-2">
@@ -110,13 +107,9 @@ export default function BrowserExtensionApiKeyRow({
           </div>
         </div>
       </TableCell>
-      <TableCell className="px-6 py-2">
-        {apiKey.user ? apiKey.user.username : "N/A"}
-      </TableCell>
-      <TableCell className="px-6 py-2">
-        {new Date(apiKey.createdAt).toLocaleString()}
-      </TableCell>
-      <TableCell className="px-6 py-2">
+      <TableCell>{apiKey.user ? apiKey.user.username : "N/A"}</TableCell>
+      <TableCell>{new Date(apiKey.createdAt).toLocaleString()}</TableCell>
+      <TableCell>
         <Button variant="destructive" onClick={handleRevoke}>
           <Trash2 className="h-4 w-4" />
         </Button>

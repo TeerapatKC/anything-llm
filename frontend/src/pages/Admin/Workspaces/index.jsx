@@ -89,27 +89,15 @@ function WorkspacesContainer() {
   }
 
   return (
-    <Table className="w-full text-xs text-left rounded-lg mt-6 min-w-[640px] border-spacing-0">
+    <Table className="text-left rounded-lg mt-6 min-w-[640px] border-spacing-0">
       <TableHeader>
         <TableRow>
-          <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-            Name
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Link
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Users
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Status
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Created On
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-            {" "}
-          </TableHead>
+          <TableHead scope="col">Name</TableHead>
+          <TableHead scope="col">Link</TableHead>
+          <TableHead scope="col">Users</TableHead>
+          <TableHead scope="col">Status</TableHead>
+          <TableHead scope="col">Created On</TableHead>
+          <TableHead scope="col"> </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

@@ -20,7 +20,7 @@ export default function KokoroTTSOptions({ settings }) {
 
   return (
     <div className="w-full flex flex-col gap-y-7">
-      <p className="text-sm font-base text-theme-text-primary text-opacity-60">
+      <p className="text-sm/60 font-base text-theme-text-primary">
         Connect to a self-hosted{" "}
         <a
           href="https://github.com/remsky/Kokoro-FastAPI"
@@ -46,7 +46,7 @@ export default function KokoroTTSOptions({ settings }) {
             onChange={(e) => setInputEndpoint(e.target.value)}
             onBlur={() => setEndpoint(inputEndpoint)}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             The OpenAI-compatible base URL of your kokoro-fastapi server.
           </p>
         </div>
@@ -62,7 +62,7 @@ export default function KokoroTTSOptions({ settings }) {
             onChange={(e) => setInputApiKey(e.target.value)}
             onBlur={() => setApiKey(inputApiKey)}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Optional — only required if you front your Kokoro server with auth.
           </p>
         </div>
@@ -133,7 +133,7 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
           autoComplete="off"
           spellCheck={false}
         />
-        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+        <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
           Could not reach the Kokoro server to load voices. Enter a voice id
           manually.
         </p>

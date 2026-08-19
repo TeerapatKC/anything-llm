@@ -75,16 +75,9 @@ export default function WorkspaceRow({
 
   return (
     <>
-      <TableRow
-        ref={rowRef}
-        className={`bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10 ${
-          active ? "" : "opacity-60"
-        }`}
-      >
-        <TableHead scope="row" className="px-6 whitespace-nowrap">
-          {workspace.name}
-        </TableHead>
-        <TableCell className="px-6">
+      <TableRow ref={rowRef} className={`${active ? "" : "opacity-60"}`}>
+        <TableHead scope="row">{workspace.name}</TableHead>
+        <TableCell>
           <a
             href={paths.workspace.chat(workspace.slug)}
             target="_blank"
@@ -94,7 +87,7 @@ export default function WorkspaceRow({
             <Link2 className="mr-2 w-4 h-4" /> {workspace.slug}
           </a>
         </TableCell>
-        <TableCell className="px-6">
+        <TableCell>
           <a
             href={paths.workspace.settings.members(workspace.slug)}
             className="text-theme-text-primary flex items-center underline"
@@ -102,7 +95,7 @@ export default function WorkspaceRow({
             {workspace.userIds?.length}
           </a>
         </TableCell>
-        <TableCell className="px-6">
+        <TableCell>
           <div className="flex items-center gap-x-2">
             <Switch
               checked={active}
@@ -116,13 +109,13 @@ export default function WorkspaceRow({
             </span>
           </div>
         </TableCell>
-        <TableCell className="px-6">{workspace.createdAt}</TableCell>
-        <TableCell className="px-6">
+        <TableCell>{workspace.createdAt}</TableCell>
+        <TableCell>
           <div className="flex items-center gap-x-2">
             <a
               href={paths.workspace.settings.generalAppearance(workspace.slug)}
               title="Workspace settings"
-              className="text-xs font-medium text-white/80 light:text-black/80 hover:text-white light:hover:text-black rounded-lg p-2 hover:bg-white hover:light:bg-black/10 hover:bg-opacity-10 inline-flex items-center"
+              className="text-xs font-medium text-white/80 light:text-black/80 hover:text-white light:hover:text-black rounded-lg p-2 hover:bg-white/10 hover:light:bg-black/10 inline-flex items-center"
             >
               <Settings className="h-5 w-5" />
             </a>

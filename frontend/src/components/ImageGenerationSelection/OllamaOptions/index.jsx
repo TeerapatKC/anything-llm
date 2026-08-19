@@ -44,7 +44,7 @@ export default function OllamaImageOptions({ settings }) {
         />
         <ImageDimensionSelection provider="ollama-imggen" settings={settings} />
       </div>
-      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60">
+      <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary">
         Ollama image generation is experimental and only available on macOS.
         Only models that report image generation support will be listed.
       </p>

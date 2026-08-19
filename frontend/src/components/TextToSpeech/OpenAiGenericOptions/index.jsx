@@ -19,7 +19,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
             autoComplete="off"
             spellCheck={false}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             This should be the base URL of the OpenAI compatible TTS service you
             will generate TTS responses from.
           </p>
@@ -36,7 +36,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
             autoComplete="new-password"
             spellCheck={false}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Some TTS services require an API key to generate TTS responses -
             this is optional if your service does not require one.
           </p>
@@ -54,7 +54,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
             autoComplete="off"
             spellCheck={false}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Most TTS services will have several models available. This is the{" "}
             <code>model</code> parameter you will use to select the model you
             want to use. Note: This is not the same as the voice model.
@@ -71,7 +71,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
             autoComplete="off"
             spellCheck={false}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Most TTS services will have several voice models available, this is
             the identifier for the voice model you want to use.
           </p>

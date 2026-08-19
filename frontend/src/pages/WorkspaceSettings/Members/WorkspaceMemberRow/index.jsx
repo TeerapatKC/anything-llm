@@ -43,11 +43,9 @@ export default function WorkspaceMemberRow({
   }
 
   return (
-    <TableRow className="bg-transparent text-theme-text-primary text-sm font-medium">
-      <TableHead scope="row" className="px-6 py-4 whitespace-nowrap">
-        {member.username}
-      </TableHead>
-      <TableCell className="px-6 py-4">
+    <TableRow>
+      <TableHead scope="row">{member.username}</TableHead>
+      <TableCell>
         {canManage ? (
           <Select
             value={roleId}
@@ -69,7 +67,7 @@ export default function WorkspaceMemberRow({
           (member.workspaceRole?.displayName ?? "—")
         )}
       </TableCell>
-      <TableCell className="px-6 py-4">{member.createdAt}</TableCell>
+      <TableCell>{member.createdAt}</TableCell>
     </TableRow>
   );
 }

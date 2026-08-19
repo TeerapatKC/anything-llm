@@ -132,12 +132,12 @@ export default function ChatPromptSettings({
               {t("chat.prompt.title")}
             </label>
           </div>
-          <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+          <p className="text-theme-text-primary/60 text-xs font-medium">
             {t("chat.prompt.description")}
           </p>
 
           <div className="flex items-center justify-between">
-            <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+            <p className="text-theme-text-primary/60 text-xs font-medium">
               You can insert{" "}
               <Link
                 to={paths.settings.systemPromptVariables()}

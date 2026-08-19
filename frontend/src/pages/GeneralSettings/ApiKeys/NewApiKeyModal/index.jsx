@@ -72,7 +72,7 @@ export default function NewApiKeyModal({ onSuccess }) {
                 placeholder={t("api.modal.name.placeholder")}
                 className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5"
               />
-              <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm mt-2">
+              <p className="text-theme-text-primary/60 text-xs md:text-sm mt-2">
                 {t("api.modal.name.helper")}
               </p>
             </div>
@@ -99,7 +99,7 @@ export default function NewApiKeyModal({ onSuccess }) {
               </button>
             </div>
           )}
-          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary/60 text-xs md:text-sm">
             {t("api.modal.helper")}
           </p>
           <a

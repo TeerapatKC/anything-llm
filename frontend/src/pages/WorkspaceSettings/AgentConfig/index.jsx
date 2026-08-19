@@ -111,7 +111,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
             >
               Manage instance-wide agent skills
             </a>
-            <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
+            <p className="text-theme-text-primary/60 text-xs font-medium">
               Instance-wide settings define what is available here and seed
               workspaces that have not been configured yet.
             </p>

@@ -74,34 +74,27 @@ export default function VariableRow({ variable, onRefresh }) {
 
   return (
     <>
-      <TableRow
-        ref={rowRef}
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-      >
-        <TableHead scope="row" className="px-4 py-2 whitespace-nowrap">
-          {variable.key}
-        </TableHead>
-        <TableCell className="px-4 py-2">
+      <TableRow ref={rowRef}>
+        <TableHead scope="row">{variable.key}</TableHead>
+        <TableCell>
           {typeof variable.value === "function"
             ? variable.value()
             : truncate(variable.value, 50)}
         </TableCell>
-        <TableCell className="px-4 py-2">
-          {truncate(variable.description || "-", 50)}
-        </TableCell>
-        <TableCell className="px-4 py-2">
+        <TableCell>{truncate(variable.description || "-", 50)}</TableCell>
+        <TableCell>
           <span
             className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs leading-5 font-semibold ${colorTheme.text} shadow-xs`}
           >
             {titleCase(variable?.type ?? "static")}
           </span>
         </TableCell>
-        <TableCell className="px-4 py-2 flex items-center justify-end gap-x-4">
+        <TableCell className="flex items-center justify-end gap-x-4">
           {variable.type === "static" && (
             <>
               <button
                 onClick={openModal}
-                className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white hover:bg-opacity-10"
+                className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white/10"
               >
                 Edit
               </button>

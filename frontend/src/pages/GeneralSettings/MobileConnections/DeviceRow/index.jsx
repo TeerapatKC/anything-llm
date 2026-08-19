@@ -26,8 +26,8 @@ export default function DeviceRow({ device, removeDevice }) {
 
   return (
     <>
-      <TableRow className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10">
-        <TableCell scope="row" className="px-6 whitespace-nowrap">
+      <TableRow>
+        <TableCell scope="row">
           <div className="flex items-center gap-x-2">
             {device.deviceOs === "ios" ? (
               <AppleLogo
@@ -41,7 +41,7 @@ export default function DeviceRow({ device, removeDevice }) {
             <span className="text-sm">{device.deviceName}</span>
           </div>
         </TableCell>
-        <TableCell className="px-6">
+        <TableCell>
           <div className="flex items-center gap-x-2">
             {moment(device.createdAt).format("lll")}
             {device.user && (
@@ -57,11 +57,11 @@ export default function DeviceRow({ device, removeDevice }) {
             )}
           </div>
         </TableCell>
-        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
+        <TableCell className="flex items-center gap-x-6 h-full mt-1">
           {status ? (
             <button
               onClick={handleDeny}
-              className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white hover:light:bg-red-50 hover:bg-opacity-10`}
+              className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white/10 hover:light:bg-red-50`}
             >
               Revoke
             </button>
@@ -69,13 +69,13 @@ export default function DeviceRow({ device, removeDevice }) {
             <>
               <button
                 onClick={handleApprove}
-                className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white hover:bg-opacity-10 hover:light:bg-green-50 hover:light:text-green-500 hover:text-green-300`}
+                className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white/10 hover:light:bg-green-50 hover:light:text-green-500 hover:text-green-300`}
               >
                 Approve Access
               </button>
               <button
                 onClick={handleDeny}
-                className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white hover:bg-opacity-10 hover:light:bg-red-50 hover:light:text-red-500 hover:text-red-300`}
+                className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white/10 hover:light:bg-red-50 hover:light:text-red-500 hover:text-red-300`}
               >
                 Deny
               </button>

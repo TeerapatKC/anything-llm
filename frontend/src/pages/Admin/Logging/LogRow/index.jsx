@@ -27,15 +27,13 @@ export default function LogRow({ log }) {
     <>
       <TableRow
         onClick={handleRowClick}
-        className={`bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10 ${
-          hasMetadata ? "cursor-pointer hover:bg-white/5" : ""
-        }`}
+        className={`${hasMetadata ? "cursor-pointer hover:bg-white/5" : ""}`}
       >
         <EventBadge event={log.event} />
-        <TableCell className="px-6 border-transparent transform transition-transform duration-200">
+        <TableCell className="border-transparent transform transition-transform duration-200">
           {log.user.username}
         </TableCell>
-        <TableCell className="px-6 border-transparent transform transition-transform duration-200">
+        <TableCell className="border-transparent transform transition-transform duration-200">
           {log.occurredAt}
         </TableCell>
         {hasMetadata && (
@@ -67,14 +65,11 @@ const EventMetadata = ({ metadata, expanded = false }) => {
   if (!metadata || !expanded) return null;
   return (
     <TableRow className="bg-theme-bg-primary">
-      <TableCell
-        colSpan="2"
-        className="px-6 py-4 font-medium text-theme-text-primary rounded-l-2xl"
-      >
+      <TableCell colSpan="2" className="font-medium rounded-l-2xl">
         Event Metadata
       </TableCell>
-      <TableCell colSpan="4" className="px-6 py-4 rounded-r-2xl">
-        <div className="w-full rounded-lg bg-theme-bg-secondary p-2 text-theme-text-primary shadow-xs border-theme-sidebar-border border bg-opacity-10">
+      <TableCell colSpan="4" className="rounded-r-2xl">
+        <div className="w-full rounded-lg bg-theme-bg-secondary/10 p-2 text-theme-text-primary shadow-xs border-theme-sidebar-border border">
           <pre className="overflow-scroll">
             {JSON.stringify(metadata, null, 2)}
           </pre>
@@ -106,7 +101,7 @@ const EventBadge = ({ event }) => {
     };
 
   return (
-    <TableCell className="px-6 py-2 font-medium whitespace-nowrap text-theme-text-primary flex items-center">
+    <TableCell className="font-medium flex items-center">
       <span
         className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs font-medium ${colorTheme.text} shadow-xs`}
       >

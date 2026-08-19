@@ -82,7 +82,7 @@ export default function SettingsSidebar() {
               showBgOverlay
                 ? "transition-all opacity-1"
                 : "transition-none opacity-0"
-            }  duration-500 fixed top-0 left-0 bg-theme-bg-secondary bg-opacity-75 w-screen h-screen`}
+            }  duration-500 fixed top-0 left-0 bg-theme-bg-secondary/75 w-screen h-screen`}
             onClick={() => setShowSidebar(false)}
           />
           <div
@@ -103,7 +103,7 @@ export default function SettingsSidebar() {
                 <div className="flex gap-x-2 items-center text-slate-500 shrink-0">
                   <a
                     href={paths.home()}
-                    className="transition-all duration-300 p-2 rounded-full text-theme-text-primary bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100 hover:border-opacity-50 border-transparent border"
+                    className="transition-all duration-300 p-2 rounded-full text-theme-text-primary bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100/50 border-transparent border"
                   >
                     <House className="h-4 w-4" />
                   </a>
@@ -128,7 +128,7 @@ export default function SettingsSidebar() {
                   </div>
                 </div>
               </div>
-              <div className="absolute bottom-0 left-0 right-0 pt-2 pb-6 rounded-br-[26px] bg-theme-bg-sidebar bg-opacity-80 backdrop-filter backdrop-blur-md">
+              <div className="absolute bottom-0 left-0 right-0 pt-2 pb-6 rounded-br-[26px] bg-theme-bg-sidebar/80 backdrop-filter backdrop-blur-md">
                 <Footer />
               </div>
             </div>

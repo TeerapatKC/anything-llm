@@ -27,7 +27,7 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
   return (
     <TableRow
       onClick={() => toggleSelection(item, folderName)}
-      className={`text-theme-text-primary text-xs grid grid-cols-12 py-2 pl-8 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
+      className={`grid grid-cols-12 py-2 pl-8 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
         selected ? "selected light:text-white" : ""
       }`}
     >

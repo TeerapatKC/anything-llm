@@ -103,7 +103,7 @@ export default function NewInviteModal({ onSuccess }) {
               </button>
             </div>
           )}
-          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary/60 text-xs md:text-sm">
             After creation you will be able to copy the invite and send it to a
             new user where they can create an account as the <b>default</b> role
             and automatically be added to workspaces selected.
@@ -117,7 +117,7 @@ export default function NewInviteModal({ onSuccess }) {
                 <Label htmlFor="workspaces" className="block">
                   Auto-add invitee to workspaces
                 </Label>
-                <p className="text-theme-text-primary text-opacity-60 text-xs">
+                <p className="text-theme-text-primary/60 text-xs">
                   You can optionally automatically assign the user to the
                   workspaces below by selecting them. By default, the user will
                   not have any workspaces visible. You can assign workspaces

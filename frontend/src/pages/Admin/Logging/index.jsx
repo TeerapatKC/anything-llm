@@ -122,18 +122,10 @@ function LogsContainer({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-              {t("event.table.type")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("event.table.user")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              {t("event.table.occurred")}
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-              {" "}
-            </TableHead>
+            <TableHead scope="col">{t("event.table.type")}</TableHead>
+            <TableHead scope="col">{t("event.table.user")}</TableHead>
+            <TableHead scope="col">{t("event.table.occurred")}</TableHead>
+            <TableHead scope="col"> </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

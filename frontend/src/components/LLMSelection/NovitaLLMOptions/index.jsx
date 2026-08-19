@@ -72,7 +72,7 @@ function AdvancedControls({ settings }) {
             min={500}
             step={1}
           />
-          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
+          <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
             Timeout value between token responses to auto-timeout the stream.
           </p>
         </div>

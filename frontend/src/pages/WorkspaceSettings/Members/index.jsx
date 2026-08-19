@@ -71,21 +71,13 @@ export default function Members({ workspace }) {
 
   return (
     <div className="flex justify-between -mt-3">
-      <Table className="w-full max-w-[700px] text-sm text-left rounded-lg">
-        <TableHeader className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60">
+      <Table className="max-w-[700px] text-left rounded-lg">
+        <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
           <TableRow>
-            <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-              Username
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              Workspace role
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3">
-              Date Added
-            </TableHead>
-            <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-              {" "}
-            </TableHead>
+            <TableHead scope="col">Username</TableHead>
+            <TableHead scope="col">Workspace role</TableHead>
+            <TableHead scope="col">Date Added</TableHead>
+            <TableHead scope="col"> </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

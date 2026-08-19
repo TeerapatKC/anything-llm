@@ -90,21 +90,11 @@ function UsersContainer() {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-            Username
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Email
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Role
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3">
-            Date Added
-          </TableHead>
-          <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-            {" "}
-          </TableHead>
+          <TableHead scope="col">Username</TableHead>
+          <TableHead scope="col">Email</TableHead>
+          <TableHead scope="col">Role</TableHead>
+          <TableHead scope="col">Date Added</TableHead>
+          <TableHead scope="col"> </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

@@ -81,24 +81,14 @@ export default function AdminApiKeys() {
             containerClassName="flex w-full"
           />
         ) : (
-          <Table className="w-full text-xs text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0">
+          <Table className="text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0">
             <TableHeader>
               <TableRow>
-                <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
-                  {t("api.table.name")}
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  {t("api.table.key")}
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  {t("api.table.by")}
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3">
-                  {t("api.table.created")}
-                </TableHead>
-                <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
-                  {t("api.actions")}
-                </TableHead>
+                <TableHead scope="col">{t("api.table.name")}</TableHead>
+                <TableHead scope="col">{t("api.table.key")}</TableHead>
+                <TableHead scope="col">{t("api.table.by")}</TableHead>
+                <TableHead scope="col">{t("api.table.created")}</TableHead>
+                <TableHead scope="col">{t("api.actions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

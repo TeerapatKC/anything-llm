@@ -91,26 +91,21 @@ export default function UserRow({
 
   return (
     <>
-      <TableRow
-        ref={rowRef}
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-      >
-        <TableHead scope="row" className="px-6 whitespace-nowrap">
-          {user.username}
-        </TableHead>
-        <TableCell className="px-6">
+      <TableRow ref={rowRef}>
+        <TableHead scope="row">{user.username}</TableHead>
+        <TableCell>
           {user.email || <span className="text-white/40">—</span>}
         </TableCell>
-        <TableCell className="px-6">
+        <TableCell>
           {roles.find((role) => role.name === user.role)?.displayName ??
             titleCase(user.role)}
         </TableCell>
-        <TableCell className="px-6">{user.createdAt}</TableCell>
-        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-2">
+        <TableCell>{user.createdAt}</TableCell>
+        <TableCell className="flex items-center gap-x-6 h-full mt-2">
           {canModify && (
             <button
               onClick={openModal}
-              className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white hover:bg-opacity-10"
+              className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white/10"
             >
               Edit
             </button>
@@ -119,13 +114,13 @@ export default function UserRow({
             <>
               <button
                 onClick={handleResetPassword}
-                className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white hover:bg-opacity-10 whitespace-nowrap"
+                className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white/10 whitespace-nowrap"
               >
                 Reset password
               </button>
               <button
                 onClick={handleSuspend}
-                className="text-xs font-medium text-white/80 light:text-black/80 hover:light:text-orange-500 hover:text-orange-300 rounded-lg px-2 py-1 hover:bg-white hover:light:bg-orange-50 hover:bg-opacity-10"
+                className="text-xs font-medium text-white/80 light:text-black/80 hover:light:text-orange-500 hover:text-orange-300 rounded-lg px-2 py-1 hover:bg-white/10 hover:light:bg-orange-50"
               >
                 {suspended ? "Unsuspend" : "Suspend"}
               </button>
