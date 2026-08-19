@@ -67,9 +67,7 @@ export default function ApiCallNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          URL
-        </Label>
+        <Label className="block mb-2">URL</Label>
         <div className="flex gap-2">
           <VariableInput
             ref={urlInputRef}
@@ -103,14 +101,12 @@ export default function ApiCallNode({
       </div>
 
       <div>
-        <Label variant="field" className="block mb-2">
-          Method
-        </Label>
+        <Label className="block mb-2">Method</Label>
         <Select
           value={config.method}
           onValueChange={(value) => onConfigChange({ method: value })}
         >
-          <SelectTrigger variant="settings">
+          <SelectTrigger>
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>
@@ -172,9 +168,7 @@ export default function ApiCallNode({
 
       {["POST", "PUT", "PATCH"].includes(config.method) && (
         <div>
-          <Label variant="field" className="block mb-2">
-            Request Body
-          </Label>
+          <Label className="block mb-2">Request Body</Label>
           <div className="space-y-2">
             <Select
               value={config.bodyType || "json"}
@@ -266,9 +260,7 @@ export default function ApiCallNode({
       )}
 
       <div>
-        <Label variant="field" className="block mb-2">
-          Store Response In
-        </Label>
+        <Label className="block mb-2">Store Response In</Label>
         {renderVariableSelect(
           config.responseVariable,
           (value) => onConfigChange({ responseVariable: value }),

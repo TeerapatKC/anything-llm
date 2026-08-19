@@ -43,15 +43,10 @@ export default function NewFolderModal({ closeModal, onCreated }) {
         <form onSubmit={handleCreate}>
           <div className="space-y-4">
             <div>
-              <Label
-                variant="field"
-                htmlFor="folderName"
-                className="block mb-2"
-              >
+              <Label htmlFor="folderName" className="block mb-2">
                 Folder Name
               </Label>
               <Input
-                variant="settings"
                 name="folderName"
                 type="text"
                 placeholder="Enter folder name"
@@ -64,10 +59,8 @@ export default function NewFolderModal({ closeModal, onCreated }) {
             {error && <p className="text-red-400 text-sm">Error: {error}</p>}
           </div>
           <DialogFooter className="mt-4 p-0">
-            <DialogClose asChild>
-              <Button variant="muted" type="button">
-                Cancel
-              </Button>
+            <DialogClose render={<Button variant="ghost" type="button" />}>
+              Cancel
             </DialogClose>
             <Button type="submit" variant="default" disabled={creating}>
               {creating ? "Creating..." : "Create Folder"}

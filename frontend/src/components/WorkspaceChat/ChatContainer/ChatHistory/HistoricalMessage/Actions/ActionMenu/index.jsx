@@ -45,14 +45,16 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
   return (
     <div className="mt-2 -ml-0.5 relative" ref={menuRef}>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={toggleMenu}
-            className="border-none text-zinc-300 light:text-slate-500 transition-colors duration-200"
-            aria-label={t("chat_window.more_actions")}
-          >
-            <EllipsisVertical size={24} />
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              onClick={toggleMenu}
+              className="border-none text-zinc-300 light:text-slate-500 transition-colors duration-200"
+              aria-label={t("chat_window.more_actions")}
+            />
+          }
+        >
+          <EllipsisVertical size={24} />
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[250px] text-xs">
           {t("chat_window.more_actions")}

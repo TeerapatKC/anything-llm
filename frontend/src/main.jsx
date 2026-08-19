@@ -294,22 +294,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/interface",
-        lazy: async () => {
-          const { default: InterfaceSettings } = await import(
-            "@/pages/GeneralSettings/Settings/Interface"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={InterfaceSettings}
-                permissions={[PERMISSIONS.SYSTEM_APPEARANCE]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/settings/branding",
         lazy: async () => {
           const { default: BrandingSettings } = await import(

@@ -87,18 +87,20 @@ function FeedbackButton({
   return (
     <div className="mt-3 relative">
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={handleFeedback}
-            className="text-zinc-300 light:text-slate-500"
-            aria-label={tooltipContent}
-          >
-            <IconComponent
-              size={20}
-              className="mb-1"
-              weight={isSelected ? "fill" : "regular"}
+        <TooltipTrigger
+          render={
+            <button
+              onClick={handleFeedback}
+              className="text-zinc-300 light:text-slate-500"
+              aria-label={tooltipContent}
             />
-          </button>
+          }
+        >
+          <IconComponent
+            size={20}
+            className="mb-1"
+            weight={isSelected ? "fill" : "regular"}
+          />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {tooltipContent}
@@ -116,18 +118,20 @@ function CopyMessage({ message }) {
     <>
       <div className="mt-3 relative">
         <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => copyText(message)}
-              className="text-zinc-300 light:text-slate-500"
-              aria-label={t("chat_window.copy")}
-            >
-              {copied ? (
-                <Check size={20} className="mb-1" />
-              ) : (
-                <Copy size={20} className="mb-1" />
-              )}
-            </button>
+          <TooltipTrigger
+            render={
+              <button
+                onClick={() => copyText(message)}
+                className="text-zinc-300 light:text-slate-500"
+                aria-label={t("chat_window.copy")}
+              />
+            }
+          >
+            {copied ? (
+              <Check size={20} className="mb-1" />
+            ) : (
+              <Copy size={20} className="mb-1" />
+            )}
           </TooltipTrigger>
           <TooltipContent side="bottom" className="max-w-[250px] text-xs">
             {t("chat_window.copy")}
@@ -144,14 +148,16 @@ function RegenerateMessage({ regenerateMessage, chatId }) {
   return (
     <div className="mt-3 relative">
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={() => regenerateMessage(chatId)}
-            className="border-none text-zinc-300 light:text-slate-500"
-            aria-label={t("chat_window.regenerate")}
-          >
-            <RefreshCw size={20} className="mb-1 fill-current" />
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              onClick={() => regenerateMessage(chatId)}
+              className="border-none text-zinc-300 light:text-slate-500"
+              aria-label={t("chat_window.regenerate")}
+            />
+          }
+        >
+          <RefreshCw size={20} className="mb-1 fill-current" />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {t("chat_window.regenerate_response")}

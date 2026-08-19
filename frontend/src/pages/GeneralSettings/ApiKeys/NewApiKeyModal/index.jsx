@@ -64,9 +64,7 @@ export default function NewApiKeyModal({ onSuccess }) {
           )}
           {!apiKey && (
             <div>
-              <Label variant="field" className="block mb-2">
-                {t("api.modal.name.label")}
-              </Label>
+              <Label className="block mb-2">{t("api.modal.name.label")}</Label>
               <input
                 type="text"
                 value={name}
@@ -116,20 +114,16 @@ export default function NewApiKeyModal({ onSuccess }) {
         <DialogFooter className="p-0 mt-4">
           {!apiKey ? (
             <>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  {t("api.modal.cancel")}
-                </Button>
+              <DialogClose render={<Button variant="outline" type="button" />}>
+                {t("api.modal.cancel")}
               </DialogClose>
               <Button variant="default" type="submit">
                 {t("api.modal.create")}
               </Button>
             </>
           ) : (
-            <DialogClose asChild>
-              <Button variant="default" type="button">
-                {t("api.modal.close")}
-              </Button>
+            <DialogClose render={<Button variant="default" type="button" />}>
+              {t("api.modal.close")}
             </DialogClose>
           )}
         </DialogFooter>

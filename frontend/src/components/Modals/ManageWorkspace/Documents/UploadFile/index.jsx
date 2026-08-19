@@ -137,7 +137,6 @@ export default function UploadFile({
       </div>
       <form onSubmit={handleSendLink} className="flex gap-x-2">
         <Input
-          variant="settings"
           disabled={fetchingUrl}
           name="link"
           // Not type="url" - that would force the user to type the protocol.

@@ -46,13 +46,17 @@ export default function DockerModelRunnerOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <Label variant="settings">Base URL</Label>
+              <Label>Base URL</Label>
               {loading ? (
                 <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -61,10 +65,12 @@ export default function DockerModelRunnerOptions({ settings }) {
             </div>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
-                  <Info size={18} className="text-theme-text-secondary" />
-                </div>
+              <TooltipTrigger
+                render={
+                  <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full" />
+                }
+              >
+                <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 Enter the URL where the Docker Model Runner is running.
@@ -86,7 +92,6 @@ export default function DockerModelRunnerOptions({ settings }) {
           </div>
 
           <Input
-            variant="settings"
             type="url"
             name="DockerModelRunnerBasePath"
             placeholder="http://localhost:12434/engines/llama.cpp/v1"
@@ -100,15 +105,15 @@ export default function DockerModelRunnerOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label variant="settings" className="block">
-              Model context window
-            </Label>
+            <Label className="block">Model context window</Label>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
-                  <Info size={18} className="text-theme-text-secondary" />
-                </div>
+              <TooltipTrigger
+                render={
+                  <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full" />
+                }
+              >
+                <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 The maximum number of tokens that can be used for a model
@@ -137,7 +142,6 @@ export default function DockerModelRunnerOptions({ settings }) {
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="number"
             name="DockerModelRunnerModelTokenLimit"
             placeholder="4096"

@@ -5,11 +5,8 @@ export default function ChromaCloudOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="ChromaCloudApiKey"
             placeholder="ck-your-api-key-here"
@@ -21,11 +18,8 @@ export default function ChromaCloudOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Tenant ID
-          </Label>
+          <Label className="block mb-3">Tenant ID</Label>
           <Input
-            variant="settings"
             name="ChromaCloudTenant"
             autoComplete="off"
             type="text"
@@ -36,11 +30,8 @@ export default function ChromaCloudOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Database Name
-          </Label>
+          <Label className="block mb-3">Database Name</Label>
           <Input
-            variant="settings"
             name="ChromaCloudDatabase"
             autoComplete="off"
             type="text"

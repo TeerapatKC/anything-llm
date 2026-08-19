@@ -5,11 +5,8 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            Base URL
-          </Label>
+          <Label className="block mb-2">Base URL</Label>
           <Input
-            variant="settings"
             type="url"
             name="STTOpenAICompatibleEndpoint"
             placeholder="http://localhost:8000/v1"
@@ -24,11 +21,8 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            API Key
-          </Label>
+          <Label className="block mb-2">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="STTOpenAICompatibleKey"
             placeholder="API Key"
@@ -44,11 +38,8 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            Transcription Model
-          </Label>
+          <Label className="block mb-2">Transcription Model</Label>
           <Input
-            variant="settings"
             type="text"
             name="STTOpenAICompatibleModel"
             placeholder="Your STT model identifier"

@@ -68,7 +68,7 @@ export default function RouterSelection({ workspace, setHasChanges }) {
         onValueChange={() => setHasChanges(true)}
         required
       >
-        <SelectTrigger variant="settings" className="max-w-[640px]">
+        <SelectTrigger className="max-w-[640px]">
           <SelectValue
             placeholder={t("model-router.router-selection.select-router")}
           />

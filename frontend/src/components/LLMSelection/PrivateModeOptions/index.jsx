@@ -54,14 +54,16 @@ export default function PrivateModeOptions({ settings }) {
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-2">
-            <Label variant="settings">Privatemode Proxy URL</Label>
+            <Label>Privatemode Proxy URL</Label>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                }
+              ></TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 Enter the URL where Privatemode Proxy is running.
                 <br />
@@ -77,7 +79,6 @@ export default function PrivateModeOptions({ settings }) {
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="url"
             name="PrivateModeBasePath"
             placeholder="eg: http://127.0.0.1:8080"
@@ -89,12 +90,10 @@ export default function PrivateModeOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            Chat Model
-          </Label>
+          <Label className="block mb-2">Chat Model</Label>
           {loading ? (
             <Select name="PrivateModeModelPref" required={true} disabled={true}>
-              <SelectTrigger variant="settings">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="---- Loading ----" />
               </SelectTrigger>
               <SelectContent />
@@ -110,7 +109,7 @@ export default function PrivateModeOptions({ settings }) {
               onValueChange={setModel}
               required={true}
             >
-              <SelectTrigger variant="settings">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="-- Select a model --" />
               </SelectTrigger>
               <SelectContent>

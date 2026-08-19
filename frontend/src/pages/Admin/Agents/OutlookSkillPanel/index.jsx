@@ -329,11 +329,13 @@ function ConfigurationSection({
         <div className="p-3 flex flex-col gap-y-4 border-t border-theme-sidebar-border/50">
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <Label variant="field">{t("agent.skill.outlook.authType")}</Label>
+              <Label>{t("agent.skill.outlook.authType")}</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info size={16} className="text-theme-text-secondary" />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info size={16} className="text-theme-text-secondary" />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   {t("agent.skill.outlook.authTypeHelp")}
                 </TooltipContent>
@@ -365,11 +367,13 @@ function ConfigurationSection({
 
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <Label variant="field">{t("agent.skill.outlook.clientId")}</Label>
+              <Label>{t("agent.skill.outlook.clientId")}</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info size={16} className="text-theme-text-secondary" />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info size={16} className="text-theme-text-secondary" />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   {t("agent.skill.outlook.clientIdHelp")}
                 </TooltipContent>
@@ -390,13 +394,13 @@ function ConfigurationSection({
           {showTenantId && (
             <div className="flex flex-col gap-y-2">
               <div className="flex items-center gap-x-2">
-                <Label variant="field">
-                  {t("agent.skill.outlook.tenantId")}
-                </Label>
+                <Label>{t("agent.skill.outlook.tenantId")}</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info size={16} className="text-theme-text-secondary" />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info size={16} className="text-theme-text-secondary" />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     {t("agent.skill.outlook.tenantIdHelp")}
                   </TooltipContent>
@@ -417,13 +421,13 @@ function ConfigurationSection({
 
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <Label variant="field">
-                {t("agent.skill.outlook.clientSecret")}
-              </Label>
+              <Label>{t("agent.skill.outlook.clientSecret")}</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info size={16} className="text-theme-text-secondary" />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info size={16} className="text-theme-text-secondary" />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   {t("agent.skill.outlook.clientSecretHelp")}
                 </TooltipContent>

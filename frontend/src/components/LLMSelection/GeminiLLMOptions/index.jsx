@@ -20,11 +20,8 @@ export default function GeminiLLMOptions({ settings }) {
     <div className="w-full flex flex-col">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Google AI API Key
-          </Label>
+          <Label className="block mb-3">Google AI API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="GeminiLLMApiKey"
             placeholder="Google Gemini API Key"
@@ -46,7 +43,7 @@ export default function GeminiLLMOptions({ settings }) {
             We are not using the generativeAPI endpoint and therefore cannot set the safety threshold.
 
             <div className="flex flex-col w-60">
-              <Label variant="settings" className="block mb-3">
+              <Label className="block mb-3">
                 Safety Setting
               </Label>
               <select
@@ -98,11 +95,9 @@ function GeminiModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="GeminiLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -113,9 +108,7 @@ function GeminiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="GeminiLLMModelPref"
         required={true}
@@ -130,7 +123,7 @@ function GeminiModelSelection({ apiKey, settings }) {
           ]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

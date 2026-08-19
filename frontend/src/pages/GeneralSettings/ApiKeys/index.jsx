@@ -9,7 +9,7 @@ import NewApiKeyModal from "./NewApiKeyModal";
 import paths from "@/utils/paths";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -57,10 +57,12 @@ export default function AdminApiKeys() {
           open={isOpen}
           onOpenChange={(open) => (open ? openModal() : closeModal())}
         >
-          <DialogTrigger asChild>
-            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-14 z-10">
-              <CirclePlus className="h-4 w-4" /> {t("api.generate")}
-            </CTAButton>
+          <DialogTrigger
+            render={
+              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-14 z-10" />
+            }
+          >
+            <CirclePlus className="h-4 w-4" /> {t("api.generate")}
           </DialogTrigger>
           <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
             <NewApiKeyModal onSuccess={fetchExistingKeys} />
@@ -79,38 +81,27 @@ export default function AdminApiKeys() {
             containerClassName="flex w-full"
           />
         ) : (
-          <Table
-            variant="none"
-            className="w-full text-xs text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0"
-          >
-            <TableHeader variant="settings">
-              <TableRow variant="none">
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-3 rounded-tl-lg"
-                >
+          <Table className="w-full text-xs text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0">
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
                   {t("api.table.name")}
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   {t("api.table.key")}
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   {t("api.table.by")}
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   {t("api.table.created")}
                 </TableHead>
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-3 rounded-tr-lg"
-                >
+                <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
                   {t("api.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody variant="none">
+            <TableBody>
               {apiKeys.length === 0 ? (
                 <TableEmptyRow colSpan="5">{t("api.empty")}</TableEmptyRow>
               ) : (

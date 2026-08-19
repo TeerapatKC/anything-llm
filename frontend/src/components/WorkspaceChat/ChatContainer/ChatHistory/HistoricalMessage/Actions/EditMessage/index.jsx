@@ -30,18 +30,20 @@ export function EditMessageAction({ chatId = null, role, isEditing }) {
   return (
     <div
       className={`mt-3 relative ${
-        role === "user" && !isEditing ? "" : "!opacity-100"
+        role === "user" && !isEditing ? "" : "opacity-100!"
       }`}
     >
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={handleEditClick}
-            className="border-none text-zinc-300 light:text-slate-500 px-0"
-            aria-label={`Edit ${role === "user" ? t("chat_window.edit_prompt") : t("chat_window.edit_response")}`}
-          >
-            <Pencil size={21} className="mb-1" />
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              onClick={handleEditClick}
+              className="border-none text-zinc-300 light:text-slate-500 px-0"
+              aria-label={`Edit ${role === "user" ? t("chat_window.edit_prompt") : t("chat_window.edit_response")}`}
+            />
+          }
+        >
+          <Pencil size={21} className="mb-1" />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">{`${
           role === "user"

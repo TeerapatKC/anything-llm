@@ -20,7 +20,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
  */
 
 const OVERLAY_CLASSES =
-  "bg-black/60 backdrop-blur-sm fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-50";
+  "bg-black/60 backdrop-blur-xs fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-50";
 
 /**
  *

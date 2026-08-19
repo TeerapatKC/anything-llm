@@ -17,9 +17,7 @@ export default function WebScrapingNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          URL to Scrape
-        </Label>
+        <Label className="block mb-2">URL to Scrape</Label>
         <VariableInput
           value={config?.url || ""}
           onChange={(e) =>
@@ -33,16 +31,14 @@ export default function WebScrapingNode({
       </div>
 
       <div>
-        <Label variant="field" className="block mb-2">
-          Capture Page Content As
-        </Label>
+        <Label className="block mb-2">Capture Page Content As</Label>
         <Select
           value={config.captureAs}
           onValueChange={(value) =>
             onConfigChange({ ...config, captureAs: value })
           }
         >
-          <SelectTrigger variant="settings">
+          <SelectTrigger>
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>
@@ -61,9 +57,7 @@ export default function WebScrapingNode({
 
       {config.captureAs === "querySelector" && (
         <div>
-          <Label variant="field" className="block mb-2">
-            Query Selector
-          </Label>
+          <Label className="block mb-2">Query Selector</Label>
           <p className="text-xs text-theme-text-secondary mb-2">
             Enter a valid CSS selector to scrape the content of the page.
           </p>
@@ -97,9 +91,7 @@ export default function WebScrapingNode({
         }
       />
       <div>
-        <Label variant="field" className="block mb-2">
-          Result Variable
-        </Label>
+        <Label className="block mb-2">Result Variable</Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ ...config, resultVariable: value }),

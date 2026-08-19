@@ -22,11 +22,10 @@ export default function AzureAiOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7 mt-1.5">
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
+          <Label className="block mb-3">
             {t("llm.providers.azure_openai.azure_service_endpoint")}
           </Label>
           <Input
-            variant="settings"
             type="url"
             name="AzureOpenAiEndpoint"
             placeholder="https://my-azure.openai.azure.com"
@@ -38,11 +37,10 @@ export default function AzureAiOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
+          <Label className="block mb-3">
             {t("llm.providers.azure_openai.api_key")}
           </Label>
           <Input
-            variant="settings"
             type="password"
             name="AzureOpenAiKey"
             placeholder="Azure OpenAI API Key"
@@ -54,11 +52,10 @@ export default function AzureAiOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
+          <Label className="block mb-3">
             {t("llm.providers.azure_openai.chat_deployment_name")}
           </Label>
           <Input
-            variant="settings"
             type="text"
             name="AzureOpenAiModelPref"
             placeholder="Azure OpenAI chat model deployment name"
@@ -72,7 +69,7 @@ export default function AzureAiOptions({ settings }) {
 
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
+          <Label className="block mb-3">
             {t("llm.providers.azure_openai.chat_model_token_limit")}
           </Label>
           {/* Radix only deals in string values, where a native select coerced
@@ -82,7 +79,7 @@ export default function AzureAiOptions({ settings }) {
             defaultValue={String(settings?.AzureOpenAiTokenLimit || 4096)}
             required={true}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -103,18 +100,20 @@ export default function AzureAiOptions({ settings }) {
 
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label variant="settings" className="block">
+            <Label className="block">
               {t("llm.providers.azure_openai.model_type")}
             </Label>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <div
-                  type="button"
-                  className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
-                >
-                  <Info size={18} className="text-theme-text-secondary" />
-                </div>
+              <TooltipTrigger
+                render={
+                  <div
+                    type="button"
+                    className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full"
+                  />
+                }
+              >
+                <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 {t("llm.providers.azure_openai.model_type_tooltip")}
@@ -126,7 +125,7 @@ export default function AzureAiOptions({ settings }) {
             defaultValue={settings?.AzureOpenAiModelType || "default"}
             required={true}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>

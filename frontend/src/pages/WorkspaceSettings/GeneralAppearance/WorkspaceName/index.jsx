@@ -14,7 +14,6 @@ export default function WorkspaceName({ workspace, setHasChanges }) {
         </p>
       </div>
       <Input
-        variant="settings"
         name="name"
         type="text"
         minLength={2}

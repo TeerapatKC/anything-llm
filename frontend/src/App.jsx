@@ -34,7 +34,7 @@ export default function App() {
                   <I18nextProvider i18n={i18n}>
                     {/* delayDuration matches the delayShow={300} the
                         react-tooltip call sites used. */}
-                    <TooltipProvider delayDuration={300}>
+                    <TooltipProvider delay={300}>
                       <Outlet />
                       <ToastContainer />
                       <KeyboardShortcutsHelp />

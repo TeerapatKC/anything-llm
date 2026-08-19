@@ -94,11 +94,8 @@ export default function AccountModal({ user, hideModal }) {
   return (
     <>
       <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
-        <DialogContent
-          scrollable={false}
-          className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden"
-        >
-          <DialogHeader sticky={false} className="p-4">
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
+          <DialogHeader className="p-4">
             <DialogTitle className="text-lg font-semibold">
               {t("profile_settings.edit_account")}
             </DialogTitle>
@@ -146,15 +143,10 @@ export default function AccountModal({ user, hideModal }) {
               </div>
               <div className="flex flex-col gap-y-3 px-4">
                 <div>
-                  <Label
-                    variant="field"
-                    htmlFor="username"
-                    className="block mb-2"
-                  >
+                  <Label htmlFor="username" className="block mb-2">
                     {t("profile_settings.username")}
                   </Label>
                   <Input
-                    variant="settings"
                     name="username"
                     type="text"
                     placeholder="User's username"
@@ -170,11 +162,10 @@ export default function AccountModal({ user, hideModal }) {
                   </p>
                 </div>
                 <div>
-                  <Label variant="field" htmlFor="email" className="block mb-2">
+                  <Label htmlFor="email" className="block mb-2">
                     {t("profile_settings.email")}
                   </Label>
                   <Input
-                    variant="settings"
                     name="email"
                     type="email"
                     placeholder="user@example.com"
@@ -185,7 +176,7 @@ export default function AccountModal({ user, hideModal }) {
                   />
                 </div>
                 <div>
-                  <Label variant="field" className="block mb-2">
+                  <Label className="block mb-2">
                     {t("profile_settings.password")}
                   </Label>
                   <Button
@@ -200,11 +191,10 @@ export default function AccountModal({ user, hideModal }) {
                   </p>
                 </div>
                 <div>
-                  <Label variant="field" htmlFor="bio" className="block mb-2">
+                  <Label htmlFor="bio" className="block mb-2">
                     Bio
                   </Label>
                   <Textarea
-                    variant="settings"
                     name="bio"
                     placeholder="Tell us about yourself..."
                     defaultValue={user.bio}
@@ -219,10 +209,10 @@ export default function AccountModal({ user, hideModal }) {
                 </div>
               </div>
               <DialogFooter className="p-4">
-                <DialogClose asChild>
-                  <Button variant="outline" type="button">
-                    {t("profile_settings.cancel")}
-                  </Button>
+                <DialogClose
+                  render={<Button variant="outline" type="button" />}
+                >
+                  {t("profile_settings.cancel")}
                 </DialogClose>
                 <Button variant="default" type="submit">
                   {t("profile_settings.update_account")}
@@ -257,14 +247,12 @@ function AutoSubmitPreference() {
   return (
     <div>
       <div className="flex items-center gap-x-1 mb-2">
-        <Label variant="field" htmlFor="autoSubmit" className="block">
+        <Label htmlFor="autoSubmit" className="block">
           {t("customization.chat.auto_submit.title")}
         </Label>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="cursor-pointer h-fit">
-              <Info size={16} className="text-theme-text-primary" />
-            </div>
+          <TooltipTrigger render={<div className="cursor-pointer h-fit" />}>
+            <Info size={16} className="text-theme-text-primary" />
           </TooltipTrigger>
           <TooltipContent side="bottom" className="max-w-[250px] text-xs">
             {t("customization.chat.auto_submit.description")}
@@ -296,14 +284,12 @@ function AutoSpeakPreference() {
   return (
     <div>
       <div className="flex items-center gap-x-1 mb-2">
-        <Label variant="field" htmlFor="autoSpeak" className="block">
+        <Label htmlFor="autoSpeak" className="block">
           {t("customization.chat.auto_speak.title")}
         </Label>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="cursor-pointer h-fit">
-              <Info size={16} className="text-theme-text-primary" />
-            </div>
+          <TooltipTrigger render={<div className="cursor-pointer h-fit" />}>
+            <Info size={16} className="text-theme-text-primary" />
           </TooltipTrigger>
           <TooltipContent side="bottom" className="max-w-[250px] text-xs">
             {t("customization.chat.auto_speak.description")}

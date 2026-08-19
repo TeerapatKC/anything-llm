@@ -67,7 +67,7 @@ export default function ImageModelSelection({
     return (
       <ModelSelectionWrapper>
         <Select name="ImageGenerationModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 needsBasePath
@@ -103,7 +103,7 @@ export default function ImageModelSelection({
   return (
     <ModelSelectionWrapper>
       <Select name="ImageGenerationModelPref" required={true}>
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>
@@ -132,9 +132,7 @@ export default function ImageModelSelection({
 function ModelSelectionWrapper({ children, hint = null }) {
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Model
-      </Label>
+      <Label className="block mb-3">Model</Label>
       {children}
       {hint && (
         <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">

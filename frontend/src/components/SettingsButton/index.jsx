@@ -20,14 +20,16 @@ export default function SettingsButton() {
     return (
       <div className="flex w-fit">
         <Tooltip>
-          <TooltipTrigger asChild>
-            <Link
-              to={paths.home()}
-              className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-              aria-label="Home"
-            >
-              <Undo2 className="h-5 w-5 text-theme-text-primary light:text-slate-800 fill-current" />
-            </Link>
+          <TooltipTrigger
+            render={
+              <Link
+                to={paths.home()}
+                className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+                aria-label="Home"
+              />
+            }
+          >
+            <Undo2 className="h-5 w-5 text-theme-text-primary light:text-slate-800 fill-current" />
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-[250px] text-xs">
             Back to workspaces
@@ -39,14 +41,16 @@ export default function SettingsButton() {
   return (
     <div className="flex w-fit">
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Link
-            to={paths.settings.interface()}
-            className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
-            aria-label="Settings"
-          >
-            <Wrench className="h-5 w-5 text-theme-text-primary light:text-slate-800 fill-current" />
-          </Link>
+        <TooltipTrigger
+          render={
+            <Link
+              to={paths.settings.branding()}
+              className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
+              aria-label="Settings"
+            />
+          }
+        >
+          <Wrench className="h-5 w-5 text-theme-text-primary light:text-slate-800 fill-current" />
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[250px] text-xs">
           Open settings

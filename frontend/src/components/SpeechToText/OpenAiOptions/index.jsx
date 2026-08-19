@@ -17,11 +17,8 @@ export default function OpenAiSpeechToTextOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="OpenAiKey"
           placeholder="OpenAI API Key"
@@ -58,11 +55,9 @@ function OpenAiSttModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Transcription Model
-        </Label>
+        <Label className="block mb-3">Transcription Model</Label>
         <Select name="STTOpenAIModel" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -73,15 +68,13 @@ function OpenAiSttModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Transcription Model
-      </Label>
+      <Label className="block mb-3">Transcription Model</Label>
       <Select
         name="STTOpenAIModel"
         required={true}
         defaultValue={settings?.STTOpenAIModel ?? "whisper-1"}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

@@ -15,11 +15,8 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Base URL
-          </Label>
+          <Label className="block mb-3">Base URL</Label>
           <Input
-            variant="settings"
             type="url"
             name="EmbeddingBasePath"
             placeholder="https://api.openai.com/v1"
@@ -30,11 +27,8 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Embedding Model
-          </Label>
+          <Label className="block mb-3">Embedding Model</Label>
           <Input
-            variant="settings"
             type="text"
             name="EmbeddingModelPref"
             placeholder="text-embedding-ada-002"
@@ -46,23 +40,22 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center mb-3 gap-x-1">
-            <Label variant="settings" className="block">
-              Max embedding chunk length
-            </Label>
+            <Label className="block">Max embedding chunk length</Label>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Info
-                  size={18}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                }
+              ></TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 Maximum length of text chunks, in characters, for embedding.
               </TooltipContent>
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
             placeholder="8192"
@@ -77,12 +70,11 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
-            <Label variant="settings" className="flex items-center gap-x-2">
-              API Key <p className="!text-xs !italic !font-thin">optional</p>
+            <Label className="flex items-center gap-x-2">
+              API Key <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
-            variant="settings"
             type="password"
             name="GenericOpenAiEmbeddingApiKey"
             placeholder="sk-mysecretkey"
@@ -96,7 +88,8 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -114,13 +107,12 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         <div className="w-full flex items-start gap-4 flex-wrap">
           <div className="flex flex-col w-60">
             <div className="flex flex-col gap-y-1 mb-4">
-              <Label variant="settings" className="flex items-center gap-x-2">
+              <Label className="flex items-center gap-x-2">
                 Max concurrent Chunks
-                <p className="!text-xs !italic !font-thin">optional</p>
+                <p className="text-xs! italic! font-thin!">optional</p>
               </Label>
             </div>
             <Input
-              variant="settings"
               type="number"
               name="GenericOpenAiEmbeddingMaxConcurrentChunks"
               placeholder="500"
@@ -134,16 +126,18 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-4 gap-x-1">
-              <Label variant="settings" className="flex items-center gap-x-2">
+              <Label className="flex items-center gap-x-2">
                 Passage Prefix
               </Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
                     Text prepended to each chunk of content before embedding for
@@ -158,7 +152,6 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
               </Tooltip>
             </div>
             <Input
-              variant="settings"
               type="text"
               name="GenericOpenAiEmbeddingPassagePrefix"
               placeholder="passage: "
@@ -170,16 +163,16 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-4 gap-x-1">
-              <Label variant="settings" className="flex items-center gap-x-2">
-                Query Prefix
-              </Label>
+              <Label className="flex items-center gap-x-2">Query Prefix</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
                     Text prepended to the query text before embedding for
@@ -194,7 +187,6 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
               </Tooltip>
             </div>
             <Input
-              variant="settings"
               type="text"
               name="GenericOpenAiEmbeddingQueryPrefix"
               placeholder="query: "

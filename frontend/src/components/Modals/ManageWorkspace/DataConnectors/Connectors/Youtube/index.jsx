@@ -54,7 +54,7 @@ export default function YoutubeOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">{t("connectors.youtube.URL")}</Label>
+                  <Label>{t("connectors.youtube.URL")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.youtube.URL_explained_start")}
                     <a
@@ -70,7 +70,6 @@ export default function YoutubeOptions() {
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="url"
                   name="url"
                   placeholder="https://youtube.com/watch?v=abc123"
@@ -83,7 +82,7 @@ export default function YoutubeOptions() {
           </div>
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <Button variant="homePrimary" type="submit" disabled={loading}>
+            <Button variant="default" type="submit" disabled={loading}>
               {loading ? "Collecting transcript..." : "Collect transcript"}
             </Button>
             {loading && (

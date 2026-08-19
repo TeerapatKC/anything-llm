@@ -48,32 +48,22 @@ export default function InviteRow({ invite }) {
   return (
     <>
       <TableRow
-        variant="none"
         ref={rowRef}
         className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
-        <TableCell
-          variant="none"
-          scope="row"
-          className="px-6 whitespace-nowrap"
-        >
+        <TableCell scope="row" className="px-6 whitespace-nowrap">
           {titleCase(status)}
         </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           {invite.claimedBy
             ? invite.claimedBy?.username || "deleted user"
             : "--"}
         </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           {invite.createdBy?.username || "deleted user"}
         </TableCell>
-        <TableCell variant="none" className="px-6">
-          {invite.createdAt}
-        </TableCell>
-        <TableCell
-          variant="none"
-          className="px-6 flex items-center gap-x-6 h-full mt-1"
-        >
+        <TableCell className="px-6">{invite.createdAt}</TableCell>
+        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
           {status === "pending" && (
             <>
               <button
@@ -83,7 +73,7 @@ export default function InviteRow({ invite }) {
               >
                 {copied ? "Copied" : "Copy Invite Link"}
               </button>
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="destructive" onClick={handleDelete}>
                 <Trash2 className="h-5 w-5" />
               </Button>
             </>

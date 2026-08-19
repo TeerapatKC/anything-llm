@@ -47,14 +47,8 @@ export default function ChatRow({ chat, onDelete }) {
 
   return (
     <>
-      <TableRow
-        variant="none"
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-      >
-        <TableCell
-          variant="none"
-          className="px-6 font-medium whitespace-nowrap text-theme-text-primary"
-        >
+      <TableRow className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10">
+        <TableCell className="px-6 font-medium whitespace-nowrap text-theme-text-primary">
           <a
             href={paths.settings.embedChatWidgets()}
             target="_blank"
@@ -65,7 +59,6 @@ export default function ChatRow({ chat, onDelete }) {
           </a>
         </TableCell>
         <TableCell
-          variant="none"
           onClick={openConnectionDetailsModal}
           className="px-6 cursor-pointer hover:shadow-lg"
         >
@@ -74,26 +67,19 @@ export default function ChatRow({ chat, onDelete }) {
           </div>
         </TableCell>
         <TableCell
-          variant="none"
           onClick={openPromptModal}
           className="px-6 border-transparent cursor-pointer hover:shadow-lg"
         >
           {truncate(chat.prompt, 40)}
         </TableCell>
         <TableCell
-          variant="none"
           onClick={openResponseModal}
           className="px-6 cursor-pointer hover:shadow-lg"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
         </TableCell>
-        <TableCell variant="none" className="px-6">
-          {chat.createdAt}
-        </TableCell>
-        <TableCell
-          variant="none"
-          className="px-6 flex items-center gap-x-6 h-full mt-1"
-        >
+        <TableCell className="px-6">{chat.createdAt}</TableCell>
+        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
           <button
             onClick={handleDelete}
             className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-delete-hover-bg"

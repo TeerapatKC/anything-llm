@@ -249,7 +249,11 @@ export default function ToolsSelector({
                             : "cursor-pointer"
                         }
                       >
-                        <Checkbox state={state} disabled={cat.requiresSetup} />
+                        <Checkbox
+                          checked={state === "checked"}
+                          indeterminate={state === "indeterminate"}
+                          disabled={cat.requiresSetup}
+                        />
                       </span>
                     </button>
 
@@ -306,7 +310,7 @@ export default function ToolsSelector({
                                 )}
                               </div>
                               <Checkbox
-                                state={isSelected ? "checked" : "unchecked"}
+                                checked={isSelected}
                                 disabled={itemNeedsSetup}
                               />
                             </button>

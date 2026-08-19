@@ -35,7 +35,7 @@ export default function CardMenu({
   return createPortal(
     <div
       ref={menuRef}
-      className="fixed z-[9999] bg-zinc-800 light:bg-slate-50 border border-zinc-700 light:border-slate-300 rounded-lg py-3 px-2 flex flex-col shadow-lg w-[175px]"
+      className="fixed z-9999 bg-zinc-800 light:bg-slate-50 border border-zinc-700 light:border-slate-300 rounded-lg py-3 px-2 flex flex-col shadow-lg w-[175px]"
       style={{ top: pos.top, left: pos.left }}
     >
       <MenuItem label={t("chat_window.memories.menu.edit")} onClick={onEdit} />

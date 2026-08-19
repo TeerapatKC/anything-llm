@@ -4,11 +4,8 @@ export default function TextGenWebUIOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5 flex-wrap">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Base URL
-        </Label>
+        <Label className="block mb-3">Base URL</Label>
         <Input
-          variant="settings"
           type="url"
           name="TextGenWebUIBasePath"
           placeholder="http://127.0.0.1:5000/v1"
@@ -19,11 +16,8 @@ export default function TextGenWebUIOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Model context window
-        </Label>
+        <Label className="block mb-3">Model context window</Label>
         <Input
-          variant="settings"
           type="number"
           name="TextGenWebUITokenLimit"
           placeholder="Content window limit (eg: 4096)"
@@ -35,11 +29,8 @@ export default function TextGenWebUIOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key (Optional)
-        </Label>
+        <Label className="block mb-3">API Key (Optional)</Label>
         <Input
-          variant="settings"
           type="password"
           name="TextGenWebUIAPIKey"
           placeholder="TextGen Web UI API Key"

@@ -68,9 +68,9 @@ const VariableInput = forwardRef(function VariableInput(
     backdropRef.current.scrollLeft = e.target.scrollLeft;
   };
 
-  const fontClass = mono ? "!font-mono" : "";
+  const fontClass = mono ? "font-mono!" : "";
   const wrapClass = multiline
-    ? "whitespace-pre-wrap break-words"
+    ? "whitespace-pre-wrap wrap-break-word"
     : "whitespace-pre";
 
   // input and textarea behave identically here except for the tag, the resize

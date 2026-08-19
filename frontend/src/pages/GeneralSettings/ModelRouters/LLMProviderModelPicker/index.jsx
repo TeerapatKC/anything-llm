@@ -277,10 +277,8 @@ function ProviderSetupModal({ isOpen, provider, settings, onSave, onClose }) {
           </p>
           <div className="space-y-4">{provider.options(settings ?? {})}</div>
           <DialogFooter className="p-0 mt-5">
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                {t("model-router.provider-picker.cancel")}
-              </Button>
+            <DialogClose render={<Button variant="outline" type="button" />}>
+              {t("model-router.provider-picker.cancel")}
             </DialogClose>
             <Button variant="default" type="submit" form="provider-setup-form">
               {t("model-router.provider-picker.save-settings")}

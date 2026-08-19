@@ -185,7 +185,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
               <div
                 className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
                   selectedOption === "job"
-                    ? "bg-[var(--theme-sidebar-item-workspace-active)]"
+                    ? "bg-(--theme-sidebar-item-workspace-active)"
                     : ""
                 }`}
               ></div>
@@ -194,7 +194,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
               </div>
             </label>
             <label
-              className={`border-solid transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border-[1px] ${
+              className={`border-solid transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
                 selectedOption === "personal"
                   ? "border-theme-sidebar-item-workspace-active bg-theme-bg-secondary"
                   : "border-theme-sidebar-border"
@@ -211,7 +211,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
               <div
                 className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
                   selectedOption === "personal"
-                    ? "bg-[var(--theme-sidebar-item-workspace-active)]"
+                    ? "bg-(--theme-sidebar-item-workspace-active)"
                     : ""
                 }`}
               ></div>
@@ -220,7 +220,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
               </div>
             </label>
             <label
-              className={`border-solid transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border-[1px] ${
+              className={`border-solid transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
                 selectedOption === "other"
                   ? "border-theme-sidebar-item-workspace-active bg-theme-bg-secondary"
                   : "border-theme-sidebar-border"
@@ -237,7 +237,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
               <div
                 className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
                   selectedOption === "other"
-                    ? "bg-[var(--theme-sidebar-item-workspace-active)]"
+                    ? "bg-(--theme-sidebar-item-workspace-active)"
                     : ""
                 }`}
               ></div>

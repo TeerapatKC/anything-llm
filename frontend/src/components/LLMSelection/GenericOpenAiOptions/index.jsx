@@ -27,11 +27,8 @@ export default function GenericOpenAiOptions({ settings }) {
     <div className="flex flex-col gap-y-7">
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Base URL
-          </Label>
+          <Label className="block mb-3">Base URL</Label>
           <Input
-            variant="settings"
             type="url"
             name="GenericOpenAiBasePath"
             placeholder="eg: https://proxy.openai.com"
@@ -43,11 +40,8 @@ export default function GenericOpenAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="GenericOpenAiKey"
             placeholder="Generic service API Key"
@@ -68,11 +62,8 @@ export default function GenericOpenAiOptions({ settings }) {
       </div>
       <div className="flex gap-[36px] flex-wrap">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Model context window
-          </Label>
+          <Label className="block mb-3">Model context window</Label>
           <Input
-            variant="settings"
             type="number"
             name="GenericOpenAiTokenLimit"
             placeholder="Content window limit (eg: 4096)"
@@ -84,11 +75,8 @@ export default function GenericOpenAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Max Tokens
-          </Label>
+          <Label className="block mb-3">Max Tokens</Label>
           <Input
-            variant="settings"
             type="number"
             name="GenericOpenAiMaxTokens"
             placeholder="Max tokens per request (eg: 1024)"
@@ -141,10 +129,10 @@ function GenericOpenAiModelSelection({
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <Label variant="settings">Selected Model</Label>
+          <Label>Selected Model</Label>
         </div>
         <Select name="GenericOpenAiModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="--loading available models--" />
           </SelectTrigger>
           <SelectContent />
@@ -157,11 +145,8 @@ function GenericOpenAiModelSelection({
   if (customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          Selected Model
-        </Label>
+        <Label className="block mb-2">Selected Model</Label>
         <Input
-          variant="settings"
           type="text"
           name="GenericOpenAiModelPref"
           placeholder="Model id used for chat requests"
@@ -178,15 +163,13 @@ function GenericOpenAiModelSelection({
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        Selected Model
-      </Label>
+      <Label className="block mb-2">Selected Model</Label>
       <Select
         name="GenericOpenAiModelPref"
         required={true}
         defaultValue={settings.GenericOpenAiModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

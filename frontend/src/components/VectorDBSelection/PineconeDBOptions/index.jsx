@@ -5,11 +5,8 @@ export default function PineconeDBOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Pinecone DB API Key
-          </Label>
+          <Label className="block mb-3">Pinecone DB API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="PineConeKey"
             placeholder="Pinecone API Key"
@@ -20,11 +17,8 @@ export default function PineconeDBOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Pinecone Index Name
-          </Label>
+          <Label className="block mb-3">Pinecone Index Name</Label>
           <Input
-            variant="settings"
             type="text"
             name="PineConeIndex"
             placeholder="my-index"

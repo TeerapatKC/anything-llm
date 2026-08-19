@@ -19,11 +19,8 @@ export default function MoonshotAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="MoonshotAiApiKey"
           placeholder="Moonshot AI API Key"
@@ -66,11 +63,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
   if (!apiKey) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="MoonshotAiModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- Enter API key --" />
           </SelectTrigger>
           <SelectContent />
@@ -82,11 +77,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="MoonshotAiModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -97,15 +90,13 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="MoonshotAiModelPref"
         required={true}
         defaultValue={settings?.MoonshotAiModelPref ?? models?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

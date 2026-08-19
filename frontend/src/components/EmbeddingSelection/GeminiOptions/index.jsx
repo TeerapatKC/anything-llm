@@ -29,11 +29,8 @@ export default function GeminiOptions({ settings }) {
       <div className="w-full flex flex-col gap-y-4">
         <div className="w-full flex items-center gap-[36px] mt-1.5">
           <div className="flex flex-col w-60">
-            <Label variant="settings" className="block mb-3">
-              API Key
-            </Label>
+            <Label className="block mb-3">API Key</Label>
             <Input
-              variant="settings"
               type="password"
               name="GeminiEmbeddingApiKey"
               placeholder="Gemini API Key"
@@ -46,9 +43,7 @@ export default function GeminiOptions({ settings }) {
             />
           </div>
           <div className="flex flex-col w-60">
-            <Label variant="settings" className="block mb-3">
-              Model Preference
-            </Label>
+            <Label className="block mb-3">Model Preference</Label>
             <Select
               name="EmbeddingModelPref"
               required={true}
@@ -56,7 +51,7 @@ export default function GeminiOptions({ settings }) {
                 settings?.EmbeddingModelPref ?? DEFAULT_MODELS?.[0]?.id
               }
             >
-              <SelectTrigger variant="settings">
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select an option" />
               </SelectTrigger>
               <SelectContent>
@@ -77,16 +72,14 @@ export default function GeminiOptions({ settings }) {
       </div>
       <div className="flex flex-col w-60">
         <Tooltip>
-          <TooltipTrigger asChild>
-            <div className="flex gap-x-1 items-center mb-3">
-              <Label variant="settings" className="block">
-                Output dimensions
-              </Label>
-              <Info
-                size={16}
-                className="text-theme-text-secondary cursor-pointer"
-              />
-            </div>
+          <TooltipTrigger
+            render={<div className="flex gap-x-1 items-center mb-3" />}
+          >
+            <Label className="block">Output dimensions</Label>
+            <Info
+              size={16}
+              className="text-theme-text-secondary cursor-pointer"
+            />
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-[250px] text-xs">
             The number of dimensions the resulting output embeddings should have
@@ -97,7 +90,6 @@ export default function GeminiOptions({ settings }) {
           </TooltipContent>
         </Tooltip>
         <Input
-          variant="settings"
           type="number"
           name="EmbeddingOutputDimensions"
           placeholder="Assume default dimensions"

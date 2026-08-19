@@ -84,7 +84,13 @@ import CerebrasLLMOptions from "@/components/LLMSelection/CerebrasLLMOptions";
 
 import LLMItem from "@/components/LLMSelection/LLMItem";
 import { ChevronsUpDown, Search, X } from "lucide-react";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import OMLXOptions from "@/components/LLMSelection/OMLXOptions";
 
 export const MODEL_ROUTER_PROVIDER = {
@@ -531,93 +537,90 @@ export default function GeneralLLMPreference() {
           />
           <div className="w-full justify-end flex">
             {hasChanges && (
-              <CTAButton
-                onClick={() => handleSubmit()}
-                className="mt-3 mr-0 -mb-14 z-10"
-              >
+              <Button size="lg" type="submit" className="mt-3 mr-0 -mb-14 z-10">
                 {saving ? "Saving..." : "Save changes"}
-              </CTAButton>
+              </Button>
             )}
           </div>
           <div className="text-base font-bold text-theme-text-primary mt-6 mb-4">
             {t("llm.provider")}
           </div>
-          <div className="relative">
-            {searchMenuOpen && (
-              <div
-                className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 backdrop-blur-sm z-10"
-                onClick={() => setSearchMenuOpen(false)}
-              />
-            )}
-            {searchMenuOpen ? (
-              <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
-                <div className="w-full flex flex-col gap-y-1">
-                  <div className="flex items-center sticky top-0 z-10 border-b border-[#9CA3AF] mx-4 bg-theme-settings-input-bg">
-                    <Search
-                      size={20}
-                      className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
+          <Popover open={searchMenuOpen} onOpenChange={setSearchMenuOpen}>
+            <PopoverTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="w-full max-w-[640px] h-[64px] justify-between gap-0 p-[14px] rounded-lg border-2 border-transparent bg-theme-settings-input-bg hover:bg-theme-settings-input-bg hover:border-primary-button aria-expanded:bg-theme-settings-input-bg transition-all duration-300"
+                >
+                  <div className="flex gap-x-4 items-center">
+                    <img
+                      src={selectedLLMObject?.logo || AnythingLLMIcon}
+                      alt={`${selectedLLMObject?.name} logo`}
+                      className="w-10 h-10 rounded-md"
                     />
-                    <input
-                      type="text"
-                      name="llm-search"
-                      autoComplete="off"
-                      placeholder="Search all LLM providers"
-                      className="border-none -ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      ref={searchInputRef}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") e.preventDefault();
-                      }}
-                    />
-                    <X
-                      size={20}
-                      className="cursor-pointer text-theme-text-primary hover:text-x-button"
-                      onClick={handleXButton}
-                    />
+                    <div className="flex flex-col text-left">
+                      <div className="text-sm font-semibold text-theme-text-primary">
+                        {selectedLLMObject?.name || "None selected"}
+                      </div>
+                      <div className="mt-1 text-xs text-description font-normal">
+                        {selectedLLMObject?.description ||
+                          "You need to select an LLM"}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1 pl-4 pr-2 flex flex-col gap-y-1 overflow-y-auto white-scrollbar pb-4 max-h-[245px]">
-                    {filteredLLMs.map((llm) => {
-                      return (
-                        <LLMItem
-                          key={llm.name}
-                          name={llm.name}
-                          value={llm.value}
-                          image={llm.logo}
-                          description={llm.description}
-                          checked={selectedLLM === llm.value}
-                          onClick={() => updateLLMChoice(llm.value)}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <button
-                className="w-full max-w-[640px] h-[64px] bg-theme-settings-input-bg rounded-lg flex items-center p-[14px] justify-between cursor-pointer border-2 border-transparent hover:border-primary-button transition-all duration-300"
-                type="button"
-                onClick={() => setSearchMenuOpen(true)}
-              >
-                <div className="flex gap-x-4 items-center">
-                  <img
-                    src={selectedLLMObject?.logo || AnythingLLMIcon}
-                    alt={`${selectedLLMObject?.name} logo`}
-                    className="w-10 h-10 rounded-md"
+                  <ChevronsUpDown
+                    size={24}
+                    className="text-theme-text-primary"
                   />
-                  <div className="flex flex-col text-left">
-                    <div className="text-sm font-semibold text-theme-text-primary">
-                      {selectedLLMObject?.name || "None selected"}
-                    </div>
-                    <div className="mt-1 text-xs text-description">
-                      {selectedLLMObject?.description ||
-                        "You need to select an LLM"}
-                    </div>
-                  </div>
-                </div>
-                <ChevronsUpDown size={24} className="text-theme-text-primary" />
-              </button>
-            )}
-          </div>
+                </Button>
+              }
+            />
+            <PopoverContent
+              align="start"
+              sideOffset={4}
+              className="w-(--anchor-width) max-w-[640px] max-h-[310px] min-h-[64px] flex-col gap-0 rounded-lg bg-theme-settings-input-bg p-0 border-2 border-primary-button"
+            >
+              <div className="flex items-center border-b px-4">
+                <Search
+                  size={20}
+                  className="text-theme-text-primary shrink-0"
+                />
+                <Input
+                  type="text"
+                  name="llm-search"
+                  autoComplete="off"
+                  placeholder="Search all LLM providers"
+                  className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  ref={searchInputRef}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") e.preventDefault();
+                  }}
+                />
+                <X
+                  size={20}
+                  className="cursor-pointer text-theme-text-primary hover:text-x-button shrink-0"
+                  onClick={handleXButton}
+                />
+              </div>
+              <div className="flex-1 flex flex-col gap-y-1 overflow-y-auto thin-scrollbar px-2 py-2 max-h-[245px]">
+                {filteredLLMs.map((llm) => {
+                  return (
+                    <LLMItem
+                      key={llm.name}
+                      name={llm.name}
+                      value={llm.value}
+                      image={llm.logo}
+                      description={llm.description}
+                      checked={selectedLLM === llm.value}
+                      onClick={() => updateLLMChoice(llm.value)}
+                    />
+                  );
+                })}
+              </div>
+            </PopoverContent>
+          </Popover>
           <div
             onChange={() => setHasChanges(true)}
             className="mt-4 flex flex-col gap-y-1"

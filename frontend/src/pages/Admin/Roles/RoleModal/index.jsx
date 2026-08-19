@@ -123,15 +123,10 @@ export default function RoleModal({
         <div className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label
-                variant="field"
-                htmlFor="displayName"
-                className="block mb-2"
-              >
+              <Label htmlFor="displayName" className="block mb-2">
                 Label
               </Label>
               <Input
-                variant="settings"
                 name="displayName"
                 value={displayName}
                 onChange={(e) => {
@@ -144,11 +139,10 @@ export default function RoleModal({
               />
             </div>
             <div>
-              <Label variant="field" htmlFor="name" className="block mb-2">
+              <Label htmlFor="name" className="block mb-2">
                 Identifier
               </Label>
               <Input
-                variant="settings"
                 name="name"
                 value={name}
                 onChange={(e) => {
@@ -169,11 +163,10 @@ export default function RoleModal({
           </div>
 
           <div>
-            <Label variant="field" htmlFor="description" className="block mb-2">
+            <Label htmlFor="description" className="block mb-2">
               Description
             </Label>
             <Textarea
-              variant="settings"
               name="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -185,7 +178,7 @@ export default function RoleModal({
 
           <div>
             <div className="flex items-baseline justify-between mb-2">
-              <Label variant="field">Permissions</Label>
+              <Label>Permissions</Label>
               <span className="text-xs text-theme-text-secondary">
                 {selected.size} of {totalPermissions} selected
               </span>
@@ -257,10 +250,12 @@ export default function RoleModal({
         </div>
 
         <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
-          <DialogClose asChild>
-            <Button variant="outline" type="button" onClick={onClose}>
-              Cancel
-            </Button>
+          <DialogClose
+            render={
+              <Button variant="outline" type="button" onClick={onClose} />
+            }
+          >
+            Cancel
           </DialogClose>
           <Button variant="default" type="submit" disabled={saving}>
             {saving ? "Saving…" : isNew ? "Create role" : "Save changes"}

@@ -161,17 +161,19 @@ export const ThoughtChainComponent = forwardRef(
               <div className="absolute top-4 left-4 w-[18px] h-[18px]">
                 {isThinking ? (
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-[18px] h-[18px] scale-[115%] light:invert light:opacity-50"
-                        aria-label="Model is thinking..."
-                      >
-                        <source src={ThinkingAnimation} type="video/webm" />
-                      </video>
+                    <TooltipTrigger
+                      render={
+                        <video
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          className="w-[18px] h-[18px] scale-[115%] light:invert light:opacity-50"
+                          aria-label="Model is thinking..."
+                        />
+                      }
+                    >
+                      <source src={ThinkingAnimation} type="video/webm" />
                     </TooltipTrigger>
                     <TooltipContent
                       side="bottom"
@@ -182,14 +184,16 @@ export const ThoughtChainComponent = forwardRef(
                   </Tooltip>
                 ) : isComplete ? (
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <img
-                        src={ThinkingStatic}
-                        alt="Thinking complete"
-                        className="w-[18px] h-[18px] light:invert light:opacity-50"
-                        aria-label="Model has finished thinking"
-                      />
-                    </TooltipTrigger>
+                    <TooltipTrigger
+                      render={
+                        <img
+                          src={ThinkingStatic}
+                          alt="Thinking complete"
+                          className="w-[18px] h-[18px] light:invert light:opacity-50"
+                          aria-label="Model has finished thinking"
+                        />
+                      }
+                    ></TooltipTrigger>
                     <TooltipContent
                       side="bottom"
                       className="max-w-[250px] text-xs"
@@ -201,18 +205,22 @@ export const ThoughtChainComponent = forwardRef(
               </div>
               {canExpand && (
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      onClick={handleExpandClick}
-                      className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
-                      aria-label={
-                        isExpanded ? "Hide thought chain" : "Show thought chain"
-                      }
-                    >
-                      <ChevronDown
-                        className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                  <TooltipTrigger
+                    render={
+                      <button
+                        onClick={handleExpandClick}
+                        className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
+                        aria-label={
+                          isExpanded
+                            ? "Hide thought chain"
+                            : "Show thought chain"
+                        }
                       />
-                    </button>
+                    }
+                  >
+                    <ChevronDown
+                      className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                    />
                   </TooltipTrigger>
                   <TooltipContent
                     side="bottom"

@@ -64,38 +64,27 @@ function WatchedDocumentsContainer() {
   }
 
   return (
-    <Table
-      variant="none"
-      className="w-full text-sm text-left rounded-lg mt-6 min-w-[640px]"
-    >
-      <TableHeader variant="settings">
-        <TableRow variant="none">
-          <TableHead
-            variant="none"
-            scope="col"
-            className="px-6 py-3 rounded-tl-lg"
-          >
+    <Table className="w-full text-sm text-left rounded-lg mt-6 min-w-[640px]">
+      <TableHeader>
+        <TableRow>
+          <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
             Document Name
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Last Synced
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Time until next refresh
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Created On
           </TableHead>
-          <TableHead
-            variant="none"
-            scope="col"
-            className="px-6 py-3 rounded-tr-lg"
-          >
+          <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
             {" "}
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody variant="none">
+      <TableBody>
         {queues.map((queue) => (
           <DocumentSyncQueueRow key={queue.id} queue={queue} />
         ))}

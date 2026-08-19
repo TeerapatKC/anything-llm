@@ -41,19 +41,21 @@ export default function NativeTTSMessage({ chatId, message }) {
   return (
     <div className="mt-3 relative">
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={speakMessage}
-            data-auto-play-chat-id={chatId}
-            className="border-none text-zinc-300 light:text-slate-500"
-            aria-label={speaking ? "Pause speech" : "Speak message"}
-          >
-            {speaking ? (
-              <CirclePause size={18} className="mb-1" />
-            ) : (
-              <Volume2 size={18} className="mb-1" />
-            )}
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              onClick={speakMessage}
+              data-auto-play-chat-id={chatId}
+              className="border-none text-zinc-300 light:text-slate-500"
+              aria-label={speaking ? "Pause speech" : "Speak message"}
+            />
+          }
+        >
+          {speaking ? (
+            <CirclePause size={18} className="mb-1" />
+          ) : (
+            <Volume2 size={18} className="mb-1" />
+          )}
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {speaking ? "Pause TTS speech of message" : "TTS Speak message"}

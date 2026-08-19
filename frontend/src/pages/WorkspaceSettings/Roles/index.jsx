@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import CTAButton from "@/components/lib/CTAButton";
 import {
   Table,
   TableBody,
@@ -120,37 +119,37 @@ export default function WorkspaceRoles({ workspace }) {
           everywhere; roles you create here exist only in this workspace.
         </p>
         {canDefine && (
-          <CTAButton className="shrink-0" onClick={() => setEditing({})}>
+          <Button
+            size="lg"
+            className="-mr-8 shrink-0"
+            onClick={() => setEditing({})}
+          >
             <Plus className="h-4 w-4" /> New role
-          </CTAButton>
+          </Button>
         )}
       </div>
 
-      <Table variant="none" className="w-full max-w-[760px] text-sm mt-6">
-        <TableHeader
-          variant="none"
-          className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60"
-        >
-          <TableRow variant="none">
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+      <Table className="w-full max-w-[760px] text-sm mt-6">
+        <TableHeader className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60">
+          <TableRow>
+            <TableHead scope="col" className="px-6 py-3">
               Role
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               Permissions
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               Members
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {" "}
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody variant="none">
+        <TableBody>
           {own.length === 0 && (
-            <TableRow variant="none">
+            <TableRow>
               <TableCell
-                variant="none"
                 colSpan="4"
                 className="px-6 py-3 text-xs text-theme-text-secondary"
               >
@@ -164,10 +163,9 @@ export default function WorkspaceRoles({ workspace }) {
           {[...own, ...shared].map((role) => (
             <TableRow
               key={role.id}
-              variant="none"
               className="bg-transparent text-theme-text-primary border-b border-theme-sidebar-border"
             >
-              <TableCell variant="none" className="px-6 py-4">
+              <TableCell className="px-6 py-4">
                 <div className="flex items-center gap-x-2">
                   <span className="font-medium">{role.displayName}</span>
                   {!role.editableHere && (
@@ -193,19 +191,13 @@ export default function WorkspaceRoles({ workspace }) {
                   </p>
                 )}
               </TableCell>
-              <TableCell
-                variant="none"
-                className="px-6 py-4 text-theme-text-secondary"
-              >
+              <TableCell className="px-6 py-4 text-theme-text-secondary">
                 {role.permissions.length}
               </TableCell>
-              <TableCell
-                variant="none"
-                className="px-6 py-4 text-theme-text-secondary"
-              >
+              <TableCell className="px-6 py-4 text-theme-text-secondary">
                 {role.memberCount}
               </TableCell>
-              <TableCell variant="none" className="px-6 py-4">
+              <TableCell className="px-6 py-4">
                 <div className="flex items-center gap-x-2 justify-end">
                   {canDefine && role.editableHere && (
                     <>

@@ -48,9 +48,7 @@ export default function NativeEmbeddingOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex flex-col mt-1.5">
         <div className="flex flex-col w-96">
-          <Label variant="settings" className="block mb-3">
-            Model Preference
-          </Label>
+          <Label className="block mb-3">Model Preference</Label>
           <Select
             name="EmbeddingModelPref"
             required={true}
@@ -58,7 +56,7 @@ export default function NativeEmbeddingOptions({ settings }) {
             onValueChange={setSelectedModel}
             disabled={loading}
           >
-            <SelectTrigger variant="settings" className="w-60">
+            <SelectTrigger className="w-60">
               <SelectValue
                 placeholder={
                   loading ? "--loading available models--" : "Select a model"

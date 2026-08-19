@@ -8,10 +8,9 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
           <div className="flex justify-between items-start mb-2">
-            <Label variant="settings">Base URL</Label>
+            <Label>Base URL</Label>
           </div>
           <Input
-            variant="settings"
             type="url"
             name="TTSOpenAICompatibleEndpoint"
             placeholder="http://localhost:7851/v1"
@@ -26,11 +25,8 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            API Key
-          </Label>
+          <Label className="block mb-2">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="TTSOpenAICompatibleKey"
             placeholder="API Key"
@@ -48,11 +44,8 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
       </div>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            TTS Model
-          </Label>
+          <Label className="block mb-3">TTS Model</Label>
           <Input
-            variant="settings"
             type="text"
             name="TTSOpenAICompatibleModel"
             placeholder="Your TTS model identifier"
@@ -68,11 +61,8 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Voice Model
-          </Label>
+          <Label className="block mb-3">Voice Model</Label>
           <Input
-            variant="settings"
             type="text"
             name="TTSOpenAICompatibleVoiceModel"
             placeholder="Your voice model identifier"

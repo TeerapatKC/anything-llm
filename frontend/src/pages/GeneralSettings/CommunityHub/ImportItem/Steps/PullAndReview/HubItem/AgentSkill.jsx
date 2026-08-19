@@ -1,4 +1,4 @@
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import CommunityHubImportItemSteps from "../..";
 import showToast from "@/utils/toast";
@@ -97,14 +97,15 @@ export default function AgentSkill({ item, settings, setStep }) {
         </p>
       </div>
       <FileReview item={item} />
-      <CTAButton
+      <Button
+        size="lg"
         disabled={loading}
-        className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+        className="-mr-8 text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
         onClick={importAgentSkill}
       >
         {loading ? <Spinner /> : null}
         {loading ? "Importing..." : "Import agent skill"}
-      </CTAButton>
+      </Button>
     </div>
   );
 }

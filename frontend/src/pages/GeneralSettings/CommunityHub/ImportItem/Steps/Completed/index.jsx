@@ -1,11 +1,11 @@
 import CommunityHubImportItemSteps from "..";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 
 export default function Completed({ settings, setSettings, setStep }) {
   return (
-    <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
+    <div className="flex-2 flex flex-col gap-y-[18px] mt-10">
       <div className="bg-theme-bg-secondary rounded-xl flex-1 p-6">
         <div className="w-full flex flex-col gap-y-2 max-w-[700px]">
           <h2 className="text-base text-theme-text-primary font-semibold">
@@ -30,15 +30,16 @@ export default function Completed({ settings, setSettings, setStep }) {
               reflected in the community hub. You can now modify as needed.
             </p>
           </div>
-          <CTAButton
-            className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+          <Button
+            size="lg"
+            className="-mr-8 text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
             onClick={() => {
               setSettings({ item: null, itemId: null });
               setStep(CommunityHubImportItemSteps.itemId.key);
             }}
           >
             Import another item
-          </CTAButton>
+          </Button>
         </div>
       </div>
     </div>

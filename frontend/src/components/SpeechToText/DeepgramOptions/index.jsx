@@ -19,11 +19,8 @@ export default function DeepgramSpeechToTextOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="STTDeepgramApiKey"
           placeholder="Deepgram API Key"
@@ -60,11 +57,9 @@ function DeepgramSttModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Transcription Model
-        </Label>
+        <Label className="block mb-3">Transcription Model</Label>
         <Select name="STTDeepgramModel" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -75,15 +70,13 @@ function DeepgramSttModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Transcription Model
-      </Label>
+      <Label className="block mb-3">Transcription Model</Label>
       <Select
         name="STTDeepgramModel"
         required={true}
         defaultValue={settings?.STTDeepgramModel ?? "nova-3"}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

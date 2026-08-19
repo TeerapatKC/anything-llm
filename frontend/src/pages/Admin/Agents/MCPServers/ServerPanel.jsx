@@ -88,14 +88,24 @@ function ManageServerMenu({ server, toggleServer, onDelete }) {
       </button>
       {open && (
         <div className="absolute w-[150px] top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
-          <Button variant="menuItem" type="button" onClick={handleToggleServer}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={handleToggleServer}
+            className="justify-start"
+          >
             <span className="text-sm">
               {running
                 ? t("agent.mcp.stop-server")
                 : t("agent.mcp.start-server")}
             </span>
           </Button>
-          <Button variant="menuItem" type="button" onClick={deleteServer}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={deleteServer}
+            className="justify-start"
+          >
             <span className="text-sm">{t("agent.mcp.delete-server")}</span>
           </Button>
         </div>

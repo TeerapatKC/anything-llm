@@ -78,7 +78,7 @@ export default function ConfluenceOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold" className="flex gap-x-2 items-center">
+                  <Label className="flex gap-x-2 items-center">
                     <p className="font-bold text-theme-text-primary">
                       {t("connectors.confluence.deployment_type")}
                     </p>
@@ -95,7 +95,7 @@ export default function ConfluenceOptions() {
                   defaultValue="true"
                   onValueChange={(value) => setIsCloud(value === "true")}
                 >
-                  <SelectTrigger variant="settings">
+                  <SelectTrigger>
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
                   <SelectContent>
@@ -107,7 +107,7 @@ export default function ConfluenceOptions() {
 
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold" className="flex gap-x-2 items-center">
+                  <Label className="flex gap-x-2 items-center">
                     <p className="font-bold text-theme-text-primary">
                       {t("connectors.confluence.base_url")}
                     </p>
@@ -117,7 +117,6 @@ export default function ConfluenceOptions() {
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="url"
                   name="baseUrl"
                   placeholder="eg: https://example.atlassian.net, http://localhost:8211, etc..."
@@ -128,15 +127,12 @@ export default function ConfluenceOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">
-                    {t("connectors.confluence.space_key")}
-                  </Label>
+                  <Label>{t("connectors.confluence.space_key")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.confluence.space_key_explained")}
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="text"
                   name="spaceKey"
                   placeholder="eg: ~7120208c08555d52224113949698b933a3bb56"
@@ -147,9 +143,7 @@ export default function ConfluenceOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">
-                    {t("connectors.confluence.auth_type")}
-                  </Label>
+                  <Label>{t("connectors.confluence.auth_type")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.confluence.auth_type_explained")}
                   </p>
@@ -186,15 +180,12 @@ export default function ConfluenceOptions() {
                 <>
                   <div className="flex flex-col pr-10">
                     <div className="flex flex-col gap-y-1 mb-4">
-                      <Label variant="bold">
-                        {t("connectors.confluence.username")}
-                      </Label>
+                      <Label>{t("connectors.confluence.username")}</Label>
                       <p className="text-xs font-normal text-theme-text-secondary">
                         {t("connectors.confluence.username_explained")}
                       </p>
                     </div>
                     <Input
-                      variant="settings"
                       type="text"
                       name="username"
                       placeholder="jdoe@example.com"
@@ -205,17 +196,16 @@ export default function ConfluenceOptions() {
                   </div>
                   <div className="flex flex-col pr-10">
                     <div className="flex flex-col gap-y-1 mb-4">
-                      <Label
-                        variant="bold"
-                        className="flex gap-x-2 items-center"
-                      >
+                      <Label className="flex gap-x-2 items-center">
                         <p className="font-bold text-theme-text-primary">
                           {t("connectors.confluence.token")}
                         </p>
                         <Tooltip>
-                          <TooltipTrigger asChild>
-                            <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
-                          </TooltipTrigger>
+                          <TooltipTrigger
+                            render={
+                              <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
+                            }
+                          ></TooltipTrigger>
                           <TooltipContent
                             side="right"
                             className="max-w-[250px] text-xs"
@@ -243,7 +233,6 @@ export default function ConfluenceOptions() {
                       </p>
                     </div>
                     <Input
-                      variant="settings"
                       type="password"
                       name="accessToken"
                       placeholder="abcd1234"
@@ -257,15 +246,12 @@ export default function ConfluenceOptions() {
               {accessType === "personalToken" && (
                 <div className="flex flex-col pr-10">
                   <div className="flex flex-col gap-y-1 mb-4">
-                    <Label variant="bold">
-                      {t("connectors.confluence.pat_token")}
-                    </Label>
+                    <Label>{t("connectors.confluence.pat_token")}</Label>
                     <p className="text-xs font-normal text-theme-text-secondary">
                       {t("connectors.confluence.pat_token_explained")}
                     </p>
                   </div>
                   <Input
-                    variant="settings"
                     type="password"
                     name="personalAccessToken"
                     placeholder="abcd1234"
@@ -283,7 +269,7 @@ export default function ConfluenceOptions() {
               <div className="w-full flex flex-col gap-4">
                 <div className="flex flex-col pr-10">
                   <div className="flex flex-col gap-y-1 mb-4">
-                    <Label variant="bold" className="flex gap-x-2 items-center">
+                    <Label className="flex gap-x-2 items-center">
                       <Toggle size="md" name="bypassSSL" value="true" />
                       <p className="font-bold text-theme-text-primary">
                         {t("connectors.confluence.bypass_ssl")}
@@ -299,7 +285,7 @@ export default function ConfluenceOptions() {
           )}
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <Button variant="homePrimary" type="submit" disabled={loading}>
+            <Button variant="default" type="submit" disabled={loading}>
               {loading ? "Collecting pages..." : "Submit"}
             </Button>
             {loading && (

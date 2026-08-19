@@ -98,7 +98,7 @@ function RenderAssistantChatContent({ message, messageId }) {
         />
       )}
       <span
-        className="break-words"
+        className="wrap-break-word"
         dangerouslySetInnerHTML={{
           __html: DOMPurify.sanitize(renderMarkdown(contentRef.current)),
         }}

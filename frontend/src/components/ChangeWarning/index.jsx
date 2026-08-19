@@ -35,10 +35,10 @@ export default function ChangeWarningModal({
         </p>
       </div>
       <DialogFooter className="p-0">
-        <DialogClose asChild>
-          <Button variant="outline" onClick={onClose} type="button">
-            Cancel
-          </Button>
+        <DialogClose
+          render={<Button variant="outline" onClick={onClose} type="button" />}
+        >
+          Cancel
         </DialogClose>
         <Button variant="destructive" onClick={onConfirm} type="button">
           Confirm

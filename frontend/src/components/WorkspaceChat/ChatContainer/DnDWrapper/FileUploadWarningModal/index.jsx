@@ -34,12 +34,7 @@ export default function FileUploadWarningModal({
   if (isEmbedding) {
     return (
       <Dialog open={show}>
-        <DialogContent
-          className="max-w-[600px] bg-theme-bg-primary border-theme-modal-border [&>button]:hidden"
-          onEscapeKeyDown={(e) => e.preventDefault()}
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
-        >
+        <DialogContent className="max-w-[600px] bg-theme-bg-primary border-theme-modal-border [&>button]:hidden">
           <DialogTitle className="sr-only">Embedding files</DialogTitle>
           <div className="flex flex-col items-center justify-center">
             <p className="text-theme-text-primary text-sm font-semibold mb-4">

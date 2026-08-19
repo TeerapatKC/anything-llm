@@ -15,11 +15,8 @@ export default function OpenAiWhisperOptions({ settings }) {
   return (
     <div className="flex gap-x-7 gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="OpenAiKey"
           placeholder="OpenAI API Key"
@@ -32,11 +29,9 @@ export default function OpenAiWhisperOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Whisper Model
-        </Label>
+        <Label className="block mb-3">Whisper Model</Label>
         <Select disabled={true}>
-          <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
+          <SelectTrigger className="border-none shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
             <SelectValue placeholder="Whisper Large" />
           </SelectTrigger>
           <SelectContent />

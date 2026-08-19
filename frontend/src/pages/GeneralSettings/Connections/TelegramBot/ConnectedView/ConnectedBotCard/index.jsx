@@ -11,7 +11,7 @@ export default function ConnectedBotCard({ config }) {
       <div className="flex items-start gap-x-1 border border-zinc-700 light:border-slate-200 rounded-xl p-3 w-[700px]">
         <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#00ADEC] shrink-0">
           <TelegramLogo
-            className="h-5 w-5 !text-theme-text-primary"
+            className="h-5 w-5 text-theme-text-primary!"
             weight="fill"
           />
         </div>

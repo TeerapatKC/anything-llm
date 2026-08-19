@@ -258,7 +258,7 @@ export default function AgentBuilder() {
     placeholder = "Select variable"
   ) => (
     <Select value={value || ""} onValueChange={onChange}>
-      <SelectTrigger variant="settings">
+      <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

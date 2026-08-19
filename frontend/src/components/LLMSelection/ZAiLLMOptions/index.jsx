@@ -19,11 +19,8 @@ export default function ZAiLLMOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Z.AI API Key
-        </Label>
+        <Label className="block mb-3">Z.AI API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="ZAiApiKey"
           placeholder="Z.AI API Key"
@@ -72,11 +69,9 @@ function ZAiModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="ZAiModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="--loading available models--" />
           </SelectTrigger>
           <SelectContent />
@@ -90,15 +85,13 @@ function ZAiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="ZAiModelPref"
         required={true}
         defaultValue={settings?.ZAiModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

@@ -34,7 +34,7 @@ export default function ChatModelSelection({
           </p>
         </div>
         <Select name="chatModel" required={true} disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger>
             <SelectValue placeholder="-- waiting for models --" />
           </SelectTrigger>
           <SelectContent />
@@ -62,7 +62,7 @@ export default function ChatModelSelection({
           setHasChanges(true);
         }}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger>
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>

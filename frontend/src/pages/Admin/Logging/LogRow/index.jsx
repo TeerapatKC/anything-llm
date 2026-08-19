@@ -26,30 +26,22 @@ export default function LogRow({ log }) {
   return (
     <>
       <TableRow
-        variant="none"
         onClick={handleRowClick}
         className={`bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10 ${
           hasMetadata ? "cursor-pointer hover:bg-white/5" : ""
         }`}
       >
         <EventBadge event={log.event} />
-        <TableCell
-          variant="none"
-          className="px-6 border-transparent transform transition-transform duration-200"
-        >
+        <TableCell className="px-6 border-transparent transform transition-transform duration-200">
           {log.user.username}
         </TableCell>
-        <TableCell
-          variant="none"
-          className="px-6 border-transparent transform transition-transform duration-200"
-        >
+        <TableCell className="px-6 border-transparent transform transition-transform duration-200">
           {log.occurredAt}
         </TableCell>
         {hasMetadata && (
           <div className="mt-1">
             {expanded ? (
               <TableCell
-                variant="none"
                 className={`px-2 gap-x-1 flex items-center justify-center transform transition-transform duration-200`}
               >
                 <ChevronUp size={20} />
@@ -57,7 +49,6 @@ export default function LogRow({ log }) {
               </TableCell>
             ) : (
               <TableCell
-                variant="none"
                 className={`px-2 gap-x-1 flex items-center justify-center transform transition-transform duration-200`}
               >
                 <ChevronDown size={20} />
@@ -75,16 +66,15 @@ export default function LogRow({ log }) {
 const EventMetadata = ({ metadata, expanded = false }) => {
   if (!metadata || !expanded) return null;
   return (
-    <TableRow variant="none" className="bg-theme-bg-primary">
+    <TableRow className="bg-theme-bg-primary">
       <TableCell
-        variant="none"
         colSpan="2"
         className="px-6 py-4 font-medium text-theme-text-primary rounded-l-2xl"
       >
         Event Metadata
       </TableCell>
-      <TableCell variant="none" colSpan="4" className="px-6 py-4 rounded-r-2xl">
-        <div className="w-full rounded-lg bg-theme-bg-secondary p-2 text-theme-text-primary shadow-sm border-theme-sidebar-border border bg-opacity-10">
+      <TableCell colSpan="4" className="px-6 py-4 rounded-r-2xl">
+        <div className="w-full rounded-lg bg-theme-bg-secondary p-2 text-theme-text-primary shadow-xs border-theme-sidebar-border border bg-opacity-10">
           <pre className="overflow-scroll">
             {JSON.stringify(metadata, null, 2)}
           </pre>
@@ -116,12 +106,9 @@ const EventBadge = ({ event }) => {
     };
 
   return (
-    <TableCell
-      variant="none"
-      className="px-6 py-2 font-medium whitespace-nowrap text-theme-text-primary flex items-center"
-    >
+    <TableCell className="px-6 py-2 font-medium whitespace-nowrap text-theme-text-primary flex items-center">
       <span
-        className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs font-medium ${colorTheme.text} shadow-sm`}
+        className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs font-medium ${colorTheme.text} shadow-xs`}
       >
         {event}
       </span>

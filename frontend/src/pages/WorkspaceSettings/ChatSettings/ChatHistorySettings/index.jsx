@@ -14,7 +14,6 @@ export default function ChatHistorySettings({ workspace, setHasChanges }) {
         </p>
       </div>
       <Input
-        variant="settings"
         name="openAiHistory"
         type="number"
         min={1}

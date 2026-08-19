@@ -138,29 +138,29 @@ export default function ActiveWorkspaces() {
           return (
             <SidebarMenuItem key={workspace.id}>
               <SidebarMenuButton
-                asChild
                 isActive={isActive}
                 tooltip={
                   workspace.active === false
                     ? `${workspace.name} — inactive`
                     : workspace.name
                 }
-                className="!size-8 justify-center !p-0"
-              >
-                <Link
-                  to={paths.workspace.chat(workspace.slug)}
-                  aria-current={isActive ? "page" : ""}
-                  aria-label={workspace.name}
-                >
-                  <WorkspaceMonogram
-                    name={workspace.name}
-                    isActive={isActive}
-                    className={cn(
-                      "size-8 rounded-lg text-xs",
-                      workspace.active === false && "opacity-50"
-                    )}
+                className="size-8! justify-center p-0!"
+                render={
+                  <Link
+                    to={paths.workspace.chat(workspace.slug)}
+                    aria-current={isActive ? "page" : ""}
+                    aria-label={workspace.name}
                   />
-                </Link>
+                }
+              >
+                <WorkspaceMonogram
+                  name={workspace.name}
+                  isActive={isActive}
+                  className={cn(
+                    "size-8 rounded-lg text-xs",
+                    workspace.active === false && "opacity-50"
+                  )}
+                />
               </SidebarMenuButton>
             </SidebarMenuItem>
           );
@@ -244,85 +244,92 @@ export default function ActiveWorkspaces() {
                           >
                             <GripVertical className="size-4" />
                           </span>
-                          <SidebarMenuButton asChild isActive={isActive}>
-                            <Link
-                              to={paths.workspace.chat(workspace.slug)}
-                              aria-current={isActive ? "page" : ""}
-                              // An anchor is natively draggable, and the browser
-                              // firing `dragstart` aborts an in-flight dnd drag,
-                              // which is what made rows snap back to their old
-                              // position mid-reorder.
-                              draggable={false}
-                            >
-                              <WorkspaceMonogram
-                                name={workspace.name}
-                                isActive={isActive}
-                                className={cn(
-                                  "size-[18px] transition-opacity group-hover/workspace:opacity-0",
-                                  isInactive && "opacity-50"
-                                )}
+                          <SidebarMenuButton
+                            isActive={isActive}
+                            render={
+                              <Link
+                                to={paths.workspace.chat(workspace.slug)}
+                                aria-current={isActive ? "page" : ""}
+                                // An anchor is natively draggable, and the browser
+                                // firing `dragstart` aborts an in-flight dnd drag,
+                                // which is what made rows snap back to their old
+                                // position mid-reorder.
+                                draggable={false}
                               />
-                              <Tooltip>
-                                <TooltipTrigger asChild>
+                            }
+                          >
+                            <WorkspaceMonogram
+                              name={workspace.name}
+                              isActive={isActive}
+                              className={cn(
+                                "size-[18px] transition-opacity group-hover/workspace:opacity-0",
+                                isInactive && "opacity-50"
+                              )}
+                            />
+                            <Tooltip>
+                              <TooltipTrigger
+                                render={
                                   <span
                                     className={cn(
                                       "truncate",
                                       isInactive && "text-sidebar-foreground/50"
                                     )}
-                                  >
-                                    {workspace.name}
-                                  </span>
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  side="right"
-                                  className="max-w-[250px] text-xs"
-                                >
-                                  {isInactive
-                                    ? `${workspace.name} — inactive`
-                                    : workspace.name}
-                                </TooltipContent>
-                              </Tooltip>
-                              {isInactive && (
-                                <Badge
-                                  variant="outline"
-                                  className={cn(
-                                    "ml-auto h-[18px] shrink-0 rounded-sm border-sidebar-border px-1 text-[10px] font-medium text-sidebar-foreground/60",
-                                    canManage &&
-                                      "transition-opacity group-hover/workspace:opacity-0"
-                                  )}
-                                >
-                                  Inactive
-                                </Badge>
-                              )}
-                            </Link>
+                                  />
+                                }
+                              >
+                                {workspace.name}
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="right"
+                                className="max-w-[250px] text-xs"
+                              >
+                                {isInactive
+                                  ? `${workspace.name} — inactive`
+                                  : workspace.name}
+                              </TooltipContent>
+                            </Tooltip>
+                            {isInactive && (
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  "ml-auto h-[18px] shrink-0 rounded-sm border-sidebar-border px-1 text-[10px] font-medium text-sidebar-foreground/60",
+                                  canManage &&
+                                    "transition-opacity group-hover/workspace:opacity-0"
+                                )}
+                              >
+                                Inactive
+                              </Badge>
+                            )}
                           </SidebarMenuButton>
                           {canManage && (
                             <Tooltip>
-                              <TooltipTrigger asChild>
-                                <SidebarMenuAction
-                                  showOnHover={!isActive}
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    navigate(
-                                      isInWorkspaceSettings
-                                        ? paths.workspace.chat(workspace.slug)
-                                        : paths.workspace.settings.generalAppearance(
-                                            workspace.slug
-                                          )
-                                    );
-                                  }}
-                                  aria-label="General appearance settings"
-                                >
-                                  <Settings
-                                    className={cn(
-                                      "size-4",
-                                      isInWorkspaceSettings &&
-                                        workspace.slug === slug &&
-                                        "text-sidebar-primary"
-                                    )}
+                              <TooltipTrigger
+                                render={
+                                  <SidebarMenuAction
+                                    showOnHover={!isActive}
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      navigate(
+                                        isInWorkspaceSettings
+                                          ? paths.workspace.chat(workspace.slug)
+                                          : paths.workspace.settings.generalAppearance(
+                                              workspace.slug
+                                            )
+                                      );
+                                    }}
+                                    aria-label="General appearance settings"
                                   />
-                                </SidebarMenuAction>
+                                }
+                              >
+                                <Settings
+                                  className={cn(
+                                    "size-4",
+                                    isInWorkspaceSettings &&
+                                      workspace.slug === slug &&
+                                      "text-sidebar-primary"
+                                  )}
+                                />
                               </TooltipTrigger>
                               <TooltipContent
                                 side="top"

@@ -27,7 +27,6 @@ export default function ChatTemperatureSettings({
         </p>
       </div>
       <Input
-        variant="settings"
         name="openAiTemp"
         type="number"
         min={0.0}

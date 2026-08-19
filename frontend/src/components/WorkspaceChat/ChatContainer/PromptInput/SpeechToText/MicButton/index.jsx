@@ -54,27 +54,29 @@ export default function MicButton({
   const active = listening || processing;
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          aria-label={t("chat_window.microphone")}
-          onClick={toggle}
-          className={`group border-none relative flex justify-center items-center cursor-pointer w-8 h-8 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200 ${
-            active ? "bg-zinc-700 light:bg-slate-200" : ""
-          }`}
-        >
-          {processing ? (
-            <Spinner className="pointer-events-none text-theme-text-primary light:text-slate-800 shrink-0" />
-          ) : (
-            <Mic
-              size={18}
-              className={`pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0 ${
-                listening
-                  ? "animate-pulse-glow !text-theme-text-primary light:!text-slate-800"
-                  : ""
-              }`}
-            />
-          )}
-        </div>
+      <TooltipTrigger
+        render={
+          <div
+            aria-label={t("chat_window.microphone")}
+            onClick={toggle}
+            className={`group border-none relative flex justify-center items-center cursor-pointer w-8 h-8 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200 ${
+              active ? "bg-zinc-700 light:bg-slate-200" : ""
+            }`}
+          />
+        }
+      >
+        {processing ? (
+          <Spinner className="pointer-events-none text-theme-text-primary light:text-slate-800 shrink-0" />
+        ) : (
+          <Mic
+            size={18}
+            className={`pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0 ${
+              listening
+                ? "animate-pulse-glow text-theme-text-primary! light:text-slate-800!"
+                : ""
+            }`}
+          />
+        )}
       </TooltipTrigger>
       <TooltipContent
         side="top"

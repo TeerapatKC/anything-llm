@@ -231,41 +231,33 @@ function ChatsContainer({
 
   return (
     <>
-      <Table variant="settings">
-        <TableHeader variant="settings">
-          <TableRow variant="none">
-            <TableHead
-              variant="none"
-              scope="col"
-              className="px-6 py-3 rounded-tl-lg"
-            >
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
               {t("recorded.table.id")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("recorded.table.by")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("recorded.table.workspace")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("recorded.table.prompt")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("recorded.table.response")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("recorded.table.at")}
             </TableHead>
-            <TableHead
-              variant="none"
-              scope="col"
-              className="px-6 py-3 rounded-tr-lg"
-            >
+            <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
               {" "}
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody variant="none">
+        <TableBody>
           {!!chats &&
             chats.map((chat) => (
               <ChatRow key={chat.id} chat={chat} onDelete={handleDeleteChat} />

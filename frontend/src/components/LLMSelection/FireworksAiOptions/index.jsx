@@ -21,11 +21,8 @@ export default function FireworksAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Fireworks AI API Key
-        </Label>
+        <Label className="block mb-3">Fireworks AI API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="FireworksAiLLMApiKey"
           placeholder="Fireworks AI API Key"
@@ -73,11 +70,9 @@ function FireworksAiModelSelection({ apiKey, settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="FireworksAiLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -88,9 +83,7 @@ function FireworksAiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="FireworksAiLLMModelPref"
         required={true}
@@ -99,7 +92,7 @@ function FireworksAiModelSelection({ apiKey, settings }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

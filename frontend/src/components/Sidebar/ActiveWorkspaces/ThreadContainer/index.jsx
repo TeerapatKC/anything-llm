@@ -188,13 +188,11 @@ function NewThreadButton({ workspace }) {
   return (
     <SidebarMenuSubItem>
       <SidebarMenuSubButton
-        asChild
         className="cursor-pointer text-sidebar-foreground/70"
+        render={<button type="button" onClick={onClick} disabled={loading} />}
       >
-        <button type="button" onClick={onClick} disabled={loading}>
-          {loading ? <Spinner size="sm" /> : <Plus />}
-          <span>{loading ? "Starting thread..." : "New Thread"}</span>
-        </button>
+        {loading ? <Spinner size="sm" /> : <Plus />}
+        <span>{loading ? "Starting thread..." : "New Thread"}</span>
       </SidebarMenuSubButton>
     </SidebarMenuSubItem>
   );

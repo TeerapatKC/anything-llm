@@ -90,14 +90,13 @@ export default function FolderRow({
           a whole-row click is too easy to hit by accident for something that
           can stage hundreds of files for embedding. */}
       <TableRow
-        variant="none"
         onClick={() => onToggleExpanded(item.name)}
         onMouseEnter={() => onPrefetch(item.name)}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         className={`text-theme-text-primary text-xs grid grid-cols-12 py-2 pl-3.5 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
-          selected || partial ? "selected light:text-white !text-white" : ""
+          selected || partial ? "selected light:text-white text-white!" : ""
         } ${
           isDropTarget
             ? "outline-dashed outline-2 -outline-offset-2 outline-sky-400 bg-sky-400/10"
@@ -106,7 +105,7 @@ export default function FolderRow({
       >
         <div
           className={`col-span-6 flex gap-x-2 items-center ${
-            selected || partial ? "!text-white" : "text-theme-text-primary"
+            selected || partial ? "text-white!" : "text-theme-text-primary"
           }`}
         >
           <Checkbox
@@ -134,7 +133,7 @@ export default function FolderRow({
           {displayCount > 0 && (
             <span
               className={`text-theme-text-secondary text-[10px] font-medium ml-1.5 shrink-0 ${
-                selected || partial ? "light:!text-white" : ""
+                selected || partial ? "light:text-white!" : ""
               }`}
             >
               ({displayCount})
@@ -148,14 +147,8 @@ export default function FolderRow({
         <p className="col-span-2 pl-2" />
       </TableRow>
       {expanded && loading && files.length === 0 && (
-        <TableRow
-          variant="none"
-          className="text-theme-text-secondary text-xs py-2 pl-8 pr-8"
-        >
-          <TableCell
-            variant="none"
-            className="flex items-center gap-x-2 py-2 pl-8"
-          >
+        <TableRow className="text-theme-text-secondary text-xs py-2 pl-8 pr-8">
+          <TableCell className="flex items-center gap-x-2 py-2 pl-8">
             <Spinner size="xs" />
             <span>{t("common.loading")}...</span>
           </TableCell>
@@ -172,11 +165,8 @@ export default function FolderRow({
           />
         ))}
       {expanded && hasMore && (
-        <TableRow
-          variant="none"
-          className="text-theme-text-secondary text-xs py-1 pl-8 pr-8"
-        >
-          <TableCell variant="none" className="py-1 pl-8">
+        <TableRow className="text-theme-text-secondary text-xs py-1 pl-8 pr-8">
+          <TableCell className="py-1 pl-8">
             <button
               onClick={(event) => {
                 event.stopPropagation();

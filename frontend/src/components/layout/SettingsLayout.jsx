@@ -57,7 +57,7 @@ export function PaneLayout({
       <div
         style={{ height: "100%" }}
         className={cn(
-          "relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0",
+          "relative bg-theme-bg-secondary w-full h-full overflow-y-scroll thin-scrollbar p-4 md:p-0",
           paneClassName
         )}
       >

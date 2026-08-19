@@ -76,10 +76,7 @@ export default function AddMemberModal({ workspace, users }) {
 
   return (
     <>
-      <DialogHeader
-        sticky={false}
-        className="flex-row items-center space-y-0 gap-x-4 p-4"
-      >
+      <DialogHeader className="flex-row items-center space-y-0 gap-x-4 p-4">
         <DialogTitle className="text-sm font-semibold">Users</DialogTitle>
         <div className="relative">
           <input
@@ -95,20 +92,16 @@ export default function AddMemberModal({ workspace, users }) {
       </DialogHeader>
       <form onSubmit={handleUpdate}>
         <div className="py-[17px] pl-[20px]">
-          <Table
-            variant="none"
-            className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto pr-[20px]"
-          >
+          <Table className="gap-y-[8px] flex flex-col max-h-[385px] overflow-y-auto pr-[20px]">
             {filteredUsers.length > 0 ? (
               filteredUsers.map((user) => (
                 <TableRow
-                  variant="none"
                   key={user.id}
                   className="flex items-center gap-x-2 cursor-pointer"
                   onClick={() => handleUserSelect(user.id)}
                 >
                   <div
-                    className="shrink-0 w-3 h-3 rounded border-[1px] border-solid border-white light:border-black flex justify-center items-center"
+                    className="shrink-0 w-3 h-3 rounded border border-solid border-white light:border-black flex justify-center items-center"
                     role="checkbox"
                     aria-checked={isUserSelected(user.id)}
                     tabIndex={0}
@@ -137,7 +130,7 @@ export default function AddMemberModal({ workspace, users }) {
               className="flex items-center gap-x-2 ml-2"
             >
               <div
-                className="shrink-0 w-3 h-3 rounded border-[1px] border-white flex justify-center items-center cursor-pointer"
+                className="shrink-0 w-3 h-3 rounded border border-white flex justify-center items-center cursor-pointer"
                 role="checkbox"
                 aria-checked={selectedUsers.length === filteredUsers.length}
                 tabIndex={0}

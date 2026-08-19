@@ -160,10 +160,8 @@ function SetupProvider({
             <div>{LLMOption.options(settings, { credentialsOnly: true })}</div>
           </div>
           <DialogFooter className="mt-4 p-0">
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
+            <DialogClose render={<Button variant="outline" type="button" />}>
+              Cancel
             </DialogClose>
             <Button variant="default" type="submit" form="provider-form">
               Save settings

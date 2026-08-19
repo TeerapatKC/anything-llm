@@ -98,10 +98,8 @@ export default function EditEmbedModal({ embed }) {
           </p>
         </div>
         <DialogFooter className="p-0 mt-4">
-          <DialogClose asChild>
-            <Button variant="outline" type="button">
-              Cancel
-            </Button>
+          <DialogClose render={<Button variant="outline" type="button" />}>
+            Cancel
           </DialogClose>
           <Button variant="default" type="submit">
             Update embed

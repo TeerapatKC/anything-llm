@@ -4,11 +4,8 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
   return (
     <div className="flex gap-x-7 gap-[36px] mt-1.5 flex-wrap">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Base URL
-        </Label>
+        <Label className="block mb-3">Base URL</Label>
         <Input
-          variant="settings"
           type="url"
           name="WhisperGenericOpenAiBaseUrl"
           placeholder="http://localhost:8000/v1"
@@ -23,11 +20,8 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
         </p>
       </div>
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="WhisperGenericOpenAiApiKey"
           placeholder="API Key"
@@ -42,11 +36,8 @@ export default function GenericOpenAiWhisperOptions({ settings }) {
         </p>
       </div>
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Transcription Model
-        </Label>
+        <Label className="block mb-3">Transcription Model</Label>
         <Input
-          variant="settings"
           type="text"
           name="WhisperGenericOpenAiModel"
           placeholder="whisper-small"

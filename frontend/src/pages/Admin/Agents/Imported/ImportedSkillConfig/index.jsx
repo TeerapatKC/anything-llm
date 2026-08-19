@@ -152,9 +152,7 @@ export default function ImportedSkillConfig({
             <div className="flex flex-col gap-y-2">
               {Object.entries(config.setup_args).map(([key, props]) => (
                 <div key={key} className="flex flex-col gap-y-1">
-                  <Label variant="bold" htmlFor={key}>
-                    {key}
-                  </Label>
+                  <Label htmlFor={key}>{key}</Label>
                   <input
                     type={props?.input?.type || "text"}
                     required={props?.input?.required}
@@ -248,7 +246,12 @@ function ManageSkillMenu({ config, setImportedSkills }) {
       </button>
       {open && (
         <div className="absolute w-[100px] -top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
-          <Button variant="menuItem" type="button" onClick={deleteSkill}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={deleteSkill}
+            className="justify-start"
+          >
             <span className="text-sm">Delete Skill</span>
           </Button>
         </div>

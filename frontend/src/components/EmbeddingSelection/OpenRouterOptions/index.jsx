@@ -13,13 +13,10 @@ import {
 export default function OpenRouterOptions({ settings }) {
   return (
     <div className="w-full flex flex-col gap-y-4">
-      <div className="w-full flex items-center gap-[36px] mt-1.5">
+      <div className="w-full flex items-center gap-9 mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="OpenRouterApiKey"
             placeholder="OpenRouter API Key"
@@ -66,11 +63,9 @@ function OpenRouterEmbeddingModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Model Preference
-        </Label>
+        <Label className="block mb-3">Model Preference</Label>
         <Select name="EmbeddingModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -81,16 +76,14 @@ function OpenRouterEmbeddingModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Model Preference
-      </Label>
+      <Label className="block mb-3">Model Preference</Label>
       <Select
         name="EmbeddingModelPref"
         required={true}
         value={selectedModel}
         onValueChange={setSelectedModel}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>

@@ -27,10 +27,10 @@ export default function MobileConnectModal({ isOpen, onClose }) {
         <div className="flex w-full h-full justify-between p-[35px]">
           {/* left column */}
           <div className="flex flex-col w-1/2 gap-y-[16px]">
-            <p className="text-[#FFF] text-xl font-bold">
+            <p className="text-white text-xl font-bold">
               Go mobile. Stay local. AnythingLLM Mobile.
             </p>
-            <p className="text-[#FFF] text-lg">
+            <p className="text-white text-lg">
               AnythingLLM for mobile allows you to connect to your workspace's
               chats, threads, tools, and documents for you to use on the go.
               <br />
@@ -55,7 +55,7 @@ export default function MobileConnectModal({ isOpen, onClose }) {
             <div className="bg-white/10 rounded-lg p-[40px] w-[300px] h-[300px] flex flex-col gap-y-[16px] items-center justify-center">
               <ConnectionQrCode isOpen={isOpen} />
             </div>
-            <p className="text-[#FFF] text-sm w-[300px] text-center">
+            <p className="text-white text-sm w-[300px] text-center">
               Scan the QR code with the AnythingLLM Mobile app to enable live
               sync of your workspaces, chats, threads and documents.
               <br />

@@ -55,7 +55,7 @@ export default function ExportRow({
           <DropdownMenuItem
             key={format.key}
             disabled={exporting}
-            onSelect={() => handleExport(format)}
+            onClick={() => handleExport(format)}
           >
             {format.label}
           </DropdownMenuItem>

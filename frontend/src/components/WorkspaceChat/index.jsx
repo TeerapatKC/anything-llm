@@ -89,12 +89,7 @@ export default function WorkspaceChat({ loading, workspace }) {
       <>
         {loading === false && !workspace && (
           <Dialog open={true}>
-            <DialogContent
-              className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden"
-              onEscapeKeyDown={(e) => e.preventDefault()}
-              onPointerDownOutside={(e) => e.preventDefault()}
-              onInteractOutside={(e) => e.preventDefault()}
-            >
+            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
               <DialogHeader className="p-0">
                 <div className="flex items-center gap-2">
                   <CircleAlert className="text-red-500 w-[18px] h-[18px] fill-current" />
@@ -108,8 +103,8 @@ export default function WorkspaceChat({ loading, workspace }) {
                 been deleted or you may not have access to it.
               </p>
               <DialogFooter className="p-0 mt-4">
-                <Button variant="default" asChild>
-                  <a href={paths.home()}>Return to homepage</a>
+                <Button variant="default" render={<a href={paths.home()} />}>
+                  Return to homepage
                 </Button>
               </DialogFooter>
             </DialogContent>

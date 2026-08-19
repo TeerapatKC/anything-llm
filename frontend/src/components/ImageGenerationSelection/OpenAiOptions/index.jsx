@@ -14,11 +14,8 @@ export default function OpenAiImageOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="ImageGenerationOpenAiKey"
             placeholder="OpenAI API Key"

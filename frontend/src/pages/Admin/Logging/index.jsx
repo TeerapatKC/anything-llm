@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import LogRow from "./LogRow";
 import showToast from "@/utils/toast";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -71,12 +71,13 @@ export default function AdminLogs() {
         description={t("event.description")}
       />
       <div className="w-full justify-end flex">
-        <CTAButton
+        <Button
+          size="lg"
           onClick={handleResetLogs}
           className="mt-3 mr-0 mb-4 md:-mb-14 z-10"
         >
           {t("event.clear")}
-        </CTAButton>
+        </Button>
       </div>
       <div className="overflow-x-auto mt-6">
         <LogsContainer
@@ -118,32 +119,24 @@ function LogsContainer({
 
   return (
     <>
-      <Table variant="settings">
-        <TableHeader variant="settings">
-          <TableRow variant="none">
-            <TableHead
-              variant="none"
-              scope="col"
-              className="px-6 py-3 rounded-tl-lg"
-            >
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
               {t("event.table.type")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("event.table.user")}
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               {t("event.table.occurred")}
             </TableHead>
-            <TableHead
-              variant="none"
-              scope="col"
-              className="px-6 py-3 rounded-tr-lg"
-            >
+            <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
               {" "}
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody variant="none">
+        <TableBody>
           {!!logs && logs.map((log) => <LogRow key={log.id} log={log} />)}
         </TableBody>
       </Table>

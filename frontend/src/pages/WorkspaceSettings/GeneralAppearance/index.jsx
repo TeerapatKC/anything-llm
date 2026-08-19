@@ -6,7 +6,7 @@ import WorkspaceName from "./WorkspaceName";
 import SuggestedChatMessages from "./SuggestedChatMessages";
 import WorkspaceStatus from "./WorkspaceStatus";
 import DeleteWorkspace from "./DeleteWorkspace";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 
 export default function GeneralInfo({ slug, deletionProtected = false }) {
   const [workspace, setWorkspace] = useState(null);
@@ -53,9 +53,9 @@ export default function GeneralInfo({ slug, deletionProtected = false }) {
       >
         {hasChanges && (
           <div className="absolute top-0 right-0">
-            <CTAButton type="submit">
+            <Button className="-mr-8" size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
-            </CTAButton>
+            </Button>
           </div>
         )}
         <WorkspaceName

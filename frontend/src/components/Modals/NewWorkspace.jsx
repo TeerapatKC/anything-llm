@@ -43,11 +43,10 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
           <div className="space-y-2 flex-col">
             <div className="w-full flex flex-col gap-y-4">
               <div>
-                <Label variant="field" htmlFor="name" className="block mb-2">
+                <Label htmlFor="name" className="block mb-2">
                   {t("common.workspaces-name")}
                 </Label>
                 <Input
-                  variant="settings"
                   name="name"
                   type="text"
                   id="name"

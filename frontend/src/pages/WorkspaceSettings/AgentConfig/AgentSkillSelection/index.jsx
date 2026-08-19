@@ -374,7 +374,7 @@ function SearchProviderPicker({ value, instanceProvider, onChange }) {
         Search engine
       </label>
       <Select value={value ?? INHERIT_SEARCH_PROVIDER} onValueChange={onChange}>
-        <SelectTrigger variant="settings" className="w-fit min-w-[220px]">
+        <SelectTrigger className="w-fit min-w-[220px]">
           <SelectValue placeholder="Select an engine" />
         </SelectTrigger>
         <SelectContent>

@@ -28,7 +28,7 @@ export default function ModelTableLayout({
         </label>
       </div>
       <div className="flex w-full items-center gap-x-[16px]">
-        <div className="relative flex-1 flex-grow">
+        <div className="relative flex-1 grow">
           <Search
             size={16}
             color="var(--theme-text-primary)"

@@ -77,11 +77,7 @@ export default function EditPresetModal({
             <div className="space-y-2 flex-col">
               <div className="w-full flex flex-col gap-y-4">
                 <div>
-                  <Label
-                    variant="field"
-                    htmlFor="command"
-                    className="block mb-2"
-                  >
+                  <Label htmlFor="command" className="block mb-2">
                     Command
                   </Label>
                   <div className="flex items-center">
@@ -89,7 +85,6 @@ export default function EditPresetModal({
                       /
                     </span>
                     <Input
-                      variant="settings"
                       type="text"
                       name="command"
                       placeholder="your-command"
@@ -100,15 +95,10 @@ export default function EditPresetModal({
                   </div>
                 </div>
                 <div>
-                  <Label
-                    variant="field"
-                    htmlFor="prompt"
-                    className="block mb-2"
-                  >
+                  <Label htmlFor="prompt" className="block mb-2">
                     Prompt
                   </Label>
                   <Textarea
-                    variant="settings"
                     name="prompt"
                     placeholder="This is a test prompt. Please respond with a poem about LLMs."
                     defaultValue={preset.prompt}
@@ -116,15 +106,10 @@ export default function EditPresetModal({
                   ></Textarea>
                 </div>
                 <div>
-                  <Label
-                    variant="field"
-                    htmlFor="description"
-                    className="block mb-2"
-                  >
+                  <Label htmlFor="description" className="block mb-2">
                     Description
                   </Label>
                   <Input
-                    variant="settings"
                     type="text"
                     name="description"
                     defaultValue={preset.description}
@@ -145,10 +130,10 @@ export default function EditPresetModal({
                 {deleting ? "Deleting..." : "Delete Preset"}
               </Button>
               <div className="flex space-x-2">
-                <DialogClose asChild>
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
+                <DialogClose
+                  render={<Button variant="outline" type="button" />}
+                >
+                  Cancel
                 </DialogClose>
                 <Button variant="default" type="submit">
                   Save

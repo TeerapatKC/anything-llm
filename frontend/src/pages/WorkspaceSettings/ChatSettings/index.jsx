@@ -9,7 +9,7 @@ import ChatTemperatureSettings from "./ChatTemperatureSettings";
 import ChatModeSelection from "./ChatModeSelection";
 import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
 import ChatQueryRefusalResponse from "./ChatQueryRefusalResponse";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 
 export default function ChatSettings({ workspace }) {
   const [settings, setSettings] = useState({});
@@ -57,9 +57,9 @@ export default function ChatSettings({ workspace }) {
       >
         {hasChanges && (
           <div className="absolute top-0 right-0">
-            <CTAButton type="submit">
+            <Button className="-mr-8" size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
-            </CTAButton>
+            </Button>
           </div>
         )}
         <WorkspaceLLMSelection

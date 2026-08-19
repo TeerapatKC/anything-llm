@@ -107,7 +107,7 @@ const Layout = ({ children }) => {
   return (
     <div
       style={{ height: "100%" }}
-      className={`relative bg-theme-bg-secondary light:border-[1px] light:border-theme-sidebar-border w-full h-full overflow-y-scroll ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
+      className={`relative bg-theme-bg-secondary light:border light:border-theme-sidebar-border w-full h-full overflow-y-scroll ${showScrollbar ? "show-scrollbar" : "no-scroll"}`}
     >
       {children}
     </div>

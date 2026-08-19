@@ -437,12 +437,12 @@ export default function DnDFileUploaderWrapper({ children }) {
 
   return (
     <div
-      className={`relative flex flex-col h-full w-full md:mt-0 mt-[40px] p-[1px]`}
+      className={`relative flex flex-col h-full w-full md:mt-0 mt-[40px] p-px`}
       {...getRootProps()}
     >
       <div
         hidden={!dragging}
-        className="absolute top-0 w-full h-full bg-dark-text/90 light:bg-[#C2E7FE]/90 rounded-2xl border-[4px] border-white z-[9999]"
+        className="absolute top-0 w-full h-full bg-dark-text/90 light:bg-[#C2E7FE]/90 rounded-2xl border-4 border-white z-9999"
       >
         <div className="w-full h-full flex justify-center items-center rounded-xl">
           <div className="flex flex-col gap-y-[14px] justify-center items-center">

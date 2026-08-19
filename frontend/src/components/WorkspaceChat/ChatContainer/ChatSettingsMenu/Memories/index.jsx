@@ -30,7 +30,7 @@ export default function MemoriesRow() {
   if (!isAdmin && !memoryEnabled) return null;
 
   return (
-    <DropdownMenuItem onSelect={handleClick}>
+    <DropdownMenuItem onClick={handleClick}>
       {t("chat_window.memories.title")}
     </DropdownMenuItem>
   );

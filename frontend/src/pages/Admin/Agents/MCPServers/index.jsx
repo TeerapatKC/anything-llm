@@ -173,9 +173,9 @@ function MCPServerItem({ server, isFirst, isLast, isSelected, handleClick }) {
       <div className="flex items-center gap-x-2 text-sm font-light">
         {showWarning && (
           <Tooltip>
-            <TooltipTrigger asChild>
-              <TriangleAlert className="h-4 w-4 text-yellow-500" />
-            </TooltipTrigger>
+            <TooltipTrigger
+              render={<TriangleAlert className="h-4 w-4 text-yellow-500" />}
+            ></TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-[250px] text-xs">
               {t("agent.mcp.tool-warning")}
             </TooltipContent>

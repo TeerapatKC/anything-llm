@@ -18,6 +18,7 @@ import AccountModal from "../AccountModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
@@ -98,30 +99,32 @@ export default function UserButton() {
     <div className="w-full">
       <DropdownMenu>
         <Tooltip>
-          <TooltipTrigger asChild>
-            <DropdownMenuTrigger
-              type="button"
-              aria-label={t("profile_settings.account")}
-              className="group/account flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:data-[state=open]:!bg-transparent"
-            >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-theme-text-primary light:text-slate-800 group-data-[collapsible=icon]:group-hover/account:ring-2 group-data-[collapsible=icon]:group-data-[state=open]/account:ring-2 group-data-[collapsible=icon]:ring-theme-sidebar-item-hover">
-                <UserDisplay />
-              </span>
-              <span className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate text-sm font-semibold text-theme-text-primary">
-                  {displayName}
-                </span>
-                {!!userRoleLabel && (
-                  <span className="truncate text-xs text-theme-text-secondary">
-                    {userRoleLabel}
-                  </span>
-                )}
-              </span>
-              <ChevronsUpDown
-                size={14}
-                className="ml-auto shrink-0 text-theme-text-secondary group-data-[collapsible=icon]:hidden"
+          <TooltipTrigger
+            render={
+              <DropdownMenuTrigger
+                type="button"
+                aria-label={t("profile_settings.account")}
+                className="group/account flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:h-12! group-data-[collapsible=icon]:w-8! group-data-[collapsible=icon]:p-0! group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:hover:bg-transparent! group-data-[collapsible=icon]:data-[state=open]:bg-transparent!"
               />
-            </DropdownMenuTrigger>
+            }
+          >
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-theme-text-primary light:text-slate-800 group-data-[collapsible=icon]:group-hover/account:ring-2 group-data-[collapsible=icon]:group-data-[state=open]/account:ring-2 group-data-[collapsible=icon]:ring-theme-sidebar-item-hover">
+              <UserDisplay />
+            </span>
+            <span className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
+              <span className="truncate text-sm font-semibold text-theme-text-primary">
+                {displayName}
+              </span>
+              {!!userRoleLabel && (
+                <span className="truncate text-xs text-theme-text-secondary">
+                  {userRoleLabel}
+                </span>
+              )}
+            </span>
+            <ChevronsUpDown
+              size={14}
+              className="ml-auto shrink-0 text-theme-text-secondary group-data-[collapsible=icon]:hidden"
+            />
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-[250px] text-xs">
             {displayName}
@@ -132,26 +135,30 @@ export default function UserButton() {
           align="start"
           className="w-64 bg-theme-action-menu-bg border-theme-modal-border"
         >
-          <DropdownMenuLabel className="font-normal">
-            <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-theme-text-primary light:text-slate-800">
-                <UserDisplay />
-              </span>
-              <span className="grid flex-1 leading-tight">
-                <span className="truncate text-sm font-semibold text-theme-text-primary">
-                  {displayName}
+          {/* Base UI requires group parts to sit inside a Group — a bare
+              GroupLabel throws "MenuGroupContext is missing". */}
+          <DropdownMenuGroup>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-theme-text-primary light:text-slate-800">
+                  <UserDisplay />
                 </span>
-                {!!userRoleLabel && (
-                  <span className="truncate text-xs text-theme-text-secondary">
-                    {userRoleLabel}
+                <span className="grid flex-1 leading-tight">
+                  <span className="truncate text-sm font-semibold text-theme-text-primary">
+                    {displayName}
                   </span>
-                )}
-              </span>
-            </div>
-          </DropdownMenuLabel>
+                  {!!userRoleLabel && (
+                    <span className="truncate text-xs text-theme-text-secondary">
+                      {userRoleLabel}
+                    </span>
+                  )}
+                </span>
+              </div>
+            </DropdownMenuLabel>
+          </DropdownMenuGroup>
           <DropdownMenuSeparator className="bg-theme-modal-border" />
           <DropdownMenuItem
-            onSelect={() => setShowAccountSettings(true)}
+            onClick={() => setShowAccountSettings(true)}
             className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
           >
             <User size={16} />
@@ -179,27 +186,23 @@ export default function UserButton() {
           />
           {canSeeSettings && (
             <DropdownMenuItem
-              asChild
               className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
+              render={<Link to={paths.settings.branding()} />}
             >
-              <Link to={paths.settings.interface()}>
-                <Wrench size={16} />
-                Settings
-              </Link>
+              <Wrench size={16} />
+              Settings
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
-            asChild
             className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
+            render={<a href={supportEmail} />}
           >
-            <a href={supportEmail}>
-              <CircleQuestionMark size={16} />
-              {t("profile_settings.support")}
-            </a>
+            <CircleQuestionMark size={16} />
+            {t("profile_settings.support")}
           </DropdownMenuItem>
           <DropdownMenuSeparator className="bg-theme-modal-border" />
           <DropdownMenuItem
-            onSelect={() => {
+            onClick={() => {
               window.localStorage.removeItem(AUTH_USER);
               clearPermissions();
               clearRoleLabel();

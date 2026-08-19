@@ -156,9 +156,6 @@ export default {
     vectorDatabase: () => {
       return "/settings/vector-database";
     },
-    interface: () => {
-      return "/settings/interface";
-    },
     branding: () => {
       return "/settings/branding";
     },

@@ -86,7 +86,7 @@ export default function CommunityHubImportItemFlow() {
             }
           />
           <div className="flex-1 flex flex-col 2xl:flex-row h-full">
-            <div className="flex flex-col gap-y-[18px] mt-10 w-full 2xl:w-[360px] 2xl:flex-shrink-0">
+            <div className="flex flex-col gap-y-[18px] mt-10 w-full 2xl:w-[360px] 2xl:shrink-0">
               <SideBarSelection setStep={setStep} currentStep={step} />
             </div>
             <div className="flex-1 min-w-0 overflow-y-auto pb-[200px] 2xl:h-screen no-scroll">

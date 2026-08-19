@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CirclePlus } from "lucide-react";
 import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import BrowserExtensionApiKeyRow from "./BrowserExtensionApiKeyRow";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import NewBrowserExtensionApiKeyModal from "./NewBrowserExtensionApiKeyModal";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
@@ -56,11 +56,13 @@ export default function BrowserExtensionApiKeys() {
           open={isOpen}
           onOpenChange={(open) => (open ? openModal() : closeModal())}
         >
-          <DialogTrigger asChild>
-            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-14 z-10">
-              <CirclePlus className="h-4 w-4" />
-              Generate New API Key
-            </CTAButton>
+          <DialogTrigger
+            render={
+              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-14 z-10" />
+            }
+          >
+            <CirclePlus className="h-4 w-4" />
+            Generate New API Key
           </DialogTrigger>
           <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
             <NewBrowserExtensionApiKeyModal onSuccess={fetchExistingKeys} />
@@ -81,35 +83,24 @@ export default function BrowserExtensionApiKeys() {
         ) : error ? (
           <div className="text-red-500 mt-6">Error: {error}</div>
         ) : (
-          <Table
-            variant="none"
-            className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0"
-          >
-            <TableHeader variant="settings">
-              <TableRow variant="none">
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-2 rounded-tl-lg"
-                >
+          <Table className="w-full text-xs text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0">
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col" className="px-6 py-2 rounded-tl-lg">
                   Extension Connection String
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-2">
+                <TableHead scope="col" className="px-6 py-2">
                   Created By
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-2">
+                <TableHead scope="col" className="px-6 py-2">
                   Created At
                 </TableHead>
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-2 rounded-tr-lg"
-                >
+                <TableHead scope="col" className="px-6 py-2 rounded-tr-lg">
                   Actions
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody variant="none">
+            <TableBody>
               {apiKeys.length === 0 ? (
                 <TableEmptyRow
                   colSpan="4"

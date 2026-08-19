@@ -19,15 +19,13 @@ export default function NativeTranscriptionOptions({ settings }) {
       <LocalWarning model={model} />
       <div className="w-full flex items-center gap-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            {t("common.selection")}
-          </Label>
+          <Label className="block mb-3">{t("common.selection")}</Label>
           <Select
             name="WhisperModelPref"
             defaultValue={model}
             onValueChange={setModel}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>

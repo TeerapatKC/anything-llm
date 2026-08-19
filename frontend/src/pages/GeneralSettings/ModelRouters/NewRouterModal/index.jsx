@@ -152,10 +152,8 @@ export default function NewRouterModal({
           )}
 
           <DialogFooter className="p-0">
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                {t("model-router.new-router.cancel")}
-              </Button>
+            <DialogClose render={<Button variant="outline" type="button" />}>
+              {t("model-router.new-router.cancel")}
             </DialogClose>
             <Button variant="default" type="submit" disabled={loading}>
               {loading ? (

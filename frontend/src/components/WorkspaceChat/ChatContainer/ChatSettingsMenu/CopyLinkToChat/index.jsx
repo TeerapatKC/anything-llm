@@ -35,7 +35,7 @@ export default function CopyLinkToChatRow() {
 
   return (
     <>
-      <DropdownMenuItem onSelect={handleClick}>
+      <DropdownMenuItem onClick={handleClick}>
         {copied ? "Link copied!" : "Copy chat link"}
       </DropdownMenuItem>
       <CopyLinkModal

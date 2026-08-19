@@ -207,10 +207,8 @@ export default function RuleForm({
           </div>
 
           <DialogFooter className="p-0">
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                {t("model-router.rule-form.cancel")}
-              </Button>
+            <DialogClose render={<Button variant="outline" type="button" />}>
+              {t("model-router.rule-form.cancel")}
             </DialogClose>
             <Button variant="default" type="submit" disabled={loading}>
               {loading ? (

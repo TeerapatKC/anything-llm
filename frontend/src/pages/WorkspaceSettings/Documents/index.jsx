@@ -45,7 +45,7 @@ function SubTabButton({ label, active, onClick }) {
       className={cn(
         "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-xs font-medium transition-all",
         active
-          ? "bg-background text-foreground shadow-sm"
+          ? "bg-background text-foreground shadow-xs"
           : "hover:text-foreground"
       )}
     >

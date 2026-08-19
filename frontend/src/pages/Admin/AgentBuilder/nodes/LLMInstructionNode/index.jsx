@@ -10,9 +10,7 @@ export default function LLMInstructionNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          Instruction
-        </Label>
+        <Label className="block mb-2">Instruction</Label>
         <VariableInput
           multiline
           rows={3}
@@ -28,9 +26,7 @@ export default function LLMInstructionNode({
       </div>
 
       <div>
-        <Label variant="field" className="block mb-2">
-          Result Variable
-        </Label>
+        <Label className="block mb-2">Result Variable</Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ ...config, resultVariable: value }),

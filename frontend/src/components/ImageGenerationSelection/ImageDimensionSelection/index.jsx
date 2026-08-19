@@ -22,11 +22,9 @@ export default function ImageDimensionSelection({ provider, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Image Dimensions
-      </Label>
+      <Label className="block mb-3">Image Dimensions</Label>
       <Select name="ImageGenerationDimensions" defaultValue={defaultValue}>
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

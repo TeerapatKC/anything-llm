@@ -261,16 +261,18 @@ export default function BlockList({
                     <div className="flex items-center gap-1">
                       {index > 2 && (
                         <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                moveBlock(index, index - 1);
-                              }}
-                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-                            >
-                              <ChevronUp className="w-3.5 h-3.5" />
-                            </button>
+                          <TooltipTrigger
+                            render={
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  moveBlock(index, index - 1);
+                                }}
+                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
+                              />
+                            }
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
                           </TooltipTrigger>
                           <TooltipContent
                             side="bottom"
@@ -282,16 +284,18 @@ export default function BlockList({
                       )}
                       {index < blocks.length - 2 && (
                         <Tooltip>
-                          <TooltipTrigger asChild>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                moveBlock(index, index + 1);
-                              }}
-                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-                            >
-                              <ChevronDown className="w-3.5 h-3.5" />
-                            </button>
+                          <TooltipTrigger
+                            render={
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  moveBlock(index, index + 1);
+                                }}
+                                className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
+                              />
+                            }
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
                           </TooltipTrigger>
                           <TooltipContent
                             side="bottom"
@@ -302,16 +306,18 @@ export default function BlockList({
                         </Tooltip>
                       )}
                       <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeBlock(block.id);
-                            }}
-                            className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors duration-300"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
+                        <TooltipTrigger
+                          render={
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                removeBlock(block.id);
+                              }}
+                              className="w-7 h-7 flex items-center justify-center rounded-lg bg-theme-bg-primary border border-white/5 text-red-400 hover:bg-red-500/10 hover:border-red-500/20 transition-colors duration-300"
+                            />
+                          }
+                        >
+                          <X className="w-3.5 h-3.5" />
                         </TooltipTrigger>
                         <TooltipContent
                           side="bottom"

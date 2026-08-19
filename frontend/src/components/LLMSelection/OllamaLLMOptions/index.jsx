@@ -53,7 +53,8 @@ export default function OllamaLLMOptions({ settings }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -74,14 +75,16 @@ export default function OllamaLLMOptions({ settings }) {
             <div className="flex flex-col w-60">
               <div className="flex justify-between items-center mb-2">
                 <div className="flex items-center gap-1">
-                  <Label variant="settings">Ollama Base URL</Label>
+                  <Label>Ollama Base URL</Label>
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Info
-                        size={18}
-                        className="text-theme-text-secondary cursor-pointer"
-                      />
-                    </TooltipTrigger>
+                    <TooltipTrigger
+                      render={
+                        <Info
+                          size={18}
+                          className="text-theme-text-secondary cursor-pointer"
+                        />
+                      }
+                    ></TooltipTrigger>
                     <TooltipContent
                       side="top"
                       className="max-w-[250px] text-xs"
@@ -95,7 +98,11 @@ export default function OllamaLLMOptions({ settings }) {
                 ) : (
                   <>
                     {!basePathValue.value && (
-                      <Button variant="chip" onClick={handleAutoDetectClick}>
+                      <Button
+                        variant="secondary"
+                        size="xs"
+                        onClick={handleAutoDetectClick}
+                      >
                         Auto-Detect
                       </Button>
                     )}
@@ -103,7 +110,6 @@ export default function OllamaLLMOptions({ settings }) {
                 )}
               </div>
               <Input
-                variant="settings"
                 type="url"
                 name="OllamaLLMBasePath"
                 placeholder="http://127.0.0.1:11434"
@@ -118,16 +124,16 @@ export default function OllamaLLMOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label variant="settings" className="block">
-                  Ollama Keep Alive
-                </Label>
+                <Label className="block">Ollama Keep Alive</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info
-                      size={18}
-                      className="text-theme-text-secondary cursor-pointer"
-                    />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     <p className="text-xs leading-[18px] font-base">
                       Choose how long Ollama should keep your model in memory
@@ -149,7 +155,7 @@ export default function OllamaLLMOptions({ settings }) {
                 required={true}
                 defaultValue={settings?.OllamaLLMKeepAliveSeconds ?? "300"}
               >
-                <SelectTrigger variant="settings">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select an option" />
                 </SelectTrigger>
                 <SelectContent>
@@ -164,16 +170,16 @@ export default function OllamaLLMOptions({ settings }) {
           <div className="w-full flex items-start gap-4">
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label variant="settings" className="block">
-                  Model context window
-                </Label>
+                <Label className="block">Model context window</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info
-                      size={18}
-                      className="text-theme-text-secondary cursor-pointer"
-                    />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     <p className="text-xs leading-[18px] font-base">
                       Specify the maximum number of tokens that can be used for
@@ -198,7 +204,6 @@ export default function OllamaLLMOptions({ settings }) {
                 </Tooltip>
               </div>
               <Input
-                variant="settings"
                 type="number"
                 name="OllamaLLMTokenLimit"
                 placeholder="Automatically managed"
@@ -215,14 +220,16 @@ export default function OllamaLLMOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label variant="settings">Authentication Token</Label>
+                <Label>Authentication Token</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info
-                      size={18}
-                      className="text-theme-text-secondary cursor-pointer"
-                    />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     <p className="text-xs leading-[18px] font-base">
                       Enter a <code>Bearer</code> Auth Token for interacting
@@ -235,7 +242,6 @@ export default function OllamaLLMOptions({ settings }) {
                 </Tooltip>
               </div>
               <Input
-                variant="settings"
                 type="password"
                 name="OllamaLLMAuthToken"
                 placeholder="Ollama Auth Token"
@@ -292,11 +298,9 @@ function OllamaLLMModelSelection({
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          Ollama Model
-        </Label>
+        <Label className="block mb-2">Ollama Model</Label>
         <Select name="OllamaLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 !!basePath
@@ -317,15 +321,13 @@ function OllamaLLMModelSelection({
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        Ollama Model
-      </Label>
+      <Label className="block mb-2">Ollama Model</Label>
       <Select
         name="OllamaLLMModelPref"
         required={true}
         defaultValue={settings.OllamaLLMModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

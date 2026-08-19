@@ -16,9 +16,7 @@ export default function FileNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          Operation
-        </Label>
+        <Label className="block mb-2">Operation</Label>
         <Select
           value={config.operation}
           onValueChange={(value) => onConfigChange({ operation: value })}
@@ -34,9 +32,7 @@ export default function FileNode({
         </Select>
       </div>
       <div>
-        <Label variant="field" className="block mb-2">
-          File Path
-        </Label>
+        <Label className="block mb-2">File Path</Label>
         <input
           type="text"
           placeholder="/path/to/file"
@@ -49,9 +45,7 @@ export default function FileNode({
       </div>
       {config.operation !== "read" && (
         <div>
-          <Label variant="field" className="block mb-2">
-            Content
-          </Label>
+          <Label className="block mb-2">Content</Label>
           <textarea
             placeholder="File content..."
             value={config.content}
@@ -64,9 +58,7 @@ export default function FileNode({
         </div>
       )}
       <div>
-        <Label variant="field" className="block mb-2">
-          Store Result In
-        </Label>
+        <Label className="block mb-2">Store Result In</Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),

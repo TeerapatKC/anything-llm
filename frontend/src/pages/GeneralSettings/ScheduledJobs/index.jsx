@@ -250,14 +250,16 @@ function NotificationBellButton() {
   return (
     <>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={handleClick}
-            className="border-none flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/10 light:hover:bg-slate-200 transition-colors"
-          >
-            <Bell size={20} className="text-orange-400" />
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              onClick={handleClick}
+              className="border-none flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/10 light:hover:bg-slate-200 transition-colors"
+            />
+          }
+        >
+          <Bell size={20} className="text-orange-400" />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {t(

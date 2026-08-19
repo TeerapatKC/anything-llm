@@ -72,29 +72,35 @@ export default function ThreadItem({
   return (
     <SidebarMenuSubItem className="group/thread relative">
       <Tooltip>
-        <TooltipTrigger asChild>
-          <SidebarMenuSubButton
-            asChild
-            isActive={isActive}
-            className={cn("pr-7", thread.virtual && "italic")}
-          >
-            <Link ref={ref} to={linkTo} aria-current={isActive ? "page" : ""}>
-              {/* Leading marker. Kept before the label so the name stays the
-                  button's last child, which is what carries the truncation. */}
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "size-1.5 shrink-0 rounded-full transition-colors",
-                  isActive
-                    ? "bg-sidebar-primary"
-                    : "bg-sidebar-foreground/30 group-hover/thread:bg-sidebar-foreground/60"
-                )}
-              />
-              <span className={cn("truncate", isActive && "font-medium")}>
-                {thread.name}
-              </span>
-            </Link>
-          </SidebarMenuSubButton>
+        <TooltipTrigger
+          render={
+            <SidebarMenuSubButton
+              isActive={isActive}
+              className={cn("pr-7", thread.virtual && "italic")}
+              render={
+                <Link
+                  ref={ref}
+                  to={linkTo}
+                  aria-current={isActive ? "page" : ""}
+                />
+              }
+            />
+          }
+        >
+          {/* Leading marker. Kept before the label so the name stays the
+              button's last child, which is what carries the truncation. */}
+          <span
+            aria-hidden="true"
+            className={cn(
+              "size-1.5 shrink-0 rounded-full transition-colors",
+              isActive
+                ? "bg-sidebar-primary"
+                : "bg-sidebar-foreground/30 group-hover/thread:bg-sidebar-foreground/60"
+            )}
+          />
+          <span className={cn("truncate", isActive && "font-medium")}>
+            {thread.name}
+          </span>
         </TooltipTrigger>
         <TooltipContent side="right" className="max-w-[250px] text-xs">
           {thread.name}
@@ -175,23 +181,25 @@ function ThreadOptions({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          type="button"
-          aria-label="Thread options"
-          className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm text-sidebar-foreground/60 opacity-0 transition-opacity hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:opacity-100 group-hover/thread:opacity-100 data-[state=open]:opacity-100"
-        >
-          <MoreHorizontal className="size-4" />
-        </button>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            aria-label="Thread options"
+            className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm text-sidebar-foreground/60 opacity-0 transition-opacity hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:opacity-100 group-hover/thread:opacity-100 data-[state=open]:opacity-100"
+          />
+        }
+      >
+        <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="start" className="w-44">
-        <DropdownMenuItem onSelect={renameThread}>
+        <DropdownMenuItem onClick={renameThread}>
           <Pencil className="mr-2 size-4" />
           Rename
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
-          onSelect={() =>
+          onClick={() =>
             onConfirm({
               title: "Delete this thread?",
               description:

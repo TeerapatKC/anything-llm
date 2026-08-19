@@ -87,7 +87,6 @@ export default function DataConnectors() {
         <div className="relative shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-theme-text-secondary" />
           <Input
-            variant="settings"
             type="text"
             placeholder={t("connectors.search-placeholder")}
             className="pl-9 h-9"

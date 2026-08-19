@@ -33,7 +33,7 @@ export function FullScreenLoader() {
   return (
     <div
       id="preloader"
-      className="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-theme-bg-primary text-[var(--theme-loader)]"
+      className="fixed left-0 top-0 z-999999 flex h-screen w-screen items-center justify-center bg-theme-bg-primary text-(--theme-loader)"
     >
       <Spinner size="xl" />
     </div>

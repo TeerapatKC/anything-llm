@@ -106,16 +106,13 @@ export default function ObsidianOptions() {
 
               <div className="flex flex-col">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">
-                    {t("connectors.obsidian.vault_location")}
-                  </Label>
+                  <Label>{t("connectors.obsidian.vault_location")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.obsidian.vault_description")}
                   </p>
                 </div>
                 <div className="flex gap-x-2">
                   <Input
-                    variant="settings"
                     type="text"
                     value={vaultPath}
                     onChange={(e) => setVaultPath(e.target.value)}

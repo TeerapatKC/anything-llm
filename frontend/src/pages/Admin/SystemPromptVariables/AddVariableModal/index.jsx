@@ -48,11 +48,10 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
       <form onSubmit={handleCreate}>
         <div className="space-y-4">
           <div>
-            <Label variant="field" htmlFor="key" className="block mb-2">
+            <Label htmlFor="key" className="block mb-2">
               Key
             </Label>
             <Input
-              variant="settings"
               name="key"
               type="text"
               minLength={3}
@@ -68,11 +67,10 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
             </p>
           </div>
           <div>
-            <Label variant="field" htmlFor="value" className="block mb-2">
+            <Label htmlFor="value" className="block mb-2">
               Value
             </Label>
             <Input
-              variant="settings"
               name="value"
               type="text"
               placeholder="e.g., Acme Corp"
@@ -81,11 +79,10 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
             />
           </div>
           <div>
-            <Label variant="field" htmlFor="description" className="block mb-2">
+            <Label htmlFor="description" className="block mb-2">
               Description
             </Label>
             <Input
-              variant="settings"
               name="description"
               type="text"
               placeholder="Optional description"
@@ -95,10 +92,8 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
         </div>
         <DialogFooter className="p-0 mt-4">
-          <DialogClose asChild>
-            <Button variant="outline" type="button">
-              Cancel
-            </Button>
+          <DialogClose render={<Button variant="outline" type="button" />}>
+            Cancel
           </DialogClose>
           <Button variant="default" type="submit">
             Create variable

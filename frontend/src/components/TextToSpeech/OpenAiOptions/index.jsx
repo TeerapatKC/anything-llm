@@ -19,11 +19,8 @@ export default function OpenAiTextToSpeechOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="TTSOpenAIKey"
           placeholder="OpenAI API Key"
@@ -34,14 +31,12 @@ export default function OpenAiTextToSpeechOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Voice Model
-        </Label>
+        <Label className="block mb-3">Voice Model</Label>
         <Select
           name="TTSOpenAIVoiceModel"
           defaultValue={settings?.TTSOpenAIVoiceModel ?? "alloy"}
         >
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>

@@ -49,7 +49,7 @@ export default function ModelRouteNotification({ routedTo, isStreaming }) {
 function RouterIcon({ isStreaming }) {
   if (!isStreaming)
     return (
-      <Shuffle className="w-4 h-4 text-zinc-50 light:text-slate-950 flex-shrink-0" />
+      <Shuffle className="w-4 h-4 text-zinc-50 light:text-slate-950 shrink-0" />
     );
 
   return (
@@ -57,7 +57,7 @@ function RouterIcon({ isStreaming }) {
       autoPlay
       muted
       playsInline
-      className="w-4 h-4 flex-shrink-0 scale-[134%] invert light:invert-0"
+      className="w-4 h-4 shrink-0 scale-[134%] invert light:invert-0"
       aria-label="Routing to model..."
     >
       <source src={RouterAnimation} type="video/webm" />

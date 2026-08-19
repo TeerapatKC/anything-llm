@@ -5,11 +5,8 @@ export default function AzureAiOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Azure Service Endpoint
-          </Label>
+          <Label className="block mb-3">Azure Service Endpoint</Label>
           <Input
-            variant="settings"
             type="url"
             name="AzureOpenAiEndpoint"
             placeholder="https://my-azure.openai.azure.com"
@@ -21,11 +18,8 @@ export default function AzureAiOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="AzureOpenAiKey"
             placeholder="Azure OpenAI API Key"
@@ -37,11 +31,8 @@ export default function AzureAiOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Embedding Deployment Name
-          </Label>
+          <Label className="block mb-3">Embedding Deployment Name</Label>
           <Input
-            variant="settings"
             type="text"
             name="AzureOpenAiEmbeddingModelPref"
             placeholder="Azure OpenAI embedding model deployment name"

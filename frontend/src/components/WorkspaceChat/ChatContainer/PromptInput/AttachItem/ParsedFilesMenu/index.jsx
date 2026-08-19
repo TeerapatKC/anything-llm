@@ -128,7 +128,7 @@ export default function ParsedFilesMenu({
         <div className="flex flex-col gap-2 p-2 bg-theme-bg-secondary light:bg-theme-bg-primary rounded">
           <div className="flex items-start gap-2">
             <TriangleAlert
-              className="flex-shrink-0 mt-1 text-yellow-500 light:text-yellow-600"
+              className="shrink-0 mt-1 text-yellow-500 light:text-yellow-600"
               size={16}
             />
             <div className="text-xs text-theme-text-primary">
@@ -140,7 +140,7 @@ export default function ParsedFilesMenu({
           <button
             onClick={handleEmbed}
             disabled={isEmbedding}
-            className="border-none disabled:opacity-50 flex items-center justify-center gap-2 px-3 py-2 text-xs bg-primary-button hover:bg-theme-button-primary-hover text-theme-text-primary font-medium rounded transition-colors shadow-sm"
+            className="border-none disabled:opacity-50 flex items-center justify-center gap-2 px-3 py-2 text-xs bg-primary-button hover:bg-theme-button-primary-hover text-theme-text-primary font-medium rounded transition-colors shadow-xs"
           >
             {isEmbedding ? (
               <>
@@ -213,7 +213,7 @@ function TokenCount({ currentTokens, contextWindow, exceeded, explain }) {
   if (!explain) return body;
   return (
     <Tooltip>
-      <TooltipTrigger asChild>{body}</TooltipTrigger>
+      <TooltipTrigger render={body} />
       <TooltipContent side="top" className="max-w-[350px] text-xs">
         You have exceeded the context window limit. Some files may be truncated
         or excluded from chat responses. Responses may hallucinate or lack

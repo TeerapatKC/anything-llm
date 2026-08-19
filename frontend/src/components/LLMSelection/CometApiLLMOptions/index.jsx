@@ -10,11 +10,8 @@ export default function CometApiLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            CometAPI API Key
-          </Label>
+          <Label className="block mb-3">CometAPI API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="CometApiLLMApiKey"
             placeholder="CometAPI API Key"
@@ -40,7 +37,8 @@ function AdvancedControls({ settings }) {
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-start">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           type="button"
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
         >
@@ -54,11 +52,8 @@ function AdvancedControls({ settings }) {
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Stream Timeout (ms)
-          </Label>
+          <Label className="block mb-3">Stream Timeout (ms)</Label>
           <Input
-            variant="settings"
             type="number"
             name="CometApiLLMTimeout"
             placeholder="Timeout value between token responses to auto-timeout the stream"
@@ -113,11 +108,8 @@ function CometApiModelSelection({ settings }) {
   if (loading || models.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Input
-          variant="settings"
           type="text"
           name="CometApiLLMModelPref"
           placeholder="-- loading available models --"
@@ -129,11 +121,8 @@ function CometApiModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Input
-        variant="settings"
         type="text"
         name="CometApiLLMModelPref"
         list="cometapi-models-list"

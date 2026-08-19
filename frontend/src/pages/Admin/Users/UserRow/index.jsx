@@ -92,31 +92,21 @@ export default function UserRow({
   return (
     <>
       <TableRow
-        variant="none"
         ref={rowRef}
         className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
-        <TableHead
-          variant="none"
-          scope="row"
-          className="px-6 whitespace-nowrap"
-        >
+        <TableHead scope="row" className="px-6 whitespace-nowrap">
           {user.username}
         </TableHead>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           {user.email || <span className="text-white/40">—</span>}
         </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           {roles.find((role) => role.name === user.role)?.displayName ??
             titleCase(user.role)}
         </TableCell>
-        <TableCell variant="none" className="px-6">
-          {user.createdAt}
-        </TableCell>
-        <TableCell
-          variant="none"
-          className="px-6 flex items-center gap-x-6 h-full mt-2"
-        >
+        <TableCell className="px-6">{user.createdAt}</TableCell>
+        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-2">
           {canModify && (
             <button
               onClick={openModal}
@@ -139,7 +129,7 @@ export default function UserRow({
               >
                 {suspended ? "Unsuspend" : "Suspend"}
               </button>
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="destructive" onClick={handleDelete}>
                 Delete
               </Button>
             </>

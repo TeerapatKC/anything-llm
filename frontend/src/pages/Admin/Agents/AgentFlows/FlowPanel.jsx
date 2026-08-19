@@ -60,13 +60,19 @@ function ManageFlowMenu({ flow, onDelete }) {
       {open && (
         <div className="absolute min-w-[140px] top-full right-0 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
           <Button
-            variant="menuItem"
+            variant="ghost"
             type="button"
+            className="justify-start"
             onClick={() => navigate(paths.agents.editAgent(flow.uuid))}
           >
             <span className="text-sm whitespace-nowrap">Edit Flow</span>
           </Button>
-          <Button variant="menuItem" type="button" onClick={deleteFlow}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={deleteFlow}
+            className="justify-start"
+          >
             <span className="text-sm whitespace-nowrap">Delete Flow</span>
           </Button>
         </div>

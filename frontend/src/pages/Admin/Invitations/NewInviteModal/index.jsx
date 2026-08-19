@@ -114,7 +114,7 @@ export default function NewInviteModal({ onSuccess }) {
           <div className="mt-6">
             <div className="w-full">
               <div className="flex flex-col gap-y-1 mb-2">
-                <Label variant="field" htmlFor="workspaces" className="block">
+                <Label htmlFor="workspaces" className="block">
                   Auto-add invitee to workspaces
                 </Label>
                 <p className="text-theme-text-primary text-opacity-60 text-xs">
@@ -142,20 +142,16 @@ export default function NewInviteModal({ onSuccess }) {
         <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
           {!invite ? (
             <>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
+              <DialogClose render={<Button variant="outline" type="button" />}>
+                Cancel
               </DialogClose>
               <Button variant="default" type="submit">
                 Create Invite
               </Button>
             </>
           ) : (
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                Close
-              </Button>
+            <DialogClose render={<Button variant="outline" type="button" />}>
+              Close
             </DialogClose>
           )}
         </DialogFooter>
@@ -184,7 +180,7 @@ function WorkspaceOption({ workspace, selected, toggleSelection }) {
       />
       <div
         className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
-          selected ? "bg-[var(--theme-sidebar-item-workspace-active)]" : ""
+          selected ? "bg-(--theme-sidebar-item-workspace-active)" : ""
         }`}
       ></div>
       <div className="text-theme-text-primary text-sm font-medium font-['Plus Jakarta Sans'] leading-tight">

@@ -27,7 +27,7 @@ function ScheduledJobCreatedCard({ props }) {
           className="w-full flex items-center justify-between bg-zinc-800 light:bg-slate-100 light:border light:border-slate-200/50 rounded-xl px-2 py-1 hover:bg-zinc-700 light:hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <div className="flex items-center gap-x-3 min-w-0">
-            <div className="bg-sky-100 text-sky-700 rounded-lg flex items-center justify-center flex-shrink-0 h-[48px] w-[48px]">
+            <div className="bg-sky-100 text-sky-700 rounded-lg flex items-center justify-center shrink-0 h-[48px] w-[48px]">
               <CalendarCheck size={24} />
             </div>
             <div className="flex flex-col min-w-0 text-left">
@@ -39,7 +39,7 @@ function ScheduledJobCreatedCard({ props }) {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-x-2 px-4 py-2 rounded-lg border border-zinc-600 light:border-theme-sidebar-border text-theme-text-primary light:text-theme-text-primary text-sm font-medium flex-shrink-0 ml-4">
+          <div className="flex items-center gap-x-2 px-4 py-2 rounded-lg border border-zinc-600 light:border-theme-sidebar-border text-theme-text-primary light:text-theme-text-primary text-sm font-medium shrink-0 ml-4">
             <span>View job</span>
             <ArrowRight size={16} />
           </div>

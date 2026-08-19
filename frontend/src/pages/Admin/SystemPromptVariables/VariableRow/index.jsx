@@ -75,36 +75,28 @@ export default function VariableRow({ variable, onRefresh }) {
   return (
     <>
       <TableRow
-        variant="none"
         ref={rowRef}
         className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
-        <TableHead
-          variant="none"
-          scope="row"
-          className="px-4 py-2 whitespace-nowrap"
-        >
+        <TableHead scope="row" className="px-4 py-2 whitespace-nowrap">
           {variable.key}
         </TableHead>
-        <TableCell variant="none" className="px-4 py-2">
+        <TableCell className="px-4 py-2">
           {typeof variable.value === "function"
             ? variable.value()
             : truncate(variable.value, 50)}
         </TableCell>
-        <TableCell variant="none" className="px-4 py-2">
+        <TableCell className="px-4 py-2">
           {truncate(variable.description || "-", 50)}
         </TableCell>
-        <TableCell variant="none" className="px-4 py-2">
+        <TableCell className="px-4 py-2">
           <span
-            className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs leading-5 font-semibold ${colorTheme.text} shadow-sm`}
+            className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs leading-5 font-semibold ${colorTheme.text} shadow-xs`}
           >
             {titleCase(variable?.type ?? "static")}
           </span>
         </TableCell>
-        <TableCell
-          variant="none"
-          className="px-4 py-2 flex items-center justify-end gap-x-4"
-        >
+        <TableCell className="px-4 py-2 flex items-center justify-end gap-x-4">
           {variable.type === "static" && (
             <>
               <button
@@ -113,7 +105,7 @@ export default function VariableRow({ variable, onRefresh }) {
               >
                 Edit
               </button>
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="destructive" onClick={handleDelete}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </>

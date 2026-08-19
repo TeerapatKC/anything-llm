@@ -19,11 +19,8 @@ export default function TogetherAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Together AI API Key
-        </Label>
+        <Label className="block mb-3">Together AI API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="TogetherAiApiKey"
           placeholder="Together AI API Key"
@@ -78,11 +75,9 @@ function TogetherAiModelSelection({ settings, apiKey }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="TogetherAiModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -93,9 +88,7 @@ function TogetherAiModelSelection({ settings, apiKey }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="TogetherAiModelPref"
         required={true}
@@ -104,7 +97,7 @@ function TogetherAiModelSelection({ settings, apiKey }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

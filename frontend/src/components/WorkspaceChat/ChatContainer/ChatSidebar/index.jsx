@@ -70,7 +70,7 @@ export function useMemoriesSidebar() {
 export default function ChatSidebar({ isOpen, children }) {
   return (
     <div
-      className="h-full flex-shrink-0 overflow-hidden"
+      className="h-full shrink-0 overflow-hidden"
       style={{
         width: isOpen ? "366px" : "0px",
         transition: "width 400ms cubic-bezier(0.4,0,0.2,1)",

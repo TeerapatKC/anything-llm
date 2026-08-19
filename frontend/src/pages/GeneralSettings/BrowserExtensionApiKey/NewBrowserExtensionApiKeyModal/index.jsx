@@ -84,10 +84,8 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
         <DialogFooter className="p-0 mt-4">
           {!apiKey ? (
             <>
-              <DialogClose asChild>
-                <Button variant="outline" type="button">
-                  Cancel
-                </Button>
+              <DialogClose render={<Button variant="outline" type="button" />}>
+                Cancel
               </DialogClose>
               <Button variant="default" type="submit">
                 Create API Key

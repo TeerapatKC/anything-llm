@@ -39,14 +39,16 @@ export default function LemonadeImageOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1">
-              <Label variant="settings">Lemonade Base URL</Label>
+              <Label>Lemonade Base URL</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   Enter the URL where Lemonade is running.
                   <br />
@@ -66,7 +68,11 @@ export default function LemonadeImageOptions({ settings }) {
             ) : (
               <>
                 {!basePathValue.value && (
-                  <Button variant="chip" onClick={handleAutoDetectClick}>
+                  <Button
+                    variant="secondary"
+                    size="xs"
+                    onClick={handleAutoDetectClick}
+                  >
                     Auto-Detect
                   </Button>
                 )}
@@ -74,7 +80,6 @@ export default function LemonadeImageOptions({ settings }) {
             )}
           </div>
           <Input
-            variant="settings"
             type="url"
             name="ImageGenerationLemonadeBasePath"
             placeholder="http://localhost:13305"
@@ -87,11 +92,10 @@ export default function LemonadeImageOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
+          <Label className="block mb-3">
             API Key <span className="text-white/40">(optional)</span>
           </Label>
           <Input
-            variant="settings"
             type="password"
             name="ImageGenerationLemonadeApiKey"
             placeholder="Lemonade API Key"

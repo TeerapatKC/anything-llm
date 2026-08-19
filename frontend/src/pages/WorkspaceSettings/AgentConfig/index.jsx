@@ -102,7 +102,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           form dirty. */}
       {userCan(PERMISSIONS.AGENTS_MANAGE_SKILLS, user) && (
         <div className="w-1/2 flex flex-col gap-y-6 mt-6">
-          <div className="bg-white/10 h-[1px] w-full" />
+          <div className="bg-white/10 h-px w-full" />
           <AgentSkillSelection workspace={workspace} />
           <div className="flex flex-col gap-y-2">
             <a
@@ -135,7 +135,7 @@ function LoadingSkeleton() {
           enableAnimation={true}
           containerClassName="flex flex-col gap-y-1"
         />
-        <div className="bg-white/10 h-[1px] w-full" />
+        <div className="bg-white/10 h-px w-full" />
         <Skeleton
           height={100}
           width="100%"

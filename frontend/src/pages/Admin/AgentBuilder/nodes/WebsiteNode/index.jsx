@@ -16,9 +16,7 @@ export default function WebsiteNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          URL
-        </Label>
+        <Label className="block mb-2">URL</Label>
         <input
           type="text"
           placeholder="https://example.com"
@@ -30,9 +28,7 @@ export default function WebsiteNode({
         />
       </div>
       <div>
-        <Label variant="field" className="block mb-2">
-          Action
-        </Label>
+        <Label className="block mb-2">Action</Label>
         <Select
           value={config.action}
           onValueChange={(value) => onConfigChange({ action: value })}
@@ -48,9 +44,7 @@ export default function WebsiteNode({
         </Select>
       </div>
       <div>
-        <Label variant="field" className="block mb-2">
-          CSS Selector
-        </Label>
+        <Label className="block mb-2">CSS Selector</Label>
         <input
           type="text"
           placeholder="#element-id or .class-name"
@@ -62,9 +56,7 @@ export default function WebsiteNode({
         />
       </div>
       <div>
-        <Label variant="field" className="block mb-2">
-          Store Result In
-        </Label>
+        <Label className="block mb-2">Store Result In</Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),

@@ -224,11 +224,11 @@ export function CitationDetailModal({ source, onClose }) {
                   <DialogTitle className="truncate text-ellipsis whitespace-nowrap overflow-hidden w-full text-sm font-semibold">
                     {webpageUrl}
                   </DialogTitle>
-                  <SquareArrowOutUpRight className="flex-shrink-0" />
+                  <SquareArrowOutUpRight className="shrink-0" />
                 </div>
               </a>
             ) : (
-              <DialogTitle className="text-sm font-semibold text-theme-text-primary light:text-slate-900 overflow-hidden overflow-ellipsis whitespace-nowrap">
+              <DialogTitle className="text-sm font-semibold text-theme-text-primary light:text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap">
                 {truncate(title, 45)}
               </DialogTitle>
             )}
@@ -251,14 +251,14 @@ export function CitationDetailModal({ source, onClose }) {
                   {!!score && (
                     <div className="w-full flex items-center text-xs text-theme-text-secondary light:text-slate-500 gap-x-2 cursor-default">
                       <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="flex items-center gap-x-1">
-                            <Info size={14} />
-                            <p>
-                              {toPercentString(score)}{" "}
-                              {t("chat_window.similarity_match")}
-                            </p>
-                          </div>
+                        <TooltipTrigger
+                          render={<div className="flex items-center gap-x-1" />}
+                        >
+                          <Info size={14} />
+                          <p>
+                            {toPercentString(score)}{" "}
+                            {t("chat_window.similarity_match")}
+                          </p>
                         </TooltipTrigger>
                         <TooltipContent
                           side="top"

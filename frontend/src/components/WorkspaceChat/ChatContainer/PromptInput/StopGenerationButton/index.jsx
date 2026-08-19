@@ -15,15 +15,17 @@ export default function StopGenerationButton() {
   return (
     <>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            type="button"
-            onClick={emitHaltEvent}
-            className="border-none inline-flex justify-center items-center rounded-full cursor-pointer w-8 h-8 bg-white light:bg-slate-800 hover:opacity-80 transition-opacity"
-            aria-label="Stop generating"
-          >
-            <div className="w-3.5 h-3.5 rounded-[4px] bg-zinc-800 light:bg-white" />
-          </button>
+        <TooltipTrigger
+          render={
+            <button
+              type="button"
+              onClick={emitHaltEvent}
+              className="border-none inline-flex justify-center items-center rounded-full cursor-pointer w-8 h-8 bg-white light:bg-slate-800 hover:opacity-80 transition-opacity"
+              aria-label="Stop generating"
+            />
+          }
+        >
+          <div className="w-3.5 h-3.5 rounded-[4px] bg-zinc-800 light:bg-white" />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {t("chat_window.stop_generating")}

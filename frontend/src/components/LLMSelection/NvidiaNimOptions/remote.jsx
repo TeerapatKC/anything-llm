@@ -35,13 +35,17 @@ export default function RemoteNvidiaNimOptions({ settings }) {
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
         <div className="flex justify-between items-center mb-2">
-          <Label variant="settings">NVIDIA Nim Base URL</Label>
+          <Label>NVIDIA Nim Base URL</Label>
           {loading ? (
             <PreLoader size="6" />
           ) : (
             <>
               {!basePathValue.value && (
-                <Button variant="chip" onClick={handleAutoDetectClick}>
+                <Button
+                  variant="secondary"
+                  size="xs"
+                  onClick={handleAutoDetectClick}
+                >
                   Auto-Detect
                 </Button>
               )}
@@ -49,7 +53,6 @@ export default function RemoteNvidiaNimOptions({ settings }) {
           )}
         </div>
         <Input
-          variant="settings"
           type="url"
           name="NvidiaNimLLMBasePath"
           placeholder="http://localhost:8000/v1"
@@ -94,11 +97,9 @@ function NvidiaNimModelSelection({ settings, basePath }) {
   if (loading || models.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="NvidiaNimLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -109,15 +110,13 @@ function NvidiaNimModelSelection({ settings, basePath }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="NvidiaNimLLMModelPref"
         required={true}
         defaultValue={settings?.NvidiaNimLLMModelPref ?? models?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

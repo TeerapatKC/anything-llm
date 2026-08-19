@@ -75,7 +75,8 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -95,14 +96,16 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           <div className="flex flex-col w-[300px]">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <Label variant="settings">LM Studio Base URL</Label>
+                <Label>LM Studio Base URL</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info
-                      size={18}
-                      className="text-theme-text-secondary cursor-pointer"
-                    />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     Enter the URL where LM Studio is running.
                   </TooltipContent>
@@ -113,7 +116,11 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -121,7 +128,6 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="LMStudioBasePath"
               placeholder="http://localhost:1234/v1"
@@ -135,14 +141,16 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <Label variant="settings">Model Context Window</Label>
+              <Label>Model Context Window</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   Override the context window limit. Leave empty to auto-detect
                   from the model (defaults to 4096 if detection fails).
@@ -150,7 +158,6 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
               </Tooltip>
             </div>
             <Input
-              variant="settings"
               type="number"
               name="LMStudioTokenLimit"
               placeholder="Automatically managed"
@@ -167,14 +174,16 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
         <div className="flex items-start gap-4 mt-4">
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <Label variant="settings">Authentication Token</Label>
+              <Label>Authentication Token</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
                     Enter a <code>Bearer</code> Auth Token for interacting with
@@ -187,7 +196,6 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
               </Tooltip>
             </div>
             <Input
-              variant="settings"
               type="password"
               name="LMStudioAuthToken"
               placeholder="LM Studio Auth Token"
@@ -238,16 +246,18 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <Label variant="settings">Selected Model</Label>
+          <Label>Selected Model</Label>
           {!loading && !!basePath && (
             <>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <TriangleAlert
-                    size={18}
-                    className="text-red-400 cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <TriangleAlert
+                      size={18}
+                      className="text-red-400 cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
                     Could not reach LM Studio. Verify the URL is correct and the
@@ -259,7 +269,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
           )}
         </div>
         <Select name="LMStudioModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 loading
@@ -278,15 +288,13 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        Selected Model
-      </Label>
+      <Label className="block mb-2">Selected Model</Label>
       <Select
         name="LMStudioModelPref"
         required={true}
         defaultValue={settings.LMStudioModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

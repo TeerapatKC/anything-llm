@@ -19,11 +19,8 @@ export default function MistralOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Mistral API Key
-        </Label>
+        <Label className="block mb-3">Mistral API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="MistralApiKey"
           placeholder="Mistral API Key"
@@ -67,11 +64,9 @@ function MistralModelSelection({ apiKey, settings }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="MistralModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 !!apiKey
@@ -88,15 +83,13 @@ function MistralModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="MistralModelPref"
         required={true}
         defaultValue={settings?.MistralModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

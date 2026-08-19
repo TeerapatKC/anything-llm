@@ -11,7 +11,7 @@ import { PERMISSIONS } from "@/utils/permissions";
 import NewUserModal from "./NewUserModal";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import Toggle from "@/components/lib/Toggle";
 import { Input } from "@/components/ui/input";
 import {
@@ -38,10 +38,12 @@ export default function AdminUsers() {
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
         <div className="w-full justify-end flex">
-          <DialogTrigger asChild>
-            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
-              <UserPlus className="h-4 w-4" /> Add user
-            </CTAButton>
+          <DialogTrigger
+            render={
+              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-6 z-10" />
+            }
+          >
+            <UserPlus className="h-4 w-4" /> Add user
           </DialogTrigger>
         </div>
         <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
@@ -85,35 +87,27 @@ function UsersContainer() {
   }
 
   return (
-    <Table variant="settings">
-      <TableHeader variant="settings">
-        <TableRow variant="none">
-          <TableHead
-            variant="none"
-            scope="col"
-            className="px-6 py-3 rounded-tl-lg"
-          >
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
             Username
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Email
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Role
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Date Added
           </TableHead>
-          <TableHead
-            variant="none"
-            scope="col"
-            className="px-6 py-3 rounded-tr-lg"
-          >
+          <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
             {" "}
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody variant="none">
+      <TableBody>
         {users.map((user) => (
           <UserRow
             key={user.id}
@@ -199,7 +193,6 @@ export function MessageLimitInput({
           </label>
           <div className="relative mt-2">
             <Input
-              variant="settings"
               type="number"
               onScroll={(e) => e.target.blur()}
               onChange={(e) => {

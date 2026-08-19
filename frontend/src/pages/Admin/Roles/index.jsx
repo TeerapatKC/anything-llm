@@ -4,7 +4,6 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Lock, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import Role, { WorkspaceRole } from "@/models/role";
-import CTAButton from "@/components/lib/CTAButton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -136,13 +135,14 @@ function RolesPanel({ scope }) {
   return (
     <>
       <div className="w-full justify-end flex">
-        <CTAButton
+        <Button
+          size="lg"
           className="mt-3 mr-0 mb-4 md:-mb-6 z-10"
           onClick={() => setEditing({})}
         >
           <Plus className="h-4 w-4" /> New{" "}
           {isWorkspace ? "workspace role" : "role"}
-        </CTAButton>
+        </Button>
       </div>
 
       <div className="overflow-x-auto">
@@ -157,34 +157,26 @@ function RolesPanel({ scope }) {
             containerClassName="flex w-full"
           />
         ) : (
-          <Table variant="settings">
-            <TableHeader variant="settings">
-              <TableRow variant="none">
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-3 rounded-tl-lg"
-                >
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
                   Role
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   Permissions
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   {isWorkspace ? "Members" : "Users"}
                 </TableHead>
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-3 rounded-tr-lg"
-                >
+                <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
                   {" "}
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody variant="none">
+            <TableBody>
               {roles.map((role) => (
-                <TableRow key={role.id} variant="settings">
+                <TableRow key={role.id}>
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-x-2">
                       <span className="text-theme-text-primary font-medium">

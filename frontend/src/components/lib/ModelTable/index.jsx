@@ -217,9 +217,9 @@ function ModelRow({
   useEffect(() => {
     if (selectedModelId === model.id) {
       setIsActiveModel(true);
-      modelRowRef.current.classList.add("!bg-gray-200/10");
+      modelRowRef.current.classList.add("bg-gray-200/10!");
       setTimeout(
-        () => modelRowRef.current.classList.remove("!bg-gray-200/10"),
+        () => modelRowRef.current.classList.remove("bg-gray-200/10!"),
         800
       );
     } else {
@@ -296,14 +296,16 @@ function ModelRow({
         install — a provider may list a catalog it cannot download from. */}
         {!model.downloaded && !processing && !!downloadModel && (
           <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="border-none hover:bg-white/20 light:hover:bg-black/5 rounded-lg p-2 flex items-center gap-x-1 cursor-pointer"
-                onClick={handleSetActiveModel}
-              >
-                <CloudDownload size={20} className="text-theme-text-primary" />
-              </button>
+            <TooltipTrigger
+              render={
+                <button
+                  type="button"
+                  className="border-none hover:bg-white/20 light:hover:bg-black/5 rounded-lg p-2 flex items-center gap-x-1 cursor-pointer"
+                  onClick={handleSetActiveModel}
+                />
+              }
+            >
+              <CloudDownload size={20} className="text-theme-text-primary" />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               {`Install ${model.organization}:${model.name}`}

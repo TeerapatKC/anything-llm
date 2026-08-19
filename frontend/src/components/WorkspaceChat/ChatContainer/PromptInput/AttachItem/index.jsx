@@ -126,7 +126,7 @@ export default function AttachItem({
   if (!showMenu)
     return (
       <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipTrigger render={button} />
         <TooltipContent side="top" className="text-xs">
           {t("chat_window.attach_file")}
         </TooltipContent>
@@ -142,10 +142,10 @@ export default function AttachItem({
         if (!open && isEmbedding) return;
         setMenuOpen(open);
       }}
-      openDelay={300}
+      delay={300}
       closeDelay={800}
     >
-      <HoverCardTrigger asChild>{button}</HoverCardTrigger>
+      <HoverCardTrigger render={button} />
       <HoverCardContent
         side="top"
         className="z-99 w-[400px] bg-theme-bg-primary px-[5px] py-2 rounded-lg light:border-2 light:border-theme-modal-border"

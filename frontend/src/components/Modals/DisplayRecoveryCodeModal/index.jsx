@@ -41,12 +41,7 @@ export default function RecoveryCodeModal({
 
   return (
     <Dialog open={true}>
-      <DialogContent
-        className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden"
-        onEscapeKeyDown={(e) => e.preventDefault()}
-        onPointerDownOutside={(e) => e.preventDefault()}
-        onInteractOutside={(e) => e.preventDefault()}
-      >
+      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
         <DialogHeader className="p-0">
           <div className="w-full flex gap-x-2 items-center">
             <Key size={18} className="text-theme-text-primary" />

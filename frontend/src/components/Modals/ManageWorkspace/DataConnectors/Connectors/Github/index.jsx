@@ -83,13 +83,12 @@ export default function GithubOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">{t("connectors.github.URL")}</Label>
+                  <Label>{t("connectors.github.URL")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.github.URL_explained")}
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="url"
                   name="repo"
                   placeholder="https://github.com/Mintplex-Labs/anything-llm"
@@ -102,7 +101,7 @@ export default function GithubOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold" className="flex gap-x-2 items-center">
+                  <Label className="flex gap-x-2 items-center">
                     <p className="font-bold text-theme-text-primary">
                       {t("connectors.github.token")}
                     </p>{" "}
@@ -118,7 +117,6 @@ export default function GithubOptions() {
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="text"
                   name="accessToken"
                   placeholder="github_pat_1234_abcdefg"
@@ -154,7 +152,7 @@ export default function GithubOptions() {
                 classNames={{
                   tag: "bg-theme-settings-input-bg light:bg-black/10 bg-blue-300/10 text-zinc-800",
                   input:
-                    "flex p-1 !bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
+                    "flex p-1 bg-theme-settings-input-bg! text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
                 }}
               />
             </div>
@@ -162,7 +160,7 @@ export default function GithubOptions() {
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
             <PATAlert accessToken={accessToken} />
-            <Button variant="homePrimary" type="submit" disabled={loading}>
+            <Button variant="default" type="submit" disabled={loading}>
               {loading ? "Collecting files..." : "Submit"}
             </Button>
             {loading && (
@@ -205,7 +203,7 @@ function GitHubBranchSelection({ repo, accessToken }) {
     return (
       <div className="flex flex-col w-full max-w-60">
         <div className="flex flex-col gap-y-1 mb-4">
-          <Label variant="bold">Branch</Label>
+          <Label>Branch</Label>
           <p className="text-xs font-normal text-theme-text-secondary">
             {t("connectors.github.branch")}
           </p>
@@ -223,7 +221,7 @@ function GitHubBranchSelection({ repo, accessToken }) {
   return (
     <div className="flex flex-col w-60">
       <div className="flex flex-col gap-y-1 mb-4">
-        <Label variant="bold">Branch</Label>
+        <Label>Branch</Label>
         <p className="text-xs font-normal text-theme-text-secondary">
           {t("connectors.github.branch_explained")}
         </p>
@@ -284,9 +282,11 @@ function PATTooltip({ accessToken }) {
     <>
       {!accessToken && (
         <Tooltip>
-          <TooltipTrigger asChild>
-            <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
-          </TooltipTrigger>
+          <TooltipTrigger
+            render={
+              <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
+            }
+          ></TooltipTrigger>
           <TooltipContent side="right" className="max-w-[250px] text-xs">
             <p className="text-sm">
               {t("connectors.github.token_explained_start")}

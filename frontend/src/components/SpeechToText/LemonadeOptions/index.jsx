@@ -42,14 +42,15 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <Label variant="settings">Base URL</Label>
+              <Label>Base URL</Label>
               {loading ? (
                 <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (
                     <Button
-                      variant="chip"
+                      variant="secondary"
+                      size="xs"
                       type="button"
                       onClick={handleAutoDetectClick}
                     >
@@ -61,10 +62,12 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
             </div>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
-                  <Info size={18} className="text-theme-text-secondary" />
-                </div>
+              <TooltipTrigger
+                render={
+                  <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full" />
+                }
+              >
+                <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 Enter the URL where your Lemonade server is running.
@@ -72,7 +75,6 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="url"
             name="STTLemonadeBasePath"
             placeholder="http://localhost:13305"
@@ -90,15 +92,15 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
         />
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label variant="settings" className="block">
-              API Key (optional)
-            </Label>
+            <Label className="block">API Key (optional)</Label>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full">
-                  <Info size={18} className="text-theme-text-secondary" />
-                </div>
+              <TooltipTrigger
+                render={
+                  <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full" />
+                }
+              >
+                <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 The API key for your Lemonade server. Shared with the Lemonade
@@ -107,7 +109,6 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="password"
             name="LemonadeLLMApiKey"
             defaultValue={settings?.LemonadeLLMApiKey ? "*".repeat(20) : ""}
@@ -152,11 +153,9 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Transcription Model
-        </Label>
+        <Label className="block mb-3">Transcription Model</Label>
         <Select name="STTLemonadeModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 basePath
@@ -177,9 +176,7 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Transcription Model
-      </Label>
+      <Label className="block mb-3">Transcription Model</Label>
       <Select
         name="STTLemonadeModelPref"
         required={true}
@@ -190,7 +187,7 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
           (downloadedModels[0]?.id || customModels[0]?.id)
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>

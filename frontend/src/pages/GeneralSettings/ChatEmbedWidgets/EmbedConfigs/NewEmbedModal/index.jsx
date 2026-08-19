@@ -107,10 +107,8 @@ export default function NewEmbedModal() {
           </p>
         </div>
         <DialogFooter className="p-0 mt-4">
-          <DialogClose asChild>
-            <Button variant="outline" type="button">
-              Cancel
-            </Button>
+          <DialogClose render={<Button variant="outline" type="button" />}>
+            Cancel
           </DialogClose>
           <Button variant="default" type="submit">
             Create embed
@@ -134,7 +132,7 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <Label variant="field" htmlFor="workspace_id" className="block">
+        <Label htmlFor="workspace_id" className="block">
           Workspace
         </Label>
         <p className="text-theme-text-secondary text-xs">
@@ -143,7 +141,7 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
         </p>
       </div>
       <Select name="workspace_id" required={true} defaultValue={defaultValue}>
-        <SelectTrigger className="min-w-[15rem] rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-theme-text-primary focus:ring-blue-500 focus:border-blue-500">
+        <SelectTrigger className="min-w-60 rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-theme-text-primary focus:ring-blue-500 focus:border-blue-500">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>
@@ -166,7 +164,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <Label variant="field" className="block" htmlFor="chat_mode">
+        <Label className="block" htmlFor="chat_mode">
           Allowed chat method
         </Label>
         <p className="text-theme-text-secondary text-xs">
@@ -196,7 +194,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
           <div
             className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
               chatMode === "chat"
-                ? "bg-[var(--theme-sidebar-item-workspace-active)]"
+                ? "bg-(--theme-sidebar-item-workspace-active)"
                 : ""
             }`}
           ></div>
@@ -222,7 +220,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
           <div
             className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
               chatMode === "query"
-                ? "bg-[var(--theme-sidebar-item-workspace-active)]"
+                ? "bg-(--theme-sidebar-item-workspace-active)"
                 : ""
             }`}
           ></div>
@@ -276,7 +274,7 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <Label variant="field" htmlFor="allowlist_domains" className="block">
+        <Label htmlFor="allowlist_domains" className="block">
           Restrict requests from domains
         </Label>
         <p className="text-theme-text-secondary text-xs">
@@ -295,7 +293,7 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
         classNames={{
           tag: "bg-theme-settings-input-bg light:bg-black/10 bg-blue-300/10 text-zinc-800",
           input:
-            "flex p-1 !bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
+            "flex p-1 bg-theme-settings-input-bg! text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
         }}
       />
     </div>
@@ -306,7 +304,7 @@ export const NumberInput = ({ name, title, hint, defaultValue = 0 }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <Label variant="field" htmlFor={name} className="block">
+        <Label htmlFor={name} className="block">
           {title}
         </Label>
         <p className="text-theme-text-secondary text-xs">{hint}</p>
@@ -314,7 +312,7 @@ export const NumberInput = ({ name, title, hint, defaultValue = 0 }) => {
       <input
         type="number"
         name={name}
-        className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[15rem] p-2.5"
+        className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-60 p-2.5"
         min={0}
         defaultValue={defaultValue}
         onScroll={(e) => e.target.blur()}

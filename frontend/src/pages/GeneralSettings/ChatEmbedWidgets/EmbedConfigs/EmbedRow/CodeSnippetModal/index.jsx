@@ -25,10 +25,8 @@ export default function CodeSnippetModal({ embed }) {
         <ScriptTag embed={embed} />
       </div>
       <DialogFooter className="p-0 mt-4">
-        <DialogClose asChild>
-          <Button variant="outline" type="button">
-            Close
-          </Button>
+        <DialogClose render={<Button variant="outline" type="button" />}>
+          Close
         </DialogClose>
       </DialogFooter>
     </>
@@ -74,9 +72,7 @@ const ScriptTag = ({ embed }) => {
   return (
     <div>
       <div className="flex flex-col mb-2">
-        <Label variant="field" className="block">
-          HTML Script Tag Embed Code
-        </Label>
+        <Label className="block">HTML Script Tag Embed Code</Label>
         <p className="text-theme-text-secondary text-xs">
           Have your workspace chat embed function like a help desk chat bottom
           in the corner of your website.

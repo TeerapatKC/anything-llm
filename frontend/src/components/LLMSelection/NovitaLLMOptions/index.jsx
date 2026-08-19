@@ -19,11 +19,8 @@ export default function NovitaLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Novita API Key
-          </Label>
+          <Label className="block mb-3">Novita API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="NovitaLLMApiKey"
             placeholder="Novita API Key"
@@ -49,7 +46,8 @@ function AdvancedControls({ settings }) {
     <div className="flex flex-col gap-y-4">
       <div className="flex justify-start">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           type="button"
           onClick={() => setShowAdvancedControls(!showAdvancedControls)}
         >
@@ -63,11 +61,8 @@ function AdvancedControls({ settings }) {
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Stream Timeout (ms)
-          </Label>
+          <Label className="block mb-3">Stream Timeout (ms)</Label>
           <Input
-            variant="settings"
             type="number"
             name="NovitaLLMTimeout"
             placeholder="Timeout value between token responses to auto-timeout the stream"
@@ -110,11 +105,9 @@ function NovitaModelSelection({ settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="NovitaLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -125,9 +118,7 @@ function NovitaModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="NovitaLLMModelPref"
         required={true}
@@ -136,7 +127,7 @@ function NovitaModelSelection({ settings }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

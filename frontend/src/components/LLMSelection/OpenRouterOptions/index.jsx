@@ -1,6 +1,7 @@
 import System from "@/models/system";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,13 +17,10 @@ import {
 export default function OpenRouterOptions({ settings }) {
   return (
     <div className="flex flex-col gap-y-4 mt-1.5">
-      <div className="flex gap-[36px]">
+      <div className="flex gap-9">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            OpenRouter API Key
-          </Label>
+          <Label className="block mb-3">OpenRouter API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="OpenRouterApiKey"
             placeholder="OpenRouter API Key"
@@ -46,25 +44,25 @@ function AdvancedControls({ settings }) {
 
   return (
     <div className="flex flex-col gap-y-4">
-      <button
-        type="button"
-        onClick={() => setShowAdvancedControls(!showAdvancedControls)}
-        className="border-none text-theme-text-primary hover:text-white/70 flex items-center text-sm"
-      >
-        {showAdvancedControls ? "Hide" : "Show"} advanced controls
-        {showAdvancedControls ? (
-          <ChevronUp size={14} className="ml-1" />
-        ) : (
-          <ChevronDown size={14} className="ml-1" />
-        )}
-      </button>
+      <div className="flex justify-start">
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          onClick={() => setShowAdvancedControls(!showAdvancedControls)}
+        >
+          {showAdvancedControls ? "Hide" : "Show"} advanced settings
+          {showAdvancedControls ? (
+            <ChevronUp size={14} className="ml-1" />
+          ) : (
+            <ChevronDown size={14} className="ml-1" />
+          )}
+        </Button>
+      </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Stream Timeout (ms)
-          </Label>
+          <Label className="block mb-3">Stream Timeout (ms)</Label>
           <Input
-            variant="settings"
             type="number"
             name="OpenRouterTimeout"
             placeholder="Timeout value between token responses to auto-timeout the stream"
@@ -106,11 +104,9 @@ function OpenRouterModelSelection({ settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="OpenRouterModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -121,9 +117,7 @@ function OpenRouterModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="OpenRouterModelPref"
         required={true}
@@ -132,7 +126,7 @@ function OpenRouterModelSelection({ settings }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

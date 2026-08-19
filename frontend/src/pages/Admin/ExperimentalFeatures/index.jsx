@@ -87,7 +87,7 @@ export default function ExperimentalFeatures() {
 
         {/* Selected feature setting panel */}
         <FeatureVerification>
-          <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
+          <div className="flex-2 flex flex-col gap-y-[18px] mt-10">
             <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl flex-1 p-4">
               {selectedFeature ? (
                 <SelectedFeatureComponent
@@ -192,12 +192,7 @@ function FeatureVerification({ children }) {
     return (
       <>
         <Dialog open={true}>
-          <DialogContent
-            className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden"
-            onEscapeKeyDown={(e) => e.preventDefault()}
-            onPointerDownOutside={(e) => e.preventDefault()}
-            onInteractOutside={(e) => e.preventDefault()}
-          >
+          <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
             <DialogHeader className="p-0">
               <div className="flex items-center gap-2">
                 <FlaskConical size={18} className="text-theme-text-primary" />
@@ -274,8 +269,12 @@ function FeatureVerification({ children }) {
                 </div>
               </div>
               <div className="flex w-full justify-between items-center mt-6 space-x-2">
-                <Button variant="outline" type="button" asChild>
-                  <a href={paths.home()}>Reject &amp; close</a>
+                <Button
+                  variant="outline"
+                  type="button"
+                  render={<a href={paths.home()} />}
+                >
+                  Reject &amp; close
                 </Button>
                 <Button variant="default" type="submit">
                   I understand

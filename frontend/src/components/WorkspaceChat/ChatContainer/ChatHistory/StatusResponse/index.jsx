@@ -54,18 +54,20 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
             </div>
             {previousThoughts?.length > 0 && (
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    onClick={handleExpandClick}
-                    className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
-                    aria-label={
-                      isExpanded ? "Hide thought chain" : "Show thought chain"
-                    }
-                  >
-                    <ChevronDown
-                      className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                <TooltipTrigger
+                  render={
+                    <button
+                      onClick={handleExpandClick}
+                      className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
+                      aria-label={
+                        isExpanded ? "Hide thought chain" : "Show thought chain"
+                      }
                     />
-                  </button>
+                  }
+                >
+                  <ChevronDown
+                    className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                  />
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-[250px] text-xs">
                   {isExpanded ? "Hide thought chain" : "Show thought chain"}

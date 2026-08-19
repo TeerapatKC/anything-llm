@@ -9,7 +9,7 @@ import WorkspaceRow from "./WorkspaceRow";
 import NewWorkspaceModal from "./NewWorkspaceModal";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -34,10 +34,12 @@ export default function AdminWorkspaces() {
           open={isOpen}
           onOpenChange={(open) => (open ? openModal() : closeModal())}
         >
-          <DialogTrigger asChild>
-            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-14 z-10">
-              <BookOpen className="h-4 w-4" /> New Workspace
-            </CTAButton>
+          <DialogTrigger
+            render={
+              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-14 z-10" />
+            }
+          >
+            <BookOpen className="h-4 w-4" /> New Workspace
           </DialogTrigger>
           <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
             <NewWorkspaceModal />
@@ -87,41 +89,30 @@ function WorkspacesContainer() {
   }
 
   return (
-    <Table
-      variant="none"
-      className="w-full text-xs text-left rounded-lg mt-6 min-w-[640px] border-spacing-0"
-    >
-      <TableHeader variant="settings">
-        <TableRow variant="none">
-          <TableHead
-            variant="none"
-            scope="col"
-            className="px-6 py-3 rounded-tl-lg"
-          >
+    <Table className="w-full text-xs text-left rounded-lg mt-6 min-w-[640px] border-spacing-0">
+      <TableHeader>
+        <TableRow>
+          <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
             Name
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Link
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Users
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Status
           </TableHead>
-          <TableHead variant="none" scope="col" className="px-6 py-3">
+          <TableHead scope="col" className="px-6 py-3">
             Created On
           </TableHead>
-          <TableHead
-            variant="none"
-            scope="col"
-            className="px-6 py-3 rounded-tr-lg"
-          >
+          <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
             {" "}
           </TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody variant="none">
+      <TableBody>
         {workspaces.map((workspace) => (
           <WorkspaceRow
             key={workspace.id}

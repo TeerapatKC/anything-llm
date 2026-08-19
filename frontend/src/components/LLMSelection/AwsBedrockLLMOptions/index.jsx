@@ -44,11 +44,8 @@ export default function AwsBedrockLLMOptions({ settings }) {
 
       <div className="w-full flex items-center gap-[36px] my-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            AWS Bedrock API Key
-          </Label>
+          <Label className="block mb-3">AWS Bedrock API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="AwsBedrockLLMApiKey"
             placeholder="AWS Bedrock API Key"
@@ -61,16 +58,14 @@ export default function AwsBedrockLLMOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            AWS Region
-          </Label>
+          <Label className="block mb-3">AWS Region</Label>
           <Select
             name="AwsBedrockLLMRegion"
             value={region}
             required={true}
             onValueChange={setRegion}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select a region" />
             </SelectTrigger>
             <SelectContent>
@@ -95,11 +90,8 @@ export default function AwsBedrockLLMOptions({ settings }) {
               region={region}
             />
             <div className="flex flex-col w-60">
-              <Label variant="settings" className="block mb-3">
-                Model context window
-              </Label>
+              <Label className="block mb-3">Model context window</Label>
               <Input
-                variant="settings"
                 type="number"
                 name="AwsBedrockLLMTokenLimit"
                 placeholder="Content window limit (eg: 8192)"
@@ -112,9 +104,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
             </div>
             <div className="flex flex-col w-60">
               <div className="flex items-center gap-x-1 mb-3">
-                <Label variant="settings" className="block">
-                  Max Tokens
-                </Label>
+                <Label className="block">Max Tokens</Label>
                 <div className="group relative">
                   <Info
                     size={14}
@@ -127,7 +117,6 @@ export default function AwsBedrockLLMOptions({ settings }) {
                 </div>
               </div>
               <Input
-                variant="settings"
                 type="number"
                 name="AwsBedrockLLMMaxTokens"
                 placeholder="4096"
@@ -176,11 +165,9 @@ function BedrockModelSelection({ settings, apiKey, region }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="AwsBedrockLLMModel" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -191,9 +178,7 @@ function BedrockModelSelection({ settings, apiKey, region }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="AwsBedrockLLMModel"
         required={true}
@@ -202,7 +187,7 @@ function BedrockModelSelection({ settings, apiKey, region }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

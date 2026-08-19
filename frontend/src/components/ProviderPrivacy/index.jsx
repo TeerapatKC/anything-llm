@@ -79,7 +79,7 @@ function ProviderPrivacyItem({ title, provider, altText }) {
         <img
           src={provider.logo}
           alt={altText}
-          className="w-8 h-8 rounded flex-shrink-0 mt-0.5"
+          className="w-8 h-8 rounded shrink-0 mt-0.5"
         />
         <div className="flex flex-col gap-2 flex-1">
           <div className="flex items-center gap-2 flex-wrap">

@@ -6,9 +6,7 @@ const FlowInfoNode = forwardRef(({ config, onConfigChange }, refs) => {
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          Flow Name
-        </Label>
+        <Label className="block mb-2">Flow Name</Label>
         <div className="flex flex-col text-xs text-theme-text-secondary mt-2 mb-3">
           <p className="">
             It is important to give your flow a name that an LLM can easily
@@ -35,9 +33,7 @@ const FlowInfoNode = forwardRef(({ config, onConfigChange }, refs) => {
       </div>
 
       <div>
-        <Label variant="field" className="block mb-2">
-          Description
-        </Label>
+        <Label className="block mb-2">Description</Label>
         <div className="flex flex-col text-xs text-theme-text-secondary mt-2 mb-3">
           <p className="">
             It is equally important to give your flow a description that an LLM

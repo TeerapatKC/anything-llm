@@ -1,4 +1,4 @@
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import CommunityHubImportItemSteps from "../..";
 import { useEffect, useState } from "react";
 import Workspace from "@/models/workspace";
@@ -84,15 +84,13 @@ export default function SystemPrompt({ item, setStep }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Apply to Workspace
-          </Label>
+          <Label className="block mb-3">Apply to Workspace</Label>
           <Select
             name="destinationWorkspaceSlug"
             required={true}
             onValueChange={setDestinationWorkspaceSlug}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger>
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -109,12 +107,13 @@ export default function SystemPrompt({ item, setStep }) {
         </div>
       </div>
       {destinationWorkspaceSlug && (
-        <CTAButton
-          className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+        <Button
+          size="lg"
+          className="-mr-8 text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
           onClick={handleSubmit}
         >
           Apply system prompt to workspace
-        </CTAButton>
+        </Button>
       )}
     </div>
   );

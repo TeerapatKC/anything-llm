@@ -226,7 +226,7 @@ export default function AgentFlows({ entity }) {
                         </span>
                       </div>
                       {isExpanded && summary && (
-                        <div className="w-full text-theme-text-secondary text-xs mt-1 whitespace-pre-line break-words">
+                        <div className="w-full text-theme-text-secondary text-xs mt-1 whitespace-pre-line wrap-break-word">
                           {summary}
                         </div>
                       )}

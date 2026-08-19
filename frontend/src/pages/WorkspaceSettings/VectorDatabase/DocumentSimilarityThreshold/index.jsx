@@ -30,7 +30,7 @@ export default function DocumentSimilarityThreshold({
         onValueChange={() => setHasChanges(true)}
         required={true}
       >
-        <SelectTrigger variant="settings" className="mt-2">
+        <SelectTrigger className="mt-2">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

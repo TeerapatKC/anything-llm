@@ -28,11 +28,8 @@ export default function LiteLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Base URL
-          </Label>
+          <Label className="block mb-3">Base URL</Label>
           <Input
-            variant="settings"
             type="url"
             name="LiteLLMBasePath"
             placeholder="http://127.0.0.1:4000"
@@ -51,23 +48,20 @@ export default function LiteLLMOptions({ settings }) {
         />
         <div className="flex flex-col w-60">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex gap-x-1 items-center mb-3">
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-                <Label variant="settings" className="block">
-                  Max embedding chunk length
-                </Label>
-              </div>
+            <TooltipTrigger
+              render={<div className="flex gap-x-1 items-center mb-3" />}
+            >
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
+              <Label className="block">Max embedding chunk length</Label>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
             </TooltipContent>
           </Tooltip>
           <Input
-            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
             placeholder="8192"
@@ -82,12 +76,11 @@ export default function LiteLLMOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
-            <Label variant="settings" className="flex items-center gap-x-2">
-              API Key <p className="!text-xs !italic !font-thin">optional</p>
+            <Label className="flex items-center gap-x-2">
+              API Key <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
-            variant="settings"
             type="password"
             name="LiteLLMAPIKey"
             placeholder="sk-mysecretkey"
@@ -129,11 +122,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Embedding Model Selection
-        </Label>
+        <Label className="block mb-3">Embedding Model Selection</Label>
         <Select name="EmbeddingModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 basePath?.includes("/v1")
@@ -151,9 +142,7 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   return (
     <div className="flex flex-col w-60">
       <div className="flex items-center">
-        <Label variant="settings" className="block mb-3">
-          Embedding Model Selection
-        </Label>
+        <Label className="block mb-3">Embedding Model Selection</Label>
         <EmbeddingModelTooltip />
       </div>
       <Select
@@ -161,7 +150,7 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
         required={true}
         defaultValue={settings.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>
@@ -187,12 +176,14 @@ function EmbeddingModelTooltip() {
   return (
     <div className="flex items-center justify-center -mt-3 ml-1">
       <Tooltip>
-        <TooltipTrigger asChild>
-          <TriangleAlert
-            size={14}
-            className="ml-1 text-orange-500 cursor-pointer"
-          />
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <TriangleAlert
+              size={14}
+              className="ml-1 text-orange-500 cursor-pointer"
+            />
+          }
+        ></TooltipTrigger>
         <TooltipContent side="top" className="max-w-[250px] text-xs">
           <p className="text-sm">
             Be sure to select a valid embedding model. Chat models are not

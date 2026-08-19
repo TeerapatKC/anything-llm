@@ -100,13 +100,7 @@ export default function SlashCommandManager({
           </h2>
           <p className="text-xs text-theme-text-secondary">{description}</p>
         </div>
-        <Button
-          type="button"
-          size="sm"
-          className="shrink-0"
-          onClick={openAdd}
-          disabled={loading}
-        >
+        <Button type="button" size="lg" onClick={openAdd} disabled={loading}>
           <Plus className="mr-1.5 size-4" />
           New command
         </Button>

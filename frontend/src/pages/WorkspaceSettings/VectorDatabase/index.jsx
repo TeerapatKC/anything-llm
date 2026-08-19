@@ -8,7 +8,7 @@ import DocumentSimilarityThreshold from "./DocumentSimilarityThreshold";
 import ResetDatabase from "./ResetDatabase";
 import VectorCount from "./VectorCount";
 import VectorSearchMode from "./VectorSearchMode";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 
 export default function VectorDatabase({ workspace }) {
   const [hasChanges, setHasChanges] = useState(false);
@@ -44,9 +44,9 @@ export default function VectorDatabase({ workspace }) {
       >
         {hasChanges && (
           <div className="absolute top-0 right-0">
-            <CTAButton type="submit">
+            <Button className="-mr-8" size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
-            </CTAButton>
+            </Button>
           </div>
         )}
         <div className="flex items-start gap-x-5">

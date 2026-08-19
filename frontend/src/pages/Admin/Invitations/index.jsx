@@ -8,7 +8,7 @@ import InviteRow from "./InviteRow";
 import NewInviteModal from "./NewInviteModal";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -46,10 +46,12 @@ export default function AdminInvites() {
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
         <div className="w-full justify-end flex">
-          <DialogTrigger asChild>
-            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-12 z-10">
-              <Mail className="h-4 w-4" /> Create Invite Link
-            </CTAButton>
+          <DialogTrigger
+            render={
+              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-12 z-10" />
+            }
+          >
+            <Mail className="h-4 w-4" /> Create Invite Link
           </DialogTrigger>
         </div>
         <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
@@ -68,35 +70,27 @@ export default function AdminInvites() {
             containerClassName="flex w-full"
           />
         ) : (
-          <Table variant="settings">
-            <TableHeader variant="settings">
-              <TableRow variant="none">
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-3 rounded-tl-lg"
-                >
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
                   Status
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   Accepted By
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   Created By
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   Created
                 </TableHead>
-                <TableHead
-                  variant="none"
-                  scope="col"
-                  className="px-6 py-3 rounded-tr-lg"
-                >
+                <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
                   {" "}
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody variant="none">
+            <TableBody>
               {invites.length === 0 ? (
                 <TableEmptyRow
                   colSpan="5"

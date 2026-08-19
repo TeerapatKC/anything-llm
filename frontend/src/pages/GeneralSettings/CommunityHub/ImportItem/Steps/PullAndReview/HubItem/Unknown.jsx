@@ -1,4 +1,4 @@
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import CommunityHubImportItemSteps from "../..";
 import { TriangleAlert } from "lucide-react";
 
@@ -25,15 +25,16 @@ export default function UnknownItem({ item, setSettings, setStep }) {
           Please contact support via email if you need help importing this item.
         </p>
       </div>
-      <CTAButton
-        className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+      <Button
+        size="lg"
+        className="-mr-8 text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
         onClick={() => {
           setSettings({ itemId: null, item: null });
           setStep(CommunityHubImportItemSteps.itemId.key);
         }}
       >
         Try another item
-      </CTAButton>
+      </Button>
     </div>
   );
 }

@@ -153,7 +153,7 @@ function ToolApprovalPayload({ payload, isExpanded }) {
 
   return (
     <div className="p-3 bg-zinc-900/50 light:bg-slate-200/50 rounded-lg overflow-x-auto">
-      <pre className="text-xs text-zinc-300 light:text-slate-700 font-mono whitespace-pre-wrap break-words">
+      <pre className="text-xs text-zinc-300 light:text-slate-700 font-mono whitespace-pre-wrap wrap-break-word">
         {formatPayload(payload)}
       </pre>
     </div>

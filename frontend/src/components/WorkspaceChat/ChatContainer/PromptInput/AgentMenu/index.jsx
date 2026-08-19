@@ -15,20 +15,22 @@ export default function AvailableAgentsButton({ showing, setShowAgents }) {
   if (agentSessionActive) return null;
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          id="agent-list-btn"
-          aria-label={t("chat_window.agents")}
-          onClick={() => setShowAgents(!showing)}
-          className={`flex justify-center items-center cursor-pointer opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 ${
-            showing ? "!opacity-100" : ""
-          }`}
-        >
-          <AtSign
-            color="var(--theme-sidebar-footer-icon-fill)"
-            className="w-[20px] h-[20px] pointer-events-none text-theme-text-primary"
+      <TooltipTrigger
+        render={
+          <div
+            id="agent-list-btn"
+            aria-label={t("chat_window.agents")}
+            onClick={() => setShowAgents(!showing)}
+            className={`flex justify-center items-center cursor-pointer opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60 ${
+              showing ? "opacity-100!" : ""
+            }`}
           />
-        </div>
+        }
+      >
+        <AtSign
+          color="var(--theme-sidebar-footer-icon-fill)"
+          className="w-[20px] h-[20px] pointer-events-none text-theme-text-primary"
+        />
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-[250px] text-xs">
         {t("chat_window.agents")}

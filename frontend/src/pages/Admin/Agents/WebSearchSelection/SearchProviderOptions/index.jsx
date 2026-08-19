@@ -35,11 +35,8 @@ export function SerpApiOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentSerpApiKey"
             placeholder="SerpApi API Key"
@@ -50,15 +47,13 @@ export function SerpApiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Engine
-          </Label>
+          <Label className="block mb-3">Engine</Label>
           <Select
             name="env::AgentSerpApiEngine"
             required={true}
             defaultValue={settings?.AgentSerpApiEngine || "google"}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger>
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -116,11 +111,8 @@ export function SearchApiOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentSearchApiKey"
             placeholder="SearchApi API Key"
@@ -131,15 +123,13 @@ export function SearchApiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Engine
-          </Label>
+          <Label className="block mb-3">Engine</Label>
           <Select
             name="env::AgentSearchApiEngine"
             required={true}
             defaultValue={settings?.AgentSearchApiEngine || "google"}
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger>
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -182,11 +172,8 @@ export function SerperDotDevOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentSerperApiKey"
             placeholder="Serper.dev API Key"
@@ -217,11 +204,8 @@ export function BingSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentBingSearchApiKey"
             placeholder="Bing Web Search API Key"
@@ -281,11 +265,8 @@ export function BaiduSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentBaiduSearchApiKey"
             placeholder="Baidu Search API Key"
@@ -318,11 +299,8 @@ export function SerplySearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentSerplyApiKey"
             placeholder="Serply API Key"
@@ -341,11 +319,8 @@ export function SearXNGOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          SearXNG API Base URL
-        </Label>
+        <Label className="block mb-3">SearXNG API Base URL</Label>
         <Input
-          variant="settings"
           type="url"
           name="env::AgentSearXNGApiUrl"
           placeholder="SearXNG API Base URL"
@@ -375,11 +350,8 @@ export function TavilySearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentTavilyApiKey"
             placeholder="Tavily API Key"
@@ -419,11 +391,8 @@ export function CrwSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentCrwApiKey"
             placeholder="fastCRW API Key"
@@ -434,11 +403,8 @@ export function CrwSearchOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Base URL (optional)
-          </Label>
+          <Label className="block mb-3">Base URL (optional)</Label>
           <Input
-            variant="settings"
             type="url"
             name="env::AgentCrwApiUrl"
             placeholder="https://fastcrw.com/api"
@@ -478,11 +444,8 @@ export function ExaSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentExaApiKey"
             placeholder="Exa API Key"
@@ -513,11 +476,8 @@ export function PerplexitySearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentPerplexityApiKey"
             placeholder="Perplexity API Key"
@@ -548,11 +508,8 @@ export function BraveSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key
-          </Label>
+          <Label className="block mb-3">API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentBraveApiKey"
             placeholder="Brave API Key"
@@ -585,11 +542,8 @@ export function YouSearchOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            API Key (optional)
-          </Label>
+          <Label className="block mb-3">API Key (optional)</Label>
           <Input
-            variant="settings"
             type="password"
             name="env::AgentYouApiKey"
             placeholder="You.com API Key"

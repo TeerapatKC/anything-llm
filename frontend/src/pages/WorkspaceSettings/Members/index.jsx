@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import { WorkspaceRole } from "@/models/role";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import useUser from "@/hooks/useUser";
@@ -71,38 +71,24 @@ export default function Members({ workspace }) {
 
   return (
     <div className="flex justify-between -mt-3">
-      <Table
-        variant="none"
-        className="w-full max-w-[700px] text-sm text-left rounded-lg"
-      >
-        <TableHeader
-          variant="none"
-          className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60"
-        >
-          <TableRow variant="none">
-            <TableHead
-              variant="none"
-              scope="col"
-              className="px-6 py-3 rounded-tl-lg"
-            >
+      <Table className="w-full max-w-[700px] text-sm text-left rounded-lg">
+        <TableHeader className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60">
+          <TableRow>
+            <TableHead scope="col" className="px-6 py-3 rounded-tl-lg">
               Username
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               Workspace role
             </TableHead>
-            <TableHead variant="none" scope="col" className="px-6 py-3">
+            <TableHead scope="col" className="px-6 py-3">
               Date Added
             </TableHead>
-            <TableHead
-              variant="none"
-              scope="col"
-              className="px-6 py-3 rounded-tr-lg"
-            >
+            <TableHead scope="col" className="px-6 py-3 rounded-tr-lg">
               {" "}
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody variant="none">
+        <TableBody>
           {members.length > 0 ? (
             members.map((member) => (
               <WorkspaceMemberRow
@@ -122,13 +108,10 @@ export default function Members({ workspace }) {
         open={isOpen}
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <DialogTrigger asChild>
-          <CTAButton>Manage Users</CTAButton>
+        <DialogTrigger render={<Button className="-mr-8" size="lg" />}>
+          Manage Users
         </DialogTrigger>
-        <DialogContent
-          scrollable={false}
-          className="max-w-[550px] bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden"
-        >
+        <DialogContent className="max-w-[550px] bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
           <AddMemberModal users={users} workspace={adminWorkspace} />
         </DialogContent>
       </Dialog>

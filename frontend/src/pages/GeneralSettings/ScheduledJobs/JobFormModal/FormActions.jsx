@@ -7,10 +7,8 @@ export default function FormActions({ isEditing, saving }) {
 
   return (
     <DialogFooter className="p-0 sm:justify-between">
-      <DialogClose asChild>
-        <Button variant="outline" type="button">
-          {t("scheduledJobs.modal.cancel")}
-        </Button>
+      <DialogClose render={<Button variant="outline" type="button" />}>
+        {t("scheduledJobs.modal.cancel")}
       </DialogClose>
       <Button variant="default" type="submit" disabled={saving}>
         {saving

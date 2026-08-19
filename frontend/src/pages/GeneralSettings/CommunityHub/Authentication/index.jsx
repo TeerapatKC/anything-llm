@@ -158,7 +158,6 @@ export default function CommunityHubAuthentication() {
             AnythingLLM Hub API Key
           </label>
           <Input
-            variant="settings"
             type="password"
             value={connectionKey || ""}
             onChange={onConnectionKeyChange}

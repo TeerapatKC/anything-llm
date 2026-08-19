@@ -13,18 +13,18 @@ export default function PGVectorOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-96">
           <div className="flex items-center gap-x-1 mb-3">
-            <Label variant="settings" className="block">
-              Postgres Connection String
-            </Label>
+            <Label className="block">Postgres Connection String</Label>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Info
+                    size={16}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                }
+              ></TooltipTrigger>
               <TooltipContent side="right" className="max-w-[250px] text-xs">
-                <p className="text-md whitespace-pre-line break-words">
+                <p className="text-md whitespace-pre-line wrap-break-word">
                   This is the connection string for the Postgres database in the
                   format of <br />
                   <code>postgresql://username:password@host:port/database</code>
@@ -46,7 +46,6 @@ export default function PGVectorOptions({ settings }) {
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="text"
             name="PGVectorConnectionString"
             placeholder="postgresql://username:password@host:port/database"
@@ -61,18 +60,18 @@ export default function PGVectorOptions({ settings }) {
 
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-x-1 mb-3">
-            <Label variant="settings" className="block">
-              Vector Table Name
-            </Label>
+            <Label className="block">Vector Table Name</Label>
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Info
+                    size={16}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                }
+              ></TooltipTrigger>
               <TooltipContent side="right" className="max-w-[250px] text-xs">
-                <p className="text-md whitespace-pre-line break-words">
+                <p className="text-md whitespace-pre-line wrap-break-word">
                   This is the name of the table in the Postgres database that
                   will store the vectors.
                   <br />
@@ -90,7 +89,6 @@ export default function PGVectorOptions({ settings }) {
             </Tooltip>
           </div>
           <Input
-            variant="settings"
             type="text"
             name="PGVectorTableName"
             autoComplete="off"

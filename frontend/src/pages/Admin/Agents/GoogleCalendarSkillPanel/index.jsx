@@ -225,13 +225,13 @@ function ConfigurationSection({
         <div className="p-3 flex flex-col gap-y-4 border-t border-theme-sidebar-border/50">
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <Label variant="field">
-                {t("agent.skill.googleCalendar.deploymentId")}
-              </Label>
+              <Label>{t("agent.skill.googleCalendar.deploymentId")}</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info size={16} className="text-theme-text-secondary" />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info size={16} className="text-theme-text-secondary" />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   {t("agent.skill.googleCalendar.deploymentIdHelp")}
                 </TooltipContent>
@@ -251,13 +251,13 @@ function ConfigurationSection({
 
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center gap-x-2">
-              <Label variant="field">
-                {t("agent.skill.googleCalendar.apiKey")}
-              </Label>
+              <Label>{t("agent.skill.googleCalendar.apiKey")}</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info size={16} className="text-theme-text-secondary" />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info size={16} className="text-theme-text-secondary" />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   {t("agent.skill.googleCalendar.apiKeyHelp")}
                 </TooltipContent>

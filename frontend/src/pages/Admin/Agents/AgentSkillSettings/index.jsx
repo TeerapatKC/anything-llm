@@ -19,16 +19,15 @@ export default function AgentSkillSettings() {
       open={isOpen}
       onOpenChange={(open) => (open ? openModal() : closeModal())}
     >
-      <DialogTrigger asChild>
-        <button
-          type="button"
-          className={`w-10 h-10 flex items-center justify-center light:border-black/10 light:border-solid border-none light:!border rounded-lg transition-colors outline-none bg-transparent hover:bg-theme-bg-secondary`}
-        >
-          <SlidersHorizontal
-            size={24}
-            className={`text-theme-text-secondary`}
+      <DialogTrigger
+        render={
+          <button
+            type="button"
+            className={`w-10 h-10 flex items-center justify-center light:border-black/10 light:border-solid border-none light:border! rounded-lg transition-colors outline-none bg-transparent hover:bg-theme-bg-secondary`}
           />
-        </button>
+        }
+      >
+        <SlidersHorizontal size={24} className={`text-theme-text-secondary`} />
       </DialogTrigger>
       <AgentSkillSettingsModal />
     </Dialog>
@@ -49,9 +48,9 @@ function AgentSkillSettingsModal() {
       <div className="flex flex-col w-full">
         <div className="flex flex-col gap-y-5 w-full">
           <MaxToolCallStack />
-          <div className="border-b border-theme-sidebar-border h-[1px] w-full" />
+          <div className="border-b border-theme-sidebar-border h-px w-full" />
           <AgentSkillReranker />
-          <div className="border-b border-theme-sidebar-border h-[1px] w-full" />
+          <div className="border-b border-theme-sidebar-border h-px w-full" />
           <AgentClarifyingQuestions />
         </div>
       </div>

@@ -69,11 +69,10 @@ export default function NewUserModal() {
       <form onSubmit={handleCreate}>
         <div className="space-y-4">
           <div>
-            <Label variant="field" htmlFor="username" className="block mb-2">
+            <Label htmlFor="username" className="block mb-2">
               Username
             </Label>
             <Input
-              variant="settings"
               name="username"
               type="text"
               placeholder="User's username"
@@ -88,11 +87,10 @@ export default function NewUserModal() {
             </p>
           </div>
           <div>
-            <Label variant="field" htmlFor="email" className="block mb-2">
+            <Label htmlFor="email" className="block mb-2">
               Email
             </Label>
             <Input
-              variant="settings"
               name="email"
               type="email"
               placeholder="user@example.com"
@@ -105,11 +103,10 @@ export default function NewUserModal() {
             </p>
           </div>
           <div>
-            <Label variant="field" htmlFor="bio" className="block mb-2">
+            <Label htmlFor="bio" className="block mb-2">
               Bio
             </Label>
             <Textarea
-              variant="settings"
               name="bio"
               placeholder="User's bio"
               autoComplete="off"
@@ -117,7 +114,7 @@ export default function NewUserModal() {
             />
           </div>
           <div>
-            <Label variant="field" htmlFor="role" className="block mb-2">
+            <Label htmlFor="role" className="block mb-2">
               Role
             </Label>
             <Select
@@ -126,7 +123,7 @@ export default function NewUserModal() {
               value={role}
               onValueChange={setRole}
             >
-              <SelectTrigger variant="settings">
+              <SelectTrigger>
                 <SelectValue placeholder="Select a role" />
               </SelectTrigger>
               <SelectContent>
@@ -158,10 +155,8 @@ export default function NewUserModal() {
           </p>
         </div>
         <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
-          <DialogClose asChild>
-            <Button variant="outline" type="button">
-              Cancel
-            </Button>
+          <DialogClose render={<Button variant="outline" type="button" />}>
+            Cancel
           </DialogClose>
           <Button variant="default" type="submit">
             Add user

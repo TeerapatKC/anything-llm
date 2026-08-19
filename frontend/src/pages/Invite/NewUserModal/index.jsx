@@ -57,11 +57,10 @@ export default function NewUserModal() {
       <form onSubmit={handleCreate}>
         <div className="space-y-4">
           <div>
-            <Label variant="field" htmlFor="username" className="block mb-2">
+            <Label htmlFor="username" className="block mb-2">
               Username
             </Label>
             <Input
-              variant="settings"
               name="username"
               type="text"
               placeholder="My username"
@@ -76,11 +75,10 @@ export default function NewUserModal() {
             </p>
           </div>
           <div>
-            <Label variant="field" htmlFor="email" className="block mb-2">
+            <Label htmlFor="email" className="block mb-2">
               Email
             </Label>
             <Input
-              variant="settings"
               name="email"
               type="email"
               placeholder="you@example.com"
@@ -90,11 +88,10 @@ export default function NewUserModal() {
             />
           </div>
           <div>
-            <Label variant="field" htmlFor="password" className="block mb-2">
+            <Label htmlFor="password" className="block mb-2">
               Password
             </Label>
             <Input
-              variant="settings"
               name="password"
               type="password"
               placeholder="Your password"

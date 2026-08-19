@@ -277,7 +277,6 @@ export default function Directory({
           <div className="flex items-center gap-x-2">
             <div className="relative">
               <Input
-                variant="settings"
                 type="search"
                 placeholder={t("connectors.directory.search-document")}
                 onChange={handleSearch}
@@ -429,7 +428,7 @@ export default function Directory({
         />
       </div>
       {isFolderModalOpen && (
-        <div className="bg-black/60 backdrop-blur-sm fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-30">
+        <div className="bg-black/60 backdrop-blur-xs fixed top-0 left-0 outline-none w-screen h-screen flex items-center justify-center z-30">
           <NewFolderModal
             closeModal={closeFolderModal}
             onCreated={handleFolderCreated}

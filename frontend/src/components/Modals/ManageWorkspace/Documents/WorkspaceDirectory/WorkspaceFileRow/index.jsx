@@ -72,22 +72,24 @@ export default function WorkspaceFileRow({
       onClick={toggleRowSelection}
     >
       <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="col-span-10 w-fit flex gap-x-2 items-center relative">
-            <div className="shrink-0 w-3.5 h-3.5">
-              {!disableSelection ? (
-                <Checkbox
-                  checked={selected}
-                  className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
-                  onClick={handleRowSelection}
-                />
-              ) : null}
-            </div>
-            <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px] ml-1" />
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
-              {middleTruncate(item.title, 50)}
-            </p>
+        <TooltipTrigger
+          render={
+            <div className="col-span-10 w-fit flex gap-x-2 items-center relative" />
+          }
+        >
+          <div className="shrink-0 w-3.5 h-3.5">
+            {!disableSelection ? (
+              <Checkbox
+                checked={selected}
+                className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
+                onClick={handleRowSelection}
+              />
+            ) : null}
           </div>
+          <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px] ml-1" />
+          <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
+            {middleTruncate(item.title, 50)}
+          </p>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {JSON.stringify({
@@ -99,7 +101,7 @@ export default function WorkspaceFileRow({
       </Tooltip>
       <div className="col-span-2 flex justify-end items-center">
         {hasChanges ? (
-          <div className="w-4 h-4 ml-2 flex-shrink-0" />
+          <div className="w-4 h-4 ml-2 shrink-0" />
         ) : (
           <div className="flex gap-x-2 items-center">
             <WatchForChanges
@@ -161,22 +163,24 @@ const PinItemToWorkspace = memo(({ workspace, docPath, item }) => {
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          onClick={updatePinStatus}
-          className="group flex items-center ml-2 cursor-pointer"
-        >
-          {pinned ? (
-            <div className="bg-theme-settings-input-active group-hover:bg-red-500/20 rounded-3xl whitespace-nowrap">
-              <p className="text-xs px-2 py-0.5 group-hover:text-red-500">
-                <span className="group-hover:hidden">Pinned</span>
-                <span className="hidden group-hover:inline">Un-pin</span>
-              </p>
-            </div>
-          ) : (
-            <Pin className="h-4 w-4 outline-none flex-shrink-0" />
-          )}
-        </div>
+      <TooltipTrigger
+        render={
+          <div
+            onClick={updatePinStatus}
+            className="group flex items-center ml-2 cursor-pointer"
+          />
+        }
+      >
+        {pinned ? (
+          <div className="bg-theme-settings-input-active group-hover:bg-red-500/20 rounded-3xl whitespace-nowrap">
+            <p className="text-xs px-2 py-0.5 group-hover:text-red-500">
+              <span className="group-hover:hidden">Pinned</span>
+              <span className="hidden group-hover:inline">Un-pin</span>
+            </p>
+          </div>
+        ) : (
+          <Pin className="h-4 w-4 outline-none shrink-0" />
+        )}
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
         {pinned ? "Un-pin from workspace" : "Pin to workspace"}
@@ -233,17 +237,19 @@ const WatchForChanges = memo(({ workspace, docPath, item }) => {
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <div
-          className="group flex gap-x-2 items-center hover:bg-theme-file-picker-hover p-[2px] rounded ml-2 cursor-pointer"
-          onClick={updateWatchStatus}
-        >
-          {watched ? (
-            <Eye className="h-4 w-4 outline-none flex-shrink-0" />
-          ) : (
-            <EyeOff className="h-4 w-4 outline-none flex-shrink-0" />
-          )}
-        </div>
+      <TooltipTrigger
+        render={
+          <div
+            className="group flex gap-x-2 items-center hover:bg-theme-file-picker-hover p-[2px] rounded ml-2 cursor-pointer"
+            onClick={updateWatchStatus}
+          />
+        }
+      >
+        {watched ? (
+          <Eye className="h-4 w-4 outline-none shrink-0" />
+        ) : (
+          <EyeOff className="h-4 w-4 outline-none shrink-0" />
+        )}
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
         {watched ? "Stop watching for changes" : "Watch document for changes"}
@@ -256,12 +262,14 @@ const RemoveItemFromWorkspace = ({ item: _item, onClick }) => {
   return (
     <div>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Undo2
-            onClick={onClick}
-            className="h-4 w-4 ml-2 flex-shrink-0 cursor-pointer"
-          />
-        </TooltipTrigger>
+        <TooltipTrigger
+          render={
+            <Undo2
+              onClick={onClick}
+              className="h-4 w-4 ml-2 shrink-0 cursor-pointer"
+            />
+          }
+        ></TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           Remove document from workspace
         </TooltipContent>

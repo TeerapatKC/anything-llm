@@ -76,20 +76,15 @@ export default function WorkspaceRow({
   return (
     <>
       <TableRow
-        variant="none"
         ref={rowRef}
         className={`bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10 ${
           active ? "" : "opacity-60"
         }`}
       >
-        <TableHead
-          variant="none"
-          scope="row"
-          className="px-6 whitespace-nowrap"
-        >
+        <TableHead scope="row" className="px-6 whitespace-nowrap">
           {workspace.name}
         </TableHead>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           <a
             href={paths.workspace.chat(workspace.slug)}
             target="_blank"
@@ -99,7 +94,7 @@ export default function WorkspaceRow({
             <Link2 className="mr-2 w-4 h-4" /> {workspace.slug}
           </a>
         </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           <a
             href={paths.workspace.settings.members(workspace.slug)}
             className="text-theme-text-primary flex items-center underline"
@@ -107,7 +102,7 @@ export default function WorkspaceRow({
             {workspace.userIds?.length}
           </a>
         </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           <div className="flex items-center gap-x-2">
             <Switch
               checked={active}
@@ -121,10 +116,8 @@ export default function WorkspaceRow({
             </span>
           </div>
         </TableCell>
-        <TableCell variant="none" className="px-6">
-          {workspace.createdAt}
-        </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">{workspace.createdAt}</TableCell>
+        <TableCell className="px-6">
           <div className="flex items-center gap-x-2">
             <a
               href={paths.workspace.settings.generalAppearance(workspace.slug)}
@@ -134,7 +127,7 @@ export default function WorkspaceRow({
               <Settings className="h-5 w-5" />
             </a>
             {!deletionProtected && (
-              <Button variant="danger" onClick={handleDelete}>
+              <Button variant="destructive" onClick={handleDelete}>
                 <Trash2 className="h-5 w-5" />
               </Button>
             )}

@@ -112,16 +112,18 @@ export default function RenderMetrics({ metrics = {} }) {
 
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <button
-          type="button"
-          onClick={() => setShowMetricsAutomatically(toggleAutoShowMetrics())}
-          className={`border-none flex md:justify-end items-center gap-x-[8px] -ml-7 ${showMetricsAutomatically ? "opacity-100" : "opacity-0"} md:group-hover:opacity-100 transition-all duration-300`}
-        >
-          <p className="cursor-pointer text-xs font-mono text-zinc-400 light:text-slate-500">
-            {buildMetricsString(metrics)}
-          </p>
-        </button>
+      <TooltipTrigger
+        render={
+          <button
+            type="button"
+            onClick={() => setShowMetricsAutomatically(toggleAutoShowMetrics())}
+            className={`border-none flex md:justify-end items-center gap-x-[8px] -ml-7 ${showMetricsAutomatically ? "opacity-100" : "opacity-0"} md:group-hover:opacity-100 transition-all duration-300`}
+          />
+        }
+      >
+        <p className="cursor-pointer text-xs font-mono text-zinc-400 light:text-slate-500">
+          {buildMetricsString(metrics)}
+        </p>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
         {showMetricsAutomatically

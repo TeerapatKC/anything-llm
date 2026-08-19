@@ -165,7 +165,7 @@ const HistoricalMessage = ({
             saveChanges={saveEditedMessage}
           />
         ) : (
-          <div className="break-words">
+          <div className="wrap-break-word">
             <HistoricalClarifyingQuestions surveys={clarifyingQuestions} />
             <RenderChatContent
               role={role}
@@ -175,19 +175,21 @@ const HistoricalMessage = ({
             />
             {isRefusalMessage && (
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    className="!no-underline group !flex w-fit"
-                    to={paths.chatModes()}
-                    target="_blank"
-                  >
-                    <div className="flex flex-row items-center gap-x-1 group-hover:opacity-100 opacity-60 w-fit">
-                      <Info className="text-theme-text-secondary" />
-                      <p className="!m-0 !p-0 text-theme-text-secondary !no-underline text-xs cursor-pointer">
-                        {t("chat.refusal.tooltip-title")}
-                      </p>
-                    </div>
-                  </Link>
+                <TooltipTrigger
+                  render={
+                    <Link
+                      className="no-underline! group flex! w-fit"
+                      to={paths.chatModes()}
+                      target="_blank"
+                    />
+                  }
+                >
+                  <div className="flex flex-row items-center gap-x-1 group-hover:opacity-100 opacity-60 w-fit">
+                    <Info className="text-theme-text-secondary" />
+                    <p className="m-0! p-0! text-theme-text-secondary no-underline! text-xs cursor-pointer">
+                      {t("chat.refusal.tooltip-title")}
+                    </p>
+                  </div>
                 </TooltipTrigger>
                 <TooltipContent
                   side="top"

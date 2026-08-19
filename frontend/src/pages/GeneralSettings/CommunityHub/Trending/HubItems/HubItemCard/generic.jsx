@@ -35,10 +35,8 @@ export function VisibilityIcon({ visibility = "public" }) {
   return (
     <>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <div>
-            <Icon className="w-4 h-4 text-theme-text-secondary" />
-          </div>
+        <TooltipTrigger render={<div />}>
+          <Icon className="w-4 h-4 text-theme-text-secondary" />
         </TooltipTrigger>
         <TooltipContent
           side="top"

@@ -1,5 +1,5 @@
 import CommunityHubImportItemSteps from "..";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { useState } from "react";
@@ -15,7 +15,7 @@ export default function Introduction({ settings, setSettings, setStep }) {
   };
 
   return (
-    <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
+    <div className="flex-2 flex flex-col gap-y-[18px] mt-10">
       <div className="bg-theme-bg-secondary rounded-xl flex-1 p-6">
         <div className="w-full flex flex-col gap-y-2 max-w-[700px]">
           <h2 className="text-base text-theme-text-primary font-semibold">
@@ -52,11 +52,10 @@ export default function Introduction({ settings, setSettings, setStep }) {
           <div className="flex flex-col gap-y-2 mt-4">
             <div className="w-full flex flex-col gap-y-4">
               <div className="flex flex-col w-full">
-                <Label variant="settings" className="block mb-3">
+                <Label className="block mb-3">
                   Community Hub Item Import ID
                 </Label>
                 <Input
-                  variant="settings"
                   type="text"
                   value={itemId}
                   onChange={(e) => setItemId(e.target.value)}
@@ -65,12 +64,13 @@ export default function Introduction({ settings, setSettings, setStep }) {
               </div>
             </div>
           </div>
-          <CTAButton
-            className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+          <Button
+            size="lg"
+            className="-mr-8 text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
             onClick={handleContinue}
           >
             Continue with import &rarr;
-          </CTAButton>
+          </Button>
         </div>
       </div>
     </div>

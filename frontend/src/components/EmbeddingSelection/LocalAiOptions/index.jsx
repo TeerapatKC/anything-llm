@@ -49,16 +49,16 @@ export default function LocalAiOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
             <div className="flex gap-x-1 items-center">
-              <Label variant="settings" className="block">
-                Local AI API Key
-              </Label>
+              <Label className="block">Local AI API Key</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={16}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={16}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   The API key for the LocalAI server (if applicable).
                 </TooltipContent>
@@ -66,7 +66,6 @@ export default function LocalAiOptions({ settings }) {
             </div>
           </div>
           <Input
-            variant="settings"
             type="password"
             name="LocalAiApiKey"
             placeholder="sk-mysecretkey"
@@ -81,23 +80,20 @@ export default function LocalAiOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex gap-x-1 items-center mb-3">
-                <Label variant="settings" className="block">
-                  Max embedding chunk length
-                </Label>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </div>
+            <TooltipTrigger
+              render={<div className="flex gap-x-1 items-center mb-3" />}
+            >
+              <Label className="block">Max embedding chunk length</Label>
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
             </TooltipContent>
           </Tooltip>
           <Input
-            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
             placeholder="1000"
@@ -111,16 +107,14 @@ export default function LocalAiOptions({ settings }) {
 
         <div className="flex flex-col w-60">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex gap-x-1 items-center mb-3">
-                <Label variant="settings" className="block">
-                  Output dimensions
-                </Label>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </div>
+            <TooltipTrigger
+              render={<div className="flex gap-x-1 items-center mb-3" />}
+            >
+              <Label className="block">Output dimensions</Label>
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               The number of dimensions the resulting output embeddings should
@@ -131,7 +125,6 @@ export default function LocalAiOptions({ settings }) {
             </TooltipContent>
           </Tooltip>
           <Input
-            variant="settings"
             type="number"
             name="EmbeddingOutputDimensions"
             placeholder="Assume default dimensions"
@@ -145,7 +138,8 @@ export default function LocalAiOptions({ settings }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -163,13 +157,17 @@ export default function LocalAiOptions({ settings }) {
         <div className="w-full flex items-center gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <Label variant="settings">LocalAI Base URL</Label>
+              <Label>LocalAI Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -177,7 +175,6 @@ export default function LocalAiOptions({ settings }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="EmbeddingBasePath"
               placeholder="http://localhost:8080/v1"
@@ -221,11 +218,9 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          Embedding Model Name
-        </Label>
+        <Label className="block mb-2">Embedding Model Name</Label>
         <Select name="EmbeddingModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 basePath?.includes("/v1")
@@ -242,15 +237,13 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        Embedding Model Name
-      </Label>
+      <Label className="block mb-2">Embedding Model Name</Label>
       <Select
         name="EmbeddingModelPref"
         required={true}
         defaultValue={settings?.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

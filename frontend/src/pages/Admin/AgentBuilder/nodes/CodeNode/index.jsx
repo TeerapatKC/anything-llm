@@ -16,9 +16,7 @@ export default function CodeNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label variant="field" className="block mb-2">
-          Language
-        </Label>
+        <Label className="block mb-2">Language</Label>
         <Select
           value={config.language}
           onValueChange={(value) => onConfigChange({ language: value })}
@@ -34,9 +32,7 @@ export default function CodeNode({
         </Select>
       </div>
       <div>
-        <Label variant="field" className="block mb-2">
-          Code
-        </Label>
+        <Label className="block mb-2">Code</Label>
         <textarea
           placeholder="Enter code..."
           value={config.code}
@@ -48,9 +44,7 @@ export default function CodeNode({
         />
       </div>
       <div>
-        <Label variant="field" className="block mb-2">
-          Store Result In
-        </Label>
+        <Label className="block mb-2">Store Result In</Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),

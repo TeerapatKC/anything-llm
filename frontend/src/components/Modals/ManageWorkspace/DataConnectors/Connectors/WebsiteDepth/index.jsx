@@ -59,15 +59,12 @@ export default function WebsiteDepthOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">
-                    {t("connectors.website-depth.URL")}
-                  </Label>
+                  <Label>{t("connectors.website-depth.URL")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.website-depth.URL_explained")}
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="url"
                   name="url"
                   placeholder="https://example.com"
@@ -78,16 +75,12 @@ export default function WebsiteDepthOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">
-                    {" "}
-                    {t("connectors.website-depth.depth")}
-                  </Label>
+                  <Label> {t("connectors.website-depth.depth")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.website-depth.depth_explained")}
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="number"
                   name="depth"
                   min="1"
@@ -98,15 +91,12 @@ export default function WebsiteDepthOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">
-                    {t("connectors.website-depth.max_pages")}
-                  </Label>
+                  <Label>{t("connectors.website-depth.max_pages")}</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     {t("connectors.website-depth.max_pages_explained")}
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="number"
                   name="maxLinks"
                   min="1"
@@ -118,7 +108,7 @@ export default function WebsiteDepthOptions() {
           </div>
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <Button variant="homePrimary" type="submit" disabled={loading}>
+            <Button variant="default" type="submit" disabled={loading}>
               {loading ? "Scraping website..." : "Submit"}
             </Button>
             {loading && (

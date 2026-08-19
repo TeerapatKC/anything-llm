@@ -328,11 +328,8 @@ export default function SQLConnectionModal({
             </div>
 
             <div className="flex flex-col w-full">
-              <Label variant="field" className="block mb-2">
-                Connection name
-              </Label>
+              <Label className="block mb-2">Connection name</Label>
               <Input
-                variant="settings"
                 type="text"
                 name="name"
                 placeholder="a unique name to identify this SQL connection"
@@ -345,11 +342,8 @@ export default function SQLConnectionModal({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col">
-                <Label variant="field" className="block mb-2">
-                  Database user
-                </Label>
+                <Label className="block mb-2">Database user</Label>
                 <Input
-                  variant="settings"
                   type="text"
                   name="username"
                   placeholder="root"
@@ -360,11 +354,8 @@ export default function SQLConnectionModal({
                 />
               </div>
               <div className="flex flex-col">
-                <Label variant="field" className="block mb-2">
-                  Database user password
-                </Label>
+                <Label className="block mb-2">Database user password</Label>
                 <Input
-                  variant="settings"
                   type="password"
                   name="password"
                   placeholder="password123"
@@ -378,11 +369,8 @@ export default function SQLConnectionModal({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="sm:col-span-2">
-                <Label variant="field" className="block mb-2">
-                  Server endpoint
-                </Label>
+                <Label className="block mb-2">Server endpoint</Label>
                 <Input
-                  variant="settings"
                   type="text"
                   name="host"
                   placeholder="the hostname or endpoint for your database"
@@ -393,11 +381,8 @@ export default function SQLConnectionModal({
                 />
               </div>
               <div>
-                <Label variant="field" className="block mb-2">
-                  Port
-                </Label>
+                <Label className="block mb-2">Port</Label>
                 <Input
-                  variant="settings"
                   type="text"
                   name="port"
                   placeholder="3306"
@@ -410,11 +395,8 @@ export default function SQLConnectionModal({
             </div>
 
             <div className="flex flex-col">
-              <Label variant="field" className="block mb-2">
-                Database
-              </Label>
+              <Label className="block mb-2">Database</Label>
               <Input
-                variant="settings"
                 type="text"
                 name="database"
                 placeholder="the database the agent will interact with"
@@ -427,11 +409,8 @@ export default function SQLConnectionModal({
 
             {engine === "postgresql" && (
               <div className="flex flex-col">
-                <Label variant="field" className="block mb-2">
-                  Schema (optional)
-                </Label>
+                <Label className="block mb-2">Schema (optional)</Label>
                 <Input
-                  variant="settings"
                   type="text"
                   name="schema"
                   placeholder="public (default schema if not specified)"
@@ -469,10 +448,12 @@ export default function SQLConnectionModal({
           </div>
         </form>
         <DialogFooter className="p-0 mt-4">
-          <DialogClose asChild>
-            <Button variant="outline" type="button" onClick={handleClose}>
-              Cancel
-            </Button>
+          <DialogClose
+            render={
+              <Button variant="outline" type="button" onClick={handleClose} />
+            }
+          >
+            Cancel
           </DialogClose>
           <Button
             variant="default"
@@ -504,7 +485,7 @@ function DBEngine({ provider, active, onClick }) {
       type="button"
       onClick={onClick}
       className={`flex flex-col p-4 border border-white/40 bg-zinc-800 light:bg-theme-settings-input-bg rounded-lg w-fit hover:bg-zinc-700 ${
-        active ? "!bg-blue-500/50" : ""
+        active ? "bg-blue-500/50!" : ""
       }`}
     >
       <img

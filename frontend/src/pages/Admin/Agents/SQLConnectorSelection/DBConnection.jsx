@@ -56,28 +56,32 @@ export default function DBConnection({
         </div>
         <div className="flex gap-x-2">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="border-none text-theme-text-secondary hover:text-theme-text-primary transition-colors duration-200 p-1 rounded"
-                onClick={openModal}
-              >
-                <Pencil size={18} />
-              </button>
+            <TooltipTrigger
+              render={
+                <button
+                  type="button"
+                  className="border-none text-theme-text-secondary hover:text-theme-text-primary transition-colors duration-200 p-1 rounded"
+                  onClick={openModal}
+                />
+              }
+            >
+              <Pencil size={18} />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               Edit SQL connection
             </TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={removeConfirmation}
-                className="border-none text-theme-text-secondary hover:text-red-500"
-              >
-                <X size={18} />
-              </button>
+            <TooltipTrigger
+              render={
+                <button
+                  type="button"
+                  onClick={removeConfirmation}
+                  className="border-none text-theme-text-secondary hover:text-red-500"
+                />
+              }
+            >
+              <X size={18} />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               Delete SQL connection

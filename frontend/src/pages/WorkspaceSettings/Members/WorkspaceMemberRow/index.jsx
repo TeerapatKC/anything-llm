@@ -43,25 +43,18 @@ export default function WorkspaceMemberRow({
   }
 
   return (
-    <TableRow
-      variant="none"
-      className="bg-transparent text-theme-text-primary text-sm font-medium"
-    >
-      <TableHead
-        variant="none"
-        scope="row"
-        className="px-6 py-4 whitespace-nowrap"
-      >
+    <TableRow className="bg-transparent text-theme-text-primary text-sm font-medium">
+      <TableHead scope="row" className="px-6 py-4 whitespace-nowrap">
         {member.username}
       </TableHead>
-      <TableCell variant="none" className="px-6 py-4">
+      <TableCell className="px-6 py-4">
         {canManage ? (
           <Select
             value={roleId}
             onValueChange={handleRoleChange}
             disabled={saving}
           >
-            <SelectTrigger variant="settings" className="w-[190px]">
+            <SelectTrigger className="w-[190px]">
               <SelectValue placeholder="Select a role" />
             </SelectTrigger>
             <SelectContent>
@@ -76,9 +69,7 @@ export default function WorkspaceMemberRow({
           (member.workspaceRole?.displayName ?? "—")
         )}
       </TableCell>
-      <TableCell variant="none" className="px-6 py-4">
-        {member.createdAt}
-      </TableCell>
+      <TableCell className="px-6 py-4">{member.createdAt}</TableCell>
     </TableRow>
   );
 }

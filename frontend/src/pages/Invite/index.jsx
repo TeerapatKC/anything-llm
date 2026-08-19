@@ -49,12 +49,7 @@ export default function InvitePage() {
   return (
     <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex items-center justify-center">
       <Dialog open={true}>
-        <DialogContent
-          className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden"
-          onEscapeKeyDown={(e) => e.preventDefault()}
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
-        >
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
           <NewUserModal />
         </DialogContent>
       </Dialog>

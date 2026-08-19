@@ -283,7 +283,7 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
     <ChatSidebarProvider>
       <div
         style={{ height: "100%" }}
-        className="relative flex w-full h-full z-[2]"
+        className="relative flex w-full h-full z-2"
       >
         <div className="flex-1 min-w-0 transition-all duration-500 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
           <div className="absolute z-30 flex items-center justify-end top-[68px] left-4 right-4 md:top-2 md:left-3 md:right-3">

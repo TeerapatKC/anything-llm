@@ -35,7 +35,7 @@ function FileDownloadCard({ props }) {
         <div className="flex items-center justify-between bg-zinc-800 light:bg-slate-100 light:border light:border-slate-200/50 rounded-xl px-2 py-1">
           <div className="flex items-center gap-x-3 min-w-0">
             <div
-              className={`${badgeBg} ${badgeText} rounded-lg flex items-center justify-center flex-shrink-0 h-[48px] w-[48px] text-xs font-bold`}
+              className={`${badgeBg} ${badgeText} rounded-lg flex items-center justify-center shrink-0 h-[48px] w-[48px] text-xs font-bold`}
             >
               {badge}
             </div>
@@ -53,7 +53,7 @@ function FileDownloadCard({ props }) {
           <button
             onClick={handleDownload}
             disabled={downloading}
-            className="flex items-center gap-x-2 px-4 py-2 rounded-lg border border-zinc-600 light:border-theme-sidebar-border hover:bg-zinc-700 light:hover:bg-theme-bg-secondary transition-colors text-theme-text-primary light:text-theme-text-primary text-sm font-medium flex-shrink-0 ml-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-x-2 px-4 py-2 rounded-lg border border-zinc-600 light:border-theme-sidebar-border hover:bg-zinc-700 light:hover:bg-theme-bg-secondary transition-colors text-theme-text-primary light:text-theme-text-primary text-sm font-medium shrink-0 ml-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {downloading ? <Spinner /> : <Download size={16} />}
             <span>{downloading ? "Downloading..." : "Download"}</span>

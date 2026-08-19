@@ -4,7 +4,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QrCode } from "lucide-react";
 import { useModal } from "@/hooks/useModal";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import MobileConnection from "@/models/mobile";
 import ConnectionModal from "./ConnectionModal";
 import DeviceRow from "./DeviceRow";
@@ -58,12 +58,13 @@ export default function MobileDevices() {
         }
       />
       <div className="w-full justify-end flex">
-        <CTAButton
+        <Button
+          size="lg"
           onClick={openModal}
           className="mt-3 mr-0 mb-4 md:-mb-14 z-10"
         >
           <QrCode className="h-4 w-4" /> Register New Device
-        </CTAButton>
+        </Button>
       </div>
       <div className="overflow-x-auto mt-6">
         {loading ? (
@@ -77,21 +78,21 @@ export default function MobileDevices() {
             containerClassName="flex w-full"
           />
         ) : (
-          <Table variant="settings">
-            <TableHeader variant="settings">
-              <TableRow variant="none">
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col" className="px-6 py-3">
                   Device Name
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   Registered
                 </TableHead>
-                <TableHead variant="none" scope="col" className="px-6 py-3">
+                <TableHead scope="col" className="px-6 py-3">
                   {" "}
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody variant="none">
+            <TableBody>
               {devices.length === 0 ? (
                 <TableEmptyRow
                   colSpan="4"

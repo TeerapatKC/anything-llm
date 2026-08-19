@@ -19,11 +19,8 @@ export default function SambaNovaOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          SambaNova API Key
-        </Label>
+        <Label className="block mb-3">SambaNova API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="SambaNovaLLMApiKey"
           placeholder="SambaNova AI API Key"
@@ -67,11 +64,9 @@ function SambaNovaModelSelection({ settings, apiKey }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="SambaNovaLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -82,9 +77,7 @@ function SambaNovaModelSelection({ settings, apiKey }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="SambaNovaLLMModelPref"
         required={true}
@@ -93,7 +86,7 @@ function SambaNovaModelSelection({ settings, apiKey }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

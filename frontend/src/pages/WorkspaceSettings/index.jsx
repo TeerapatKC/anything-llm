@@ -169,7 +169,7 @@ function TabItem({ title, icon, to, visible = true }) {
         cn(
           "inline-flex items-center justify-center gap-x-1.5 whitespace-nowrap rounded-sm px-3 py-1.5 text-xs font-medium shrink-0 transition-all",
           isActive
-            ? "bg-background text-foreground shadow-sm"
+            ? "bg-background text-foreground shadow-xs"
             : "text-muted-foreground hover:text-foreground"
         )
       }

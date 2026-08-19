@@ -26,25 +26,26 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
 
   return (
     <TableRow
-      variant="none"
       onClick={() => toggleSelection(item, folderName)}
       className={`text-theme-text-primary text-xs grid grid-cols-12 py-2 pl-8 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
         selected ? "selected light:text-white" : ""
       }`}
     >
       <Tooltip>
-        <TooltipTrigger asChild>
-          <div className="col-span-10 w-fit flex gap-x-2 items-center relative">
-            <Checkbox
-              checked={selected}
-              className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
-              tabIndex={-1}
-            />
-            <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
-            <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
-              {middleTruncate(item.title, 55)}
-            </p>
-          </div>
+        <TooltipTrigger
+          render={
+            <div className="col-span-10 w-fit flex gap-x-2 items-center relative" />
+          }
+        >
+          <Checkbox
+            checked={selected}
+            className="shrink-0 h-3.5 w-3.5 border-white/60 data-[state=checked]:border-white"
+            tabIndex={-1}
+          />
+          <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
+          <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
+            {middleTruncate(item.title, 55)}
+          </p>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {tooltipContent}

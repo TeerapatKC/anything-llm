@@ -47,7 +47,7 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
           <div className="space-y-2 flex-col">
             <div className="w-full flex flex-col gap-y-4">
               <div>
-                <Label variant="field" htmlFor="command" className="block mb-2">
+                <Label htmlFor="command" className="block mb-2">
                   {t("chat_window.command")}
                 </Label>
                 <div className="flex items-center">
@@ -55,7 +55,6 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
                     /
                   </span>
                   <Input
-                    variant="settings"
                     name="command"
                     type="text"
                     id="command"
@@ -69,11 +68,10 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
                 </div>
               </div>
               <div>
-                <Label variant="field" htmlFor="prompt" className="block mb-2">
+                <Label htmlFor="prompt" className="block mb-2">
                   Prompt
                 </Label>
                 <Textarea
-                  variant="settings"
                   name="prompt"
                   id="prompt"
                   autoComplete="off"
@@ -82,15 +80,10 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
                 ></Textarea>
               </div>
               <div>
-                <Label
-                  variant="field"
-                  htmlFor="description"
-                  className="block mb-2"
-                >
+                <Label htmlFor="description" className="block mb-2">
                   {t("chat_window.description")}
                 </Label>
                 <Input
-                  variant="settings"
                   type="text"
                   name="description"
                   id="description"
@@ -103,10 +96,8 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
             </div>
           </div>
           <DialogFooter className="mt-6 p-0">
-            <DialogClose asChild>
-              <Button variant="outline" type="button">
-                {t("chat_window.cancel")}
-              </Button>
+            <DialogClose render={<Button variant="outline" type="button" />}>
+              {t("chat_window.cancel")}
             </DialogClose>
             <Button variant="default" type="submit">
               {t("chat_window.save")}

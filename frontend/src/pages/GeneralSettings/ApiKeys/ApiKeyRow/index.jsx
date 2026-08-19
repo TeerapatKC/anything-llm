@@ -41,36 +41,25 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
 
   return (
     <>
-      <TableRow
-        variant="none"
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border"
-      >
+      <TableRow className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border">
         <TableCell
-          variant="none"
           scope="row"
           className="px-6 py-3 whitespace-nowrap align-middle"
         >
           {apiKey.name || t("api.row.unnamed")}
         </TableCell>
-        <TableCell
-          variant="none"
-          scope="row"
-          className="px-6 py-3 align-middle"
-        >
+        <TableCell scope="row" className="px-6 py-3 align-middle">
           <code className="font-mono text-[11px] break-all text-theme-text-primary">
             {apiKey.secret}
           </code>
         </TableCell>
-        <TableCell variant="none" className="px-6 py-3 text-left align-middle">
+        <TableCell className="px-6 py-3 text-left align-middle">
           {apiKey.createdBy?.username || "--"}
         </TableCell>
-        <TableCell
-          variant="none"
-          className="px-6 py-3 whitespace-nowrap align-middle"
-        >
+        <TableCell className="px-6 py-3 whitespace-nowrap align-middle">
           {new Date(apiKey.createdAt).toLocaleString()}
         </TableCell>
-        <TableCell variant="none" className="px-6 py-3 align-middle">
+        <TableCell className="px-6 py-3 align-middle">
           <div className="flex items-center gap-x-6">
             <button
               onClick={copyApiKey}
@@ -79,7 +68,7 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
             >
               {copied ? t("api.row.copied") : t("api.row.copy")}
             </button>
-            <Button variant="danger" onClick={handleDelete}>
+            <Button variant="destructive" onClick={handleDelete}>
               <Trash2 className="h-5 w-5" />
             </Button>
           </div>

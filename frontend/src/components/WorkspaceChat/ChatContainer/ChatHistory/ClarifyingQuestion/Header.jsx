@@ -6,7 +6,7 @@ const NAV_BUTTON_CLASS =
 
 function QuestionText({ children }) {
   return (
-    <p className="flex-1 min-w-0 text-theme-text-primary light:text-slate-900 text-sm font-medium leading-5 break-words">
+    <p className="flex-1 min-w-0 text-theme-text-primary light:text-slate-900 text-sm font-medium leading-5 wrap-break-word">
       {children}
     </p>
   );

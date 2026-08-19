@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { SpinnerBlock } from "@/components/ui/spinner";
-import CTAButton from "@/components/lib/CTAButton";
+import { Button } from "@/components/ui/button";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
 import { numberWithCommas } from "@/utils/numbers";
@@ -110,24 +110,21 @@ export default function EmbeddingTextSplitterPreference() {
           />
           <div className="w-full justify-end flex">
             {hasChanges && (
-              <CTAButton className="mt-3 mr-0 -mb-14 z-10">
+              <Button size="lg" type="submit" className="mt-3 mr-0 -mb-14 z-10">
                 {saving ? t("common.saving") : t("common.save")}
-              </CTAButton>
+              </Button>
             )}
           </div>
 
           <div className="flex flex-col gap-y-4 mt-8">
             <div className="flex flex-col max-w-[300px]">
               <div className="flex flex-col gap-y-2 mb-4">
-                <Label variant="settings" className="block">
-                  {t("text.size.title")}
-                </Label>
+                <Label className="block">{t("text.size.title")}</Label>
                 <p className="text-xs text-theme-text-secondary">
                   {t("text.size.description")}
                 </p>
               </div>
               <Input
-                variant="settings"
                 type="number"
                 name="text_splitter_chunk_size"
                 min={1}
@@ -152,15 +149,12 @@ export default function EmbeddingTextSplitterPreference() {
           <div className="flex flex-col gap-y-4 mt-8">
             <div className="flex flex-col max-w-[300px]">
               <div className="flex flex-col gap-y-2 mb-4">
-                <Label variant="settings" className="block">
-                  {t("text.overlap.title")}
-                </Label>
+                <Label className="block">{t("text.overlap.title")}</Label>
                 <p className="text-xs text-theme-text-secondary">
                   {t("text.overlap.description")}
                 </p>
               </div>
               <Input
-                variant="settings"
                 type="number"
                 name="text_splitter_chunk_overlap"
                 min={0}

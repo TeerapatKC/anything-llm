@@ -65,30 +65,27 @@ export default function BrowserExtensionApiKeyRow({
 
   return (
     <TableRow
-      variant="none"
       ref={rowRef}
       className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
     >
-      <TableCell
-        variant="none"
-        scope="row"
-        className="px-6 py-2 whitespace-nowrap"
-      >
+      <TableCell scope="row" className="px-6 py-2 whitespace-nowrap">
         <div className="flex items-center">
           <span className="mr-2 font-mono">{connectionString}</span>
           <div className="flex items-center space-x-2">
             <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleCopy}
-                  className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
-                >
-                  {copied ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
-                </button>
+              <TooltipTrigger
+                render={
+                  <button
+                    onClick={handleCopy}
+                    className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
+                  />
+                }
+              >
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-500" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </TooltipTrigger>
               <TooltipContent side="bottom" className="max-w-[250px] text-xs">
                 Copy connection string
@@ -96,13 +93,15 @@ export default function BrowserExtensionApiKeyRow({
             </Tooltip>
 
             <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={handleConnect}
-                  className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
-                >
-                  <Plug className="h-4 w-4" />
-                </button>
+              <TooltipTrigger
+                render={
+                  <button
+                    onClick={handleConnect}
+                    className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
+                  />
+                }
+              >
+                <Plug className="h-4 w-4" />
               </TooltipTrigger>
               <TooltipContent side="bottom" className="max-w-[250px] text-xs">
                 Automatically connect to extension
@@ -111,14 +110,14 @@ export default function BrowserExtensionApiKeyRow({
           </div>
         </div>
       </TableCell>
-      <TableCell variant="none" className="px-6 py-2">
+      <TableCell className="px-6 py-2">
         {apiKey.user ? apiKey.user.username : "N/A"}
       </TableCell>
-      <TableCell variant="none" className="px-6 py-2">
+      <TableCell className="px-6 py-2">
         {new Date(apiKey.createdAt).toLocaleString()}
       </TableCell>
-      <TableCell variant="none" className="px-6 py-2">
-        <Button variant="danger" onClick={handleRevoke}>
+      <TableCell className="px-6 py-2">
+        <Button variant="destructive" onClick={handleRevoke}>
           <Trash2 className="h-4 w-4" />
         </Button>
       </TableCell>

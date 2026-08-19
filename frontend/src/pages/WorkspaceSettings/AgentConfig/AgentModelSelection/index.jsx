@@ -86,7 +86,7 @@ export default function AgentModelSelection({
           </p>
         </div>
         <Select name="agentModel" required={true} disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger>
             <SelectValue placeholder={t("agent.mode.wait")} />
           </SelectTrigger>
           <SelectContent />
@@ -114,7 +114,7 @@ export default function AgentModelSelection({
           setHasChanges(true);
         }}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger>
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>

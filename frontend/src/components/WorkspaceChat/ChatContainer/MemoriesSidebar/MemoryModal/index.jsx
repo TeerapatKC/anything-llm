@@ -82,10 +82,8 @@ export default function MemoryModal({
           />
         </div>
         <DialogFooter className="p-0 sm:justify-between">
-          <DialogClose asChild>
-            <Button variant="outline" type="button">
-              {t("chat_window.memories.modal.cancel")}
-            </Button>
+          <DialogClose render={<Button variant="outline" type="button" />}>
+            {t("chat_window.memories.modal.cancel")}
           </DialogClose>
           <Button
             variant="default"

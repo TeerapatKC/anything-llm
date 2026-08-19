@@ -81,7 +81,7 @@ export default function MenuOption({
         <Link
           ref={ref}
           to={href}
-          className={`flex flex-grow items-center px-[12px] h-[32px] font-medium ${
+          className={`flex grow items-center px-[12px] h-[32px] font-medium ${
             isChild
               ? "hover:text-white"
               : "text-theme-text-primary light:text-black"

@@ -116,19 +116,21 @@ export default function Sidebar() {
         </div>
         {canCreateWorkspace && (
           <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                onClick={showNewWsModal}
-                aria-label={t("new-workspace.title")}
-                className="hidden group-data-[collapsible=icon]:flex mx-auto items-center justify-center h-8 w-8 rounded-lg bg-white hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
-              >
-                <Plus
-                  size={16}
-                  strokeWidth={2.5}
-                  className="text-black light:text-slate-500"
+            <TooltipTrigger
+              render={
+                <button
+                  type="button"
+                  onClick={showNewWsModal}
+                  aria-label={t("new-workspace.title")}
+                  className="hidden group-data-[collapsible=icon]:flex mx-auto items-center justify-center h-8 w-8 rounded-lg bg-white hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
                 />
-              </button>
+              }
+            >
+              <Plus
+                size={16}
+                strokeWidth={2.5}
+                className="text-black light:text-slate-500"
+              />
             </TooltipTrigger>
             <TooltipContent side="right" className="max-w-[250px] text-xs">
               {t("new-workspace.title")}

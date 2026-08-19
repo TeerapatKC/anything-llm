@@ -181,7 +181,7 @@ function WorkspaceDirectory({
         <div className={`relative w-full ${PANEL_HEIGHT}`}>
           <div
             className={`absolute inset-0 rounded-lg ${
-              highlightWorkspace ? "border-4 border-cyan-300/80 z-[999]" : ""
+              highlightWorkspace ? "border-4 border-cyan-300/80 z-999" : ""
             }`}
           />
           <div className="relative w-full h-full bg-theme-settings-input-bg rounded-lg overflow-hidden border border-theme-modal-border">

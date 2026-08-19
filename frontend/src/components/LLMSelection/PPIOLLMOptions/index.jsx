@@ -17,11 +17,8 @@ export default function PPIOLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            PPIO API Key
-          </Label>
+          <Label className="block mb-3">PPIO API Key</Label>
           <Input
-            variant="settings"
             type="password"
             name="PPIOApiKey"
             placeholder="PPIO API Key"
@@ -63,11 +60,9 @@ function PPIOModelSelection({ settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="PPIOModelPref" required={true} disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -78,9 +73,7 @@ function PPIOModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="PPIOModelPref"
         required={true}
@@ -89,7 +82,7 @@ function PPIOModelSelection({ settings }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

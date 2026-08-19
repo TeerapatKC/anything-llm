@@ -50,7 +50,8 @@ export default function OllamaImageOptions({ settings }) {
       </p>
       <div className="flex justify-start">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -70,14 +71,16 @@ export default function OllamaImageOptions({ settings }) {
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <Label variant="settings">Ollama Base URL</Label>
+                <Label>Ollama Base URL</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info
-                      size={18}
-                      className="text-theme-text-secondary cursor-pointer"
-                    />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     Enter the URL where Ollama is running.
                   </TooltipContent>
@@ -88,7 +91,11 @@ export default function OllamaImageOptions({ settings }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -96,7 +103,6 @@ export default function OllamaImageOptions({ settings }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="ImageGenerationOllamaBasePath"
               placeholder="http://127.0.0.1:11434"
@@ -111,14 +117,16 @@ export default function OllamaImageOptions({ settings }) {
 
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <Label variant="settings">Authentication Token</Label>
+              <Label>Authentication Token</Label>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Info
-                    size={18}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </TooltipTrigger>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px]">
                   <p className="text-xs leading-[18px] font-base">
                     Enter a <code>Bearer</code> Auth Token for interacting with
@@ -131,7 +139,6 @@ export default function OllamaImageOptions({ settings }) {
               </Tooltip>
             </div>
             <Input
-              variant="settings"
               type="password"
               name="ImageGenerationOllamaAuthToken"
               placeholder="Ollama Auth Token"

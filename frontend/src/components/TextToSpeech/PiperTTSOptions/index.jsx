@@ -79,11 +79,9 @@ function PiperTTSModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Voice Model Selection
-        </Label>
+        <Label className="block mb-3">Voice Model Selection</Label>
         <Select name="TTSPiperTTSVoiceModel" value="" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -95,9 +93,7 @@ function PiperTTSModelSelection({ settings }) {
   return (
     <div className="flex flex-col w-fit">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Voice Model Selection
-        </Label>
+        <Label className="block mb-3">Voice Model Selection</Label>
         <div className="flex items-center w-fit gap-x-4 mb-2">
           <Select
             name="TTSPiperTTSVoiceModel"
@@ -105,7 +101,7 @@ function PiperTTSModelSelection({ settings }) {
             onValueChange={setSelectedVoice}
             value={selectedVoice}
           >
-            <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
+            <SelectTrigger className="border-none shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -202,23 +198,23 @@ function DemoVoiceSample({ voiceId }) {
     >
       {speaking ? (
         <>
-          <CirclePause size={20} className="flex-shrink-0" />
-          <p className="text-sm flex-shrink-0">Stop demo</p>
+          <CirclePause size={20} className="shrink-0" />
+          <p className="text-sm shrink-0">Stop demo</p>
         </>
       ) : (
         <>
           {loading ? (
             <>
-              <Spinner className="flex-shrink-0" />
-              <p className="text-sm flex-shrink-0">Loading voice</p>
+              <Spinner className="shrink-0" />
+              <p className="text-sm shrink-0">Loading voice</p>
             </>
           ) : (
             <>
               <CirclePlay
                 size={20}
-                className="flex-shrink-0 text-theme-text-primary"
+                className="shrink-0 text-theme-text-primary"
               />
-              <p className="text-theme-text-primary text-sm flex-shrink-0">
+              <p className="text-theme-text-primary text-sm shrink-0">
                 Play sample
               </p>
             </>

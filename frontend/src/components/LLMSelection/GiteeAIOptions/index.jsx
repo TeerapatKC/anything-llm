@@ -16,11 +16,8 @@ export default function GiteeAIOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          API Key
-        </Label>
+        <Label className="block mb-3">API Key</Label>
         <Input
-          variant="settings"
           type="password"
           name="GiteeAIApiKey"
           placeholder="GiteeAI API Key"
@@ -34,11 +31,8 @@ export default function GiteeAIOptions({ settings }) {
         <>
           <GiteeAIModelSelection settings={settings} />
           <div className="flex flex-col w-60">
-            <Label variant="settings" className="block mb-2">
-              Model context window
-            </Label>
+            <Label className="block mb-2">Model context window</Label>
             <Input
-              variant="settings"
               type="number"
               name="GiteeAITokenLimit"
               placeholder="Content window limit (eg: 8192)"
@@ -80,11 +74,9 @@ function GiteeAIModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="GiteeAIModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
           <SelectContent />
@@ -95,9 +87,7 @@ function GiteeAIModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="GiteeAIModelPref"
         required={true}
@@ -106,7 +96,7 @@ function GiteeAIModelSelection({ settings }) {
           groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

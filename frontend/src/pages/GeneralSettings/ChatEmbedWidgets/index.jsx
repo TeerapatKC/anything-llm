@@ -82,7 +82,7 @@ export default function ChatEmbedWidgets() {
             </div>
           </div>
         </div>
-        <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
+        <div className="flex-2 flex flex-col gap-y-[18px] mt-10">
           <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl flex-1 p-4 overflow-y-scroll no-scroll">
             {selectedView === "configs" ? (
               <EmbedConfigsView />

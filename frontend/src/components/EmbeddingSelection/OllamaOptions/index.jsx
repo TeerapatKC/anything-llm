@@ -62,23 +62,20 @@ export default function OllamaEmbeddingOptions({ settings }) {
         />
         <div className="flex flex-col w-60">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex gap-x-1 items-center mb-3">
-                <Label variant="settings" className="block">
-                  Max embedding chunk length
-                </Label>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </div>
+            <TooltipTrigger
+              render={<div className="flex gap-x-1 items-center mb-3" />}
+            >
+              <Label className="block">Max embedding chunk length</Label>
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
             </TooltipContent>
           </Tooltip>
           <Input
-            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
             placeholder="8192"
@@ -93,13 +90,14 @@ export default function OllamaEmbeddingOptions({ settings }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
           }}
         >
-          {showAdvancedControls ? "Hide" : "Show"} Advanced Settings
+          {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
             <ChevronUp size={14} className="ml-1" />
           ) : (
@@ -112,13 +110,17 @@ export default function OllamaEmbeddingOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <Label variant="settings">Ollama Base URL</Label>
+              <Label>Ollama Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -126,7 +128,6 @@ export default function OllamaEmbeddingOptions({ settings }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="EmbeddingBasePath"
               placeholder="http://127.0.0.1:11434"
@@ -143,16 +144,14 @@ export default function OllamaEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="flex gap-x-1 items-center mb-3">
-                  <Label variant="settings" className="block">
-                    Embedding batch size
-                  </Label>
-                  <Info
-                    size={16}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                </div>
+              <TooltipTrigger
+                render={<div className="flex gap-x-1 items-center mb-3" />}
+              >
+                <Label className="block">Embedding batch size</Label>
+                <Info
+                  size={16}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 Number of text chunks to embed in parallel. Higher values
@@ -160,7 +159,6 @@ export default function OllamaEmbeddingOptions({ settings }) {
               </TooltipContent>
             </Tooltip>
             <Input
-              variant="settings"
               type="number"
               name="OllamaEmbeddingBatchSize"
               placeholder="1"
@@ -177,11 +175,8 @@ export default function OllamaEmbeddingOptions({ settings }) {
             </p>
           </div>
           <div>
-            <Label variant="settings" className="block mb-3">
-              Auth Token (optional)
-            </Label>
+            <Label className="block mb-3">Auth Token (optional)</Label>
             <Input
-              variant="settings"
               type="password"
               name="OllamaLLMAuthToken"
               placeholder="Enter your Auth Token"
@@ -234,11 +229,9 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          Ollama Embedding Model
-        </Label>
+        <Label className="block mb-2">Ollama Embedding Model</Label>
         <Select name="EmbeddingModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 !!basePath
@@ -259,15 +252,13 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        Ollama Embedding Model
-      </Label>
+      <Label className="block mb-2">Ollama Embedding Model</Label>
       <Select
         name="EmbeddingModelPref"
         required={true}
         defaultValue={settings.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

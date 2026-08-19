@@ -26,15 +26,8 @@ export default function DeviceRow({ device, removeDevice }) {
 
   return (
     <>
-      <TableRow
-        variant="none"
-        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
-      >
-        <TableCell
-          variant="none"
-          scope="row"
-          className="px-6 whitespace-nowrap"
-        >
+      <TableRow className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10">
+        <TableCell scope="row" className="px-6 whitespace-nowrap">
           <div className="flex items-center gap-x-2">
             {device.deviceOs === "ios" ? (
               <AppleLogo
@@ -48,7 +41,7 @@ export default function DeviceRow({ device, removeDevice }) {
             <span className="text-sm">{device.deviceName}</span>
           </div>
         </TableCell>
-        <TableCell variant="none" className="px-6">
+        <TableCell className="px-6">
           <div className="flex items-center gap-x-2">
             {moment(device.createdAt).format("lll")}
             {device.user && (
@@ -64,10 +57,7 @@ export default function DeviceRow({ device, removeDevice }) {
             )}
           </div>
         </TableCell>
-        <TableCell
-          variant="none"
-          className="px-6 flex items-center gap-x-6 h-full mt-1"
-        >
+        <TableCell className="px-6 flex items-center gap-x-6 h-full mt-1">
           {status ? (
             <button
               onClick={handleDeny}

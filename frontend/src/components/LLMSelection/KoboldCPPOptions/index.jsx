@@ -52,11 +52,8 @@ export default function KoboldCPPOptions({ settings }) {
           basePath={basePath.value}
         />
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            Model context window
-          </Label>
+          <Label className="block mb-2">Model context window</Label>
           <Input
-            variant="settings"
             type="number"
             name="KoboldCPPTokenLimit"
             placeholder="4096"
@@ -72,11 +69,8 @@ export default function KoboldCPPOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-2">
-            Max response tokens
-          </Label>
+          <Label className="block mb-2">Max response tokens</Label>
           <Input
-            variant="settings"
             type="number"
             name="KoboldCPPMaxTokens"
             placeholder="2048"
@@ -94,7 +88,8 @@ export default function KoboldCPPOptions({ settings }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -113,13 +108,17 @@ export default function KoboldCPPOptions({ settings }) {
         <div className="w-full flex items-start gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <Label variant="settings">KoboldCPP Base URL</Label>
+              <Label>KoboldCPP Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -127,7 +126,6 @@ export default function KoboldCPPOptions({ settings }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="KoboldCPPBasePath"
               placeholder="http://127.0.0.1:5000/v1"
@@ -179,11 +177,9 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          KoboldCPP Model
-        </Label>
+        <Label className="block mb-2">KoboldCPP Model</Label>
         <Select name="KoboldCPPModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 basePath?.includes("/v1")
@@ -204,15 +200,13 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        KoboldCPP Model
-      </Label>
+      <Label className="block mb-2">KoboldCPP Model</Label>
       <Select
         name="KoboldCPPModelPref"
         required={true}
         defaultValue={settings.KoboldCPPModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

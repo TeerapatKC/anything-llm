@@ -62,11 +62,8 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
               apiKey={apiKey}
             />
             <div className="flex flex-col w-60">
-              <Label variant="settings" className="block mb-2">
-                Model context window
-              </Label>
+              <Label className="block mb-2">Model context window</Label>
               <Input
-                variant="settings"
                 type="number"
                 name="LocalAiTokenLimit"
                 placeholder="4096"
@@ -81,13 +78,12 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
         )}
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
-            <Label variant="settings" className="flex items-center gap-x-2">
+            <Label className="flex items-center gap-x-2">
               Local AI API Key{" "}
-              <p className="!text-xs !italic !font-thin">optional</p>
+              <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
-            variant="settings"
             type="password"
             name="LocalAiApiKey"
             placeholder="sk-mysecretkey"
@@ -101,7 +97,8 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -119,13 +116,17 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
         <div className="w-full flex items-center gap-4">
           <div className="flex flex-col w-60">
             <div className="flex justify-between items-center mb-2">
-              <Label variant="settings">Local AI Base URL</Label>
+              <Label>Local AI Base URL</Label>
               {loading ? (
                 <PreLoader size="6" />
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -133,7 +134,6 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="LocalAiBasePath"
               placeholder="http://localhost:8080/v1"
@@ -177,11 +177,9 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-2">Chat Model Selection</Label>
         <Select name="LocalAiModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 basePath?.includes("/v1")
@@ -198,15 +196,13 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-2">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-2">Chat Model Selection</Label>
       <Select
         name="LocalAiModelPref"
         required={true}
         defaultValue={settings.LocalAiModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

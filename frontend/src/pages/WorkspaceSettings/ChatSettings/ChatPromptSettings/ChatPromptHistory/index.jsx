@@ -56,7 +56,7 @@ export default forwardRef(function ChatPromptHistory(
     <>
       <div
         ref={ref}
-        className={`fixed right-3 top-3 bottom-3 w-[375px] bg-theme-action-menu-bg light:bg-theme-home-update-card-bg rounded-xl py-4 px-4 z-[9999] overflow-y-hidden ${
+        className={`fixed right-3 top-3 bottom-3 w-[375px] bg-theme-action-menu-bg light:bg-theme-home-update-card-bg rounded-xl py-4 px-4 z-9999 overflow-y-hidden ${
           show
             ? "translate-x-0 opacity-100 visible"
             : "translate-x-full opacity-0 invisible"

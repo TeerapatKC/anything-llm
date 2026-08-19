@@ -52,23 +52,20 @@ export default function LemonadeEmbeddingOptions({ settings }) {
         <LemonadeModelSelection settings={settings} basePath={basePath.value} />
         <div className="flex flex-col w-60">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex gap-x-1 items-center mb-3">
-                <Label variant="settings" className="block">
-                  Max embedding chunk length
-                </Label>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </div>
+            <TooltipTrigger
+              render={<div className="flex gap-x-1 items-center mb-3" />}
+            >
+              <Label className="block">Max embedding chunk length</Label>
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               Maximum length of text chunks, in characters, for embedding.
             </TooltipContent>
           </Tooltip>
           <Input
-            variant="settings"
             type="number"
             name="EmbeddingModelMaxChunkLength"
             placeholder="8192"
@@ -82,23 +79,20 @@ export default function LemonadeEmbeddingOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex gap-x-1 items-center mb-3">
-                <Label variant="settings" className="block">
-                  API Key (optional)
-                </Label>
-                <Info
-                  size={16}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </div>
+            <TooltipTrigger
+              render={<div className="flex gap-x-1 items-center mb-3" />}
+            >
+              <Label className="block">API Key (optional)</Label>
+              <Info
+                size={16}
+                className="text-theme-text-secondary cursor-pointer"
+              />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
               The API key for your Lemonade instance
             </TooltipContent>
           </Tooltip>
           <Input
-            variant="settings"
             type="password"
             name="LemonadeLLMApiKey"
             defaultValue={settings?.LemonadeLLMApiKey ? "*".repeat(20) : ""}
@@ -108,7 +102,8 @@ export default function LemonadeEmbeddingOptions({ settings }) {
       </div>
       <div className="flex justify-start mt-4">
         <Button
-          variant="inline"
+          variant="link"
+          size="sm"
           onClick={(e) => {
             e.preventDefault();
             setShowAdvancedControls(!showAdvancedControls);
@@ -128,14 +123,16 @@ export default function LemonadeEmbeddingOptions({ settings }) {
           <div className="flex flex-col w-[300px]">
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-1">
-                <Label variant="settings">Lemonade Base URL</Label>
+                <Label>Lemonade Base URL</Label>
                 <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info
-                      size={18}
-                      className="text-theme-text-secondary cursor-pointer"
-                    />
-                  </TooltipTrigger>
+                  <TooltipTrigger
+                    render={
+                      <Info
+                        size={18}
+                        className="text-theme-text-secondary cursor-pointer"
+                      />
+                    }
+                  ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     Enter the URL where Lemonade is running.
                   </TooltipContent>
@@ -146,7 +143,11 @@ export default function LemonadeEmbeddingOptions({ settings }) {
               ) : (
                 <>
                   {!basePathValue.value && (
-                    <Button variant="chip" onClick={handleAutoDetectClick}>
+                    <Button
+                      variant="secondary"
+                      size="xs"
+                      onClick={handleAutoDetectClick}
+                    >
                       Auto-Detect
                     </Button>
                   )}
@@ -154,7 +155,6 @@ export default function LemonadeEmbeddingOptions({ settings }) {
               )}
             </div>
             <Input
-              variant="settings"
               type="url"
               name="EmbeddingBasePath"
               placeholder="http://localhost:8000/live"
@@ -205,11 +205,9 @@ function LemonadeModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-2">
-          Lemonade Embedding Model
-        </Label>
+        <Label className="block mb-2">Lemonade Embedding Model</Label>
         <Select name="EmbeddingModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 !!basePath
@@ -230,9 +228,7 @@ function LemonadeModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Lemonade Embedding Model
-      </Label>
+      <Label className="block mb-3">Lemonade Embedding Model</Label>
       <Select
         name="EmbeddingModelPref"
         required={true}
@@ -243,7 +239,7 @@ function LemonadeModelSelection({ settings, basePath = null }) {
           (downloadedModels[0]?.id || customModels[0]?.id)
         }
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select a model" />
         </SelectTrigger>
         <SelectContent>

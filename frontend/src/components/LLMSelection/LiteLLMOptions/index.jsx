@@ -22,11 +22,8 @@ export default function LiteLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7 mt-1.5">
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Base URL
-          </Label>
+          <Label className="block mb-3">Base URL</Label>
           <Input
-            variant="settings"
             type="url"
             name="LiteLLMBasePath"
             placeholder="http://127.0.0.1:4000"
@@ -44,11 +41,8 @@ export default function LiteLLMOptions({ settings }) {
           apiKey={apiKey}
         />
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
-            Model context window
-          </Label>
+          <Label className="block mb-3">Model context window</Label>
           <Input
-            variant="settings"
             type="number"
             name="LiteLLMTokenLimit"
             placeholder="8192"
@@ -63,12 +57,11 @@ export default function LiteLLMOptions({ settings }) {
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
-            <Label variant="settings" className="flex items-center gap-x-2">
-              API Key <p className="!text-xs !italic !font-thin">optional</p>
+            <Label className="flex items-center gap-x-2">
+              API Key <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
-            variant="settings"
             type="password"
             name="LiteLLMAPIKey"
             placeholder="sk-mysecretkey"
@@ -110,11 +103,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label variant="settings" className="block mb-3">
-          Chat Model Selection
-        </Label>
+        <Label className="block mb-3">Chat Model Selection</Label>
         <Select name="LiteLLMModelPref" disabled={true}>
-          <SelectTrigger variant="settings">
+          <SelectTrigger className="w-full">
             <SelectValue
               placeholder={
                 basePath?.includes("/v1")
@@ -131,15 +122,13 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label variant="settings" className="block mb-3">
-        Chat Model Selection
-      </Label>
+      <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="LiteLLMModelPref"
         required={true}
         defaultValue={settings.LiteLLMModelPref ?? customModels?.[0]?.id}
       >
-        <SelectTrigger variant="settings">
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

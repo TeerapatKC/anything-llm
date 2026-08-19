@@ -141,7 +141,7 @@ export default function SuggestedChatMessages({ slug }) {
               }}
               onClick={() => handleRemoveMessage(index)}
             >
-              <X className="m-[1px]" size={20} />
+              <X className="m-px" size={20} />
             </button>
             <button
               key={index}
@@ -161,9 +161,7 @@ export default function SuggestedChatMessages({ slug }) {
       {editingIndex >= 0 && (
         <div className="flex flex-col gap-y-4 mr-2">
           <div className="w-1/2">
-            <Label variant="settings" className="block mb-2">
-              Message
-            </Label>
+            <Label className="block mb-2">Message</Label>
             <input
               placeholder="Message"
               className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-white/20 text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block p-2.5 w-full"

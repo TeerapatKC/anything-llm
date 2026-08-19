@@ -33,7 +33,7 @@ export default function HeaderMenu({
   }, []);
 
   return (
-    <div className="absolute top-[calc(40px+16px)] left-4 right-4">
+    <div className="absolute top-[56px] left-4 right-4">
       <div className="flex justify-between items-start max-w-[1700px] mx-auto">
         <div className="flex items-center gap-x-2">
           <button
@@ -48,7 +48,7 @@ export default function HeaderMenu({
           >
             <button
               onClick={() => navigate(paths.settings.agentSkills())}
-              className="!border-t-transparent !border-l-transparent !border-b-transparent flex items-center gap-x-2 px-4 py-2 border-r border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
+              className="border-t-transparent! border-l-transparent! border-b-transparent! flex items-center gap-x-2 px-4 py-2 border-r border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
             >
               <img
                 src={AnythingInfinityLogo}

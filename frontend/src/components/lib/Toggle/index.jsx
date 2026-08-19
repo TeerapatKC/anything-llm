@@ -18,7 +18,7 @@ const LABEL_STYLES = {
     gap: "gap-[2px]",
   },
   md: {
-    label: "text-[14px] leading-[18px] font-medium -mt-[2px]",
+    label: "text-[14px] leading-[18px] font-medium mt-[-2px]",
     description: "text-[12px] leading-[16px] font-normal",
     gap: "gap-[2px]",
   },
@@ -171,12 +171,14 @@ function TextContent({
           {label}
           {hint && (
             <Tooltip>
-              <TooltipTrigger asChild>
-                <Info
-                  size={14}
-                  className="text-theme-text-secondary cursor-pointer"
-                />
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Info
+                    size={14}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                }
+              ></TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 {hint}
               </TooltipContent>

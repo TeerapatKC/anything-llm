@@ -69,7 +69,7 @@ export default function DrupalWikiOptions() {
             <div className="w-full flex flex-col gap-4">
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold" className="flex gap-x-2 items-center">
+                  <Label className="flex gap-x-2 items-center">
                     <p className="font-bold text-theme-text-primary">
                       Drupal Wiki base URL
                     </p>
@@ -88,7 +88,6 @@ export default function DrupalWikiOptions() {
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="url"
                   name="baseUrl"
                   placeholder="eg: https://mywiki.drupal-wiki.net, https://drupalwiki.mycompany.tld, etc..."
@@ -99,7 +98,7 @@ export default function DrupalWikiOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold">Drupal Wiki Space IDs</Label>
+                  <Label>Drupal Wiki Space IDs</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     Comma separated Space IDs you want to extract. See the&nbsp;
                     <a
@@ -116,7 +115,6 @@ export default function DrupalWikiOptions() {
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="text"
                   name="spaceIds"
                   placeholder="eg: 12,34,69"
@@ -127,14 +125,16 @@ export default function DrupalWikiOptions() {
               </div>
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
-                  <Label variant="bold" className="flex gap-x-2 items-center">
+                  <Label className="flex gap-x-2 items-center">
                     <p className="font-bold text-theme-text-primary">
                       Drupal Wiki API Token
                     </p>
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
-                      </TooltipTrigger>
+                      <TooltipTrigger
+                        render={
+                          <AlertTriangle className="ml-1 h-3.5 w-3.5 text-orange-500 cursor-pointer" />
+                        }
+                      ></TooltipTrigger>
                       <TooltipContent
                         side="right"
                         className="max-w-[250px] text-xs"
@@ -160,7 +160,6 @@ export default function DrupalWikiOptions() {
                   </p>
                 </div>
                 <Input
-                  variant="settings"
                   type="password"
                   name="accessToken"
                   placeholder="pat:123"
@@ -173,7 +172,7 @@ export default function DrupalWikiOptions() {
           </div>
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <Button variant="homePrimary" type="submit" disabled={loading}>
+            <Button variant="default" type="submit" disabled={loading}>
               {loading ? "Collecting pages..." : "Submit"}
             </Button>
             {loading && (

@@ -57,7 +57,7 @@ export default function ModelRouterOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <Label variant="settings" className="block mb-3">
+          <Label className="block mb-3">
             {t("model-router.router-selection.model-router-label")}
           </Label>
           <Select
@@ -67,7 +67,7 @@ export default function ModelRouterOptions({ settings }) {
             defaultValue={settings?.ModelRouterId || undefined}
             required
           >
-            <SelectTrigger variant="settings">
+            <SelectTrigger className="w-full">
               <SelectValue
                 placeholder={t("model-router.router-selection.select-router")}
               />
