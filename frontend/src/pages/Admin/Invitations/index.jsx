@@ -46,11 +46,7 @@ export default function AdminInvites() {
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
         <div className="w-full justify-end flex">
-          <DialogTrigger
-            render={
-              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-12 z-10" />
-            }
-          >
+          <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
             <Mail className="h-4 w-4" /> Create Invite Link
           </DialogTrigger>
         </div>

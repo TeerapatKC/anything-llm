@@ -109,7 +109,7 @@ export default function SystemPrompt({ item, setStep }) {
       {destinationWorkspaceSlug && (
         <Button
           size="lg"
-          className="-mr-8 text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
+          className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
           onClick={handleSubmit}
         >
           Apply system prompt to workspace

@@ -56,11 +56,7 @@ export default function BrowserExtensionApiKeys() {
           open={isOpen}
           onOpenChange={(open) => (open ? openModal() : closeModal())}
         >
-          <DialogTrigger
-            render={
-              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-14 z-10" />
-            }
-          >
+          <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
             <CirclePlus className="h-4 w-4" />
             Generate New API Key
           </DialogTrigger>

@@ -72,10 +72,7 @@ export default function BrowserExtensionApiKeyRow({
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <button
-                    onClick={handleCopy}
-                    className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
-                  />
+                  <Button variant="ghost" size="icon-sm" onClick={handleCopy} />
                 }
               >
                 {copied ? (
@@ -92,9 +89,10 @@ export default function BrowserExtensionApiKeyRow({
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <button
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
                     onClick={handleConnect}
-                    className="border-none text-theme-text-primary hover:text-theme-text-secondary transition-colors duration-200 p-1 rounded"
                   />
                 }
               >
@@ -110,7 +108,7 @@ export default function BrowserExtensionApiKeyRow({
       <TableCell>{apiKey.user ? apiKey.user.username : "N/A"}</TableCell>
       <TableCell>{new Date(apiKey.createdAt).toLocaleString()}</TableCell>
       <TableCell>
-        <Button variant="destructive" onClick={handleRevoke}>
+        <Button size="icon-sm" variant="destructive" onClick={handleRevoke}>
           <Trash2 className="h-4 w-4" />
         </Button>
       </TableCell>

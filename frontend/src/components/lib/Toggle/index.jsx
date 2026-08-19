@@ -4,12 +4,16 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
 
-const TOGGLE_STYLES = {
-  sm: "h-[12px] w-[20px] after:h-[8px] after:w-[8px] after:top-[2px] after:left-[2px] peer-checked:after:translate-x-full",
-  md: "h-[16px] w-[28px] after:h-[12px] after:w-[12px] after:top-[2px] after:left-[2px] peer-checked:after:translate-x-full",
-  lg: "h-[19px] w-[36px] after:h-[15px] after:w-[15px] after:top-[2px] after:left-[2px] peer-checked:after:translate-x-[17px]",
-};
+/**
+ * This component used to hand-roll its own switch out of a hidden checkbox and
+ * a styled div, with green/zinc colours written literally. It now renders the
+ * shadcn `Switch`, so the on/off colours come from `--primary` and `--input`
+ * and therefore track both themes. Only this size map is app-specific — it
+ * keeps the three sizes the ~33 call sites already pass.
+ */
+const SWITCH_SIZES = { sm: "sm", md: "default", lg: "lg" };
 
 const LABEL_STYLES = {
   sm: {
@@ -66,7 +70,7 @@ export default function Toggle({
 }) {
   const inputProps =
     enabled !== undefined
-      ? { checked: enabled, onChange: (e) => onChange?.(e.target.checked) }
+      ? { checked: enabled, onCheckedChange: (checked) => onChange?.(checked) }
       : { defaultChecked: false };
 
   const labelStyles = LABEL_STYLES[size] || LABEL_STYLES.sm;
@@ -128,27 +132,13 @@ export default function Toggle({
 
 function ToggleSwitch({ name, disabled, size, inputProps, value }) {
   return (
-    <>
-      <input
-        type="checkbox"
-        name={name}
-        disabled={disabled}
-        className="peer sr-only"
-        value={value}
-        {...inputProps}
-      />
-      <div
-        className={`
-          relative shrink-0 peer pointer-events-none rounded-full
-          ${TOGGLE_STYLES[size] || TOGGLE_STYLES.sm}
-          after:absolute after:rounded-full after:bg-white
-          after:transition-all after:content-['']
-          peer-focus:ring-2
-          bg-zinc-500 light:bg-zinc-300 peer-focus:ring-zinc-700 light:peer-focus:bg-green-100 light:peer-focus:ring-green-200
-          peer-checked:bg-green-400 peer-checked:peer-focus:bg-green-300 peer-checked:peer-focus:ring-green-900 light:peer-checked:peer-focus:bg-green-300 light:peer-checked:peer-focus:ring-green-200
-        `}
-      />
-    </>
+    <Switch
+      name={name}
+      value={value}
+      disabled={disabled}
+      size={SWITCH_SIZES[size] ?? SWITCH_SIZES.sm}
+      {...inputProps}
+    />
   );
 }
 
@@ -166,7 +156,7 @@ function TextContent({
     <div className={`flex flex-col ${gapClassName ?? labelStyles.gap}`}>
       {label && (
         <span
-          className={`flex items-center gap-x-1 text-theme-text-primary light:text-slate-950 ${labelClassName ?? labelStyles.label}`}
+          className={`flex items-center gap-x-1 text-foreground ${labelClassName ?? labelStyles.label}`}
         >
           {label}
           {hint && (
@@ -175,7 +165,7 @@ function TextContent({
                 render={
                   <Info
                     size={14}
-                    className="text-theme-text-secondary cursor-pointer"
+                    className="text-muted-foreground cursor-pointer"
                   />
                 }
               ></TooltipTrigger>
@@ -188,7 +178,7 @@ function TextContent({
       )}
       {description && (
         <span
-          className={`text-zinc-400 light:text-zinc-600 ${descriptionClassName ?? labelStyles.description}`}
+          className={`text-muted-foreground ${descriptionClassName ?? labelStyles.description}`}
         >
           {description}
         </span>
@@ -198,7 +188,9 @@ function TextContent({
 }
 
 /**
- * Simple toggle switch that doesn't use label/input to avoid focus-scroll issues
+ * The same switch without the wrapping <label>, for rows that already handle
+ * their own click target and where a label's focus-scroll behaviour got in the
+ * way. Kept as a separate export so those call sites read unchanged.
  */
 export function SimpleToggleSwitch({
   className,
@@ -208,38 +200,13 @@ export function SimpleToggleSwitch({
   size = "sm",
 }) {
   return (
-    <div
-      role="switch"
-      aria-checked={enabled}
-      tabIndex={0}
-      onClick={(e) => {
-        e.stopPropagation();
-        onChange(!enabled);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          e.stopPropagation();
-          onChange(!enabled);
-        }
-      }}
-      className={`
-        relative shrink-0 cursor-pointer rounded-full ${disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"}
-        ${size === "sm" ? "h-[12px] w-[20px]" : size === "md" ? "h-[16px] w-[28px]" : "h-[19px] w-[36px]"}
-        transition-colors duration-200
-        ${enabled ? "bg-green-400" : "bg-zinc-500"}
-        ${className}
-      `}
-    >
-      <div
-        className={`
-          absolute top-[2px] left-[2px]
-          ${size === "sm" ? "h-[8px] w-[8px]" : size === "md" ? "h-[12px] w-[12px]" : "h-[15px] w-[15px]"}
-          rounded-full bg-white
-          transition-transform duration-200
-          ${enabled ? "translate-x-full" : "translate-x-0"}
-        `}
-      />
-    </div>
+    <Switch
+      className={className}
+      checked={enabled}
+      disabled={disabled}
+      size={SWITCH_SIZES[size] ?? SWITCH_SIZES.sm}
+      onCheckedChange={(checked) => onChange?.(checked)}
+      onClick={(e) => e.stopPropagation()}
+    />
   );
 }

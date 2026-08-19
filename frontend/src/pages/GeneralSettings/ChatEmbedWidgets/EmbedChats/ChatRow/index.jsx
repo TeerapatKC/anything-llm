@@ -13,6 +13,7 @@ import MarkdownRenderer from "../MarkdownRenderer";
 import { safeJsonParse } from "@/utils/request";
 import { TableCell, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { Button } from "@/components/ui/button";
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -79,15 +80,10 @@ export default function ChatRow({ chat, onDelete }) {
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
         </TableCell>
         <TableCell>{chat.createdAt}</TableCell>
-        <TableCell className="flex items-center gap-x-6 h-full mt-1">
-          <button
-            onClick={handleDelete}
-            className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-delete-hover-bg"
-          >
-            <span className="group-hover:text-theme-button-delete-hover-text">
-              Delete
-            </span>
-          </button>
+        <TableCell className="text-right">
+          <Button variant="destructive" size="sm" onClick={handleDelete}>
+            Delete
+          </Button>
         </TableCell>
       </TableRow>
       <Dialog

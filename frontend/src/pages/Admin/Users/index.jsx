@@ -38,11 +38,7 @@ export default function AdminUsers() {
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
         <div className="w-full justify-end flex">
-          <DialogTrigger
-            render={
-              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-6 z-10" />
-            }
-          >
+          <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
             <UserPlus className="h-4 w-4" /> Add user
           </DialogTrigger>
         </div>

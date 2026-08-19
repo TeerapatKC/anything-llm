@@ -54,11 +54,7 @@ export default function SystemPromptVariables() {
           open={isOpen}
           onOpenChange={(open) => (open ? openModal() : closeModal())}
         >
-          <DialogTrigger
-            render={
-              <Button size="lg" className="mt-3 mr-0 mb-4 md:-mb-6 z-10" />
-            }
-          >
+          <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
             <Plus className="h-4 w-4" /> Add Variable
           </DialogTrigger>
           <DialogContent>

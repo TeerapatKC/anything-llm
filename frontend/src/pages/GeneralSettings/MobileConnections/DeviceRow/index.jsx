@@ -7,6 +7,11 @@ import { AppleLogo } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import { TableCell, TableRow } from "@/components/ui/table";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export default function DeviceRow({ device, removeDevice }) {
   const [status, setStatus] = useState(device.approved);
@@ -57,30 +62,24 @@ export default function DeviceRow({ device, removeDevice }) {
             )}
           </div>
         </TableCell>
-        <TableCell className="flex items-center gap-x-6 h-full mt-1">
-          {status ? (
-            <button
-              onClick={handleDeny}
-              className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white/10 hover:light:bg-red-50`}
-            >
-              Revoke
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={handleApprove}
-                className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white/10 hover:light:bg-green-50 hover:light:text-green-500 hover:text-green-300`}
-              >
-                Approve Access
-              </button>
-              <button
-                onClick={handleDeny}
-                className={`border-none flex items-center justify-center text-xs font-medium text-white/80 light:text-black/80 rounded-lg p-1 hover:bg-white/10 hover:light:bg-red-50 hover:light:text-red-500 hover:text-red-300`}
-              >
-                Deny
-              </button>
-            </>
-          )}
+        <TableCell className="text-right">
+          <TableRowActions>
+            {status ? (
+              <DropdownMenuItem variant="destructive" onClick={handleDeny}>
+                Revoke
+              </DropdownMenuItem>
+            ) : (
+              <>
+                <DropdownMenuItem onClick={handleApprove}>
+                  Approve access
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={handleDeny}>
+                  Deny
+                </DropdownMenuItem>
+              </>
+            )}
+          </TableRowActions>
         </TableCell>
       </TableRow>
     </>

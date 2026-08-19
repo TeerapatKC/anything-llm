@@ -100,7 +100,7 @@ export default function Members({ workspace }) {
         open={isOpen}
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <DialogTrigger render={<Button className="-mr-8" size="lg" />}>
+        <DialogTrigger render={<Button size="lg" />}>
           Manage Users
         </DialogTrigger>
         <DialogContent size="md" className="p-0 overflow-hidden">

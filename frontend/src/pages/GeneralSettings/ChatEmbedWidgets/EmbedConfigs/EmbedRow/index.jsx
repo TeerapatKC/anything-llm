@@ -1,5 +1,4 @@
 import { useRef, useState } from "react";
-import { Ellipsis } from "lucide-react";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -12,6 +11,12 @@ import moment from "moment";
 import { safeJsonParse } from "@/utils/request";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import TableRowActions from "@/components/lib/TableRowActions";
+import { Code, Settings, Trash2 } from "lucide-react";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export default function EmbedRow({ embed }) {
   const rowRef = useRef(null);
@@ -101,37 +106,25 @@ export default function EmbedRow({ embed }) {
               : moment(embed.createdAt).fromNow()
           }
         </TableHead>
-        <TableCell className="flex items-center gap-x-6 h-full mt-1">
-          <button
-            onClick={openSnippetModal}
-            className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-code-hover-bg"
-          >
-            <span className="group-hover:text-theme-button-code-hover-text">
-              Code
-            </span>
-          </button>
-          <button
-            onClick={handleSuspend}
-            className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-disable-hover-bg"
-          >
-            <span className="group-hover:text-theme-button-disable-hover-text">
+        <TableCell className="text-right">
+          <TableRowActions>
+            <DropdownMenuItem onClick={openSettingsModal}>
+              <Settings />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={openSnippetModal}>
+              <Code />
+              Code snippet
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSuspend}>
               {enabled ? "Disable" : "Enable"}
-            </span>
-          </button>
-          <button
-            onClick={handleDelete}
-            className="group text-xs font-medium text-theme-text-secondary px-2 py-1 rounded-lg hover:bg-theme-button-delete-hover-bg"
-          >
-            <span className="group-hover:text-theme-button-delete-hover-text">
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+              <Trash2 />
               Delete
-            </span>
-          </button>
-          <button
-            onClick={openSettingsModal}
-            className="text-xs font-medium text-theme-button-text hover:text-theme-text-secondary hover:bg-theme-hover px-2 py-1 rounded-lg"
-          >
-            <Ellipsis className="h-5 w-5 fill-current" />
-          </button>
+            </DropdownMenuItem>
+          </TableRowActions>
         </TableCell>
       </TableRow>
       <Dialog

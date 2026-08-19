@@ -4,6 +4,7 @@ import { stripUuidAndJsonFromString } from "@/components/Modals/ManageWorkspace/
 import moment from "moment";
 import System from "@/models/system";
 import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export default function DocumentSyncQueueRow({ queue }) {
   const rowRef = useRef(null);
@@ -28,13 +29,10 @@ export default function DocumentSyncQueueRow({ queue }) {
           <i className="text-xs px-2">({moment(queue.nextSyncAt).fromNow()})</i>
         </TableCell>
         <TableCell>{moment(queue.createdAt).format("lll")}</TableCell>
-        <TableCell className="flex items-center gap-x-6">
-          <button
-            onClick={handleDelete}
-            className="border-none font-medium px-2 py-1 rounded-lg text-theme-text-primary hover:text-red-500"
-          >
+        <TableCell className="text-right">
+          <Button variant="destructive" size="icon-sm" onClick={handleDelete}>
             <Trash2 className="h-5 w-5" />
-          </button>
+          </Button>
         </TableCell>
       </TableRow>
     </>

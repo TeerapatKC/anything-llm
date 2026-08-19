@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { titleCase } from "text-case";
 import Admin from "@/models/admin";
-import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Copy, Trash2 } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export default function InviteRow({ invite }) {
   const rowRef = useRef(null);
@@ -56,21 +60,22 @@ export default function InviteRow({ invite }) {
         </TableCell>
         <TableCell>{invite.createdBy?.username || "deleted user"}</TableCell>
         <TableCell>{invite.createdAt}</TableCell>
-        <TableCell className="flex items-center gap-x-6 h-full mt-1">
-          {status === "pending" && (
-            <>
-              <button
-                onClick={copyInviteLink}
-                disabled={copied}
-                className="text-xs font-medium text-blue-300 rounded-lg hover:text-blue-400 hover:underline"
-              >
-                {copied ? "Copied" : "Copy Invite Link"}
-              </button>
-              <Button variant="destructive" onClick={handleDelete}>
-                <Trash2 className="h-5 w-5" />
-              </Button>
-            </>
-          )}
+        <TableCell className="text-right">
+          <TableRowActions>
+            {status === "pending" && (
+              <>
+                <DropdownMenuItem onClick={copyInviteLink} disabled={copied}>
+                  <Copy />
+                  {copied ? "Copied" : "Copy invite link"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                  <Trash2 />
+                  Delete
+                </DropdownMenuItem>
+              </>
+            )}
+          </TableRowActions>
         </TableCell>
       </TableRow>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />

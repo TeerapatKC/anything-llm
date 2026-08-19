@@ -16,6 +16,11 @@ import {
 import Role, { WorkspaceRole } from "@/models/role";
 import RoleModal from "@/pages/Admin/Roles/RoleModal";
 import showToast from "@/utils/toast";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 /**
  * Roles defined inside one workspace.
@@ -119,11 +124,7 @@ export default function WorkspaceRoles({ workspace }) {
           everywhere; roles you create here exist only in this workspace.
         </p>
         {canDefine && (
-          <Button
-            size="lg"
-            className="-mr-8 shrink-0"
-            onClick={() => setEditing({})}
-          >
+          <Button size="lg" className="shrink-0" onClick={() => setEditing({})}>
             <Plus className="h-4 w-4" /> New role
           </Button>
         )}
@@ -183,37 +184,31 @@ export default function WorkspaceRoles({ workspace }) {
               <TableCell className="text-theme-text-secondary">
                 {role.memberCount}
               </TableCell>
-              <TableCell>
-                <div className="flex items-center gap-x-2 justify-end">
+              <TableCell className="text-right">
+                <TableRowActions>
                   {canDefine && role.editableHere && (
                     <>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditing(role)}
-                      >
-                        <Pencil className="h-4 w-4" /> Edit
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-red-400 hover:text-red-300"
+                      <DropdownMenuItem onClick={() => setEditing(role)}>
+                        <Pencil />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        variant="destructive"
                         onClick={() => handleDelete(role)}
                       >
-                        <Trash2 className="h-4 w-4" /> Delete
-                      </Button>
+                        <Trash2 />
+                        Delete
+                      </DropdownMenuItem>
                     </>
                   )}
                   {canDefine && !role.editableHere && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDuplicate(role)}
-                    >
-                      <Copy className="h-4 w-4" /> Duplicate
-                    </Button>
+                    <DropdownMenuItem onClick={() => handleDuplicate(role)}>
+                      <Copy />
+                      Duplicate
+                    </DropdownMenuItem>
                   )}
-                </div>
+                </TableRowActions>
               </TableCell>
             </TableRow>
           ))}

@@ -71,11 +71,7 @@ export default function AdminLogs() {
         description={t("event.description")}
       />
       <div className="w-full justify-end flex">
-        <Button
-          size="lg"
-          onClick={handleResetLogs}
-          className="mt-3 mr-0 mb-4 md:-mb-14 z-10"
-        >
+        <Button size="lg" onClick={handleResetLogs} className="mt-3 mb-4">
           {t("event.clear")}
         </Button>
       </div>

@@ -61,7 +61,7 @@ export default function ChatRow({ chat, onDelete }) {
         </TableCell>
         <TableCell>{chat.createdAt}</TableCell>
         <TableCell className="flex items-center gap-x-6 h-full mt-1">
-          <Button variant="destructive" onClick={handleDelete}>
+          <Button size="icon-sm" variant="destructive" onClick={handleDelete}>
             <Trash2 className="h-5 w-5" />
           </Button>
         </TableCell>

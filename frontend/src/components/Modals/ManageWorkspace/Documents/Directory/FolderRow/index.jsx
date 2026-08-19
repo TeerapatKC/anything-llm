@@ -6,6 +6,7 @@ import { middleTruncate } from "@/utils/directories";
 import { useTranslation } from "react-i18next";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 
 /**
  * A folder in the document picker. Purely presentational - every piece of
@@ -167,18 +168,19 @@ export default function FolderRow({
       {expanded && hasMore && (
         <TableRow className="text-theme-text-secondary py-1 pl-8 pr-8">
           <TableCell className="py-1 pl-8">
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={(event) => {
                 event.stopPropagation();
                 onLoadMore(item.name);
               }}
               disabled={loading}
-              className="border-none bg-transparent text-xs text-theme-text-secondary hover:text-white cursor-pointer underline disabled:opacity-50 p-0"
             >
               {loading
                 ? `${t("common.loading")}...`
                 : `Load more (${files.length} of ${totalCount})`}
-            </button>
+            </Button>
           </TableCell>
         </TableRow>
       )}

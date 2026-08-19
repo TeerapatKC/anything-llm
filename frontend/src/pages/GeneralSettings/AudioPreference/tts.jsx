@@ -140,7 +140,7 @@ export default function TextToSpeechProvider({ settings }) {
         />
         <div className="w-full justify-end flex">
           {hasChanges && (
-            <Button size="lg" type="submit" className="mt-3 mr-0 -mb-14 z-10">
+            <Button size="lg" type="submit" className="mt-3">
               {saving ? "Saving..." : "Save changes"}
             </Button>
           )}

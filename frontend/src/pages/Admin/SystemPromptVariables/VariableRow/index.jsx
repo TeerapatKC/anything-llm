@@ -6,10 +6,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import EditVariableModal from "./EditVariableModal";
 import { titleCase } from "text-case";
 import truncate from "truncate";
-import { Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 /**
  * A row component for displaying a system prompt variable
@@ -89,20 +93,22 @@ export default function VariableRow({ variable, onRefresh }) {
             {titleCase(variable?.type ?? "static")}
           </span>
         </TableCell>
-        <TableCell className="flex items-center justify-end gap-x-4">
-          {variable.type === "static" && (
-            <>
-              <button
-                onClick={openModal}
-                className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white/10"
-              >
-                Edit
-              </button>
-              <Button variant="destructive" onClick={handleDelete}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </>
-          )}
+        <TableCell className="text-right">
+          <TableRowActions>
+            {variable.type === "static" && (
+              <>
+                <DropdownMenuItem onClick={openModal}>
+                  <Pencil />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                  <Trash2 />
+                  Delete
+                </DropdownMenuItem>
+              </>
+            )}
+          </TableRowActions>
         </TableCell>
       </TableRow>
       <Dialog

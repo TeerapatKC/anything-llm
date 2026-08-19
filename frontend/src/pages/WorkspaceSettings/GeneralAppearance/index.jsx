@@ -53,7 +53,7 @@ export default function GeneralInfo({ slug, deletionProtected = false }) {
       >
         {hasChanges && (
           <div className="absolute top-0 right-0">
-            <Button className="-mr-8" size="lg" type="submit">
+            <Button size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
             </Button>
           </div>

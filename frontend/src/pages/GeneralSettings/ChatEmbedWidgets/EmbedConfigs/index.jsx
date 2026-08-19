@@ -64,7 +64,7 @@ export default function EmbedConfigsView() {
             onOpenChange={(open) => (open ? openModal() : closeModal())}
           >
             <DialogTrigger
-              render={<Button size="lg" className="-mr-8 text-theme-bg-chat" />}
+              render={<Button size="lg" className="text-theme-bg-chat" />}
             >
               <Code className="h-4 w-4" /> {t("embeddable.create")}
             </DialogTrigger>

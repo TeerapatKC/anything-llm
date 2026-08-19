@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import Admin from "@/models/admin";
-import { Trash2 } from "lucide-react";
+import { Copy, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export default function ApiKeyRow({ apiKey, removeApiKey }) {
   const { t } = useTranslation();
@@ -52,19 +56,18 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
           {apiKey.createdBy?.username || "--"}
         </TableCell>
         <TableCell>{new Date(apiKey.createdAt).toLocaleString()}</TableCell>
-        <TableCell>
-          <div className="flex items-center gap-x-6">
-            <button
-              onClick={copyApiKey}
-              disabled={copied}
-              className="text-xs font-medium text-blue-300 rounded-lg hover:text-white/60 hover:light:text-blue-500 hover:underline"
-            >
+        <TableCell className="text-right">
+          <TableRowActions>
+            <DropdownMenuItem onClick={copyApiKey} disabled={copied}>
+              <Copy />
               {copied ? t("api.row.copied") : t("api.row.copy")}
-            </button>
-            <Button variant="destructive" onClick={handleDelete}>
-              <Trash2 className="h-5 w-5" />
-            </Button>
-          </div>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+              <Trash2 />
+              Delete
+            </DropdownMenuItem>
+          </TableRowActions>
         </TableCell>
       </TableRow>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />

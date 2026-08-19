@@ -5,11 +5,15 @@ import EditUserModal from "./EditUserModal";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import { PERMISSIONS, userCan, canManageRole } from "@/utils/permissions";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import GeneratedPasswordModal from "@/components/Modals/GeneratedPassword";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export default function UserRow({
   currUser,
@@ -101,34 +105,26 @@ export default function UserRow({
             titleCase(user.role)}
         </TableCell>
         <TableCell>{user.createdAt}</TableCell>
-        <TableCell className="flex items-center gap-x-6 h-full mt-2">
-          {canModify && (
-            <button
-              onClick={openModal}
-              className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white/10"
-            >
-              Edit
-            </button>
-          )}
-          {currUser?.id !== user.id && canModify && (
-            <>
-              <button
-                onClick={handleResetPassword}
-                className="text-xs font-medium text-white/80 light:text-black/80 rounded-lg hover:text-white hover:light:text-gray-500 px-2 py-1 hover:bg-white/10 whitespace-nowrap"
-              >
-                Reset password
-              </button>
-              <button
-                onClick={handleSuspend}
-                className="text-xs font-medium text-white/80 light:text-black/80 hover:light:text-orange-500 hover:text-orange-300 rounded-lg px-2 py-1 hover:bg-white/10 hover:light:bg-orange-50"
-              >
-                {suspended ? "Unsuspend" : "Suspend"}
-              </button>
-              <Button variant="destructive" onClick={handleDelete}>
-                Delete
-              </Button>
-            </>
-          )}
+        <TableCell className="text-right">
+          <TableRowActions>
+            {canModify && (
+              <DropdownMenuItem onClick={openModal}>Edit</DropdownMenuItem>
+            )}
+            {currUser?.id !== user.id && canModify && (
+              <>
+                <DropdownMenuItem onClick={handleResetPassword}>
+                  Reset password
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleSuspend}>
+                  {suspended ? "Unsuspend" : "Suspend"}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+                  Delete
+                </DropdownMenuItem>
+              </>
+            )}
+          </TableRowActions>
         </TableCell>
       </TableRow>
       <Dialog

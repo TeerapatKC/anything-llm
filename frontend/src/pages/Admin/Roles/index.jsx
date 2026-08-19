@@ -19,6 +19,11 @@ import {
 import RoleModal from "./RoleModal";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import showToast from "@/utils/toast";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 /**
  * Roles live in two scopes that never overlap. System roles decide what an account can
@@ -29,7 +34,7 @@ export default function AdminRoles() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Roles &amp; Permissions"}
+        title={"Roles & Permissions"}
         description={
           "A role is a named set of permissions. System roles control the instance itself; workspace roles control what a member can do inside a single workspace, so one account can be a manager of one workspace and read-only in another."
         }
@@ -135,11 +140,7 @@ function RolesPanel({ scope }) {
   return (
     <>
       <div className="w-full justify-end flex">
-        <Button
-          size="lg"
-          className="mt-3 mr-0 mb-4 md:-mb-6 z-10"
-          onClick={() => setEditing({})}
-        >
+        <Button size="lg" className="mt-3 mb-4" onClick={() => setEditing({})}>
           <Plus className="h-4 w-4" /> New{" "}
           {isWorkspace ? "workspace role" : "role"}
         </Button>
@@ -214,35 +215,32 @@ function RolesPanel({ scope }) {
                   <TableCell className="text-theme-text-secondary">
                     {holderCount(role)}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-x-2 justify-end">
+                  <TableCell className="text-right">
+                    <TableRowActions>
                       {isWorkspace && !role.isDefault && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
+                        <DropdownMenuItem
                           onClick={() => handleMakeDefault(role)}
                         >
                           Make default
-                        </Button>
+                        </DropdownMenuItem>
                       )}
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditing(role)}
-                      >
-                        <Pencil className="h-4 w-4" /> Edit
-                      </Button>
+                      <DropdownMenuItem onClick={() => setEditing(role)}>
+                        <Pencil />
+                        Edit
+                      </DropdownMenuItem>
                       {!role.isSystem && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-400 hover:text-red-300"
-                          onClick={() => handleDelete(role)}
-                        >
-                          <Trash2 className="h-4 w-4" /> Delete
-                        </Button>
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={() => handleDelete(role)}
+                          >
+                            <Trash2 />
+                            Delete
+                          </DropdownMenuItem>
+                        </>
                       )}
-                    </div>
+                    </TableRowActions>
                   </TableCell>
                 </TableRow>
               ))}
