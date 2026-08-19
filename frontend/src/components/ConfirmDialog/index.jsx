@@ -51,7 +51,7 @@ export default function ConfirmDialog({ config, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-md bg-theme-bg-secondary border-theme-modal-border">
+      <DialogContent size="sm">
         <div className="p-6 flex flex-col gap-y-4">
           <DialogHeader>
             <DialogTitle>{config?.title ?? "Are you sure?"}</DialogTitle>
@@ -62,7 +62,7 @@ export default function ConfirmDialog({ config, onClose }) {
             )}
           </DialogHeader>
 
-          <DialogFooter className="pt-2 flex flex-row justify-end gap-x-2">
+          <DialogFooter className="flex flex-row justify-end gap-x-2">
             <Button variant="outline" onClick={onClose}>
               {config?.cancelText ?? "Cancel"}
             </Button>

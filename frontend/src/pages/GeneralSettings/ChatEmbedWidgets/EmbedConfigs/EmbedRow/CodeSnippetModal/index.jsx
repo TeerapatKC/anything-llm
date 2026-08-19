@@ -16,7 +16,7 @@ import {
 export default function CodeSnippetModal({ embed }) {
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           Copy your embed code
         </DialogTitle>
@@ -24,7 +24,7 @@ export default function CodeSnippetModal({ embed }) {
       <div className="space-y-4">
         <ScriptTag embed={embed} />
       </div>
-      <DialogFooter className="p-0 mt-4">
+      <DialogFooter>
         <DialogClose render={<Button variant="outline" type="button" />}>
           Close
         </DialogClose>

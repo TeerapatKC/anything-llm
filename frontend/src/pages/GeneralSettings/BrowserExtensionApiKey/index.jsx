@@ -64,7 +64,7 @@ export default function BrowserExtensionApiKeys() {
             <CirclePlus className="h-4 w-4" />
             Generate New API Key
           </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <DialogContent>
             <NewBrowserExtensionApiKeyModal onSuccess={fetchExistingKeys} />
           </DialogContent>
         </Dialog>

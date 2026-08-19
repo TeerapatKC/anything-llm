@@ -309,8 +309,8 @@ const PinAlert = memo(() => {
 
   return (
     <Dialog open={showAlert} onOpenChange={(open) => !open && dismissAlert()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <div className="flex items-center gap-2">
             <Pin className="text-theme-text-primary w-5 h-5" />
             <DialogTitle className="text-sm font-semibold">
@@ -337,7 +337,7 @@ const PinAlert = memo(() => {
             <p>{t("connectors.pinning.pin_explained_block3")}</p>
           </div>
         </div>
-        <DialogFooter className="p-0">
+        <DialogFooter>
           <Button variant="default" onClick={dismissAlert}>
             {t("connectors.pinning.accept")}
           </Button>
@@ -368,8 +368,8 @@ const DocumentWatchAlert = memo(() => {
 
   return (
     <Dialog open={showAlert} onOpenChange={(open) => !open && dismissAlert()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <div className="flex items-center gap-2">
             <Eye className="text-theme-text-primary w-5 h-5" />
             <DialogTitle className="text-sm font-semibold">
@@ -399,7 +399,7 @@ const DocumentWatchAlert = memo(() => {
             </p>
           </div>
         </div>
-        <DialogFooter className="p-0">
+        <DialogFooter>
           <Button variant="default" onClick={dismissAlert}>
             {t("connectors.watching.accept")}
           </Button>

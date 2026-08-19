@@ -46,7 +46,7 @@ export default function AdminUsers() {
             <UserPlus className="h-4 w-4" /> Add user
           </DialogTrigger>
         </div>
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <NewUserModal />
         </DialogContent>
       </Dialog>

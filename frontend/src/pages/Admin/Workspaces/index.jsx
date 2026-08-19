@@ -41,7 +41,7 @@ export default function AdminWorkspaces() {
           >
             <BookOpen className="h-4 w-4" /> New Workspace
           </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <DialogContent>
             <NewWorkspaceModal />
           </DialogContent>
         </Dialog>

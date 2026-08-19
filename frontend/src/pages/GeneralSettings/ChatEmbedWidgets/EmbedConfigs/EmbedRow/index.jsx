@@ -140,7 +140,7 @@ export default function EmbedRow({ embed }) {
           open ? openSettingsModal() : closeSettingsModal()
         }
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <EditEmbedModal embed={embed} />
         </DialogContent>
       </Dialog>
@@ -150,7 +150,7 @@ export default function EmbedRow({ embed }) {
           open ? openSnippetModal() : closeSnippetModal()
         }
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <CodeSnippetModal embed={embed} />
         </DialogContent>
       </Dialog>

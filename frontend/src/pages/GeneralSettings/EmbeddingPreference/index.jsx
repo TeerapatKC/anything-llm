@@ -371,7 +371,7 @@ export default function GeneralEmbeddingPreference() {
         open={isOpen}
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <ChangeWarningModal
             warningText="Switching the embedding model will reset all previously embedded documents in all workspaces.\n\nConfirming will clear all embeddings from your vector database and remove all documents from your workspaces. Your uploaded documents will not be deleted, they will be available for re-embedding."
             onClose={closeModal}

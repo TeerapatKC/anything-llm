@@ -109,7 +109,7 @@ export default function VariableRow({ variable, onRefresh }) {
         open={isOpen}
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <EditVariableModal
             variable={variable}
             closeModal={closeModal}

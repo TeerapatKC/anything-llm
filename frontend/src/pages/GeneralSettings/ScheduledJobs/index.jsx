@@ -171,7 +171,7 @@ export default function ScheduledJobsPage() {
         open={isOpen}
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <JobFormModal
             job={editingJob}
             onSaved={() => {

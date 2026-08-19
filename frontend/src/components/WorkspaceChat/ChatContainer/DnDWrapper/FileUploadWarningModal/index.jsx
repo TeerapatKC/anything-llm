@@ -34,7 +34,7 @@ export default function FileUploadWarningModal({
   if (isEmbedding) {
     return (
       <Dialog open={show}>
-        <DialogContent className="max-w-[600px] bg-theme-bg-primary border-theme-modal-border [&>button]:hidden">
+        <DialogContent showCloseButton={false}>
           <DialogTitle className="sr-only">Embedding files</DialogTitle>
           <div className="flex flex-col items-center justify-center">
             <p className="text-theme-text-primary text-sm font-semibold mb-4">
@@ -53,8 +53,8 @@ export default function FileUploadWarningModal({
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[600px] bg-theme-bg-primary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <DialogTitle className="text-sm font-semibold">
             Context Window Warning
           </DialogTitle>
@@ -80,7 +80,7 @@ export default function FileUploadWarningModal({
           </p>
         </div>
 
-        <DialogFooter className="p-0 sm:justify-between">
+        <DialogFooter className="sm:justify-between">
           <Button variant="outline" onClick={onClose} type="button">
             Cancel
           </Button>

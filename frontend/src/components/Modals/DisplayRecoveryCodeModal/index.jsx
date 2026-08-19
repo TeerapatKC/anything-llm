@@ -41,8 +41,8 @@ export default function RecoveryCodeModal({
 
   return (
     <Dialog open={true}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
-        <DialogHeader className="p-0">
+      <DialogContent showCloseButton={false}>
+        <DialogHeader>
           <div className="w-full flex gap-x-2 items-center">
             <Key size={18} className="text-theme-text-primary" />
             <DialogTitle className="text-sm font-semibold">
@@ -71,7 +71,7 @@ export default function RecoveryCodeModal({
             </ul>
           </div>
         </div>
-        <DialogFooter className="p-0">
+        <DialogFooter>
           <Button
             variant="default"
             type="button"

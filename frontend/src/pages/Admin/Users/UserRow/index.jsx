@@ -135,7 +135,7 @@ export default function UserRow({
         open={isOpen}
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <EditUserModal
             currentUser={currUser}
             user={user}

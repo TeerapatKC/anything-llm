@@ -37,8 +37,8 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <DialogTitle className="text-sm font-semibold">
             {t("chat_window.add_new_preset")}
           </DialogTitle>
@@ -95,7 +95,7 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
               </div>
             </div>
           </div>
-          <DialogFooter className="mt-6 p-0">
+          <DialogFooter>
             <DialogClose render={<Button variant="outline" type="button" />}>
               {t("chat_window.cancel")}
             </DialogClose>

@@ -49,7 +49,7 @@ export default function InvitePage() {
   return (
     <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex items-center justify-center">
       <Dialog open={true}>
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
+        <DialogContent showCloseButton={false}>
           <NewUserModal />
         </DialogContent>
       </Dialog>

@@ -103,7 +103,7 @@ export default function Members({ workspace }) {
         <DialogTrigger render={<Button className="-mr-8" size="lg" />}>
           Manage Users
         </DialogTrigger>
-        <DialogContent className="max-w-[550px] bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
+        <DialogContent size="md" className="p-0 overflow-hidden">
           <AddMemberModal users={users} workspace={adminWorkspace} />
         </DialogContent>
       </Dialog>

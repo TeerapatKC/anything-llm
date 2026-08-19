@@ -50,7 +50,7 @@ export default function CopyLinkToChatRow() {
 function CopyLinkModal({ isOpen, closeModal, url }) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="max-w-[500px] bg-theme-bg-sidebar border-theme-sidebar-border">
+      <DialogContent size="md">
         <DialogTitle className="text-theme-text-primary text-left font-medium text-sm">
           Chat link copied!
         </DialogTitle>

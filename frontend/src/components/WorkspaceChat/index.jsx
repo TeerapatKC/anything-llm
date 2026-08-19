@@ -89,8 +89,8 @@ export default function WorkspaceChat({ loading, workspace }) {
       <>
         {loading === false && !workspace && (
           <Dialog open={true}>
-            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
-              <DialogHeader className="p-0">
+            <DialogContent showCloseButton={false}>
+              <DialogHeader>
                 <div className="flex items-center gap-2">
                   <CircleAlert className="text-red-500 w-[18px] h-[18px] fill-current" />
                   <DialogTitle className="text-sm font-semibold text-red-500">
@@ -102,7 +102,7 @@ export default function WorkspaceChat({ loading, workspace }) {
                 The workspace you're looking for is not available. It may have
                 been deleted or you may not have access to it.
               </p>
-              <DialogFooter className="p-0 mt-4">
+              <DialogFooter>
                 <Button variant="default" render={<a href={paths.home()} />}>
                   Return to homepage
                 </Button>

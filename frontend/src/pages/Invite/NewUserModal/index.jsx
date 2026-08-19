@@ -49,7 +49,7 @@ export default function NewUserModal() {
 
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           Create a new account
         </DialogTitle>
@@ -106,7 +106,7 @@ export default function NewUserModal() {
             credentials and start using workspaces.
           </p>
         </div>
-        <DialogFooter className="mt-4">
+        <DialogFooter>
           <Button type="submit" variant="default" className="w-full">
             Accept Invitation
           </Button>

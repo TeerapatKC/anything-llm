@@ -67,8 +67,8 @@ export default function EditPresetModal({
     <>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
       <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-          <DialogHeader className="p-0">
+        <DialogContent>
+          <DialogHeader>
             <DialogTitle className="text-sm font-semibold">
               Edit Preset
             </DialogTitle>
@@ -119,7 +119,7 @@ export default function EditPresetModal({
                 </div>
               </div>
             </div>
-            <DialogFooter className="mt-6 p-0 sm:justify-between">
+            <DialogFooter className="sm:justify-between">
               <Button
                 variant="ghost"
                 disabled={deleting}

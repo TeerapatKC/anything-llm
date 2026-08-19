@@ -277,8 +277,8 @@ export default function SQLConnectionModal({
   // any ancestor <form> and avoids the nesting problem.
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <DialogTitle className="text-sm font-semibold">
             {isEditMode ? "Edit SQL Connection" : "New SQL Connection"}
           </DialogTitle>
@@ -447,7 +447,7 @@ export default function SQLConnectionModal({
             </p>
           </div>
         </form>
-        <DialogFooter className="p-0 mt-4">
+        <DialogFooter>
           <DialogClose
             render={
               <Button variant="outline" type="button" onClick={handleClose} />

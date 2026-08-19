@@ -49,8 +49,8 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
   if (isMobileOnly) {
     return (
       <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-          <DialogHeader className="p-0">
+        <DialogContent>
+          <DialogHeader>
             <DialogTitle className="text-sm font-semibold">
               {t("connectors.manage.editing")} "{workspace.name}"
             </DialogTitle>
@@ -60,7 +60,7 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
               {t("connectors.manage.desktop-only")}
             </p>
           </div>
-          <DialogFooter className="p-0">
+          <DialogFooter>
             <Button variant="default" onClick={hideModal} type="button">
               {t("connectors.manage.dismiss")}
             </Button>

@@ -137,9 +137,9 @@ export default function RuleForm({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="max-w-3xl bg-zinc-900 light:bg-white border-zinc-700 light:border-slate-300">
+      <DialogContent size="xl">
         <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
-          <DialogHeader className="p-0">
+          <DialogHeader>
             <DialogTitle className="text-sm font-semibold">
               {t("model-router.rules.title")}
             </DialogTitle>
@@ -206,7 +206,7 @@ export default function RuleForm({
             />
           </div>
 
-          <DialogFooter className="p-0">
+          <DialogFooter>
             <DialogClose render={<Button variant="outline" type="button" />}>
               {t("model-router.rule-form.cancel")}
             </DialogClose>

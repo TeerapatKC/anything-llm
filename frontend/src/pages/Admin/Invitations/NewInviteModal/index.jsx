@@ -139,7 +139,7 @@ export default function NewInviteModal({ onSuccess }) {
           </div>
         )}
 
-        <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
+        <DialogFooter>
           {!invite ? (
             <>
               <DialogClose render={<Button variant="outline" type="button" />}>

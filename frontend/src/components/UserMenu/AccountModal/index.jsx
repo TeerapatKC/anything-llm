@@ -94,132 +94,125 @@ export default function AccountModal({ user, hideModal }) {
   return (
     <>
       <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border p-0 overflow-hidden">
-          <DialogHeader className="p-4">
+        <DialogContent>
+          <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
               {t("profile_settings.edit_account")}
             </DialogTitle>
           </DialogHeader>
-          <div
-            className="h-full w-full overflow-y-auto thin-scrollbar"
-            style={{ maxHeight: "calc(100vh - 200px)" }}
-          >
-            <form onSubmit={handleUpdate} className="space-y-4">
-              <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                <div className="flex flex-col items-center">
-                  <label className="group w-24 h-24 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
-                    <input
-                      id="logo-upload"
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleFileUpload}
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+              <div className="flex flex-col items-center">
+                <label className="group w-24 h-24 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
+                  <input
+                    id="logo-upload"
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
+                  {pfp ? (
+                    <img
+                      src={pfp}
+                      alt="User profile picture"
+                      className="w-24 h-24 rounded-full object-cover bg-white"
                     />
-                    {pfp ? (
-                      <img
-                        src={pfp}
-                        alt="User profile picture"
-                        className="w-24 h-24 rounded-full object-cover bg-white"
-                      />
-                    ) : (
-                      <div className="flex flex-col items-center justify-center p-1">
-                        <Plus className="w-5 h-5 text-theme-text-secondary" />
-                        <span className="text-theme-text-secondary/80 text-xs font-semibold">
-                          {t("profile_settings.profile_picture")}
-                        </span>
-                      </div>
-                    )}
-                  </label>
-                  {pfp && (
-                    <button
-                      type="button"
-                      onClick={handleRemovePfp}
-                      className="mt-2 text-theme-text-secondary/60 text-xs font-medium hover:underline"
-                    >
-                      {t("profile_settings.remove_profile_picture")}
-                    </button>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center p-1">
+                      <Plus className="w-5 h-5 text-theme-text-secondary" />
+                      <span className="text-theme-text-secondary/80 text-xs font-semibold">
+                        {t("profile_settings.profile_picture")}
+                      </span>
+                    </div>
                   )}
-                </div>
-              </div>
-              <div className="flex flex-col gap-y-3 px-4">
-                <div>
-                  <Label htmlFor="username" className="block mb-2">
-                    {t("profile_settings.username")}
-                  </Label>
-                  <Input
-                    name="username"
-                    type="text"
-                    placeholder="User's username"
-                    minLength={USERNAME_MIN_LENGTH}
-                    maxLength={USERNAME_MAX_LENGTH}
-                    pattern={USERNAME_PATTERN}
-                    defaultValue={user.username}
-                    required
-                    autoComplete="off"
-                  />
-                  <p className="mt-2 text-xs text-theme-text-secondary">
-                    {t("common.username_requirements")}
-                  </p>
-                </div>
-                <div>
-                  <Label htmlFor="email" className="block mb-2">
-                    {t("profile_settings.email")}
-                  </Label>
-                  <Input
-                    name="email"
-                    type="email"
-                    placeholder="user@example.com"
-                    defaultValue={user.email ?? ""}
-                    maxLength={255}
-                    required
-                    autoComplete="off"
-                  />
-                </div>
-                <div>
-                  <Label className="block mb-2">
-                    {t("profile_settings.password")}
-                  </Label>
-                  <Button
-                    variant="outline"
+                </label>
+                {pfp && (
+                  <button
                     type="button"
-                    onClick={() => setShowChangePassword(true)}
+                    onClick={handleRemovePfp}
+                    className="mt-2 text-theme-text-secondary/60 text-xs font-medium hover:underline"
                   >
-                    {t("password_change.title")}
-                  </Button>
-                  <p className="mt-2 text-xs text-theme-text-secondary">
-                    {t("profile_settings.password_description")}
-                  </p>
-                </div>
-                <div>
-                  <Label htmlFor="bio" className="block mb-2">
-                    Bio
-                  </Label>
-                  <Textarea
-                    name="bio"
-                    placeholder="Tell us about yourself..."
-                    defaultValue={user.bio}
-                    rows={3}
-                  />
-                </div>
-                <div className="flex gap-x-8">
-                  <div className="flex flex-col gap-y-3">
-                    <AutoSubmitPreference />
-                    <AutoSpeakPreference />
-                  </div>
+                    {t("profile_settings.remove_profile_picture")}
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-y-3">
+              <div>
+                <Label htmlFor="username" className="block mb-2">
+                  {t("profile_settings.username")}
+                </Label>
+                <Input
+                  name="username"
+                  type="text"
+                  placeholder="User's username"
+                  minLength={USERNAME_MIN_LENGTH}
+                  maxLength={USERNAME_MAX_LENGTH}
+                  pattern={USERNAME_PATTERN}
+                  defaultValue={user.username}
+                  required
+                  autoComplete="off"
+                />
+                <p className="mt-2 text-xs text-theme-text-secondary">
+                  {t("common.username_requirements")}
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="email" className="block mb-2">
+                  {t("profile_settings.email")}
+                </Label>
+                <Input
+                  name="email"
+                  type="email"
+                  placeholder="user@example.com"
+                  defaultValue={user.email ?? ""}
+                  maxLength={255}
+                  required
+                  autoComplete="off"
+                />
+              </div>
+              <div>
+                <Label className="block mb-2">
+                  {t("profile_settings.password")}
+                </Label>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => setShowChangePassword(true)}
+                >
+                  {t("password_change.title")}
+                </Button>
+                <p className="mt-2 text-xs text-theme-text-secondary">
+                  {t("profile_settings.password_description")}
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="bio" className="block mb-2">
+                  Bio
+                </Label>
+                <Textarea
+                  name="bio"
+                  placeholder="Tell us about yourself..."
+                  defaultValue={user.bio}
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-x-8">
+                <div className="flex flex-col gap-y-3">
+                  <AutoSubmitPreference />
+                  <AutoSpeakPreference />
                 </div>
               </div>
-              <DialogFooter className="p-4">
-                <DialogClose
-                  render={<Button variant="outline" type="button" />}
-                >
-                  {t("profile_settings.cancel")}
-                </DialogClose>
-                <Button variant="default" type="submit">
-                  {t("profile_settings.update_account")}
-                </Button>
-              </DialogFooter>
-            </form>
-          </div>
+            </div>
+            <DialogFooter>
+              <DialogClose render={<Button variant="outline" type="button" />}>
+                {t("profile_settings.cancel")}
+              </DialogClose>
+              <Button variant="default" type="submit">
+                {t("profile_settings.update_account")}
+              </Button>
+            </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
       <ChangePasswordModal

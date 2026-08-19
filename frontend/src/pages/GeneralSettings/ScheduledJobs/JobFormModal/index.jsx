@@ -104,7 +104,7 @@ export default function JobFormModal({ job = null, onSaved }) {
 
   return (
     <>
-      <DialogHeader className="p-0 gap-1">
+      <DialogHeader className="gap-1">
         <DialogTitle className="text-sm font-semibold">
           {isEditing
             ? t("scheduledJobs.modal.titleEdit")

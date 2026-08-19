@@ -192,8 +192,8 @@ function FeatureVerification({ children }) {
     return (
       <>
         <Dialog open={true}>
-          <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border [&>button]:hidden">
-            <DialogHeader className="p-0">
+          <DialogContent showCloseButton={false}>
+            <DialogHeader>
               <div className="flex items-center gap-2">
                 <FlaskConical size={18} className="text-theme-text-primary" />
                 <DialogTitle className="text-sm font-semibold">

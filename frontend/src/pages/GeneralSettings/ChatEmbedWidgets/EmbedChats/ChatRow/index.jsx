@@ -133,8 +133,8 @@ export default function ChatRow({ chat, onDelete }) {
 
 const TextPreview = ({ text }) => {
   return (
-    <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-      <DialogHeader className="p-0">
+    <DialogContent>
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           Viewing Text
         </DialogTitle>

@@ -154,7 +154,7 @@ export default function NewUserModal() {
             instance.
           </p>
         </div>
-        <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
+        <DialogFooter>
           <DialogClose render={<Button variant="outline" type="button" />}>
             Cancel
           </DialogClose>

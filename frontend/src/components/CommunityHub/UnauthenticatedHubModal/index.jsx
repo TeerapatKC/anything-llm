@@ -14,8 +14,8 @@ export default function UnauthenticatedHubModal({ show, onClose }) {
 
   return (
     <Dialog open={show} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-[400px] bg-theme-bg-primary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent size="sm">
+        <DialogHeader>
           <DialogTitle className="text-sm font-semibold text-center">
             {t("community_hub.publish.generic.unauthenticated.title")}
           </DialogTitle>

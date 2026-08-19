@@ -252,8 +252,8 @@ function ProviderSetupModal({ isOpen, provider, settings, onSave, onClose }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl bg-zinc-900 light:bg-white border-zinc-700 light:border-slate-300">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <div className="flex items-center gap-x-3">
             {provider.logo && (
               <img
@@ -276,7 +276,7 @@ function ProviderSetupModal({ isOpen, provider, settings, onSave, onClose }) {
             })}
           </p>
           <div className="space-y-4">{provider.options(settings ?? {})}</div>
-          <DialogFooter className="p-0 mt-5">
+          <DialogFooter>
             <DialogClose render={<Button variant="outline" type="button" />}>
               {t("model-router.provider-picker.cancel")}
             </DialogClose>

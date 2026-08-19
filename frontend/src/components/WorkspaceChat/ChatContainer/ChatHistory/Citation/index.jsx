@@ -210,8 +210,8 @@ export function CitationDetailModal({ source, onClose }) {
 
   return (
     <Dialog open={!!source} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl bg-zinc-900 light:bg-white border-zinc-700 light:border-slate-300">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <div className="w-full flex gap-x-2 items-center">
             {isUrl ? (
               <a

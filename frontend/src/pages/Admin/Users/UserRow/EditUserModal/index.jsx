@@ -80,7 +80,7 @@ export default function EditUserModal({
 
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           Edit {user.username}
         </DialogTitle>
@@ -172,7 +172,7 @@ export default function EditUserModal({
           />
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
         </div>
-        <DialogFooter className="p-0 mt-4">
+        <DialogFooter>
           <DialogClose render={<Button variant="outline" type="button" />}>
             Cancel
           </DialogClose>

@@ -51,7 +51,7 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
 
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           New Browser Extension API Key
         </DialogTitle>
@@ -81,7 +81,7 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
             and paste it into the extension manually.
           </p>
         </div>
-        <DialogFooter className="p-0 mt-4">
+        <DialogFooter>
           {!apiKey ? (
             <>
               <DialogClose render={<Button variant="outline" type="button" />}>

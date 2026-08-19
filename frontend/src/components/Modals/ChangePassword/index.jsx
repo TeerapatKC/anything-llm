@@ -121,7 +121,7 @@ export function ChangePasswordForm({
       </div>
       {error && <p className="text-red-400 text-sm">Error: {error}</p>}
       {actions?.({ loading }) ?? (
-        <DialogFooter className="pt-2">
+        <DialogFooter>
           <DialogClose render={<Button variant="outline" type="button" />}>
             {t("password_change.cancel")}
           </DialogClose>
@@ -145,7 +145,7 @@ export default function ChangePasswordModal({ open, onClose }) {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-lg bg-theme-bg-secondary border-theme-modal-border">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{t("password_change.title")}</DialogTitle>
         </DialogHeader>

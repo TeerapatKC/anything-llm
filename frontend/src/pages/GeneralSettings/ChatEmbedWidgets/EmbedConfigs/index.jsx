@@ -68,7 +68,7 @@ export default function EmbedConfigsView() {
             >
               <Code className="h-4 w-4" /> {t("embeddable.create")}
             </DialogTrigger>
-            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+            <DialogContent>
               <NewEmbedModal />
             </DialogContent>
           </Dialog>

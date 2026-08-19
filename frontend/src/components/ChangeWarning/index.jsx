@@ -14,7 +14,7 @@ export default function ChangeWarningModal({
 }) {
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <div className="flex items-center gap-2">
           <TriangleAlert className="text-red-500 w-5 h-5 fill-current" />
           <DialogTitle className="text-sm font-semibold text-red-500">
@@ -34,7 +34,7 @@ export default function ChangeWarningModal({
           Are you sure you want to proceed?
         </p>
       </div>
-      <DialogFooter className="p-0">
+      <DialogFooter>
         <DialogClose
           render={<Button variant="outline" onClick={onClose} type="button" />}
         >

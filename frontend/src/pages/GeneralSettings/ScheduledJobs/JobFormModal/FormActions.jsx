@@ -6,7 +6,7 @@ export default function FormActions({ isEditing, saving }) {
   const { t } = useTranslation();
 
   return (
-    <DialogFooter className="p-0 sm:justify-between">
+    <DialogFooter className="sm:justify-between">
       <DialogClose render={<Button variant="outline" type="button" />}>
         {t("scheduledJobs.modal.cancel")}
       </DialogClose>

@@ -249,7 +249,7 @@ export default function RoleModal({
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
         </div>
 
-        <DialogFooter className="mt-6 pt-6 border-t border-theme-modal-border">
+        <DialogFooter>
           <DialogClose
             render={
               <Button variant="outline" type="button" onClick={onClose} />

@@ -25,7 +25,7 @@ export default function NewWorkspaceModal() {
 
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           Create new workspace
         </DialogTitle>
@@ -51,7 +51,7 @@ export default function NewWorkspaceModal() {
             You can add users after it has been created.
           </p>
         </div>
-        <DialogFooter className="p-0 mt-4">
+        <DialogFooter>
           <DialogClose render={<Button variant="outline" type="button" />}>
             Cancel
           </DialogClose>

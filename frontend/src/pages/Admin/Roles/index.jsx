@@ -255,7 +255,7 @@ function RolesPanel({ scope }) {
         open={editing !== null}
         onOpenChange={(open) => !open && setEditing(null)}
       >
-        <DialogContent className="max-w-3xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent size="xl">
           {editing !== null && (
             <RoleModal
               role={editing}

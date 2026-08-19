@@ -147,8 +147,8 @@ function SetupProvider({
   // to the parent container form so we don't have nested forms.
   return createPortal(
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-        <DialogHeader className="p-0">
+      <DialogContent>
+        <DialogHeader>
           <DialogTitle className="text-sm font-semibold">
             {LLMOption.name} Settings
           </DialogTitle>
@@ -161,7 +161,7 @@ function SetupProvider({
             </p>
             <div>{LLMOption.options(settings, { credentialsOnly: true })}</div>
           </div>
-          <DialogFooter className="mt-4 p-0">
+          <DialogFooter>
             <DialogClose render={<Button variant="outline" type="button" />}>
               Cancel
             </DialogClose>

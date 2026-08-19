@@ -13,7 +13,8 @@ export default function MobileConnectModal({ isOpen, onClose }) {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
-        className="relative w-full max-w-[70vw] p-0 border-none [&>button]:text-white [&>button]:opacity-100"
+        size="2xl"
+        className="relative w-full p-0 [&>button]:text-white [&>button]:opacity-100"
         style={{
           minHeight: "60vh",
           backgroundImage: `url(${BG})`,

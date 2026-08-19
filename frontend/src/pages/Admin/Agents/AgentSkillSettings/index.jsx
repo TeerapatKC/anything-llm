@@ -38,8 +38,8 @@ function AgentSkillSettingsModal() {
   const { t } = useTranslation();
 
   return (
-    <DialogContent className="max-w-[500px] bg-theme-bg-sidebar border-theme-sidebar-border">
-      <DialogHeader className="p-0">
+    <DialogContent size="md">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           {t("agent.settings.title")}
         </DialogTitle>

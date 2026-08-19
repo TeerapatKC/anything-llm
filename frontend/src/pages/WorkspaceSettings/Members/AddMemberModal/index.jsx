@@ -122,7 +122,7 @@ export default function AddMemberModal({ workspace, users }) {
             )}
           </Table>
         </div>
-        <DialogFooter className="sm:justify-between items-center p-3">
+        <DialogFooter className="sm:justify-between items-center">
           <div className="flex items-center gap-x-2">
             <button
               type="button"

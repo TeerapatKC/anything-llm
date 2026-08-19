@@ -54,7 +54,7 @@ export default function AdminInvites() {
             <Mail className="h-4 w-4" /> Create Invite Link
           </DialogTrigger>
         </div>
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <NewInviteModal onSuccess={fetchInvites} />
         </DialogContent>
       </Dialog>

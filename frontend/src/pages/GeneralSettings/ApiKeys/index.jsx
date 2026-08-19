@@ -64,7 +64,7 @@ export default function AdminApiKeys() {
           >
             <CirclePlus className="h-4 w-4" /> {t("api.generate")}
           </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <DialogContent>
             <NewApiKeyModal onSuccess={fetchExistingKeys} />
           </DialogContent>
         </Dialog>

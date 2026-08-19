@@ -76,9 +76,9 @@ export default function NewRouterModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="max-w-2xl bg-zinc-900 light:bg-white border-zinc-700 light:border-slate-300">
+      <DialogContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-y-5">
-          <DialogHeader className="p-0">
+          <DialogHeader>
             <DialogTitle className="text-sm font-semibold">
               {isEdit
                 ? t("model-router.edit-router.title", { name: router.name })
@@ -151,7 +151,7 @@ export default function NewRouterModal({
             </p>
           )}
 
-          <DialogFooter className="p-0">
+          <DialogFooter>
             <DialogClose render={<Button variant="outline" type="button" />}>
               {t("model-router.new-router.cancel")}
             </DialogClose>

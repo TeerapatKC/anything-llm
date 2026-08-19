@@ -70,7 +70,7 @@ export default function ChatRow({ chat, onDelete }) {
         open={isPromptOpen}
         onOpenChange={(open) => !open && closePromptModal()}
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <TextPreview text={chat.prompt} />
         </DialogContent>
       </Dialog>
@@ -78,7 +78,7 @@ export default function ChatRow({ chat, onDelete }) {
         open={isResponseOpen}
         onOpenChange={(open) => !open && closeResponseModal()}
       >
-        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+        <DialogContent>
           <TextPreview
             text={
               <MarkdownRenderer
@@ -95,7 +95,7 @@ export default function ChatRow({ chat, onDelete }) {
 const TextPreview = ({ text }) => {
   return (
     <>
-      <DialogHeader className="p-0">
+      <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
           Viewing Text
         </DialogTitle>

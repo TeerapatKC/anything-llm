@@ -34,7 +34,7 @@ export default function GeneratedPasswordModal({
   if (!password) return null;
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-lg bg-theme-bg-secondary border-theme-modal-border">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
