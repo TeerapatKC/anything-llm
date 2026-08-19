@@ -89,7 +89,7 @@ export default forwardRef(function ChatPromptHistory(
           {loading ? (
             <LoaderSkeleton />
           ) : history.length === 0 ? (
-            <div className="flex text-theme-text-secondary text-sm text-center w-full h-full flex items-center justify-center">
+            <div className="text-theme-text-secondary text-sm text-center w-full h-full flex items-center justify-center">
               {t("chat.prompt.history.noHistory")}
             </div>
           ) : (
