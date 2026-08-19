@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Sidebar from "@/components/SettingsSidebar";
-import { ArrowLeft, CircleNotch } from "@phosphor-icons/react";
+import { ArrowLeft } from "lucide-react";
 import ModelRouter from "@/models/modelRouter";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
@@ -34,7 +35,7 @@ export default function RouterRulesPage() {
     return (
       <Layout t={t}>
         <div className="flex items-center justify-center py-20">
-          <CircleNotch className="h-8 w-8 text-zinc-400 light:text-slate-400 animate-spin" />
+          <Spinner size="lg" className="text-zinc-400 light:text-slate-400" />
         </div>
       </Layout>
     );
@@ -61,7 +62,7 @@ function Layout({ t, children }) {
         style={{ height: "100%" }}
         className="relative bg-zinc-900 light:bg-white light:border light:border-slate-300 w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
+        <div className="flex flex-col w-full px-1 py-16 md:px-6 md:py-6">
           <button
             onClick={() => navigate(paths.settings.modelRouters())}
             className="border-none flex items-center gap-x-2 text-zinc-400 light:text-slate-500 hover:text-white light:hover:text-slate-900 text-sm mb-4 transition-colors"

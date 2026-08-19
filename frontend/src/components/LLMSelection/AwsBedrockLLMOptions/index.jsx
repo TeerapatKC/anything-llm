@@ -1,4 +1,4 @@
-import { ArrowSquareOut, Info } from "@phosphor-icons/react";
+import { Info, SquareArrowOutUpRight } from "lucide-react";
 import { AWS_REGIONS } from "./regions";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
@@ -22,7 +22,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
   return (
     <div className="w-full flex flex-col">
       {!settings?.credentialsOnly && (
-        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-white mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
           <div className="gap-x-2 flex items-center">
             <Info size={40} />
             <p className="text-base">
@@ -35,7 +35,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
                 rel="noreferrer"
               >
                 Read more on how to use AWS Bedrock in AnythingLLM
-                <ArrowSquareOut size={14} />
+                <SquareArrowOutUpRight size={14} />
               </a>
             </p>
           </div>
@@ -116,8 +116,11 @@ export default function AwsBedrockLLMOptions({ settings }) {
                   Max Tokens
                 </Label>
                 <div className="group relative">
-                  <Info size={14} className="text-white/60 cursor-pointer" />
-                  <div className="hidden group-hover:block absolute left-0 bottom-full mb-1 w-64 p-2 bg-theme-settings-input-bg text-white text-xs rounded-lg shadow-lg z-10">
+                  <Info
+                    size={14}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
+                  <div className="hidden group-hover:block absolute left-0 bottom-full mb-1 w-64 p-2 bg-theme-settings-input-bg text-theme-text-primary text-xs rounded-lg shadow-lg z-10">
                     Maximum number of tokens the model can generate per
                     response. Increase for longer outputs. Default is 4096.
                   </div>

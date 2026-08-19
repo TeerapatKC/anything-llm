@@ -93,7 +93,7 @@ function FileUploadProgressComponent({
           />
         </div>
         <div className="flex flex-col">
-          <p className="text-white light:text-red-600 text-xs font-semibold">
+          <p className="text-theme-text-primary light:text-red-600 text-xs font-semibold">
             {truncate(relativePath || file.name, 30)}
           </p>
           <p className="text-red-100 light:text-red-600 text-xs font-medium">
@@ -118,7 +118,7 @@ function FileUploadProgressComponent({
           />
         </div>
         <div className="flex flex-col">
-          <p className="text-white light:text-red-600 text-xs font-semibold">
+          <p className="text-theme-text-primary light:text-red-600 text-xs font-semibold">
             {truncate(relativePath || file.name, 30)}
           </p>
           <p className="text-red-100 light:text-red-600 text-xs font-medium">
@@ -148,7 +148,7 @@ function FileUploadProgressComponent({
         )}
       </div>
       <div className="flex flex-col">
-        <p className="text-white light:text-theme-text-primary text-xs font-medium">
+        <p className="text-theme-text-primary light:text-theme-text-primary text-xs font-medium">
           {truncate(relativePath || file.name, 30)}
         </p>
         <p className="text-white/80 light:text-theme-text-secondary text-xs font-medium">

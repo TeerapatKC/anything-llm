@@ -1,5 +1,5 @@
 import System from "@/models/system";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,13 +49,13 @@ function AdvancedControls({ settings }) {
       <button
         type="button"
         onClick={() => setShowAdvancedControls(!showAdvancedControls)}
-        className="border-none text-white hover:text-white/70 flex items-center text-sm"
+        className="border-none text-theme-text-primary hover:text-white/70 flex items-center text-sm"
       >
         {showAdvancedControls ? "Hide" : "Show"} advanced controls
         {showAdvancedControls ? (
-          <CaretUp size={14} className="ml-1" />
+          <ChevronUp size={14} className="ml-1" />
         ) : (
-          <CaretDown size={14} className="ml-1" />
+          <ChevronDown size={14} className="ml-1" />
         )}
       </button>
       <div hidden={!showAdvancedControls}>

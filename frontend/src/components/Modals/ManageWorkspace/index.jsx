@@ -1,5 +1,5 @@
 import { useState, useEffect, memo } from "react";
-import { X } from "@phosphor-icons/react";
+import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Workspace from "../../../models/workspace";
@@ -56,7 +56,9 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-2 flex-col">
-            <p className="text-white">{t("connectors.manage.desktop-only")}</p>
+            <p className="text-theme-text-primary">
+              {t("connectors.manage.desktop-only")}
+            </p>
           </div>
           <DialogFooter className="p-0">
             <Button variant="default" onClick={hideModal} type="button">
@@ -77,9 +79,9 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             <button
               onClick={hideModal}
               type="button"
-              className="z-29 text-white bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center bg-sidebar-button hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
+              className="z-29 text-theme-text-primary bg-transparent rounded-lg text-sm p-1.5 ml-auto inline-flex items-center bg-sidebar-button hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border"
             >
-              <X size={20} weight="bold" className="text-white" />
+              <X size={20} className="text-theme-text-primary" />
             </button>
           </div>
 
@@ -116,7 +118,7 @@ const ModalTabSwitcher = ({ selectedTab, setSelectedTab }) => {
           onClick={() => setSelectedTab("documents")}
           className={`border-none px-4 py-2 rounded-[8px] font-semibold hover:bg-theme-modal-border hover:bg-opacity-60 ${
             selectedTab === "documents"
-              ? "bg-theme-modal-border font-bold text-white light:bg-[#E0F2FE] light:text-[#026AA2]"
+              ? "bg-theme-modal-border font-bold text-theme-text-primary light:bg-[#E0F2FE] light:text-[#026AA2]"
               : "text-white/20 font-medium hover:text-white light:bg-white light:text-[#535862] light:hover:bg-[#E0F2FE]"
           }`}
         >
@@ -126,7 +128,7 @@ const ModalTabSwitcher = ({ selectedTab, setSelectedTab }) => {
           onClick={() => setSelectedTab("dataConnectors")}
           className={`border-none px-4 py-2 rounded-[8px] font-semibold hover:bg-theme-modal-border hover:bg-opacity-60 ${
             selectedTab === "dataConnectors"
-              ? "bg-theme-modal-border font-bold text-white light:bg-[#E0F2FE] light:text-[#026AA2]"
+              ? "bg-theme-modal-border font-bold text-theme-text-primary light:bg-[#E0F2FE] light:text-[#026AA2]"
               : "text-white/20 font-medium hover:text-white light:bg-white light:text-[#535862] light:hover:bg-[#E0F2FE]"
           }`}
         >

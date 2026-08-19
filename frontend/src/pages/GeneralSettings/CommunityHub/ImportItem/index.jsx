@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PageHeader from "@/components/layout/PageHeader";
 import { isMobile } from "react-device-detect";
 import CommunityHubImportItemSteps, {
   CommunityHubImportItemLayout,
@@ -31,7 +32,7 @@ function SideBarSelection({ setStep, currentStep }) {
                 isSelected ? "rounded-t-xl" : "",
                 isLast
                   ? ""
-                  : "border-b border-white/10 light:border-[#026AA2]/10",
+                  : "border-b border-theme-sidebar-border light:border-[#026AA2]/10",
               ].join(" ")}
             >
               {isDone || isSelected ? (
@@ -78,17 +79,12 @@ export default function CommunityHubImportItemFlow() {
     <CommunityHubImportItemLayout setStep={setStep}>
       {(settings, setSettings, setStep) => (
         <div className="flex flex-col w-full px-1 md:px-6 2xl:pr-[86px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-            <div className="items-center">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                Import a Community Item
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              Import items from the AnythingLLM Community Hub to enhance your
-              instance with community-created prompts, skills, and commands.
-            </p>
-          </div>
+          <PageHeader
+            title={"Import a Community Item"}
+            description={
+              "Import items from the AnythingLLM Community Hub to enhance your instance with community-created prompts, skills, and commands."
+            }
+          />
           <div className="flex-1 flex flex-col 2xl:flex-row h-full">
             <div className="flex flex-col gap-y-[18px] mt-10 w-full 2xl:w-[360px] 2xl:flex-shrink-0">
               <SideBarSelection setStep={setStep} currentStep={step} />

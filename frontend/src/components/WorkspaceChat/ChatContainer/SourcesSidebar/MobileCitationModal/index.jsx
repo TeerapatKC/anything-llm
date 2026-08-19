@@ -31,7 +31,7 @@ export default function MobileCitationModal({
         ) : (
           <>
             <div className="flex items-center justify-between">
-              <DialogTitle className="text-sm font-semibold text-white light:text-slate-900">
+              <DialogTitle className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
                 {t("chat_window.sources")}
               </DialogTitle>
             </div>

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { DotsThreeOutline } from "@phosphor-icons/react";
+import { Ellipsis } from "lucide-react";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -76,7 +76,7 @@ export default function EmbedRow({ embed }) {
       <TableRow
         variant="none"
         ref={rowRef}
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableHead
           variant="none"
@@ -87,7 +87,7 @@ export default function EmbedRow({ embed }) {
             href={paths.workspace.chat(embed.workspace.slug)}
             target="_blank"
             rel="noreferrer"
-            className="text-white flex items-center hover:underline"
+            className="text-theme-text-primary flex items-center hover:underline"
           >
             {embed.workspace.name}
           </a>
@@ -150,7 +150,7 @@ export default function EmbedRow({ embed }) {
             onClick={openSettingsModal}
             className="text-xs font-medium text-theme-button-text hover:text-theme-text-secondary hover:bg-theme-hover px-2 py-1 rounded-lg"
           >
-            <DotsThreeOutline weight="fill" className="h-5 w-5" />
+            <Ellipsis className="h-5 w-5 fill-current" />
           </button>
         </TableCell>
       </TableRow>

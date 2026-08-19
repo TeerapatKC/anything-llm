@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CircleNotch } from "@phosphor-icons/react";
+import { Spinner } from "@/components/ui/spinner";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -9,7 +9,7 @@ export default function DetailsSection({ config, onDisconnected }) {
   const { t } = useTranslation();
   return (
     <div className="flex flex-col gap-y-[18px]">
-      <p className="text-base font-semibold text-white light:text-slate-900">
+      <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
         Details
       </p>
       <div className="border border-zinc-700 light:border-slate-200 rounded-xl p-4 w-[700px]">
@@ -43,7 +43,7 @@ export default function DetailsSection({ config, onDisconnected }) {
 function DetailRow({ label, value }) {
   return (
     <div className="flex items-start justify-between">
-      <span className="font-medium text-white light:text-slate-900">
+      <span className="font-medium text-theme-text-primary light:text-slate-900">
         {label}
       </span>
       <span className="text-zinc-300 light:text-slate-700">{value}</span>
@@ -78,7 +78,7 @@ function DisconnectButton({ onDisconnected }) {
     >
       {disconnecting ? (
         <>
-          <CircleNotch className="h-4 w-4 animate-spin" />
+          <Spinner size="sm" />
           {t("telegram.connected.disconnecting")}
         </>
       ) : (

@@ -36,7 +36,7 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
         <label htmlFor="name" className="block input-label">
           Search Preference
         </label>
-        <p className="text-white text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
           {hint[selection]?.description}
         </p>
       </div>
@@ -49,7 +49,7 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
         }}
         required={true}
       >
-        <SelectTrigger className="border-none bg-theme-settings-input-bg text-white text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none w-full p-2.5">
+        <SelectTrigger className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none w-full p-2.5">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>

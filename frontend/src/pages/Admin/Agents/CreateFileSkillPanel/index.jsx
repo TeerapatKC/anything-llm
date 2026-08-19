@@ -1,14 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import Toggle, { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { useTranslation } from "react-i18next";
-import {
-  FilePpt,
-  FileXls,
-  FileDoc,
-  FilePdf,
-  FileText,
-  CircleNotch,
-} from "@phosphor-icons/react";
+import { FileSpreadsheet, FileText } from "lucide-react";
 import Admin from "@/models/admin";
 
 export const getCreateFileSkills = (t) => [
@@ -24,25 +18,25 @@ export const getCreateFileSkills = (t) => [
     name: "create-pptx-presentation",
     title: t("agent.skill.createFiles.skills.create-pptx.title"),
     description: t("agent.skill.createFiles.skills.create-pptx.description"),
-    icon: FilePpt,
+    icon: FileText,
   },
   {
     name: "create-pdf-file",
     title: t("agent.skill.createFiles.skills.create-pdf.title"),
     description: t("agent.skill.createFiles.skills.create-pdf.description"),
-    icon: FilePdf,
+    icon: FileText,
   },
   {
     name: "create-excel-file",
     title: t("agent.skill.createFiles.skills.create-xlsx.title"),
     description: t("agent.skill.createFiles.skills.create-xlsx.description"),
-    icon: FileXls,
+    icon: FileSpreadsheet,
   },
   {
     name: "create-docx-file",
     title: t("agent.skill.createFiles.skills.create-docx.title"),
     description: t("agent.skill.createFiles.skills.create-docx.description"),
-    icon: FileDoc,
+    icon: FileText,
   },
 ];
 
@@ -137,10 +131,7 @@ export default function CreateFileSkillPanel({
               </p>
               {loading ? (
                 <div className="flex items-center justify-center py-4">
-                  <CircleNotch
-                    size={24}
-                    className="animate-spin text-theme-text-primary"
-                  />
+                  <Spinner size="lg" className="text-theme-text-primary" />
                 </div>
               ) : (
                 <div className="flex flex-col gap-y-2">

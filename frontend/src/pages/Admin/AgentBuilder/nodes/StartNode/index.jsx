@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus, X } from "lucide-react";
 import { VARIABLE_HIGHLIGHT_CLASS } from "../../VariableInput";
 
 export default function StartNode({

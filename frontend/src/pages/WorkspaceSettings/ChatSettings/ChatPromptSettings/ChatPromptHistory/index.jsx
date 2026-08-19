@@ -1,6 +1,6 @@
 import { useEffect, useState, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
-import { X } from "@phosphor-icons/react";
+import { X } from "lucide-react";
 import PromptHistory from "@/models/promptHistory";
 import PromptHistoryItem from "./PromptHistoryItem";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -81,7 +81,7 @@ export default forwardRef(function ChatPromptHistory(
               className="text-theme-text-secondary cursor-pointer hover:text-primary-button border-none"
               onClick={onClose}
             >
-              <X size={16} weight="bold" />
+              <X size={16} />
             </button>
           </div>
         </div>

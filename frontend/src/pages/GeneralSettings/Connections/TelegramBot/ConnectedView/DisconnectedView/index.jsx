@@ -1,10 +1,7 @@
 import { useState } from "react";
-import {
-  CircleNotch,
-  Eye,
-  EyeSlash,
-  TelegramLogo,
-} from "@phosphor-icons/react";
+import { Spinner } from "@/components/ui/spinner";
+import { Eye, EyeOff } from "lucide-react";
+import { TelegramLogo } from "@phosphor-icons/react";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -18,7 +15,7 @@ export default function DisconnectedView({
   const { t } = useTranslation();
   const [reconnecting, setReconnecting] = useState(false);
   const [showToken, setShowToken] = useState(false);
-  const Icon = showToken ? Eye : EyeSlash;
+  const Icon = showToken ? Eye : EyeOff;
 
   async function handleReconnect(e) {
     e.preventDefault();
@@ -43,7 +40,7 @@ export default function DisconnectedView({
   return (
     <div className="flex flex-col gap-y-8 mt-8">
       <div className="flex flex-col gap-y-[18px]">
-        <p className="text-base font-semibold text-white light:text-slate-900">
+        <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
           Connected Bot
         </p>
         <div className="flex items-start gap-x-1 border border-red-500/30 light:border-red-300 rounded-xl p-3 w-[700px]">
@@ -54,7 +51,7 @@ export default function DisconnectedView({
             />
           </div>
           <div className="flex flex-col gap-y-1 ml-1">
-            <p className="text-sm font-semibold text-white light:text-slate-900">
+            <p className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
               @{config.bot_username}
             </p>
             <p className="text-xs text-red-400 light:text-red-500">
@@ -79,7 +76,7 @@ export default function DisconnectedView({
               value={newToken}
               onChange={(e) => setNewToken(e.target.value)}
               placeholder={t("telegram.connected.placeholder-token")}
-              className="bg-transparent flex-1 text-sm text-white light:text-slate-900 placeholder:text-zinc-400 light:placeholder:text-slate-500 outline-none min-w-0"
+              className="bg-transparent flex-1 text-sm text-theme-text-primary light:text-slate-900 placeholder:text-zinc-400 light:placeholder:text-slate-500 outline-none min-w-0"
               autoComplete="off"
             />
           </div>
@@ -89,7 +86,7 @@ export default function DisconnectedView({
             className="flex items-center justify-center gap-x-1.5 text-sm font-medium bg-zinc-50 light:bg-slate-900 text-zinc-900 light:text-white rounded-lg h-8 px-5 hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
           >
             {reconnecting ? (
-              <CircleNotch className="h-4 w-4 animate-spin" />
+              <Spinner size="sm" />
             ) : (
               t("telegram.connected.reconnect")
             )}
@@ -136,13 +133,13 @@ function VoiceModeSelector({ config }) {
 
   return (
     <div className="flex items-center justify-between">
-      <span className="text-xs text-white">
+      <span className="text-xs text-theme-text-primary">
         {t("telegram.connected.voice-response")}
       </span>
       <select
         value={voiceMode}
         onChange={handleVoiceModeChange}
-        className="text-xs text-right bg-transparent text-white rounded-md px-2 py-1 outline-none max-w-[260px]"
+        className="text-xs text-right bg-transparent text-theme-text-primary rounded-md px-2 py-1 outline-none max-w-[260px]"
       >
         {getVoiceModeOptions(t).map((opt) => (
           <option key={opt.value} value={opt.value}>

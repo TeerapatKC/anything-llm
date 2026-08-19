@@ -17,7 +17,7 @@ import {
   DndUploaderContext,
   PASTE_ATTACHMENT_EVENT,
 } from "./ChatContainer/DnDWrapper";
-import { WarningCircle } from "@phosphor-icons/react";
+import { CircleAlert } from "lucide-react";
 import {
   TTSProvider,
   useWatchForAutoPlayAssistantTTSResponse,
@@ -97,16 +97,13 @@ export default function WorkspaceChat({ loading, workspace }) {
             >
               <DialogHeader className="p-0">
                 <div className="flex items-center gap-2">
-                  <WarningCircle
-                    className="text-red-500 w-[18px] h-[18px]"
-                    weight="fill"
-                  />
+                  <CircleAlert className="text-red-500 w-[18px] h-[18px] fill-current" />
                   <DialogTitle className="text-sm font-semibold text-red-500">
                     Workspace not found
                   </DialogTitle>
                 </div>
               </DialogHeader>
-              <p className="text-white text-sm">
+              <p className="text-theme-text-primary text-sm">
                 The workspace you're looking for is not available. It may have
                 been deleted or you may not have access to it.
               </p>

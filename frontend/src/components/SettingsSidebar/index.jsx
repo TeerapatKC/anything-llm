@@ -3,15 +3,15 @@ import paths from "@/utils/paths";
 import { PERMISSIONS, userCan } from "@/utils/permissions";
 import useLogo from "@/hooks/useLogo";
 import {
+  Briefcase,
+  FlaskConical,
   House,
   List,
-  Flask,
-  Gear,
-  UserCircleGear,
-  PencilSimpleLine,
-  Toolbox,
-  Plugs,
-} from "@phosphor-icons/react";
+  PenLine,
+  Settings,
+  Unplug,
+  UserCog,
+} from "lucide-react";
 import AgentIcon from "@/media/animations/agent-static.png";
 import CommunityHubIcon from "@/media/illustrations/community-hub.png";
 import useUser from "@/hooks/useUser";
@@ -103,7 +103,7 @@ export default function SettingsSidebar() {
                 <div className="flex gap-x-2 items-center text-slate-500 shrink-0">
                   <a
                     href={paths.home()}
-                    className="transition-all duration-300 p-2 rounded-full text-white bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100 hover:border-opacity-50 border-transparent border"
+                    className="transition-all duration-300 p-2 rounded-full text-theme-text-primary bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100 hover:border-opacity-50 border-transparent border"
                   >
                     <House className="h-4 w-4" />
                   </a>
@@ -214,7 +214,7 @@ const SidebarOptions = ({ user = null, t }) => (
       <>
         <Option
           btnText={t("settings.ai-providers")}
-          icon={<Gear className="h-5 w-5 flex-shrink-0" />}
+          icon={<Settings className="h-5 w-5 flex-shrink-0" />}
           user={user}
           childOptions={[
             {
@@ -261,7 +261,7 @@ const SidebarOptions = ({ user = null, t }) => (
         />
         <Option
           btnText={t("settings.admin")}
-          icon={<UserCircleGear className="h-5 w-5 flex-shrink-0" />}
+          icon={<UserCog className="h-5 w-5 flex-shrink-0" />}
           user={user}
           childOptions={[
             {
@@ -340,7 +340,7 @@ const SidebarOptions = ({ user = null, t }) => (
         />
         <Option
           btnText={t("settings.customization")}
-          icon={<PencilSimpleLine className="h-5 w-5 flex-shrink-0" />}
+          icon={<PenLine className="h-5 w-5 flex-shrink-0" />}
           user={user}
           childOptions={[
             {
@@ -362,7 +362,7 @@ const SidebarOptions = ({ user = null, t }) => (
         />
         <Option
           btnText={t("settings.channels")}
-          icon={<Plugs className="h-5 w-5 flex-shrink-0" />}
+          icon={<Unplug className="h-5 w-5 flex-shrink-0" />}
           user={user}
           childOptions={[
             {
@@ -374,7 +374,7 @@ const SidebarOptions = ({ user = null, t }) => (
         />
         <Option
           btnText={t("settings.tools")}
-          icon={<Toolbox className="h-5 w-5 flex-shrink-0" />}
+          icon={<Briefcase className="h-5 w-5 flex-shrink-0" />}
           user={user}
           childOptions={[
             {
@@ -423,7 +423,7 @@ const SidebarOptions = ({ user = null, t }) => (
         <HoldToReveal key="exp_features">
           <Option
             btnText={t("settings.experimental-features")}
-            icon={<Flask className="h-5 w-5 flex-shrink-0" />}
+            icon={<FlaskConical className="h-5 w-5 flex-shrink-0" />}
             href={paths.settings.experimental()}
             user={user}
             permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}

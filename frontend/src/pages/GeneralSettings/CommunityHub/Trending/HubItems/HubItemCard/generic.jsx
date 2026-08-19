@@ -1,5 +1,5 @@
 import paths from "@/utils/paths";
-import { Eye, LockSimple } from "@phosphor-icons/react";
+import { Eye, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Tooltip,
@@ -13,8 +13,10 @@ export default function GenericHubCard({ item }) {
       key={item.id}
       className="bg-zinc-800 light:bg-slate-100 rounded-lg p-3 hover:bg-zinc-700 light:hover:bg-slate-200 transition-all duration-200"
     >
-      <p className="text-white text-sm font-medium">{item.name}</p>
-      <p className="text-white/60 text-xs mt-1">{item.description}</p>
+      <p className="text-theme-text-primary text-sm font-medium">{item.name}</p>
+      <p className="text-theme-text-secondary text-xs mt-1">
+        {item.description}
+      </p>
       <div className="flex justify-end mt-2">
         <Link
           className="text-primary-button hover:text-primary-button/80 text-xs"
@@ -28,14 +30,14 @@ export default function GenericHubCard({ item }) {
 }
 
 export function VisibilityIcon({ visibility = "public" }) {
-  const Icon = visibility === "private" ? LockSimple : Eye;
+  const Icon = visibility === "private" ? Lock : Eye;
 
   return (
     <>
       <Tooltip>
         <TooltipTrigger asChild>
           <div>
-            <Icon className="w-4 h-4 text-white/60" />
+            <Icon className="w-4 h-4 text-theme-text-secondary" />
           </div>
         </TooltipTrigger>
         <TooltipContent

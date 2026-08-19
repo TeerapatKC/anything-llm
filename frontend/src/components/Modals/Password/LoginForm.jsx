@@ -17,7 +17,7 @@ const ForgotPasswordNotice = ({ setShowForgotPassword }) => {
       <div className="flex items-start justify-between pt-7 pb-9">
         <div className="flex items-center flex-col gap-y-[18px] max-w-[300px]">
           <div className="flex gap-x-1">
-            <h3 className="text-white light:text-slate-950 text-3xl leading-[28px] font-medium text-center white-space-nowrap block">
+            <h3 className="text-theme-text-primary light:text-slate-950 text-3xl leading-[28px] font-medium text-center white-space-nowrap block">
               {t("login.password-reset.title")}
             </h3>
           </div>
@@ -90,7 +90,7 @@ export default function LoginForm() {
       <div className="flex items-start justify-between pt-7 pb-9">
         <div className="flex items-center flex-col gap-y-[18px] max-w-[300px]">
           <div className="flex gap-x-1">
-            <h3 className="text-white light:text-slate-950 text-[38px] leading-[28px] font-medium text-center white-space-nowrap block">
+            <h3 className="text-theme-text-primary light:text-slate-950 text-[38px] leading-[28px] font-medium text-center white-space-nowrap block">
               {t("login.form.welcome")}
             </h3>
           </div>
@@ -134,9 +134,7 @@ export default function LoginForm() {
           type="submit"
           className="text-zinc-950 bg-white hover:bg-zinc-300 light:bg-sky-200 light:text-slate-950 light:hover:bg-sky-300 text-sm font-semibold rounded-lg border-primary-button h-[34px] w-full"
         >
-          {loading
-            ? t("login.form.validating")
-            : t("login.form.login")}
+          {loading ? t("login.form.validating") : t("login.form.login")}
         </button>
         <button
           type="button"

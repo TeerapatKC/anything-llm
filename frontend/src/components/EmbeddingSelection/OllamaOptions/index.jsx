@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { OLLAMA_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp, Info } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -101,9 +101,9 @@ export default function OllamaEmbeddingOptions({ settings }) {
         >
           {showAdvancedControls ? "Hide" : "Show"} Advanced Settings
           {showAdvancedControls ? (
-            <CaretUp size={14} className="ml-1" />
+            <ChevronUp size={14} className="ml-1" />
           ) : (
-            <CaretDown size={14} className="ml-1" />
+            <ChevronDown size={14} className="ml-1" />
           )}
         </Button>
       </div>
@@ -137,7 +137,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               onChange={basePath.onChange}
               onBlur={basePath.onBlur}
             />
-            <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+            <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
               Enter the URL where Ollama is running.
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               required={true}
               autoComplete="off"
             />
-            <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+            <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
               Increase this value to process multiple chunks simultaneously for
               faster embedding.
             </p>
@@ -193,7 +193,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               autoComplete="off"
               spellCheck={false}
             />
-            <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+            <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
               Enter a <code>Bearer</code> Auth Token for interacting with your
               Ollama server.
               <br />
@@ -249,7 +249,7 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
           Select the Ollama model for embeddings. Models will load after
           entering a valid Ollama URL.
         </p>
@@ -285,7 +285,7 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
           )}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
         Choose the Ollama model you want to use for generating embeddings.
       </p>
     </div>

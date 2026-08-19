@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CodeBlock } from "@phosphor-icons/react";
+import { Code } from "lucide-react";
 import EmbedRow from "./EmbedRow";
 import NewEmbedModal from "./NewEmbedModal";
 import { useModal } from "@/hooks/useModal";
@@ -65,8 +65,7 @@ export default function EmbedConfigsView() {
           >
             <DialogTrigger asChild>
               <CTAButton className="text-theme-bg-chat">
-                <CodeBlock className="h-4 w-4" weight="bold" />{" "}
-                {t("embeddable.create")}
+                <Code className="h-4 w-4" /> {t("embeddable.create")}
               </CTAButton>
             </DialogTrigger>
             <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
@@ -79,7 +78,7 @@ export default function EmbedConfigsView() {
         <Table variant="settings">
           <TableHeader
             variant="none"
-            className="text-theme-text-secondary text-xs leading-[18px] uppercase border-white/10 border-b"
+            className="text-theme-text-secondary text-xs leading-[18px] uppercase border-theme-sidebar-border border-b"
           >
             <TableRow variant="none">
               <TableHead variant="none" scope="col" className="px-6 py-3">

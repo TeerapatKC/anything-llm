@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/refs */
 import { memo, useRef, useEffect } from "react";
-import { Warning } from "@phosphor-icons/react";
+import { TriangleAlert } from "lucide-react";
 import renderMarkdown from "@/utils/chat/markdown";
 import DOMPurify from "@/utils/chat/purify";
 import Citations from "../Citation";
@@ -29,8 +29,8 @@ const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
       <div className="flex justify-start w-full">
         <div className="py-4 pl-0 pr-4 flex flex-col md:max-w-[80%]">
           <span className="inline-block p-2 rounded-lg bg-red-50 text-red-500">
-            <Warning className="h-4 w-4 mb-1 inline-block" /> Could not respond
-            to message.
+            <TriangleAlert className="h-4 w-4 mb-1 inline-block" /> Could not
+            respond to message.
             <span className="text-xs">Reason: {error || "unknown"}</span>
           </span>
         </div>

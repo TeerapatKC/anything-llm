@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Trash } from "@phosphor-icons/react";
+import { Trash2 } from "lucide-react";
 import Workspace from "@/models/workspace";
 import {
   useMessageActionsContext,
@@ -42,7 +42,7 @@ export function DeleteMessage({ chatId, isEditing, role }) {
       className="border-none flex items-center gap-x-1 w-full"
       role="menuitem"
     >
-      <Trash size={21} weight="fill" />
+      <Trash2 className="fill-current" size={21} />
       <p>Delete</p>
     </button>
   );

@@ -6,16 +6,16 @@ import React, {
   useCallback,
 } from "react";
 import Toggle, { SimpleToggleSwitch } from "@/components/lib/Toggle";
+import { Spinner } from "@/components/ui/spinner";
 import { Trans, useTranslation } from "react-i18next";
 import debounce from "lodash.debounce";
 import {
-  MagnifyingGlass,
-  CircleNotch,
-  Warning,
-  CaretDown,
-  CheckCircle,
+  ChevronDown,
+  CircleCheck,
   Info,
-} from "@phosphor-icons/react";
+  Search,
+  TriangleAlert,
+} from "lucide-react";
 import Admin from "@/models/admin";
 import GoogleAgentSkills from "@/models/googleAgentSkills";
 import { getGoogleCalendarSkills, filterSkillCategories } from "./utils";
@@ -128,7 +128,6 @@ export default function GoogleCalendarSkillPanel({
           />
         </div>
 
-
         <p className="text-theme-text-secondary text-opacity-60 text-xs font-medium">
           <Trans
             i18nKey="agent.skill.googleCalendar.description"
@@ -154,10 +153,7 @@ export default function GoogleCalendarSkillPanel({
 
             {loading ? (
               <div className="flex items-center justify-center py-4">
-                <CircleNotch
-                  size={24}
-                  className="animate-spin text-theme-text-primary"
-                />
+                <Spinner size="lg" className="text-theme-text-primary" />
               </div>
             ) : (
               <>
@@ -212,14 +208,14 @@ function ConfigurationSection({
           </span>
           {isConfigured && (
             <div className="flex items-center gap-x-1">
-              <CheckCircle size={14} weight="fill" className="text-green-500" />
+              <CircleCheck size={14} className="text-green-500 fill-current" />
               <span className="text-xs text-green-500">
                 {t("agent.skill.googleCalendar.configured")}
               </span>
             </div>
           )}
         </div>
-        <CaretDown
+        <ChevronDown
           size={16}
           className={`text-theme-text-secondary transition-transform ${expanded ? "rotate-180" : ""}`}
         />
@@ -280,7 +276,7 @@ function ConfigurationSection({
           </div>
           {!isConfigured && (
             <div className="flex items-center gap-x-2 p-3 bg-orange-500/10 border border-orange-500/30 rounded-lg">
-              <Warning size={20} className="text-orange-500 shrink-0" />
+              <TriangleAlert size={20} className="text-orange-500 shrink-0" />
               <p className="text-orange-500 text-xs">
                 {t("agent.skill.googleCalendar.configurationRequired")}
               </p>
@@ -323,10 +319,9 @@ function SkillSearchInput({ onSearch }) {
         onChange={handleChange}
         className="w-full pl-9 pr-3 py-2 bg-theme-bg-primary border border-theme-sidebar-border rounded-lg text-theme-text-primary text-sm placeholder:text-theme-text-secondary/50 search-input"
       />
-      <MagnifyingGlass
+      <Search
         size={16}
         className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-secondary"
-        weight="bold"
       />
     </div>
   );

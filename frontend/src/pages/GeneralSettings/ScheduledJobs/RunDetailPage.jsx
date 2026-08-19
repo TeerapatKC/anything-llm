@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Sidebar from "@/components/SettingsSidebar";
+import SettingsLayout from "@/components/layout/SettingsLayout";
 import {
   ArrowLeft,
-  ChatText,
   Brain,
-  Wrench,
   File,
-  Stop,
-} from "@phosphor-icons/react";
+  MessageSquareText,
+  Square,
+  Wrench,
+} from "lucide-react";
 import ScheduledJobs from "@/models/scheduledJobs";
 import usePolling from "@/hooks/usePolling";
 import showToast from "@/utils/toast";
@@ -134,19 +134,7 @@ export default function RunDetailPage() {
 }
 
 function RunDetailLayout({ children }) {
-  return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-      >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          {children}
-        </div>
-      </div>
-    </div>
-  );
+  return <SettingsLayout>{children}</SettingsLayout>;
 }
 
 function RunHeader({
@@ -193,7 +181,7 @@ function RunHeader({
   const isKillable = ["running", "queued"].includes(run.status);
 
   return (
-    <div className="w-full flex items-end justify-between gap-x-4 pb-6 border-white/10 light:border-zinc-300 border-b-2">
+    <div className="w-full flex items-end justify-between gap-x-4 pb-6 border-theme-sidebar-border light:border-zinc-300 border-b-2">
       <div className="flex flex-col gap-y-2">
         <button
           type="button"
@@ -232,7 +220,7 @@ function RunHeader({
             title={t("scheduledJobs.runDetail.stopJob")}
             className="border-none h-9 px-5 rounded-lg bg-red-500/20 text-red-400 light:bg-red-100 light:text-red-600 text-sm font-medium hover:bg-red-500/30 light:hover:bg-red-200 transition-colors disabled:opacity-50 shrink-0 flex items-center gap-2"
           >
-            <Stop className="h-4 w-4" weight="bold" />
+            <Square className="h-4 w-4" />
             {killing
               ? t("scheduledJobs.runDetail.killing")
               : t("scheduledJobs.runDetail.stopJob")}
@@ -258,7 +246,7 @@ function RunHeader({
 function PromptSection({ t, prompt }) {
   return (
     <div className="border border-zinc-700 light:border-slate-400 rounded-lg p-[18px]">
-      <p className="text-sm font-medium text-white light:text-slate-950 uppercase tracking-[1.4px] mb-1">
+      <p className="text-sm font-medium text-theme-text-primary light:text-slate-950 uppercase tracking-[1.4px] mb-1">
         {t("scheduledJobs.runDetail.sections.prompt")}
       </p>
       <p className="text-sm text-zinc-400 light:text-slate-600 whitespace-pre-wrap">
@@ -366,7 +354,7 @@ function FinalResponseSection({ t, result }) {
   return (
     <CollapsibleSection
       title={t("scheduledJobs.runDetail.sections.response")}
-      icon={ChatText}
+      icon={MessageSquareText}
       defaultOpen={true}
       copyableContent={msgToRender}
     >

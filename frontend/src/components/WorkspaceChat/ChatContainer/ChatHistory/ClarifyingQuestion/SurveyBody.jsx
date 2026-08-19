@@ -3,7 +3,9 @@ import { formatAnswerDisplay } from "./utils";
 
 function StatusMessage({ message }) {
   return (
-    <div className="text-xs text-white/60 light:text-slate-600">{message}</div>
+    <div className="text-xs text-theme-text-secondary light:text-slate-600">
+      {message}
+    </div>
   );
 }
 
@@ -16,10 +18,10 @@ function AnswerRow({ question, answer, index, showNumber, skippedLabel }) {
         </span>
       )}
       <div className="flex flex-col">
-        <span className="text-white/60 light:text-slate-600">
+        <span className="text-theme-text-secondary light:text-slate-600">
           {question.question}
         </span>
-        <span className="font-medium text-white light:text-slate-900">
+        <span className="font-medium text-theme-text-primary light:text-slate-900">
           {formatAnswerDisplay(answer, skippedLabel)}
         </span>
       </div>

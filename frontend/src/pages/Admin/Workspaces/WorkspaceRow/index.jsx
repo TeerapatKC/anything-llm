@@ -78,7 +78,7 @@ export default function WorkspaceRow({
       <TableRow
         variant="none"
         ref={rowRef}
-        className={`bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10 ${
+        className={`bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10 ${
           active ? "" : "opacity-60"
         }`}
       >
@@ -94,7 +94,7 @@ export default function WorkspaceRow({
             href={paths.workspace.chat(workspace.slug)}
             target="_blank"
             rel="noreferrer"
-            className="text-white flex items-center hover:underline"
+            className="text-theme-text-primary flex items-center hover:underline"
           >
             <Link2 className="mr-2 w-4 h-4" /> {workspace.slug}
           </a>
@@ -102,7 +102,7 @@ export default function WorkspaceRow({
         <TableCell variant="none" className="px-6">
           <a
             href={paths.workspace.settings.members(workspace.slug)}
-            className="text-white flex items-center underline"
+            className="text-theme-text-primary flex items-center underline"
           >
             {workspace.userIds?.length}
           </a>

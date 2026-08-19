@@ -36,10 +36,10 @@ export default function MaxToolCallStack() {
     <div className="flex flex-col gap-y-2 mt-4">
       <div className="flex items-center gap-x-4 mt-2">
         <div className="flex flex-col gap-y-1 flex-1">
-          <label className="block text-md font-medium text-white">
+          <label className="block text-md font-medium text-theme-text-primary">
             {t("agent.settings.max-tool-calls.title")}
           </label>
-          <p className="text-xs text-white/60">
+          <p className="text-xs text-theme-text-secondary">
             {t("agent.settings.max-tool-calls.description")}
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function MaxToolCallStack() {
             setMaxCallStack(parseInt(e.target.value));
           }}
           onWheel={(e) => e.target.blur()}
-          className="border border-white/10 bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[80px] p-2.5 text-center"
+          className="border border-theme-sidebar-border bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[80px] p-2.5 text-center"
           placeholder="10"
           autoComplete="off"
         />

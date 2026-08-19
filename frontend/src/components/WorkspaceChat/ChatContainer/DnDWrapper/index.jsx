@@ -452,8 +452,10 @@ export default function DnDFileUploaderWrapper({ children }) {
               height={69}
               alt="Drag and drop icon"
             />
-            <p className="text-white text-[24px] font-semibold">Add anything</p>
-            <p className="text-white text-[16px] text-center">
+            <p className="text-theme-text-primary text-[24px] font-semibold">
+              Add anything
+            </p>
+            <p className="text-theme-text-primary text-[16px] text-center">
               Drop a file or image here to attach it to your <br />
               workspace auto-magically.
             </p>

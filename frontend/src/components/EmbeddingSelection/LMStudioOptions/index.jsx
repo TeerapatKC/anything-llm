@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
 import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
-import {
-  CaretDown,
-  CaretUp,
-  Info,
-  CircleNotch,
-  Warning,
-} from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp, Info, TriangleAlert } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -100,9 +95,9 @@ export default function LMStudioEmbeddingOptions({ settings }) {
         >
           {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
           {showAdvancedControls ? (
-            <CaretUp size={14} className="ml-1" />
+            <ChevronUp size={14} className="ml-1" />
           ) : (
-            <CaretDown size={14} className="ml-1" />
+            <ChevronDown size={14} className="ml-1" />
           )}
         </Button>
       </div>
@@ -126,10 +121,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
                 </Tooltip>
               </div>
               {loading ? (
-                <CircleNotch
-                  size={16}
-                  className="text-theme-text-secondary animate-spin"
-                />
+                <Spinner className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (
@@ -231,7 +223,10 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
             <>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Warning size={18} className="text-red-400 cursor-pointer" />
+                  <TriangleAlert
+                    size={18}
+                    className="text-red-400 cursor-pointer"
+                  />
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
@@ -289,7 +284,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
           )}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
         Choose the LM Studio model you want to use for generating embeddings.
       </p>
     </div>

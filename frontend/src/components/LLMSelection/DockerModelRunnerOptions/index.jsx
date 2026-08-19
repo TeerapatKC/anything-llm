@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
-import { CircleNotch, Info } from "@phosphor-icons/react";
+import { Info } from "lucide-react";
 import strDistance from "js-levenshtein";
 import { LLM_PREFERENCE_CHANGED_EVENT } from "@/pages/GeneralSettings/LLMPreference";
 import { DOCKER_MODEL_RUNNER_COMMON_URLS } from "@/utils/constants";
@@ -47,7 +48,7 @@ export default function DockerModelRunnerOptions({ settings }) {
             <div className="flex justify-between items-center gap-x-2">
               <Label variant="settings">Base URL</Label>
               {loading ? (
-                <CircleNotch className="w-4 h-4 text-theme-text-secondary animate-spin" />
+                <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (

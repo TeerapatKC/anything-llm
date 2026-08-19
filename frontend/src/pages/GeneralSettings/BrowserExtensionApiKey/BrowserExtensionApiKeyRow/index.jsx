@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import showToast from "@/utils/toast";
-import { Trash, Copy, Check, Plug } from "@phosphor-icons/react";
+import { Check, Copy, Plug, Trash2 } from "lucide-react";
 import { POPUP_BROWSER_EXTENSION_EVENT } from "@/utils/constants";
 import {
   Tooltip,
@@ -67,7 +67,7 @@ export default function BrowserExtensionApiKeyRow({
     <TableRow
       variant="none"
       ref={rowRef}
-      className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+      className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
     >
       <TableCell
         variant="none"
@@ -119,7 +119,7 @@ export default function BrowserExtensionApiKeyRow({
       </TableCell>
       <TableCell variant="none" className="px-6 py-2">
         <Button variant="danger" onClick={handleRevoke}>
-          <Trash className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </TableCell>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />

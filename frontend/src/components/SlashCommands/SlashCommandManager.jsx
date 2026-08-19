@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -118,9 +119,11 @@ export default function SlashCommandManager({
           ))}
         </div>
       ) : presets.length === 0 ? (
-        <p className="rounded-md border border-dashed border-theme-sidebar-border px-4 py-8 text-center text-xs text-theme-text-secondary">
-          {emptyHint}
-        </p>
+        <Empty className="border border-dashed border-theme-sidebar-border py-8">
+          <EmptyHeader>
+            <EmptyDescription>{emptyHint}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
         <ul className="flex flex-col gap-y-2">
           {presets.map((preset) => (

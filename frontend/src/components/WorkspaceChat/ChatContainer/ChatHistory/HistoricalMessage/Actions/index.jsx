@@ -1,6 +1,6 @@
 import React, { memo, useState } from "react";
 import useCopyText from "@/hooks/useCopyText";
-import { Check, ThumbsUp, ArrowsClockwise, Copy } from "@phosphor-icons/react";
+import { Check, Copy, RefreshCw, ThumbsUp } from "lucide-react";
 import Workspace from "@/models/workspace";
 import { EditMessageAction } from "./EditMessage";
 import RenderMetrics from "./RenderMetrics";
@@ -150,7 +150,7 @@ function RegenerateMessage({ regenerateMessage, chatId }) {
             className="border-none text-zinc-300 light:text-slate-500"
             aria-label={t("chat_window.regenerate")}
           >
-            <ArrowsClockwise size={20} className="mb-1" weight="fill" />
+            <RefreshCw size={20} className="mb-1 fill-current" />
           </button>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">

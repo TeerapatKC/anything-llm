@@ -1,9 +1,4 @@
-import {
-  CalendarBlank,
-  CalendarCheck,
-  CalendarPlus,
-  UserCircleGear,
-} from "@phosphor-icons/react";
+import { Calendar, CalendarCheck, CalendarPlus, UserCog } from "lucide-react";
 export { filterSkillCategories } from "../utils";
 
 export const getGoogleCalendarSkills = (t) => ({
@@ -12,7 +7,7 @@ export const getGoogleCalendarSkills = (t) => ({
     description: t(
       "agent.skill.googleCalendar.categories.calendars.description"
     ),
-    icon: CalendarBlank,
+    icon: Calendar,
     skills: [
       {
         name: "gcal-list-calendars",
@@ -100,7 +95,7 @@ export const getGoogleCalendarSkills = (t) => ({
   rsvp: {
     title: t("agent.skill.googleCalendar.categories.rsvp.title"),
     description: t("agent.skill.googleCalendar.categories.rsvp.description"),
-    icon: UserCircleGear,
+    icon: UserCog,
     skills: [
       {
         name: "gcal-set-my-status",

@@ -1,4 +1,4 @@
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/request";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -28,7 +28,7 @@ export default function LogRow({ log }) {
       <TableRow
         variant="none"
         onClick={handleRowClick}
-        className={`bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10 ${
+        className={`bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10 ${
           hasMetadata ? "cursor-pointer hover:bg-white/5" : ""
         }`}
       >
@@ -52,7 +52,7 @@ export default function LogRow({ log }) {
                 variant="none"
                 className={`px-2 gap-x-1 flex items-center justify-center transform transition-transform duration-200`}
               >
-                <CaretUp weight="bold" size={20} />
+                <ChevronUp size={20} />
                 <p className="text-xs text-white/50 w-[20px]">hide</p>
               </TableCell>
             ) : (
@@ -60,7 +60,7 @@ export default function LogRow({ log }) {
                 variant="none"
                 className={`px-2 gap-x-1 flex items-center justify-center transform transition-transform duration-200`}
               >
-                <CaretDown weight="bold" size={20} />
+                <ChevronDown size={20} />
                 <p className="text-xs text-white/50 w-[20px]">show</p>
               </TableCell>
             )}
@@ -84,7 +84,7 @@ const EventMetadata = ({ metadata, expanded = false }) => {
         Event Metadata
       </TableCell>
       <TableCell variant="none" colSpan="4" className="px-6 py-4 rounded-r-2xl">
-        <div className="w-full rounded-lg bg-theme-bg-secondary p-2 text-white shadow-sm border-white/10 border bg-opacity-10">
+        <div className="w-full rounded-lg bg-theme-bg-secondary p-2 text-theme-text-primary shadow-sm border-theme-sidebar-border border bg-opacity-10">
           <pre className="overflow-scroll">
             {JSON.stringify(metadata, null, 2)}
           </pre>
@@ -118,7 +118,7 @@ const EventBadge = ({ event }) => {
   return (
     <TableCell
       variant="none"
-      className="px-6 py-2 font-medium whitespace-nowrap text-white flex items-center"
+      className="px-6 py-2 font-medium whitespace-nowrap text-theme-text-primary flex items-center"
     >
       <span
         className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs font-medium ${colorTheme.text} shadow-sm`}

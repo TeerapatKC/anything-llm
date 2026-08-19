@@ -1,10 +1,10 @@
 import { NavLink } from "react-router-dom";
-import { House, MagnifyingGlass } from "@phosphor-icons/react";
+import { House, Search } from "lucide-react";
 
 export default function NotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-theme-bg-primary text-theme-text-primary gap-4 p-4 md:p-8 w-full">
-      <MagnifyingGlass className="w-16 h-16 text-theme-text-secondary" />
+      <Search className="w-16 h-16 text-theme-text-secondary" />
       <h1 className="text-xl md:text-2xl font-bold text-center">
         404 - Page Not Found
       </h1>

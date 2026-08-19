@@ -1,4 +1,4 @@
-import { SkipForward, Check, ArrowRight } from "@phosphor-icons/react";
+import { ArrowRight, Check, SkipForward } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 function ProgressIndicator({ answeredCount, total }) {
@@ -19,7 +19,7 @@ function SkipButton({ isSingle, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="border-none text-white light:text-slate-900 text-sm font-medium px-3 py-2 rounded-lg hover:bg-white/5 light:hover:bg-slate-300 flex items-center gap-1"
+      className="border-none text-theme-text-primary light:text-slate-900 text-sm font-medium px-3 py-2 rounded-lg hover:bg-white/5 light:hover:bg-slate-300 flex items-center gap-1"
     >
       <SkipForward size={14} />
       {isSingle
@@ -37,7 +37,7 @@ function SubmitButton({ isSingle, onClick }) {
       onClick={onClick}
       className="border-none transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm flex items-center gap-1"
     >
-      <Check size={14} weight="bold" />
+      <Check size={14} />
       {isSingle
         ? t("chat_window.agent_invocation.clarifying_submit")
         : t("chat_window.agent_invocation.batch_submit_all")}
@@ -54,7 +54,7 @@ function NextButton({ onClick }) {
       className="border-none transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm flex items-center gap-1"
     >
       {t("chat_window.agent_invocation.batch_next")}
-      <ArrowRight size={14} weight="bold" />
+      <ArrowRight size={14} />
     </button>
   );
 }

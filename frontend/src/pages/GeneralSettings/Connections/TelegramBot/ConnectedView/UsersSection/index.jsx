@@ -1,4 +1,4 @@
-import { X, Check } from "@phosphor-icons/react";
+import { Check, X } from "lucide-react";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -53,7 +53,7 @@ export default function UsersSection({
   return (
     <div className="flex flex-col gap-y-[18px] w-[700px]">
       <div className="flex flex-col gap-y-2">
-        <p className="text-base font-semibold text-white light:text-slate-900">
+        <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
           Users
         </p>
         <p className="text-xs text-zinc-400 light:text-slate-600">
@@ -99,11 +99,11 @@ function UserRow({ user, isPending = false, onApprove, onDeny, onRevoke }) {
       <div className="flex items-center">
         <div className="flex items-center gap-x-3 flex-1 min-w-0">
           <div className="bg-zinc-800 light:bg-slate-300 size-8 rounded-full flex items-center justify-center shrink-0">
-            <span className="text-sm font-semibold text-white light:text-slate-900">
+            <span className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
               {initial}
             </span>
           </div>
-          <span className="text-sm font-medium text-white light:text-slate-900 truncate">
+          <span className="text-sm font-medium text-theme-text-primary light:text-slate-900 truncate">
             {displayName}
           </span>
         </div>
@@ -123,13 +123,13 @@ function UserRow({ user, isPending = false, onApprove, onDeny, onRevoke }) {
                 onClick={() => onDeny(chatId)}
                 className="text-zinc-400 light:text-slate-400 hover:text-red-400 light:hover:text-red-500 transition-colors"
               >
-                <X className="h-4 w-4" weight="bold" />
+                <X className="h-4 w-4" />
               </button>
               <button
                 onClick={() => onApprove(chatId)}
                 className="text-zinc-400 light:text-slate-400 hover:text-green-400 light:hover:text-green-500 transition-colors"
               >
-                <Check className="h-4 w-4" weight="bold" />
+                <Check className="h-4 w-4" />
               </button>
             </>
           ) : (

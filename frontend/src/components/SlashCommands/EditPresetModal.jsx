@@ -85,7 +85,9 @@ export default function EditPresetModal({
                     Command
                   </Label>
                   <div className="flex items-center">
-                    <span className="text-white text-sm mr-2 font-bold">/</span>
+                    <span className="text-theme-text-primary text-sm mr-2 font-bold">
+                      /
+                    </span>
                     <Input
                       variant="settings"
                       type="text"

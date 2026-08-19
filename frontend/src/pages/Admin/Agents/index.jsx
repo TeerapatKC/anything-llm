@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { SplitLayout } from "@/components/layout/SettingsLayout";
 import { useTranslation } from "react-i18next";
-import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import Admin from "@/models/admin";
 import System from "@/models/system";
@@ -9,14 +9,14 @@ import showToast from "@/utils/toast";
 import { userCan, PERMISSIONS } from "@/utils/permissions";
 import { userFromStorage } from "@/utils/request";
 import {
-  CaretLeft,
-  CaretRight,
-  Plug,
-  Robot,
+  Bot,
+  ChevronLeft,
+  ChevronRight,
   Hammer,
-  FlowArrow,
   Package,
-} from "@phosphor-icons/react";
+  Plug,
+  Workflow,
+} from "lucide-react";
 import ContextualSaveBar from "@/components/ContextualSaveBar";
 import { castToType } from "@/utils/types";
 import { FullScreenLoader } from "@/components/Preloader";
@@ -373,7 +373,7 @@ export default function AdminAgents() {
             className="flex flex-col gap-y-[18px] overflow-y-scroll no-scroll"
           >
             <div className="text-theme-text-primary flex items-center gap-x-2">
-              <Robot size={24} />
+              <Bot size={24} />
               <p className="text-lg font-medium">Agent Skills</p>
             </div>
             {/* Default skills */}
@@ -419,7 +419,7 @@ export default function AdminAgents() {
             />
 
             <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
-              <FlowArrow size={24} />
+              <Workflow size={24} />
               <p className="text-lg font-medium">Agent Flows</p>
             </div>
             <AgentFlowsList
@@ -462,16 +462,16 @@ export default function AdminAgents() {
                       setShowSkillModal(false);
                       setSelectedSkill("");
                     }}
-                    className="text-white/60 hover:text-white transition-colors duration-200"
+                    className="text-theme-text-secondary hover:text-white transition-colors duration-200"
                   >
                     <div className="flex items-center text-sky-400">
-                      <CaretLeft size={24} />
+                      <ChevronLeft size={24} />
                       <div>Back</div>
                     </div>
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4">
-                  <div className=" bg-theme-bg-secondary text-white rounded-xl p-4 overflow-y-scroll overflow-x-visible no-scroll">
+                  <div className=" bg-theme-bg-secondary text-theme-text-primary rounded-xl p-4 overflow-y-scroll overflow-x-visible no-scroll">
                     {SelectedSkillComponent ? (
                       <>
                         {selectedMcpServer ? (
@@ -544,7 +544,7 @@ export default function AdminAgents() {
                       </>
                     ) : (
                       <div className="flex flex-col items-center justify-center h-full text-theme-text-secondary">
-                        <Robot size={40} />
+                        <Bot size={40} />
                         <p className="font-medium">
                           Select an Agent Skill, Agent Flow, or MCP Server
                         </p>
@@ -596,7 +596,7 @@ export default function AdminAgents() {
         <div className="flex flex-col min-w-[360px] h-[calc(100vh-90px)]">
           <div className="flex-none flex justify-between items-center mb-4">
             <div className="text-theme-text-primary flex items-center gap-x-2">
-              <Robot size={24} />
+              <Bot size={24} />
               <p className="text-lg font-medium">Agent Skills</p>
             </div>
             <AgentSkillSettings />
@@ -648,7 +648,7 @@ export default function AdminAgents() {
 
               <div className="text-theme-text-primary flex items-center justify-between gap-x-2 mt-4">
                 <div className="flex items-center gap-x-2">
-                  <FlowArrow size={24} />
+                  <Workflow size={24} />
                   <p className="text-lg font-medium">Agent Flows</p>
                 </div>
                 {agentFlows.length === 0 ? (
@@ -697,7 +697,7 @@ export default function AdminAgents() {
 
         {/* Selected agent skill setting panel */}
         <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
-          <div className="bg-theme-bg-secondary text-white rounded-xl flex-1 p-4 overflow-y-scroll overflow-x-visible no-scroll">
+          <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl flex-1 p-4 overflow-y-scroll overflow-x-visible no-scroll">
             {SelectedSkillComponent ? (
               <>
                 {selectedMcpServer ? (
@@ -768,7 +768,7 @@ export default function AdminAgents() {
               </>
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-theme-text-secondary">
-                <Robot size={40} />
+                <Bot size={40} />
                 <p className="font-medium">
                   Select an Agent Skill, Agent Flow, or MCP Server
                 </p>
@@ -783,20 +783,14 @@ export default function AdminAgents() {
 
 function SkillLayout({ children, hasChanges, handleSubmit, handleCancel }) {
   return (
-    <div
-      id="workspace-agent-settings-container"
-      className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
-    >
-      <Sidebar />
-      <div style={{ height: "100%" }} className="relative w-full h-full flex">
-        {children}
-        <ContextualSaveBar
-          showing={hasChanges}
-          onSave={handleSubmit}
-          onCancel={handleCancel}
-        />
-      </div>
-    </div>
+    <SplitLayout id="workspace-agent-settings-container">
+      {children}
+      <ContextualSaveBar
+        showing={hasChanges}
+        onSave={handleSubmit}
+        onCancel={handleCancel}
+      />
+    </SplitLayout>
   );
 }
 
@@ -813,7 +807,7 @@ function SkillList({
   return (
     <>
       <div
-        className={`bg-theme-bg-secondary text-white rounded-xl ${
+        className={`bg-theme-bg-secondary text-theme-text-primary rounded-xl ${
           isMobile ? "w-full" : "min-w-[360px] w-fit"
         }`}
       >
@@ -825,7 +819,7 @@ function SkillList({
             } ${
               index === Object.keys(skills).length - 1
                 ? "rounded-b-xl"
-                : "border-b border-white/10"
+                : "border-b border-theme-sidebar-border"
             } cursor-pointer transition-all duration-300  hover:bg-theme-bg-primary ${
               selectedSkill === skill
                 ? "bg-white/10 light:bg-theme-bg-sidebar"
@@ -849,11 +843,7 @@ function SkillList({
                   {activeSkills.includes(skill) ? "On" : "Off"}
                 </div>
               )}
-              <CaretRight
-                size={14}
-                weight="bold"
-                className="text-theme-text-secondary"
-              />
+              <ChevronRight size={14} className="text-theme-text-secondary" />
             </div>
           </div>
         ))}

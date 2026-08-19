@@ -1,15 +1,15 @@
 import { memo, useEffect, useState, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
 import { saveAs } from "file-saver";
 import {
-  DownloadSimple,
-  Copy,
   Check,
-  CircleNotch,
-  ImageBroken,
-  DotsThree,
-  PencilSimple,
-} from "@phosphor-icons/react";
+  Copy,
+  Download,
+  Ellipsis,
+  ImageOff,
+  Pencil,
+} from "lucide-react";
 import StorageFiles from "@/models/files";
 import { openImageLightbox } from "@/components/ImageLightbox";
 import { PASTE_ATTACHMENT_EVENT } from "@/components/WorkspaceChat/ChatContainer/DnDWrapper";
@@ -108,17 +108,16 @@ function ImageGenerationCard({ props }) {
           <div className="relative rounded-xl overflow-hidden bg-zinc-800 aspect-square w-[280px]">
             {status === "loading" && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <CircleNotch
-                  size={28}
-                  weight="bold"
-                  className="animate-spin text-zinc-400 light:text-slate-500"
+                <Spinner
+                  size="lg"
+                  className="text-zinc-400 light:text-slate-500"
                 />
               </div>
             )}
 
             {status === "failed" && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-y-2 text-zinc-400 light:text-slate-500">
-                <ImageBroken size={28} weight="bold" />
+                <ImageOff size={28} />
                 <span className="text-xs">
                   {t("imageGeneration.card.failed-to-load")}
                 </span>
@@ -154,13 +153,9 @@ function ImageGenerationCard({ props }) {
             <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
               <button
                 onClick={handleCopy}
-                className="border-none p-2 rounded-lg bg-black/60 hover:bg-black/80 light:bg-slate-200/60 light:hover:bg-slate-200 text-white light:text-slate-700"
+                className="border-none p-2 rounded-lg bg-black/60 hover:bg-black/80 light:bg-slate-200/60 light:hover:bg-slate-200 text-theme-text-primary light:text-slate-700"
               >
-                {copied ? (
-                  <Check size={16} weight="bold" />
-                ) : (
-                  <Copy size={16} weight="bold" />
-                )}
+                {copied ? <Check size={16} /> : <Copy size={16} />}
               </button>
             </div>
 
@@ -171,25 +166,25 @@ function ImageGenerationCard({ props }) {
             >
               <button
                 onClick={() => setMenuOpen((prev) => !prev)}
-                className="border-none p-2 rounded-lg bg-black/60 hover:bg-black/80 light:bg-slate-200/60 light:hover:bg-slate-200 text-white light:text-slate-700"
+                className="border-none p-2 rounded-lg bg-black/60 hover:bg-black/80 light:bg-slate-200/60 light:hover:bg-slate-200 text-theme-text-primary light:text-slate-700"
               >
-                <DotsThree size={16} weight="bold" />
+                <Ellipsis size={16} />
               </button>
 
               {menuOpen && (
                 <div className="absolute right-0 mt-1 w-36 rounded-lg bg-zinc-900 light:bg-white border border-zinc-700 light:border-slate-200 shadow-lg z-10 overflow-hidden">
                   <button
                     onClick={handleEdit}
-                    className="w-full flex items-center gap-x-2 px-3 py-2 text-sm text-white light:text-slate-700 hover:bg-zinc-800 light:hover:bg-slate-100 border-none"
+                    className="w-full flex items-center gap-x-2 px-3 py-2 text-sm text-theme-text-primary light:text-slate-700 hover:bg-zinc-800 light:hover:bg-slate-100 border-none"
                   >
-                    <PencilSimple size={14} weight="bold" />
+                    <Pencil size={14} />
                     {t("imageGeneration.card.edit")}
                   </button>
                   <button
                     onClick={handleDownload}
-                    className="w-full flex items-center gap-x-2 px-3 py-2 text-sm text-white light:text-slate-700 hover:bg-zinc-800 light:hover:bg-slate-100 border-none"
+                    className="w-full flex items-center gap-x-2 px-3 py-2 text-sm text-theme-text-primary light:text-slate-700 hover:bg-zinc-800 light:hover:bg-slate-100 border-none"
                   >
-                    <DownloadSimple size={14} weight="bold" />
+                    <Download size={14} />
                     {t("imageGeneration.card.download")}
                   </button>
                 </div>

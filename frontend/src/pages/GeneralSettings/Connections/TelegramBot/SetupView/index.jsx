@@ -1,10 +1,7 @@
 import { useState } from "react";
-import {
-  CircleNotch,
-  Eye,
-  EyeSlash,
-  TelegramLogo,
-} from "@phosphor-icons/react";
+import { Spinner } from "@/components/ui/spinner";
+import { Eye, EyeOff } from "lucide-react";
+import { TelegramLogo } from "@phosphor-icons/react";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import CreateBotSection from "./CreateBotSection";
@@ -38,7 +35,7 @@ export default function SetupView({ onConnected }) {
       <CreateBotSection />
       <form onSubmit={handleConnect} className="flex flex-col gap-y-[18px]">
         <div className="flex flex-col gap-y-2">
-          <p className="text-sm light:text-base font-semibold text-white light:text-slate-900">
+          <p className="text-sm light:text-base font-semibold text-theme-text-primary light:text-slate-900">
             {t("telegram.setup.step2.title")}
           </p>
           <p className="text-xs text-zinc-400 light:text-slate-600 max-w-[700px]">
@@ -53,7 +50,7 @@ export default function SetupView({ onConnected }) {
         >
           {connecting ? (
             <>
-              <CircleNotch className="h-4 w-4 animate-spin" />
+              <Spinner size="sm" />
               {t("telegram.setup.step2.connecting")}
             </>
           ) : (
@@ -71,7 +68,7 @@ export default function SetupView({ onConnected }) {
 function BotTokenInput({ botToken, setBotToken }) {
   const { t } = useTranslation();
   const [showToken, setShowToken] = useState(false);
-  const Icon = showToken ? Eye : EyeSlash;
+  const Icon = showToken ? Eye : EyeOff;
 
   return (
     <div className="flex flex-col gap-y-1.5 w-[320px]">
@@ -91,7 +88,7 @@ function BotTokenInput({ botToken, setBotToken }) {
           value={botToken}
           onChange={(e) => setBotToken(e.target.value)}
           placeholder="123456:ABC-DEF123ghlkl-zyx57W2v"
-          className="bg-transparent flex-1 text-sm text-white light:text-slate-900 placeholder:text-zinc-400 light:placeholder:text-slate-500 outline-none min-w-0"
+          className="bg-transparent flex-1 text-sm text-theme-text-primary light:text-slate-900 placeholder:text-zinc-400 light:placeholder:text-slate-500 outline-none min-w-0"
           autoComplete="off"
         />
       </div>

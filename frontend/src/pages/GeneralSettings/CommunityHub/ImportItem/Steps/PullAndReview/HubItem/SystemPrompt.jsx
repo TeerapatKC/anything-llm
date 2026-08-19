@@ -53,7 +53,7 @@ export default function SystemPrompt({ item, setStep }) {
           Review System Prompt "{item.name}"
         </h2>
         {item.creatorUsername && (
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-theme-text-secondary light:text-theme-text-secondary text-xs font-mono">
             Created by{" "}
             <a
               href={paths.communityHub.profile(item.creatorUsername)}
@@ -73,11 +73,11 @@ export default function SystemPrompt({ item, setStep }) {
         </p>
 
         <div className="flex flex-col gap-y-2">
-          <p className="text-white/60 light:text-theme-text-secondary font-semibold">
+          <p className="text-theme-text-secondary light:text-theme-text-secondary font-semibold">
             Provided system prompt:
           </p>
           <div className="w-full text-theme-text-primary text-md flex flex-col max-h-[calc(300px)] overflow-y-auto">
-            <p className="text-white/60 light:text-theme-text-secondary font-mono bg-zinc-900 light:bg-slate-200 px-2 py-1 rounded-md text-sm whitespace-pre-line">
+            <p className="text-theme-text-secondary light:text-theme-text-secondary font-mono bg-zinc-900 light:bg-slate-200 px-2 py-1 rounded-md text-sm whitespace-pre-line">
               {item.prompt}
             </p>
           </div>

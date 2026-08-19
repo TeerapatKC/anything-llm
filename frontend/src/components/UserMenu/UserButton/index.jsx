@@ -4,14 +4,14 @@ import System from "@/models/system";
 import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
 import {
-  CaretUpDown,
+  ChevronsUpDown,
+  CircleQuestionMark,
+  Languages,
+  LogOut,
   Palette,
-  Person,
-  Question,
-  SignOut,
-  Translate,
+  User,
   Wrench,
-} from "@phosphor-icons/react";
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AccountModal from "../AccountModal";
@@ -104,7 +104,7 @@ export default function UserButton() {
               aria-label={t("profile_settings.account")}
               className="group/account flex w-full items-center gap-2 rounded-lg p-1.5 text-left transition-colors duration-300 hover:bg-theme-sidebar-item-hover data-[state=open]:bg-theme-sidebar-item-hover group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:!w-8 group-data-[collapsible=icon]:!p-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:hover:!bg-transparent group-data-[collapsible=icon]:data-[state=open]:!bg-transparent"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800 group-data-[collapsible=icon]:group-hover/account:ring-2 group-data-[collapsible=icon]:group-data-[state=open]/account:ring-2 group-data-[collapsible=icon]:ring-theme-sidebar-item-hover">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-theme-text-primary light:text-slate-800 group-data-[collapsible=icon]:group-hover/account:ring-2 group-data-[collapsible=icon]:group-data-[state=open]/account:ring-2 group-data-[collapsible=icon]:ring-theme-sidebar-item-hover">
                 <UserDisplay />
               </span>
               <span className="grid flex-1 text-left leading-tight group-data-[collapsible=icon]:hidden">
@@ -117,9 +117,8 @@ export default function UserButton() {
                   </span>
                 )}
               </span>
-              <CaretUpDown
+              <ChevronsUpDown
                 size={14}
-                weight="bold"
                 className="ml-auto shrink-0 text-theme-text-secondary group-data-[collapsible=icon]:hidden"
               />
             </DropdownMenuTrigger>
@@ -135,7 +134,7 @@ export default function UserButton() {
         >
           <DropdownMenuLabel className="font-normal">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-white light:text-slate-800">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-theme-sidebar-footer-icon text-xs font-semibold uppercase text-theme-text-primary light:text-slate-800">
                 <UserDisplay />
               </span>
               <span className="grid flex-1 leading-tight">
@@ -155,7 +154,7 @@ export default function UserButton() {
             onSelect={() => setShowAccountSettings(true)}
             className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
           >
-            <Person size={16} />
+            <User size={16} />
             {t("profile_settings.account")}
           </DropdownMenuItem>
           <PreferenceSubmenu
@@ -169,7 +168,7 @@ export default function UserButton() {
             }))}
           />
           <PreferenceSubmenu
-            icon={<Translate size={16} />}
+            icon={<Languages size={16} />}
             label={t("profile_settings.language")}
             value={currentLanguage || "en"}
             onValueChange={changeLanguage}
@@ -194,7 +193,7 @@ export default function UserButton() {
             className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
           >
             <a href={supportEmail}>
-              <Question size={16} />
+              <CircleQuestionMark size={16} />
               {t("profile_settings.support")}
             </a>
           </DropdownMenuItem>
@@ -212,7 +211,7 @@ export default function UserButton() {
             }}
             className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
           >
-            <SignOut size={16} />
+            <LogOut size={16} />
             {t("profile_settings.signout")}
           </DropdownMenuItem>
         </DropdownMenuContent>

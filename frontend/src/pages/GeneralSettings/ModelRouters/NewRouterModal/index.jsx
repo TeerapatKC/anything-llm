@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
-import { CircleNotch } from "@phosphor-icons/react";
 import ModelRouter from "@/models/modelRouter";
 import System from "@/models/system";
 import LLMProviderModelPicker from "../LLMProviderModelPicker";
@@ -92,7 +92,7 @@ export default function NewRouterModal({
           </DialogHeader>
 
           <div className="flex flex-col gap-y-1.5">
-            <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+            <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
               {t("model-router.new-router.name")}
             </label>
             <input
@@ -100,13 +100,13 @@ export default function NewRouterModal({
               name="name"
               defaultValue={router?.name || ""}
               placeholder={t("model-router.new-router.name-placeholder")}
-              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
               required
             />
           </div>
 
           <div className="flex flex-col gap-y-1.5">
-            <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+            <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
               {t("model-router.new-router.description")}
             </label>
             <input
@@ -114,7 +114,7 @@ export default function NewRouterModal({
               name="description"
               defaultValue={router?.description || ""}
               placeholder={t("model-router.new-router.description-placeholder")}
-              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
             />
           </div>
 
@@ -130,7 +130,7 @@ export default function NewRouterModal({
           />
 
           <div className="flex flex-col gap-y-1.5">
-            <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+            <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
               {t("model-router.new-router.cooldown-label")}
             </label>
             <input
@@ -138,7 +138,7 @@ export default function NewRouterModal({
               name="cooldown_seconds"
               defaultValue={router?.cooldown_seconds ?? 300}
               min={0}
-              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
+              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5"
             />
             <p className="text-xs leading-4 text-zinc-400 light:text-slate-600">
               {t("model-router.new-router.cooldown-help")}
@@ -160,7 +160,7 @@ export default function NewRouterModal({
             <Button variant="default" type="submit" disabled={loading}>
               {loading ? (
                 <span className="flex items-center gap-x-1.5">
-                  <CircleNotch className="h-4 w-4 animate-spin" />
+                  <Spinner size="sm" />
                   {t("common.saving")}
                 </span>
               ) : isEdit ? (

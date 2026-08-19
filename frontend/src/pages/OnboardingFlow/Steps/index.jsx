@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { isMobile } from "react-device-detect";
 import useRedirectToHomeOnOnboardingComplete from "@/hooks/useOnboardingComplete";
@@ -62,7 +62,7 @@ export function OnboardingLayout({ children }) {
                   className="group p-2 rounded-lg border-2 border-zinc-300 disabled:border-zinc-600 h-fit w-fit disabled:not-allowed hover:bg-zinc-100 disabled:hover:bg-transparent"
                 >
                   <ArrowLeft
-                    className="text-white group-hover:text-black group-disabled:text-gray-500"
+                    className="text-theme-text-primary group-hover:text-black group-disabled:text-gray-500"
                     size={30}
                   />
                 </button>
@@ -77,7 +77,7 @@ export function OnboardingLayout({ children }) {
                   className="group p-2 rounded-lg border-2 border-zinc-300 disabled:border-zinc-600 h-fit w-fit disabled:not-allowed hover:bg-teal disabled:hover:bg-transparent"
                 >
                   <ArrowRight
-                    className="text-white group-hover:text-teal group-disabled:text-gray-500"
+                    className="text-theme-text-primary group-hover:text-teal group-disabled:text-gray-500"
                     size={30}
                   />
                 </button>

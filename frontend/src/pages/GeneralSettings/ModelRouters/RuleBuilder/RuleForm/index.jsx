@@ -1,6 +1,6 @@
 import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
-import { CircleNotch } from "@phosphor-icons/react";
 import ModelRouterAPI from "@/models/modelRouter";
 import showToast from "@/utils/toast";
 import LLMProviderModelPicker from "../../LLMProviderModelPicker";
@@ -151,7 +151,7 @@ export default function RuleForm({
           <div className="flex flex-col gap-y-5">
             <div className="flex gap-x-5 items-start">
               <div className="flex flex-col gap-y-1.5 w-[500px]">
-                <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+                <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
                   {t("model-router.rule-form.title-label")}
                 </label>
                 <input
@@ -159,16 +159,16 @@ export default function RuleForm({
                   name="title"
                   defaultValue={existingRule?.title || ""}
                   placeholder="e.g. route_code_to_claude"
-                  className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5 font-mono"
+                  className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5 font-mono"
                   required
                 />
               </div>
               <div className="flex flex-col gap-y-1.5 w-[300px]">
-                <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+                <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
                   {t("model-router.rule-form.rule-type")}
                 </label>
                 <Select value={ruleType} onValueChange={setRuleType}>
-                  <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
+                  <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
                     <SelectValue placeholder="Select an option" />
                   </SelectTrigger>
                   <SelectContent>
@@ -215,7 +215,7 @@ export default function RuleForm({
             <Button variant="default" type="submit" disabled={loading}>
               {loading ? (
                 <span className="flex items-center gap-x-1.5">
-                  <CircleNotch className="h-4 w-4 animate-spin" />
+                  <Spinner size="sm" />
                   {t("model-router.rule-form.saving")}
                 </span>
               ) : isEditing ? (

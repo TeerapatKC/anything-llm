@@ -6,7 +6,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SlidersHorizontal } from "@phosphor-icons/react";
+import { SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import MaxToolCallStack from "./MaxToolCallStack";
 import AgentClarifyingQuestions from "./AgentClarifyingQuestions";
@@ -39,7 +39,7 @@ function AgentSkillSettingsModal() {
   const { t } = useTranslation();
 
   return (
-    <DialogContent className="max-w-[500px] bg-theme-bg-sidebar border-white/10">
+    <DialogContent className="max-w-[500px] bg-theme-bg-sidebar border-theme-sidebar-border">
       <DialogHeader className="p-0">
         <DialogTitle className="text-sm font-semibold">
           {t("agent.settings.title")}
@@ -49,9 +49,9 @@ function AgentSkillSettingsModal() {
       <div className="flex flex-col w-full">
         <div className="flex flex-col gap-y-5 w-full">
           <MaxToolCallStack />
-          <div className="border-b border-white/10 h-[1px] w-full" />
+          <div className="border-b border-theme-sidebar-border h-[1px] w-full" />
           <AgentSkillReranker />
-          <div className="border-b border-white/10 h-[1px] w-full" />
+          <div className="border-b border-theme-sidebar-border h-[1px] w-full" />
           <AgentClarifyingQuestions />
         </div>
       </div>

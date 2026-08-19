@@ -1,6 +1,6 @@
 import useUser from "@/hooks/useUser";
 import paths from "@/utils/paths";
-import { ArrowUUpLeft, Wrench } from "@phosphor-icons/react";
+import { Undo2, Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMatch } from "react-router-dom";
 import {
@@ -26,10 +26,7 @@ export default function SettingsButton() {
               className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
               aria-label="Home"
             >
-              <ArrowUUpLeft
-                className="h-5 w-5 text-white light:text-slate-800"
-                weight="fill"
-              />
+              <Undo2 className="h-5 w-5 text-theme-text-primary light:text-slate-800 fill-current" />
             </Link>
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-[250px] text-xs">
@@ -48,10 +45,7 @@ export default function SettingsButton() {
             className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
             aria-label="Settings"
           >
-            <Wrench
-              className="h-5 w-5 text-white light:text-slate-800"
-              weight="fill"
-            />
+            <Wrench className="h-5 w-5 text-theme-text-primary light:text-slate-800 fill-current" />
           </Link>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[250px] text-xs">

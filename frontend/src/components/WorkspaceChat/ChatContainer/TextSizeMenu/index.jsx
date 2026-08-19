@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import { SlidersHorizontal } from "@phosphor-icons/react";
+import { SlidersHorizontal } from "lucide-react";
 import useUser from "@/hooks/useUser";
 import { useTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
@@ -67,7 +67,7 @@ export default function TextSizeMenu() {
           size={18}
           className={
             showMenu
-              ? "text-white light:text-slate-800"
+              ? "text-theme-text-primary light:text-slate-800"
               : "text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-800"
           }
         />
@@ -91,7 +91,9 @@ export default function TextSizeMenu() {
                   : "hover:bg-zinc-700/50 light:hover:bg-slate-100"
               }`}
             >
-              <span className={`${textClass} text-white light:text-slate-900`}>
+              <span
+                className={`${textClass} text-theme-text-primary light:text-slate-900`}
+              >
                 {label}
               </span>
             </div>

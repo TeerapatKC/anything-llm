@@ -83,7 +83,7 @@ export default function NewUserModal() {
               required={true}
               autoComplete="off"
             />
-            <p className="mt-2 text-xs text-white/60">
+            <p className="mt-2 text-xs text-theme-text-secondary">
               {t("common.username_requirements")}
             </p>
           </div>
@@ -100,7 +100,7 @@ export default function NewUserModal() {
               required={true}
               autoComplete="off"
             />
-            <p className="mt-2 text-xs text-white/60">
+            <p className="mt-2 text-xs text-theme-text-secondary">
               Used to identify and contact the account holder.
             </p>
           </div>
@@ -151,7 +151,7 @@ export default function NewUserModal() {
             updateState={setMessageLimit}
           />
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-          <p className="text-white text-xs md:text-sm">
+          <p className="text-theme-text-primary text-xs md:text-sm">
             An initial password is generated for you and shown once after the
             user is created. The user must replace it before they can use the
             instance.

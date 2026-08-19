@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, PencilSimple, Trash, Lock, Copy } from "@phosphor-icons/react";
+import { Copy, Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -121,7 +121,7 @@ export default function WorkspaceRoles({ workspace }) {
         </p>
         {canDefine && (
           <CTAButton className="shrink-0" onClick={() => setEditing({})}>
-            <Plus className="h-4 w-4" weight="bold" /> New role
+            <Plus className="h-4 w-4" /> New role
           </CTAButton>
         )}
       </div>
@@ -129,7 +129,7 @@ export default function WorkspaceRoles({ workspace }) {
       <Table variant="none" className="w-full max-w-[760px] text-sm mt-6">
         <TableHeader
           variant="none"
-          className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white/10 border-b border-opacity-60"
+          className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60"
         >
           <TableRow variant="none">
             <TableHead variant="none" scope="col" className="px-6 py-3">
@@ -165,7 +165,7 @@ export default function WorkspaceRoles({ workspace }) {
             <TableRow
               key={role.id}
               variant="none"
-              className="bg-transparent text-theme-text-primary border-b border-white/10"
+              className="bg-transparent text-theme-text-primary border-b border-theme-sidebar-border"
             >
               <TableCell variant="none" className="px-6 py-4">
                 <div className="flex items-center gap-x-2">
@@ -214,7 +214,7 @@ export default function WorkspaceRoles({ workspace }) {
                         size="sm"
                         onClick={() => setEditing(role)}
                       >
-                        <PencilSimple className="h-4 w-4" /> Edit
+                        <Pencil className="h-4 w-4" /> Edit
                       </Button>
                       <Button
                         variant="ghost"
@@ -222,7 +222,7 @@ export default function WorkspaceRoles({ workspace }) {
                         className="text-red-400 hover:text-red-300"
                         onClick={() => handleDelete(role)}
                       >
-                        <Trash className="h-4 w-4" /> Delete
+                        <Trash2 className="h-4 w-4" /> Delete
                       </Button>
                     </>
                   )}

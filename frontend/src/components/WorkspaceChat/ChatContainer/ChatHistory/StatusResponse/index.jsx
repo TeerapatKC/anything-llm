@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CaretDown } from "@phosphor-icons/react";
+import { ChevronDown } from "lucide-react";
 
 import AgentAnimation from "@/media/animations/agent-animation.webm";
 import AgentStatic from "@/media/animations/agent-static.png";
@@ -62,7 +62,7 @@ export default function StatusResponse({ messages = [], isThinking = false }) {
                       isExpanded ? "Hide thought chain" : "Show thought chain"
                     }
                   >
-                    <CaretDown
+                    <ChevronDown
                       className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
                     />
                   </button>

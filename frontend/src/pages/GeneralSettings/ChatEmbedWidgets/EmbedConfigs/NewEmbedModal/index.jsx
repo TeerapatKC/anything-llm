@@ -97,10 +97,10 @@ export default function NewEmbedModal() {
           />
 
           {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-          <p className="text-white text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
             After creating an embed you will be provided a link that you can
             publish on your website with a simple
-            <code className="light:bg-stone-300 bg-stone-900 text-white mx-1 px-1 rounded-sm">
+            <code className="light:bg-stone-300 bg-stone-900 text-theme-text-primary mx-1 px-1 rounded-sm">
               &lt;script&gt;
             </code>{" "}
             tag.
@@ -143,7 +143,7 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
         </p>
       </div>
       <Select name="workspace_id" required={true} defaultValue={defaultValue}>
-        <SelectTrigger className="min-w-[15rem] rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-white focus:ring-blue-500 focus:border-blue-500">
+        <SelectTrigger className="min-w-[15rem] rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-theme-text-primary focus:ring-blue-500 focus:border-blue-500">
           <SelectValue placeholder="Select an option" />
         </SelectTrigger>
         <SelectContent>
@@ -295,7 +295,7 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
         classNames={{
           tag: "bg-theme-settings-input-bg light:bg-black/10 bg-blue-300/10 text-zinc-800",
           input:
-            "flex p-1 !bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
+            "flex p-1 !bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
         }}
       />
     </div>
@@ -314,7 +314,7 @@ export const NumberInput = ({ name, title, hint, defaultValue = 0 }) => {
       <input
         type="number"
         name={name}
-        className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[15rem] p-2.5"
+        className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[15rem] p-2.5"
         min={0}
         defaultValue={defaultValue}
         onScroll={(e) => e.target.blur()}

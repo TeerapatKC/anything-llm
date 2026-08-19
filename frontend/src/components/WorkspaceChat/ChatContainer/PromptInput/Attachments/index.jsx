@@ -1,16 +1,13 @@
 import {
-  CircleNotch,
   FileCode,
-  FileCsv,
-  FileDoc,
-  FileHtml,
-  FileText,
   FileImage,
-  FilePdf,
-  WarningOctagon,
+  FileSpreadsheet,
+  FileText,
+  OctagonAlert,
   X,
-} from "@phosphor-icons/react";
+} from "lucide-react";
 import { REMOVE_ATTACHMENT_EVENT } from "../../DnDWrapper";
+import { Spinner } from "@/components/ui/spinner";
 import { openImageLightbox } from "@/components/ImageLightbox";
 import {
   Tooltip,
@@ -68,11 +65,7 @@ function AttachmentItem({ attachment, onImageClick }) {
         <div
           className={`bg-theme-attachment-icon-spinner-bg rounded-md flex items-center justify-center flex-shrink-0 h-[32px] w-[32px] m-1`}
         >
-          <CircleNotch
-            size={18}
-            weight="bold"
-            className="text-theme-attachment-icon-spinner animate-spin"
-          />
+          <Spinner className="text-theme-attachment-icon-spinner" />
         </div>
         <div className="flex flex-col w-[125px]">
           <p className="text-theme-attachment-text text-xs font-semibold truncate">
@@ -105,10 +98,7 @@ function AttachmentItem({ attachment, onImageClick }) {
             <div
               className={`bg-error rounded-md flex items-center justify-center flex-shrink-0 h-[32px] w-[32px] m-1`}
             >
-              <WarningOctagon
-                size={24}
-                className="text-theme-attachment-icon"
-              />
+              <OctagonAlert size={24} className="text-theme-attachment-icon" />
             </div>
             <div className="flex flex-col w-[125px]">
               <p className="text-theme-attachment-text text-xs font-semibold truncate">
@@ -222,14 +212,10 @@ function AttachmentItem({ attachment, onImageClick }) {
           <div
             className={`${iconBgColor} rounded-md flex items-center justify-center flex-shrink-0 h-[32px] w-[32px] m-1`}
           >
-            <Icon
-              size={24}
-              weight="light"
-              className="text-theme-attachment-icon"
-            />
+            <Icon size={24} className="text-theme-attachment-icon" />
           </div>
           <div className="flex flex-col w-[125px]">
-            <p className="text-white text-xs font-semibold truncate">
+            <p className="text-theme-text-primary text-xs font-semibold truncate">
               {file.name}
             </p>
             <p className="text-theme-attachment-text-secondary text-[10px] leading-[14px] font-medium">
@@ -255,15 +241,15 @@ function displayFromFile(file) {
   const extension = file?.name?.split(".")?.pop()?.toLowerCase() ?? "txt";
   switch (extension) {
     case "pdf":
-      return { iconBgColor: "bg-magenta", Icon: FilePdf };
+      return { iconBgColor: "bg-magenta", Icon: FileText };
     case "doc":
     case "docx":
-      return { iconBgColor: "bg-royalblue", Icon: FileDoc };
+      return { iconBgColor: "bg-royalblue", Icon: FileText };
     case "html":
-      return { iconBgColor: "bg-purple", Icon: FileHtml };
+      return { iconBgColor: "bg-purple", Icon: FileCode };
     case "csv":
     case "xlsx":
-      return { iconBgColor: "bg-success", Icon: FileCsv };
+      return { iconBgColor: "bg-success", Icon: FileSpreadsheet };
     case "json":
     case "sql":
     case "js":

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CaretRight } from "@phosphor-icons/react";
+import { ChevronRight } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { safeJsonParse } from "@/utils/request";
 import { isPathMatch } from "@/utils/paths";
@@ -82,7 +82,9 @@ export default function MenuOption({
           ref={ref}
           to={href}
           className={`flex flex-grow items-center px-[12px] h-[32px] font-medium ${
-            isChild ? "hover:text-white" : "text-white light:text-black"
+            isChild
+              ? "hover:text-white"
+              : "text-theme-text-primary light:text-black"
           }`}
           onClick={hasChildren ? handleClick : undefined}
         >
@@ -92,20 +94,19 @@ export default function MenuOption({
               isChild ? "text-xs" : "text-sm"
             } leading-loose whitespace-nowrap overflow-hidden ml-2 ${
               isActive
-                ? "text-white font-semibold"
-                : "text-white light:text-black"
+                ? "text-theme-text-primary font-semibold"
+                : "text-theme-text-primary light:text-black"
             } ${!icon && "pl-5"}`}
           >
             {btnText}
           </p>
         </Link>
         {hasChildren && (
-          <button onClick={handleClick} className="p-2 text-white">
-            <CaretRight
+          <button onClick={handleClick} className="p-2 text-theme-text-primary">
+            <ChevronRight
               size={16}
-              weight="bold"
               // color={isExpanded ? "#000000" : "var(--theme-sidebar-subitem-icon)"}
-              className={`transition-transform text-white light:text-black ${
+              className={`transition-transform text-theme-text-primary light:text-black ${
                 isExpanded ? "rotate-90" : ""
               }`}
             />

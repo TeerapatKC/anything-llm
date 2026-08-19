@@ -153,7 +153,7 @@ export default function AgentSkillSelection({ workspace }) {
   if (loading) return <LoadingSkeleton />;
   if (!config)
     return (
-      <p className="text-white text-opacity-60 text-xs font-medium">
+      <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
         Could not load agent skills for this workspace.
       </p>
     );
@@ -179,14 +179,16 @@ export default function AgentSkillSelection({ workspace }) {
     <div className="flex flex-col gap-y-6">
       <div className="flex flex-col gap-y-1">
         <div className="flex items-center gap-x-2">
-          <p className="text-white text-sm font-semibold">Agent Skills</p>
+          <p className="text-theme-text-primary text-sm font-semibold">
+            Agent Skills
+          </p>
           {!configured && (
             <span className="text-[10px] uppercase tracking-wide px-1.5 py-0.5 rounded bg-theme-action-menu-item-hover text-theme-text-secondary">
               Using instance defaults
             </span>
           )}
         </div>
-        <p className="text-white text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
           Choose which skills this workspace's agent can use. These apply to
           this workspace only — other workspaces keep their own selection.
         </p>
@@ -303,7 +305,7 @@ function SkillGroup({
   if (entries.length === 0) return null;
   return (
     <div className="flex flex-col gap-y-2">
-      <p className="text-white text-xs font-semibold uppercase tracking-wide opacity-60">
+      <p className="text-theme-text-primary text-xs font-semibold uppercase tracking-wide opacity-60">
         {title}
       </p>
       {entries.map(([id, skill]) => {
@@ -386,7 +388,7 @@ function SearchProviderPicker({ value, instanceProvider, onChange }) {
           ))}
         </SelectContent>
       </Select>
-      <p className="text-white text-opacity-40 text-xs">
+      <p className="text-theme-text-primary text-opacity-40 text-xs">
         API keys for each engine are configured instance-wide under Agent
         Skills.
       </p>
@@ -403,11 +405,13 @@ function EntityGroup({
 }) {
   return (
     <div className="flex flex-col gap-y-2">
-      <p className="text-white text-xs font-semibold uppercase tracking-wide opacity-60">
+      <p className="text-theme-text-primary text-xs font-semibold uppercase tracking-wide opacity-60">
         {title}
       </p>
       {items.length === 0 ? (
-        <p className="text-white text-opacity-40 text-xs">{emptyText}</p>
+        <p className="text-theme-text-primary text-opacity-40 text-xs">
+          {emptyText}
+        </p>
       ) : (
         items.map((item) => (
           <Toggle

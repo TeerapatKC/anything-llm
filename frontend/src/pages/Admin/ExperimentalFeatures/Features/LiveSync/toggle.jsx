@@ -1,7 +1,7 @@
 import System from "@/models/system";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import { ArrowSquareOut } from "@phosphor-icons/react";
+import { SquareArrowOutUpRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Toggle from "@/components/lib/Toggle";
@@ -64,7 +64,7 @@ export default function LiveSyncToggle({ enabled = false, onToggle }) {
               className="text-sm text-blue-400 light:text-blue-500 hover:underline flex items-center gap-x-1"
               rel="noreferrer"
             >
-              <ArrowSquareOut size={14} />
+              <SquareArrowOutUpRight size={14} />
               <span>Feature Documentation and Warnings</span>
             </a>
           </li>

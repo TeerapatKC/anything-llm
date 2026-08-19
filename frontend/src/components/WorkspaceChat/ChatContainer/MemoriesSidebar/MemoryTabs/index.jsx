@@ -1,4 +1,4 @@
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Tooltip,
@@ -69,7 +69,7 @@ export default function MemoryTabs() {
         disabled={atLimit}
         className="-mr-1 flex items-center justify-center size-6 rounded-lg border-none bg-transparent cursor-pointer text-zinc-50 light:text-slate-900 hover:bg-zinc-800 light:hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent"
       >
-        <Plus size={16} weight="bold" />
+        <Plus size={16} />
       </button>
     </div>
   );

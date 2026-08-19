@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import CommunityHub from "@/models/communityHub";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import { X, CaretRight } from "@phosphor-icons/react";
+import { ChevronRight, X } from "lucide-react";
 import { BLOCK_INFO } from "@/pages/Admin/AgentBuilder/BlockList";
 import { Link } from "react-router-dom";
 
@@ -127,7 +127,7 @@ export default function AgentFlows({ entity }) {
             <label className="block text-sm font-semibold text-theme-text-primary mb-1">
               {t("community_hub.publish.agent_flow.description_label")}
             </label>
-            <div className="text-xs text-white/60 mb-2">
+            <div className="text-xs text-theme-text-secondary mb-2">
               {t("community_hub.publish.agent_flow.description_description")}
             </div>
             <textarea
@@ -139,14 +139,14 @@ export default function AgentFlows({ entity }) {
               placeholder={t(
                 "community_hub.publish.agent_flow.description_description"
               )}
-              className="border-none w-full bg-theme-bg-secondary rounded-lg p-2 text-white text-sm focus:outline-primary-button active:outline-primary-button outline-none min-h-[80px] placeholder:text-theme-text-placeholder"
+              className="border-none w-full bg-theme-bg-secondary rounded-lg p-2 text-theme-text-primary text-sm focus:outline-primary-button active:outline-primary-button outline-none min-h-[80px] placeholder:text-theme-text-placeholder"
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-white mb-1">
+            <label className="block text-sm font-semibold text-theme-text-primary mb-1">
               {t("community_hub.publish.agent_flow.tags_label")}
             </label>
-            <div className="text-xs text-white/60 mb-2">
+            <div className="text-xs text-theme-text-secondary mb-2">
               {t("community_hub.publish.agent_flow.tags_description")}
             </div>
             <div className="flex flex-wrap gap-2 p-2 bg-theme-bg-secondary rounded-lg min-h-[42px]">
@@ -178,7 +178,7 @@ export default function AgentFlows({ entity }) {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-white">
+            <label className="block text-sm font-semibold text-theme-text-primary">
               {t("community_hub.publish.agent_flow.visibility_label")}
             </label>
             <span className="text-xs text-theme-text-secondary">
@@ -191,7 +191,7 @@ export default function AgentFlows({ entity }) {
             <label className="block text-sm font-semibold text-theme-text-primary mb-1">
               Flow Steps
             </label>
-            <div className="text-xs text-white/60">
+            <div className="text-xs text-theme-text-secondary">
               The steps the agent will follow when the flow is triggered.
             </div>
           </div>
@@ -222,7 +222,7 @@ export default function AgentFlows({ entity }) {
                         <span
                           className={`ml-2 text-theme-text-secondary transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}`}
                         >
-                          <CaretRight size={16} />
+                          <ChevronRight size={16} />
                         </span>
                       </div>
                       {isExpanded && summary && (

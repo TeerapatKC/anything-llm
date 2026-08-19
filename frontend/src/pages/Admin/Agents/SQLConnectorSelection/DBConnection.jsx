@@ -1,7 +1,7 @@
 import PostgreSQLLogo from "./icons/postgresql.png";
 import MySQLLogo from "./icons/mysql.png";
 import MSSQLLogo from "./icons/mssql.png";
-import { PencilSimple, X } from "@phosphor-icons/react";
+import { Pencil, X } from "lucide-react";
 import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import EditSQLConnection from "./SQLConnectionModal";
@@ -49,7 +49,9 @@ export default function DBConnection({
       />
       <div className="flex w-full items-center justify-between">
         <div className="flex flex-col">
-          <div className="text-sm font-semibold text-white">{database_id}</div>
+          <div className="text-sm font-semibold text-theme-text-primary">
+            {database_id}
+          </div>
           <div className="mt-1 text-xs text-description">{engine}</div>
         </div>
         <div className="flex gap-x-2">
@@ -60,7 +62,7 @@ export default function DBConnection({
                 className="border-none text-theme-text-secondary hover:text-theme-text-primary transition-colors duration-200 p-1 rounded"
                 onClick={openModal}
               >
-                <PencilSimple size={18} />
+                <Pencil size={18} />
               </button>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">

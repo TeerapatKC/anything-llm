@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import PageHeader from "@/components/layout/PageHeader";
 import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import System from "@/models/system";
@@ -19,19 +20,13 @@ export default function LiveDocumentSyncManager() {
         style={{ height: "100%" }}
         className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-            <div className="items-center flex gap-x-4">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                Watched documents
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              These are all the documents that are currently being watched in
-              your instance. The content of these documents will be periodically
-              synced.
-            </p>
-          </div>
+        <div className="flex flex-col w-full px-1 py-16 md:px-6 md:py-6">
+          <PageHeader
+            title={"Watched documents"}
+            description={
+              "These are all the documents that are currently being watched in your instance. The content of these documents will be periodically synced."
+            }
+          />
           <div className="overflow-x-auto">
             <WatchedDocumentsContainer />
           </div>

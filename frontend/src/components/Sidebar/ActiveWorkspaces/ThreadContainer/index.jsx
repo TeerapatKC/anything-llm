@@ -1,7 +1,8 @@
 import Workspace from "@/models/workspace";
+import { Spinner } from "@/components/ui/spinner";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { forwardRef, useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
 import { useParams } from "react-router-dom";
@@ -191,7 +192,7 @@ function NewThreadButton({ workspace }) {
         className="cursor-pointer text-sidebar-foreground/70"
       >
         <button type="button" onClick={onClick} disabled={loading}>
-          {loading ? <Loader2 className="animate-spin" /> : <Plus />}
+          {loading ? <Spinner size="sm" /> : <Plus />}
           <span>{loading ? "Starting thread..." : "New Thread"}</span>
         </button>
       </SidebarMenuSubButton>

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/refs */
 import React, { useRef, useState } from "react";
-import { Plus, X, CaretDown } from "@phosphor-icons/react";
+import { ChevronDown, Plus, X } from "lucide-react";
 import VariableInput from "../../VariableInput";
 import { Label } from "@/components/ui/label";
 import {
@@ -86,7 +86,7 @@ export default function ApiCallNode({
               title="Insert variable"
             >
               <Plus className="w-4 h-4" />
-              <CaretDown className="w-3 h-3" />
+              <ChevronDown className="w-3 h-3" />
             </button>
             {showVarMenu && (
               <div className="absolute right-0 top-[calc(100%+4px)] w-48 bg-theme-settings-input-bg border-none rounded-lg shadow-lg z-10">

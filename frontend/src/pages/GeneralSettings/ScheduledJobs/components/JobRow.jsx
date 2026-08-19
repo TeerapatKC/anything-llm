@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Play, PencilSimple, X } from "@phosphor-icons/react";
+import { Pencil, Play, X } from "lucide-react";
 import paths from "@/utils/paths";
 import { humanizeCron } from "../utils/cron";
 import { useTranslation } from "react-i18next";
@@ -38,7 +38,7 @@ export default function JobRow({ job, onTrigger, onToggle, onEdit, onDelete }) {
       className="flex items-center justify-between px-4 h-14 hover:bg-white/5 light:hover:bg-slate-200 transition-colors cursor-pointer"
       title={t("scheduledJobs.row.viewRuns")}
     >
-      <span className="w-[150px] text-sm font-medium text-white light:text-slate-950 truncate">
+      <span className="w-[150px] text-sm font-medium text-theme-text-primary light:text-slate-950 truncate">
         {job.name}
       </span>
       <span className="w-[180px] text-sm text-zinc-400 light:text-slate-600 truncate">
@@ -70,7 +70,7 @@ export default function JobRow({ job, onTrigger, onToggle, onEdit, onDelete }) {
           className="border-none p-2 rounded-full text-zinc-400 light:text-slate-950 hover:text-white light:hover:text-slate-700 hover:bg-white/10 light:hover:bg-slate-300/50 transition-colors"
           title={t("scheduledJobs.row.edit")}
         >
-          <PencilSimple className="h-4 w-4 shrink-0" />
+          <Pencil className="h-4 w-4 shrink-0" />
         </button>
         <button
           type="button"

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { X, CircleNotch, Warning } from "@phosphor-icons/react";
+import { Spinner } from "@/components/ui/spinner";
+import { TriangleAlert, X } from "lucide-react";
 import Workspace from "@/models/workspace";
 import { nFormatter } from "@/utils/numbers";
 import showToast from "@/utils/toast";
@@ -126,7 +127,7 @@ export default function ParsedFilesMenu({
       {contextWindowLimitExceeded && canEmbed && (
         <div className="flex flex-col gap-2 p-2 bg-theme-bg-secondary light:bg-theme-bg-primary rounded">
           <div className="flex items-start gap-2">
-            <Warning
+            <TriangleAlert
               className="flex-shrink-0 mt-1 text-yellow-500 light:text-yellow-600"
               size={16}
             />
@@ -139,11 +140,11 @@ export default function ParsedFilesMenu({
           <button
             onClick={handleEmbed}
             disabled={isEmbedding}
-            className="border-none disabled:opacity-50 flex items-center justify-center gap-2 px-3 py-2 text-xs bg-primary-button hover:bg-theme-button-primary-hover text-white font-medium rounded transition-colors shadow-sm"
+            className="border-none disabled:opacity-50 flex items-center justify-center gap-2 px-3 py-2 text-xs bg-primary-button hover:bg-theme-button-primary-hover text-theme-text-primary font-medium rounded transition-colors shadow-sm"
           >
             {isEmbedding ? (
               <>
-                <CircleNotch size={14} className="animate-spin" />
+                <Spinner size="sm" />
                 Embedding {embedProgress} of {files.length} files...
               </>
             ) : (
@@ -175,7 +176,7 @@ export default function ParsedFilesMenu({
           ))}
         {isLoading && (
           <div className="flex items-center justify-center gap-2 text-xs text-theme-text-secondary text-center py-2">
-            <CircleNotch size={16} className="animate-spin" />
+            <Spinner />
             Loading...
           </div>
         )}
@@ -199,7 +200,7 @@ function TokenCount({ currentTokens, contextWindow, exceeded, explain }) {
     <div
       className={`flex items-center gap-x-1 ${explain ? "cursor-pointer" : ""}`}
     >
-      {exceeded && <Warning size={14} className="text-orange-600" />}
+      {exceeded && <TriangleAlert size={14} className="text-orange-600" />}
       <div
         className={`text-xs ${exceeded ? "text-orange-600" : "text-theme-text-secondary"}`}
       >

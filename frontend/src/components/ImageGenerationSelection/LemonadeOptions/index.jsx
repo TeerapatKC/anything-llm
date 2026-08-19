@@ -1,4 +1,5 @@
-import { CircleNotch, Info } from "@phosphor-icons/react";
+import { Info } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
@@ -61,10 +62,7 @@ export default function LemonadeImageOptions({ settings }) {
               </Tooltip>
             </div>
             {loading ? (
-              <CircleNotch
-                size={16}
-                className="text-theme-text-secondary animate-spin"
-              />
+              <Spinner className="text-theme-text-secondary" />
             ) : (
               <>
                 {!basePathValue.value && (

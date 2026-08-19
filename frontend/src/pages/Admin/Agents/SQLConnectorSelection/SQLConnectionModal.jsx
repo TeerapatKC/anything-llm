@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
-import { WarningOctagon } from "@phosphor-icons/react";
+import { OctagonAlert } from "lucide-react";
 import { DB_LOGOS } from "./DBConnection";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
@@ -289,14 +289,14 @@ export default function SQLConnectionModal({
           onSubmit={handleUpdate}
         >
           <div className="space-y-6">
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-theme-text-secondary">
               {isEditMode
                 ? "Update the connection information for your database below."
                 : "Add the connection information for your database below and it will be available for future SQL agent calls."}
             </p>
             <div className="flex flex-col w-full">
               <div className="border border-red-800 bg-zinc-800 light:bg-red-200/50 p-4 rounded-lg flex items-center gap-x-2 text-sm text-red-400 light:text-red-500">
-                <WarningOctagon size={28} className="shrink-0" />
+                <OctagonAlert size={28} className="shrink-0" />
                 <p>
                   <b>WARNING:</b> The SQL agent has been <i>instructed</i> to
                   only perform non-modifying queries. This <b>does not</b>{" "}
@@ -305,7 +305,7 @@ export default function SQLConnectionModal({
                 </p>
               </div>
 
-              <label className="block mb-2 text-sm font-medium text-white mt-4">
+              <label className="block mb-2 text-sm font-medium text-theme-text-primary mt-4">
                 Select your SQL engine
               </label>
               <div className="grid md:grid-cols-4 gap-4 grid-cols-2">
@@ -369,7 +369,7 @@ export default function SQLConnectionModal({
                   name="password"
                   placeholder="password123"
                   required={true}
-                  autoComplete="new-password" 
+                  autoComplete="new-password"
                   spellCheck={false}
                   defaultValue={config.password || ""}
                 />

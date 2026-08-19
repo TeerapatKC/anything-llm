@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty";
 import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import paths from "@/utils/paths";
@@ -173,9 +174,13 @@ export default function ActiveWorkspaces() {
       <SidebarGroup className="p-0">
         <SidebarGroupLabel>Workspaces</SidebarGroupLabel>
         <SidebarGroupContent>
-          <p className="rounded-md border border-dashed border-sidebar-border px-3 py-4 text-center text-xs text-sidebar-foreground/60">
-            No workspaces yet.
-          </p>
+          <Empty className="border border-dashed border-sidebar-border px-3 py-4">
+            <EmptyHeader>
+              <EmptyDescription className="text-sidebar-foreground/60">
+                No workspaces yet.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         </SidebarGroupContent>
       </SidebarGroup>
     );

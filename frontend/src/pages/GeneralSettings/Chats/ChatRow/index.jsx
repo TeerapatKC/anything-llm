@@ -1,5 +1,5 @@
 import truncate from "truncate";
-import { Trash } from "@phosphor-icons/react";
+import { Trash2 } from "lucide-react";
 import System from "@/models/system";
 import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
@@ -45,17 +45,17 @@ export default function ChatRow({ chat, onDelete }) {
     <>
       <TableRow
         variant="none"
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableCell
           variant="none"
-          className="px-6 font-medium whitespace-nowrap text-white"
+          className="px-6 font-medium whitespace-nowrap text-theme-text-primary"
         >
           {chat.id}
         </TableCell>
         <TableCell
           variant="none"
-          className="px-6 font-medium whitespace-nowrap text-white"
+          className="px-6 font-medium whitespace-nowrap text-theme-text-primary"
         >
           {chat.user?.username}
         </TableCell>
@@ -84,7 +84,7 @@ export default function ChatRow({ chat, onDelete }) {
           className="px-6 flex items-center gap-x-6 h-full mt-1"
         >
           <Button variant="danger" onClick={handleDelete}>
-            <Trash className="h-5 w-5" />
+            <Trash2 className="h-5 w-5" />
           </Button>
         </TableCell>
       </TableRow>
@@ -123,7 +123,7 @@ const TextPreview = ({ text }) => {
         </DialogTitle>
       </DialogHeader>
       <div className="w-full">
-        <pre className="w-full h-[200px] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-white text-sm">
+        <pre className="w-full h-[200px] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-theme-text-primary text-sm">
           {text}
         </pre>
       </div>

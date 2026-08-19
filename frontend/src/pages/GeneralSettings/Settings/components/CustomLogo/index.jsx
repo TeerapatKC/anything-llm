@@ -2,7 +2,7 @@ import useLogo from "@/hooks/useLogo";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useRef, useState } from "react";
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function CustomLogo() {
@@ -70,10 +70,10 @@ export default function CustomLogo() {
 
   return (
     <div className="flex flex-col gap-y-0.5 my-4">
-      <p className="text-sm leading-6 font-semibold text-white">
+      <p className="text-sm leading-6 font-semibold text-theme-text-primary">
         {t("customization.items.logo.title")}
       </p>
-      <p className="text-xs text-white/60">
+      <p className="text-xs text-theme-text-secondary">
         {t("customization.items.logo.description")}
       </p>
       {isDefaultLogo ? (

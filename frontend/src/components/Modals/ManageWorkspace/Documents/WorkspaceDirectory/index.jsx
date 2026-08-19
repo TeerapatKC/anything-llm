@@ -1,4 +1,5 @@
 import PreLoader from "@/components/Preloader";
+import { Spinner } from "@/components/ui/spinner";
 import WorkspaceFileRow from "./WorkspaceFileRow";
 import { memo, useEffect, useState } from "react";
 import {
@@ -8,15 +9,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  Eye,
-  Pin,
-  CheckCircle2,
-  XCircle,
-  Loader2,
-  Clock,
-  X,
-} from "lucide-react";
+import { Eye, Pin, CheckCircle2, XCircle, Clock, X } from "lucide-react";
 import { SEEN_DOC_PIN_ALERT, SEEN_WATCH_ALERT } from "@/utils/constants";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
@@ -326,7 +319,7 @@ const PinAlert = memo(() => {
           </div>
         </DialogHeader>
         <div className="space-y-2 flex-col">
-          <div className="w-full text-white text-md flex flex-col gap-y-2">
+          <div className="w-full text-theme-text-primary text-md flex flex-col gap-y-2">
             <p>
               <span
                 dangerouslySetInnerHTML={{
@@ -385,7 +378,7 @@ const DocumentWatchAlert = memo(() => {
           </div>
         </DialogHeader>
         <div className="space-y-2 flex-col">
-          <div className="w-full text-white text-md flex flex-col gap-y-2">
+          <div className="w-full text-theme-text-primary text-md flex flex-col gap-y-2">
             <p>
               <span
                 dangerouslySetInnerHTML={{
@@ -462,7 +455,10 @@ const STATUS_STYLES = {
   },
   embedding: {
     icon: (
-      <Loader2 className="h-4 w-4 text-slate-100 light:text-slate-900/40 animate-spin shrink-0" />
+      <Spinner
+        size="sm"
+        className="text-slate-100 light:text-slate-900/40 shrink-0"
+      />
     ),
     textColor: "text-slate-100 light:text-slate-900/70",
     label: "Embedding",

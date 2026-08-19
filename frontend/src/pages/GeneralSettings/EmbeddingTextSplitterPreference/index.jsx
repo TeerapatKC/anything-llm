@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
-import PreLoader from "@/components/Preloader";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import PageHeader from "@/components/layout/PageHeader";
+import { SpinnerBlock } from "@/components/ui/spinner";
 import CTAButton from "@/components/lib/CTAButton";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
@@ -87,111 +88,95 @@ export default function EmbeddingTextSplitterPreference() {
   }, []);
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
+    <SettingsLayout>
       {loading ? (
-        <div
-          style={{ height: "100%" }}
-          className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-        >
-          <div className="w-full h-full flex justify-center items-center">
-            <PreLoader />
-          </div>
-        </div>
+        <SpinnerBlock className="min-h-[60vh]" />
       ) : (
-        <div
-          style={{ height: "100%" }}
-          className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+        <form
+          onSubmit={handleSubmit}
+          onChange={() => setHasChanges(true)}
+          className="flex flex-col w-full"
+          id="text-splitter-chunking-form"
         >
-          <form
-            onSubmit={handleSubmit}
-            onChange={() => setHasChanges(true)}
-            className="flex w-full"
-            id="text-splitter-chunking-form"
-          >
-            <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-              <div className="w-full flex flex-col gap-y-1 pb-4 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-                <div className="flex gap-x-4 items-center">
-                  <p className="text-lg leading-6 font-bold text-white">
-                    {t("text.title")}
-                  </p>
-                </div>
-                <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-                  {t("text.desc-start")} <br />
-                  {t("text.desc-end")}
+          <PageHeader
+            title={t("text.title")}
+            description={
+              <>
+                {t("text.desc-start")}
+                <br />
+                {t("text.desc-end")}
+              </>
+            }
+          />
+          <div className="w-full justify-end flex">
+            {hasChanges && (
+              <CTAButton className="mt-3 mr-0 -mb-14 z-10">
+                {saving ? t("common.saving") : t("common.save")}
+              </CTAButton>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-y-4 mt-8">
+            <div className="flex flex-col max-w-[300px]">
+              <div className="flex flex-col gap-y-2 mb-4">
+                <Label variant="settings" className="block">
+                  {t("text.size.title")}
+                </Label>
+                <p className="text-xs text-theme-text-secondary">
+                  {t("text.size.description")}
                 </p>
               </div>
-              <div className="w-full justify-end flex">
-                {hasChanges && (
-                  <CTAButton className="mt-3 mr-0 -mb-14 z-10">
-                    {saving ? t("common.saving") : t("common.save")}
-                  </CTAButton>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-y-4 mt-8">
-                <div className="flex flex-col max-w-[300px]">
-                  <div className="flex flex-col gap-y-2 mb-4">
-                    <Label variant="settings" className="block">
-                      {t("text.size.title")}
-                    </Label>
-                    <p className="text-xs text-white/60">
-                      {t("text.size.description")}
-                    </p>
-                  </div>
-                  <Input
-                    variant="settings"
-                    type="number"
-                    name="text_splitter_chunk_size"
-                    min={1}
-                    max={settings?.max_embed_chunk_size || 1000}
-                    onWheel={(e) => e?.currentTarget?.blur()}
-                    placeholder="maximum length of vectorized text"
-                    defaultValue={
-                      isNullOrNaN(settings?.text_splitter_chunk_size)
-                        ? 1000
-                        : Number(settings?.text_splitter_chunk_size)
-                    }
-                    required={true}
-                    autoComplete="off"
-                  />
-                  <p className="text-xs text-white/40 mt-2">
-                    {t("text.size.recommend")}{" "}
-                    {numberWithCommas(settings?.max_embed_chunk_size || 1000)}.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-y-4 mt-8">
-                <div className="flex flex-col max-w-[300px]">
-                  <div className="flex flex-col gap-y-2 mb-4">
-                    <Label variant="settings" className="block">
-                      {t("text.overlap.title")}
-                    </Label>
-                    <p className="text-xs text-white/60">
-                      {t("text.overlap.description")}
-                    </p>
-                  </div>
-                  <Input
-                    variant="settings"
-                    type="number"
-                    name="text_splitter_chunk_overlap"
-                    min={0}
-                    onWheel={(e) => e?.currentTarget?.blur()}
-                    placeholder="maximum length of vectorized text"
-                    defaultValue={
-                      isNullOrNaN(settings?.text_splitter_chunk_overlap)
-                        ? 20
-                        : Number(settings?.text_splitter_chunk_overlap)
-                    }
-                    required={true}
-                    autoComplete="off"
-                  />
-                </div>
-              </div>
+              <Input
+                variant="settings"
+                type="number"
+                name="text_splitter_chunk_size"
+                min={1}
+                max={settings?.max_embed_chunk_size || 1000}
+                onWheel={(e) => e?.currentTarget?.blur()}
+                placeholder="maximum length of vectorized text"
+                defaultValue={
+                  isNullOrNaN(settings?.text_splitter_chunk_size)
+                    ? 1000
+                    : Number(settings?.text_splitter_chunk_size)
+                }
+                required={true}
+                autoComplete="off"
+              />
+              <p className="text-xs text-white/40 mt-2">
+                {t("text.size.recommend")}{" "}
+                {numberWithCommas(settings?.max_embed_chunk_size || 1000)}.
+              </p>
             </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex flex-col gap-y-4 mt-8">
+            <div className="flex flex-col max-w-[300px]">
+              <div className="flex flex-col gap-y-2 mb-4">
+                <Label variant="settings" className="block">
+                  {t("text.overlap.title")}
+                </Label>
+                <p className="text-xs text-theme-text-secondary">
+                  {t("text.overlap.description")}
+                </p>
+              </div>
+              <Input
+                variant="settings"
+                type="number"
+                name="text_splitter_chunk_overlap"
+                min={0}
+                onWheel={(e) => e?.currentTarget?.blur()}
+                placeholder="maximum length of vectorized text"
+                defaultValue={
+                  isNullOrNaN(settings?.text_splitter_chunk_overlap)
+                    ? 20
+                    : Number(settings?.text_splitter_chunk_overlap)
+                }
+                required={true}
+                autoComplete="off"
+              />
+            </div>
+          </div>
+        </form>
       )}
 
       <Dialog
@@ -206,6 +191,6 @@ export default function EmbeddingTextSplitterPreference() {
           />
         </DialogContent>
       </Dialog>
-    </div>
+    </SettingsLayout>
   );
 }

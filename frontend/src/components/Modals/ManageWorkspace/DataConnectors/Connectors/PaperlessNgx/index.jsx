@@ -74,7 +74,9 @@ export default function PaperlessNgxOptions() {
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
                   <Label variant="bold" className="flex gap-x-2 items-center">
-                    <p className="font-bold text-white">API Token</p>
+                    <p className="font-bold text-theme-text-primary">
+                      API Token
+                    </p>
                   </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     Your Paperless-ngx API token. You can find this under
@@ -95,7 +97,7 @@ export default function PaperlessNgxOptions() {
           </div>
 
           <div className="flex flex-col gap-y-2 w-full pr-10">
-            <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-white mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
+            <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
               <div className="gap-x-2 flex items-center">
                 <Info className="shrink-0" size={25} />
                 <p className="text-sm">

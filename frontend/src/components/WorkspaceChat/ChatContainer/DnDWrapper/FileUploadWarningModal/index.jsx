@@ -1,4 +1,3 @@
-import { CircleNotch } from "@phosphor-icons/react";
 import {
   Dialog,
   DialogContent,
@@ -7,6 +6,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import pluralize from "pluralize";
 import { numberWithCommas } from "@/utils/numbers";
 import useUser from "@/hooks/useUser";
@@ -42,12 +42,12 @@ export default function FileUploadWarningModal({
         >
           <DialogTitle className="sr-only">Embedding files</DialogTitle>
           <div className="flex flex-col items-center justify-center">
-            <p className="text-white text-sm font-semibold mb-4">
+            <p className="text-theme-text-primary text-sm font-semibold mb-4">
               Embedding {embedProgress + 1} of {fileCount}{" "}
               {pluralize("file", fileCount)}
             </p>
-            <CircleNotch size={32} className="animate-spin text-white" />
-            <p className="text-white/60 text-sm mt-2">
+            <Spinner size="lg" className="text-theme-text-primary" />
+            <p className="text-theme-text-secondary text-sm mt-2">
               Please wait while we embed your files...
             </p>
           </div>

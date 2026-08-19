@@ -9,7 +9,7 @@ import ImageGenerationPending from "./ImageGenerationPending";
 import ScheduledJobCreatedCard from "./ScheduledJobCreatedCard";
 import { useManageWorkspaceModal } from "../../../Modals/ManageWorkspace";
 import ManageWorkspace from "../../../Modals/ManageWorkspace";
-import { ArrowDown } from "@phosphor-icons/react";
+import { ArrowDown } from "lucide-react";
 import Chartable from "./Chartable";
 import ModelRouteNotification from "./ModelRouteNotification";
 import Workspace from "@/models/workspace";
@@ -175,10 +175,10 @@ export default forwardRef(function (
           <div className="absolute bottom-40 right-10 z-50 cursor-pointer animate-pulse">
             <div className="flex flex-col items-center">
               <div
-                className="p-1 rounded-full border border-white/10 bg-white/10 hover:bg-white/20 hover:text-white"
+                className="p-1 rounded-full border border-theme-sidebar-border bg-white/10 hover:bg-white/20 hover:text-white"
                 onClick={() => scrollToBottom(true)}
               >
-                <ArrowDown weight="bold" className="text-white/60 w-5 h-5" />
+                <ArrowDown className="text-theme-text-secondary w-5 h-5" />
               </div>
             </div>
           </div>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import { SplitLayout } from "@/components/layout/SettingsLayout";
 import Admin from "@/models/admin";
 import { FullScreenLoader } from "@/components/Preloader";
-import { CaretRight, Flask } from "@phosphor-icons/react";
+import { ChevronRight, FlaskConical } from "lucide-react";
 import { configurableFeatures } from "./features";
 import {
   Dialog,
@@ -56,12 +56,12 @@ export default function ExperimentalFeatures() {
       <div className="flex-1 flex gap-x-6 p-4 mt-10">
         {/* Feature settings nav */}
         <div className="flex flex-col gap-y-[18px]">
-          <div className="text-white flex items-center gap-x-2">
-            <Flask size={24} />
+          <div className="text-theme-text-primary flex items-center gap-x-2">
+            <FlaskConical size={24} />
             <p className="text-lg font-medium">Experimental Features</p>
           </div>
           {/* Feature list */}
-          <div className="bg-theme-bg-secondary text-white rounded-xl min-w-[360px] w-fit">
+          <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl min-w-[360px] w-fit">
             {Object.values(configurableFeatures).map((feature, index) => {
               const isFirst = index === 0;
               const isLast =
@@ -77,7 +77,7 @@ export default function ExperimentalFeatures() {
                     ...(isFirst ? ["rounded-t-xl"] : []),
                     ...(isLast
                       ? ["rounded-b-xl"]
-                      : ["border-b border-white/10"]),
+                      : ["border-b border-theme-sidebar-border"]),
                   ].join(" ")}
                 />
               );
@@ -88,7 +88,7 @@ export default function ExperimentalFeatures() {
         {/* Selected feature setting panel */}
         <FeatureVerification>
           <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
-            <div className="bg-theme-bg-secondary text-white rounded-xl flex-1 p-4">
+            <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl flex-1 p-4">
               {selectedFeature ? (
                 <SelectedFeatureComponent
                   feature={configurableFeatures[selectedFeature]}
@@ -96,8 +96,8 @@ export default function ExperimentalFeatures() {
                   refresh={refresh}
                 />
               ) : (
-                <div className="flex flex-col items-center justify-center h-full text-white/60">
-                  <Flask size={40} />
+                <div className="flex flex-col items-center justify-center h-full text-theme-text-secondary">
+                  <FlaskConical size={40} />
                   <p className="font-medium">Select an experimental feature</p>
                 </div>
               )}
@@ -111,15 +111,9 @@ export default function ExperimentalFeatures() {
 
 function FeatureLayout({ children }) {
   return (
-    <div
-      id="workspace-feature-settings-container"
-      className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
-    >
-      <Sidebar />
-      <div style={{ height: "100%" }} className="relative w-full h-full flex">
-        {children}
-      </div>
-    </div>
+    <SplitLayout id="workspace-feature-settings-container">
+      {children}
+    </SplitLayout>
   );
 }
 
@@ -128,7 +122,7 @@ function FeatureItem({
   isSelected = false,
   isActive = false,
   handleClick = () => {},
-  borderClass = "border-b border-white/10",
+  borderClass = "border-b border-theme-sidebar-border",
 }) {
   return (
     <div
@@ -155,11 +149,7 @@ function FeatureItem({
             <div className="text-sm text-theme-text-secondary font-medium">
               {isActive ? "On" : "Off"}
             </div>
-            <CaretRight
-              size={14}
-              weight="bold"
-              className="text-theme-text-secondary"
-            />
+            <ChevronRight size={14} className="text-theme-text-secondary" />
           </>
         )}
       </div>
@@ -210,7 +200,7 @@ function FeatureVerification({ children }) {
           >
             <DialogHeader className="p-0">
               <div className="flex items-center gap-2">
-                <Flask size={18} className="text-theme-text-primary" />
+                <FlaskConical size={18} className="text-theme-text-primary" />
                 <DialogTitle className="text-sm font-semibold">
                   Terms of use for experimental features
                 </DialogTitle>
@@ -218,7 +208,7 @@ function FeatureVerification({ children }) {
             </DialogHeader>
             <form onSubmit={acceptTos}>
               <div className="space-y-4 flex-col">
-                <div className="w-full text-white text-md flex flex-col gap-y-4">
+                <div className="w-full text-theme-text-primary text-md flex flex-col gap-y-4">
                   <p>
                     Experimental features of AnythingLLM are features that we
                     are piloting and are <b>opt-in</b>. We proactively will

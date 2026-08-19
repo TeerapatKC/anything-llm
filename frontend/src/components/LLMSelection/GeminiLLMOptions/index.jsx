@@ -55,7 +55,7 @@ export default function GeminiLLMOptions({ settings }) {
                   settings?.GeminiSafetySetting || "BLOCK_MEDIUM_AND_ABOVE"
                 }
                 required={true}
-                className="border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
+                className="border-none bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg block w-full p-2.5"
               >
                 <option value="BLOCK_NONE">None</option>
                 <option value="BLOCK_ONLY_HIGH">Block few</option>

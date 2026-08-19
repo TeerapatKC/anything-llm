@@ -1,6 +1,6 @@
 import { ICON_COMPONENTS } from "@/components/Footer";
 import React, { useEffect, useRef, useState } from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus, X } from "lucide-react";
 
 export default function NewIconForm({ icon, url, onSave, onRemove }) {
   const [selectedIcon, setSelectedIcon] = useState(icon || "Plus");
@@ -89,7 +89,7 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
         value={selectedUrl}
         onChange={handleUrlChange}
         placeholder="https://example.com"
-        className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-md p-2.5 w-[300px] h-[32px] focus:outline-primary-button active:outline-primary-button outline-none"
+        className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-md p-2.5 w-[300px] h-[32px] focus:outline-primary-button active:outline-primary-button outline-none"
         required
       />
       {selectedIcon !== "Plus" && (

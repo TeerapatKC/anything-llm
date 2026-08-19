@@ -48,7 +48,7 @@ const buttonVariants = cva("", {
       cta: "transition-all duration-300 bg-white text-black hover:opacity-60 px-4 py-2 rounded-lg text-sm",
       /** The quieter partner to `cta`, typically Cancel. */
       muted:
-        "transition-all duration-300 text-white hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm",
+        "transition-all duration-300 text-theme-text-primary hover:bg-zinc-700 px-4 py-2 rounded-lg text-sm",
       /** The X in the top-right corner of a modal. Positions itself. */
       modalClose:
         "absolute top-4 right-4 transition-all duration-300 bg-transparent rounded-lg text-sm p-1 inline-flex items-center hover:bg-theme-modal-border hover:border-theme-modal-border hover:border-opacity-50 border-transparent border",

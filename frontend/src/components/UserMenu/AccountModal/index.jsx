@@ -3,7 +3,7 @@ import System from "@/models/system";
 import Appearance from "@/models/appearance";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
-import { Info, Plus } from "@phosphor-icons/react";
+import { Info, Plus } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -165,7 +165,7 @@ export default function AccountModal({ user, hideModal }) {
                     required
                     autoComplete="off"
                   />
-                  <p className="mt-2 text-xs text-white/60">
+                  <p className="mt-2 text-xs text-theme-text-secondary">
                     {t("common.username_requirements")}
                   </p>
                 </div>
@@ -195,7 +195,7 @@ export default function AccountModal({ user, hideModal }) {
                   >
                     {t("password_change.title")}
                   </Button>
-                  <p className="mt-2 text-xs text-white/60">
+                  <p className="mt-2 text-xs text-theme-text-secondary">
                     {t("profile_settings.password_description")}
                   </p>
                 </div>
@@ -263,7 +263,7 @@ function AutoSubmitPreference() {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="cursor-pointer h-fit">
-              <Info size={16} weight="bold" className="text-white" />
+              <Info size={16} className="text-theme-text-primary" />
             </div>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="max-w-[250px] text-xs">
@@ -302,7 +302,7 @@ function AutoSpeakPreference() {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="cursor-pointer h-fit">
-              <Info size={16} weight="bold" className="text-white" />
+              <Info size={16} className="text-theme-text-primary" />
             </div>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="max-w-[250px] text-xs">

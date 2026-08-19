@@ -11,10 +11,8 @@ const inputVariants = cva("", {
         "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
       // The look used by every provider settings form (LLM / Embedding / Image
       // generation), lifted from the class string those ~110 inputs repeated
-      // inline. The only difference is text-theme-text-primary in place of
-      // text-white; index.css already rewrites `.text-white` to
-      // var(--theme-text-primary) under [data-theme="light"], so the two render
-      // identically in both themes and this spells the intent out.
+      // inline. It names --theme-text-primary directly, which is what the rest
+      // of the app now does too.
       settings:
         "border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5",
     },

@@ -25,7 +25,7 @@ export default function SourceItem({ source, onClick }) {
           url={info.href}
           customImage={customImage}
         />
-        <p className="flex-1 font-medium text-sm text-white light:text-slate-900 leading-[15px] truncate">
+        <p className="flex-1 font-medium text-sm text-theme-text-primary light:text-slate-900 leading-[15px] truncate">
           {source.title}
         </p>
       </div>

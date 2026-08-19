@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
+import PageHeader from "@/components/layout/PageHeader";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import LLMItem from "@/components/LLMSelection/LLMItem";
-import { CaretUpDown, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { ChevronsUpDown, Search, X } from "lucide-react";
 import CTAButton from "@/components/lib/CTAButton";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import DeepgramLogo from "@/media/ttsproviders/deepgram.png";
@@ -123,20 +124,13 @@ export default function SpeechToTextProvider({ settings }) {
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full">
-      <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-        <div className="w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
-          <div className="flex gap-x-4 items-center">
-            <p className="text-lg leading-6 font-bold text-white">
-              Speech-to-text Preference
-            </p>
-          </div>
-          <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-            Here you can specify what kind of text-to-speech and speech-to-text
-            providers you would want to use in your AnythingLLM experience. By
-            default, we use the browser's built in support for these services,
-            but you may want to use others.
-          </p>
-        </div>
+      <div className="flex flex-col w-full px-1 py-16 md:px-6 md:py-6">
+        <PageHeader
+          title={"Speech-to-text Preference"}
+          description={
+            "Here you can specify what kind of text-to-speech and speech-to-text providers you would want to use in your AnythingLLM experience. By default, we use the browser's built in support for these services, but you may want to use others."
+          }
+        />
         <div className="w-full justify-end flex">
           {hasChanges && (
             <CTAButton
@@ -147,7 +141,9 @@ export default function SpeechToTextProvider({ settings }) {
             </CTAButton>
           )}
         </div>
-        <div className="text-base font-bold text-white mt-6 mb-4">Provider</div>
+        <div className="text-base font-bold text-theme-text-primary mt-6 mb-4">
+          Provider
+        </div>
         <div className="relative">
           {searchMenuOpen && (
             <div
@@ -159,9 +155,8 @@ export default function SpeechToTextProvider({ settings }) {
             <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
               <div className="w-full flex flex-col gap-y-1">
                 <div className="flex items-center sticky top-0 z-10 border-b border-[#9CA3AF] mx-4 bg-theme-settings-input-bg">
-                  <MagnifyingGlass
+                  <Search
                     size={20}
-                    weight="bold"
                     className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                   />
                   <input
@@ -178,8 +173,7 @@ export default function SpeechToTextProvider({ settings }) {
                   />
                   <X
                     size={20}
-                    weight="bold"
-                    className="cursor-pointer text-white hover:text-x-button"
+                    className="cursor-pointer text-theme-text-primary hover:text-x-button"
                     onClick={handleXButton}
                   />
                 </div>
@@ -211,7 +205,7 @@ export default function SpeechToTextProvider({ settings }) {
                   className="w-10 h-10 rounded-md"
                 />
                 <div className="flex flex-col text-left">
-                  <div className="text-sm font-semibold text-white">
+                  <div className="text-sm font-semibold text-theme-text-primary">
                     {selectedProviderObject.name}
                   </div>
                   <div className="mt-1 text-xs text-description">
@@ -219,7 +213,7 @@ export default function SpeechToTextProvider({ settings }) {
                   </div>
                 </div>
               </div>
-              <CaretUpDown size={24} weight="bold" className="text-white" />
+              <ChevronsUpDown size={24} className="text-theme-text-primary" />
             </button>
           )}
         </div>

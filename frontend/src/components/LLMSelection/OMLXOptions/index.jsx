@@ -1,7 +1,8 @@
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
+import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
 import { OMLX_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp, CircleNotch, Info } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   Tooltip,
@@ -59,9 +60,9 @@ export default function OMLXOptions({ settings }) {
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
-            <CaretUp size={14} className="ml-1" />
+            <ChevronUp size={14} className="ml-1" />
           ) : (
-            <CaretDown size={14} className="ml-1" />
+            <ChevronDown size={14} className="ml-1" />
           )}
         </Button>
       </div>
@@ -89,10 +90,7 @@ export default function OMLXOptions({ settings }) {
                   </Tooltip>
                 </div>
                 {loading ? (
-                  <CircleNotch
-                    size={16}
-                    className="text-theme-text-secondary animate-spin"
-                  />
+                  <Spinner className="text-theme-text-secondary" />
                 ) : (
                   <>
                     {!basePathValue.value && (
@@ -257,7 +255,7 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
           Select the OMLX model you want to use. Models will load after entering
           a valid OMLX URL.
         </p>
@@ -293,7 +291,7 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
           )}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
         Choose the OMLX model you want to use for your conversations.
       </p>
     </div>

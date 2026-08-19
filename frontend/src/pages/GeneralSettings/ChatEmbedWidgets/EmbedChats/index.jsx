@@ -4,7 +4,7 @@ import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import Embed from "@/models/embed";
 import { useTranslation } from "react-i18next";
-import { CaretDown, Download } from "@phosphor-icons/react";
+import { ChevronDown, Download } from "lucide-react";
 import showToast from "@/utils/toast";
 import { saveAs } from "file-saver";
 import System from "@/models/system";
@@ -150,9 +150,9 @@ export default function EmbedChatsView() {
               onClick={toggleMenu}
               className="flex items-center gap-x-2 px-4 py-1 rounded-lg text-theme-bg-chat bg-primary-button hover:bg-secondary hover:text-white text-xs font-semibold h-[34px] w-fit"
             >
-              <Download size={18} weight="bold" />
+              <Download size={18} />
               {t("embed-chats.export")}
-              <CaretDown size={18} weight="bold" />
+              <ChevronDown size={18} />
             </button>
             <div
               ref={menuRef}
@@ -168,7 +168,7 @@ export default function EmbedChatsView() {
                       handleDumpChats(key);
                       setShowMenu(false);
                     }}
-                    className="w-full text-left px-4 py-2 text-white text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
+                    className="w-full text-left px-4 py-2 text-theme-text-primary text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
                   >
                     {data.name}
                   </button>

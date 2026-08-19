@@ -76,7 +76,7 @@ export default function ChangePassword() {
       />
       <div className="w-full max-w-md mt-8">
         <div className="flex flex-col items-center gap-y-3 mb-8">
-          <h3 className="text-white light:text-slate-950 text-3xl font-medium text-center">
+          <h3 className="text-theme-text-primary light:text-slate-950 text-3xl font-medium text-center">
             {forced
               ? t("password_change.forced_title")
               : t("password_change.title")}

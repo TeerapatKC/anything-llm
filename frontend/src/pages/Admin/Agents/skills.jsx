@@ -8,14 +8,14 @@ import GMailSkillPanel from "./GMailSkillPanel";
 import GoogleCalendarSkillPanel from "./GoogleCalendarSkillPanel";
 import OutlookSkillPanel from "./OutlookSkillPanel";
 import {
+  AppWindow,
   Brain,
-  File,
-  Browser,
-  ChartBar,
-  FolderOpen,
-  FilePlus,
   CalendarCheck,
-} from "@phosphor-icons/react";
+  ChartColumn,
+  File,
+  FilePlus,
+  FolderOpen,
+} from "lucide-react";
 import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";
 import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";
@@ -48,7 +48,7 @@ export const getDefaultSkills = (t) => ({
     title: t("agent.skill.scrape.title"),
     description: t("agent.skill.scrape.description"),
     component: DefaultSkillPanel,
-    icon: Browser,
+    icon: AppWindow,
     image: ScrapeWebsitesImage,
     skill: "web-scraping",
   },
@@ -91,7 +91,7 @@ export const getConfigurableSkills = (
     description: t("agent.skill.generate.description"),
     component: GenericSkillPanel,
     skill: "create-chart",
-    icon: ChartBar,
+    icon: ChartColumn,
     image: GenerateChartsImage,
   },
   "web-browsing": {

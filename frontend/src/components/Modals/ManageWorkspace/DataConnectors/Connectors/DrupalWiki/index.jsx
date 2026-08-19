@@ -70,7 +70,9 @@ export default function DrupalWikiOptions() {
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
                   <Label variant="bold" className="flex gap-x-2 items-center">
-                    <p className="font-bold text-white">Drupal Wiki base URL</p>
+                    <p className="font-bold text-theme-text-primary">
+                      Drupal Wiki base URL
+                    </p>
                   </Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
                     This is the base URL of your&nbsp;
@@ -126,7 +128,7 @@ export default function DrupalWikiOptions() {
               <div className="flex flex-col pr-10">
                 <div className="flex flex-col gap-y-1 mb-4">
                   <Label variant="bold" className="flex gap-x-2 items-center">
-                    <p className="font-bold text-white">
+                    <p className="font-bold text-theme-text-primary">
                       Drupal Wiki API Token
                     </p>
                     <Tooltip>

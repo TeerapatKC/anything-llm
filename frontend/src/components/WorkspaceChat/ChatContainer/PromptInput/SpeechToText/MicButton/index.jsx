@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from "react";
-import { Microphone, CircleNotch } from "@phosphor-icons/react";
+import { Spinner } from "@/components/ui/spinner";
+import { Mic } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -62,18 +63,13 @@ export default function MicButton({
           }`}
         >
           {processing ? (
-            <CircleNotch
-              size={18}
-              weight="bold"
-              className="pointer-events-none text-white light:text-slate-800 animate-spin shrink-0"
-            />
+            <Spinner className="pointer-events-none text-theme-text-primary light:text-slate-800 shrink-0" />
           ) : (
-            <Microphone
-              weight="regular"
+            <Mic
               size={18}
               className={`pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0 ${
                 listening
-                  ? "animate-pulse-glow !text-white light:!text-slate-800"
+                  ? "animate-pulse-glow !text-theme-text-primary light:!text-slate-800"
                   : ""
               }`}
             />

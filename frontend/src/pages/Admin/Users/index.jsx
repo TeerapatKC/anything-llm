@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
-import { UserPlus } from "@phosphor-icons/react";
+import { UserPlus } from "lucide-react";
 import Admin from "@/models/admin";
 import UserRow from "./UserRow";
 import useUser from "@/hooks/useUser";
@@ -25,46 +26,32 @@ export default function AdminUsers() {
   const { isOpen, openModal, closeModal } = useModal();
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
+    <SettingsLayout>
+      <PageHeader
+        title={"Users"}
+        description={
+          "These are all the accounts which have an account on this instance. Removing an account will instantly remove their access to this instance."
+        }
+      />
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-            <div className="items-center flex gap-x-4">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                Users
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              These are all the accounts which have an account on this instance.
-              Removing an account will instantly remove their access to this
-              instance.
-            </p>
-          </div>
-          <Dialog
-            open={isOpen}
-            onOpenChange={(open) => (open ? openModal() : closeModal())}
-          >
-            <div className="w-full justify-end flex">
-              <DialogTrigger asChild>
-                <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
-                  <UserPlus className="h-4 w-4" weight="bold" /> Add user
-                </CTAButton>
-              </DialogTrigger>
-            </div>
-            <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-              <NewUserModal />
-            </DialogContent>
-          </Dialog>
-          <div className="overflow-x-auto">
-            <UsersContainer />
-          </div>
+        <div className="w-full justify-end flex">
+          <DialogTrigger asChild>
+            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
+              <UserPlus className="h-4 w-4" /> Add user
+            </CTAButton>
+          </DialogTrigger>
         </div>
+        <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+          <NewUserModal />
+        </DialogContent>
+      </Dialog>
+      <div className="overflow-x-auto">
+        <UsersContainer />
       </div>
-    </div>
+    </SettingsLayout>
   );
 }
 
@@ -207,7 +194,7 @@ export function MessageLimitInput({
       />
       {enabled && (
         <div className="mt-4">
-          <label className="text-white text-sm font-semibold block mb-4">
+          <label className="text-theme-text-primary text-sm font-semibold block mb-4">
             Message limit per day
           </label>
           <div className="relative mt-2">

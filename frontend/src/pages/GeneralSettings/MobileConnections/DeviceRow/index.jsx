@@ -2,7 +2,8 @@ import showToast from "@/utils/toast";
 import MobileConnection from "@/models/mobile";
 import { useState } from "react";
 import moment from "moment";
-import { BugDroid, AppleLogo } from "@phosphor-icons/react";
+import { Bug } from "lucide-react";
+import { AppleLogo } from "@phosphor-icons/react";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -27,7 +28,7 @@ export default function DeviceRow({ device, removeDevice }) {
     <>
       <TableRow
         variant="none"
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableCell
           variant="none"
@@ -42,11 +43,7 @@ export default function DeviceRow({ device, removeDevice }) {
                 className="fill-theme-text-primary"
               />
             ) : (
-              <BugDroid
-                weight="fill"
-                size={16}
-                className="fill-theme-text-primary"
-              />
+              <Bug size={16} className="fill-theme-text-primary fill-current" />
             )}
             <span className="text-sm">{device.deviceName}</span>
           </div>

@@ -1,4 +1,4 @@
-import { SlidersHorizontal } from "@phosphor-icons/react";
+import { SlidersHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,

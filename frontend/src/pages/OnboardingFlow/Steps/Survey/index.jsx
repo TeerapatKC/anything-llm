@@ -3,7 +3,7 @@ import {
   ONBOARDING_SURVEY_URL,
 } from "@/utils/constants";
 import paths from "@/utils/paths";
-import { CheckCircle } from "@phosphor-icons/react";
+import { CircleCheck } from "lucide-react";
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -124,8 +124,8 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
       <div className="w-full flex justify-center items-center py-40">
         <div className="w-full flex items-center justify-center px-1 md:px-8 py-4">
           <div className="w-auto flex flex-col gap-y-1 items-center">
-            <CheckCircle size={60} className="text-green-500" />
-            <p className="text-white text-lg">
+            <CircleCheck size={60} className="text-green-500" />
+            <p className="text-theme-text-primary text-lg">
               {t("onboarding.survey.thankYou")}
             </p>
             <a
@@ -155,7 +155,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
             type="email"
             placeholder="you@gmail.com"
             required={true}
-            className="mt-2 bg-theme-settings-input-bg text-white focus:outline-primary-button active:outline-primary-button placeholder:text-theme-settings-input-placeholder outline-none text-sm font-medium font-['Plus Jakarta Sans'] leading-tight w-full h-11 p-2.5 bg-theme-settings-input-bg rounded-lg"
+            className="mt-2 bg-theme-settings-input-bg text-theme-text-primary focus:outline-primary-button active:outline-primary-button placeholder:text-theme-settings-input-placeholder outline-none text-sm font-medium font-['Plus Jakarta Sans'] leading-tight w-full h-11 p-2.5 bg-theme-settings-input-bg rounded-lg"
           />
         </div>
 
@@ -249,7 +249,10 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
         </div>
 
         <div className="mt-8">
-          <label htmlFor="comment" className="text-white text-base font-medium">
+          <label
+            htmlFor="comment"
+            className="text-theme-text-primary text-base font-medium"
+          >
             {t("onboarding.survey.comment")}{" "}
             <span className="text-neutral-400 text-base font-light">
               ({t("common.optional")})
@@ -258,7 +261,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
           <textarea
             name="comment"
             rows={5}
-            className="mt-2 bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button placeholder:text-theme-settings-input-placeholder outline-none block w-full p-2.5"
+            className="mt-2 bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg focus:outline-primary-button active:outline-primary-button placeholder:text-theme-settings-input-placeholder outline-none block w-full p-2.5"
             placeholder={t("onboarding.survey.commentPlaceholder")}
             wrap="soft"
             autoComplete="off"
@@ -275,7 +278,7 @@ export default function Survey({ setHeader, setForwardBtn, setBackBtn }) {
           <button
             type="button"
             onClick={skipSurvey}
-            className="text-white text-base font-medium text-opacity-30 hover:text-opacity-100 hover:text-teal mt-8"
+            className="text-theme-text-primary text-base font-medium text-opacity-30 hover:text-opacity-100 hover:text-teal mt-8"
           >
             {t("onboarding.survey.skip")}
           </button>

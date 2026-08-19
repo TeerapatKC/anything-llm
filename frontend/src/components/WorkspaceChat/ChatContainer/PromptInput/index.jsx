@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import debounce from "lodash.debounce";
-import { ArrowUp, At } from "@phosphor-icons/react";
+import { ArrowUp, AtSign } from "lucide-react";
 import StopGenerationButton from "./StopGenerationButton";
 import SpeechToText from "./SpeechToText";
 import {
@@ -365,7 +365,7 @@ export default function PromptInput({
                   }}
                   value={promptInput}
                   spellCheck={Appearance.get("enableSpellCheck")}
-                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] pt-[20px] w-full leading-5 text-white light:text-slate-600 bg-transparent placeholder:text-white/60 light:placeholder:text-slate-400 resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
+                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] pt-[20px] w-full leading-5 text-theme-text-primary light:text-slate-600 bg-transparent placeholder:text-white/60 light:placeholder:text-slate-400 resize-none active:outline-none focus:outline-none flex-grow pwa:!text-[16px] ${textSizeClass}`}
                   placeholder={t("chat_window.send_message")}
                 />
               </div>
@@ -439,7 +439,7 @@ function AgentSessionButton({
             aria-label={t("chat_window.start_agent_session")}
             className="group border-none relative flex justify-center items-center cursor-pointer w-6 h-6 rounded-full hover:bg-zinc-700 light:hover:bg-slate-200"
           >
-            <At
+            <AtSign
               size={18}
               className="pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0"
             />
@@ -479,7 +479,7 @@ function ToolsButton({
       <span
         className={`text-sm font-medium ${
           showTools
-            ? "text-white light:text-slate-800"
+            ? "text-theme-text-primary light:text-slate-800"
             : "text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-800"
         }`}
       >
@@ -507,10 +507,7 @@ function SendPromptButton({ formRef, promptInput, isDisabled }) {
             }`}
             aria-label={t("chat_window.send")}
           >
-            <ArrowUp
-              className="w-[18px] h-[18px] pointer-events-none text-zinc-800 light:text-white"
-              weight="bold"
-            />
+            <ArrowUp className="w-[18px] h-[18px] pointer-events-none text-zinc-800 light:text-white" />
             <span className="sr-only">{t("chat_window.send")}</span>
           </button>
         </TooltipTrigger>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Copy, Check } from "@phosphor-icons/react";
+import { Check, Copy } from "lucide-react";
 import Admin from "@/models/admin";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
@@ -87,7 +87,7 @@ export default function NewInviteModal({ onSuccess }) {
                 type="url"
                 defaultValue={`${window.location.origin}/accept-invite/${invite.code}`}
                 disabled={true}
-                className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
+                className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg outline-none block w-full p-2.5 pr-10"
               />
               <button
                 type="button"
@@ -96,14 +96,14 @@ export default function NewInviteModal({ onSuccess }) {
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-theme-modal-border transition-all duration-300"
               >
                 {copied ? (
-                  <Check size={20} className="text-green-400" weight="bold" />
+                  <Check size={20} className="text-green-400" />
                 ) : (
-                  <Copy size={20} className="text-white" weight="bold" />
+                  <Copy size={20} className="text-theme-text-primary" />
                 )}
               </button>
             </div>
           )}
-          <p className="text-white text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
             After creation you will be able to copy the invite and send it to a
             new user where they can create an account as the <b>default</b> role
             and automatically be added to workspaces selected.
@@ -117,7 +117,7 @@ export default function NewInviteModal({ onSuccess }) {
                 <Label variant="field" htmlFor="workspaces" className="block">
                   Auto-add invitee to workspaces
                 </Label>
-                <p className="text-white text-opacity-60 text-xs">
+                <p className="text-theme-text-primary text-opacity-60 text-xs">
                   You can optionally automatically assign the user to the
                   workspaces below by selecting them. By default, the user will
                   not have any workspaces visible. You can assign workspaces

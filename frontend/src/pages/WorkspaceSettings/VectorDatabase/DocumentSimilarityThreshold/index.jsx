@@ -18,7 +18,7 @@ export default function DocumentSimilarityThreshold({
         <label htmlFor="name" className="block input-label">
           {t("vector-workspace.doc.title")}
         </label>
-        <p className="text-white text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
           {t("vector-workspace.doc.description")}
         </p>
       </div>

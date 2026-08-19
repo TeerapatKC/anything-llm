@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import PageHeader from "@/components/layout/PageHeader";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
@@ -22,38 +23,24 @@ export default function PrivacyAndDataHandling() {
   }, []);
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative light:border light:border-theme-sidebar-border bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-      >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-            <div className="items-center flex gap-x-4">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                {t("privacy.title")}
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              {t("privacy.description")}
-            </p>
+    <SettingsLayout>
+      <PageHeader
+        title={t("privacy.title")}
+        description={t("privacy.description")}
+      />
+      {loading ? (
+        <div className="h-1/2 transition-all duration-500 relative md:ml-[2px] md:mr-[8px] md:my-[16px] md:rounded-[26px] p-[18px] h-full overflow-y-scroll">
+          <div className="w-full h-full flex justify-center items-center">
+            <PreLoader />
           </div>
-          {loading ? (
-            <div className="h-1/2 transition-all duration-500 relative md:ml-[2px] md:mr-[8px] md:my-[16px] md:rounded-[26px] p-[18px] h-full overflow-y-scroll">
-              <div className="w-full h-full flex justify-center items-center">
-                <PreLoader />
-              </div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto flex flex-col gap-y-6 pt-6">
-              <ProviderPrivacy />
-              <TelemetryLogs settings={settings} />
-            </div>
-          )}
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className="overflow-x-auto flex flex-col gap-y-6 pt-6">
+          <ProviderPrivacy />
+          <TelemetryLogs settings={settings} />
+        </div>
+      )}
+    </SettingsLayout>
   );
 }
 

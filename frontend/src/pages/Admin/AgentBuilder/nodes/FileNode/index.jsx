@@ -23,7 +23,7 @@ export default function FileNode({
           value={config.operation}
           onValueChange={(value) => onConfigChange({ operation: value })}
         >
-          <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none">
+          <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none">
             <SelectValue placeholder="Select an option" />
           </SelectTrigger>
           <SelectContent>
@@ -42,7 +42,7 @@ export default function FileNode({
           placeholder="/path/to/file"
           value={config.path}
           onChange={(e) => onConfigChange({ path: e.target.value })}
-          className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white placeholder:text-white/20 focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
+          className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary placeholder:text-white/20 focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
           autoComplete="off"
           spellCheck={false}
         />
@@ -56,7 +56,7 @@ export default function FileNode({
             placeholder="File content..."
             value={config.content}
             onChange={(e) => onConfigChange({ content: e.target.value })}
-            className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-white placeholder:text-white/20 focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
+            className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary placeholder:text-white/20 focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
             rows={3}
             autoComplete="off"
             spellCheck={false}

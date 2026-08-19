@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CaretDown, Check, X, Hammer } from "@phosphor-icons/react";
+import { Check, ChevronDown, Hammer, X } from "lucide-react";
 import AgentSkillWhitelist from "@/models/agentSkillWhitelist";
 import { useTranslation } from "react-i18next";
 import useTimeoutProgress from "@/hooks/useTimeoutProgress";
@@ -75,7 +75,7 @@ export default function ToolApprovalRequest({
             />
             <div className="flex flex-col gap-y-1">
               {description && (
-                <span className="text-white/60 light:text-slate-700 font-medium font-mono text-xs">
+                <span className="text-theme-text-secondary light:text-slate-700 font-medium font-mono text-xs">
                   {description}
                 </span>
               )}
@@ -129,7 +129,7 @@ function ToolApprovalHeader({
           className="absolute top-4 right-4 border-none"
           aria-label={isExpanded ? "Hide details" : "Show details"}
         >
-          <CaretDown
+          <ChevronDown
             className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
           />
         </button>
@@ -184,12 +184,12 @@ function ToolApprovalResponseOption({
         <button
           type="button"
           onClick={onReject}
-          className="border-none text-white light:text-slate-900 text-sm font-medium w-[70px] h-9 rounded-lg hover:bg-white/5 light:hover:bg-slate-300"
+          className="border-none text-theme-text-primary light:text-slate-900 text-sm font-medium w-[70px] h-9 rounded-lg hover:bg-white/5 light:hover:bg-slate-300"
         >
           {t("chat_window.agent_invocation.reject")}
         </button>
       </div>
-      <label className="flex items-center gap-2 cursor-pointer text-white/60 light:text-slate-600 text-xs hover:text-white/80 light:hover:text-slate-800 transition-colors">
+      <label className="flex items-center gap-2 cursor-pointer text-theme-text-secondary light:text-slate-600 text-xs hover:text-white/80 light:hover:text-slate-800 transition-colors">
         <input
           type="checkbox"
           checked={alwaysAllow}
@@ -211,7 +211,7 @@ function ToolApprovalResponseMessage({ approved }) {
   if (approved === false) {
     return (
       <div className="flex items-center gap-1 text-sm font-medium text-red-400 light:text-red-500">
-        <X size={16} weight="bold" />
+        <X size={16} />
         <span>{t("chat_window.agent_invocation.tool_call_was_rejected")}</span>
       </div>
     );
@@ -219,7 +219,7 @@ function ToolApprovalResponseMessage({ approved }) {
 
   return (
     <div className="flex items-center gap-1 text-sm font-medium text-green-400 light:text-green-500">
-      <Check size={16} weight="bold" />
+      <Check size={16} />
       <span>{t("chat_window.agent_invocation.tool_call_was_approved")}</span>
     </div>
   );

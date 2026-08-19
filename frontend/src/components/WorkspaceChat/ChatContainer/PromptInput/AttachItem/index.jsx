@@ -1,4 +1,4 @@
-import { Plus } from "@phosphor-icons/react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCallback, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
@@ -113,7 +113,6 @@ export default function AttachItem({
         <Plus
           size={18}
           className="pointer-events-none text-zinc-300 light:text-slate-600 group-hover:text-white light:group-hover:text-slate-600 shrink-0"
-          weight="bold"
         />
         {files.length > 0 && (
           <div className="absolute -top-2.5 -right-2 bg-white text-black light:invert text-[8px] rounded-full px-1 flex items-center justify-center">

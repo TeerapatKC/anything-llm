@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { CheckCircle, CopySimple } from "@phosphor-icons/react";
+import { CircleCheck, Copy } from "lucide-react";
 import showToast from "@/utils/toast";
 import hljs from "highlight.js";
 import "@/utils/chat/themes/github-dark.css";
@@ -93,7 +93,7 @@ const ScriptTag = ({ embed }) => {
       <button
         disabled={copied}
         onClick={handleClick}
-        className={`disabled:border disabled:border-green-300 disabled:light:border-green-600 border border-transparent relative w-full font-mono flex hljs ${theme} light:border light:border-gray-700 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none p-2.5 m-1`}
+        className={`disabled:border disabled:border-green-300 disabled:light:border-green-600 border border-transparent relative w-full font-mono flex hljs ${theme} light:border light:border-gray-700 text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none p-2.5 m-1`}
       >
         <div
           className="flex w-full text-left flex-col gap-y-1 pr-6 pl-4 whitespace-pre-line"
@@ -105,12 +105,12 @@ const ScriptTag = ({ embed }) => {
           }}
         />
         {copied ? (
-          <CheckCircle
+          <CircleCheck
             size={14}
             className="text-green-300 light:text-green-600 absolute top-2 right-2"
           />
         ) : (
-          <CopySimple size={14} className="absolute top-2 right-2" />
+          <Copy size={14} className="absolute top-2 right-2" />
         )}
       </button>
     </div>

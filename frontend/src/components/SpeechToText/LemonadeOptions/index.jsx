@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
 import { LEMONADE_COMMON_URLS } from "@/utils/constants";
-import { CircleNotch, Info } from "@phosphor-icons/react";
+import { Info } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -43,7 +44,7 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
             <div className="flex justify-between items-center gap-x-2">
               <Label variant="settings">Base URL</Label>
               {loading ? (
-                <CircleNotch className="w-4 h-4 text-theme-text-secondary animate-spin" />
+                <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (
@@ -166,7 +167,7 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
           Load a Whisper or transcription model into your Lemonade server, then
           it will appear here.
         </p>

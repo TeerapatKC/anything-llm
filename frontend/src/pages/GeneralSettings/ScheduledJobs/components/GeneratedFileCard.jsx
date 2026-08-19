@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
-import { CircleNotch, DownloadSimple } from "@phosphor-icons/react";
+import { Download } from "lucide-react";
 import StorageFiles from "@/models/files";
 import showToast from "@/utils/toast";
 import { humanFileSize } from "@/utils/numbers";
@@ -105,7 +106,7 @@ export default function GeneratedFileCard({ file }) {
           {badge}
         </div>
         <div className="flex flex-col min-w-0">
-          <p className="text-sm text-white light:text-slate-950 truncate">
+          <p className="text-sm text-theme-text-primary light:text-slate-950 truncate">
             {file.filename || t("scheduledJobs.file.unknown")}
           </p>
           <p className="text-sm text-zinc-400 light:text-slate-600">
@@ -123,11 +124,7 @@ export default function GeneratedFileCard({ file }) {
         aria-label={t("scheduledJobs.file.download")}
         className="border-none text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 transition-colors shrink-0 ml-4 disabled:opacity-50"
       >
-        {downloading ? (
-          <CircleNotch size={16} weight="bold" className="animate-spin" />
-        ) : (
-          <DownloadSimple size={16} weight="bold" />
-        )}
+        {downloading ? <Spinner /> : <Download size={16} />}
       </button>
     </div>
   );

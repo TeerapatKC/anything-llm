@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import { SplitLayout } from "@/components/layout/SettingsLayout";
 import { isMobile } from "react-device-detect";
-import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import EmbedConfigsView from "./EmbedConfigs";
 import EmbedChatsView from "./EmbedChats";
 
@@ -38,16 +38,16 @@ export default function ChatEmbedWidgets() {
                       setShowViewModal(false);
                       setSelectedView("");
                     }}
-                    className="text-white/60 hover:text-white transition-colors duration-200"
+                    className="text-theme-text-secondary hover:text-white transition-colors duration-200"
                   >
                     <div className="flex items-center text-sky-400">
-                      <CaretLeft size={24} />
+                      <ChevronLeft size={24} />
                       <div>Back</div>
                     </div>
                   </button>
                 </div>
                 <div className="flex-1 overflow-y-auto p-4">
-                  <div className="bg-theme-bg-secondary text-white rounded-xl p-4 overflow-y-scroll no-scroll">
+                  <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl p-4 overflow-y-scroll no-scroll">
                     {selectedView === "configs" ? (
                       <EmbedConfigsView />
                     ) : (
@@ -83,7 +83,7 @@ export default function ChatEmbedWidgets() {
           </div>
         </div>
         <div className="flex-[2] flex flex-col gap-y-[18px] mt-10">
-          <div className="bg-theme-bg-secondary text-white rounded-xl flex-1 p-4 overflow-y-scroll no-scroll">
+          <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl flex-1 p-4 overflow-y-scroll no-scroll">
             {selectedView === "configs" ? (
               <EmbedConfigsView />
             ) : (
@@ -98,15 +98,9 @@ export default function ChatEmbedWidgets() {
 
 function WidgetLayout({ children }) {
   return (
-    <div
-      id="workspace-widget-settings-container"
-      className="w-screen h-screen overflow-hidden bg-theme-bg-container flex md:mt-0 mt-6"
-    >
-      <Sidebar />
-      <div style={{ height: "100%" }} className="relative w-full h-full flex">
-        {children}
-      </div>
-    </div>
+    <SplitLayout id="workspace-widget-settings-container">
+      {children}
+    </SplitLayout>
   );
 }
 
@@ -122,7 +116,7 @@ function WidgetList({ selectedView, handleClick }) {
 
   return (
     <div
-      className={`bg-theme-bg-secondary text-white rounded-xl ${isMobile ? "w-full" : "min-w-[360px] w-fit"}`}
+      className={`bg-theme-bg-secondary text-theme-text-primary rounded-xl ${isMobile ? "w-full" : "min-w-[360px] w-fit"}`}
     >
       {Object.entries(views).map(([view, settings], index) => (
         <div
@@ -132,18 +126,14 @@ function WidgetList({ selectedView, handleClick }) {
           } ${
             index === Object.keys(views).length - 1
               ? "rounded-b-xl"
-              : "border-b border-white/10"
+              : "border-b border-theme-sidebar-border"
           } cursor-pointer transition-all duration-300 hover:bg-theme-bg-primary ${
             selectedView === view ? "bg-white/10 light:bg-theme-bg-sidebar" : ""
           }`}
           onClick={() => handleClick?.(view)}
         >
           <div className="text-sm font-light">{settings.title}</div>
-          <CaretRight
-            size={14}
-            weight="bold"
-            className="text-theme-text-secondary"
-          />
+          <ChevronRight size={14} className="text-theme-text-secondary" />
         </div>
       ))}
     </div>

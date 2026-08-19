@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import DBConnection from "./DBConnection";
-import { Plus, Database, CircleNotch } from "@phosphor-icons/react";
+import { Database, Plus } from "lucide-react";
 import NewSQLConnection from "./SQLConnectionModal";
 import { useModal } from "@/hooks/useModal";
 import SQLAgentImage from "@/media/agents/sql-agent.png";
@@ -97,11 +98,7 @@ export default function AgentSQLConnectorSelection({
         <div className="flex flex-col gap-y-[18px] max-w-[500px]">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center gap-x-2">
-              <Database
-                size={24}
-                color="var(--theme-text-primary)"
-                weight="bold"
-              />
+              <Database size={24} color="var(--theme-text-primary)" />
               <label
                 htmlFor="name"
                 className="text-theme-text-primary text-md font-bold"
@@ -143,10 +140,7 @@ export default function AgentSQLConnectorSelection({
                 <div className="flex flex-col gap-y-3">
                   {loading ? (
                     <div className="flex items-center justify-center py-4">
-                      <CircleNotch
-                        size={24}
-                        className="animate-spin text-theme-text-primary"
-                      />
+                      <Spinner size="lg" className="text-theme-text-primary" />
                     </div>
                   ) : (
                     connections
@@ -170,7 +164,6 @@ export default function AgentSQLConnectorSelection({
                     <div className="flex w-full gap-x-2 items-center p-4">
                       <div className="bg-theme-bg-secondary p-2 rounded-lg h-[24px] w-[24px] flex items-center justify-center">
                         <Plus
-                          weight="bold"
                           size={14}
                           className="shrink-0 text-theme-text-primary"
                         />

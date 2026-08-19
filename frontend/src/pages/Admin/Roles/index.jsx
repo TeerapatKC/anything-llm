@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, PencilSimple, Trash, Lock, Star } from "@phosphor-icons/react";
+import { Lock, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import Role, { WorkspaceRole } from "@/models/role";
 import CTAButton from "@/components/lib/CTAButton";
 import { Button } from "@/components/ui/button";
@@ -27,42 +28,27 @@ import showToast from "@/utils/toast";
  */
 export default function AdminRoles() {
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-      >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-            <div className="items-center flex gap-x-4">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                Roles &amp; Permissions
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              A role is a named set of permissions. System roles control the
-              instance itself; workspace roles control what a member can do
-              inside a single workspace, so one account can be a manager of one
-              workspace and read-only in another.
-            </p>
-          </div>
+    <SettingsLayout>
+      <PageHeader
+        title={"Roles &amp; Permissions"}
+        description={
+          "A role is a named set of permissions. System roles control the instance itself; workspace roles control what a member can do inside a single workspace, so one account can be a manager of one workspace and read-only in another."
+        }
+      />
 
-          <Tabs defaultValue="system" className="mt-6">
-            <TabsList>
-              <TabsTrigger value="system">System roles</TabsTrigger>
-              <TabsTrigger value="workspace">Workspace roles</TabsTrigger>
-            </TabsList>
-            <TabsContent value="system">
-              <RolesPanel scope="system" />
-            </TabsContent>
-            <TabsContent value="workspace">
-              <RolesPanel scope="workspace" />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
+      <Tabs defaultValue="system" className="mt-6">
+        <TabsList>
+          <TabsTrigger value="system">System roles</TabsTrigger>
+          <TabsTrigger value="workspace">Workspace roles</TabsTrigger>
+        </TabsList>
+        <TabsContent value="system">
+          <RolesPanel scope="system" />
+        </TabsContent>
+        <TabsContent value="workspace">
+          <RolesPanel scope="workspace" />
+        </TabsContent>
+      </Tabs>
+    </SettingsLayout>
   );
 }
 
@@ -154,7 +140,7 @@ function RolesPanel({ scope }) {
           className="mt-3 mr-0 mb-4 md:-mb-6 z-10"
           onClick={() => setEditing({})}
         >
-          <Plus className="h-4 w-4" weight="bold" /> New{" "}
+          <Plus className="h-4 w-4" /> New{" "}
           {isWorkspace ? "workspace role" : "role"}
         </CTAButton>
       </div>
@@ -228,7 +214,7 @@ function RolesPanel({ scope }) {
                           variant="secondary"
                           className="gap-x-1 text-[10px]"
                         >
-                          <Star className="h-3 w-3" weight="fill" /> Default
+                          <Star className="h-3 w-3 fill-current" /> Default
                         </Badge>
                       )}
                     </div>
@@ -258,7 +244,7 @@ function RolesPanel({ scope }) {
                         size="sm"
                         onClick={() => setEditing(role)}
                       >
-                        <PencilSimple className="h-4 w-4" /> Edit
+                        <Pencil className="h-4 w-4" /> Edit
                       </Button>
                       {!role.isSystem && (
                         <Button
@@ -267,7 +253,7 @@ function RolesPanel({ scope }) {
                           className="text-red-400 hover:text-red-300"
                           onClick={() => handleDelete(role)}
                         >
-                          <Trash className="h-4 w-4" /> Delete
+                          <Trash2 className="h-4 w-4" /> Delete
                         </Button>
                       )}
                     </div>

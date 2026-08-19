@@ -296,7 +296,7 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
             <div className="h-full w-full overflow-y-auto">
               <div className="flex flex-col min-h-full w-full items-center justify-center py-6">
                 <div className="flex flex-col items-center w-full max-w-[750px]">
-                  <h1 className="text-white text-xl md:text-2xl mb-11 text-center">
+                  <h1 className="text-theme-text-primary text-xl md:text-2xl mb-11 text-center">
                     {t("main-page.greeting")}
                   </h1>
                   <PromptInput
@@ -341,7 +341,7 @@ function NoWorkspacesAssigned() {
     >
       <div className="h-full w-full overflow-y-auto">
         <div className="flex flex-col min-h-full w-full items-center justify-center p-6">
-          <p className="text-white/60 text-sm text-center whitespace-pre-line">
+          <p className="text-theme-text-secondary text-sm text-center whitespace-pre-line">
             {t("home.notAssigned")}
           </p>
         </div>

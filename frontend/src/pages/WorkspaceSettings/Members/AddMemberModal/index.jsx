@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { Search } from "lucide-react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
 import { Table, TableRow } from "@/components/ui/table";
@@ -84,13 +84,12 @@ export default function AddMemberModal({ workspace, users }) {
         <div className="relative">
           <input
             onChange={handleSearch}
-            className="w-[400px] h-[34px] bg-theme-bg-primary rounded-[100px] text-white placeholder:text-theme-text-secondary text-sm px-10 pl-10"
+            className="w-[400px] h-[34px] bg-theme-bg-primary rounded-[100px] text-theme-text-primary placeholder:text-theme-text-secondary text-sm px-10 pl-10"
             placeholder="Search for a user"
           />
-          <MagnifyingGlass
+          <Search
             size={16}
-            weight="bold"
-            className="text-white text-lg absolute left-3 top-1/2 transform -translate-y-1/2"
+            className="text-theme-text-primary text-lg absolute left-3 top-1/2 transform -translate-y-1/2"
           />
         </div>
       </DialogHeader>
@@ -147,7 +146,9 @@ export default function AddMemberModal({ workspace, users }) {
                   <div className="w-2 h-2 bg-white rounded-[2px]" />
                 )}
               </div>
-              <p className="text-white text-sm font-medium">Select All</p>
+              <p className="text-theme-text-primary text-sm font-medium">
+                Select All
+              </p>
             </button>
             {selectedUsers.length > 0 && (
               <button

@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import {
   Table,
   TableBody,
-  TableCell,
+  TableEmptyRow,
   TableHead,
   TableHeader,
   TableRow,
@@ -77,7 +77,7 @@ export default function Members({ workspace }) {
       >
         <TableHeader
           variant="none"
-          className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white/10 border-b border-opacity-60"
+          className="text-theme-text-primary text-opacity-80 text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b border-opacity-60"
         >
           <TableRow variant="none">
             <TableHead
@@ -114,15 +114,7 @@ export default function Members({ workspace }) {
               />
             ))
           ) : (
-            <TableRow variant="none">
-              <TableCell
-                variant="none"
-                className="text-center py-4 text-white/80"
-                colSpan="4"
-              >
-                No workspace members
-              </TableCell>
-            </TableRow>
+            <TableEmptyRow colSpan="4">No workspace members</TableEmptyRow>
           )}
         </TableBody>
       </Table>

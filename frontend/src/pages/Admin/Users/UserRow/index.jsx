@@ -94,7 +94,7 @@ export default function UserRow({
       <TableRow
         variant="none"
         ref={rowRef}
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableHead
           variant="none"

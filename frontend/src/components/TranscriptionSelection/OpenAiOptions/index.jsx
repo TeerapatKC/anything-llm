@@ -36,7 +36,7 @@ export default function OpenAiWhisperOptions({ settings }) {
           Whisper Model
         </Label>
         <Select disabled={true}>
-          <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg w-full p-2.5">
+          <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
             <SelectValue placeholder="Whisper Large" />
           </SelectTrigger>
           <SelectContent />

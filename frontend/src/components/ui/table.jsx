@@ -2,6 +2,14 @@ import * as React from "react";
 import { cva } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 /**
  * Every part takes a `variant`:
@@ -32,7 +40,7 @@ const headerVariants = cva("", {
     variant: {
       default: "[&_tr]:border-b",
       settings:
-        "text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b",
+        "text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-theme-sidebar-border border-b",
       none: "",
     },
   },
@@ -154,6 +162,47 @@ const TableCell = React.forwardRef(({ className, variant, ...props }, ref) => (
 ));
 TableCell.displayName = "TableCell";
 
+/**
+ * The "nothing to show" row every settings table wrote out by hand as a
+ * `<TableRow><TableCell colSpan …className="px-6 py-4 text-center">`. Routing
+ * it through `Empty` gives those states the same media / title / description
+ * hierarchy the rest of the app uses instead of one line of bare text.
+ *
+ * @param {Object} props
+ * @param {number|string} props.colSpan Must span the table's full width.
+ * @param {React.ReactNode} [props.icon]
+ * @param {React.ReactNode} props.children The message.
+ * @param {React.ReactNode} [props.description]
+ * @param {React.ReactNode} [props.action]
+ */
+const TableEmptyRow = React.forwardRef(
+  (
+    { colSpan, icon, children, description, action, className, ...props },
+    ref
+  ) => (
+    <TableRow
+      ref={ref}
+      variant="settings"
+      className={cn("hover:bg-transparent", className)}
+      {...props}
+    >
+      <TableCell variant="none" colSpan={colSpan} className="p-0">
+        <Empty className="py-10">
+          <EmptyHeader>
+            {icon ? <EmptyMedia>{icon}</EmptyMedia> : null}
+            <EmptyTitle>{children}</EmptyTitle>
+            {description ? (
+              <EmptyDescription>{description}</EmptyDescription>
+            ) : null}
+          </EmptyHeader>
+          {action ? <EmptyContent>{action}</EmptyContent> : null}
+        </Empty>
+      </TableCell>
+    </TableRow>
+  )
+);
+TableEmptyRow.displayName = "TableEmptyRow";
+
 const TableCaption = React.forwardRef(({ className, ...props }, ref) => (
   <caption
     ref={ref}
@@ -171,5 +220,6 @@ export {
   TableHead,
   TableRow,
   TableCell,
+  TableEmptyRow,
   TableCaption,
 };

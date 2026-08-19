@@ -1,4 +1,5 @@
 import { v4 } from "uuid";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Area,
   AreaChart,
@@ -37,7 +38,7 @@ import DOMPurify from "dompurify";
 import { memo, useCallback, useState } from "react";
 import { saveAs } from "file-saver";
 import { useGenerateImage } from "recharts-to-png";
-import { CircleNotch, DownloadSimple } from "@phosphor-icons/react";
+import { Download } from "lucide-react";
 
 /** Slice colours for the donut, in the order tremor used them. */
 const DONUT_COLORS = [
@@ -54,7 +55,7 @@ const DONUT_COLORS = [
 function ChartLegend({ label, color, className = "" }) {
   return (
     <div
-      className={`flex items-center gap-x-2 text-xs text-white ${className}`}
+      className={`flex items-center gap-x-2 text-xs text-theme-text-primary ${className}`}
     >
       <span
         className="inline-block h-2 w-2 rounded-full"
@@ -103,7 +104,7 @@ export function Chartable({ props }) {
     switch (chartType) {
       case "area":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -146,7 +147,7 @@ export function Chartable({ props }) {
         );
       case "bar":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -179,7 +180,7 @@ export function Chartable({ props }) {
         );
       case "line":
         return (
-          <div className="bg-theme-bg-primary p-8 pb-12 rounded-xl text-white h-[500px] w-full light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 pb-12 rounded-xl text-theme-text-primary h-[500px] w-full light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -222,7 +223,7 @@ export function Chartable({ props }) {
         );
       case "composed":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -280,7 +281,7 @@ export function Chartable({ props }) {
         );
       case "scatter":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -328,7 +329,7 @@ export function Chartable({ props }) {
         );
       case "pie":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -359,7 +360,7 @@ export function Chartable({ props }) {
         );
       case "radar":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -395,7 +396,7 @@ export function Chartable({ props }) {
         );
       case "radialbar":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -432,7 +433,7 @@ export function Chartable({ props }) {
         );
       case "treemap":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -460,7 +461,7 @@ export function Chartable({ props }) {
         );
       case "funnel":
         return (
-          <div className="bg-theme-bg-primary p-8 rounded-xl text-white light:border light:border-theme-border-primary">
+          <div className="bg-theme-bg-primary p-8 rounded-xl text-theme-text-primary light:border light:border-theme-border-primary">
             <h3 className="text-lg text-theme-text-primary font-medium">
               {title}
             </h3>
@@ -534,13 +535,12 @@ function DownloadGraph({ onClick }) {
       <div className="flex flex-col items-center">
         <div className="p-1 rounded-full border-none">
           {loading ? (
-            <CircleNotch
-              className="text-theme-text-primary w-5 h-5 animate-spin"
+            <Spinner
+              className="text-theme-text-primary"
               aria-label="Downloading image..."
             />
           ) : (
-            <DownloadSimple
-              weight="bold"
+            <Download
               className="text-theme-text-primary w-5 h-5 hover:text-theme-text-primary"
               onClick={handleClick}
               aria-label="Download graph image"

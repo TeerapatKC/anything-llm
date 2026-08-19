@@ -14,12 +14,7 @@ import PerplexitySearchIcon from "./icons/perplexity.png";
 import BraveSearchIcon from "./icons/brave.png";
 import CrwSearchIcon from "./icons/crw.png";
 import YouSearchIcon from "./icons/you.png";
-import {
-  CaretUpDown,
-  MagnifyingGlass,
-  X,
-  ListMagnifyingGlass,
-} from "@phosphor-icons/react";
+import { ChevronsUpDown, ListFilter, Search, X } from "lucide-react";
 import Toggle from "@/components/lib/Toggle";
 import SearchProviderItem from "./SearchProviderItem";
 import WebSearchImage from "@/media/agents/scrape-websites.png";
@@ -208,11 +203,7 @@ export default function AgentWebSearchSelection({
       <div className="flex flex-col gap-y-[18px] max-w-[500px]">
         <div className="flex w-full justify-between items-center">
           <div className="flex items-center gap-x-2">
-            <ListMagnifyingGlass
-              size={24}
-              color="var(--theme-text-primary)"
-              weight="bold"
-            />
+            <ListFilter size={24} color="var(--theme-text-primary)" />
             <label
               htmlFor="name"
               className="text-theme-text-primary text-md font-bold"
@@ -251,9 +242,8 @@ export default function AgentWebSearchSelection({
               <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
                 <div className="w-full flex flex-col gap-y-1">
                   <div className="flex items-center sticky top-0 z-10 border-b border-[#9CA3AF] mx-4 bg-theme-settings-input-bg">
-                    <MagnifyingGlass
+                    <Search
                       size={20}
-                      weight="bold"
                       className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                     />
                     <input
@@ -270,8 +260,7 @@ export default function AgentWebSearchSelection({
                     />
                     <X
                       size={20}
-                      weight="bold"
-                      className="cursor-pointer text-white hover:text-x-button"
+                      className="cursor-pointer text-theme-text-primary hover:text-x-button"
                       onClick={handleXButton}
                     />
                   </div>
@@ -302,7 +291,7 @@ export default function AgentWebSearchSelection({
                     className="w-10 h-10 rounded-md"
                   />
                   <div className="flex flex-col text-left">
-                    <div className="text-sm font-semibold text-white">
+                    <div className="text-sm font-semibold text-theme-text-primary">
                       {selectedSearchProviderObject.name}
                     </div>
                     <div className="mt-1 text-xs text-description">
@@ -310,7 +299,7 @@ export default function AgentWebSearchSelection({
                     </div>
                   </div>
                 </div>
-                <CaretUpDown size={24} weight="bold" className="text-white" />
+                <ChevronsUpDown size={24} className="text-theme-text-primary" />
               </button>
             )}
           </div>

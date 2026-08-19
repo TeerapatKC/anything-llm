@@ -32,10 +32,10 @@
   --radius: 0.5rem;
 
   /*
-   * `secondary` and `accent` are pinned to the flat hex values they replaced in
-   * tailwind.config.js and are intentionally identical in both themes, so the ~30
-   * pre-existing `bg-secondary` / `hover:bg-accent` usages render byte-identically.
-   * Giving them real light-mode values is a follow-up, not part of this change.
+   * `secondary` and `accent` keep the flat hex values they replaced in
+   * tailwind.config.js for dark mode; the light overrides below finally give
+   * them light-mode values. Without those, `hover:bg-accent` on a ghost button
+   * turned it into a near-black chip in the middle of a white page.
    */
   --secondary: 222 10.2% 19.2%; /* #2C2F36 — was colors.secondary */
   --secondary-foreground: 0 0% 100%; /* #ffffff */
@@ -162,8 +162,7 @@
 }
 
 [data-theme="light"] {
-  /* shadcn/ui tokens — light overrides. --secondary/--accent are deliberately
-     absent so they inherit the pinned dark values from :root (see note there). */
+  /* shadcn/ui tokens — light overrides. */
   --background: 0 0% 100%; /* #ffffff */
   --foreground: 180 3.4% 5.7%; /* #0e0f0f */
   --card: 0 0% 100%; /* #ffffff */
@@ -179,6 +178,13 @@
   --border: 0 0% 82.7%; /* #d3d3d3 — --theme-modal-border */
   --input: 216.9 56.5% 95.5%; /* #edf2fa */
   --ring: 198.9 91.1% 48.4%; /* #0ba5ec */
+
+  /* Quiet surfaces: the same #edf2fa the settings inputs use, so a secondary
+     button and a ghost hover read as a tint of the page rather than a hole. */
+  --secondary: 216.9 56.5% 95.5%; /* #edf2fa */
+  --secondary-foreground: 180 3.4% 5.7%; /* #0e0f0f */
+  --accent: 216.9 56.5% 95.5%; /* #edf2fa */
+  --accent-foreground: 180 3.4% 5.7%; /* #0e0f0f */
 
   /* shadcn/ui Sidebar tokens — light overrides, same reuse pattern as :root. */
   --sidebar-background: 0 0% 100%; /* #ffffff — matches --theme-bg-secondary */
@@ -291,21 +297,27 @@
   --theme-button-delete-hover-bg: #fee4e2;
 }
 
-[data-theme="light"] .text-white {
-  color: var(--theme-text-primary);
-}
-
-[data-theme="light"] .text-description,
-[data-theme="light"] .text-white\/60 {
+/*
+ * `.text-white`, `.text-white/60` and `.border-white/10` used to be rewritten
+ * here for light mode. Those rules are gone: the ~700 call sites now name the
+ * token they actually wanted (--theme-text-primary / --theme-text-secondary /
+ * --theme-sidebar-border), which renders identically and no longer silently
+ * outranks a `light:` variant the author put on the same element.
+ *
+ * `.text-description` keeps its override — its dark value (#D2D5DB) is not the
+ * same colour as --theme-text-secondary, so it is not a like-for-like swap.
+ */
+[data-theme="light"] .text-description {
   color: var(--theme-text-secondary);
 }
 
+/*
+ * TODO: this paints a border on *every* element carrying the class, which is
+ * why several pages also set `light:border` explicitly and get two. Replacing
+ * it means auditing the ~116 call sites in a browser; left in place until then.
+ */
 [data-theme="light"] .bg-theme-bg-secondary {
   border: 1px solid var(--theme-sidebar-border);
-}
-
-[data-theme="light"] .border-white\/10 {
-  border-color: var(--theme-sidebar-border);
 }
 
 /*

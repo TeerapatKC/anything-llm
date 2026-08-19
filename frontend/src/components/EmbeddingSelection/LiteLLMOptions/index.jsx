@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
-import { Warning, Info } from "@phosphor-icons/react";
+import { Info, TriangleAlert } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -188,7 +188,10 @@ function EmbeddingModelTooltip() {
     <div className="flex items-center justify-center -mt-3 ml-1">
       <Tooltip>
         <TooltipTrigger asChild>
-          <Warning size={14} className="ml-1 text-orange-500 cursor-pointer" />
+          <TriangleAlert
+            size={14}
+            className="ml-1 text-orange-500 cursor-pointer"
+          />
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[250px] text-xs">
           <p className="text-sm">

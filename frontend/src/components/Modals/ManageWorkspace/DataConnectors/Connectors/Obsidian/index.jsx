@@ -95,7 +95,7 @@ export default function ObsidianOptions() {
         <form className="w-full" onSubmit={handleSubmit}>
           <div className="w-full flex flex-col py-2">
             <div className="w-full flex flex-col gap-4">
-              <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-white mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
+              <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
                 <div className="gap-x-2 flex items-center">
                   <Info className="shrink-0" size={25} />
                   <p className="text-sm">
@@ -125,7 +125,7 @@ export default function ObsidianOptions() {
                     spellCheck={false}
                     readOnly
                   />
-                  <label className="px-3 py-2 bg-theme-settings-input-bg border border-none rounded-lg text-white hover:bg-theme-settings-input-bg/80 cursor-pointer">
+                  <label className="px-3 py-2 bg-theme-settings-input-bg border border-none rounded-lg text-theme-text-primary hover:bg-theme-settings-input-bg/80 cursor-pointer">
                     <FolderOpen size={20} />
                     <input
                       type="file"
@@ -137,14 +137,17 @@ export default function ObsidianOptions() {
                 </div>
                 {selectedFiles.length > 0 && (
                   <>
-                    <p className="text-xs text-white mt-2 font-bold">
+                    <p className="text-xs text-theme-text-primary mt-2 font-bold">
                       {t("connectors.obsidian.selected_files", {
                         count: selectedFiles.length,
                       })}
                     </p>
 
                     {selectedFiles.map((file, i) => (
-                      <p key={i} className="text-xs text-white mt-2">
+                      <p
+                        key={i}
+                        className="text-xs text-theme-text-primary mt-2"
+                      >
                         {file.webkitRelativePath}
                       </p>
                     ))}

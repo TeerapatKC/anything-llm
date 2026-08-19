@@ -39,7 +39,7 @@ export default function OnboardingHome() {
           <OnboardingLogoSVG />
         </div>
 
-        <h1 className="relative font-medium text-white light:text-slate-700 text-[64px] md:text-[96px] lg:text-[160px] leading-none tracking-[-0.06em] select-none">
+        <h1 className="relative font-medium text-theme-text-primary light:text-slate-700 text-[64px] md:text-[96px] lg:text-[160px] leading-none tracking-[-0.06em] select-none">
           {t("onboarding.home.welcome")}
         </h1>
 

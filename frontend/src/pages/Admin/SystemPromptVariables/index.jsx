@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Plus } from "@phosphor-icons/react";
-import Sidebar from "@/components/SettingsSidebar";
+import { Plus } from "lucide-react";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import PageHeader from "@/components/layout/PageHeader";
 import CTAButton from "@/components/lib/CTAButton";
 import VariableRow from "./VariableRow";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -40,99 +41,85 @@ export default function SystemPromptVariables() {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-      >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
-            <div className="items-center flex gap-x-4">
-              <p className="text-lg leading-6 font-bold text-theme-text-primary">
-                System Prompt Variables
-              </p>
-            </div>
-            <p className="text-xs leading-[18px] font-base text-theme-text-secondary">
-              System prompt variables are used to store configuration values
-              that can be referenced in your system prompt to enable dynamic
-              content in your prompts.
-            </p>
-          </div>
+    <SettingsLayout>
+      <PageHeader
+        title={"System Prompt Variables"}
+        description={
+          "System prompt variables are used to store configuration values that can be referenced in your system prompt to enable dynamic content in your prompts."
+        }
+      />
 
-          <div className="w-full justify-end flex">
-            <Dialog
-              open={isOpen}
-              onOpenChange={(open) => (open ? openModal() : closeModal())}
-            >
-              <DialogTrigger asChild>
-                <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
-                  <Plus className="h-4 w-4" weight="bold" /> Add Variable
-                </CTAButton>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
-                <AddVariableModal
-                  closeModal={closeModal}
+      <div className="w-full justify-end flex">
+        <Dialog
+          open={isOpen}
+          onOpenChange={(open) => (open ? openModal() : closeModal())}
+        >
+          <DialogTrigger asChild>
+            <CTAButton className="mt-3 mr-0 mb-4 md:-mb-6 z-10">
+              <Plus className="h-4 w-4" /> Add Variable
+            </CTAButton>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl bg-theme-bg-secondary border-theme-modal-border">
+            <AddVariableModal
+              closeModal={closeModal}
+              onRefresh={fetchVariables}
+            />
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="overflow-x-auto">
+        {loading ? (
+          <Skeleton
+            height="80vh"
+            width="100%"
+            highlightColor="var(--theme-bg-primary)"
+            baseColor="var(--theme-bg-secondary)"
+            count={1}
+            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-8"
+            containerClassName="flex w-full"
+          />
+        ) : variables.length === 0 ? (
+          <div className="text-center py-4 text-theme-text-secondary">
+            No variables found
+          </div>
+        ) : (
+          <Table
+            variant="none"
+            className="w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0"
+          >
+            <TableHeader variant="settings">
+              <TableRow variant="none">
+                <TableHead
+                  variant="none"
+                  scope="col"
+                  className="px-4 py-2 rounded-tl-lg"
+                >
+                  Key
+                </TableHead>
+                <TableHead variant="none" scope="col" className="px-4 py-2">
+                  Value
+                </TableHead>
+                <TableHead variant="none" scope="col" className="px-4 py-2">
+                  Description
+                </TableHead>
+                <TableHead variant="none" scope="col" className="px-4 py-2">
+                  Type
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody variant="none">
+              {variables.map((variable) => (
+                <VariableRow
+                  key={variable.id}
+                  variable={variable}
                   onRefresh={fetchVariables}
                 />
-              </DialogContent>
-            </Dialog>
-          </div>
-
-          <div className="overflow-x-auto">
-            {loading ? (
-              <Skeleton
-                height="80vh"
-                width="100%"
-                highlightColor="var(--theme-bg-primary)"
-                baseColor="var(--theme-bg-secondary)"
-                count={1}
-                className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-8"
-                containerClassName="flex w-full"
-              />
-            ) : variables.length === 0 ? (
-              <div className="text-center py-4 text-theme-text-secondary">
-                No variables found
-              </div>
-            ) : (
-              <Table
-                variant="none"
-                className="w-full text-sm text-left rounded-lg min-w-[640px] border-spacing-0"
-              >
-                <TableHeader variant="settings">
-                  <TableRow variant="none">
-                    <TableHead
-                      variant="none"
-                      scope="col"
-                      className="px-4 py-2 rounded-tl-lg"
-                    >
-                      Key
-                    </TableHead>
-                    <TableHead variant="none" scope="col" className="px-4 py-2">
-                      Value
-                    </TableHead>
-                    <TableHead variant="none" scope="col" className="px-4 py-2">
-                      Description
-                    </TableHead>
-                    <TableHead variant="none" scope="col" className="px-4 py-2">
-                      Type
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody variant="none">
-                  {variables.map((variable) => (
-                    <VariableRow
-                      key={variable.id}
-                      variable={variable}
-                      onRefresh={fetchVariables}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </div>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
-    </div>
+    </SettingsLayout>
   );
 }

@@ -81,7 +81,7 @@ function ZAiModelSelection({ apiKey, settings }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
           Enter a valid API key to view all available models for your account.
         </p>
       </div>
@@ -116,7 +116,7 @@ function ZAiModelSelection({ apiKey, settings }) {
           )}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
         Select the Z.AI model you want to use for your conversations.
       </p>
     </div>

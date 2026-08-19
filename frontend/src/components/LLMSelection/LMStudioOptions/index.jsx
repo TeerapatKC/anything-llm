@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  Info,
-  CaretDown,
-  CaretUp,
-  CircleNotch,
-  Warning,
-} from "@phosphor-icons/react";
+import { Spinner } from "@/components/ui/spinner";
+import { ChevronDown, ChevronUp, Info, TriangleAlert } from "lucide-react";
 import paths from "@/utils/paths";
 import System from "@/models/system";
 import { LMSTUDIO_COMMON_URLS } from "@/utils/constants";
@@ -55,7 +50,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
   return (
     <div className="w-full flex flex-col gap-y-7">
       {showAlert && (
-        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-white mb-6 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary mb-6 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
           <div className="gap-x-2 flex items-center">
             <Info size={12} className="hidden md:visible" />
             <p className="text-sm md:text-base">
@@ -88,9 +83,9 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
-            <CaretUp size={14} className="ml-1" />
+            <ChevronUp size={14} className="ml-1" />
           ) : (
-            <CaretDown size={14} className="ml-1" />
+            <ChevronDown size={14} className="ml-1" />
           )}
         </Button>
       </div>
@@ -114,10 +109,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                 </Tooltip>
               </div>
               {loading ? (
-                <CircleNotch
-                  size={16}
-                  className="text-theme-text-secondary animate-spin"
-                />
+                <Spinner className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (
@@ -251,7 +243,10 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
             <>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Warning size={18} className="text-red-400 cursor-pointer" />
+                  <TriangleAlert
+                    size={18}
+                    className="text-red-400 cursor-pointer"
+                  />
                 </TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">

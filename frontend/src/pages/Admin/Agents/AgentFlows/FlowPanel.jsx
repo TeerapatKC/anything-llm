@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import AgentFlows from "@/models/agentFlows";
 import showToast from "@/utils/toast";
-import { FlowArrow, Gear } from "@phosphor-icons/react";
+import { Settings, Workflow } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
 import Toggle from "@/components/lib/Toggle";
@@ -53,12 +53,12 @@ function ManageFlowMenu({ flow, onDelete }) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="p-1.5 rounded-lg text-white hover:bg-theme-action-menu-item-hover transition-colors duration-300"
+        className="p-1.5 rounded-lg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
       >
-        <Gear className="h-5 w-5" weight="bold" />
+        <Settings className="h-5 w-5" />
       </button>
       {open && (
-        <div className="absolute min-w-[140px] top-full right-0 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-white z-99 md:z-10">
+        <div className="absolute min-w-[140px] top-full right-0 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
           <Button
             variant="menuItem"
             type="button"
@@ -97,8 +97,11 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
         <div className="flex flex-col gap-y-[18px] max-w-[500px]">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center gap-x-2">
-              <FlowArrow size={24} weight="bold" className="text-white" />
-              <label htmlFor="name" className="text-white text-md font-bold">
+              <Workflow size={24} className="text-theme-text-primary" />
+              <label
+                htmlFor="name"
+                className="text-theme-text-primary text-md font-bold"
+              >
                 {flow.name}
               </label>
             </div>
@@ -107,7 +110,7 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
               <ManageFlowMenu flow={flow} onDelete={onDelete} />
             </div>
           </div>
-          <p className="whitespace-pre-wrap text-white text-opacity-60 text-xs font-medium py-1.5">
+          <p className="whitespace-pre-wrap text-theme-text-primary text-opacity-60 text-xs font-medium py-1.5">
             {flow.description || "No description provided"}
           </p>
         </div>

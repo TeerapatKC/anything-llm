@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Wrench } from "@phosphor-icons/react";
+import { Wrench } from "lucide-react";
 import hljs from "highlight.js";
 import { safeJsonParse } from "@/utils/request";
 import { useTheme } from "@/hooks/useTheme";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import { PaneLayout } from "@/components/layout/SettingsLayout";
+import { SpinnerBlock } from "@/components/ui/spinner";
 import System from "@/models/system";
-import PreLoader from "@/components/Preloader";
 import SpeechToTextProvider from "./stt";
 import TextToSpeechProvider from "./tts";
 
@@ -19,26 +19,15 @@ export default function AudioPreference() {
   }, []);
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
+    <PaneLayout>
       {loading ? (
-        <div
-          style={{ height: "100%" }}
-          className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-        >
-          <div className="w-full h-full flex justify-center items-center">
-            <PreLoader />
-          </div>
-        </div>
+        <SpinnerBlock className="h-full" />
       ) : (
-        <div
-          style={{ height: "100%" }}
-          className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-        >
+        <>
           <SpeechToTextProvider settings={settings} />
           <TextToSpeechProvider settings={settings} />
-        </div>
+        </>
       )}
-    </div>
+    </PaneLayout>
   );
 }

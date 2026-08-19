@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from "react-i18next";
-import { Trash, PencilSimple, DotsSixVertical } from "@phosphor-icons/react";
+import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import truncate from "truncate";
 
@@ -49,7 +49,7 @@ export default function RuleRow({
           className="cursor-grab shrink-0 text-zinc-400 light:text-slate-500 hover:text-white light:hover:text-slate-700 transition-colors"
           aria-label={t("model-router.rules.aria-drag-to-reorder")}
         >
-          <DotsSixVertical size={24} weight="bold" />
+          <GripVertical size={24} />
         </div>
       ) : (
         <div className="shrink-0 w-6" />
@@ -61,7 +61,7 @@ export default function RuleRow({
       )}
       <div className="flex flex-col flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium leading-5 text-white light:text-slate-900 truncate">
+          <span className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-900 truncate">
             {rule.title}
           </span>
           {rule.type === "llm" ? (
@@ -91,14 +91,14 @@ export default function RuleRow({
           className="border-none text-zinc-400 light:text-slate-500 hover:text-white light:hover:text-slate-900 transition-colors"
           aria-label={t("model-router.rules.aria-edit-rule")}
         >
-          <PencilSimple size={16} weight="bold" />
+          <Pencil size={16} />
         </button>
         <button
           onClick={onDelete}
           className="border-none text-zinc-400 light:text-slate-500 hover:text-red-400 light:hover:text-red-500 transition-colors"
           aria-label={t("model-router.rules.aria-delete-rule")}
         >
-          <Trash size={16} weight="bold" />
+          <Trash2 size={16} />
         </button>
       </div>
     </div>

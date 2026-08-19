@@ -1,6 +1,7 @@
 import { memo, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { saveAs } from "file-saver";
-import { DownloadSimple, CircleNotch } from "@phosphor-icons/react";
+import { Download } from "lucide-react";
 import { humanFileSize } from "@/utils/numbers";
 import StorageFiles from "@/models/files";
 
@@ -39,7 +40,7 @@ function FileDownloadCard({ props }) {
               {badge}
             </div>
             <div className="flex flex-col min-w-0">
-              <p className="text-white light:text-slate-900 text-sm font-medium truncate leading-snug">
+              <p className="text-theme-text-primary light:text-slate-900 text-sm font-medium truncate leading-snug">
                 {filename || "Unknown file"}
               </p>
               <p className="text-zinc-400 light:text-slate-500 text-xs leading-snug">
@@ -52,13 +53,9 @@ function FileDownloadCard({ props }) {
           <button
             onClick={handleDownload}
             disabled={downloading}
-            className="flex items-center gap-x-2 px-4 py-2 rounded-lg border border-zinc-600 light:border-theme-sidebar-border hover:bg-zinc-700 light:hover:bg-theme-bg-secondary transition-colors text-white light:text-theme-text-primary text-sm font-medium flex-shrink-0 ml-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-x-2 px-4 py-2 rounded-lg border border-zinc-600 light:border-theme-sidebar-border hover:bg-zinc-700 light:hover:bg-theme-bg-secondary transition-colors text-theme-text-primary light:text-theme-text-primary text-sm font-medium flex-shrink-0 ml-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {downloading ? (
-              <CircleNotch size={16} weight="bold" className="animate-spin" />
-            ) : (
-              <DownloadSimple size={16} weight="bold" />
-            )}
+            {downloading ? <Spinner /> : <Download size={16} />}
             <span>{downloading ? "Downloading..." : "Download"}</span>
           </button>
         </div>

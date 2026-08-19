@@ -1,4 +1,4 @@
-import { Info } from "@phosphor-icons/react";
+import { Info } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Tooltip,

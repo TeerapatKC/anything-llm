@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import { X } from "@phosphor-icons/react";
+import { X } from "lucide-react";
 import {
   combineLikeSources,
   CitationDetailModal,
@@ -43,15 +43,15 @@ export default function SourcesSidebar() {
           style={{ maxHeight: "calc(100% - 88px)" }}
         >
           <div className="flex items-start justify-between">
-            <p className="font-medium text-base leading-6 text-white light:text-slate-900">
+            <p className="font-medium text-base leading-6 text-theme-text-primary light:text-slate-900">
               {t("chat_window.sources")}
             </p>
             <button
               onClick={closeSidebar}
               type="button"
-              className="text-white/60 light:text-slate-400 hover:text-white light:hover:text-slate-900 transition-colors border-none bg-transparent cursor-pointer"
+              className="text-theme-text-secondary light:text-slate-400 hover:text-white light:hover:text-slate-900 transition-colors border-none bg-transparent cursor-pointer"
             >
-              <X size={16} weight="bold" />
+              <X size={16} />
             </button>
           </div>
           <div className="flex flex-col gap-3 overflow-y-auto no-scroll">

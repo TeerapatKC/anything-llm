@@ -103,7 +103,7 @@ export default function EditUserModal({
               required={true}
               autoComplete="off"
             />
-            <p className="mt-2 text-xs text-white/60">
+            <p className="mt-2 text-xs text-theme-text-secondary">
               {t("common.username_requirements")}
             </p>
           </div>
@@ -121,7 +121,7 @@ export default function EditUserModal({
               required={true}
               autoComplete="off"
             />
-            <p className="mt-2 text-xs text-white/60">
+            <p className="mt-2 text-xs text-theme-text-secondary">
               Passwords are not set here - use "Reset password" on the user list
               to issue a new one.
             </p>

@@ -1,4 +1,4 @@
-import { CaretLeft, CaretRight, X } from "@phosphor-icons/react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 const NAV_BUTTON_CLASS =
@@ -6,7 +6,7 @@ const NAV_BUTTON_CLASS =
 
 function QuestionText({ children }) {
   return (
-    <p className="flex-1 min-w-0 text-white light:text-slate-900 text-sm font-medium leading-5 break-words">
+    <p className="flex-1 min-w-0 text-theme-text-primary light:text-slate-900 text-sm font-medium leading-5 break-words">
       {children}
     </p>
   );
@@ -23,7 +23,7 @@ function PaginationControls({ index, total, onPrev, onNext, isFirst, isLast }) {
         aria-label={t("chat_window.agent_invocation.clarifying_prev_aria")}
         className={NAV_BUTTON_CLASS}
       >
-        <CaretLeft size={16} />
+        <ChevronLeft size={16} />
       </button>
       <span className="text-xs text-zinc-400 light:text-zinc-400 leading-4 whitespace-nowrap select-none">
         {t("chat_window.agent_invocation.clarifying_pagination", {
@@ -38,7 +38,7 @@ function PaginationControls({ index, total, onPrev, onNext, isFirst, isLast }) {
         aria-label={t("chat_window.agent_invocation.clarifying_next_aria")}
         className={NAV_BUTTON_CLASS}
       >
-        <CaretRight size={16} />
+        <ChevronRight size={16} />
       </button>
     </div>
   );

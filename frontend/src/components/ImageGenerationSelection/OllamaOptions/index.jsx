@@ -1,4 +1,5 @@
-import { CaretDown, CaretUp, CircleNotch, Info } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp, Info } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import {
   Tooltip,
   TooltipContent,
@@ -43,7 +44,7 @@ export default function OllamaImageOptions({ settings }) {
         />
         <ImageDimensionSelection provider="ollama-imggen" settings={settings} />
       </div>
-      <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
+      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60">
         Ollama image generation is experimental and only available on macOS.
         Only models that report image generation support will be listed.
       </p>
@@ -57,9 +58,9 @@ export default function OllamaImageOptions({ settings }) {
         >
           {showAdvancedControls ? "Hide" : "Show"} advanced settings
           {showAdvancedControls ? (
-            <CaretUp size={14} className="ml-1" />
+            <ChevronUp size={14} className="ml-1" />
           ) : (
-            <CaretDown size={14} className="ml-1" />
+            <ChevronDown size={14} className="ml-1" />
           )}
         </Button>
       </div>
@@ -83,10 +84,7 @@ export default function OllamaImageOptions({ settings }) {
                 </Tooltip>
               </div>
               {loading ? (
-                <CircleNotch
-                  size={16}
-                  className="text-theme-text-secondary animate-spin"
-                />
+                <Spinner className="text-theme-text-secondary" />
               ) : (
                 <>
                   {!basePathValue.value && (

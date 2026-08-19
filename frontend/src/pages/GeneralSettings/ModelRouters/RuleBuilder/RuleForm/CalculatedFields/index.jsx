@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus, X } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -152,9 +152,9 @@ export default function CalculatedFields({
         type="button"
         onClick={addCondition}
         aria-label={t("model-router.rule-form.add-condition")}
-        className="border-none mt-3 bg-zinc-800 light:bg-slate-900 text-white light:text-white rounded-md p-1 hover:opacity-90 transition-opacity"
+        className="border-none mt-3 bg-zinc-800 light:bg-slate-900 text-theme-text-primary light:text-white rounded-md p-1 hover:opacity-90 transition-opacity"
       >
-        <Plus size={16} weight="bold" />
+        <Plus size={16} />
       </button>
     </div>
   );
@@ -165,7 +165,7 @@ function LogicBadge({ value, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="border-none shrink-0 self-start bg-zinc-700 light:bg-slate-200 text-white light:text-slate-950 text-xs font-medium leading-4 tracking-[1.2px] uppercase px-2.5 py-1.5 rounded-md hover:opacity-80 transition-opacity"
+      className="border-none shrink-0 self-start bg-zinc-700 light:bg-slate-200 text-theme-text-primary light:text-slate-950 text-xs font-medium leading-4 tracking-[1.2px] uppercase px-2.5 py-1.5 rounded-md hover:opacity-80 transition-opacity"
     >
       {value}
     </button>
@@ -220,7 +220,7 @@ function ConditionRow({
             onValueChange={handlePropertyChange}
             required
           >
-            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
+            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
               <SelectValue
                 placeholder={t("model-router.rule-form.property-select")}
               />
@@ -261,7 +261,7 @@ function ConditionRow({
           aria-label={t("model-router.rule-form.remove-condition")}
           className={`border-none shrink-0 self-start ${showLabels ? "mt-[34px]" : "mt-2"} text-zinc-400 light:text-slate-500 hover:text-red-400 light:hover:text-red-500 transition-colors`}
         >
-          <X size={16} weight="bold" />
+          <X size={16} />
         </button>
       )}
     </div>
@@ -272,7 +272,7 @@ function FieldColumn({ label, children }) {
   return (
     <div className="flex flex-col gap-y-1.5">
       {label && (
-        <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+        <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
           {label}
         </label>
       )}
@@ -285,7 +285,7 @@ function BooleanValueField({ value, onChange }) {
   const { t } = useTranslation();
   return (
     <Select value={value || "true"} onValueChange={onChange} required>
-      <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
+      <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
         <SelectValue placeholder="Select an option" />
       </SelectTrigger>
       <SelectContent>
@@ -313,7 +313,7 @@ function ComparatorAndValueFields({ condition, onChange, showLabels }) {
           onValueChange={(value) => onChange({ comparator: value })}
           required
         >
-          <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
+          <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
             <SelectValue
               placeholder={t("model-router.rule-form.comparator-select")}
             />
@@ -341,7 +341,7 @@ function ComparatorAndValueFields({ condition, onChange, showLabels }) {
             condition.property,
             condition.comparator
           )}
-          className={`bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5 ${
+          className={`bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5 ${
             condition.comparator === "matches" ? "font-mono" : ""
           }`}
           required

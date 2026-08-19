@@ -134,7 +134,7 @@ export default function LLMProviderModelPicker({
 
   return (
     <div className="flex flex-col gap-y-1.5">
-      <label className="text-sm font-medium leading-5 text-white light:text-slate-950">
+      <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
         {label}
       </label>
       {description && (
@@ -150,7 +150,7 @@ export default function LLMProviderModelPicker({
             onValueChange={handleProviderChange}
             required
           >
-            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
+            <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
               <SelectValue
                 placeholder={t("model-router.provider-picker.select-provider")}
               />
@@ -189,7 +189,7 @@ export default function LLMProviderModelPicker({
               onValueChange={setSelectedModel}
               required
             >
-              <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
+              <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
                 <SelectValue
                   placeholder={t("model-router.provider-picker.select-model")}
                 />
@@ -228,7 +228,7 @@ export default function LLMProviderModelPicker({
                   : t("model-router.provider-picker.select-provider-first")
               }
               disabled={!selectedProvider}
-              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-white light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5 disabled:opacity-50"
+              className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 placeholder:text-zinc-400 light:placeholder:text-slate-400 text-sm rounded-[8px] outline-none block w-full h-8 px-3.5 disabled:opacity-50"
               required
             />
           )}

@@ -1,4 +1,4 @@
-import { DotsThreeVertical } from "@phosphor-icons/react";
+import { EllipsisVertical } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import PromptHistory from "@/models/promptHistory";
 import { useTranslation } from "react-i18next";
@@ -57,17 +57,17 @@ export default function PromptHistoryItem({
   }, [showMenu]);
 
   return (
-    <div className="text-white">
+    <div className="text-theme-text-primary">
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
       <div className="flex items-center justify-between">
         <div className="text-xs">
           {user && (
             <>
               <span className="text-primary-button">{user.username}</span>{" "}
-              <span className="mx-1 text-white">•</span>
+              <span className="mx-1 text-theme-text-primary">•</span>
             </>
           )}
-          <span className="text-white opacity-50 light:opacity-100">
+          <span className="text-theme-text-primary opacity-50 light:opacity-100">
             {moment(modifiedAt).fromNow()}
           </span>
         </div>
@@ -86,7 +86,7 @@ export default function PromptHistoryItem({
               className="border-none text-theme-text-secondary cursor-pointer hover:text-primary-button flex items-center justify-center"
               onClick={() => setShowMenu(!showMenu)}
             >
-              <DotsThreeVertical size={16} weight="bold" />
+              <EllipsisVertical size={16} />
             </button>
             {showMenu && (
               <div
@@ -95,7 +95,7 @@ export default function PromptHistoryItem({
               >
                 <button
                   type="button"
-                  className="px-[10px] py-[6px] text-sm text-white hover:bg-theme-sidebar-item-hover rounded-t-lg cursor-pointer border-none w-full text-left whitespace-nowrap"
+                  className="px-[10px] py-[6px] text-sm text-theme-text-primary hover:bg-theme-sidebar-item-hover rounded-t-lg cursor-pointer border-none w-full text-left whitespace-nowrap"
                   onClick={() => {
                     setShowMenu(false);
                     onPublishClick(prompt);
@@ -105,7 +105,7 @@ export default function PromptHistoryItem({
                 </button>
                 <button
                   type="button"
-                  className="px-[10px] py-[6px] text-sm text-white hover:bg-red-500/60 light:hover:bg-red-300/80 rounded-b-lg cursor-pointer border-none w-full text-left whitespace-nowrap"
+                  className="px-[10px] py-[6px] text-sm text-theme-text-primary hover:bg-red-500/60 light:hover:bg-red-300/80 rounded-b-lg cursor-pointer border-none w-full text-left whitespace-nowrap"
                   onClick={() => {
                     setShowMenu(false);
                     deleteHistory(id);

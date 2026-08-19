@@ -64,18 +64,18 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
               type="text"
               defaultValue={apiKey}
               disabled={true}
-              className="border-none bg-theme-settings-input-bg w-full text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block p-2.5"
+              className="border-none bg-theme-settings-input-bg w-full text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg block p-2.5"
             />
           )}
           <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
             Warning: this API key will allow access to all workspaces associated
             with your account. Please share it cautiously.
           </p>
-          <p className="text-white text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
             After clicking "Create API Key", AnythingLLM will attempt to connect
             to your browser extension automatically.
           </p>
-          <p className="text-white text-opacity-60 text-xs md:text-sm">
+          <p className="text-theme-text-primary text-opacity-60 text-xs md:text-sm">
             If you see "Connected to AnythingLLM" in the extension, the
             connection was successful. If not, please copy the connection string
             and paste it into the extension manually.

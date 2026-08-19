@@ -1,7 +1,7 @@
 import { useState } from "react";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
-import { CaretDown } from "@phosphor-icons/react";
+import { ChevronDown } from "lucide-react";
 import "highlight.js/styles/github-dark.css";
 import DOMPurify from "@/utils/chat/purify";
 
@@ -32,9 +32,8 @@ const ThoughtBubble = ({ thought }) => {
         onClick={() => setIsExpanded(!isExpanded)}
         className="cursor-pointer flex items-center gap-x-2 text-theme-text-secondary hover:text-theme-text-primary transition-colors mb-2"
       >
-        <CaretDown
+        <ChevronDown
           size={14}
-          weight="bold"
           className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
         />
         <span className="text-xs font-medium">View thoughts</span>

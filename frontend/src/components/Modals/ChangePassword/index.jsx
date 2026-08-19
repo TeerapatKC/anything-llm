@@ -109,7 +109,7 @@ export function ChangePasswordForm({
           minLength={8}
           autoComplete="new-password"
         />
-        <p className="mt-2 text-xs text-white/60">
+        <p className="mt-2 text-xs text-theme-text-secondary">
           {t("password_change.password_requirements")}
         </p>
       </div>

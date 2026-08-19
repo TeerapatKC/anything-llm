@@ -51,7 +51,9 @@ export default function AddPresetModal({ isOpen, onClose, onSave }) {
                   {t("chat_window.command")}
                 </Label>
                 <div className="flex items-center">
-                  <span className="text-white text-sm mr-2 font-bold">/</span>
+                  <span className="text-theme-text-primary text-sm mr-2 font-bold">
+                    /
+                  </span>
                   <Input
                     variant="settings"
                     name="command"

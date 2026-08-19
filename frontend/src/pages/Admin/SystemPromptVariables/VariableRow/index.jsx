@@ -6,7 +6,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import EditVariableModal from "./EditVariableModal";
 import { titleCase } from "text-case";
 import truncate from "truncate";
-import { Trash } from "@phosphor-icons/react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -77,7 +77,7 @@ export default function VariableRow({ variable, onRefresh }) {
       <TableRow
         variant="none"
         ref={rowRef}
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableHead
           variant="none"
@@ -114,7 +114,7 @@ export default function VariableRow({ variable, onRefresh }) {
                 Edit
               </button>
               <Button variant="danger" onClick={handleDelete}>
-                <Trash className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </>
           )}

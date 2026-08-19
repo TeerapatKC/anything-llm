@@ -1,13 +1,9 @@
 import CTAButton from "@/components/lib/CTAButton";
+import { Spinner } from "@/components/ui/spinner";
 import CommunityHubImportItemSteps from "../..";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import {
-  CaretLeft,
-  CaretRight,
-  CircleNotch,
-  Warning,
-} from "@phosphor-icons/react";
+import { ChevronLeft, ChevronRight, TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import renderMarkdown from "@/utils/chat/markdown";
 import DOMPurify from "dompurify";
@@ -37,10 +33,10 @@ export default function AgentSkill({ item, settings, setStep }) {
 
   return (
     <div className="flex flex-col mt-4 gap-y-4">
-      <div className="border border-white/10 light:border-orange-500/20 my-2 flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary light:text-orange-600 mb-4 bg-orange-800/30 light:bg-orange-500/10 rounded-lg px-4 py-2">
+      <div className="border border-theme-sidebar-border light:border-orange-500/20 my-2 flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary light:text-orange-600 mb-4 bg-orange-800/30 light:bg-orange-500/10 rounded-lg px-4 py-2">
         <div className="flex flex-col gap-y-2">
           <div className="gap-x-2 flex items-center">
-            <Warning size={25} />
+            <TriangleAlert size={25} />
             <h1 className="text-lg font-semibold">
               {" "}
               Only import agent skills you trust{" "}
@@ -60,7 +56,7 @@ export default function AgentSkill({ item, settings, setStep }) {
           Review Agent Skill "{item.name}"
         </h2>
         {item.creatorUsername && (
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-theme-text-secondary light:text-theme-text-secondary text-xs font-mono">
             Created by{" "}
             <a
               href={paths.communityHub.profile(item.creatorUsername)}
@@ -106,7 +102,7 @@ export default function AgentSkill({ item, settings, setStep }) {
         className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
         onClick={importAgentSkill}
       >
-        {loading ? <CircleNotch size={16} className="animate-spin" /> : null}
+        {loading ? <Spinner /> : null}
         {loading ? "Importing..." : "Import agent skill"}
       </CTAButton>
     </div>
@@ -150,24 +146,24 @@ function FileReview({ item }) {
         <div className="flex justify-between items-center">
           <button
             type="button"
-            className={`border-none bg-black/70 light:bg-slate-200 rounded-md p-1 text-white/60 light:text-theme-text-secondary text-xs font-mono ${
+            className={`border-none bg-black/70 light:bg-slate-200 rounded-md p-1 text-theme-text-secondary light:text-theme-text-secondary text-xs font-mono ${
               index === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={handlePrevious}
           >
-            <CaretLeft size={16} />
+            <ChevronLeft size={16} />
           </button>
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-theme-text-secondary light:text-theme-text-secondary text-xs font-mono">
             {file.name} ({index + 1} of {files.length} files)
           </p>
           <button
             type="button"
-            className={`border-none bg-black/70 light:bg-slate-200 rounded-md p-1 text-white/60 light:text-theme-text-secondary text-xs font-mono ${
+            className={`border-none bg-black/70 light:bg-slate-200 rounded-md p-1 text-theme-text-secondary light:text-theme-text-secondary text-xs font-mono ${
               index === files.length - 1 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             onClick={handleNext}
           >
-            <CaretRight size={16} />
+            <ChevronRight size={16} />
           </button>
         </div>
         <span

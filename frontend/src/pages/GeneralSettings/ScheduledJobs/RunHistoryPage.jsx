@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import Sidebar from "@/components/SettingsSidebar";
-import { ArrowLeft } from "@phosphor-icons/react";
+import SettingsLayout from "@/components/layout/SettingsLayout";
+import { ArrowLeft } from "lucide-react";
 import ScheduledJobs from "@/models/scheduledJobs";
 import usePolling from "@/hooks/usePolling";
 import showToast from "@/utils/toast";
@@ -130,35 +130,27 @@ function RunHistoryLayout({ job, children }) {
   const navigate = useNavigate();
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
-      >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-2 pb-6 border-white/10 light:border-slate-300 border-b-2">
-            <button
-              type="button"
-              onClick={() => navigate(paths.settings.scheduledJobs())}
-              className="border-none flex items-center gap-2 text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 text-sm transition-colors w-fit"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t("scheduledJobs.runHistory.back")}
-            </button>
-            <p className="text-lg leading-7 font-semibold text-zinc-50 light:text-slate-950">
-              {t("scheduledJobs.runHistory.title", {
-                name: job?.name || "...",
-              })}
-            </p>
-            <p className="text-xs text-zinc-400 light:text-slate-600">
-              {t("scheduledJobs.runHistory.schedule")}{" "}
-              <code>{humanizeCron(job?.schedule, i18n.language) || "—"}</code>
-            </p>
-          </div>
-          {children}
-        </div>
+    <SettingsLayout>
+      <div className="w-full flex flex-col gap-y-2 pb-6 border-theme-sidebar-border light:border-slate-300 border-b-2">
+        <button
+          type="button"
+          onClick={() => navigate(paths.settings.scheduledJobs())}
+          className="border-none flex items-center gap-2 text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 text-sm transition-colors w-fit"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          {t("scheduledJobs.runHistory.back")}
+        </button>
+        <p className="text-lg leading-7 font-semibold text-zinc-50 light:text-slate-950">
+          {t("scheduledJobs.runHistory.title", {
+            name: job?.name || "...",
+          })}
+        </p>
+        <p className="text-xs text-zinc-400 light:text-slate-600">
+          {t("scheduledJobs.runHistory.schedule")}{" "}
+          <code>{humanizeCron(job?.schedule, i18n.language) || "—"}</code>
+        </p>
       </div>
-    </div>
+      {children}
+    </SettingsLayout>
   );
 }

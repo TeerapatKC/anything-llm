@@ -1,10 +1,11 @@
 import UploadFile from "../UploadFile";
+import { Spinner } from "@/components/ui/spinner";
 import PreLoader from "@/components/Preloader";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import FolderRow from "./FolderRow";
 import System from "@/models/system";
-import { Loader2, Search, Plus, Trash2, FolderInput } from "lucide-react";
+import { Search, Plus, Trash2, FolderInput } from "lucide-react";
 import Document from "@/models/document";
 import showToast from "@/utils/toast";
 import FolderSelectionPopup from "./FolderSelectionPopup";
@@ -283,7 +284,10 @@ export default function Directory({
                 className="pl-9 w-[200px] h-9"
               />
               {searching ? (
-                <Loader2 className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 animate-spin text-theme-text-secondary" />
+                <Spinner
+                  size="xs"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-theme-text-secondary"
+                />
               ) : (
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-theme-text-secondary" />
               )}
@@ -365,7 +369,7 @@ export default function Directory({
           {/* Non-blocking status strip - mutations never blank the tree. */}
           {!!busyMessage && (
             <div className="absolute top-8 left-0 right-0 z-20 flex items-center justify-center gap-x-2 bg-theme-bg-secondary/95 border-b border-theme-modal-border py-1.5">
-              <Loader2 className="h-3 w-3 animate-spin" />
+              <Spinner size="xs" />
               <p className="text-theme-text-primary text-xs font-medium">
                 {busyMessage}
               </p>

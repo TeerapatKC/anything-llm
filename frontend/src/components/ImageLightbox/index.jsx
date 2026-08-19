@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X, CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 const OPEN_EVENT = "open-image-lightbox";
 
@@ -64,10 +64,10 @@ export default function ImageLightbox() {
       <button
         type="button"
         onClick={close}
-        className="absolute top-4 right-4 p-2 text-white light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
+        className="absolute top-4 right-4 p-2 text-theme-text-primary light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
         aria-label="Close lightbox"
       >
-        <X size={24} weight="bold" />
+        <X size={24} />
       </button>
 
       {images.length > 1 && (
@@ -78,10 +78,10 @@ export default function ImageLightbox() {
               e.stopPropagation();
               handlePrevious();
             }}
-            className="absolute left-4 p-3 text-white light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
+            className="absolute left-4 p-3 text-theme-text-primary light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
             aria-label="Previous image"
           >
-            <CaretLeft size={24} weight="bold" />
+            <ChevronLeft size={24} />
           </button>
           <button
             type="button"
@@ -89,10 +89,10 @@ export default function ImageLightbox() {
               e.stopPropagation();
               handleNext();
             }}
-            className="absolute right-4 p-3 text-white light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
+            className="absolute right-4 p-3 text-theme-text-primary light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
             aria-label="Next image"
           >
-            <CaretRight size={24} weight="bold" />
+            <ChevronRight size={24} />
           </button>
         </>
       )}

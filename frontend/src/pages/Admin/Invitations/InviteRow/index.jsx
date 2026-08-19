@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { titleCase } from "text-case";
 import Admin from "@/models/admin";
-import { Trash } from "@phosphor-icons/react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -50,7 +50,7 @@ export default function InviteRow({ invite }) {
       <TableRow
         variant="none"
         ref={rowRef}
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableCell
           variant="none"
@@ -84,7 +84,7 @@ export default function InviteRow({ invite }) {
                 {copied ? "Copied" : "Copy Invite Link"}
               </button>
               <Button variant="danger" onClick={handleDelete}>
-                <Trash className="h-5 w-5" />
+                <Trash2 className="h-5 w-5" />
               </Button>
             </>
           )}

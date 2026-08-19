@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
 import AgentLLMItem from "./AgentLLMItem";
 import { ALL_LLM_PROVIDERS } from "@/pages/GeneralSettings/LLMPreference";
-import { CaretUpDown, Gauge, MagnifyingGlass, X } from "@phosphor-icons/react";
+import { ChevronsUpDown, Gauge, Search, X } from "lucide-react";
 import AgentModelSelection from "../AgentModelSelection";
 import { useTranslation } from "react-i18next";
 
@@ -109,7 +109,7 @@ export default function AgentLLMSelection({
   return (
     <div className="flex flex-col gap-y-[8px]">
       {WARN_PERFORMANCE.includes(selectedLLM) && (
-        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-white bg-blue-800/30 w-fit rounded-lg px-4 py-2">
+        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary bg-blue-800/30 w-fit rounded-lg px-4 py-2">
           <div className="gap-x-2 flex items-center">
             <Gauge className="shrink-0" size={25} />
             <p className="text-sm">{t("agent.performance-warning")}</p>
@@ -121,7 +121,7 @@ export default function AgentLLMSelection({
         <label htmlFor="name" className="block input-label">
           {t("agent.provider.title")}
         </label>
-        <p className="text-white text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
           {t("agent.provider.description")}
         </p>
       </div>
@@ -138,9 +138,8 @@ export default function AgentLLMSelection({
           <div className="absolute top-0 left-0 w-full max-w-[640px] max-h-[310px] min-h-[64px] bg-theme-settings-input-bg rounded-lg flex flex-col justify-between cursor-pointer border-2 border-primary-button z-20">
             <div className="w-full flex flex-col gap-y-1">
               <div className="flex items-center sticky top-0 z-10 border-b border-[#9CA3AF] mx-4 bg-theme-settings-input-bg">
-                <MagnifyingGlass
+                <Search
                   size={20}
-                  weight="bold"
                   className="absolute left-4 z-30 text-theme-text-primary -ml-4 my-2"
                 />
                 <input
@@ -157,7 +156,6 @@ export default function AgentLLMSelection({
                 />
                 <X
                   size={20}
-                  weight="bold"
                   className="cursor-pointer text-theme-text-primary hover:text-x-button"
                   onClick={handleXButton}
                 />
@@ -191,7 +189,7 @@ export default function AgentLLMSelection({
                 className="w-10 h-10 rounded-md"
               />
               <div className="flex flex-col text-left">
-                <div className="text-sm font-semibold text-white">
+                <div className="text-sm font-semibold text-theme-text-primary">
                   {selectedLLMObject.name}
                 </div>
                 <div className="mt-1 text-xs text-description">
@@ -199,7 +197,7 @@ export default function AgentLLMSelection({
                 </div>
               </div>
             </div>
-            <CaretUpDown size={24} weight="bold" className="text-white" />
+            <ChevronsUpDown size={24} className="text-theme-text-primary" />
           </button>
         )}
       </div>

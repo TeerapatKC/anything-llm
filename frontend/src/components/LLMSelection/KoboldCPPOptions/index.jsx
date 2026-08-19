@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
 import { KOBOLDCPP_COMMON_URLS } from "@/utils/constants";
-import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -67,7 +67,7 @@ export default function KoboldCPPOptions({ settings }) {
             required={true}
             autoComplete="off"
           />
-          <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
             Maximum number of tokens for context and response.
           </p>
         </div>
@@ -87,7 +87,7 @@ export default function KoboldCPPOptions({ settings }) {
             required={true}
             autoComplete="off"
           />
-          <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+          <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
             Maximum number of tokens for the response.
           </p>
         </div>
@@ -102,9 +102,9 @@ export default function KoboldCPPOptions({ settings }) {
         >
           {showAdvancedControls ? "Hide" : "Show"} Manual Endpoint Input
           {showAdvancedControls ? (
-            <CaretUp size={14} className="ml-1" />
+            <ChevronUp size={14} className="ml-1" />
           ) : (
-            <CaretDown size={14} className="ml-1" />
+            <ChevronDown size={14} className="ml-1" />
           )}
         </Button>
       </div>
@@ -138,7 +138,7 @@ export default function KoboldCPPOptions({ settings }) {
               onChange={basePath.onChange}
               onBlur={basePath.onBlur}
             />
-            <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+            <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
               Enter the URL where KoboldCPP is running.
             </p>
           </div>
@@ -194,7 +194,7 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
           </SelectTrigger>
           <SelectContent />
         </Select>
-        <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+        <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
           Select the KoboldCPP model you want to use. Models will load after
           entering a valid KoboldCPP URL.
         </p>
@@ -223,7 +223,7 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
           ))}
         </SelectContent>
       </Select>
-      <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
+      <p className="text-xs leading-[18px] font-base text-theme-text-primary text-opacity-60 mt-2">
         Choose the KoboldCPP model you want to use for your conversations.
       </p>
     </div>

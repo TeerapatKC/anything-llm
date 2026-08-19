@@ -2,7 +2,7 @@ import PreLoader from "@/components/Preloader";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
-import { Plus, X } from "@phosphor-icons/react";
+import { Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 
@@ -110,10 +110,10 @@ export default function SuggestedChatMessages({ slug }) {
         <label className="block input-label">
           {t("general.message.title")}
         </label>
-        <p className="text-white text-opacity-60 text-xs font-medium py-1.5">
+        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium py-1.5">
           {t("general.message.description")}
         </p>
-        <div className="text-white text-opacity-60 text-sm font-medium">
+        <div className="text-theme-text-primary text-opacity-60 text-sm font-medium">
           <PreLoader size="4" />
         </div>
       </div>
@@ -125,12 +125,12 @@ export default function SuggestedChatMessages({ slug }) {
         <label className="block input-label">
           {t("general.message.title")}
         </label>
-        <p className="text-white text-opacity-60 text-xs font-medium">
+        <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
           {t("general.message.description")}
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-white/60 text-xs w-full justify-center max-w-[600px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-theme-text-secondary text-xs w-full justify-center max-w-[600px]">
         {suggestedMessages.map((suggestion, index) => (
           <div key={index} className="relative w-full">
             <button
@@ -166,7 +166,7 @@ export default function SuggestedChatMessages({ slug }) {
             </Label>
             <input
               placeholder="Message"
-              className="border-none bg-theme-settings-input-bg text-white placeholder:text-white/20 text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block p-2.5 w-full"
+              className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-white/20 text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block p-2.5 w-full"
               value={newMessage.message}
               name="message"
               onChange={onEditChange}
@@ -178,10 +178,9 @@ export default function SuggestedChatMessages({ slug }) {
         <button
           type="button"
           onClick={addMessage}
-          className="flex gap-x-2 items-center justify-start text-white text-sm hover:text-sky-400 transition-all duration-300"
+          className="flex gap-x-2 items-center justify-start text-theme-text-primary text-sm hover:text-sky-400 transition-all duration-300"
         >
-          {t("general.message.add")}{" "}
-          <Plus className="" size={24} weight="fill" />
+          {t("general.message.add")} <Plus className="fill-current" size={24} />
         </button>
       )}
 
@@ -189,7 +188,7 @@ export default function SuggestedChatMessages({ slug }) {
         <div className="flex justify-start">
           <button
             type="button"
-            className="transition-all duration-300 border border-slate-200 px-4 py-2 rounded-lg text-white text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
+            className="transition-all duration-300 border border-slate-200 px-4 py-2 rounded-lg text-theme-text-primary text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
             onClick={handleSaveSuggestedMessages}
           >
             {t("general.message.save")}

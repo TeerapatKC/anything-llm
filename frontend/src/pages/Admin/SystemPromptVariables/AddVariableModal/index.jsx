@@ -62,7 +62,7 @@ export default function AddVariableModal({ closeModal, onRefresh }) {
               autoComplete="off"
               pattern="^[a-zA-Z0-9_]+$"
             />
-            <p className="mt-2 text-xs text-white/60">
+            <p className="mt-2 text-xs text-theme-text-secondary">
               Key must be unique and will be used in prompts as {"{key}"}. Only
               letters, numbers and underscores are allowed.
             </p>

@@ -1,5 +1,5 @@
 import React, { memo, useLayoutEffect, useRef, useState } from "react";
-import { Info, Warning } from "@phosphor-icons/react";
+import { Info, TriangleAlert } from "lucide-react";
 import Actions from "./Actions";
 import renderMarkdown from "@/utils/chat/markdown";
 import Citations from "../Citation";
@@ -86,7 +86,7 @@ const HistoricalMessage = ({
         <div className="py-4 pl-0 pr-4 flex flex-col md:max-w-[80%]">
           <div className="p-2 rounded-lg bg-red-50 text-red-500">
             <span className="inline-block">
-              <Warning className="h-4 w-4 mb-1 inline-block" /> Could not
+              <TriangleAlert className="h-4 w-4 mb-1 inline-block" /> Could not
               respond to message.
             </span>
             <p className="text-xs font-mono mt-2 border-l-2 border-red-300 pl-2 bg-red-200 p-2 rounded-sm">
@@ -336,7 +336,7 @@ const RenderChatContent = memo(
     if (role !== "assistant")
       return (
         <span
-          className="flex flex-col gap-y-1 text-white light:text-slate-900"
+          className="flex flex-col gap-y-1 text-theme-text-primary light:text-slate-900"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(renderMarkdown(message)),
           }}
@@ -375,7 +375,7 @@ const RenderChatContent = memo(
         )}
         {msgToRender.trim().length > 0 && (
           <span
-            className="flex flex-col gap-y-1 text-white light:text-slate-900"
+            className="flex flex-col gap-y-1 text-theme-text-primary light:text-slate-900"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(renderMarkdown(msgToRender)),
             }}

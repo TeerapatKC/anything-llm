@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Admin from "@/models/admin";
-import { Trash } from "@phosphor-icons/react";
+import { Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -43,7 +43,7 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
     <>
       <TableRow
         variant="none"
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border"
       >
         <TableCell
           variant="none"
@@ -80,7 +80,7 @@ export default function ApiKeyRow({ apiKey, removeApiKey }) {
               {copied ? t("api.row.copied") : t("api.row.copy")}
             </button>
             <Button variant="danger" onClick={handleDelete}>
-              <Trash className="h-5 w-5" />
+              <Trash2 className="h-5 w-5" />
             </Button>
           </div>
         </TableCell>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { titleCase } from "text-case";
-import { BookOpenText, ArrowClockwise, Warning } from "@phosphor-icons/react";
+import { BookOpenText, RotateCw, TriangleAlert } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -79,7 +79,7 @@ export function MCPServerHeader({
             disabled={loadingMcpServers}
             className="border-none text-theme-text-secondary hover:text-cta-button flex items-center gap-x-1"
           >
-            <ArrowClockwise
+            <RotateCw
               size={16}
               className={loadingMcpServers ? "animate-spin" : ""}
             />
@@ -137,7 +137,7 @@ export function MCPServersList({
   }
 
   return (
-    <div className="bg-theme-bg-secondary text-white rounded-xl w-full md:min-w-[360px]">
+    <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl w-full md:min-w-[360px]">
       {servers.map((server, index) => (
         <MCPServerItem
           key={server.name}
@@ -164,7 +164,7 @@ function MCPServerItem({ server, isFirst, isLast, isSelected, handleClick }) {
       className={`py-3 px-4 flex items-center justify-between ${
         isFirst ? "rounded-t-xl" : ""
       } ${
-        isLast ? "rounded-b-xl" : "border-b border-white/10"
+        isLast ? "rounded-b-xl" : "border-b border-theme-sidebar-border"
       } cursor-pointer transition-all duration-300 hover:bg-theme-bg-primary ${
         isSelected ? "bg-white/10 light:bg-theme-bg-sidebar" : ""
       }`}
@@ -174,7 +174,7 @@ function MCPServerItem({ server, isFirst, isLast, isSelected, handleClick }) {
         {showWarning && (
           <Tooltip>
             <TooltipTrigger asChild>
-              <Warning className="h-4 w-4 text-yellow-500" />
+              <TriangleAlert className="h-4 w-4 text-yellow-500" />
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-[250px] text-xs">
               {t("agent.mcp.tool-warning")}

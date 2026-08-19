@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/SettingsSidebar";
+import { PaneLayout } from "@/components/layout/SettingsLayout";
 import Introduction from "./Introduction";
 import PullAndReview from "./PullAndReview";
 import Completed from "./Completed";
@@ -61,15 +61,9 @@ export function CommunityHubImportItemLayout({ setStep, children }) {
   }, []);
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
-      <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative w-full h-full overflow-y-scroll p-4 md:p-0"
-      >
-        {children(settings, setSettings, setStep)}
-      </div>
-    </div>
+    <PaneLayout paneClassName="bg-transparent">
+      {children(settings, setSettings, setStep)}
+    </PaneLayout>
   );
 }
 

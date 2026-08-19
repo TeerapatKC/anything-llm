@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SpeakerHigh, PauseCircle } from "@phosphor-icons/react";
+import { CirclePause, Volume2 } from "lucide-react";
 import messageToSpeech from "@/utils/chat/messageToSpeech";
 import {
   Tooltip,
@@ -49,9 +49,9 @@ export default function NativeTTSMessage({ chatId, message }) {
             aria-label={speaking ? "Pause speech" : "Speak message"}
           >
             {speaking ? (
-              <PauseCircle size={18} className="mb-1" />
+              <CirclePause size={18} className="mb-1" />
             ) : (
-              <SpeakerHigh size={18} className="mb-1" />
+              <Volume2 size={18} className="mb-1" />
             )}
           </button>
         </TooltipTrigger>

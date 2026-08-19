@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import PiperTTSClient from "@/utils/piperTTS";
 import { titleCase } from "text-case";
 import { humanFileSize } from "@/utils/numbers";
 import showToast from "@/utils/toast";
-import { CircleNotch, PauseCircle, PlayCircle } from "@phosphor-icons/react";
+import { CirclePause, CirclePlay } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -18,7 +19,7 @@ import {
 export default function PiperTTSOptions({ settings }) {
   return (
     <>
-      <p className="text-sm font-base text-white text-opacity-60 mb-4">
+      <p className="text-sm font-base text-theme-text-primary text-opacity-60 mb-4">
         All PiperTTS models will run in your browser locally. This can be
         resource intensive on lower-end devices.
       </p>
@@ -104,7 +105,7 @@ function PiperTTSModelSelection({ settings }) {
             onValueChange={setSelectedVoice}
             value={selectedVoice}
           >
-            <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg w-full p-2.5">
+            <SelectTrigger className="border-none flex-shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
               <SelectValue placeholder="Select an option" />
             </SelectTrigger>
             <SelectContent>
@@ -201,20 +202,25 @@ function DemoVoiceSample({ voiceId }) {
     >
       {speaking ? (
         <>
-          <PauseCircle size={20} className="flex-shrink-0" />
+          <CirclePause size={20} className="flex-shrink-0" />
           <p className="text-sm flex-shrink-0">Stop demo</p>
         </>
       ) : (
         <>
           {loading ? (
             <>
-              <CircleNotch size={20} className="animate-spin flex-shrink-0" />
+              <Spinner className="flex-shrink-0" />
               <p className="text-sm flex-shrink-0">Loading voice</p>
             </>
           ) : (
             <>
-              <PlayCircle size={20} className="flex-shrink-0 text-white" />
-              <p className="text-white text-sm flex-shrink-0">Play sample</p>
+              <CirclePlay
+                size={20}
+                className="flex-shrink-0 text-theme-text-primary"
+              />
+              <p className="text-theme-text-primary text-sm flex-shrink-0">
+                Play sample
+              </p>
             </>
           )}
         </>

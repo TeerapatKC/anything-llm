@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
-import { CircleNotch } from "@phosphor-icons/react";
 import debounce from "lodash.debounce";
 import Toggle from "@/components/lib/Toggle";
 import System from "@/models/system";
@@ -46,19 +46,16 @@ export default function AgentSkillReranker() {
   return (
     <div className="flex flex-col gap-y-4">
       <div className="flex items-center gap-x-1">
-        <label className="block text-md font-medium text-white flex items-center gap-x-1">
+        <label className="block text-md font-medium text-theme-text-primary flex items-center gap-x-1">
           {t("agent.settings.intelligent-skill-selection.title")}
         </label>
       </div>
       <div className="flex items-center gap-x-4">
-        <p className="text-xs text-white/60">
+        <p className="text-xs text-theme-text-secondary">
           {t("agent.settings.intelligent-skill-selection.description")}
         </p>
         {loading ? (
-          <CircleNotch
-            size={16}
-            className="shrink-0 animate-spin text-theme-text-primary"
-          />
+          <Spinner className="shrink-0 text-theme-text-primary" />
         ) : (
           <Toggle
             size="lg"
@@ -71,10 +68,10 @@ export default function AgentSkillReranker() {
       {enabled && (
         <div className="flex items-center gap-x-4">
           <div className="flex flex-col gap-y-1 flex-1">
-            <label className="block text-md font-medium text-white">
+            <label className="block text-md font-medium text-theme-text-primary">
               {t("agent.settings.intelligent-skill-selection.max-tools.title")}
             </label>
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-theme-text-secondary">
               {t(
                 "agent.settings.intelligent-skill-selection.max-tools.description"
               )}
@@ -91,7 +88,7 @@ export default function AgentSkillReranker() {
               setMaxTools(parseInt(e.target.value));
             }}
             onWheel={(e) => e.target.blur()}
-            className="border border-white/10 bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[80px] p-2.5 text-center"
+            className="border border-theme-sidebar-border bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[80px] p-2.5 text-center"
             placeholder="15"
             autoComplete="off"
           />

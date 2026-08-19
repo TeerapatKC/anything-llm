@@ -8,7 +8,7 @@ import {
   useCallback,
 } from "react";
 import renderMarkdown from "@/utils/chat/markdown";
-import { CaretDown } from "@phosphor-icons/react";
+import { ChevronDown } from "lucide-react";
 import DOMPurify from "dompurify";
 import { isMobile } from "react-device-detect";
 import ThinkingAnimation from "@/media/animations/thinking-animation.webm";
@@ -209,7 +209,7 @@ export const ThoughtChainComponent = forwardRef(
                         isExpanded ? "Hide thought chain" : "Show thought chain"
                       }
                     >
-                      <CaretDown
+                      <ChevronDown
                         className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
                       />
                     </button>

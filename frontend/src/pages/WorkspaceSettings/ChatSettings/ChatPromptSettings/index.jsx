@@ -132,12 +132,12 @@ export default function ChatPromptSettings({
               {t("chat.prompt.title")}
             </label>
           </div>
-          <p className="text-white text-opacity-60 text-xs font-medium">
+          <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
             {t("chat.prompt.description")}
           </p>
 
           <div className="flex items-center justify-between">
-            <p className="text-white text-opacity-60 text-xs font-medium">
+            <p className="text-theme-text-primary text-opacity-60 text-xs font-medium">
               You can insert{" "}
               <Link
                 to={paths.settings.systemPromptVariables()}
@@ -207,7 +207,7 @@ export default function ChatPromptSettings({
                   minHeight: "150px",
                 }}
                 defaultValue={prompt}
-                className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 mt-2"
+                className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 mt-2"
               />
             ) : (
               <div
@@ -217,7 +217,7 @@ export default function ChatPromptSettings({
                   overflowY: "scroll",
                   minHeight: "150px",
                 }}
-                className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 mt-2"
+                className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 mt-2"
               >
                 <Highlighter
                   className="whitespace-pre-wrap"

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import strDistance from "js-levenshtein";
-import { Info } from "@phosphor-icons/react";
+import { Info } from "lucide-react";
 import { LLM_PREFERENCE_CHANGED_EVENT } from "@/pages/GeneralSettings/LLMPreference";
 import ModelTable from "@/components/lib/ModelTable";
 import ModelTableLayout from "@/components/lib/ModelTable/layout";
@@ -51,7 +51,10 @@ export default function FoundryOptions({ settings }) {
             <Label variant="settings">Base URL</Label>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info size={18} className="text-theme-text-secondary cursor-pointer" />
+                <Info
+                  size={18}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[300px] text-xs">
                 The URL where the Foundry Local service is running. Run{" "}
@@ -76,12 +79,15 @@ export default function FoundryOptions({ settings }) {
             <Label variant="settings">Model context window</Label>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Info size={18} className="text-theme-text-secondary cursor-pointer" />
+                <Info
+                  size={18}
+                  className="text-theme-text-secondary cursor-pointer"
+                />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[350px] text-xs">
-                Override the context window limit. Leave empty to auto-detect from
-                the model, or lower it if large context windows slow your machine
-                down.
+                Override the context window limit. Leave empty to auto-detect
+                from the model, or lower it if large context windows slow your
+                machine down.
               </TooltipContent>
             </Tooltip>
           </div>

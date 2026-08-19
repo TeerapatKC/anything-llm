@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { PROVIDER_PRIVACY_MAP } from "./constants";
-import { ArrowSquareOut } from "@phosphor-icons/react";
+import { SquareArrowOutUpRight } from "lucide-react";
 import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
 import { Link } from "react-router-dom";
 import { titleCase, sentenceCase } from "text-case";
@@ -97,7 +97,7 @@ function ProviderPrivacyItem({ title, provider, altText }) {
                 rel="noopener noreferrer"
               >
                 privacy policy
-                <ArrowSquareOut size={12} />
+                <SquareArrowOutUpRight size={12} />
               </Link>
               .
             </div>

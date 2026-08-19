@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { CaretLeft, Info } from "@phosphor-icons/react";
+import { ChevronLeft, Info } from "lucide-react";
 import { decode as HTMLDecode } from "he";
 import truncate from "truncate";
 import { useTranslation } from "react-i18next";
@@ -14,11 +14,11 @@ export default function SourceDetailView({ source, onBack }) {
         <button
           onClick={onBack}
           type="button"
-          className="text-white/60 light:text-slate-400 hover:text-white light:hover:text-slate-900 transition-colors"
+          className="text-theme-text-secondary light:text-slate-400 hover:text-white light:hover:text-slate-900 transition-colors"
         >
-          <CaretLeft size={20} weight="bold" />
+          <ChevronLeft size={20} />
         </button>
-        <p className="font-semibold text-base leading-6 text-white light:text-slate-900 truncate px-2">
+        <p className="font-semibold text-base leading-6 text-theme-text-primary light:text-slate-900 truncate px-2">
           {truncate(source.title, 30)}
         </p>
       </div>
@@ -26,11 +26,11 @@ export default function SourceDetailView({ source, onBack }) {
         {source.chunks.map(({ text, score }, idx) => (
           <Fragment key={idx}>
             <div className="flex flex-col gap-y-1 py-4">
-              <p className="text-sm leading-[20px] text-white light:text-slate-900">
+              <p className="text-sm leading-[20px] text-theme-text-primary light:text-slate-900">
                 {HTMLDecode(omitChunkHeader(text))}
               </p>
               {!!score && (
-                <div className="flex items-center text-xs text-white/60 light:text-slate-500 gap-x-1">
+                <div className="flex items-center text-xs text-theme-text-secondary light:text-slate-500 gap-x-1">
                   <Info size={14} />
                   <p>
                     {toPercentString(score)} {t("chat_window.similarity_match")}

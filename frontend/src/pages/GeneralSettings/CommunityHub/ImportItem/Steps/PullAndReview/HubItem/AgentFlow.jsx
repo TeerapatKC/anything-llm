@@ -1,8 +1,8 @@
 import CTAButton from "@/components/lib/CTAButton";
+import { Spinner } from "@/components/ui/spinner";
 import CommunityHubImportItemSteps from "../..";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import { CircleNotch } from "@phosphor-icons/react";
 import { useState } from "react";
 import AgentFlows from "@/models/agentFlows";
 import { safeJsonParse } from "@/utils/request";
@@ -38,7 +38,7 @@ export default function AgentFlow({ item, setStep }) {
           Import Agent Flow &quot;{item.name}&quot;
         </h2>
         {item.creatorUsername && (
-          <p className="text-white/60 light:text-theme-text-secondary text-xs font-mono">
+          <p className="text-theme-text-secondary light:text-theme-text-secondary text-xs font-mono">
             Created by{" "}
             <a
               href={paths.communityHub.profile(item.creatorUsername)}
@@ -72,7 +72,7 @@ export default function AgentFlow({ item, setStep }) {
         className="text-dark-text w-full mt-[18px] h-[34px] hover:bg-accent"
         onClick={importAgentFlow}
       >
-        {loading ? <CircleNotch size={16} className="animate-spin" /> : null}
+        {loading ? <Spinner /> : null}
         {loading ? "Importing..." : "Import agent flow"}
       </CTAButton>
     </div>

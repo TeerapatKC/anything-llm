@@ -49,17 +49,17 @@ export default function ChatRow({ chat, onDelete }) {
     <>
       <TableRow
         variant="none"
-        className="bg-transparent text-white text-opacity-80 text-xs font-medium border-b border-white/10 h-10"
+        className="bg-transparent text-theme-text-primary text-opacity-80 text-xs font-medium border-b border-theme-sidebar-border h-10"
       >
         <TableCell
           variant="none"
-          className="px-6 font-medium whitespace-nowrap text-white"
+          className="px-6 font-medium whitespace-nowrap text-theme-text-primary"
         >
           <a
             href={paths.settings.embedChatWidgets()}
             target="_blank"
             rel="noreferrer"
-            className="text-white flex items-center hover:underline"
+            className="text-theme-text-primary flex items-center hover:underline"
           >
             {chat.embed_config.workspace.name}
           </a>
@@ -153,7 +153,7 @@ const TextPreview = ({ text }) => {
           Viewing Text
         </DialogTitle>
       </DialogHeader>
-      <div className="w-full h-[60vh] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-white text-sm">
+      <div className="w-full h-[60vh] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-theme-text-primary text-sm">
         {text}
       </div>
     </DialogContent>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Trash, DotsThreeVertical, TreeView } from "@phosphor-icons/react";
+import { EllipsisVertical, ListTree, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   Tooltip,
@@ -51,7 +51,7 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
             className="border-none text-zinc-300 light:text-slate-500 transition-colors duration-200"
             aria-label={t("chat_window.more_actions")}
           >
-            <DotsThreeVertical size={24} weight="bold" />
+            <EllipsisVertical size={24} />
           </button>
         </TooltipTrigger>
         <TooltipContent side="top" className="max-w-[250px] text-xs">
@@ -61,20 +61,20 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
       {open && (
         <div
           data-action-menu-open
-          className="absolute -top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-white z-99"
+          className="absolute -top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99"
         >
           <button
             onClick={handleFork}
-            className="border-none rounded-t-lg flex items-center text-white gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
+            className="border-none rounded-t-lg flex items-center text-theme-text-primary gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
           >
-            <TreeView size={18} />
+            <ListTree size={18} />
             <span className="text-sm">{t("chat_window.fork")}</span>
           </button>
           <button
             onClick={handleDelete}
-            className="border-none flex rounded-b-lg items-center text-white gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
+            className="border-none flex rounded-b-lg items-center text-theme-text-primary gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
           >
-            <Trash size={18} />
+            <Trash2 size={18} />
             <span className="text-sm">{t("chat_window.delete")}</span>
           </button>
         </div>

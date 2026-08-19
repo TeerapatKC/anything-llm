@@ -21,7 +21,7 @@ export default function UnauthenticatedHubModal({ show, onClose }) {
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center justify-center gap-y-4">
-          <p className="text-sm text-white text-center max-w-[300px]">
+          <p className="text-sm text-theme-text-primary text-center max-w-[300px]">
             {t("community_hub.publish.generic.unauthenticated.description")}
           </p>
           <Link

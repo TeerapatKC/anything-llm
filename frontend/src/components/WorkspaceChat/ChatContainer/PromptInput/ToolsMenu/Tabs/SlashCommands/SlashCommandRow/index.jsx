@@ -19,7 +19,7 @@ export default function SlashCommandRow({
       }`}
     >
       <div className="flex gap-1.5 items-center text-xs min-w-0 flex-1">
-        <span className="text-white light:text-slate-900 shrink-0">
+        <span className="text-theme-text-primary light:text-slate-900 shrink-0">
           {command}
         </span>
         <span className="text-zinc-400 light:text-slate-500 italic truncate">

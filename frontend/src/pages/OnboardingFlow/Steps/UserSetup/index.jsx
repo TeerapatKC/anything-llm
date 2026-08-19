@@ -112,8 +112,14 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
     navigate(paths.onboarding.dataHandling());
   };
 
-  const handleUsernameChange = debounce((e) => setUsername(e.target.value), 500);
-  const handlePasswordChange = debounce((e) => setPassword(e.target.value), 500);
+  const handleUsernameChange = debounce(
+    (e) => setUsername(e.target.value),
+    500
+  );
+  const handlePasswordChange = debounce(
+    (e) => setPassword(e.target.value),
+    500
+  );
 
   useEffect(() => {
     // Enable the button on any input, so submitting surfaces the server's validation
@@ -130,14 +136,14 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
               <div>
                 <label
                   htmlFor="username"
-                  className="block mb-3 text-sm font-medium text-white"
+                  className="block mb-3 text-sm font-medium text-theme-text-primary"
                 >
                   {t("onboarding.userSetup.adminUsername")}
                 </label>
                 <input
                   name="username"
                   type="text"
-                  className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
+                  className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
                   placeholder="Your admin username"
                   minLength={USERNAME_MIN_LENGTH}
                   maxLength={USERNAME_MAX_LENGTH}
@@ -146,20 +152,20 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
                   onChange={handleUsernameChange}
                 />
               </div>
-              <p className=" text-white text-opacity-80 text-xs font-base">
+              <p className=" text-theme-text-primary text-opacity-80 text-xs font-base">
                 {t("common.username_requirements")}
               </p>
               <div className="mt-4">
                 <label
                   htmlFor="email"
-                  className="block mb-3 text-sm font-medium text-white"
+                  className="block mb-3 text-sm font-medium text-theme-text-primary"
                 >
                   {t("onboarding.userSetup.adminEmail")}
                 </label>
                 <input
                   name="email"
                   type="email"
-                  className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
+                  className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
                   placeholder="admin@example.com"
                   maxLength={255}
                   required={true}
@@ -169,14 +175,14 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
               <div className="mt-4">
                 <label
                   htmlFor="password"
-                  className="block mb-3 text-sm font-medium text-white"
+                  className="block mb-3 text-sm font-medium text-theme-text-primary"
                 >
                   {t("onboarding.userSetup.adminPassword")}
                 </label>
                 <input
                   name="password"
                   type="password"
-                  className="border-none bg-theme-settings-input-bg text-white text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
+                  className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
                   placeholder="Your admin password"
                   minLength={8}
                   required={true}
@@ -184,7 +190,7 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
                   onChange={handlePasswordChange}
                 />
               </div>
-              <p className=" text-white text-opacity-80 text-xs font-base">
+              <p className=" text-theme-text-primary text-opacity-80 text-xs font-base">
                 {t("onboarding.userSetup.adminPasswordReq")}
               </p>
             </div>

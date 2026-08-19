@@ -1,4 +1,4 @@
-import { CaretRight } from "@phosphor-icons/react";
+import { ChevronRight } from "lucide-react";
 import { sentenceCase } from "text-case";
 
 export default function ImportedSkillList({
@@ -27,7 +27,7 @@ export default function ImportedSkillList({
 
   return (
     <div
-      className={`bg-theme-bg-secondary text-white rounded-xl w-full md:min-w-[360px]`}
+      className={`bg-theme-bg-secondary text-theme-text-primary rounded-xl w-full md:min-w-[360px]`}
     >
       {skills.map((config, index) => (
         <div
@@ -37,7 +37,7 @@ export default function ImportedSkillList({
           } ${
             index === Object.keys(skills).length - 1
               ? "rounded-b-xl"
-              : "border-b border-white/10"
+              : "border-b border-theme-sidebar-border"
           } cursor-pointer transition-all duration-300 hover:bg-theme-bg-primary ${
             selectedSkill === config.hubId ? "bg-theme-bg-primary" : ""
           }`}
@@ -48,11 +48,7 @@ export default function ImportedSkillList({
             <div className="text-sm text-theme-text-secondary font-medium">
               {config.active ? "On" : "Off"}
             </div>
-            <CaretRight
-              size={14}
-              weight="bold"
-              className="text-theme-text-secondary"
-            />
+            <ChevronRight size={14} className="text-theme-text-secondary" />
           </div>
         </div>
       ))}
