@@ -158,6 +158,25 @@ export default function AgentSkillSelection({
             icon: skill.Icon ?? skill.icon,
             status: activeIds.includes(id) ? "On" : "Off",
           }));
+
+      /**
+       * A category with nothing in it used to disappear from the nav entirely,
+       * which made it impossible to tell whether the workspace had no custom
+       * skills / flows / MCP servers or whether the feature simply did not
+       * exist here. Keep the heading and explain the emptiness instead.
+       * @param {string} category
+       * @param {string} text
+       */
+      const emptyNavItem = (category, text) => ({
+        key: `__empty__:${category}`,
+        category,
+        title: text,
+        empty: true,
+      });
+      /** Items, or a single explanatory row when there are none. */
+      const withEmptyState = (items, category, text) =>
+        items.length > 0 ? items : [emptyNavItem(category, text)];
+
       onNavigationChange?.([
         ...toNavItems(
           "Default skills",
@@ -172,38 +191,59 @@ export default function AgentSkillSelection({
           }),
           resolvedConfig.activeSkills
         ),
-        ...toNavItems(
+        // Integrations whose credential an administrator has not supplied are
+        // filtered out by `canShow`, so an all-unconfigured instance lands on
+        // the empty state rather than on a list of toggles that cannot work.
+        ...withEmptyState(
+          toNavItems(
+            "App integrations",
+            getAppIntegrationSkills(t),
+            resolvedConfig.activeSkills
+          ),
           "App integrations",
-          getAppIntegrationSkills(t),
-          resolvedConfig.activeSkills
+          "No integrations connected on this instance."
         ),
-        ...(skills?.catalog?.importedSkills ?? []).map((item) => ({
-          key: `imported:${item.id}`,
-          category: "Imported skills",
-          title: item.name,
-          icon: Package,
-          status: resolvedConfig.activeImportedSkills?.includes(item.id)
-            ? "On"
-            : "Off",
-        })),
-        ...(skills?.catalog?.flows ?? []).map((item) => ({
-          key: `flow:${item.id}`,
-          category: "Agent flows",
-          title: item.name,
-          icon: Workflow,
-          status: resolvedConfig.activeFlows?.includes(item.id) ? "On" : "Off",
-        })),
-        ...(skills?.catalog?.mcpServers ?? []).map((item) => ({
-          key: `mcp:${item.id}`,
-          category: "MCP servers",
-          title: item.name,
-          icon: Server,
-          status:
-            resolvedConfig.activeMcpServers == null ||
-            resolvedConfig.activeMcpServers?.includes(item.id)
+        ...withEmptyState(
+          (skills?.catalog?.importedSkills ?? []).map((item) => ({
+            key: `imported:${item.id}`,
+            category: "Custom skills",
+            title: item.name,
+            icon: Package,
+            status: resolvedConfig.activeImportedSkills?.includes(item.id)
               ? "On"
               : "Off",
-        })),
+          })),
+          "Custom skills",
+          "No custom skills installed on this instance."
+        ),
+        ...withEmptyState(
+          (skills?.catalog?.flows ?? []).map((item) => ({
+            key: `flow:${item.id}`,
+            category: "Agent flows",
+            title: item.name,
+            icon: Workflow,
+            status: resolvedConfig.activeFlows?.includes(item.id)
+              ? "On"
+              : "Off",
+          })),
+          "Agent flows",
+          "No agent flows on this instance."
+        ),
+        ...withEmptyState(
+          (skills?.catalog?.mcpServers ?? []).map((item) => ({
+            key: `mcp:${item.id}`,
+            category: "MCP servers",
+            title: item.name,
+            icon: Server,
+            status:
+              resolvedConfig.activeMcpServers == null ||
+              resolvedConfig.activeMcpServers?.includes(item.id)
+                ? "On"
+                : "Off",
+          })),
+          "MCP servers",
+          "No MCP servers running on this instance."
+        ),
         {
           key: "agent-skill-settings",
           category: "Settings",
@@ -500,7 +540,7 @@ export default function AgentSkillSelection({
     const entityConfig =
       focusedEntityType === "imported"
         ? {
-            label: "Imported skill",
+            label: "Custom skill",
             Icon: Package,
             field: "activeImportedSkills",
             activeIds: config.activeImportedSkills ?? [],

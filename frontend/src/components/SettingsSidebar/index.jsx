@@ -3,16 +3,16 @@ import paths from "@/utils/paths";
 import { PERMISSIONS, userCan } from "@/utils/permissions";
 import useLogo from "@/hooks/useLogo";
 import {
+  Bot,
   Briefcase,
   FlaskConical,
   PanelLeftIcon,
   PenLine,
   Settings,
+  Store,
   Unplug,
   UserCog,
 } from "lucide-react";
-import AgentIcon from "@/media/animations/agent-static.png";
-import CommunityHubIcon from "@/media/illustrations/community-hub.png";
 import useUser from "@/hooks/useUser";
 import Footer from "../Footer";
 import { Link } from "react-router-dom";
@@ -282,26 +282,14 @@ const SidebarOptions = ({ user = null, t }) => (
         />
         <Option
           btnText={t("settings.agent-skills")}
-          icon={
-            <img
-              src={AgentIcon}
-              alt="Agent"
-              className="h-5 w-5 shrink-0 light:invert"
-            />
-          }
+          icon={<Bot className="h-5 w-5 shrink-0" />}
           href={paths.settings.agentSkills()}
           user={user}
           permissions={[PERMISSIONS.AGENTS_MANAGE_SKILLS]}
         />
         <Option
           btnText={t("settings.community-hub.title")}
-          icon={
-            <img
-              src={CommunityHubIcon}
-              alt="Community Hub"
-              className="h-5 w-5 shrink-0 light:invert"
-            />
-          }
+          icon={<Store className="h-5 w-5 shrink-0" />}
           user={user}
           childOptions={[
             {

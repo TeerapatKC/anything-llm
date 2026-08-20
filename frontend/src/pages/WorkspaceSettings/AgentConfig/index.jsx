@@ -153,13 +153,22 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
                         {item.category}
                       </p>
                     )}
-                    <ConfigNavItem
-                      icon={item.icon ?? SlidersHorizontal}
-                      title={item.title}
-                      status={item.status}
-                      selected={selectedSection === item.key}
-                      onClick={() => setSelectedSection(item.key)}
-                    />
+                    {item.empty ? (
+                      // A category with nothing to configure still shows its
+                      // heading, with this row explaining why it is empty.
+                      // Not a button: there is nothing to open.
+                      <p className="px-4 py-3 text-sm font-light text-theme-text-secondary/70">
+                        {item.title}
+                      </p>
+                    ) : (
+                      <ConfigNavItem
+                        icon={item.icon ?? SlidersHorizontal}
+                        title={item.title}
+                        status={item.status}
+                        selected={selectedSection === item.key}
+                        onClick={() => setSelectedSection(item.key)}
+                      />
+                    )}
                   </div>
                 ))}
               </>

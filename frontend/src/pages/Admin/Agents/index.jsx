@@ -619,7 +619,7 @@ export default function AdminAgents() {
           </span>
           <div className="min-w-0">
             <h1 className="text-xl font-semibold text-theme-text-primary">
-              Skills &amp; Integrations
+              Agent skills
             </h1>
             <p className="mt-0.5 text-sm text-theme-text-secondary">
               Choose and configure the capabilities available to your agents.
