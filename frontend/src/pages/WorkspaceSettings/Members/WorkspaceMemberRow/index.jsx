@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import {
   Select,
@@ -20,10 +20,27 @@ export default function WorkspaceMemberRow({
   workspaceRoles = [],
   canManage = false,
 }) {
+  const memberRoleId =
+    member.workspaceRole?.id ??
+    member.workspace_role_id ??
+    member.workspaceRoleId ??
+    null;
+  const assignedRole =
+    workspaceRoles.find((role) => String(role.id) === String(memberRoleId)) ??
+    workspaceRoles.find((role) => role.isDefault) ??
+    null;
   const [roleId, setRoleId] = useState(
-    member.workspaceRole?.id ? String(member.workspaceRole.id) : ""
+    memberRoleId
+      ? String(memberRoleId)
+      : assignedRole
+        ? String(assignedRole.id)
+        : ""
   );
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!roleId && assignedRole?.id) setRoleId(String(assignedRole.id));
+  }, [assignedRole?.id, roleId]);
 
   async function handleRoleChange(nextRoleId) {
     const previous = roleId;
@@ -57,7 +74,10 @@ export default function WorkspaceMemberRow({
                 {(selectedRoleId) =>
                   workspaceRoles.find(
                     (role) => String(role.id) === String(selectedRoleId)
-                  )?.displayName ?? "Select a role"
+                  )?.displayName ??
+                  assignedRole?.displayName ??
+                  member.workspaceRole?.displayName ??
+                  "Select a role"
                 }
               </SelectValue>
             </SelectTrigger>
@@ -70,7 +90,9 @@ export default function WorkspaceMemberRow({
             </SelectContent>
           </Select>
         ) : (
-          (member.workspaceRole?.displayName ?? "—")
+          (assignedRole?.displayName ??
+          member.workspaceRole?.displayName ??
+          "—")
         )}
       </TableCell>
       <TableCell>{member.createdAt}</TableCell>

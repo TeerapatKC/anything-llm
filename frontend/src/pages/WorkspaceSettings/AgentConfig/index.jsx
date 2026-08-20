@@ -6,10 +6,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import AgentLLMSelection from "./AgentLLMSelection";
 import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
-import paths from "@/utils/paths";
 import useUser from "@/hooks/useUser";
 import AgentSkillSelection from "./AgentSkillSelection";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
+import { WORKSPACE_PERMISSIONS, workspaceCan } from "@/utils/permissions";
 import { Bot, ChevronRight, Cpu, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -26,7 +25,18 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
   const [selectedSection, setSelectedSection] = useState(CONFIG_SECTIONS.MODEL);
   const [skillNavigation, setSkillNavigation] = useState([]);
   const formEl = useRef(null);
-  const canManageSkills = userCan(PERMISSIONS.AGENTS_MANAGE_SKILLS, user);
+  // This is a workspace screen, so it has to gate on the *workspace* permission
+  // the API itself checks (`workspacePermissionValid([AGENTS_MANAGE])` on
+  // /workspace/:slug/agent-skills). The instance-wide `agents.manage_skills`
+  // belongs to /settings/agents — gating on it here hid the whole list from
+  // workspace managers whose requests the server would have happily served.
+  // Instance operators still pass: workspaceCan lets WORKSPACES_MANAGE_ALL
+  // through everywhere, mirroring the server.
+  const canManageSkills = workspaceCan(
+    WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
+    workspace?.slug,
+    user
+  );
   const handleSkillNavigation = useCallback((items) => {
     setSkillNavigation(items);
   }, []);
@@ -202,18 +212,6 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
                 onNavigationChange={handleSkillNavigation}
                 onItemStatusChange={handleSkillStatusChange}
               />
-              <div className="mt-6 flex flex-col gap-y-2 border-t border-theme-sidebar-border pt-4">
-                <a
-                  className="w-fit text-xs text-theme-text-secondary underline transition-colors hover:text-theme-text-primary"
-                  href={paths.settings.agentSkills()}
-                >
-                  Manage instance-wide agent skills
-                </a>
-                <p className="text-xs font-medium text-theme-text-primary/60">
-                  Instance-wide settings define what is available here and seed
-                  workspaces that have not been configured yet.
-                </p>
-              </div>
             </div>
           )}
         </section>

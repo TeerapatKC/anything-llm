@@ -25,16 +25,22 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
   );
 
   return (
+    // A fixed `grid-cols-12` split (name=10, badge=2) let the "Cached" pill's own
+    // natural width exceed its 2-column track at narrower panel widths - it's
+    // right-aligned inside that track, so the overflow pushed left into the name
+    // column and sat on top of the (also truncated) filename. Flex instead: the
+    // name area takes whatever is actually left after the badge reserves its own
+    // content width, so the two can never overlap regardless of panel width.
     <TableRow
       onClick={() => toggleSelection(item, folderName)}
-      className={`grid grid-cols-12 py-2 pl-8 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
+      className={`flex items-center gap-x-2 py-2 pl-8 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
         selected ? "selected light:text-white" : ""
       }`}
     >
       <Tooltip>
         <TooltipTrigger
           render={
-            <div className="col-span-10 w-fit flex gap-x-2 items-center relative" />
+            <div className="min-w-0 flex-1 flex gap-x-2 items-center relative" />
           }
         >
           <Checkbox
@@ -43,7 +49,7 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
             tabIndex={-1}
           />
           <FileText className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
-          <p className="whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
+          <p className="min-w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
             {middleTruncate(item.title, 55)}
           </p>
         </TooltipTrigger>
@@ -51,7 +57,7 @@ function FileRow({ item, selected, folderName, toggleSelection }) {
           {tooltipContent}
         </TooltipContent>
       </Tooltip>
-      <div className="col-span-2 flex justify-end items-center">
+      <div className="shrink-0 flex items-center">
         {item?.cached && (
           <div className="bg-theme-settings-input-active rounded-3xl">
             <p className="text-xs px-2 py-0.5">Cached</p>
