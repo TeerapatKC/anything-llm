@@ -1139,7 +1139,10 @@ function workspaceEndpoints(app) {
         });
       } catch (error) {
         console.error("Error checking if agent command is available:", error);
-        response.status(500).json({ showAgentCommand: true });
+        // Capability detection is best-effort. If a provider cannot be
+        // inspected, keep the explicit @agent command available instead of
+        // turning workspace loading into a failed API request.
+        response.status(200).json({ showAgentCommand: true });
       }
     }
   );

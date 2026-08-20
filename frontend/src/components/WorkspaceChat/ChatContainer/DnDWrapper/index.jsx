@@ -437,7 +437,7 @@ export default function DnDFileUploaderWrapper({ children }) {
 
   return (
     <div
-      className={`relative flex flex-col h-full w-full md:mt-0 mt-[40px] p-px`}
+      className={`relative flex flex-col h-full w-full min-[1100px]:mt-0 mt-[40px] p-px`}
       {...getRootProps()}
     >
       <div

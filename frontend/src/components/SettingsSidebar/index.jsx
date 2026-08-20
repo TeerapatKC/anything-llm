@@ -5,8 +5,7 @@ import useLogo from "@/hooks/useLogo";
 import {
   Briefcase,
   FlaskConical,
-  House,
-  List,
+  PanelLeftIcon,
   PenLine,
   Settings,
   Unplug,
@@ -15,7 +14,6 @@ import {
 import AgentIcon from "@/media/animations/agent-static.png";
 import CommunityHubIcon from "@/media/illustrations/community-hub.png";
 import useUser from "@/hooks/useUser";
-import { isMobile } from "react-device-detect";
 import Footer from "../Footer";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -29,91 +27,76 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
+import MobileSidebarTopbar from "@/components/Sidebar/MobileTopbar";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsSidebar() {
   const { t } = useTranslation();
   const { logo } = useLogo();
   const { user } = useUser();
+  const isMobile = useIsMobile();
   const sidebarRef = useRef(null);
   const [showSidebar, setShowSidebar] = useState(false);
-  const [showBgOverlay, setShowBgOverlay] = useState(false);
-
-  useEffect(() => {
-    function handleBg() {
-      if (showSidebar) {
-        setTimeout(() => {
-          setShowBgOverlay(true);
-        }, 300);
-      } else {
-        setShowBgOverlay(false);
-      }
-    }
-    handleBg();
-  }, [showSidebar]);
 
   if (isMobile) {
     return (
       <>
-        <div className="fixed top-0 left-0 right-0 z-10 flex justify-between items-center px-4 py-2 bg-theme-bg-sidebar light:bg-white text-theme-text-secondary shadow-lg h-16">
-          <button
-            onClick={() => setShowSidebar(true)}
-            className="rounded-md p-2 flex items-center justify-center text-theme-text-secondary"
+        <MobileSidebarTopbar onToggle={() => setShowSidebar(true)} />
+        <Sheet open={showSidebar} onOpenChange={setShowSidebar}>
+          <SheetContent
+            data-sidebar="sidebar"
+            data-slot="sidebar"
+            data-mobile="true"
+            className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+            style={{ "--sidebar-width": "18rem" }}
+            side="left"
+            showCloseButton={false}
           >
-            <List className="h-6 w-6" />
-          </button>
-          <div className="flex items-center justify-center grow">
-            <img
-              src={logo}
-              alt="Logo"
-              className="block mx-auto h-6 w-auto"
-              style={{ maxHeight: "40px", objectFit: "contain" }}
-            />
-          </div>
-          <div className="w-12"></div>
-        </div>
-        <div
-          style={{
-            transform: showSidebar ? `translateX(0vw)` : `translateX(-100vw)`,
-          }}
-          className={`z-99 fixed top-0 left-0 transition-all duration-500 w-screen h-screen`}
-        >
-          <div
-            className={`${
-              showBgOverlay
-                ? "transition-all opacity-1"
-                : "transition-none opacity-0"
-            }  duration-500 fixed top-0 left-0 bg-theme-bg-secondary/75 w-screen h-screen`}
-            onClick={() => setShowSidebar(false)}
-          />
-          <div
-            ref={sidebarRef}
-            className="h-screen fixed top-0 left-0 rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px]"
-          >
-            <div className="w-full h-full flex flex-col overflow-x-hidden items-between">
-              {/* Header Information */}
-              <div className="flex w-full items-center justify-between gap-x-4">
-                <div className="flex shrink w-fit items-center justify-start">
-                  <img
-                    src={logo}
-                    alt="Logo"
-                    className="rounded w-full max-h-[40px]"
-                    style={{ objectFit: "contain" }}
-                  />
-                </div>
-                <div className="flex gap-x-2 items-center text-slate-500 shrink-0">
-                  <a
-                    href={paths.home()}
-                    className="transition-all duration-300 p-2 rounded-full text-theme-text-primary bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover hover:border-slate-100/50 border-transparent border"
+            <SheetHeader className="sr-only">
+              <SheetTitle>{t("settings.title")}</SheetTitle>
+              <SheetDescription>Displays the settings sidebar.</SheetDescription>
+            </SheetHeader>
+            <div className="flex h-full w-full flex-col">
+              <SidebarHeader className="gap-3 pt-4">
+                <div className="flex items-center justify-between gap-2">
+                  <Link
+                    to={paths.home()}
+                    aria-label="Home"
+                    className="min-w-0"
                   >
-                    <House className="h-4 w-4" />
-                  </a>
+                    <img
+                      src={logo}
+                      alt="Logo"
+                      className="rounded max-h-[24px] object-contain"
+                    />
+                  </Link>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label="Toggle sidebar"
+                    onClick={() => setShowSidebar(false)}
+                    className="shrink-0 text-theme-text-secondary hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  >
+                    <PanelLeftIcon />
+                    <span className="sr-only">Toggle Sidebar</span>
+                  </Button>
                 </div>
-              </div>
-
-              {/* Primary Body */}
-              <div className="h-full flex flex-col w-full justify-between pt-4 overflow-y-scroll no-scroll">
+                <div className="text-theme-text-secondary text-sm font-medium uppercase">
+                  {t("settings.title")}
+                </div>
+              </SidebarHeader>
+              <SidebarContent ref={sidebarRef} className="px-2 no-scroll">
                 <div className="h-auto md:sidebar-items">
-                  <div className="flex flex-col gap-y-4 pb-[60px] overflow-y-scroll no-scroll">
+                  <div className="flex flex-col gap-y-2 pb-[60px]">
                     <SidebarOptions user={user} t={t} />
                     <div className="h-[1.5px] bg-[#3D4147] mx-3 mt-[14px]" />
                     <SupportEmail />
@@ -127,13 +110,13 @@ export default function SettingsSidebar() {
                     <AppVersion />
                   </div>
                 </div>
-              </div>
-              <div className="absolute bottom-0 left-0 right-0 pt-2 pb-6 rounded-br-[26px] bg-theme-bg-sidebar/80 backdrop-filter backdrop-blur-md">
+              </SidebarContent>
+              <SidebarFooter className="border-t border-theme-sidebar-border pt-2">
                 <Footer />
-              </div>
+              </SidebarFooter>
             </div>
-          </div>
-        </div>
+          </SheetContent>
+        </Sheet>
       </>
     );
   }

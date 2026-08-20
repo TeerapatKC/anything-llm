@@ -31,8 +31,11 @@ export function AppShell({ className, children, ...props }) {
  */
 export function SplitLayout({ className, children, ...props }) {
   return (
-    <AppShell className={cn("mt-6 md:mt-0", className)} {...props}>
-      <div style={{ height: "100%" }} className="relative w-full h-full flex">
+    <AppShell className={cn("mt-6 min-[1100px]:mt-0", className)} {...props}>
+      <div
+        style={{ height: "100%" }}
+        className="relative min-w-0 w-full h-full flex"
+      >
         {children}
       </div>
     </AppShell>
@@ -57,7 +60,7 @@ export function PaneLayout({
       <div
         style={{ height: "100%" }}
         className={cn(
-          "relative bg-theme-bg-secondary w-full h-full overflow-y-scroll thin-scrollbar p-4 md:p-0",
+          "relative min-w-0 bg-theme-bg-secondary w-full h-full overflow-y-scroll thin-scrollbar p-4 min-[1100px]:p-0",
           paneClassName
         )}
       >
@@ -87,7 +90,7 @@ export default function SettingsLayout({ children, className, ...props }) {
     <PaneLayout {...props}>
       <div
         className={cn(
-          "flex flex-col w-full px-1 py-16 md:px-6 md:py-6",
+          "flex flex-col w-full px-1 py-16 min-[1100px]:px-6 min-[1100px]:py-6",
           className
         )}
       >

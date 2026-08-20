@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import NewWorkspaceModal, {
@@ -27,6 +27,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PERMISSIONS, userCan } from "@/utils/permissions";
+import MobileSidebarTopbar from "./MobileTopbar";
 
 /**
  * Wraps a page's sidebar + main content in shadcn's SidebarProvider, which is
@@ -59,28 +60,9 @@ export function SidebarPageLayout({ className, children }) {
  * than per-page, so it's always in sync with the shared sidebar state.
  */
 function MobileTopbar() {
-  const { logo } = useLogo();
   const { toggleSidebar } = useSidebar();
 
-  return (
-    <div className="md:hidden fixed top-0 inset-x-0 z-40 flex items-center justify-between gap-2 h-14 px-4 bg-theme-bg-sidebar light:bg-white light:border-b light:border-theme-sidebar-border">
-      <button
-        type="button"
-        onClick={toggleSidebar}
-        aria-label="Toggle sidebar"
-        className="flex h-9 w-9 items-center justify-center rounded-md text-theme-text-secondary hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors"
-      >
-        <Menu className="h-5 w-5" />
-      </button>
-      <img
-        src={logo}
-        alt="Logo"
-        className="h-6 w-auto object-contain"
-        style={{ maxHeight: "32px" }}
-      />
-      <div className="h-9 w-9" />
-    </div>
-  );
+  return <MobileSidebarTopbar onToggle={toggleSidebar} />;
 }
 
 export default function Sidebar() {

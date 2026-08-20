@@ -56,14 +56,14 @@ export default function TelegramBotSettings() {
 function ConnectionsLayout({ children, fullPage = false }) {
   const { t } = useTranslation();
   return (
-    <div className="w-screen h-screen overflow-hidden bg-zinc-950 light:bg-slate-50 flex md:mt-0 mt-6">
+    <div className="w-screen h-screen overflow-hidden bg-zinc-950 light:bg-slate-50 flex min-[1100px]:mt-0 mt-6">
       <Sidebar />
       <div
         style={{ height: "100%" }}
-        className="relative bg-zinc-900 light:bg-white light:border light:border-slate-300 w-full h-full overflow-y-scroll p-4 md:p-0"
+        className="relative min-w-0 bg-zinc-900 light:bg-white light:border light:border-slate-300 w-full h-full overflow-y-scroll p-4 min-[1100px]:p-0"
       >
         {fullPage ? (
-          <div className="flex flex-col w-full px-1 py-16 md:px-6 md:py-6">
+          <div className="flex flex-col w-full px-1 py-16 min-[1100px]:px-6 min-[1100px]:py-6">
             <div className="w-full flex flex-col gap-y-2 pb-6 border-b border-white/20 light:border-slate-300">
               <p className="text-lg font-semibold leading-7 text-theme-text-primary light:text-slate-900">
                 {t("telegram.title")}

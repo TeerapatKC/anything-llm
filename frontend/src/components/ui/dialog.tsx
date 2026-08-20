@@ -58,7 +58,11 @@ const dialogSizes = {
  * showing the platform's default chunky bar. `pr-2` keeps text off it.
  */
 const BODY_CLASS =
-  "thin-scrollbar flex min-h-0 flex-col gap-4 overflow-x-hidden overflow-y-auto pr-2"
+  // `-mx-1 pl-1 pr-3 py-1` reserves room for the 3px focus ring that inputs
+  // draw *outside* their border — `overflow-x-hidden` would otherwise shear it
+  // off at the box edge. The negative margin cancels the inset again, so the
+  // content still lines up with the header and footer.
+  "thin-scrollbar -mx-1 flex min-h-0 flex-col gap-4 overflow-x-hidden overflow-y-auto py-1 pl-1 pr-3"
 
 /**
  * The header and footer are positioned against the popup instead of living in
@@ -81,7 +85,8 @@ function useSlotInsets(body: HTMLElement | null) {
     const popup = body?.parentElement
     if (!popup) return
 
-    const GAP = 16 // matches the popup's p-4 rhythm
+    // 12 + the box's own `py-1` keeps the visual gap at the popup's 16px rhythm
+    const GAP = 12
     const measure = () => {
       const header = popup.querySelector<HTMLElement>('[data-slot="dialog-header"]')
       const footer = popup.querySelector<HTMLElement>('[data-slot="dialog-footer"]')
