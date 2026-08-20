@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DialogClose,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -117,16 +119,22 @@ export default function RoleModal({
               : "Create a system role"
             : `Edit ${role.displayName}`}
         </DialogTitle>
+        <DialogDescription>
+          {scope === "workspace"
+            ? "Define what members with this role can do inside this workspace."
+            : "Define the permissions granted to users with this role."}
+        </DialogDescription>
       </DialogHeader>
 
-      <form onSubmit={handleSubmit}>
+      <form id="role-editor-form" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid gap-4 rounded-lg border border-theme-sidebar-border bg-muted/20 p-4 md:grid-cols-2">
             <div>
               <Label htmlFor="displayName" className="block mb-2">
                 Label
               </Label>
               <Input
+                id="displayName"
                 name="displayName"
                 value={displayName}
                 onChange={(e) => {
@@ -143,6 +151,7 @@ export default function RoleModal({
                 Identifier
               </Label>
               <Input
+                id="name"
                 name="name"
                 value={name}
                 onChange={(e) => {
@@ -162,11 +171,12 @@ export default function RoleModal({
             </div>
           </div>
 
-          <div>
+          <div className="rounded-lg border border-theme-sidebar-border bg-muted/20 p-4">
             <Label htmlFor="description" className="block mb-2">
               Description
             </Label>
             <Textarea
+              id="description"
               name="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -176,8 +186,8 @@ export default function RoleModal({
             />
           </div>
 
-          <div>
-            <div className="flex items-baseline justify-between mb-2">
+          <div className="overflow-hidden rounded-lg border border-theme-sidebar-border">
+            <div className="flex items-baseline justify-between border-b border-theme-sidebar-border bg-muted/50 px-4 py-3">
               <Label>Permissions</Label>
               <span className="text-xs text-theme-text-secondary">
                 {selected.size} of {totalPermissions} selected
@@ -185,21 +195,25 @@ export default function RoleModal({
             </div>
 
             {isSuperAdmin && (
-              <p className="text-xs text-yellow-400 mb-3">
+              <p className="mx-4 mt-3 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400 light:text-yellow-700">
                 This role holds the super administrator grant, so it has every
                 permission — including any added by future updates — regardless
                 of the boxes below.
               </p>
             )}
 
-            <div className="max-h-[45vh] overflow-y-auto pr-2 flex flex-col gap-y-5">
-              {categories.map((category) => {
-                const allChecked = category.permissions.every((permission) =>
-                  selected.has(permission.key)
-                );
-                return (
-                  <div key={category.key}>
-                    <div className="flex items-center gap-x-2 mb-2">
+            <ScrollArea className="h-[360px] min-h-[240px] max-h-[40vh]">
+              <div className="flex flex-col gap-y-3 p-3 pr-4">
+                {categories.map((category) => {
+                  const allChecked = category.permissions.every((permission) =>
+                    selected.has(permission.key)
+                  );
+                  return (
+                    <div
+                      key={category.key}
+                      className="overflow-hidden rounded-md border border-theme-sidebar-border"
+                    >
+                    <div className="flex items-center gap-x-2 border-b border-theme-sidebar-border bg-muted/30 px-3 py-2.5">
                       <Checkbox
                         id={`category-${category.key}`}
                         checked={allChecked}
@@ -214,11 +228,11 @@ export default function RoleModal({
                         {category.label}
                       </label>
                     </div>
-                    <div className="flex flex-col gap-y-2 pl-6">
+                    <div className="flex flex-col gap-y-1 p-2">
                       {category.permissions.map((permission) => (
                         <div
                           key={permission.key}
-                          className="flex items-start gap-x-2"
+                          className="flex items-start gap-x-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/50"
                         >
                           <Checkbox
                             id={permission.key}
@@ -240,28 +254,38 @@ export default function RoleModal({
                         </div>
                       ))}
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </ScrollArea>
           </div>
 
-          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          {error && (
+            <p className="rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400 light:text-red-600">
+              Error: {error}
+            </p>
+          )}
         </div>
-
-        <DialogFooter>
-          <DialogClose
-            render={
-              <Button variant="outline" type="button" onClick={onClose} />
-            }
-          >
-            Cancel
-          </DialogClose>
-          <Button variant="default" type="submit" disabled={saving}>
-            {saving ? "Saving…" : isNew ? "Create role" : "Save changes"}
-          </Button>
-        </DialogFooter>
       </form>
+
+      <DialogFooter>
+        <DialogClose
+          render={
+            <Button variant="outline" type="button" onClick={onClose} />
+          }
+        >
+          Cancel
+        </DialogClose>
+        <Button
+          variant="default"
+          type="submit"
+          form="role-editor-form"
+          disabled={saving}
+        >
+          {saving ? "Saving…" : isNew ? "Create role" : "Save changes"}
+        </Button>
+      </DialogFooter>
     </>
   );
 }

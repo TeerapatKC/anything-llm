@@ -17,6 +17,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { UserPlus } from "lucide-react";
+import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSettingsSectionHeader";
 
 export default function Members({ workspace }) {
   const { user } = useUser();
@@ -55,58 +57,67 @@ export default function Members({ workspace }) {
     fetchData();
   }, [workspace]);
 
-  if (loading) {
-    return (
-      <Skeleton
-        height="80vh"
-        width="100%"
-        highlightColor="var(--theme-bg-primary)"
-        baseColor="var(--theme-bg-secondary)"
-        count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
-        containerClassName="flex w-full"
-      />
-    );
-  }
-
   return (
-    <div className="flex justify-between -mt-3">
-      <Table className="max-w-[700px] text-left rounded-lg">
-        <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
-          <TableRow>
-            <TableHead scope="col">Username</TableHead>
-            <TableHead scope="col">Workspace role</TableHead>
-            <TableHead scope="col">Date Added</TableHead>
-            <TableHead scope="col"> </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {members.length > 0 ? (
-            members.map((member) => (
-              <WorkspaceMemberRow
-                key={member.user_id}
-                member={member}
-                workspaceSlug={workspace.slug}
-                workspaceRoles={workspaceRoles}
-                canManage={canManageMembers}
-              />
-            ))
-          ) : (
-            <TableEmptyRow colSpan="4">No workspace members</TableEmptyRow>
-          )}
-        </TableBody>
-      </Table>
-      <Dialog
-        open={isOpen}
-        onOpenChange={(open) => (open ? openModal() : closeModal())}
-      >
-        <DialogTrigger render={<Button size="lg" />}>
-          Manage Users
-        </DialogTrigger>
-        <DialogContent size="md" className="p-0 overflow-hidden">
-          <AddMemberModal users={users} workspace={adminWorkspace} />
-        </DialogContent>
-      </Dialog>
-    </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => (open ? openModal() : closeModal())}
+    >
+      <div className="flex w-full flex-col gap-y-4 px-1">
+        <WorkspaceSettingsSectionHeader
+          title="Workspace members"
+          description={`Manage who can access "${workspace.name}" and assign their workspace roles.`}
+          actions={
+            <DialogTrigger
+              render={
+                <Button size="lg" disabled={loading || !adminWorkspace} />
+              }
+            >
+              <UserPlus className="mr-1.5 size-4" />
+              Manage users
+            </DialogTrigger>
+          }
+        />
+        {loading ? (
+          <Skeleton
+            height="80vh"
+            width="100%"
+            highlightColor="var(--theme-bg-primary)"
+            baseColor="var(--theme-bg-secondary)"
+            count={1}
+            className="w-full rounded-lg p-4"
+            containerClassName="flex w-full"
+          />
+        ) : (
+          <Table className="text-left">
+            <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
+              <TableRow>
+                <TableHead scope="col">Username</TableHead>
+                <TableHead scope="col">Workspace role</TableHead>
+                <TableHead scope="col">Date Added</TableHead>
+                <TableHead scope="col"> </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {members.length > 0 ? (
+                members.map((member) => (
+                  <WorkspaceMemberRow
+                    key={member.user_id}
+                    member={member}
+                    workspaceSlug={workspace.slug}
+                    workspaceRoles={workspaceRoles}
+                    canManage={canManageMembers}
+                  />
+                ))
+              ) : (
+                <TableEmptyRow colSpan="4">No workspace members</TableEmptyRow>
+              )}
+            </TableBody>
+          </Table>
+        )}
+      </div>
+      <DialogContent size="lg">
+        <AddMemberModal users={users} workspace={adminWorkspace} />
+      </DialogContent>
+    </Dialog>
   );
 }

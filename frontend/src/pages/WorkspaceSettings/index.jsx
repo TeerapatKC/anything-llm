@@ -1,24 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
+import { SidebarPageLayout } from "@/components/Sidebar";
+import WorkspaceSettingsSidebar from "@/components/Sidebar/WorkspaceSettingsSidebar";
 import Workspace from "@/models/workspace";
-import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import PasswordModal, { usePasswordModal } from "@/components/Modals/Password";
 import { FullScreenLoader } from "@/components/Preloader";
-import {
-  Bot,
-  Database,
-  MessageSquareText,
-  ShieldCheck,
-  SlashSquare,
-  Undo2,
-  Upload,
-  User,
-  Wrench,
-} from "lucide-react";
-import paths from "@/utils/paths";
-import { Link } from "react-router-dom";
-import { NavLink } from "react-router-dom";
 import GeneralAppearance from "./GeneralAppearance";
 import ChatSettings from "./ChatSettings";
 import VectorDatabase from "./VectorDatabase";
@@ -27,10 +13,7 @@ import WorkspaceAgentConfiguration from "./AgentConfig";
 import WorkspaceRoles from "./Roles";
 import WorkspaceDocuments from "./Documents";
 import WorkspaceSlashCommands from "./SlashCommands";
-import useUser from "@/hooks/useUser";
-import { useTranslation } from "react-i18next";
 import System from "@/models/system";
-import { cn } from "@/lib/utils";
 
 const TABS = {
   "general-appearance": GeneralAppearance,
@@ -55,9 +38,7 @@ export default function WorkspaceSettings() {
 }
 
 function ShowWorkspaceChat() {
-  const { t } = useTranslation();
   const { slug, tab } = useParams();
-  const { user } = useUser();
   const [workspace, setWorkspace] = useState(null);
   const [deletionProtected, setDeletionProtected] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -82,73 +63,19 @@ function ShowWorkspaceChat() {
       setLoading(false);
     }
     getWorkspace();
-  }, [slug, tab]);
+  }, [slug]);
 
   if (loading) return <FullScreenLoader />;
 
   const TabContent = TABS[tab];
   return (
     <SidebarPageLayout>
-      <Sidebar />
+      <WorkspaceSettingsSidebar workspace={workspace} />
       <div
         style={{ height: "100%" }}
         className="transition-all duration-500 relative min-w-0 bg-theme-bg-secondary w-full h-full overflow-y-scroll"
       >
-        <div className="flex items-center gap-x-4 pt-[80px] pb-4 ml-16 mr-8 border-b-2/10 border-white light:border-theme-chat-input-border overflow-x-auto overflow-y-hidden thin-scrollbar min-[1100px]:pt-6">
-          <Link
-            to={paths.workspace.chat(slug)}
-            className="absolute top-[64px] left-2 min-[1100px]:top-4 min-[1100px]:left-4 transition-all duration-300 p-2 rounded-full text-theme-text-primary bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover z-10"
-          >
-            <Undo2 className="h-4 w-4" />
-          </Link>
-          <div className="inline-flex items-center gap-x-1 rounded-md bg-muted p-1 text-muted-foreground shrink-0">
-            <TabItem
-              title={t("workspaces—settings.general")}
-              icon={<Wrench className="h-4 w-4" />}
-              to={paths.workspace.settings.generalAppearance(slug)}
-            />
-            <TabItem
-              title={t("workspaces—settings.chat")}
-              icon={<MessageSquareText className="h-4 w-4" />}
-              to={paths.workspace.settings.chatSettings(slug)}
-            />
-            <TabItem
-              title={t("workspaces—settings.vector")}
-              icon={<Database className="h-4 w-4" />}
-              to={paths.workspace.settings.vectorDatabase(slug)}
-            />
-            <TabItem
-              title={t("workspaces—settings.members")}
-              icon={<User className="h-4 w-4" />}
-              to={paths.workspace.settings.members(slug)}
-              visible={workspaceCan(WS.MEMBERS_MANAGE, workspace?.slug, user)}
-            />
-            <TabItem
-              title="Roles"
-              icon={<ShieldCheck className="h-4 w-4" />}
-              to={paths.workspace.settings.roles(slug)}
-              visible={workspaceCan(WS.ROLES_MANAGE, workspace?.slug, user)}
-            />
-            <TabItem
-              title={t("workspaces—settings.agent")}
-              icon={<Bot className="h-4 w-4" />}
-              to={paths.workspace.settings.agentConfig(slug)}
-            />
-            <TabItem
-              title={t("workspaces—settings.upload-documents")}
-              icon={<Upload className="h-4 w-4" />}
-              to={paths.workspace.settings.documents(slug)}
-              visible={workspaceCan(WS.DOCUMENTS_UPLOAD, slug, user)}
-            />
-            <TabItem
-              title="Slash Commands"
-              icon={<SlashSquare className="h-4 w-4" />}
-              to={paths.workspace.settings.slashCommands(slug)}
-              visible={workspaceCan(WS.SETTINGS_MANAGE, slug, user)}
-            />
-          </div>
-        </div>
-        <div className="px-16 py-6">
+        <div className="px-4 pb-6 pt-20 min-[1100px]:px-16 min-[1100px]:pt-6">
           <TabContent
             slug={slug}
             workspace={workspace}
@@ -157,25 +84,5 @@ function ShowWorkspaceChat() {
         </div>
       </div>
     </SidebarPageLayout>
-  );
-}
-
-function TabItem({ title, icon, to, visible = true }) {
-  if (!visible) return null;
-  return (
-    <NavLink
-      to={to}
-      className={({ isActive }) =>
-        cn(
-          "inline-flex items-center justify-center gap-x-1.5 whitespace-nowrap rounded-sm px-3 py-1.5 text-xs font-medium shrink-0 transition-all",
-          isActive
-            ? "bg-background text-foreground shadow-xs"
-            : "text-muted-foreground hover:text-foreground"
-        )
-      }
-    >
-      {icon}
-      <div>{title}</div>
-    </NavLink>
   );
 }

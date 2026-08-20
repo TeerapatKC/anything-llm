@@ -45,19 +45,19 @@ export default function AgentClarifyingQuestions() {
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <div className="flex items-center gap-x-1">
-        <label className="block text-md font-medium text-theme-text-primary flex items-center gap-x-1">
-          {t("agent.settings.clarifying-questions.title")}{" "}
-          <i className="ml-1 text-xs text-theme-text-primary pl-2 bg-blue-500/40 rounded-md px-2 py-0.5">
-            {t("agent.settings.clarifying-questions.beta-badge")}
-          </i>
-        </label>
-      </div>
+    <div className="flex flex-col gap-y-3">
       <div className="flex items-center gap-x-4">
-        <p className="text-xs text-theme-text-secondary">
-          {t("agent.settings.clarifying-questions.description")}
-        </p>
+        <div className="min-w-0 flex-1">
+          <label className="flex items-center gap-x-1 text-md font-medium text-theme-text-primary">
+            {t("agent.settings.clarifying-questions.title")}{" "}
+            <i className="ml-1 rounded-md bg-blue-500/40 px-2 py-0.5 text-xs text-theme-text-primary">
+              {t("agent.settings.clarifying-questions.beta-badge")}
+            </i>
+          </label>
+          <p className="mt-1 text-xs text-theme-text-secondary">
+            {t("agent.settings.clarifying-questions.description")}
+          </p>
+        </div>
         {loading ? (
           <Spinner className="shrink-0 text-theme-text-primary" />
         ) : (
@@ -71,7 +71,7 @@ export default function AgentClarifyingQuestions() {
       </div>
       {enabled && (
         <>
-          <div className="flex items-center gap-x-4">
+          <div className="flex items-center gap-x-4 rounded-lg bg-muted/20 p-3">
             <div className="flex flex-col gap-y-1 flex-1">
               <label className="block text-md font-medium text-theme-text-primary">
                 {t("agent.settings.clarifying-questions.max-per-turn.title")}

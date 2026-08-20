@@ -7,6 +7,7 @@ import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import AddPresetModal from "./AddPresetModal";
 import EditPresetModal from "./EditPresetModal";
+import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSettingsSectionHeader";
 
 /**
  * The list + add/edit/delete UI shared by the two places slash commands are managed:
@@ -93,18 +94,21 @@ export default function SlashCommandManager({
 
   return (
     <div className="flex flex-col gap-y-4">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-y-1">
-          <h2 className="text-base font-semibold text-theme-text-primary">
-            {title}
-          </h2>
-          <p className="text-xs text-theme-text-secondary">{description}</p>
-        </div>
-        <Button type="button" size="lg" onClick={openAdd} disabled={loading}>
-          <Plus className="mr-1.5 size-4" />
-          New command
-        </Button>
-      </div>
+      <WorkspaceSettingsSectionHeader
+        title={title}
+        description={description}
+        actions={
+          <Button
+            type="button"
+            size="lg"
+            onClick={openAdd}
+            disabled={loading}
+          >
+            <Plus className="mr-1.5 size-4" />
+            New command
+          </Button>
+        }
+      />
 
       {loading ? (
         <div className="flex flex-col gap-y-2">

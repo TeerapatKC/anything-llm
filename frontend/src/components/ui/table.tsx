@@ -16,11 +16,18 @@ import {
  * The bordered, rounded container is what makes a shadcn table read as one
  * surface rather than loose rows sitting on the page background.
  */
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({
+  className,
+  containerClassName,
+  ...props
+}: React.ComponentProps<"table"> & { containerClassName?: string }) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto rounded-lg border"
+      className={cn(
+        "relative w-full overflow-x-auto rounded-lg border",
+        containerClassName
+      )}
     >
       <table
         data-slot="table"

@@ -29,28 +29,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-
-/**
- * Two-letter monogram standing in for a workspace icon, so every row leads with
- * a square glyph the way the shadcn sidebar blocks do.
- * @param {{name: string, isActive: boolean, className?: string}} props
- */
-function WorkspaceMonogram({ name, isActive, className }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn(
-        "flex shrink-0 items-center justify-center rounded-md border text-[10px] font-semibold uppercase leading-none transition-colors",
-        isActive
-          ? "border-transparent bg-sidebar-primary text-sidebar-primary-foreground"
-          : "border-sidebar-border bg-sidebar-accent/40 text-sidebar-foreground/70",
-        className
-      )}
-    >
-      {name?.slice(0, 2)}
-    </span>
-  );
-}
+import WorkspaceMonogram from "@/components/Sidebar/WorkspaceMonogram";
 
 export default function ActiveWorkspaces() {
   const navigate = useNavigate();

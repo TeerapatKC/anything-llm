@@ -33,8 +33,8 @@ export default function MaxToolCallStack() {
   }, [debouncedUpdateMaxCallStack]);
 
   return (
-    <div className="flex flex-col gap-y-2 mt-4">
-      <div className="flex items-center gap-x-4 mt-2">
+    <div className="flex flex-col gap-y-2">
+      <div className="flex items-center gap-x-4">
         <div className="flex flex-col gap-y-1 flex-1">
           <label className="block text-md font-medium text-theme-text-primary">
             {t("agent.settings.max-tool-calls.title")}

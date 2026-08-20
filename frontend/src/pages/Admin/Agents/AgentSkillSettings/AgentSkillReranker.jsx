@@ -44,16 +44,16 @@ export default function AgentSkillReranker() {
   }
 
   return (
-    <div className="flex flex-col gap-y-4">
-      <div className="flex items-center gap-x-1">
-        <label className="block text-md font-medium text-theme-text-primary flex items-center gap-x-1">
-          {t("agent.settings.intelligent-skill-selection.title")}
-        </label>
-      </div>
+    <div className="flex flex-col gap-y-3">
       <div className="flex items-center gap-x-4">
-        <p className="text-xs text-theme-text-secondary">
-          {t("agent.settings.intelligent-skill-selection.description")}
-        </p>
+        <div className="min-w-0 flex-1">
+          <label className="block text-md font-medium text-theme-text-primary">
+            {t("agent.settings.intelligent-skill-selection.title")}
+          </label>
+          <p className="mt-1 text-xs text-theme-text-secondary">
+            {t("agent.settings.intelligent-skill-selection.description")}
+          </p>
+        </div>
         {loading ? (
           <Spinner className="shrink-0 text-theme-text-primary" />
         ) : (
@@ -66,7 +66,7 @@ export default function AgentSkillReranker() {
         )}
       </div>
       {enabled && (
-        <div className="flex items-center gap-x-4">
+        <div className="flex items-center gap-x-4 rounded-lg bg-muted/20 p-3">
           <div className="flex flex-col gap-y-1 flex-1">
             <label className="block text-md font-medium text-theme-text-primary">
               {t("agent.settings.intelligent-skill-selection.max-tools.title")}

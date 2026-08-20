@@ -1,11 +1,3 @@
-import { useModal } from "@/hooks/useModal";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import MaxToolCallStack from "./MaxToolCallStack";
@@ -13,47 +5,35 @@ import AgentClarifyingQuestions from "./AgentClarifyingQuestions";
 import AgentSkillReranker from "./AgentSkillReranker";
 
 export default function AgentSkillSettings() {
-  const { isOpen, openModal, closeModal } = useModal();
-  return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => (open ? openModal() : closeModal())}
-    >
-      <DialogTrigger
-        render={
-          <button
-            type="button"
-            className={`w-10 h-10 flex items-center justify-center light:border-black/10 light:border-solid border-none light:border! rounded-lg transition-colors outline-none bg-transparent hover:bg-theme-bg-secondary`}
-          />
-        }
-      >
-        <SlidersHorizontal size={24} className={`text-theme-text-secondary`} />
-      </DialogTrigger>
-      <AgentSkillSettingsModal />
-    </Dialog>
-  );
-}
-
-function AgentSkillSettingsModal() {
   const { t } = useTranslation();
 
   return (
-    <DialogContent size="md">
-      <DialogHeader>
-        <DialogTitle className="text-sm font-semibold">
-          {t("agent.settings.title")}
-        </DialogTitle>
-      </DialogHeader>
+    <section className="rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary/70 p-3 text-theme-text-primary">
+      <div className="flex items-center gap-2">
+        <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted/40 text-theme-text-secondary">
+          <SlidersHorizontal className="size-4" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-xs font-semibold uppercase tracking-wide text-theme-text-secondary">
+            {t("agent.settings.title")}
+          </h2>
+          <p className="text-xs text-theme-text-secondary/80">
+            Configure how agents select and call skills.
+          </p>
+        </div>
+      </div>
 
-      <div className="flex flex-col w-full">
-        <div className="flex flex-col gap-y-5 w-full">
+      <div className="mt-2 w-full divide-y divide-theme-sidebar-border">
+        <div className="py-3">
           <MaxToolCallStack />
-          <div className="border-b border-theme-sidebar-border h-px w-full" />
+        </div>
+        <div className="py-3">
           <AgentSkillReranker />
-          <div className="border-b border-theme-sidebar-border h-px w-full" />
+        </div>
+        <div className="py-3">
           <AgentClarifyingQuestions />
         </div>
       </div>
-    </DialogContent>
+    </section>
   );
 }

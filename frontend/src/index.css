@@ -1111,7 +1111,7 @@ onboarding flow since its background is dark and is the same fill as the inputs.
 }
 
 .input-label {
-  @apply text-[14px] font-bold text-white;
+  @apply text-[14px] font-bold text-theme-text-primary;
 }
 
 /**

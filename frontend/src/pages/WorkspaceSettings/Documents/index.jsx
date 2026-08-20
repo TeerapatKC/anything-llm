@@ -4,6 +4,7 @@ import DocumentSettings from "@/components/Modals/ManageWorkspace/Documents";
 import DataConnectors from "@/components/Modals/ManageWorkspace/DataConnectors";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
 import { cn } from "@/lib/utils";
+import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSettingsSectionHeader";
 
 export default function WorkspaceDocuments({ workspace }) {
   const { t } = useTranslation();
@@ -12,8 +13,12 @@ export default function WorkspaceDocuments({ workspace }) {
   if (!workspace) return null;
 
   return (
-    <div>
-      <div className="inline-flex items-center gap-x-1 rounded-md bg-muted p-1 text-muted-foreground mb-6">
+    <div className="flex w-full flex-col gap-y-4 px-1">
+      <WorkspaceSettingsSectionHeader
+        title="Workspace documents"
+        description={`Manage the documents and data sources available to "${workspace.name}".`}
+      />
+      <div className="inline-flex w-fit items-center gap-x-1 rounded-md bg-muted p-1 text-muted-foreground">
         <SubTabButton
           label={t("connectors.manage.documents")}
           active={selectedTab === "documents"}
