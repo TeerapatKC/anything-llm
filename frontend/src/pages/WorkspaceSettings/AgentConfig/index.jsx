@@ -2,7 +2,7 @@ import System from "@/models/system";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { castToType } from "@/utils/types";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import AgentLLMSelection from "./AgentLLMSelection";
 import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,12 @@ import paths from "@/utils/paths";
 import useUser from "@/hooks/useUser";
 import AgentSkillSelection from "./AgentSkillSelection";
 import { PERMISSIONS, userCan } from "@/utils/permissions";
+import { Bot, ChevronRight, Cpu, SlidersHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const CONFIG_SECTIONS = {
+  MODEL: "model",
+};
 
 export default function WorkspaceAgentConfiguration({ workspace }) {
   const { user } = useUser();
@@ -17,7 +23,22 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [selectedSection, setSelectedSection] = useState(CONFIG_SECTIONS.MODEL);
+  const [skillNavigation, setSkillNavigation] = useState([]);
   const formEl = useRef(null);
+  const canManageSkills = userCan(PERMISSIONS.AGENTS_MANAGE_SKILLS, user);
+  const handleSkillNavigation = useCallback((items) => {
+    setSkillNavigation(items);
+  }, []);
+  const handleSkillStatusChange = useCallback((key, enabled) => {
+    setSkillNavigation((items) =>
+      items.map((item) =>
+        item.key === key || item.key.endsWith(`:${key}`)
+          ? { ...item, status: enabled ? "On" : "Off" }
+          : item
+      )
+    );
+  }, []);
 
   useEffect(() => {
     async function fetchSettings() {
@@ -73,77 +94,194 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
 
   if (!workspace || loading) return <LoadingSkeleton />;
   return (
-    <div id="workspace-agent-settings-container">
-      <form
-        ref={formEl}
-        onSubmit={handleUpdate}
-        onChange={() => setHasChanges(true)}
-        id="agent-settings-form"
-        className="w-1/2 flex flex-col gap-y-6"
-      >
-        <AgentLLMSelection
-          settings={settings}
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
-        {hasChanges && (
-          <button
-            type="submit"
-            form="agent-settings-form"
-            className="w-fit transition-all duration-300 border border-slate-200 px-5 py-2.5 rounded-lg text-theme-text-primary text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
-          >
-            {saving ? "Updating agent..." : "Update workspace agent"}
-          </button>
-        )}
-      </form>
+    <div
+      id="workspace-agent-settings-container"
+      className="flex min-h-0 flex-col gap-5 min-[1100px]:h-[calc(100vh-48px)]"
+    >
+      <header className="flex flex-none items-start gap-3">
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+          <Bot size={21} />
+        </span>
+        <div className="min-w-0">
+          <h1 className="text-xl font-semibold text-theme-text-primary">
+            Agent configuration
+          </h1>
+          <p className="mt-0.5 text-sm text-theme-text-secondary">
+            Configure the model and capabilities available to this workspace.
+          </p>
+        </div>
+      </header>
 
-      {/* Kept outside the provider/model form: skills save through their own
-          endpoint, and nesting them would let their toggles mark the workspace
-          form dirty. */}
-      {userCan(PERMISSIONS.AGENTS_MANAGE_SKILLS, user) && (
-        <div className="w-1/2 flex flex-col gap-y-6 mt-6">
-          <div className="bg-white/10 h-px w-full" />
-          <AgentSkillSelection workspace={workspace} />
-          <div className="flex flex-col gap-y-2">
-            <a
-              className="w-fit text-theme-text-secondary hover:text-white text-xs underline"
-              href={paths.settings.agentSkills()}
-            >
-              Manage instance-wide agent skills
-            </a>
-            <p className="text-theme-text-primary/60 text-xs font-medium">
-              Instance-wide settings define what is available here and seed
-              workspaces that have not been configured yet.
+      <div className="flex min-h-0 flex-1 flex-col gap-4 min-[1100px]:flex-row min-[1100px]:gap-6">
+        {/* `overflow-hidden` keeps the rounded corners from being painted over,
+            so the item list below has to do the scrolling itself — the list
+            grows with every skill, flow and MCP server the instance has. */}
+        <nav className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary shadow-sm min-[1100px]:w-[400px]">
+          <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
+            <h2 className="text-base font-semibold text-theme-text-primary">
+              Agent skills &amp; settings
+            </h2>
+            <p className="mt-1 text-sm text-theme-text-secondary">
+              Choose an item to configure.
             </p>
           </div>
-        </div>
-      )}
+          <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
+            <ConfigNavItem
+              icon={Cpu}
+              title="Model & provider"
+              selected={selectedSection === CONFIG_SECTIONS.MODEL}
+              onClick={() => setSelectedSection(CONFIG_SECTIONS.MODEL)}
+            />
+            {canManageSkills && (
+              <>
+                {skillNavigation.map((item, index) => (
+                  <div key={item.key}>
+                    {(index === 0 ||
+                      skillNavigation[index - 1]?.category !==
+                        item.category) && (
+                      <p className="px-4 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-theme-text-secondary">
+                        {item.category}
+                      </p>
+                    )}
+                    <ConfigNavItem
+                      icon={item.icon ?? SlidersHorizontal}
+                      title={item.title}
+                      status={item.status}
+                      selected={selectedSection === item.key}
+                      onClick={() => setSelectedSection(item.key)}
+                    />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        </nav>
+
+        <section className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary p-5 text-theme-text-primary">
+          <div hidden={selectedSection !== CONFIG_SECTIONS.MODEL}>
+            <div className="mb-5">
+              <h2 className="text-base font-semibold text-theme-text-primary">
+                Model &amp; provider
+              </h2>
+              <p className="mt-1 text-sm text-theme-text-secondary">
+                Select the provider and model used by this workspace's agent.
+              </p>
+            </div>
+            <form
+              ref={formEl}
+              onSubmit={handleUpdate}
+              onChange={() => setHasChanges(true)}
+              id="agent-settings-form"
+              className="flex max-w-[720px] flex-col gap-y-6"
+            >
+              <AgentLLMSelection
+                settings={settings}
+                workspace={workspace}
+                setHasChanges={setHasChanges}
+              />
+              {hasChanges && (
+                <Button
+                  type="submit"
+                  size="lg"
+                  form="agent-settings-form"
+                  className="w-fit"
+                >
+                  {saving ? "Updating agent..." : "Update workspace agent"}
+                </Button>
+              )}
+            </form>
+          </div>
+
+          {/* Kept outside the provider/model form: skills save through their
+              own endpoint, so their toggles do not mark the model form dirty. */}
+          {canManageSkills && (
+            <div hidden={selectedSection === CONFIG_SECTIONS.MODEL}>
+              <AgentSkillSelection
+                workspace={workspace}
+                focusSkillId={selectedSection}
+                onNavigationChange={handleSkillNavigation}
+                onItemStatusChange={handleSkillStatusChange}
+              />
+              <div className="mt-6 flex flex-col gap-y-2 border-t border-theme-sidebar-border pt-4">
+                <a
+                  className="w-fit text-xs text-theme-text-secondary underline transition-colors hover:text-theme-text-primary"
+                  href={paths.settings.agentSkills()}
+                >
+                  Manage instance-wide agent skills
+                </a>
+                <p className="text-xs font-medium text-theme-text-primary/60">
+                  Instance-wide settings define what is available here and seed
+                  workspaces that have not been configured yet.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
+  );
+}
+
+function ConfigNavItem({
+  icon: Icon,
+  title,
+  status = "Configure",
+  selected,
+  onClick,
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-theme-text-primary transition-colors hover:bg-theme-bg-primary ${
+        selected ? "bg-white/10 light:bg-theme-bg-sidebar" : ""
+      }`}
+    >
+      <span className="flex min-w-0 items-center gap-x-2">
+        <Icon size={16} className="shrink-0" />
+        <span className="truncate text-sm font-light">{title}</span>
+      </span>
+      <span className="flex items-center gap-x-2">
+        <span className="text-sm font-medium text-theme-text-secondary">
+          {status}
+        </span>
+        <ChevronRight size={14} className="text-theme-text-secondary" />
+      </span>
+    </button>
   );
 }
 
 function LoadingSkeleton() {
   return (
-    <div id="workspace-agent-settings-container">
-      <div className="w-1/2 flex flex-col gap-y-6">
+    <div
+      id="workspace-agent-settings-container"
+      className="flex flex-col gap-5"
+    >
+      <Skeleton
+        height={56}
+        width="100%"
+        count={1}
+        highlightColor="var(--theme-bg-primary)"
+        baseColor="var(--theme-bg-secondary)"
+      />
+      <div className="flex flex-col gap-4 min-[1100px]:flex-row min-[1100px]:gap-6">
         <Skeleton
-          height={100}
-          width="100%"
-          count={2}
+          height={320}
+          width={400}
+          count={1}
           highlightColor="var(--theme-bg-primary)"
           baseColor="var(--theme-bg-secondary)"
           enableAnimation={true}
-          containerClassName="flex flex-col gap-y-1"
+          containerClassName="w-full min-[1100px]:w-[400px]"
         />
-        <div className="bg-white/10 h-px w-full" />
         <Skeleton
-          height={100}
+          height={480}
           width="100%"
-          count={2}
+          count={1}
           highlightColor="var(--theme-bg-primary)"
           baseColor="var(--theme-bg-secondary)"
           enableAnimation={true}
-          containerClassName="flex flex-col gap-y-1 mt-4"
+          containerClassName="min-w-0 flex-1"
         />
       </div>
     </div>

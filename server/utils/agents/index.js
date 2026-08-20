@@ -843,10 +843,18 @@ class AgentHandler {
     }
   ) {
     this.#args = args;
+    // Runtime knobs follow the instance unless this workspace overrode them.
+    const { resolveRuntimeForWorkspace } = require("./workspaceSkills");
+    const skillRuntime = await resolveRuntimeForWorkspace(
+      this.invocation.workspace
+    );
+
     this.aibitat = new AIbitat({
       provider: this.provider ?? "openai",
       model: this.model ?? "gpt-4.1-nano",
       chats: await this.#chatHistory(20),
+      maxToolCalls: skillRuntime.maxToolCalls,
+      skillRuntime,
       handlerProps: {
         invocation: this.invocation,
         log: this.log,

@@ -18,7 +18,9 @@ export default function AgentSkillSettings() {
             {t("agent.settings.title")}
           </h2>
           <p className="text-xs text-theme-text-secondary/80">
-            Configure how agents select and call skills.
+            Configure how agents select and call skills. These are the instance
+            defaults — a workspace can override any of them under its own Agent
+            Configuration.
           </p>
         </div>
       </div>

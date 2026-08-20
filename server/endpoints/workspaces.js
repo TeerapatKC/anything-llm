@@ -450,8 +450,12 @@ function workspaceEndpoints(app) {
         const workspace = response.locals.workspace;
         const {
           resolveConfigForWorkspace,
+          instanceRuntimeConfig,
         } = require("../utils/agents/workspaceSkills");
-        const AgentPlugins = require("../utils/agents/aibitat/plugins");
+        const {
+          skillCredentialStatus,
+          configuredSearchProviders,
+        } = require("../utils/agents/skillCredentials");
         const ImportedPlugin = require("../utils/agents/imported");
         const { AgentFlows } = require("../utils/agentFlows");
         const MCPCompatibilityLayer = require("../utils/MCP");
@@ -459,6 +463,10 @@ function workspaceEndpoints(app) {
 
         const config = await resolveConfigForWorkspace(workspace);
         const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
+        const [instanceRuntime, skillCredentials] = await Promise.all([
+          instanceRuntimeConfig(),
+          skillCredentialStatus(),
+        ]);
 
         response.status(200).json({
           // `configured` tells the UI whether this workspace is still inheriting
@@ -472,6 +480,16 @@ function workspaceEndpoints(app) {
               { label: "agent_search_provider" },
               null
             )) ?? null,
+          // Resolved instance-wide value of every runtime knob, so the UI can
+          // show what "inherit" currently means for each one.
+          instanceRuntime,
+          // Per-skill credential readiness. Skills whose credential an admin has
+          // not supplied are hidden here rather than offered as a toggle that
+          // would produce a tool failing at call time.
+          skillCredentials,
+          // Search engines this instance holds a usable key for (or that need
+          // none) - the only engines a workspace may pick between.
+          availableSearchProviders: configuredSearchProviders(),
           catalog: {
             // `name` is not guaranteed on either config, so fall back to the id
             // rather than rendering a blank row in the UI.

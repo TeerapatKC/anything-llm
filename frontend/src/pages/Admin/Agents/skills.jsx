@@ -12,9 +12,11 @@ import {
   Brain,
   CalendarCheck,
   ChartColumn,
+  Database,
   File,
   FilePlus,
   FolderOpen,
+  ListFilter,
 } from "lucide-react";
 import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";
@@ -26,6 +28,9 @@ import GMailIcon from "./GMailSkillPanel/gmail.png";
 import OutlookIcon from "./OutlookSkillPanel/outlook.png";
 import GoogleCalendarIcon from "./GoogleCalendarSkillPanel/google-calendar.png";
 import ScheduledJobsImage from "@/media/agents/scheduled-jobs.png";
+// Same asset AgentWebSearchSelection uses for its own header.
+import WebSearchImage from "@/media/agents/scrape-websites.png";
+import SQLAgentImage from "@/media/agents/sql-agent.png";
 
 export const getDefaultSkills = (t) => ({
   "rag-memory": {
@@ -99,12 +104,20 @@ export const getConfigurableSkills = (
     description: t("agent.skill.web.description"),
     component: AgentWebSearchSelection,
     skill: "web-browsing",
+    // Mirrors what AgentWebSearchSelection renders internally. Declared here too
+    // so every surface that reads this catalog — the workspace-level skill
+    // picker included — can show the same icon and artwork.
+    icon: ListFilter,
+    image: WebSearchImage,
   },
   "sql-agent": {
     title: t("agent.skill.sql.title"),
     description: t("agent.skill.sql.description"),
     component: AgentSQLConnectorSelection,
     skill: "sql-agent",
+    // Same as above, mirroring AgentSQLConnectorSelection.
+    icon: Database,
+    image: SQLAgentImage,
   },
   "create-scheduled-job": {
     title: t("agent.skill.scheduledJob.title"),

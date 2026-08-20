@@ -53,7 +53,13 @@ export default function WorkspaceMemberRow({
             disabled={saving}
           >
             <SelectTrigger className="w-[190px]">
-              <SelectValue placeholder="Select a role" />
+              <SelectValue placeholder="Select a role">
+                {(selectedRoleId) =>
+                  workspaceRoles.find(
+                    (role) => String(role.id) === String(selectedRoleId)
+                  )?.displayName ?? "Select a role"
+                }
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {workspaceRoles.map((role) => (

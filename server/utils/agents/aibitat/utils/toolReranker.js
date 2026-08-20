@@ -160,12 +160,17 @@ class ToolReranker {
    * @param {Object[]} tools - Array of tool/function definitions from aibitat.functions
    * @param {Object} options - Options for reranking
    * @param {number} options.topN - Number of top tools to return
+   * @param {boolean} options.enabled - Overrides the instance-wide on/off switch, so a
+   * workspace that turned reranking on can still use it while the instance default is off.
    * @returns {Promise<Object[]>} - Array of reranked tools (top N)
    */
   async rerank(userPrompt, tools = [], options = {}) {
-    if (!ToolReranker.isEnabled()) return tools;
+    const {
+      enabled = ToolReranker.isEnabled(),
+      topN = ToolReranker.getTopN(),
+    } = options;
+    if (!enabled) return tools;
     if (!tools || tools.length === 0) return tools;
-    const { topN = ToolReranker.getTopN() } = options;
 
     if (tools.length <= topN) {
       this.log(`${tools.length} tools <= ${topN}, skipping reranking`);

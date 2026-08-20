@@ -1,6 +1,4 @@
 const AgentPlugins = require("./aibitat/plugins");
-const { SystemSettings } = require("../../models/systemSettings");
-const { safeJsonParse } = require("../http");
 const Provider = require("./aibitat/providers/ai-provider");
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
@@ -8,6 +6,7 @@ const MCPCompatibilityLayer = require("../MCP");
 const {
   DEFAULT_SKILLS,
   resolveConfigForWorkspace,
+  resolveRuntimeForWorkspace,
 } = require("./workspaceSkills");
 
 /**
@@ -69,7 +68,7 @@ const WORKSPACE_AGENT = {
         user,
         prompt,
       }),
-      clarifyingQuestionsSkillIfEnabled(),
+      clarifyingQuestionsSkillIfEnabled(workspace),
     ]);
 
     // If clarifying questions tools are enabled, add a note to the role that the user must use the request-user-input tool to ask questions.
@@ -93,17 +92,18 @@ const WORKSPACE_AGENT = {
 
 /**
  * Conditionally include the request-user-input sub-tools in the workspace agent's
- * function list when the admin has enabled clarifying questions.
+ * function list when clarifying questions are enabled.
  * Returns an empty array when disabled so the tools aren't visible to the LLM.
  * Names use the parent#child convention so #attachPlugins loads each sub-tool.
+ *
+ * The instance-wide setting is only the default here - a workspace that has
+ * overridden this knob decides for itself.
+ * @param {import("@prisma/client").workspaces | null} workspace
  * @returns {Promise<string[]>}
  */
-async function clarifyingQuestionsSkillIfEnabled() {
-  const enabled =
-    (await SystemSettings.getValueOrFallback(
-      { label: "agent_clarifying_questions_enabled" },
-      "false"
-    )) === "true";
+async function clarifyingQuestionsSkillIfEnabled(workspace = null) {
+  const { clarifyingQuestionsEnabled: enabled } =
+    await resolveRuntimeForWorkspace(workspace);
   if (!enabled) return [];
 
   const parentName = AgentPlugins.requestUserInput.name;

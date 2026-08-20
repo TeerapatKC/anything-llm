@@ -82,6 +82,14 @@ describeValidation("agentSkillConfig", () => {
       activeFlows: [],
       activeMcpServers: [],
       searchProvider: null,
+      // Every runtime knob starts out inheriting the instance-wide value.
+      runtime: {
+        maxToolCalls: null,
+        rerankerEnabled: null,
+        rerankerTopN: null,
+        clarifyingQuestionsEnabled: null,
+        clarifyingQuestionsMaxPerTurn: null,
+      },
     });
   });
 
@@ -90,6 +98,33 @@ describeValidation("agentSkillConfig", () => {
       JSON.stringify({ activeFlows: ["flow-1"] })
     );
     expect(JSON.parse(result).activeFlows).toEqual(["flow-1"]);
+  });
+
+  it("keeps usable runtime overrides and drops unusable ones", () => {
+    const result = JSON.parse(
+      Workspace.validations.agentSkillConfig({
+        runtime: {
+          maxToolCalls: "25", // numeric strings arrive from form bodies
+          rerankerEnabled: false, // false is an override, not "unset"
+          rerankerTopN: "abc", // unparseable
+          clarifyingQuestionsMaxPerTurn: 0, // out of range
+        },
+      })
+    );
+    expect(result.runtime).toEqual({
+      maxToolCalls: 25,
+      rerankerEnabled: false,
+      rerankerTopN: null,
+      clarifyingQuestionsEnabled: null,
+      clarifyingQuestionsMaxPerTurn: null,
+    });
+  });
+
+  it("treats a runtime-only payload as a real config", () => {
+    const result = Workspace.validations.agentSkillConfig({
+      runtime: { maxToolCalls: 4 },
+    });
+    expect(JSON.parse(result).runtime.maxToolCalls).toBe(4);
   });
 
   it("returns null for malformed JSON rather than an all-empty config", () => {

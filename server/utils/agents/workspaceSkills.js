@@ -28,7 +28,15 @@ const { AgentFlows } = require("../agentFlows");
  *   activeImportedSkills: string[],             // imported plugin hubIds
  *   activeFlows: string[],                      // agent flow uuids
  *   activeMcpServers: string[],                 // MCP server names
+ *   runtime: { [knob]: value|null },            // per-knob overrides, null = inherit
  * }
+ *
+ * `runtime` deliberately does NOT follow the all-or-nothing rule above. The
+ * knobs it holds (tool-call ceiling, skill reranker, clarifying questions) are
+ * tuning values rather than a selection, so each one inherits the instance-wide
+ * setting individually until the workspace overrides that specific knob. A
+ * workspace that only wants a bigger tool budget therefore keeps tracking the
+ * instance for everything else.
  */
 
 /** Built-in skills that are enabled unless explicitly disabled. */
@@ -46,6 +54,39 @@ const SUB_SKILL_PARENTS = {
   "outlook-agent": "disabled_outlook_skills",
 };
 
+/**
+ * Runtime knobs a workspace may override, and the type each one coerces to.
+ * Every one of these used to be readable only from `process.env` or
+ * `system_settings`, i.e. one value for the whole instance.
+ * @type {Record<string, "int"|"bool">}
+ */
+const RUNTIME_FIELDS = {
+  maxToolCalls: "int",
+  rerankerEnabled: "bool",
+  rerankerTopN: "int",
+  clarifyingQuestionsEnabled: "bool",
+  clarifyingQuestionsMaxPerTurn: "int",
+};
+
+/**
+ * Fallbacks used when the instance itself has nothing configured. Kept in sync
+ * with the values the consumers default to on their own: AIbitat's
+ * `defaultMaxToolCalls()`, `ToolReranker.isEnabled()`/`defaultTopN`, and
+ * request-user-input's DEFAULT_MAX_PER_TURN.
+ */
+const RUNTIME_DEFAULTS = {
+  maxToolCalls: 10,
+  rerankerEnabled: true,
+  rerankerTopN: 15,
+  clarifyingQuestionsEnabled: false,
+  clarifyingQuestionsMaxPerTurn: 3,
+};
+
+/** A runtime block that overrides nothing - every knob follows the instance. */
+const EMPTY_RUNTIME = Object.fromEntries(
+  Object.keys(RUNTIME_FIELDS).map((field) => [field, null])
+);
+
 const EMPTY_CONFIG = {
   activeDefaultSkills: [],
   activeSkills: [],
@@ -53,7 +94,38 @@ const EMPTY_CONFIG = {
   activeImportedSkills: [],
   activeFlows: [],
   activeMcpServers: [],
+  runtime: { ...EMPTY_RUNTIME },
 };
+
+/**
+ * Coerce a stored/user-supplied runtime block into the full shape. Anything
+ * unusable becomes `null` (inherit) rather than a guess, so a malformed value
+ * can only ever fall back to the instance setting.
+ * @param {object|null} value
+ * @returns {Record<string, number|boolean|null>}
+ */
+function normalizeRuntime(value = null) {
+  const runtime = { ...EMPTY_RUNTIME };
+  if (!value || typeof value !== "object" || Array.isArray(value))
+    return runtime;
+
+  for (const [field, kind] of Object.entries(RUNTIME_FIELDS)) {
+    const raw = value[field];
+    if (raw === null || raw === undefined || raw === "") continue;
+
+    if (kind === "bool") {
+      // A form body can deliver these as the strings "true"/"false".
+      if (typeof raw === "boolean") runtime[field] = raw;
+      else if (raw === "true" || raw === "false")
+        runtime[field] = raw === "true";
+      continue;
+    }
+
+    const parsed = Math.floor(Number(raw));
+    if (Number.isFinite(parsed) && parsed > 0) runtime[field] = parsed;
+  }
+  return runtime;
+}
 
 /**
  * Normalize an arbitrary (user-supplied or stored) config into the full shape,
@@ -77,7 +149,8 @@ function normalizeConfig(config = null) {
       return null;
     }
   }
-  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed))
+    return null;
 
   // Require at least one recognized key so an object that happens to parse but
   // carries none of our fields is treated as absent rather than as "disable
@@ -90,6 +163,7 @@ function normalizeConfig(config = null) {
     "activeFlows",
     "activeMcpServers",
     "searchProvider",
+    "runtime",
   ];
   if (!KNOWN_KEYS.some((key) => key in parsed)) return null;
 
@@ -122,6 +196,7 @@ function normalizeConfig(config = null) {
       typeof parsed.searchProvider === "string" && parsed.searchProvider
         ? parsed.searchProvider
         : null,
+    runtime: normalizeRuntime(parsed.runtime),
   };
 }
 
@@ -177,7 +252,72 @@ async function instanceDefaultConfig() {
         { label: "agent_search_provider" },
         null
       )) ?? null,
+    // Left as all-inherit on purpose. Seeding this with the instance's current
+    // numbers would freeze them into the workspace the first time it saves,
+    // silently detaching it from later instance-wide changes.
+    runtime: { ...EMPTY_RUNTIME },
   };
+}
+
+/**
+ * The instance-wide value of every runtime knob, fully resolved. This is what a
+ * workspace gets for any knob it has not overridden, and what the UI shows as
+ * the "inherit" option's current value.
+ * @returns {Promise<Record<string, number|boolean>>}
+ */
+async function instanceRuntimeConfig() {
+  const envPositiveInt = (key) => {
+    const parsed = parseInt(process.env[key], 10);
+    return !isNaN(parsed) && parsed > 0 ? parsed : null;
+  };
+
+  const maxPerTurn = Number(
+    await SystemSettings.getValueOrFallback(
+      { label: "agent_clarifying_questions_max_per_turn" },
+      String(RUNTIME_DEFAULTS.clarifyingQuestionsMaxPerTurn)
+    )
+  );
+
+  return {
+    maxToolCalls:
+      envPositiveInt("AGENT_MAX_TOOL_CALLS") ?? RUNTIME_DEFAULTS.maxToolCalls,
+    // Absent means on - the reranker is opt-out, not opt-in.
+    rerankerEnabled: !("AGENT_SKILL_RERANKER_ENABLED" in process.env)
+      ? RUNTIME_DEFAULTS.rerankerEnabled
+      : process.env.AGENT_SKILL_RERANKER_ENABLED !== "false",
+    rerankerTopN:
+      envPositiveInt("AGENT_SKILL_RERANKER_TOP_N") ??
+      RUNTIME_DEFAULTS.rerankerTopN,
+    clarifyingQuestionsEnabled:
+      (await SystemSettings.getValueOrFallback(
+        { label: "agent_clarifying_questions_enabled" },
+        "false"
+      )) === "true",
+    clarifyingQuestionsMaxPerTurn:
+      Number.isFinite(maxPerTurn) && maxPerTurn > 0
+        ? Math.floor(maxPerTurn)
+        : RUNTIME_DEFAULTS.clarifyingQuestionsMaxPerTurn,
+  };
+}
+
+/**
+ * Resolve the runtime knobs an agent session should run with, layering this
+ * workspace's overrides over the instance-wide values one knob at a time.
+ * @param {import("@prisma/client").workspaces | null} workspace
+ * @returns {Promise<Record<string, number|boolean>>}
+ */
+async function resolveRuntimeForWorkspace(workspace = null) {
+  const resolved = await instanceRuntimeConfig();
+  const stored = normalizeConfig(workspace?.agentSkillConfig ?? null);
+  if (!stored?.runtime) return resolved;
+
+  for (const field of Object.keys(RUNTIME_FIELDS)) {
+    const override = stored.runtime[field];
+    // `false` and `0`-adjacent values are real overrides, so test for null
+    // rather than falsiness.
+    if (override !== null && override !== undefined) resolved[field] = override;
+  }
+  return resolved;
 }
 
 /**
@@ -220,8 +360,14 @@ module.exports = {
   DEFAULT_SKILLS,
   SUB_SKILL_PARENTS,
   EMPTY_CONFIG,
+  RUNTIME_FIELDS,
+  RUNTIME_DEFAULTS,
+  EMPTY_RUNTIME,
   normalizeConfig,
+  normalizeRuntime,
   instanceDefaultConfig,
+  instanceRuntimeConfig,
   resolveConfigForWorkspace,
+  resolveRuntimeForWorkspace,
   resolveSearchProviderForWorkspace,
 };

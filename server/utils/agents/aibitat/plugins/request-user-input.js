@@ -45,10 +45,14 @@ function formatAnswersForAgent(questions, result) {
 async function ensureState(aibitat) {
   if (aibitat._clarifyState) return aibitat._clarifyState;
 
-  const maxPerTurnRaw = await SystemSettings.getValueOrFallback(
-    { label: "agent_clarifying_questions_max_per_turn" },
-    String(DEFAULT_MAX_PER_TURN)
-  );
+  // A workspace can override the cap; `skillRuntime` is the already-resolved
+  // value for this session, so it is preferred whenever the handler set one.
+  const maxPerTurnRaw =
+    aibitat.skillRuntime?.clarifyingQuestionsMaxPerTurn ??
+    (await SystemSettings.getValueOrFallback(
+      { label: "agent_clarifying_questions_max_per_turn" },
+      String(DEFAULT_MAX_PER_TURN)
+    ));
 
   const maxPerTurn = Number(maxPerTurnRaw);
 

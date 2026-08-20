@@ -100,6 +100,8 @@ class AIbitat {
    * @param {number} props.maxToolCalls - [default: AIbitat.defaultMaxToolCalls()] The maximum number of tools an agent can chain for a single response.
    * @param {string} props.provider - [default: "openai"] The provider for the AIbitat instance.
    * @param {Object} props.handlerProps - The handler properties for the AIbitat instance.
+   * @param {Object} props.skillRuntime - [default: null] Resolved per-workspace runtime knobs
+   * (see utils/agents/workspaceSkills). When null, the instance-wide env/system values are used.
    * @param {Object} rest - The rest of the properties for the AIbitat instance.
    */
   constructor(props = {}) {
@@ -110,6 +112,7 @@ class AIbitat {
       maxToolCalls = AIbitat.defaultMaxToolCalls(),
       provider = "openai",
       handlerProps = {}, // Inherited props we can spread so aibitat can access.
+      skillRuntime = null,
       ...rest
     } = props;
     this._chats = chats;
@@ -117,6 +120,9 @@ class AIbitat {
     this.maxRounds = maxRounds;
     this.maxToolCalls = maxToolCalls;
     this.handlerProps = handlerProps;
+    // Null for callers that never resolved a workspace (tests, ad-hoc runs);
+    // every read below falls back to the instance-wide value in that case.
+    this.skillRuntime = skillRuntime;
 
     this.defaultProvider = {
       provider,
@@ -919,14 +925,23 @@ ${this.getHistory({ to: route.to })
       ?.map((name) => this.functions.get(this.#parseFunctionName(name)))
       .filter((a) => !!a);
 
-    // Rerank tools based on user prompt if enabled
-    if (ToolReranker.isEnabled() && functions?.length) {
+    // Rerank tools based on user prompt if enabled. The workspace's own setting
+    // wins when it has one; otherwise this follows the instance-wide value.
+    const rerankerEnabled =
+      this.skillRuntime?.rerankerEnabled ?? ToolReranker.isEnabled();
+    const rerankerTopN =
+      this.skillRuntime?.rerankerTopN ?? ToolReranker.getTopN();
+
+    if (rerankerEnabled && functions?.length) {
       const toolReranker = new ToolReranker();
       const userPrompt = this.#extractUserPrompt(messages);
       if (userPrompt)
-        functions = await toolReranker.rerank(userPrompt, functions);
+        functions = await toolReranker.rerank(userPrompt, functions, {
+          enabled: true,
+          topN: rerankerTopN,
+        });
     } else {
-      if (functions?.length > ToolReranker.defaultTopN) {
+      if (functions?.length > rerankerTopN) {
         this.handlerProps.log?.(
           `
 
