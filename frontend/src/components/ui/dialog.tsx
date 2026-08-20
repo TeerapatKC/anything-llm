@@ -52,82 +52,69 @@ const dialogSizes = {
 
 /**
  * `min-h-0` is what lets the box shrink past its content once the popup hits
- * its max height — that is the whole trick that hands it the scrollbar. `mt-6`
- * starts it below the close button so the scrollbar never runs up against it,
- * and `pr-2` keeps the text off the bar.
+ * its max height — that is the whole trick that hands it the scrollbar.
+ * `thin-scrollbar` is the app's shared slim bar (6px, translucent thumb, no
+ * track) so a dialog scrolls the same way every other surface does instead of
+ * showing the platform's default chunky bar. `pr-2` keeps text off it.
  */
 const BODY_CLASS =
-  "flex min-h-0 flex-col gap-4 overflow-x-hidden overflow-y-auto pr-2"
-
-const isSlot = (node: React.ReactNode, slot: React.ElementType) =>
-  React.isValidElement(node) && node.type === slot
+  "thin-scrollbar flex min-h-0 flex-col gap-4 overflow-x-hidden overflow-y-auto pr-2"
 
 /**
- * Lay a dialog's children out as [header][scrolling body][footer].
- *
- * Call sites write three shapes. The first two are split apart here:
- *
- *   <DialogContent>          <DialogContent>
- *     <DialogHeader/>          <DialogHeader/>
- *     …body…                   <form>…body…<DialogFooter/></form>
- *     <DialogFooter/>        </DialogContent>
- *   </DialogContent>
- *
- * The third renders a whole child component that owns its own header and
- * footer (`<DialogContent><NewUserModal/></DialogContent>` — 17 of them do
- * this). Those slots are invisible from here, so they land inside the scrolling
- * body; `DialogHeader`/`DialogFooter` carry `sticky` for exactly that case, and
- * that is also why the footer must not use negative margins — the body box
- * clips horizontally.
+ * The header and footer are positioned against the popup instead of living in
+ * the scroll flow, which is what keeps the scrollbar clear of them. They are
+ * measured at runtime rather than split out of `children`, because 21 dialogs
+ * render a whole child component that owns its own header and footer
+ * (`<DialogContent><NewUserModal/></DialogContent>`) — a parent cannot see
+ * inside a component, so measuring the rendered DOM is the only approach that
+ * works for every shape.
  */
-function splitDialogSlots(children: React.ReactNode): React.ReactNode {
-  const items = React.Children.toArray(children)
-  const header = items.filter((c) => isSlot(c, DialogHeader))
-  const footer = items.filter((c) => isSlot(c, DialogFooter))
-  const rest = items.filter(
-    (c) => !isSlot(c, DialogHeader) && !isSlot(c, DialogFooter)
-  )
+function useSlotInsets(body: HTMLElement | null) {
+  const [insets, setInsets] = React.useState({ top: 0, bottom: 0 })
 
-  // Shape 2: a lone wrapper holding the header and/or footer of its own.
-  if (footer.length === 0 && rest.length === 1 && React.isValidElement(rest[0])) {
-    const wrapper = rest[0] as React.ReactElement<{
-      children?: React.ReactNode
-      className?: string
-    }>
-    const inner = React.Children.toArray(wrapper.props.children)
-    const hasSlot = inner.some(
-      (c) => isSlot(c, DialogHeader) || isSlot(c, DialogFooter)
-    )
-    if (hasSlot) {
-      return (
-        <>
-          {header}
-          {React.cloneElement(
-            wrapper,
-            {
-              className: cn("flex min-h-0 flex-col gap-4", wrapper.props.className),
-            },
-            splitDialogSlots(wrapper.props.children)
-          )}
-        </>
-      )
+  React.useLayoutEffect(() => {
+    // Measured off the body element, which arrives through a callback ref:
+    // Base UI mounts the popup lazily, so a plain `useRef` is still null when
+    // the first layout effect runs and would never be re-checked. (A ref on
+    // `Popup` itself is no good either — it takes ref as a plain prop, which
+    // React 18 drops.)
+    const popup = body?.parentElement
+    if (!popup) return
+
+    const GAP = 16 // matches the popup's p-4 rhythm
+    const measure = () => {
+      const header = popup.querySelector<HTMLElement>('[data-slot="dialog-header"]')
+      const footer = popup.querySelector<HTMLElement>('[data-slot="dialog-footer"]')
+      setInsets((prev) => {
+        const next = {
+          top: header ? header.offsetHeight + GAP : 0,
+          bottom: footer ? footer.offsetHeight + GAP : 0,
+        }
+        return prev.top === next.top && prev.bottom === next.bottom ? prev : next
+      })
     }
-  }
 
-  return (
-    <>
-      {header}
-      {rest.length > 0 && (
-        <div
-          data-slot="dialog-body"
-          className={cn(BODY_CLASS, header.length === 0 && "mt-6")}
-        >
-          {rest}
-        </div>
-      )}
-      {footer}
-    </>
-  )
+    measure()
+    // Slots resize (an error message appears, a title wraps) and appear or
+    // disappear (a dialog swaps its footer once a form succeeds).
+    const resize = new ResizeObserver(measure)
+    const track = () => {
+      resize.disconnect()
+      popup
+        .querySelectorAll('[data-slot="dialog-header"],[data-slot="dialog-footer"]')
+        .forEach((node) => resize.observe(node))
+      measure()
+    }
+    track()
+    const mutation = new MutationObserver(track)
+    mutation.observe(popup, { childList: true, subtree: true })
+    return () => {
+      resize.disconnect()
+      mutation.disconnect()
+    }
+  }, [body])
+
+  return insets
 }
 
 function DialogContent({
@@ -140,15 +127,8 @@ function DialogContent({
   showCloseButton?: boolean
   size?: keyof typeof dialogSizes
 }) {
-  /*
-   * The popup itself never scrolls — the header and footer stay put and only
-   * what sits between them does, so the scrollbar belongs to the body box
-   * rather than to the whole dialog. Call sites pass their body as plain
-   * children, so the split happens here instead of asking all ~53 of them to
-   * wrap it. Roughly half of them nest the footer inside a <form>, so that one
-   * wrapper is looked through and turned into the flex column instead.
-   */
-  const layout = splitDialogSlots(children)
+  const [body, setBody] = React.useState<HTMLDivElement | null>(null)
+  const insets = useSlotInsets(body)
 
   return (
     <DialogPortal>
@@ -159,20 +139,29 @@ function DialogContent({
         className={cn(
           // `max-h` keeps a long dialog off the top and bottom edges of the
           // viewport; the body below is what actually scrolls.
-          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100svh-4rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col gap-4 overflow-hidden rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          "fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100svh-4rem)] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl bg-popover p-4 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           dialogSizes[size],
           className
         )}
         {...props}
       >
-        {layout}
+        <div
+          ref={setBody}
+          data-slot="dialog-body"
+          className={BODY_CLASS}
+          // The scroll box stops short of the positioned header and footer, so
+          // the scrollbar covers only the part that actually scrolls.
+          style={{ marginTop: insets.top, marginBottom: insets.bottom }}
+        >
+          {children}
+        </div>
         {showCloseButton && (
           <DialogPrimitive.Close
             data-slot="dialog-close"
             render={
               <Button
                 variant="ghost"
-                className="absolute top-2 right-2"
+                className="absolute top-2 right-2 z-30"
                 size="icon-sm"
               />
             }
@@ -192,11 +181,11 @@ function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="dialog-header"
       className={cn(
-        // `min-h-5` keeps the row at least as tall as the close button so the
-        // body — and its scrollbar — start below it; `pr-9` keeps the title
-        // clear of it. `sticky` only bites when a child component nests the
-        // header inside the scrolling body.
-        "sticky top-0 z-10 flex min-h-5 shrink-0 flex-col gap-2 bg-popover pr-9",
+        // Positioned against the popup rather than left in the scroll flow, so
+        // the scrollbar starts *below* it instead of running up beside the
+        // close button. `DialogContent` measures this and insets the scroll
+        // box by the same amount. `pr-9` keeps the title clear of the ✕.
+        "absolute top-4 right-4 left-4 z-20 flex flex-col gap-2 bg-popover pr-9",
         className
       )}
       {...props}
@@ -216,12 +205,9 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        // Pinned to the bottom whether it sits beside the scrolling body or
-        // (when a child component owns it) inside it. `bg-popover` has to be
-        // opaque for the sticky case, and there are deliberately no negative
-        // margins: the body box clips horizontally, which would shear a
-        // full-bleed footer's edges off.
-        "sticky bottom-0 z-10 flex shrink-0 flex-col-reverse gap-2 border-t bg-popover pt-4 sm:flex-row sm:justify-end",
+        // Same treatment as the header at the other end: out of the scroll
+        // flow, so the scrollbar stops above it and it can never move.
+        "absolute right-4 bottom-4 left-4 z-20 flex flex-col-reverse gap-2 border-t bg-popover pt-4 sm:flex-row sm:justify-end",
         className
       )}
       {...props}

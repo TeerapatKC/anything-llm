@@ -14,11 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { DialogFooter } from "@/components/ui/dialog";
 
 export default function NewUserModal() {
   const { code } = useParams();
@@ -48,70 +44,63 @@ export default function NewUserModal() {
   };
 
   return (
-    <>
-      <DialogHeader>
-        <DialogTitle className="text-sm font-semibold">
-          Create a new account
-        </DialogTitle>
-      </DialogHeader>
-      <form onSubmit={handleCreate}>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="username" className="block mb-2">
-              Username
-            </Label>
-            <Input
-              name="username"
-              type="text"
-              placeholder="My username"
-              minLength={USERNAME_MIN_LENGTH}
-              maxLength={USERNAME_MAX_LENGTH}
-              pattern={USERNAME_PATTERN}
-              required={true}
-              autoComplete="off"
-            />
-            <p className="mt-2 text-xs text-theme-text-secondary">
-              {t("common.username_requirements")}
-            </p>
-          </div>
-          <div>
-            <Label htmlFor="email" className="block mb-2">
-              Email
-            </Label>
-            <Input
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              maxLength={255}
-              required={true}
-              autoComplete="off"
-            />
-          </div>
-          <div>
-            <Label htmlFor="password" className="block mb-2">
-              Password
-            </Label>
-            <Input
-              name="password"
-              type="password"
-              placeholder="Your password"
-              required={true}
-              minLength={8}
-              autoComplete="off"
-            />
-          </div>
-          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
-          <p className="text-theme-text-secondary text-xs md:text-sm">
-            After creating your account you will be able to login with these
-            credentials and start using workspaces.
+    <form onSubmit={handleCreate}>
+      <div className="space-y-4">
+        <div>
+          <Label htmlFor="username" className="block mb-2">
+            Username
+          </Label>
+          <Input
+            name="username"
+            type="text"
+            placeholder="My username"
+            minLength={USERNAME_MIN_LENGTH}
+            maxLength={USERNAME_MAX_LENGTH}
+            pattern={USERNAME_PATTERN}
+            required={true}
+            autoComplete="off"
+          />
+          <p className="mt-2 text-xs text-theme-text-secondary">
+            {t("common.username_requirements")}
           </p>
         </div>
-        <DialogFooter>
-          <Button type="submit" variant="default" className="w-full">
-            Accept Invitation
-          </Button>
-        </DialogFooter>
-      </form>
-    </>
+        <div>
+          <Label htmlFor="email" className="block mb-2">
+            Email
+          </Label>
+          <Input
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            maxLength={255}
+            required={true}
+            autoComplete="off"
+          />
+        </div>
+        <div>
+          <Label htmlFor="password" className="block mb-2">
+            Password
+          </Label>
+          <Input
+            name="password"
+            type="password"
+            placeholder="Your password"
+            required={true}
+            minLength={8}
+            autoComplete="off"
+          />
+        </div>
+        {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+        <p className="text-theme-text-secondary text-xs md:text-sm">
+          After creating your account you will be able to login with these
+          credentials and start using workspaces.
+        </p>
+      </div>
+      <DialogFooter>
+        <Button type="submit" variant="default" className="w-full">
+          Accept invitation
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }

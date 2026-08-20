@@ -19,7 +19,7 @@ export default function InviteRow({ invite }) {
     setConfirm({
       title: "Deactivate this invite?",
       description:
-        "After you do this it will no longer be useable. This action is irreversible.",
+        "After you do this it will no longer be usable. This action is irreversible.",
       confirmText: "Deactivate",
       variant: "destructive",
       onConfirm: async () => {

@@ -5,6 +5,7 @@ import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DialogClose,
   DialogHeader,
@@ -103,38 +104,38 @@ export default function NewInviteModal({ onSuccess }) {
               </button>
             </div>
           )}
-          <p className="text-theme-text-primary/60 text-xs md:text-sm">
-            After creation you will be able to copy the invite and send it to a
-            new user where they can create an account as the <b>default</b> role
-            and automatically be added to workspaces selected.
+          <p className="text-muted-foreground text-xs md:text-sm">
+            Once created you can copy the link and send it to someone. They sign
+            up with the <b>default</b> role and join the workspaces you pick
+            below.
           </p>
         </div>
 
         {workspaces.length > 0 && !invite && (
-          <div className="mt-6">
-            <div className="w-full">
-              <div className="flex flex-col gap-y-1 mb-2">
-                <Label htmlFor="workspaces" className="block">
-                  Auto-add invitee to workspaces
-                </Label>
-                <p className="text-theme-text-primary/60 text-xs">
-                  You can optionally automatically assign the user to the
-                  workspaces below by selecting them. By default, the user will
-                  not have any workspaces visible. You can assign workspaces
-                  later post-invite acceptance.
-                </p>
-              </div>
+          <div className="mt-6 space-y-2">
+            <div className="flex items-baseline justify-between gap-4">
+              <Label>Add to workspaces</Label>
+              {selectedWorkspaceIds.length > 0 && (
+                <span className="text-muted-foreground text-xs">
+                  {selectedWorkspaceIds.length} of {workspaces.length} selected
+                </span>
+              )}
+            </div>
+            <p className="text-muted-foreground text-xs">
+              Optional. Anyone joining with this invite is added to the
+              workspaces you pick here — otherwise they start with none, and you
+              can assign workspaces after they accept.
+            </p>
 
-              <div className="flex flex-col gap-y-2 mt-2">
-                {workspaces.map((workspace) => (
-                  <WorkspaceOption
-                    key={workspace.id}
-                    workspace={workspace}
-                    selected={selectedWorkspaceIds.includes(workspace.id)}
-                    toggleSelection={handleWorkspaceSelection}
-                  />
-                ))}
-              </div>
+            <div className="max-h-56 overflow-y-auto rounded-lg border">
+              {workspaces.map((workspace) => (
+                <WorkspaceOption
+                  key={workspace.id}
+                  workspace={workspace}
+                  selected={selectedWorkspaceIds.includes(workspace.id)}
+                  toggleSelection={handleWorkspaceSelection}
+                />
+              ))}
             </div>
           </div>
         )}
@@ -160,32 +161,20 @@ export default function NewInviteModal({ onSuccess }) {
   );
 }
 
+/**
+ * One selectable workspace. This used to be a <button> holding a hidden
+ * `type="radio"` input — the wrong control for a multi-select, and React warns
+ * about a `checked` prop with no `onChange`. It is a labelled checkbox now, so
+ * the whole row is the click target and the state is announced correctly.
+ */
 function WorkspaceOption({ workspace, selected, toggleSelection }) {
   return (
-    <button
-      type="button"
-      onClick={() => toggleSelection(workspace.id)}
-      className={`transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
-        selected
-          ? "border-theme-sidebar-item-workspace-active bg-theme-bg-secondary"
-          : "border-theme-sidebar-border"
-      } hover:border-theme-sidebar-border hover:bg-theme-bg-secondary`}
-    >
-      <input
-        type="radio"
-        name="workspace"
-        value={workspace.id}
+    <label className="flex cursor-pointer items-center gap-3 border-b px-3 py-2.5 transition-colors last:border-b-0 hover:bg-muted/50 has-data-checked:bg-muted/50">
+      <Checkbox
         checked={selected}
-        className="hidden"
+        onCheckedChange={() => toggleSelection(workspace.id)}
       />
-      <div
-        className={`w-4 h-4 rounded-full border-2 border-theme-sidebar-border mr-2 ${
-          selected ? "bg-(--theme-sidebar-item-workspace-active)" : ""
-        }`}
-      ></div>
-      <div className="text-theme-text-primary text-sm font-medium font-['Plus Jakarta Sans'] leading-tight">
-        {workspace.name}
-      </div>
-    </button>
+      <span className="text-sm font-medium">{workspace.name}</span>
+    </label>
   );
 }

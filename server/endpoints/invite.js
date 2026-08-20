@@ -1,11 +1,12 @@
 const { EventLogs } = require("../models/eventLogs");
 const { Invite } = require("../models/invite");
 const { User } = require("../models/user");
-const { reqBody } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 const { FALLBACK_ROLE } = require("../utils/permissions");
 const {
   simpleSSOLoginDisabledMiddleware,
 } = require("../utils/middleware/simpleSSOEnabled");
+const { validatedRequest } = require("../utils/middleware/validatedRequest");
 
 function inviteEndpoints(app) {
   if (!app) return;
@@ -71,6 +72,53 @@ function inviteEndpoints(app) {
           user.id
         );
 
+        response.status(200).json({ success: true, error: null });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Claim an invite with an account that already exists, instead of the
+   * sign-up flow above. The invite's only effect here is its workspace grant —
+   * an existing user keeps the role they already have, so this never
+   * escalates (or downgrades) anyone's permissions.
+   */
+  app.post(
+    "/invite/:code/claim",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const { code } = request.params;
+        const user = await userFromSession(request, response);
+        if (!user) {
+          response
+            .status(401)
+            .json({ success: false, error: "You must be signed in." });
+          return;
+        }
+
+        const invite = await Invite.get({ code });
+        if (!invite || invite.status !== "pending") {
+          response
+            .status(200)
+            .json({ success: false, error: "Invite not found or is invalid." });
+          return;
+        }
+
+        const { success, error } = await Invite.markClaimed(invite.id, user);
+        if (!success) {
+          response.status(200).json({ success: false, error });
+          return;
+        }
+
+        await EventLogs.logEvent(
+          "invite_accepted",
+          { username: user.username },
+          user.id
+        );
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.error(e);
