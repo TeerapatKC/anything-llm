@@ -24,6 +24,7 @@ const User = {
     "suspended",
     "dailyMessageLimit",
     "bio",
+    "customer_id",
   ],
   validations: {
     /**
@@ -82,6 +83,7 @@ const User = {
       case "suspended":
         return Number(Boolean(value));
       case "dailyMessageLimit":
+      case "customer_id":
         return value === null ? null : Number(value);
       default:
         return String(value);
@@ -114,6 +116,7 @@ const User = {
     dailyMessageLimit = null,
     bio = "",
     mustResetPassword = false,
+    customer_id = null,
   }) {
     const passwordCheck = this.checkPasswordComplexity(password);
     if (!passwordCheck.checkedOK) {
@@ -128,6 +131,13 @@ const User = {
       if (!(await Role.exists(validatedRole)))
         return { user: null, error: `Role "${validatedRole}" does not exist.` };
 
+      // A Customer Admin with no customer would be a dangling/broken account
+      // that can never resolve to any workspace/user scope - refuse it here
+      // rather than at the query layer, where it would just silently see
+      // nothing forever.
+      if (validatedRole === "customer_admin" && !customer_id)
+        return { user: null, error: "A customer_admin account requires a customer_id." };
+
       const bcrypt = require("bcryptjs");
       const hashedPassword = bcrypt.hashSync(password, 10);
       const user = await prisma.users.create({
@@ -139,6 +149,7 @@ const User = {
           dailyMessageLimit:
             this.validations.dailyMessageLimit(dailyMessageLimit),
           mustResetPassword: Boolean(mustResetPassword),
+          customer_id: customer_id ? Number(customer_id) : null,
         },
       });
       return { user: this.filterFields(user), error: null };
@@ -203,6 +214,16 @@ const User = {
         if (!(await Role.exists(updates.role)))
           return { success: false, error: `Role "${updates.role}" does not exist.` };
       }
+
+      // Same dangling-account guard as create(): a customer_admin must always
+      // resolve to a real customer, whether that's from this update's own
+      // customer_id or the account's existing one.
+      const nextRole = updates.role ?? currentUser.role;
+      const nextCustomerId = updates.hasOwnProperty("customer_id")
+        ? updates.customer_id
+        : currentUser.customer_id;
+      if (nextRole === "customer_admin" && !nextCustomerId)
+        return { success: false, error: "A customer_admin account requires a customer_id." };
 
       // Handle password specific updates
       if (updates.hasOwnProperty("password")) {

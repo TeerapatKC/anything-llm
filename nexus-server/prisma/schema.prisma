@@ -47,14 +47,21 @@ model workspace_documents {
 }
 
 model invites {
-  id            Int      @id @default(autoincrement())
-  code          String   @unique
-  status        String   @default("pending")
+  id            Int        @id @default(autoincrement())
+  code          String     @unique
+  status        String     @default("pending")
   claimedBy     Int?
   workspaceIds  String?
-  createdAt     DateTime @default(now())
+  // Set when a Customer Admin creates this invite - the account created by
+  // redeeming it is stamped with this customer automatically. NULL = an
+  // internal/company invite, today's exact behavior.
+  customer_id   Int?
+  createdAt     DateTime   @default(now())
   createdBy     Int
-  lastUpdatedAt DateTime @default(now())
+  lastUpdatedAt DateTime   @default(now())
+  customer      customers? @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+
+  @@index([customer_id])
 }
 
 model system_settings {
@@ -71,6 +78,10 @@ model users {
   password                     String
   pfpFilename                  String?
   role                         String                        @default("default")
+  // Set for a Customer Admin, or any user provisioned inside a customer's org
+  // (their own Workspace Admin/Standard User accounts). NULL = platform/
+  // company user - today's exact behavior for every existing account.
+  customer_id                  Int?
   suspended                    Int                           @default(0)
   seen_recovery_codes          Boolean?                      @default(false)
   // Set true when an admin creates the account with an admin-chosen password;
@@ -99,6 +110,9 @@ model users {
   desktop_mobile_devices       desktop_mobile_devices[]
   workspace_parsed_files       workspace_parsed_files[]
   memories                     memories[]
+  customer                     customers?                    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+
+  @@index([customer_id])
 }
 
 model recovery_codes {
@@ -157,6 +171,10 @@ model workspaces {
   // "active" | "inactive" | "archived"
   status                       String                         @default("active")
   archivedAt                   DateTime?
+  // Owning customer for a Hosted Customer Trial workspace. NULL = internal/
+  // company-owned workspace - today's exact behavior for every existing row.
+  customer_id                  Int?
+  customer                     customers?                     @relation(fields: [customer_id], references: [id], onDelete: SetNull)
   workspace_users              workspace_users[]
   documents                    workspace_documents[]
   workspace_suggested_messages workspace_suggested_messages[]
@@ -168,6 +186,8 @@ model workspaces {
   memories                     memories[]
   slash_command_presets        slash_command_presets[]
   workspace_roles              workspace_roles[]
+
+  @@index([customer_id])
 }
 
 model workspace_threads {
@@ -252,6 +272,36 @@ model workspace_users {
   // real admins once both rows are individually removed.
   @@unique([user_id, workspace_id])
   @@index([workspace_role_id])
+}
+
+// ===========================================================================
+// Customer/Tenant isolation (V.1.5, Hosted Customer Trial): groups a set of
+// workspaces + users under one external customer, fully isolated from every
+// other customer. NULL customer_id everywhere else in the schema means
+// "platform/company-owned" - today's exact behavior for every existing row.
+// A `customer_admin` user (see roles.name below) sees only their own
+// customer's rows; this is enforced at the query layer (customer_id filter),
+// NOT via the isElevatedRole() instance-wide bypass, which stays untouched.
+// ===========================================================================
+
+model customers {
+  id            Int        @id @default(autoincrement())
+  name          String
+  slug          String     @unique
+  // "active" | "suspended" | "archived"
+  status        String     @default("active")
+  archivedAt    DateTime?
+  // Hosted Customer Trial: once past, every user under this customer is
+  // blocked at login and on every subsequent request - computed lazily
+  // (checked against now() wherever status is checked), no background job
+  // needed to flip a status column. NULL = no trial limit (default/internal
+  // customers created without one).
+  trialExpiresAt DateTime?
+  createdAt     DateTime   @default(now())
+  lastUpdatedAt DateTime   @default(now())
+  users         users[]
+  workspaces    workspaces[]
+  invites       invites[]
 }
 
 // ===========================================================================

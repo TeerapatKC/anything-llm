@@ -5,6 +5,7 @@ const { Invite } = require("../models/invite");
 const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
 const { Workspace } = require("../models/workspace");
+const { Customer } = require("../models/customer");
 const { getEmbeddingEngineSelection } = require("../utils/helpers");
 const {
   validRoleSelection,
@@ -15,6 +16,7 @@ const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const {
   strictMultiUserRoleValid,
   flexUserRoleValid,
+  isCustomerAdmin,
   ROLES,
 } = require("../utils/middleware/multiUserProtected");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
@@ -25,16 +27,27 @@ const {
 const {
   workspaceDeletionProtection,
 } = require("../utils/middleware/workspaceDeletionProtection");
+const {
+  customerScopedWorkspace,
+  customerScopedUser,
+} = require("../utils/middleware/customerScoped");
 
 function adminEndpoints(app) {
   if (!app) return;
 
   app.get(
     "/admin/users",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
-    async (_request, response) => {
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+    ],
+    async (request, response) => {
       try {
-        const users = await User.where();
+        const currUser = await userFromSession(request, response);
+        const clause = isCustomerAdmin(currUser)
+          ? { customer_id: currUser.customer_id }
+          : {};
+        const users = await User.where(clause);
         response.status(200).json({ users });
       } catch (e) {
         console.error(e);
@@ -45,7 +58,10 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/users/new",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
@@ -59,11 +75,25 @@ function adminEndpoints(app) {
           return;
         }
 
+        // A Customer Admin's new user always lands in their own customer -
+        // never client-supplied, mirroring how the workspace_role_id/role
+        // fields are already forced elsewhere in this file.
+        if (isCustomerAdmin(currUser)) newUserParams.customer_id = currUser.customer_id;
+
+        // The old frontend lets the operator type a password directly; the new
+        // frontend sends none and expects the server to generate one, handed
+        // back once as `initialPassword` for the operator to relay out-of-band.
+        const crypto = require("crypto");
+        const generatedPassword = !newUserParams.password
+          ? crypto.randomBytes(12).toString("base64url")
+          : null;
+
         // Admin is setting the initial password on this account's behalf -
         // require it be changed on first login. (Not forced for self-service
         // invite signups, where the user already picked their own password.)
         const { user: newUser, error } = await User.create({
           ...newUserParams,
+          password: generatedPassword || newUserParams.password,
           mustResetPassword: true,
         });
         if (!!newUser) {
@@ -77,7 +107,11 @@ function adminEndpoints(app) {
           );
         }
 
-        response.status(200).json({ user: newUser, error });
+        response.status(200).json({
+          user: newUser,
+          error,
+          initialPassword: newUser && generatedPassword ? generatedPassword : null,
+        });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();
@@ -87,13 +121,22 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/user/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+      customerScopedUser(),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
         const { id } = request.params;
         const updates = reqBody(request);
-        const user = await User.get({ id: Number(id) });
+        // customer_id is never reassignable through this generic-update
+        // endpoint - moving a user between customers is a bigger operation
+        // than this route is meant for, and a Customer Admin must never be
+        // able to smuggle themselves/another user into a different customer.
+        delete updates.customer_id;
+        const user = response.locals?.targetUser ?? (await User.get({ id: Number(id) }));
         if (!user) {
           response.status(404).json({ success: false, error: "User not found." });
           return;
@@ -138,12 +181,16 @@ function adminEndpoints(app) {
   // same mustResetPassword contract as admin-created accounts.
   app.post(
     "/admin/user/:userId/reset-password",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+      customerScopedUser(),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
         const { userId } = request.params;
-        const user = await User.get({ id: Number(userId) });
+        const user = response.locals?.targetUser ?? (await User.get({ id: Number(userId) }));
         if (!user) {
           response.status(404).json({ success: false, error: "User not found." });
           return;
@@ -177,12 +224,16 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/user/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+      customerScopedUser(),
+    ],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
         const { id } = request.params;
-        const user = await User.get({ id: Number(id) });
+        const user = response.locals?.targetUser ?? (await User.get({ id: Number(id) }));
         if (!user) {
           response.status(404).json({ success: false, error: "User not found." });
           return;
@@ -191,6 +242,18 @@ function adminEndpoints(app) {
         const canModify = validCanModify(currUser, user);
         if (!canModify.valid) {
           response.status(200).json({ success: false, error: canModify.error });
+          return;
+        }
+
+        // A delete is an implicit "role removed" - canModifyAdmin's lockout
+        // check (last instance admin / last customer_admin for a customer)
+        // needs to see it that way. Pre-existing gap: this route never called
+        // canModifyAdmin at all, so the lockout guard tested below for
+        // customer_admin was silently unenforced for every role, including
+        // the original instance-admin case it was written for.
+        const roleRemoval = await canModifyAdmin(user, { role: "default" });
+        if (!roleRemoval.valid) {
+          response.status(200).json({ success: false, error: roleRemoval.error });
           return;
         }
 
@@ -214,10 +277,17 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/invites",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
-    async (_request, response) => {
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+    ],
+    async (request, response) => {
       try {
-        const invites = await Invite.whereWithUsers();
+        const currUser = await userFromSession(request, response);
+        const clause = isCustomerAdmin(currUser)
+          ? { customer_id: currUser.customer_id }
+          : {};
+        const invites = await Invite.whereWithUsers(clause);
         response.status(200).json({ invites });
       } catch (e) {
         console.error(e);
@@ -230,16 +300,29 @@ function adminEndpoints(app) {
     "/admin/invite/new",
     [
       validatedRequest,
-      strictMultiUserRoleValid([ROLES.admin, ROLES.manager]),
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
       simpleSSOLoginDisabledMiddleware,
     ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
         const body = reqBody(request);
+        let workspaceIds = body?.workspaceIds || [];
+
+        // A Customer Admin's invite is stamped with their own customer and
+        // may only reach workspaces that customer actually owns - even if the
+        // request body asked for a foreign workspace id.
+        const customerId = isCustomerAdmin(user) ? user.customer_id : null;
+        if (customerId) {
+          const ownWorkspaces = await Workspace.where({ customer_id: customerId });
+          const ownIds = new Set(ownWorkspaces.map((ws) => ws.id));
+          workspaceIds = workspaceIds.filter((id) => ownIds.has(Number(id)));
+        }
+
         const { invite, error } = await Invite.create({
           createdByUserId: user.id,
-          workspaceIds: body?.workspaceIds || [],
+          workspaceIds,
+          customer_id: customerId,
         });
 
         await EventLogs.logEvent(
@@ -260,10 +343,20 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/invite/:id",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+    ],
     async (request, response) => {
       try {
         const { id } = request.params;
+        const currUser = await userFromSession(request, response);
+        if (isCustomerAdmin(currUser)) {
+          const invite = await Invite.get({ id: Number(id) });
+          if (!invite || invite.customer_id !== currUser.customer_id)
+            return response.status(404).json({ error: "Invite does not exist." });
+        }
+
         const { success, error } = await Invite.deactivate(id);
         await EventLogs.logEvent(
           "invite_deleted",
@@ -280,10 +373,17 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/workspaces",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
-    async (_request, response) => {
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+    ],
+    async (request, response) => {
       try {
-        const workspaces = await Workspace.whereWithUsers();
+        const currUser = await userFromSession(request, response);
+        const clause = isCustomerAdmin(currUser)
+          ? { customer_id: currUser.customer_id }
+          : {};
+        const workspaces = await Workspace.whereWithUsers(clause);
         response.status(200).json({ workspaces });
       } catch (e) {
         console.error(e);
@@ -294,7 +394,11 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/workspaces/:workspaceId/users",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+      customerScopedWorkspace(),
+    ],
     async (request, response) => {
       try {
         const { workspaceId } = request.params;
@@ -309,14 +413,19 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/workspaces/new",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+    ],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
         const { name } = reqBody(request);
         const { workspace, message: error } = await Workspace.new(
           name,
-          user.id
+          user.id,
+          {},
+          isCustomerAdmin(user) ? user.customer_id : null
         );
         response.status(200).json({ workspace, error });
       } catch (e) {
@@ -328,11 +437,26 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/workspaces/:workspaceId/update-users",
-    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    [
+      validatedRequest,
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+      customerScopedWorkspace(),
+    ],
     async (request, response) => {
       try {
         const { workspaceId } = request.params;
-        const { userIds } = reqBody(request);
+        const currUser = await userFromSession(request, response);
+        let { userIds } = reqBody(request);
+
+        // A Customer Admin can only place their own customer's users into
+        // their own customer's workspace - even if the request body asked
+        // for a foreign/platform user id.
+        if (isCustomerAdmin(currUser)) {
+          const ownUsers = await User.where({ customer_id: currUser.customer_id });
+          const ownIds = new Set(ownUsers.map((u) => u.id));
+          userIds = (userIds || []).filter((id) => ownIds.has(Number(id)));
+        }
+
         const { success, error } = await Workspace.updateUsers(
           workspaceId,
           userIds
@@ -356,13 +480,14 @@ function adminEndpoints(app) {
     "/admin/workspaces/:id",
     [
       validatedRequest,
-      strictMultiUserRoleValid([ROLES.admin, ROLES.manager]),
+      strictMultiUserRoleValid([ROLES.admin, ROLES.manager, ROLES.customer_admin]),
+      customerScopedWorkspace(),
       workspaceDeletionProtection,
     ],
     async (request, response) => {
       try {
         const { id } = request.params;
-        const workspace = await Workspace.get({ id: Number(id) });
+        const workspace = response.locals?.workspace ?? (await Workspace.get({ id: Number(id) }));
         if (!workspace) {
           response.sendStatus(404).end();
           return;
@@ -376,6 +501,94 @@ function adminEndpoints(app) {
         if (!archived)
           return response.status(500).json({ success: false, error: message });
         response.status(200).json({ success: true, error: null });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  // Customer/Tenant management (V.1.5 Hosted Customer Trial) - Platform-Admin
+  // only throughout. A customer_admin never reaches these; they manage their
+  // own customer's workspaces/users/invites through the routes above instead,
+  // never the customer record itself.
+  app.get(
+    "/admin/customers",
+    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    async (_request, response) => {
+      try {
+        const customers = await Customer.where({}, null, { createdAt: "desc" });
+        response.status(200).json({ customers });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/admin/customers/new",
+    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    async (request, response) => {
+      try {
+        const { name, trialExpiresAt } = reqBody(request);
+        const { customer, message: error } = await Customer.new(name, trialExpiresAt);
+        if (customer) {
+          await EventLogs.logEvent(
+            "customer_created",
+            { customerName: customer.name, createdBy: response.locals?.user?.username },
+            response.locals?.user?.id
+          );
+        }
+        response.status(200).json({ customer, error });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/admin/customers/:id",
+    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    async (request, response) => {
+      try {
+        const { id } = request.params;
+        const updates = reqBody(request);
+        const { customer, message: error } = await Customer.update(id, updates);
+        response.status(200).json({ customer, error });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/admin/customers/:id/archive",
+    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    async (request, response) => {
+      try {
+        const { id } = request.params;
+        const user = await userFromSession(request, response);
+        const { customer, message: error } = await Customer.archive(id, user?.id);
+        response.status(200).json({ customer, error });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  app.post(
+    "/admin/customers/:id/restore",
+    [validatedRequest, strictMultiUserRoleValid([ROLES.admin, ROLES.manager])],
+    async (request, response) => {
+      try {
+        const { id } = request.params;
+        const user = await userFromSession(request, response);
+        const { customer, message: error } = await Customer.restore(id, user?.id);
+        response.status(200).json({ customer, error });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

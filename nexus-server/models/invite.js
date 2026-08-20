@@ -7,13 +7,14 @@ const Invite = {
     return uuidAPIKey.create().apiKey;
   },
 
-  create: async function ({ createdByUserId = 0, workspaceIds = [] }) {
+  create: async function ({ createdByUserId = 0, workspaceIds = [], customer_id = null }) {
     try {
       const invite = await prisma.invites.create({
         data: {
           code: this.makeCode(),
           createdBy: createdByUserId,
           workspaceIds: JSON.stringify(workspaceIds),
+          customer_id: customer_id ? Number(customer_id) : null,
         },
       });
       return { invite, error: null };
@@ -52,7 +53,15 @@ const Invite = {
         if (!!invite?.workspaceIds) {
           const { Workspace } = require("./workspace");
           const { WorkspaceUser } = require("./workspaceUsers");
-          const workspaceIds = (await Workspace.where({})).map(
+          // Defense in depth: a customer-scoped invite may only ever add the
+          // new user to workspaces owned by that same customer, even if
+          // `workspaceIds` somehow contained a foreign id - the creating
+          // endpoint already restricts the choices offered, this is the
+          // second layer.
+          const scopeClause = invite.customer_id
+            ? { customer_id: invite.customer_id }
+            : {};
+          const workspaceIds = (await Workspace.where(scopeClause)).map(
             (workspace) => workspace.id
           );
           const ids = safeJsonParse(invite.workspaceIds)

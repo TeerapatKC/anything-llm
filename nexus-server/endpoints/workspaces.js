@@ -21,6 +21,7 @@ const {
   flexUserRoleValid,
   strictMultiUserRoleValid,
   isElevatedRole,
+  isCustomerAdmin,
   ROLES,
 } = require("../utils/middleware/multiUserProtected");
 const {
@@ -570,7 +571,8 @@ function workspaceEndpoints(app) {
         // workspace (show/hide admin-only UI) without a separate round trip.
         const myRole =
           workspace && multiUserMode(response) && user
-            ? isElevatedRole(user)
+            ? isElevatedRole(user) ||
+              (isCustomerAdmin(user) && workspace.customer_id === user.customer_id)
               ? "admin"
               : await getWorkspaceRole(user.id, workspace.id)
             : null;

@@ -170,10 +170,15 @@ async function getCustomModels(
 }
 
 async function openAiModels(apiKey = null) {
+  const resolvedKey = apiKey || process.env.OPEN_AI_KEY;
+  // The OpenAI SDK throws synchronously when constructed with no key at all -
+  // that's reachable with zero setup (e.g. onboarding's default-selected
+  // provider, before the user has entered anything), so it must be handled
+  // here rather than left to the endpoint's generic catch-all.
+  if (!resolvedKey) return { models: [], error: "No OpenAI API key provided." };
+
   const { OpenAI: OpenAIApi } = require("openai");
-  const openai = new OpenAIApi({
-    apiKey: apiKey || process.env.OPEN_AI_KEY,
-  });
+  const openai = new OpenAIApi({ apiKey: resolvedKey });
   const allModels = await openai.models
     .list()
     .then((results) => results.data)

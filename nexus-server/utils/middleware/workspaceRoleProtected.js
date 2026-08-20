@@ -1,4 +1,4 @@
-const { ROLES, isElevatedRole } = require("./multiUserProtected");
+const { ROLES, isElevatedRole, isCustomerAdmin } = require("./multiUserProtected");
 const { SystemSettings } = require("../../models/systemSettings");
 const { userFromSession } = require("../http");
 
@@ -68,6 +68,13 @@ function workspaceRoleValid(allowedWorkspaceRoles = ["admin"]) {
         return null;
       })());
     if (!workspace) return response.status(404).json({ error: "Workspace does not exist." });
+
+    // Customer Admin: workspace-admin-equivalent for any workspace inside
+    // their own customer - falls through to the membership check below
+    // (which 404s, matching the anti-enumeration property above) for a
+    // workspace outside their customer, same as any other unrelated caller.
+    if (isCustomerAdmin(user) && workspace.customer_id === user.customer_id)
+      return next();
 
     const { WorkspaceUser } = require("../../models/workspaceUsers");
     const membership = await WorkspaceUser.get({

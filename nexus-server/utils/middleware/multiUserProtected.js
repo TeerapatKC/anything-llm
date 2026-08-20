@@ -5,6 +5,10 @@ const ROLES = {
   admin: "admin",
   manager: "manager",
   default: "default",
+  // V.1.5 Hosted Customer Trial: sees only their own customer's workspaces/
+  // users, never instance-wide - deliberately NOT part of isElevatedRole()
+  // or DEFAULT_ROLES below (see isCustomerAdmin/isElevatedRole comments).
+  customer_admin: "customer_admin",
 };
 const DEFAULT_ROLES = [ROLES.admin, ROLES.manager];
 
@@ -13,11 +17,28 @@ const DEFAULT_ROLES = [ROLES.admin, ROLES.manager];
  * every workspace, bypassing per-workspace membership/role scoping. Shared
  * predicate for the several places that previously each inlined their own
  * copy of `[ROLES.admin, ROLES.manager].includes(user.role)`.
+ *
+ * customer_admin is deliberately excluded: their access is conditional on a
+ * customer_id match against the target row, which this predicate can't
+ * express (it only ever sees the caller, never the target) - see
+ * isCustomerAdmin() + the customer_id-filtered query branches in
+ * models/workspace.js and endpoints/admin.js instead.
  * @param {{role: string}|null} user
  * @returns {boolean}
  */
 function isElevatedRole(user) {
   return !!user && [ROLES.admin, ROLES.manager].includes(user.role);
+}
+
+/**
+ * Whether a user is a Customer Admin - sees everything within their own
+ * `customer_id`, nothing outside it. Companion to isElevatedRole(), never
+ * merged into it (see that function's doc comment).
+ * @param {{role: string, customer_id: number|null}|null} user
+ * @returns {boolean}
+ */
+function isCustomerAdmin(user) {
+  return !!user && user.role === ROLES.customer_admin && !!user.customer_id;
 }
 
 /**
@@ -117,4 +138,5 @@ module.exports = {
   flexUserRoleValid,
   isMultiUserSetup,
   isElevatedRole,
+  isCustomerAdmin,
 };

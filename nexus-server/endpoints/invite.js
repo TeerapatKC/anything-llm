@@ -49,10 +49,16 @@ function inviteEndpoints(app) {
           return;
         }
 
+        // A customer-scoped invite (created by a Customer Admin) stamps its
+        // customer onto the account it creates, so the new user's rows are
+        // isolated the same way as everyone else provisioned under that
+        // customer - see markClaimed() below for the matching workspaceIds
+        // restriction.
         const { user, error } = await User.create({
           username,
           password,
           role: "default",
+          customer_id: invite.customer_id || null,
         });
         if (!user) {
           console.error("Accepting invite:", error);

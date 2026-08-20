@@ -180,6 +180,28 @@ const SYSTEM_ROLES = [
     permissions: [],
     protectedPermissions: [],
   },
+  {
+    // V.1.5 Hosted Customer Trial. Isolation itself is enforced at the query
+    // layer (customer_id filtering, see models/workspace.js and
+    // endpoints/admin.js) - this permission set exists so the role is valid
+    // and recognized end-to-end (Role.exists(), the Roles & Permissions admin
+    // UI), reusing "manager"'s scope since both manage users/workspaces/
+    // documents/chats without touching instance-wide config.
+    name: "customer_admin",
+    displayName: "Customer Admin",
+    permissions: [
+      PERMISSIONS.USERS_VIEW,
+      PERMISSIONS.USERS_MANAGE,
+      PERMISSIONS.USERS_ASSIGN_ROLES,
+      PERMISSIONS.INVITES_MANAGE,
+      PERMISSIONS.WORKSPACES_CREATE,
+      PERMISSIONS.WORKSPACES_VIEW_ALL,
+      PERMISSIONS.WORKSPACES_MANAGE_ALL,
+      PERMISSIONS.DOCUMENTS_MANAGE,
+      PERMISSIONS.CHATS_VIEW_ALL,
+    ],
+    protectedPermissions: [],
+  },
 ];
 
 // Seed rows for the shared (workspace_id: null) `workspace_roles` table.

@@ -5,6 +5,17 @@ const { decodeJWT } = require("../http");
 const { UserMetaCache } = require("../userLocale");
 const EncryptionMgr = new EncryptionManager();
 
+// The only endpoints a user with a pending forced password change may reach. Everything
+// else is refused until they replace the password an admin generated for them.
+// `refresh-user` and `check-token` are session-keepalive calls the app makes on every
+// boot - refusing them logs the user straight back out to /login (the frontend treats a
+// failed check as a dead session) and they could never reach the change form.
+const PASSWORD_CHANGE_ALLOWED_PATHS = [
+  "/system/user/change-password",
+  "/system/check-token",
+  "/system/refresh-user",
+];
+
 async function validatedRequest(request, response, next) {
   const multiUserMode = await SystemSettings.isMultiUserMode();
   response.locals.multiUserMode = multiUserMode;
@@ -105,14 +116,27 @@ async function validateMultiUserRequest(request, response, next) {
     return;
   }
 
+  // Hosted Customer Trial (V.1.5): a suspended/archived customer, or one
+  // whose trial has expired, blocks every one of its users on every request
+  // - no exemption paths (unlike mustResetPassword below), since there's no
+  // action the user could take to comply. Checked lazily against the current
+  // time, so an expiry takes effect immediately rather than needing a
+  // background job to flip a status column first.
+  if (user.customer_id) {
+    const { Customer } = require("../../models/customer");
+    const customer = await Customer.get({ id: user.customer_id });
+    if (Customer.isBlocked(customer)) {
+      response.status(401).json({
+        error: "Your organization's access has ended.",
+      });
+      return;
+    }
+  }
+
   // Enforced here (not just left as a flag for the frontend to notice) so an
   // admin-issued initial password can't be used indefinitely if the client
-  // never happens to check it. POST /system/user is the one path left open
-  // regardless, since it's the only way for the user to actually clear the
-  // flag (change their password).
-  const isPasswordChangeRequest =
-    request.method === "POST" && request.path === "/system/user";
-  if (user.mustResetPassword && !isPasswordChangeRequest) {
+  // never happens to check it.
+  if (user.mustResetPassword && !PASSWORD_CHANGE_ALLOWED_PATHS.includes(request.path)) {
     response.status(403).json({
       error: "You must change your password before continuing.",
       mustResetPassword: true,

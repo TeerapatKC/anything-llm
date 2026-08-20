@@ -1,7 +1,7 @@
 const prisma = require("../utils/prisma");
 const slugifyModule = require("slugify");
 const { WorkspaceUser } = require("./workspaceUsers");
-const { isElevatedRole } = require("../utils/middleware/multiUserProtected");
+const { isElevatedRole, isCustomerAdmin } = require("../utils/middleware/multiUserProtected");
 const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
@@ -205,7 +205,7 @@ const Workspace = {
    * @param {Object} additionalFields - Additional fields to apply to the workspace - will be validated.
    * @returns {Promise<{workspace: Object | null, message: string | null}>} A promise that resolves to an object containing the created workspace and an error message if applicable.
    */
-  new: async function (name = null, creatorId = null, additionalFields = {}) {
+  new: async function (name = null, creatorId = null, additionalFields = {}, customerId = null) {
     if (!name) return { workspace: null, message: "name cannot be null" };
     var slug = this.slugify(name, { lower: true });
     slug = slug || uuidv4();
@@ -233,6 +233,11 @@ const Workspace = {
           chatMode: "automatic",
           ...this.validateFields(additionalFields),
           slug,
+          // Deliberately not part of `writable`/additionalFields - the only
+          // way in is this explicit param, which the caller (endpoints/
+          // admin.js) always forces from the creating user's own customer_id
+          // for a Customer Admin, never from the request body.
+          customer_id: customerId ? Number(customerId) : null,
         },
       });
 
@@ -392,6 +397,11 @@ const Workspace = {
 
     if (isElevatedRole(user)) return this.get(scopedClause);
 
+    // Customer Admin: unfiltered by membership (like the elevated branch
+    // above), but scoped to their own customer's workspaces only.
+    if (isCustomerAdmin(user))
+      return this.get({ ...scopedClause, customer_id: user.customer_id });
+
     try {
       const workspace = await prisma.workspaces.findFirst({
         where: {
@@ -542,6 +552,17 @@ const Workspace = {
 
     if (isElevatedRole(user)) {
       const workspaces = await this.where(scopedClause, limit, orderBy);
+      return workspaces.map((ws) => ({ ...ws, myRole: "admin" }));
+    }
+
+    // Customer Admin: same unfiltered-by-membership shape as the elevated
+    // branch above, scoped to their own customer's workspaces only.
+    if (isCustomerAdmin(user)) {
+      const workspaces = await this.where(
+        { ...scopedClause, customer_id: user.customer_id },
+        limit,
+        orderBy
+      );
       return workspaces.map((ws) => ({ ...ws, myRole: "admin" }));
     }
 

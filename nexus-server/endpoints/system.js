@@ -128,11 +128,17 @@ function systemEndpoints(app) {
             return;
           }
 
-          response.sendStatus(200).end();
+          // This is the one call the frontend can always reach even while a forced
+          // password change is pending (see validatedRequest's allowlist) - it's how
+          // the app learns to route to the change-password screen instead of just
+          // treating the 403 everywhere else as a dead session.
+          response
+            .status(200)
+            .json({ requiresPasswordChange: !!user.mustResetPassword });
           return;
         }
 
-        response.sendStatus(200).end();
+        response.status(200).json({ requiresPasswordChange: false });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();
@@ -257,6 +263,32 @@ function systemEndpoints(app) {
             message: "[004] Account suspended by admin.",
           });
           return;
+        }
+
+        // Hosted Customer Trial (V.1.5): a suspended/archived customer, or
+        // one whose trial has expired, blocks every one of its users at
+        // login - same shape as the suspended-account check just above.
+        if (existingUser.customer_id) {
+          const { Customer } = require("../models/customer");
+          const customer = await Customer.get({ id: existingUser.customer_id });
+          if (Customer.isBlocked(customer)) {
+            await EventLogs.logEvent(
+              "failed_login_customer_blocked",
+              {
+                ip: request.ip || "Unknown IP",
+                username: username || "Unknown user",
+                customerId: existingUser.customer_id,
+              },
+              existingUser?.id
+            );
+            response.status(200).json({
+              user: null,
+              valid: false,
+              token: null,
+              message: "[006] Your organization's access has ended.",
+            });
+            return;
+          }
         }
 
         await Telemetry.sendTelemetry(
@@ -1305,6 +1337,79 @@ function systemEndpoints(app) {
         .json({ success: false, error: e.message || "Internal server error" });
     }
   });
+
+  // Dedicated password-change endpoint the new frontend posts to - both for a
+  // user voluntarily rotating their own password and for the mandatory stop
+  // after an admin-generated one. It's on the validatedRequest allowlist so a
+  // forced user can actually reach it.
+  app.post(
+    "/system/user/change-password",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const sessionUser = await userFromSession(request, response);
+        const id = Number(sessionUser?.id);
+        if (!id) {
+          response.status(400).json({ success: false, error: "Invalid user ID" });
+          return;
+        }
+
+        const { currentPassword, newPassword, confirmPassword } = reqBody(request);
+
+        // A user holding an admin-generated password proved they know it by logging
+        // in with it moments ago, so the forced flow does not ask for it again.
+        // Rotating your own password voluntarily always requires it.
+        const forcedChange = !!sessionUser.mustResetPassword;
+
+        if (!newPassword || (!forcedChange && !currentPassword)) {
+          response.status(400).json({
+            success: false,
+            error: forcedChange
+              ? "A new password is required."
+              : "Current and new password are both required.",
+          });
+          return;
+        }
+
+        if (String(newPassword) !== String(confirmPassword)) {
+          response.status(400).json({ success: false, error: "Passwords do not match." });
+          return;
+        }
+
+        const bcrypt = require("bcryptjs");
+        if (
+          !forcedChange &&
+          !bcrypt.compareSync(String(currentPassword), sessionUser.password)
+        ) {
+          await EventLogs.logEvent(
+            "failed_password_change_invalid_password",
+            { username: sessionUser.username },
+            id
+          );
+          response.status(400).json({ success: false, error: "Current password is incorrect." });
+          return;
+        }
+
+        const { success, error } = await User.update(id, { password: String(newPassword) });
+        if (!success) {
+          response.status(400).json({ success: false, error });
+          return;
+        }
+
+        await EventLogs.logEvent(
+          "user_password_changed",
+          { username: sessionUser.username },
+          id
+        );
+        response.status(200).json({ success: true, error: null });
+      } catch (e) {
+        console.error(e);
+        response
+          .status(500)
+          .json({ success: false, error: e.message || "Internal server error" });
+      }
+    }
+  );
 
   app.get(
     "/system/slash-command-presets",
