@@ -307,6 +307,7 @@ export default function ActiveWorkspaces() {
                                 render={
                                   <SidebarMenuAction
                                     showOnHover={!isActive}
+                                    className="text-sidebar-foreground/60 peer-hover/menu-button:text-sidebar-foreground/60"
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
@@ -322,14 +323,7 @@ export default function ActiveWorkspaces() {
                                   />
                                 }
                               >
-                                <Settings
-                                  className={cn(
-                                    "size-4",
-                                    isInWorkspaceSettings &&
-                                      workspace.slug === slug &&
-                                      "text-sidebar-primary"
-                                  )}
-                                />
+                                <Settings className="size-4" />
                               </TooltipTrigger>
                               <TooltipContent
                                 side="top"

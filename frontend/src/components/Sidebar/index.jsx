@@ -60,9 +60,12 @@ export function SidebarPageLayout({ className, children }) {
  * than per-page, so it's always in sync with the shared sidebar state.
  */
 function MobileTopbar() {
-  const { toggleSidebar } = useSidebar();
+  const { setOpenMobile } = useSidebar();
 
-  return <MobileSidebarTopbar onToggle={toggleSidebar} />;
+  // This control is only rendered for the mobile layout. Open the mobile
+  // sheet explicitly instead of routing through toggleSidebar(), whose
+  // desktop/mobile branch can briefly lag behind a CSS breakpoint resize.
+  return <MobileSidebarTopbar onToggle={() => setOpenMobile(true)} />;
 }
 
 export default function Sidebar() {

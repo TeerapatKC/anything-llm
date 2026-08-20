@@ -109,7 +109,11 @@ function SidebarProvider({
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
-  const state = open ? "expanded" : "collapsed"
+  // `open` stores the desktop collapse preference. A mobile sidebar is always
+  // a full-width sheet, so its descendants must see an expanded state even
+  // when the persisted desktop preference is collapsed. Keep `open` intact so
+  // switching back to desktop restores the user's previous preference.
+  const state = isMobile || open ? "expanded" : "collapsed"
 
   const contextValue = React.useMemo<SidebarContextProps>(
     () => ({
