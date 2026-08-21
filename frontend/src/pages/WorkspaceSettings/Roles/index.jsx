@@ -154,7 +154,7 @@ export default function WorkspaceRoles({ workspace }) {
             )}
             {[...own, ...shared].map((role) => (
               <TableRow key={role.id}>
-                <TableCell>
+                <TableCell className="max-w-sm whitespace-normal">
                   <div className="flex items-center gap-x-2">
                     <span className="font-medium">{role.displayName}</span>
                     {!role.editableHere && (
@@ -168,7 +168,10 @@ export default function WorkspaceRoles({ workspace }) {
                       </Badge>
                     )}
                   </div>
-                  <p className="text-xs text-theme-text-secondary mt-0.5">
+                  <p
+                    className="text-xs text-theme-text-secondary mt-0.5 break-words line-clamp-2"
+                    title={role.description || role.name}
+                  >
                     {role.description || role.name}
                   </p>
                   {!role.editableHere && (

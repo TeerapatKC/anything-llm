@@ -172,7 +172,7 @@ function RolesPanel({ scope }) {
             <TableBody>
               {roles.map((role) => (
                 <TableRow key={role.id}>
-                  <TableCell>
+                  <TableCell className="max-w-sm whitespace-normal">
                     <div className="flex items-center gap-x-2">
                       <span className="text-theme-text-primary font-medium">
                         {role.displayName}
@@ -213,7 +213,10 @@ function RolesPanel({ scope }) {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-theme-text-secondary mt-0.5">
+                    <p
+                      className="text-xs text-theme-text-secondary mt-0.5 break-words line-clamp-2"
+                      title={role.description || role.name}
+                    >
                       {role.description || role.name}
                     </p>
                   </TableCell>
