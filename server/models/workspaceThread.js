@@ -151,7 +151,7 @@ const WorkspaceThread = {
     });
     if (chatCount !== 1) return { renamed: false, thread };
     const { thread: updatedThread } = await this.update(thread, {
-      name: truncate(prompt, 22),
+      name: truncate(prompt, 60),
     });
 
     onRename?.(updatedThread);

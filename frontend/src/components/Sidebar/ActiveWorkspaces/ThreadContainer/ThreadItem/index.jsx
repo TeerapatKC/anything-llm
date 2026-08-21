@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { THREAD_RENAME_EVENT } from "../constants";
+import RenameThreadModal from "./RenameThreadModal";
 
 export default function ThreadItem({
   isActive,
@@ -35,6 +35,7 @@ export default function ThreadItem({
   const { slug: urlSlug, threadSlug = null } = useParams();
   const workspaceSlug = workspace?.slug ?? urlSlug;
   const [confirm, setConfirm] = useState(null);
+  const [renaming, setRenaming] = useState(false);
   const linkTo = thread.virtual
     ? "/"
     : !thread.slug
@@ -102,7 +103,7 @@ export default function ThreadItem({
             {thread.name}
           </span>
         </TooltipTrigger>
-        <TooltipContent side="right" className="max-w-[250px] text-xs">
+        <TooltipContent side="right" className="max-w-sm break-words text-xs">
           {thread.name}
         </TooltipContent>
       </Tooltip>
@@ -124,10 +125,18 @@ export default function ThreadItem({
             onRemove={onRemove}
             currentThreadSlug={threadSlug}
             onConfirm={setConfirm}
+            onRename={() => setRenaming(true)}
           />
         ))}
 
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      {renaming && (
+        <RenameThreadModal
+          workspace={workspace}
+          thread={thread}
+          onClose={() => setRenaming(false)}
+        />
+      )}
     </SidebarMenuSubItem>
   );
 }
@@ -138,34 +147,8 @@ function ThreadOptions({
   onRemove,
   currentThreadSlug,
   onConfirm,
+  onRename,
 }) {
-  const renameThread = async () => {
-    const name = window
-      .prompt("What would you like to rename this thread to?")
-      ?.trim();
-    if (!name || name.length === 0) return;
-
-    const { message } = await Workspace.threads.update(
-      workspace.slug,
-      thread.slug,
-      { name }
-    );
-    if (!!message) {
-      showToast(`Thread could not be updated! ${message}`, "error", {
-        clear: true,
-      });
-      return;
-    }
-
-    // The list owns thread state, so tell it to re-render rather than mutating
-    // the object it handed down.
-    window.dispatchEvent(
-      new CustomEvent(THREAD_RENAME_EVENT, {
-        detail: { threadSlug: thread.slug, newName: name },
-      })
-    );
-  };
-
   const deleteThread = async () => {
     const success = await Workspace.threads.delete(workspace.slug, thread.slug);
     if (!success) {
@@ -193,7 +176,7 @@ function ThreadOptions({
         <MoreHorizontal className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="right" align="start" className="w-44">
-        <DropdownMenuItem onClick={renameThread}>
+        <DropdownMenuItem onClick={onRename}>
           <Pencil className="mr-2 size-4" />
           Rename
         </DropdownMenuItem>

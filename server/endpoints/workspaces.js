@@ -847,7 +847,7 @@ function workspaceEndpoints(app) {
         await WorkspaceChats.bulkCreate(chatsData);
         await WorkspaceThread.update(newThread, {
           name: !!lastMessageText
-            ? truncate(lastMessageText, 22)
+            ? truncate(lastMessageText, 60)
             : "Forked Thread",
         });
 
