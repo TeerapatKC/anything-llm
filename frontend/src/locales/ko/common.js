@@ -1181,6 +1181,7 @@ const TRANSLATIONS = {
   chat_window: {
     attachments_processing:
       "첨부 파일을 처리 중입니다. 잠시만 기다려 주세요...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "메시지 보내기",
     attach_file: "이 채팅에 파일 첨부",
     text_size: "텍스트 크기 변경",

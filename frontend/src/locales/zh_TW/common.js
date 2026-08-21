@@ -1036,6 +1036,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "傳送訊息",
     attach_file: "將檔案附加到這段對話",
     text_size: "調整文字大小。",

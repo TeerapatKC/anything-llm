@@ -1106,6 +1106,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Gửi tin nhắn",
     attach_file: "Đính kèm tệp vào cuộc trò chuyện này",
     text_size: "Thay đổi kích thước văn bản.",

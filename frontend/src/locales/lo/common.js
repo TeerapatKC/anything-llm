@@ -1375,6 +1375,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "ກຳລັງປະມວນຜົນໄຟລ໌ແນບ. ກະລຸນາລໍຖ້າ...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "ສົ່ງຂໍ້ຄວາມ",
     attach_file: "ແນບໄຟລ໌ໃນແຊັດນີ້",
     text_size: "ປ່ຽນຂະໜາດຕົວອັກສອນ.",

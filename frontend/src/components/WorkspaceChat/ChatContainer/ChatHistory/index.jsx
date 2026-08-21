@@ -138,12 +138,15 @@ export default forwardRef(function (
   const lastMessageInfo = useMemo(() => getLastMessageInfo(history), [history]);
   const renderStatusResponse = useCallback(
     (item, index) => {
+      // Anything after this group means the agent has moved on to its actual reply, so
+      // the running commentary has served its purpose and takes itself off screen.
       const hasSubsequentMessages = index < compiledHistory.length - 1;
       return (
         <StatusResponse
           key={`status-group-${index}`}
           messages={item}
           isThinking={!hasSubsequentMessages && lastMessageInfo.isAnimating}
+          isComplete={hasSubsequentMessages}
         />
       );
     },

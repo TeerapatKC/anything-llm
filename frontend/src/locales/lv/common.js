@@ -1214,6 +1214,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Sūtīt ziņojumu",
     attach_file: "Pievienot failu šim čatam",
     text_size: "Mainīt teksta izmēru.",

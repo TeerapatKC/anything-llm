@@ -1453,6 +1453,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Privitci se obrađuju. Pričekajte...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Pošalji poruku",
     attach_file: "Priložite datoteku ovom razgovoru",
     text_size: "Promijeni veličinu teksta.",

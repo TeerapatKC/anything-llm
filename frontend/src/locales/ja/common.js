@@ -1089,6 +1089,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "メッセージを送信",
     attach_file: "このチャットにファイルを添付",
     text_size: "テキストサイズを変更",

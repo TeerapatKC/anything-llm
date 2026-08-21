@@ -1104,6 +1104,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Send en besked",
     attach_file: "Vedhæft en fil til denne chat",
     text_size: "Ændr tekststørrelse.",

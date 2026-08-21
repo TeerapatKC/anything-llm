@@ -1216,6 +1216,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Přílohy se zpracovávají. Prosím čekejte...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Odeslat zprávu",
     attach_file: "Přiložit soubor k tomuto chatu",
     text_size: "Změnit velikost textu.",

@@ -1447,6 +1447,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Lampiran sedang diproses. Harap tunggu...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Kirim pesan",
     attach_file: "Lampirkan berkas ke obrolan ini",
     text_size: "Ubah ukuran teks.",

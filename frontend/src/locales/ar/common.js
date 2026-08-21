@@ -1098,6 +1098,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "أرسل رسالة",
     attach_file: "أرفق ملفًا بهذا الدردشة",
     text_size: "تغيير حجم النص.",

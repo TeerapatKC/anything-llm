@@ -1304,6 +1304,7 @@ const TRANSLATIONS = {
   chat_window: {
     attachments_processing:
       "Els adjunts s'estan processant. Si us plau, espera...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Envia un missatge",
     attach_file: "Adjunta un fitxer a aquest xat",
     text_size: "Canvia la mida del text.",

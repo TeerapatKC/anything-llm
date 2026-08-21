@@ -488,6 +488,7 @@ const TRANSLATIONS = {
   chat_window: {
     attachments_processing:
       "Fișierele atașate se procesează. Te rugăm să aștepți...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Trimite mesaj",
     attach_file: "Atașează un fișier la acest chat",
     text_size: "Schimbă dimensiunea textului.",

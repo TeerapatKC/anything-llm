@@ -142,111 +142,102 @@ export const ThoughtChainComponent = forwardRef(
     const canExpand = tagStrippedContent.length > THOUGHT_PREVIEW_LENGTH;
     if (!content || !content.length || !hasReadableContent) return null;
 
+    // Once the model has closed its thought and moved on to the answer, the reasoning
+    // has served its purpose - the reply below it is what there is to read. Same rule the
+    // agent's status commentary follows, so the two behave alike.
+    if (!isThinking && isComplete) return null;
+
     function handleExpandClick() {
       if (!canExpand) return;
       setIsExpanded(!isExpanded);
     }
 
+    const dimText = "text-white/40 light:text-slate-900/40";
+
     return (
       <div className="flex justify-center w-full">
         <div className="w-full flex flex-col">
-          <div className="w-full">
-            <div
-              style={{
-                transition: "all 0.1s ease-in-out",
-                borderRadius: "16px",
-              }}
-              className="relative bg-zinc-800 light:bg-slate-100 p-4"
-            >
-              <div className="absolute top-4 left-4 w-[18px] h-[18px]">
-                {isThinking ? (
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <video
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          className="w-[18px] h-[18px] scale-[115%] light:invert light:opacity-50"
-                          aria-label="Model is thinking..."
-                        />
-                      }
-                    >
-                      <source src={ThinkingAnimation} type="video/webm" />
-                    </TooltipTrigger>
-                    <TooltipContent
-                      side="bottom"
-                      className="max-w-[250px] text-xs"
-                    >
-                      Model is thinking...
-                    </TooltipContent>
-                  </Tooltip>
-                ) : isComplete ? (
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <img
-                          src={ThinkingStatic}
-                          alt="Thinking complete"
-                          className="w-[18px] h-[18px] light:invert light:opacity-50"
-                          aria-label="Model has finished thinking"
-                        />
-                      }
-                    ></TooltipTrigger>
-                    <TooltipContent
-                      side="bottom"
-                      className="max-w-[250px] text-xs"
-                    >
-                      Model has finished thinking
-                    </TooltipContent>
-                  </Tooltip>
-                ) : null}
-              </div>
-              {canExpand && (
+          <div
+            onClick={handleExpandClick}
+            className={`flex items-start gap-x-2.5 py-2 ${canExpand ? "cursor-pointer" : ""}`}
+          >
+            <div className="shrink-0 w-[18px] h-[18px] mt-[1px] opacity-50">
+              {isThinking ? (
                 <Tooltip>
                   <TooltipTrigger
                     render={
-                      <button
-                        onClick={handleExpandClick}
-                        className="absolute top-4 right-4 border-none text-zinc-200 light:text-slate-800 transition-colors"
-                        aria-label={
-                          isExpanded
-                            ? "Hide thought chain"
-                            : "Show thought chain"
-                        }
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-[18px] h-[18px] scale-[115%] light:invert"
+                        aria-label="Model is thinking..."
                       />
                     }
                   >
-                    <ChevronDown
-                      className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                    />
+                    <source src={ThinkingAnimation} type="video/webm" />
                   </TooltipTrigger>
                   <TooltipContent
                     side="bottom"
                     className="max-w-[250px] text-xs"
                   >
-                    {isExpanded ? "Hide thought chain" : "Show thought chain"}
+                    Model is thinking...
                   </TooltipContent>
                 </Tooltip>
+              ) : (
+                <img
+                  src={ThinkingStatic}
+                  alt="Thinking"
+                  className="w-[18px] h-[18px] light:invert"
+                  aria-label="Model is thinking"
+                />
               )}
-              <div
-                className={`ml-[28px] mr-[26px] transition-[max-height] duration-300 ease-in-out origin-top ${isExpanded ? "" : "overflow-hidden max-h-[18px]"}`}
-              >
-                <div className="text-zinc-200 light:text-slate-800 font-mono text-sm leading-[18px] [&_p]:m-0">
-                  <span
-                    className={`block w-full ${!isExpanded ? "truncate" : ""}`}
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(
-                        isExpanded
-                          ? renderMarkdown(tagStrippedContent)
-                          : tagStrippedContent
-                      ),
-                    }}
-                  />
-                </div>
+            </div>
+
+            <div
+              className={`min-w-0 flex-1 transition-[max-height] duration-300 ease-in-out origin-top ${
+                isExpanded ? "" : "overflow-hidden max-h-[18px]"
+              }`}
+            >
+              <div className="font-mono text-sm leading-[18px] [&_p]:m-0">
+                <span
+                  className={`block w-full ${!isExpanded ? "truncate" : ""} ${
+                    isThinking ? "text-shimmer" : dimText
+                  }`}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      isExpanded
+                        ? renderMarkdown(tagStrippedContent)
+                        : tagStrippedContent
+                    ),
+                  }}
+                />
               </div>
             </div>
+
+            {canExpand && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <button
+                      onClick={handleExpandClick}
+                      className={`shrink-0 border-none ${dimText} hover:text-white/70 light:hover:text-slate-900/70 transition-colors`}
+                      aria-label={
+                        isExpanded ? "Hide thought chain" : "Show thought chain"
+                      }
+                    />
+                  }
+                >
+                  <ChevronDown
+                    className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                  />
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+                  {isExpanded ? "Hide thought chain" : "Show thought chain"}
+                </TooltipContent>
+              </Tooltip>
+            )}
           </div>
         </div>
       </div>

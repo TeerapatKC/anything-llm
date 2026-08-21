@@ -1169,6 +1169,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "קבצים מצורפים בעיבוד. אנא המתן...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "שלח הודעה",
     attach_file: "צרף קובץ לצ'אט זה",
     text_size: "שנה גודל טקסט.",

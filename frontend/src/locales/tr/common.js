@@ -1121,6 +1121,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Mesaj gönderin",
     attach_file: "Bu sohbete bir dosya ekleyin",
     text_size: "Metin boyutunu değiştirin.",

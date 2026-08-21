@@ -1129,6 +1129,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Invia un messaggio",
     attach_file: "Allega un file a questa chat.",
     text_size: "Modifica la dimensione del testo.",

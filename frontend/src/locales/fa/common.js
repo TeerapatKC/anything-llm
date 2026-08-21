@@ -1100,6 +1100,7 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "یک پیام ارسال کنید",
     attach_file: "لطفاً یک فایل را به این چت پیوست کنید.",
     text_size: "تغییر اندازه متن.",

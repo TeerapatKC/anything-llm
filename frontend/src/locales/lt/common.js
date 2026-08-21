@@ -1219,6 +1219,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Priedai apdorojami. Palaukite...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Rašyti žinutę",
     attach_file: "Pridėti failą prie šio pokalbio",
     text_size: "Keisti teksto dydį.",

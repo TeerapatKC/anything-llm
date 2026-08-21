@@ -1242,6 +1242,7 @@ const TRANSLATIONS = {
   chat_window: {
     attachments_processing:
       "Los archivos adjuntos se están procesando. Por favor, espera...",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Enviar un mensaje",
     attach_file: "Adjuntar un archivo a este chat",
     text_size: "Cambiar tamaño del texto.",

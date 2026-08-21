@@ -1180,6 +1180,7 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Manused töötlevad. Palun oota…",
+    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Saada sõnum",
     attach_file: "Lisa fail vestlusele",
     text_size: "Muuda teksti suurust.",

@@ -332,6 +332,19 @@ export default function PromptInput({
             : "flex flex-col gap-y-1 rounded-t-lg md:w-full w-full mx-auto max-w-[750px] items-center"
         }
       >
+        {/*
+          `/exit` only does anything while an agent loop is running, so the reminder is
+          tied to that rather than to streaming in general. It sits above the box the
+          command has to be typed into, and stays put for the whole session - the status
+          message that used to carry this text scrolls away behind the agent's thoughts.
+        */}
+        {agentSessionActive && (
+          <div className="w-[95vw] md:w-[750px] px-1 pb-1">
+            <span className="text-[11px] leading-none text-white/35 light:text-slate-900/40">
+              {t("chat_window.agent_exit_hint")}
+            </span>
+          </div>
+        )}
         <div
           className={`flex items-center rounded-lg md:w-full ${centered ? "mb-0" : "mb-4"}`}
         >
