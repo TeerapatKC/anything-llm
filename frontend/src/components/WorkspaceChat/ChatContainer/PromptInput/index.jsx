@@ -333,12 +333,15 @@ export default function PromptInput({
         }
       >
         {/*
-          `/exit` only does anything while an agent loop is running, so the reminder is
-          tied to that rather than to streaming in general. It sits above the box the
-          command has to be typed into, and stays put for the whole session - the status
+          Shown only while the agent is actually working: `agentSessionActive` alone
+          stays true between turns, which would leave the reminder sitting there once
+          there is an answer to read and nothing left to interrupt. Pairing it with
+          `isStreaming` means it appears exactly when there is a run to exit early from.
+
+          It sits above the box the command has to be typed into, since the status
           message that used to carry this text scrolls away behind the agent's thoughts.
         */}
-        {agentSessionActive && (
+        {agentSessionActive && isStreaming && (
           <div className="w-[95vw] md:w-[750px] px-1 pb-1">
             <span className="text-[11px] leading-none text-white/35 light:text-slate-900/40">
               {t("chat_window.agent_exit_hint")}
