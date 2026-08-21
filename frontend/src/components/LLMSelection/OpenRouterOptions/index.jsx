@@ -81,6 +81,13 @@ function AdvancedControls({ settings }) {
 function OpenRouterModelSelection({ settings }) {
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.OpenRouterModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.OpenRouterModelPref || "");
+  }, [settings?.OpenRouterModelPref]);
 
   useEffect(() => {
     async function findCustomModels() {
@@ -114,14 +121,6 @@ function OpenRouterModelSelection({ settings }) {
       </div>
     );
   }
-
-  const [selectedModel, setSelectedModel] = useState(
-    settings?.OpenRouterModelPref || ""
-  );
-
-  useEffect(() => {
-    setSelectedModel(settings?.OpenRouterModelPref || "");
-  }, [settings?.OpenRouterModelPref]);
 
   const defaultFirstModel =
     groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id || "";
