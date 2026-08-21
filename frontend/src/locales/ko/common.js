@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "시작하기",
       welcome: "환영합니다",
     },
-    llm: {
-      title: "LLM 기본 설정",
-      description:
-        "AnythingLLM은 다양한 LLM 제공자와 연동할 수 있습니다. 여기서 선택한 서비스가 채팅을 담당하게 됩니다.",
-    },
     userSetup: {
       title: "사용자 설정",
       description: "사용자 설정을 구성하세요.",
@@ -18,27 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "비밀번호는 최소 8자 이상이어야 합니다.",
       teamHint:
         "기본적으로 본인이 유일한 관리자가 됩니다. 온보딩이 완료되면 다른 사용자를 초대하거나 관리자로 지정할 수 있습니다. 비밀번호를 분실하면 관리자만 비밀번호를 재설정할 수 있으니 꼭 기억해 두세요.",
-    },
-    data: {
-      title: "데이터 처리 및 개인정보 보호",
-      description:
-        "AnythingLLM은 여러분의 개인정보에 대한 투명성과 제어권을 최우선으로 생각합니다.",
-      settingsHint: "이 설정은 언제든지 설정 메뉴에서 다시 변경할 수 있습니다.",
-    },
-    survey: {
-      title: "AnythingLLM에 오신 것을 환영합니다",
-      description:
-        "여러분의 필요에 맞는 AnythingLLM을 만들 수 있도록 도와주세요. (선택 사항)",
-      email: "이메일을 입력해 주세요",
-      useCase: "AnythingLLM을 어떤 용도로 사용하실 예정인가요?",
-      useCaseWork: "업무용",
-      useCasePersonal: "개인용",
-      useCaseOther: "기타",
-      comment: "AnythingLLM을 어떻게 알게 되셨나요?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube 등 - 어떻게 알게 되셨는지 알려주세요!",
-      skip: "설문 건너뛰기",
-      thankYou: "소중한 의견 감사합니다!",
     },
   },
   common: {
@@ -1440,6 +1414,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "환영합니다",
     chooseWorkspace: "워크스페이스를 선택하여 채팅을 시작하세요!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "현재 워크스페이스에 할당되지 않았습니다.\n워크스페이스에 대한 접근을 요청하려면 관리자에게 문의하세요.",
     goToWorkspace: '워크스페이스로 이동 "{{workspace}}"',

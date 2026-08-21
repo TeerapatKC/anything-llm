@@ -4,6 +4,7 @@ import showToast from "@/utils/toast";
 import { useEffect, useRef, useState } from "react";
 import { Plus } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
 
 export default function CustomLogo() {
   const { t } = useTranslation();
@@ -80,7 +81,7 @@ export default function CustomLogo() {
         <div className="flex md:flex-row flex-col items-center">
           <div className="flex flex-row gap-x-8">
             <label
-              className="mt-3 transition-all duration-300 hover:opacity-60"
+              className="mt-3 transition-all duration-300 hover:opacity-80"
               hidden={!isDefaultLogo}
             >
               <input
@@ -91,17 +92,17 @@ export default function CustomLogo() {
                 onChange={handleFileUpload}
               />
               <div
-                className="w-80 py-4 bg-theme-settings-input-bg rounded-2xl border-2/60 border-dashed border-theme-text-secondary justify-center items-center inline-flex cursor-pointer"
+                className="w-80 py-4 bg-theme-settings-input-bg rounded-2xl border-2 border-dashed border-theme-sidebar-border justify-center items-center inline-flex cursor-pointer hover:border-theme-text-secondary transition-colors"
                 htmlFor="logo-upload"
               >
                 <div className="flex flex-col items-center justify-center">
-                  <div className="rounded-full bg-white/40">
-                    <Plus className="w-6 h-6 text-black/80 m-2" />
+                  <div className="rounded-full bg-theme-bg-secondary p-2">
+                    <Plus className="w-5 h-5 text-theme-text-primary" />
                   </div>
-                  <div className="text-theme-text-primary/80 text-sm font-semibold py-1">
+                  <div className="text-theme-text-primary text-sm font-semibold py-1">
                     {t("customization.items.logo.add")}
                   </div>
-                  <div className="text-theme-text-secondary/60 text-xs font-medium py-1">
+                  <div className="text-theme-text-secondary text-xs font-medium py-1">
                     {t("customization.items.logo.recommended")}
                   </div>
                 </div>
@@ -111,20 +112,22 @@ export default function CustomLogo() {
         </div>
       ) : (
         <div className="flex md:flex-row flex-col items-center relative">
-          <div className="group w-80 h-[130px] mt-3 overflow-hidden">
+          <div className="group w-80 h-[130px] mt-3 overflow-hidden rounded-2xl relative">
             <img
               src={logo}
               alt="Uploaded Logo"
-              className="w-full h-full object-cover border-2/60 border-theme-text-secondary p-1 rounded-2xl"
+              className="w-full h-full object-cover border border-theme-sidebar-border p-1 rounded-2xl"
             />
 
-            <div className="absolute w-80 top-0 left-0 right-0 bottom-0 flex flex-col gap-y-3 justify-center items-center rounded-2xl mt-3 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out border-2 border-transparent hover:border-white">
-              <button
+            <div className="absolute inset-0 flex items-center justify-center gap-x-2 rounded-2xl bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
                 onClick={triggerFileInputClick}
-                className="text-[#FFFFFF] text-base font-medium hover:text-[#FFFFFF]/60 mx-2"
               >
                 {t("customization.items.logo.replace")}
-              </button>
+              </Button>
 
               <input
                 id="logo-upload"
@@ -134,12 +137,14 @@ export default function CustomLogo() {
                 onChange={handleFileUpload}
                 ref={fileInputRef}
               />
-              <button
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
                 onClick={handleRemoveLogo}
-                className="text-[#FFFFFF] text-base font-medium hover:text-[#FFFFFF]/60 mx-2"
               >
                 {t("customization.items.logo.remove")}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

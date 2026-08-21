@@ -319,13 +319,27 @@ function OllamaLLMModelSelection({
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.OllamaLLMModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.OllamaLLMModelPref || "");
+  }, [settings?.OllamaLLMModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.OllamaLLMModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-2">Ollama Model</Label>
       <Select
         name="OllamaLLMModelPref"
         required={true}
-        defaultValue={settings.OllamaLLMModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

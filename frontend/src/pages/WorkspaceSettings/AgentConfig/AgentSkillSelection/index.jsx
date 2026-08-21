@@ -140,7 +140,7 @@ export default function AgentSkillSelection({
         fileSystemAgentAvailable: fsAvailable,
         createFilesAgentAvailable: createFilesAvailable,
       });
-      const isAdmin = userCan(PERMISSIONS.SUPER_ADMIN, userFromStorage());
+      const isAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, userFromStorage());
       const canShow = ([id, skill]) => {
         if (skill.mode?.includes("adminOnly") && !isAdmin) return false;
         return skills?.skillCredentials?.[id]
@@ -356,7 +356,7 @@ export default function AgentSkillSelection({
 
   // Skills marked `adminOnly` hold instance-wide third-party credentials, so only a
   // system administrator sees them here.
-  const isSystemAdmin = userCan(PERMISSIONS.SUPER_ADMIN, userFromStorage());
+  const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, userFromStorage());
   const filterByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
     if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;

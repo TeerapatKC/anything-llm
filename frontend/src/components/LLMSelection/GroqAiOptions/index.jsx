@@ -83,13 +83,27 @@ function GroqAIModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.GroqModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.GroqModelPref || "");
+  }, [settings?.GroqModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.GroqModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="GroqModelPref"
         required={true}
-        defaultValue={settings?.GroqModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

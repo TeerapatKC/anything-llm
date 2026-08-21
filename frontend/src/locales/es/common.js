@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Comenzar",
       welcome: "Bienvenido",
     },
-    llm: {
-      title: "Preferencia de LLM",
-      description:
-        "AnythingLLM puede funcionar con muchos proveedores de LLM. Este será el servicio que gestionará el chat.",
-    },
     userSetup: {
       title: "Configuración de usuario",
       description: "Configura los ajustes de tu usuario.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Las contraseñas deben tener al menos 8 caracteres.",
       teamHint:
         "Por defecto, serás el único administrador. Una vez completada la incorporación, puedes crear e invitar a otros a ser usuarios o administradores. No pierdas tu contraseña, ya que solo los administradores pueden restablecer las contraseñas.",
-    },
-    data: {
-      title: "Manejo de datos y privacidad",
-      description:
-        "Estamos comprometidos con la transparencia y el control en lo que respecta a tus datos personales.",
-      settingsHint:
-        "Estos ajustes se pueden reconfigurar en cualquier momento en la configuración.",
-    },
-    survey: {
-      title: "Bienvenido a AnythingLLM",
-      description:
-        "Ayúdanos a hacer que AnythingLLM se adapte a tus necesidades. Opcional.",
-      email: "¿Cuál es tu correo electrónico?",
-      useCase: "¿Para qué usarás AnythingLLM?",
-      useCaseWork: "Para el trabajo",
-      useCasePersonal: "Para uso personal",
-      useCaseOther: "Otro",
-      comment: "¿Cómo te enteraste de AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. - ¡Haznos saber cómo nos encontraste!",
-      skip: "Omitir encuesta",
-      thankYou: "¡Gracias por tus comentarios!",
     },
   },
   common: {
@@ -1516,6 +1489,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Bienvenido",
     chooseWorkspace: "Elige un espacio de trabajo para comenzar a chatear!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Actualmente no estás asignado a ningún espacio de trabajo.\nPor favor, contacta a tu administrador para solicitar acceso a un espacio de trabajo.",
     goToWorkspace: 'Ir a "{{workspace}}"',

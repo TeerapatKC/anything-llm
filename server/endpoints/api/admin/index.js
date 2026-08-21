@@ -2,6 +2,7 @@ const { EventLogs } = require("../../../models/eventLogs");
 const { Invite } = require("../../../models/invite");
 const { SystemSettings } = require("../../../models/systemSettings");
 const { User } = require("../../../models/user");
+const { Role } = require("../../../models/role");
 const { Workspace } = require("../../../models/workspace");
 const { WorkspaceChats } = require("../../../models/workspaceChats");
 const { WorkspaceUser } = require("../../../models/workspaceUsers");
@@ -227,7 +228,25 @@ function apiAdminEndpoints(app) {
       try {
         const { id } = request.params;
         const user = await User.get({ id: Number(id) });
-        await User.delete({ id: user.id });
+        if (!user)
+          return response
+            .status(404)
+            .json({ success: false, error: "User not found." });
+
+        // The model refuses this too, but it reports the refusal as a boolean - without
+        // this check the API would answer "success" while the account was still there.
+        if (Role.isSuperAdmin(user))
+          return response.status(403).json({
+            success: false,
+            error: "The super admin account cannot be deleted.",
+          });
+
+        const deleted = await User.delete({ id: user.id });
+        if (!deleted)
+          return response
+            .status(400)
+            .json({ success: false, error: "Failed to delete the user." });
+
         await EventLogs.logEvent("api_user_deleted", {
           userName: user.username,
         });

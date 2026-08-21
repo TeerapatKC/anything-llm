@@ -142,7 +142,7 @@ const BrowserExtensionApiKey = {
     orderBy = null
   ) {
     // A super-admin can view and use any keys; everyone else only sees their own.
-    if (await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))
+    if (await Role.userCan(user, PERMISSIONS.SYSTEM_ADMIN))
       return await this.where(clause, limit, orderBy);
 
     try {

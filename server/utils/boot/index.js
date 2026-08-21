@@ -6,6 +6,10 @@ const setupTelemetry = require("../telemetry");
 const eagerLoadContextWindows = require("./eagerLoadContextWindows");
 const markOnboarded = require("./markOnboarded");
 const { bootstrapAdminFromEnv } = require("./bootstrapAdmin");
+const {
+  ensureSuperAdminExists,
+  applyBreakGlassFromEnv,
+} = require("./superAdmin");
 const { PushNotifications } = require("../PushNotifications");
 const { TelegramBotService } = require("../telegramBot");
 const { Role } = require("../../models/role");
@@ -37,8 +41,12 @@ function bootSSL(app, port = 3001) {
         await markOnboarded();
         await Role.seed();
         await WorkspaceRole.seed();
-        // After role seeding - the admin role must exist before the account can be made.
+        // After role seeding - the owner role must exist before the account can be made.
         await bootstrapAdminFromEnv();
+        // Instances created before the owner role existed have nobody holding it, and the
+        // recovery paths are the only way ownership moves without a signed-in owner.
+        await ensureSuperAdminExists();
+        await applyBreakGlassFromEnv();
         await setupTelemetry();
         new CommunicationKey(true);
         new EncryptionManager();
@@ -74,8 +82,12 @@ function bootHTTP(app, port = 3001) {
       await markOnboarded();
       await Role.seed();
       await WorkspaceRole.seed();
-      // After role seeding - the admin role must exist before the account can be made.
+      // After role seeding - the owner role must exist before the account can be made.
       await bootstrapAdminFromEnv();
+      // Instances created before the owner role existed have nobody holding it, and the
+      // recovery paths are the only way ownership moves without a signed-in owner.
+      await ensureSuperAdminExists();
+      await applyBreakGlassFromEnv();
       await setupTelemetry();
       new CommunicationKey(true);
       new EncryptionManager();

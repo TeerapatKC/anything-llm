@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Começar",
       welcome: "Bem-vindo",
     },
-    llm: {
-      title: "Preferência de LLM",
-      description:
-        "AnythingLLM funciona com vários provedores de LLM. Este será o serviço que lidará com os chats.",
-    },
     userSetup: {
       title: "Configuração do Usuário",
       description: "Configure suas preferências de usuário.",
@@ -18,27 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Senhas devem ter pelo menos 8 caracteres.",
       teamHint:
         "Por padrão, você será o único admin. Após a configuração, você poderá convidar outros usuários ou admins. Não perca sua senha, pois apenas admins podem redefini-la.",
-    },
-    data: {
-      title: "Privacidade de Dados",
-      description:
-        "Estamos comprometidos com transparência e controle sobre seus dados pessoais.",
-      settingsHint:
-        "Estas configurações podem ser alteradas a qualquer momento.",
-    },
-    survey: {
-      title: "Bem-vindo ao AnythingLLM",
-      description: "Ajude-nos a melhorar o AnythingLLM. Opcional.",
-      email: "Qual seu email?",
-      useCase: "Como você usará o AnythingLLM?",
-      useCaseWork: "Para trabalho",
-      useCasePersonal: "Uso pessoal",
-      useCaseOther: "Outro",
-      comment: "Como você conheceu o AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. - Conte como nos encontrou!",
-      skip: "Pular Pesquisa",
-      thankYou: "Obrigado pelo seu feedback!",
     },
   },
   common: {
@@ -1468,6 +1442,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Bem-vindo",
     chooseWorkspace: "Escolha um espaço de trabalho para começar a conversar!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Você ainda não está atribuído a nenhum espaço de trabalho.\nEntre em contato com seu administrador para solicitar acesso a um espaço de trabalho.",
     goToWorkspace: 'Ir para o espaço de trabalho "{{workspace}}"',

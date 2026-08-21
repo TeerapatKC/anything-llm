@@ -79,7 +79,7 @@ export default function BrowserExtensionApiKeys() {
         ) : error ? (
           <div className="text-red-500 mt-6">Error: {error}</div>
         ) : (
-          <Table className="text-left rounded-lg min-w-[640px] border-spacing-0 md:mt-6 mt-0">
+          <Table className="text-left min-w-[640px]">
             <TableHeader>
               <TableRow>
                 <TableHead scope="col">Extension Connection String</TableHead>

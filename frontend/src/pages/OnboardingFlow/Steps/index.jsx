@@ -3,17 +3,11 @@ import { useState } from "react";
 import { isMobile } from "react-device-detect";
 import useRedirectToHomeOnOnboardingComplete from "@/hooks/useOnboardingComplete";
 import Home from "./Home";
-import LLMPreference from "./LLMPreference";
 import UserSetup from "./UserSetup";
-import DataHandling from "./DataHandling";
-import Survey from "./Survey";
 
 const OnboardingSteps = {
   home: Home,
-  "llm-preference": LLMPreference,
   "user-setup": UserSetup,
-  "data-handling": DataHandling,
-  survey: Survey,
 };
 
 export default OnboardingSteps;

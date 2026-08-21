@@ -3,6 +3,8 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function CustomAppName() {
   const { t } = useTranslation();
@@ -54,20 +56,22 @@ export default function CustomAppName() {
 
   return (
     <form
-      className="flex flex-col gap-y-0.5 mt-4"
+      className="flex flex-col gap-y-1.5 mt-4"
       onSubmit={updateCustomAppName}
     >
-      <p className="text-sm leading-6 font-semibold text-theme-text-primary">
-        {t("customization.items.app-name.title")}
-      </p>
-      <p className="text-xs text-theme-text-secondary">
-        {t("customization.items.app-name.description")}
-      </p>
-      <div className="flex items-center gap-x-4">
-        <input
+      <div>
+        <p className="text-sm leading-6 font-semibold text-theme-text-primary">
+          {t("customization.items.app-name.title")}
+        </p>
+        <p className="text-xs text-theme-text-secondary">
+          {t("customization.items.app-name.description")}
+        </p>
+      </div>
+      <div className="flex items-center gap-x-3 mt-1">
+        <Input
           name="customAppName"
           type="text"
-          className="border-none bg-theme-settings-input-bg mt-2 text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4"
+          className="max-w-xs"
           placeholder="AnythingLLM"
           required={true}
           autoComplete="off"
@@ -75,22 +79,25 @@ export default function CustomAppName() {
           value={customAppName}
         />
         {originalAppName !== "" && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={(e) => updateCustomAppName(e, "")}
-            className="text-theme-text-primary text-base font-medium hover:text-theme-text-primary/60"
           >
             Clear
-          </button>
+          </Button>
         )}
       </div>
       {hasChanges && (
-        <button
+        <Button
           type="submit"
-          className="transition-all mt-2 w-fit duration-300 border border-slate-200 px-5 py-2.5 rounded-lg text-theme-text-primary text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
+          variant="default"
+          size="sm"
+          className="mt-2 w-fit"
         >
           Save
-        </button>
+        </Button>
       )}
     </form>
   );

@@ -38,23 +38,8 @@ export default {
     home: () => {
       return "/onboarding";
     },
-    survey: () => {
-      return "/onboarding/survey";
-    },
-    llmPreference: () => {
-      return "/onboarding/llm-preference";
-    },
-    embeddingPreference: () => {
-      return "/onboarding/embedding-preference";
-    },
-    vectorDatabase: () => {
-      return "/onboarding/vector-database";
-    },
     userSetup: () => {
       return "/onboarding/user-setup";
-    },
-    dataHandling: () => {
-      return "/onboarding/data-handling";
     },
   },
   github: () => {
@@ -118,6 +103,9 @@ export default {
   settings: {
     roles: () => {
       return `/settings/roles`;
+    },
+    superAdmin: () => {
+      return `/settings/instance-owner`;
     },
     users: () => {
       return `/settings/users`;

@@ -85,7 +85,7 @@ function WorkspacesContainer() {
   }
 
   return (
-    <Table className="text-left rounded-lg mt-6 min-w-[640px] border-spacing-0">
+    <Table containerClassName="mt-6" className="text-left min-w-[640px]">
       <TableHeader>
         <TableRow>
           <TableHead scope="col">Name</TableHead>

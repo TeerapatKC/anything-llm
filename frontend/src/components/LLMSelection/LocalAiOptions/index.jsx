@@ -194,13 +194,27 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.LocalAiModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.LocalAiModelPref || "");
+  }, [settings?.LocalAiModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.LocalAiModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-2">Chat Model Selection</Label>
       <Select
         name="LocalAiModelPref"
         required={true}
-        defaultValue={settings.LocalAiModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

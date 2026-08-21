@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Sākt darbu",
       welcome: "Laipni lūdzam",
     },
-    llm: {
-      title: "LLM preferences",
-      description:
-        "AnythingLLM var strādāt ar daudziem LLM pakalpojumu sniedzējiem. Šis būs pakalpojums, kas apstrādās sarunas.",
-    },
     userSetup: {
       title: "Lietotāja iestatīšana",
       description: "Konfigurējiet savus lietotāja iestatījumus.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Parolēm jābūt vismaz 8 rakstzīmes garām.",
       teamHint:
         "Pēc noklusējuma jūs būsiet vienīgais administrators. Kad ievadīšana būs pabeigta, jūs varēsiet izveidot un uzaicināt citus būt par lietotājiem vai administratoriem. Neaizmirstiet savu paroli, jo tikai administratori var atiestatīt paroles.",
-    },
-    data: {
-      title: "Datu apstrāde un privātums",
-      description:
-        "Mēs esam apņēmušies nodrošināt caurskatāmību un kontroli pār jūsu personīgajiem datiem.",
-      settingsHint:
-        "Šos iestatījumus var pārkonfigurēt jebkurā laikā iestatījumos.",
-    },
-    survey: {
-      title: "Laipni lūgti AnythingLLM",
-      description:
-        "Palīdziet mums veidot AnythingLLM atbilstoši jūsu vajadzībām. Neobligāti.",
-      email: "Kāds ir jūsu e-pasts?",
-      useCase: "Kam izmantosiet AnythingLLM?",
-      useCaseWork: "Darbam",
-      useCasePersonal: "Personīgai lietošanai",
-      useCaseOther: "Citam nolūkam",
-      comment: "Kā jūs uzzinājāt par AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube utt. - Ļaujiet mums zināt, kā jūs mūs atradāt!",
-      skip: "Izlaist aptauju",
-      thankYou: "Paldies par jūsu atsauksmi!",
     },
   },
   common: {
@@ -1484,6 +1457,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Laipni lūgti",
     chooseWorkspace: "Izvēlies darba vietu, lai sāktu čatu!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Jūs nav piešķirts nevienai darba vietai.\nLūdzu, sazinieties ar savu administratoru, lai pieprasītu piekļuvi darba vietai.",
     goToWorkspace: 'Pāriet uz darba vietu "{{workspace}}"',

@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Kom godt i gang",
       welcome: "Velkommen",
     },
-    llm: {
-      title: "LLM-præference",
-      description:
-        "AnythingLLM kan arbejde med mange LLM-udbydere. Dette vil være den tjeneste, der håndterer chat.",
-    },
     userSetup: {
       title: "Brugeropsætning",
       description: "Konfigurer dine brugerindstillinger.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Adgangskoder skal være på mindst 8 tegn.",
       teamHint:
         "Som standard vil du være den eneste administrator. Når onboarding er fuldført, kan du oprette og invitere andre til at blive brugere eller administratorer. Glem ikke din adgangskode, da kun administratorer kan nulstille adgangskoder.",
-    },
-    data: {
-      title: "Datahåndtering & Privatliv",
-      description:
-        "Vi er forpligtet til gennemsigtighed og kontrol, når det gælder dine persondata.",
-      settingsHint:
-        "Disse indstillinger kan ændres når som helst under indstillingerne.",
-    },
-    survey: {
-      title: "Velkommen til AnythingLLM",
-      description:
-        "Hjælp os med at gøre AnythingLLM tilpasset dine behov. Valgfrit.",
-      email: "Hvad er din e-mail?",
-      useCase: "Hvad vil du bruge AnythingLLM til?",
-      useCaseWork: "Til arbejde",
-      useCasePersonal: "Til personligt brug",
-      useCaseOther: "Andet",
-      comment: "Hvordan hørte du om AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. - Fortæl os, hvordan du fandt os!",
-      skip: "Spring undersøgelsen over",
-      thankYou: "Tak for din feedback!",
     },
   },
   common: {
@@ -1474,6 +1447,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Velkommen",
     chooseWorkspace: "Vælg et arbejdsområde for at starte at chatte!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Du er ikke tildelt til nogen arbejdsområder.\nKontakt din administrator for at anmode om adgang til et arbejdsområde.",
     goToWorkspace: 'Gå til "{{workspace}}"',

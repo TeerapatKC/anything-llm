@@ -117,13 +117,27 @@ function AnthropicModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.AnthropicModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.AnthropicModelPref || "");
+  }, [settings?.AnthropicModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.AnthropicModelPref ||
+    (models.length > 0 ? models[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="AnthropicModelPref"
         required={true}
-        defaultValue={settings?.AnthropicModelPref ?? models?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

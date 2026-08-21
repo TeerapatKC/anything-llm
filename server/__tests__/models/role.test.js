@@ -123,6 +123,7 @@ describe("Role.seed", () => {
       "admin",
       "default",
       "manager",
+      "super-admin",
     ]);
     expect(roles.every((role) => role.isSystem)).toBe(true);
     expect(mockDb.permissions.length).toBeGreaterThan(0);
@@ -136,7 +137,7 @@ describe("Role.seed", () => {
 
     const after = await Role.get({ name: "manager" });
     expect(after.permissions).toEqual([PERMISSIONS.USERS_VIEW]);
-    expect((await Role.where()).length).toBe(3);
+    expect((await Role.where()).length).toBe(4);
   });
 });
 
@@ -268,7 +269,7 @@ describe("built-in role protection", () => {
   it("keeps the super-admin grant even if it is unticked", async () => {
     const admin = await Role.get({ name: "admin" });
     await Role.update(admin.id, { permissions: [PERMISSIONS.USERS_VIEW] });
-    expect(await Role.userCan({ role: "admin" }, PERMISSIONS.SUPER_ADMIN)).toBe(
+    expect(await Role.userCan({ role: "admin" }, PERMISSIONS.SYSTEM_ADMIN)).toBe(
       true
     );
   });
@@ -353,7 +354,7 @@ describe("last administrator guard", () => {
     await Role.create({
       name: "owner",
       displayName: "Owner",
-      permissions: [PERMISSIONS.SUPER_ADMIN],
+      permissions: [PERMISSIONS.SYSTEM_ADMIN],
     });
     mockDb.users.push({ id: 2, role: "owner" });
 

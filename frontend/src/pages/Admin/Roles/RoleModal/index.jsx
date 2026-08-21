@@ -37,6 +37,9 @@ export default function RoleModal({
   onClose,
   onSaved,
 }) {
+  // The owner role is frozen server-side, so the editor opens as a viewer rather than
+  // letting an operator make changes that would only be rejected on save.
+  const readOnly = role?.isImmutable === true;
   const api = scope === "workspace" ? WorkspaceRole : Role;
   // When opened from inside a workspace the role belongs to that workspace alone, so
   // it is saved through the workspace-scoped endpoints.
@@ -59,8 +62,8 @@ export default function RoleModal({
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
-  const isSuperAdmin =
-    scope === "system" && selected.has(PERMISSIONS.SUPER_ADMIN);
+  const hasWildcard =
+    scope === "system" && selected.has(PERMISSIONS.SYSTEM_ADMIN);
   const totalPermissions = useMemo(
     () =>
       categories.reduce(
@@ -117,12 +120,14 @@ export default function RoleModal({
                 ? "Create a role for this workspace"
                 : "Create a shared workspace role"
               : "Create a system role"
-            : `Edit ${role.displayName}`}
+            : `${readOnly ? "View" : "Edit"} ${role.displayName}`}
         </DialogTitle>
         <DialogDescription>
-          {scope === "workspace"
-            ? "Define what members with this role can do inside this workspace."
-            : "Define the permissions granted to users with this role."}
+          {readOnly
+            ? "This role is built into the instance and cannot be changed. It is shown here so you can see exactly what owning the instance grants."
+            : scope === "workspace"
+              ? "Define what members with this role can do inside this workspace."
+              : "Define the permissions granted to users with this role."}
         </DialogDescription>
       </DialogHeader>
 
@@ -144,6 +149,7 @@ export default function RoleModal({
                 placeholder="Content Editor"
                 required={true}
                 autoComplete="off"
+                disabled={readOnly}
               />
             </div>
             <div>
@@ -161,7 +167,7 @@ export default function RoleModal({
                 placeholder="content-editor"
                 required={true}
                 autoComplete="off"
-                disabled={!isNew}
+                disabled={readOnly || !isNew}
               />
               <p className="mt-2 text-xs text-theme-text-secondary">
                 {isNew
@@ -183,6 +189,7 @@ export default function RoleModal({
               placeholder="What this role is for"
               rows={2}
               autoComplete="off"
+              disabled={readOnly}
             />
           </div>
 
@@ -194,9 +201,9 @@ export default function RoleModal({
               </span>
             </div>
 
-            {isSuperAdmin && (
+            {hasWildcard && (
               <p className="mx-4 mt-3 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400 light:text-yellow-700">
-                This role holds the super administrator grant, so it has every
+                This role holds the system administrator grant, so it has every
                 permission — including any added by future updates — regardless
                 of the boxes below.
               </p>
@@ -213,47 +220,70 @@ export default function RoleModal({
                       key={category.key}
                       className="overflow-hidden rounded-md border border-theme-sidebar-border"
                     >
-                    <div className="flex items-center gap-x-2 border-b border-theme-sidebar-border bg-muted/30 px-3 py-2.5">
-                      <Checkbox
-                        id={`category-${category.key}`}
-                        checked={allChecked}
-                        onCheckedChange={(checked) =>
-                          toggleCategory(category, checked === true)
-                        }
-                      />
-                      <label
-                        htmlFor={`category-${category.key}`}
-                        className="text-sm font-semibold text-theme-text-primary cursor-pointer"
-                      >
-                        {category.label}
-                      </label>
-                    </div>
-                    <div className="flex flex-col gap-y-1 p-2">
-                      {category.permissions.map((permission) => (
-                        <div
-                          key={permission.key}
-                          className="flex items-start gap-x-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/50"
+                      <div className="flex items-center gap-x-2 border-b border-theme-sidebar-border bg-muted/30 px-3 py-2.5">
+                        <Checkbox
+                          id={`category-${category.key}`}
+                          checked={allChecked}
+                          disabled={readOnly}
+                          onCheckedChange={(checked) =>
+                            toggleCategory(category, checked === true)
+                          }
+                        />
+                        <label
+                          htmlFor={`category-${category.key}`}
+                          className="text-sm font-semibold text-theme-text-primary cursor-pointer"
                         >
-                          <Checkbox
-                            id={permission.key}
-                            className="mt-0.5"
-                            checked={selected.has(permission.key)}
-                            onCheckedChange={() => toggle(permission.key)}
-                          />
-                          <label
-                            htmlFor={permission.key}
-                            className="cursor-pointer"
-                          >
-                            <span className="text-sm text-theme-text-primary block">
-                              {permission.label}
-                            </span>
-                            <span className="text-xs text-theme-text-secondary block">
-                              {permission.description}
-                            </span>
-                          </label>
-                        </div>
-                      ))}
-                    </div>
+                          {category.label}
+                        </label>
+                      </div>
+                      <div className="flex flex-col gap-y-1 p-2">
+                        {category.permissions.map((permission) => {
+                          // A coarse permission grants everything beneath it, so a child
+                          // whose parent is ticked shows as included and cannot be
+                          // unticked on its own - that is what the server resolves to.
+                          const implied =
+                            !!permission.parent &&
+                            selected.has(permission.parent);
+                          return (
+                            <div
+                              key={permission.key}
+                              className={`flex items-start gap-x-3 rounded-md px-2 py-2 transition-colors hover:bg-muted/50 ${
+                                permission.parent ? "ml-6" : ""
+                              }`}
+                            >
+                              <Checkbox
+                                id={permission.key}
+                                className="mt-0.5"
+                                checked={
+                                  implied || selected.has(permission.key)
+                                }
+                                disabled={readOnly || implied}
+                                onCheckedChange={() => toggle(permission.key)}
+                              />
+                              <label
+                                htmlFor={permission.key}
+                                className={
+                                  readOnly || implied
+                                    ? "cursor-default"
+                                    : "cursor-pointer"
+                                }
+                              >
+                                <span className="text-sm text-theme-text-primary block">
+                                  {permission.label}
+                                  {implied && (
+                                    <span className="ml-2 text-[10px] uppercase tracking-wide text-theme-text-secondary">
+                                      included
+                                    </span>
+                                  )}
+                                </span>
+                                <span className="text-xs text-theme-text-secondary block">
+                                  {permission.description}
+                                </span>
+                              </label>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
                 })}
@@ -272,19 +302,25 @@ export default function RoleModal({
       <DialogFooter>
         <DialogClose
           render={
-            <Button variant="outline" type="button" onClick={onClose} />
+            <Button
+              variant={readOnly ? "default" : "outline"}
+              type="button"
+              onClick={onClose}
+            />
           }
         >
-          Cancel
+          {readOnly ? "Close" : "Cancel"}
         </DialogClose>
-        <Button
-          variant="default"
-          type="submit"
-          form="role-editor-form"
-          disabled={saving}
-        >
-          {saving ? "Saving…" : isNew ? "Create role" : "Save changes"}
-        </Button>
+        {!readOnly && (
+          <Button
+            variant="default"
+            type="submit"
+            form="role-editor-form"
+            disabled={saving}
+          >
+            {saving ? "Saving…" : isNew ? "Create role" : "Save changes"}
+          </Button>
+        )}
       </DialogFooter>
     </>
   );

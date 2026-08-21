@@ -14,14 +14,23 @@ import {
 
 export default function GenericOpenAiOptions({ settings }) {
   const [genericOpenAiBasePath, setGenericOpenAiBasePath] = useState(
-    settings?.GenericOpenAiBasePath
+    settings?.GenericOpenAiBasePath || ""
   );
+  // GenericOpenAiKey from server is boolean (whether key exists) - use null so server uses saved env key
   const [genericOpenAiApiKey, setGenericOpenAiApiKey] = useState(
-    settings?.GenericOpenAiApiKey
+    typeof settings?.GenericOpenAiKey === "boolean" ? null : settings?.GenericOpenAiKey || null
   );
   const [genericOpenAiModelPref, setGenericOpenAiModelPref] = useState(
-    settings?.GenericOpenAiModelPref
+    settings?.GenericOpenAiModelPref || ""
   );
+
+  useEffect(() => {
+    setGenericOpenAiBasePath(settings?.GenericOpenAiBasePath || "");
+    setGenericOpenAiApiKey(
+      typeof settings?.GenericOpenAiKey === "boolean" ? null : settings?.GenericOpenAiKey || null
+    );
+    setGenericOpenAiModelPref(settings?.GenericOpenAiModelPref || "");
+  }, [settings]);
 
   return (
     <div className="flex flex-col gap-y-7">
@@ -32,7 +41,7 @@ export default function GenericOpenAiOptions({ settings }) {
             type="url"
             name="GenericOpenAiBasePath"
             placeholder="eg: https://proxy.openai.com"
-            defaultValue={settings?.GenericOpenAiBasePath}
+            value={genericOpenAiBasePath}
             onChange={(e) => setGenericOpenAiBasePath(e.target.value)}
             required={true}
             autoComplete="off"
@@ -125,6 +134,17 @@ function GenericOpenAiModelSelection({
     findCustomModels();
   }, [basePath, apiKey]);
 
+  const selectedModel =
+    genericOpenAiModelPref ||
+    settings?.GenericOpenAiModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
+  useEffect(() => {
+    if (!genericOpenAiModelPref && selectedModel) {
+      setGenericOpenAiModelPref(selectedModel);
+    }
+  }, [selectedModel, genericOpenAiModelPref, setGenericOpenAiModelPref]);
+
   if (loading) {
     return (
       <div className="flex flex-col w-60">
@@ -141,8 +161,13 @@ function GenericOpenAiModelSelection({
     );
   }
 
-  // If no models are found, just show a free-form input field for the model name
-  if (customModels.length === 0) {
+  // Determine if saved model preference exists in the fetched model list
+  const savedModelInList =
+    customModels.length > 0 &&
+    customModels.some((m) => m.id === selectedModel);
+
+  // If no models are found OR saved model is not in the list, show a free-text input
+  if (customModels.length === 0 || !savedModelInList) {
     return (
       <div className="flex flex-col w-60">
         <Label className="block mb-2">Selected Model</Label>
@@ -150,9 +175,8 @@ function GenericOpenAiModelSelection({
           type="text"
           name="GenericOpenAiModelPref"
           placeholder="Model id used for chat requests"
-          defaultValue={genericOpenAiModelPref}
+          value={selectedModel}
           onChange={(e) => setGenericOpenAiModelPref(e.target.value)}
-          onBlur={() => setGenericOpenAiModelPref(genericOpenAiModelPref)}
           required={true}
           autoComplete="off"
           spellCheck={false}
@@ -167,7 +191,8 @@ function GenericOpenAiModelSelection({
       <Select
         name="GenericOpenAiModelPref"
         required={true}
-        defaultValue={settings.GenericOpenAiModelPref ?? customModels?.[0]?.id}
+        value={selectedModel}
+        onValueChange={(val) => setGenericOpenAiModelPref(val)}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

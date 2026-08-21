@@ -205,7 +205,7 @@ function browserExtensionEndpoints(app) {
         const user = await userFromSession(request, response);
 
         // Without the super-admin grant a user may only revoke their own keys.
-        if (!(await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))) {
+        if (!(await Role.userCan(user, PERMISSIONS.SYSTEM_ADMIN))) {
           const apiKey = await BrowserExtensionApiKey.get({
             id: parseInt(id),
             user_id: user?.id,

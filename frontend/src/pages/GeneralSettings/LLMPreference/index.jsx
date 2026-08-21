@@ -452,6 +452,7 @@ export default function GeneralLLMPreference() {
   const [filteredLLMs, setFilteredLLMs] = useState([]);
   const [selectedLLM, setSelectedLLM] = useState(null);
   const [searchMenuOpen, setSearchMenuOpen] = useState(false);
+  const formRef = useRef(null);
   const searchInputRef = useRef(null);
   const { t } = useTranslation();
 
@@ -469,6 +470,7 @@ export default function GeneralLLMPreference() {
       showToast(`Failed to save LLM settings: ${error}`, "error");
     } else {
       showToast("LLM preferences saved successfully.", "success");
+      setSettings((prev) => ({ ...prev, ...data }));
     }
     setSaving(false);
     setHasChanges(!!error);
@@ -476,6 +478,14 @@ export default function GeneralLLMPreference() {
 
   const updateLLMChoice = (selection) => {
     setSearchQuery("");
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      const currentValues = {};
+      for (var [key, value] of formData.entries()) {
+        currentValues[key] = value;
+      }
+      setSettings((prev) => ({ ...prev, ...currentValues }));
+    }
     setSelectedLLM(selection);
     setSearchMenuOpen(false);
     setHasChanges(true);
@@ -530,7 +540,7 @@ export default function GeneralLLMPreference() {
       {loading ? (
         <SpinnerBlock className="min-h-[60vh]" />
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col w-full">
+        <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col w-full">
           <PageHeader
             title={t("llm.title")}
             description={t("llm.description")}
@@ -622,7 +632,13 @@ export default function GeneralLLMPreference() {
             </PopoverContent>
           </Popover>
           <div
-            onChange={() => setHasChanges(true)}
+            onChange={(e) => {
+              setHasChanges(true);
+              const { name, value } = e.target;
+              if (name) {
+                setSettings((prev) => ({ ...prev, [name]: value }));
+              }
+            }}
             className="mt-4 flex flex-col gap-y-1"
           >
             {selectedLLM &&

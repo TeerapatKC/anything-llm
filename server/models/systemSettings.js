@@ -457,7 +457,11 @@ const SystemSettings = {
     const AIbitat = require("../utils/agents/aibitat");
 
     const llmProvider = process.env.LLM_PROVIDER;
-    const vectorDB = process.env.VECTOR_DB;
+    // Both of these report the fallback the app actually runs on when nothing is set -
+    // see `getVectorDbClass` and `getEmbeddingEngineSelection` - so callers are told what
+    // is really in use rather than "nothing". `llmProvider` has no such default: there
+    // genuinely is no LLM until one is chosen, and saying so is the honest answer.
+    const vectorDB = process.env.VECTOR_DB ?? "lancedb";
     const embeddingEngine = process.env.EMBEDDING_ENGINE ?? "native";
     return {
       // --------------------------------------------------------

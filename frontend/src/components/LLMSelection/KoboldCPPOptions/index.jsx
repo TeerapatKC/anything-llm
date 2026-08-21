@@ -198,13 +198,27 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.KoboldCPPModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.KoboldCPPModelPref || "");
+  }, [settings?.KoboldCPPModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.KoboldCPPModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-2">KoboldCPP Model</Label>
       <Select
         name="KoboldCPPModelPref"
         required={true}
-        defaultValue={settings.KoboldCPPModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

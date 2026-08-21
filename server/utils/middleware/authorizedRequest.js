@@ -6,7 +6,7 @@ const { PERMISSIONS, ANY_PERMISSION } = require("../permissions");
  * Routes declare the permissions that unlock them. Holding any one of the listed
  * permissions is enough - a role that grants a superset still passes.
  */
-const DEFAULT_PERMISSIONS = [PERMISSIONS.SUPER_ADMIN];
+const DEFAULT_PERMISSIONS = [PERMISSIONS.SYSTEM_ADMIN];
 
 /**
  * @param {string[]|string} permissions
@@ -131,6 +131,27 @@ function anyWorkspacePermissionValid(allowedPermissions = []) {
 }
 
 /**
+ * Gate a route on being the instance owner.
+ *
+ * Deliberately *not* a permission check. Ownership transfer and instance reset are the
+ * two operations that must never become grantable, because a role that could hand out
+ * either one would be a way around every other guarantee the owner role makes. Holding
+ * `system.admin` is not enough - the caller has to be the one account holding
+ * `super-admin`.
+ *
+ * @returns {function}
+ */
+function superAdminOnly() {
+  return async (request, response, next) => {
+    const user =
+      response.locals?.user ?? (await userFromSession(request, response));
+    if (!Role.isSuperAdmin(user)) return response.sendStatus(401).end();
+    response.locals.user = user;
+    next();
+  };
+}
+
+/**
  * Whether the requesting user holds an instance-wide permission.
  * @param {import("express").Request} request
  * @param {import("express").Response} response
@@ -147,6 +168,7 @@ module.exports = {
   userPermissionValid,
   workspacePermissionValid,
   anyWorkspacePermissionValid,
+  superAdminOnly,
   workspaceFromRequest,
   requestUserCan,
 };

@@ -1,10 +1,11 @@
 import System from "@/models/system";
+import { AuthContext } from "@/AuthContext";
 import showToast from "@/utils/toast";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import debounce from "lodash.debounce";
 import paths from "@/utils/paths";
 import { useNavigate } from "react-router-dom";
-import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
+import { AUTH_TIMESTAMP } from "@/utils/constants";
 import { storePermissions } from "@/utils/permissions";
 import { useTranslation } from "react-i18next";
 import { USERNAME_MIN_LENGTH, USERNAME_MAX_LENGTH } from "@/utils/username";
@@ -12,9 +13,14 @@ import { PW_REGEX, PW_ALLOWED_SYMBOLS } from "@/utils/password";
 import { FullScreenLoader } from "@/components/Preloader";
 
 /**
- * Creates the instance's first system administrator, so this step is
- * unconditional - except on deploys that already created the admin from
- * `ADMIN_USERNAME`/`ADMIN_PASSWORD`, where there is nothing left to ask and we move on.
+ * Creates the instance's owner, so this step is unconditional - except on deploys that
+ * already created it from `ADMIN_USERNAME`/`ADMIN_PASSWORD`, where there is nothing left
+ * to ask and we move on.
+ *
+ * Onboarding used to be marked complete on the way out of the LLM step, which no longer
+ * exists. It is now recorded server-side the moment this step creates the owner - see
+ * `createInitialAdmin` - so the remaining steps are purely informational and an operator
+ * who closes the tab after this point is not sent back through setup.
  */
 export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {
   const { t } = useTranslation();
@@ -31,15 +37,16 @@ export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {
   }
 
   function handleBack() {
-    navigate(paths.onboarding.llmPreference());
+    navigate(paths.onboarding.home());
   }
 
   useEffect(() => {
     async function checkSetupState() {
       const needsAdminSetup = await System.needsAdminSetup();
       if (!needsAdminSetup) {
-        // An admin was already created from the environment on first boot.
-        navigate(paths.onboarding.dataHandling(), { replace: true });
+        // The owner was already created from the environment on first boot, so there is
+        // nothing to ask here. Setup was recorded server-side when that account was made.
+        navigate(paths.home(), { replace: true });
         return;
       }
       setChecking(false);
@@ -75,6 +82,7 @@ export default function UserSetup({ setHeader, setForwardBtn, setBackBtn }) {
 
 const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
   const { t } = useTranslation();
+  const { actions } = useContext(AuthContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -105,11 +113,16 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
 
     // The setup call issues a session token so the operator is not bounced to /login
     // in the middle of onboarding.
-    window.localStorage.setItem(AUTH_USER, JSON.stringify(user));
+    //
+    // This has to go through the auth context rather than straight into local storage.
+    // `AuthProvider` reads the token once, when it mounts - which during onboarding is
+    // before any account exists - and only refetches the user when that token *changes*.
+    // Writing local storage behind its back leaves `useUser()` holding null for the rest
+    // of the session, so the sidebar renders no profile until a full page reload.
     storePermissions(user.permissions);
-    window.localStorage.setItem(AUTH_TOKEN, token);
     window.localStorage.removeItem(AUTH_TIMESTAMP);
-    navigate(paths.onboarding.dataHandling());
+    actions.updateUser(user, token);
+    navigate(paths.home());
   };
 
   const handleUsernameChange = debounce(

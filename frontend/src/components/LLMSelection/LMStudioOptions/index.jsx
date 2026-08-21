@@ -286,13 +286,27 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.LMStudioModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.LMStudioModelPref || "");
+  }, [settings?.LMStudioModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.LMStudioModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-2">Selected Model</Label>
       <Select
         name="LMStudioModelPref"
         required={true}
-        defaultValue={settings.LMStudioModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

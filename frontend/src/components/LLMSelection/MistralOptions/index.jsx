@@ -81,13 +81,27 @@ function MistralModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.MistralModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.MistralModelPref || "");
+  }, [settings?.MistralModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.MistralModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="MistralModelPref"
         required={true}
-        defaultValue={settings?.MistralModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

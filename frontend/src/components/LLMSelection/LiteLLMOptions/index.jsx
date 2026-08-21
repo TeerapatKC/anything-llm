@@ -120,13 +120,27 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.LiteLLMModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.LiteLLMModelPref || "");
+  }, [settings?.LiteLLMModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.LiteLLMModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="LiteLLMModelPref"
         required={true}
-        defaultValue={settings.LiteLLMModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

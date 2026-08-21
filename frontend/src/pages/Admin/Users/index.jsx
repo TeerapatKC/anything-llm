@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Toggle from "@/components/lib/Toggle";
 import { Input } from "@/components/ui/input";
+import GeneratedPasswordModal from "@/components/Modals/GeneratedPassword";
 import {
   Table,
   TableBody,
@@ -24,6 +25,31 @@ import {
 
 export default function AdminUsers() {
   const { isOpen, openModal, closeModal } = useModal();
+  const [createdUser, setCreatedUser] = useState(null);
+  const { user: currUser } = useUser();
+  const { roles, permissionLabels, loading: loadingRoles } = useRoles();
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+
+  const fetchUsers = async () => {
+    const _users = await Admin.users();
+    setUsers(_users || []);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const handleUserCreated = ({ username, initialPassword }) => {
+    closeModal();
+    setCreatedUser({ username, initialPassword });
+  };
+
+  const handlePasswordModalClose = () => {
+    setCreatedUser(null);
+    fetchUsers();
+  };
 
   return (
     <SettingsLayout>
@@ -43,68 +69,54 @@ export default function AdminUsers() {
           </DialogTrigger>
         </div>
         <DialogContent>
-          <NewUserModal />
+          <NewUserModal closeModal={closeModal} onSuccess={handleUserCreated} />
         </DialogContent>
       </Dialog>
       <div className="overflow-x-auto">
-        <UsersContainer />
-      </div>
-    </SettingsLayout>
-  );
-}
-
-function UsersContainer() {
-  const { user: currUser } = useUser();
-  const { roles, permissionLabels, loading: loadingRoles } = useRoles();
-  const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    async function fetchUsers() {
-      const _users = await Admin.users();
-      setUsers(_users);
-      setLoading(false);
-    }
-    fetchUsers();
-  }, []);
-
-  if (loading || loadingRoles) {
-    return (
-      <Skeleton
-        height="80vh"
-        width="100%"
-        highlightColor="var(--theme-bg-primary)"
-        baseColor="var(--theme-bg-secondary)"
-        count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-8"
-        containerClassName="flex w-full"
-      />
-    );
-  }
-
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead scope="col">Username</TableHead>
-          <TableHead scope="col">Email</TableHead>
-          <TableHead scope="col">Role</TableHead>
-          <TableHead scope="col">Date Added</TableHead>
-          <TableHead scope="col"> </TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {users.map((user) => (
-          <UserRow
-            key={user.id}
-            currUser={currUser}
-            user={user}
-            roles={roles}
-            permissionLabels={permissionLabels}
+        {loading || loadingRoles ? (
+          <Skeleton
+            height="80vh"
+            width="100%"
+            highlightColor="var(--theme-bg-primary)"
+            baseColor="var(--theme-bg-secondary)"
+            count={1}
+            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-8"
+            containerClassName="flex w-full"
           />
-        ))}
-      </TableBody>
-    </Table>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col">Username</TableHead>
+                <TableHead scope="col">Email</TableHead>
+                <TableHead scope="col">Role</TableHead>
+                <TableHead scope="col">Status</TableHead>
+                <TableHead scope="col">Date Added</TableHead>
+                <TableHead scope="col"> </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => (
+                <UserRow
+                  key={user.id}
+                  currUser={currUser}
+                  user={user}
+                  roles={roles}
+                  permissionLabels={permissionLabels}
+                  fetchUsers={fetchUsers}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        )}
+      </div>
+      <GeneratedPasswordModal
+        open={!!createdUser}
+        username={createdUser?.username}
+        password={createdUser?.initialPassword}
+        onClose={handlePasswordModalClose}
+      />
+    </SettingsLayout>
   );
 }
 

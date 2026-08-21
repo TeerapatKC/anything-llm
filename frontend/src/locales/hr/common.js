@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       welcome: "Dobrodošli",
       getStarted: "Započni",
     },
-    llm: {
-      title: "LLM postavka",
-      description:
-        "AnythingLLM može raditi s mnogim LLM pružateljima usluga. Ovo je usluga koja će upravljati razgovorom.",
-    },
     userSetup: {
       title: "Postavljanje korisnika",
       description: "Konfigurirajte svoje korisničke postavke.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Lozinka mora imati najmanje 8 znakova.",
       teamHint:
         "Prema zadanim postavkama, samo vi ćete biti administrator. Nakon završetka postavljanja moći ćete stvarati i pozivati druge korisnike ili administratore. Nemojte izgubiti svoju lozinku jer samo administratori mogu resetirati lozinke.",
-    },
-    data: {
-      title: "Rukovanje podacima i privatnost",
-      description:
-        "Predani smo transparentnosti i kontroli kada je riječ o vašim osobnim podacima.",
-      settingsHint:
-        "Ove postavke mogu se ponovno konfigurirati u bilo kojem trenutku u postavkama.",
-    },
-    survey: {
-      title: "Dobrodošli u AnythingLLM",
-      description:
-        "Pomozite nam da AnythingLLM izgradimo prema vašim potrebama. Neobavezno.",
-      email: "Koja je vaša e-mail adresa?",
-      useCase: "Za što ćete koristiti AnythingLLM?",
-      useCaseWork: "Za posao",
-      useCasePersonal: "Za osobnu upotrebu",
-      useCaseOther: "Ostalo",
-      comment: "Kako ste čuli za AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, itd. - Javite nam kako ste nas pronašli!",
-      skip: "Preskoči anketu",
-      thankYou: "Hvala vam na povratnim informacijama!",
     },
   },
   common: {
@@ -62,6 +35,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Dobrodošli",
     chooseWorkspace: "Odaberite radni prostor za početak razgovora!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Trenutno niste dodijeljeni nijednom radnom prostoru.\nMolimo kontaktirajte svog administratora za pristup radnom prostoru.",
     goToWorkspace: 'Idi na "{{workspace}}"',

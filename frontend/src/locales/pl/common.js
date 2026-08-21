@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Rozpocznij",
       welcome: "Witaj",
     },
-    llm: {
-      title: "Preferencje modeli językowych",
-      description:
-        "AnythingLLM może współpracować z wieloma dostawcami modeli językowych",
-    },
     userSetup: {
       title: "Konfiguracja użytkownika",
       description: "Skonfiguruj ustawienia użytkownika.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Hasła muszą składać się z co najmniej 8 znaków.",
       teamHint:
         "Domyślnie będziesz jedynym administratorem. Po zakończeniu wdrażania możesz tworzyć i zapraszać innych użytkowników lub administratorów. Nie zgub hasła, ponieważ tylko administratorzy mogą je resetować.",
-    },
-    data: {
-      title: "Obsługa danych i prywatność",
-      description:
-        "Dbamy o przejrzystość i kontrolę danych osobowych użytkowników.",
-      settingsHint:
-        "Ustawienia te można zmienić w dowolnym momencie w ustawieniach.",
-    },
-    survey: {
-      title: "Witamy w AnythingLLM",
-      description:
-        "Pomóż nam stworzyć AnythingLLM dostosowany do Twoich potrzeb. Opcjonalnie.",
-      email: "Jaki jest Twój adres e-mail?",
-      useCase: "Do czego będziesz używać AnythingLLM?",
-      useCaseWork: "Do pracy",
-      useCasePersonal: "Do użytku osobistego",
-      useCaseOther: "Inne",
-      comment: "Skąd dowiedziałeś się o AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube itp. - Daj nam znać, jak nas znalazłeś!",
-      skip: "Pomiń ankietę",
-      thankYou: "Dziękujemy za opinię!",
     },
   },
   common: {
@@ -1493,6 +1466,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Witamy",
     chooseWorkspace: "Wybierz obszar roboczy, aby rozpocząć czat!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Nie jesteś przypisany do żadnego obszaru roboczego.\nSkontaktuj się z administratorem, aby poprosić o dostęp do obszaru roboczego.",
     goToWorkspace: 'Przejdź do obszaru roboczego "{{workspace}}"',

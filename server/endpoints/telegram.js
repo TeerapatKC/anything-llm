@@ -19,7 +19,10 @@ function telegramEndpoints(app) {
 
   app.get(
     "/telegram/config",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (_request, response) => {
       try {
         const connector = await ExternalCommunicationConnector.get("telegram");
@@ -77,7 +80,10 @@ function telegramEndpoints(app) {
    */
   app.post(
     "/telegram/connect",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (request, response) => {
       try {
         const { bot_token, default_workspace = null } = reqBody(request);
@@ -163,7 +169,10 @@ function telegramEndpoints(app) {
 
   app.post(
     "/telegram/disconnect",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (_request, response) => {
       try {
         const service = new TelegramBotService();
@@ -180,7 +189,10 @@ function telegramEndpoints(app) {
 
   app.get(
     "/telegram/status",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (_request, response) => {
       try {
         const connector = await ExternalCommunicationConnector.get("telegram");
@@ -198,7 +210,10 @@ function telegramEndpoints(app) {
 
   app.get(
     "/telegram/pending-users",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (_request, response) => {
       try {
         const service = new TelegramBotService();
@@ -214,7 +229,10 @@ function telegramEndpoints(app) {
 
   app.get(
     "/telegram/approved-users",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (_request, response) => {
       try {
         const connector = await ExternalCommunicationConnector.get("telegram");
@@ -229,7 +247,10 @@ function telegramEndpoints(app) {
 
   app.post(
     "/telegram/approve-user",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (request, response) => {
       try {
         const { chatId } = reqBody(request);
@@ -251,7 +272,10 @@ function telegramEndpoints(app) {
 
   app.post(
     "/telegram/deny-user",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (request, response) => {
       try {
         const { chatId } = reqBody(request);
@@ -273,7 +297,10 @@ function telegramEndpoints(app) {
 
   app.post(
     "/telegram/revoke-user",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (request, response) => {
       try {
         const { chatId } = reqBody(request);
@@ -295,7 +322,10 @@ function telegramEndpoints(app) {
 
   app.post(
     "/telegram/update-config",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
+    ],
     async (request, response) => {
       try {
         const { voice_response_mode } = reqBody(request);

@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Pradėti",
       welcome: "Sveiki",
     },
-    llm: {
-      title: "LLM pasirinkimas",
-      description:
-        "AnythingLLM gali dirbti su daugeliu LLM tiekėjų. Ši paslauga bus atsakinga už pokalbių valdymą.",
-    },
     userSetup: {
       title: "Vartotojo nustatymas",
       description: "Konfigūruokite savo vartotojo nustatymus.",
@@ -18,27 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Slaptažodis turi būti bent 8 simbolių ilgio.",
       teamHint:
         "Pagal numatytuosius nustatymus jūs būsite vienintelis administratorius. Baigę pradinį nustatymą, galėsite sukurti ir pakviesti kitus vartotojus ar administratorius. Nepraraskite slaptažodžio, nes tik administratoriai gali juos nustatyti iš naujo.",
-    },
-    data: {
-      title: "Duomenų tvarkymas ir privatumas",
-      description:
-        "Esame įsipareigoję užtikrinti skaidrumą ir jūsų asmeninių duomenų kontrolę.",
-      settingsHint: "Šiuos nustatymus bet kada galite pakeisti nustatymuose.",
-    },
-    survey: {
-      title: "Sveiki atvykę į AnythingLLM",
-      description:
-        "Padėkite mums pritaikyti AnythingLLM jūsų poreikiams. Neprivaloma.",
-      email: "Koks jūsų el. pašto adresas?",
-      useCase: "Kam naudosite AnythingLLM?",
-      useCaseWork: "Darbui",
-      useCasePersonal: "Asmeniniam naudojimui",
-      useCaseOther: "Kita",
-      comment: "Kaip sužinojote apie AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube ir kt. - Praneškite, kaip mus radote!",
-      skip: "Praleisti apklausą",
-      thankYou: "Ačiū už jūsų atsiliepimus!",
     },
   },
   common: {
@@ -61,6 +35,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Sveiki",
     chooseWorkspace: "Pasirinkite darbo sritį, kad pradėtumėte pokalbį!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Šiuo metu nesate priskirtas jokiai darbo sričiai.\nSusisiekite su administratoriumi, kad gautumėte prieigą prie darbo srities.",
     goToWorkspace: "Eiti į „{{workspace}}“",

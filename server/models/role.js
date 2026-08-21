@@ -6,7 +6,9 @@ const {
   SYSTEM_PERMISSION_KEYS,
   SYSTEM_ROLES,
   FALLBACK_ROLE,
+  ADMIN_ROLE,
   SUPER_ADMIN_ROLE,
+  expandPermissions,
 } = require("../utils/permissions");
 
 /**
@@ -16,6 +18,9 @@ const {
  * @property {string} displayName
  * @property {string|null} description
  * @property {boolean} isSystem
+ * @property {boolean} isSingleton - at most one account may hold it
+ * @property {boolean} isImmutable - its permission set can never be edited
+ * @property {boolean} isAssignable - whether it may be handed out through the user UI
  * @property {string[]} permissions
  */
 
@@ -31,6 +36,34 @@ const Role = {
 
   flushCache: function () {
     this._cache = null;
+  },
+
+  /**
+   * The code-defined shape of a built-in role, or null for operator-defined ones.
+   * @param {string} roleName
+   * @returns {import("../utils/permissions").SystemRoleDefinition|null}
+   */
+  _definitionFor: function (roleName = "") {
+    return SYSTEM_ROLES.find((role) => role.name === roleName) ?? null;
+  },
+
+  /**
+   * Whether a role name is the instance-owner role. Deliberately a name comparison -
+   * see the SUPER_ADMIN_ROLE note in utils/permissions for why this one role is special.
+   * @param {string|null} roleName
+   * @returns {boolean}
+   */
+  isSuperAdminRole: function (roleName = null) {
+    return String(roleName ?? "") === SUPER_ADMIN_ROLE;
+  },
+
+  /**
+   * Whether a user account is the instance owner.
+   * @param {{role?: string}|null} user
+   * @returns {boolean}
+   */
+  isSuperAdmin: function (user = null) {
+    return this.isSuperAdminRole(user?.role);
   },
 
   validations: {
@@ -200,14 +233,16 @@ const Role = {
       });
       for (const role of roles) {
         const keys = role.permissions.map((entry) => entry.permission.key);
-        // The super-admin grant is an implicit wildcard so that permissions added by a
-        // future update never lock the administrator out of their own instance.
+        // `system.admin` is an implicit wildcard so that permissions added by a future
+        // update never lock the administrator out of their own instance. Everything
+        // else is expanded down the permission tree, so a role holding only a coarse
+        // parent still satisfies checks written against its finer children.
         cache.set(
           role.name,
           new Set(
-            keys.includes(PERMISSIONS.SUPER_ADMIN)
+            keys.includes(PERMISSIONS.SYSTEM_ADMIN)
               ? SYSTEM_PERMISSION_KEYS
-              : keys
+              : expandPermissions(keys)
           )
         );
       }
@@ -315,8 +350,12 @@ const Role = {
 
   _flatten: function (role) {
     const { permissions, ...rest } = role;
+    const definition = this._definitionFor(role.name);
     return {
       ...rest,
+      isSingleton: definition?.singleton ?? false,
+      isImmutable: definition?.immutable ?? false,
+      isAssignable: definition?.assignable ?? true,
       permissions: permissions.map((entry) => entry.permission.key),
     };
   },
@@ -362,6 +401,14 @@ const Role = {
         where: { id: Number(roleId) },
       });
       if (!existing) return { role: null, error: "Role not found" };
+
+      // The owner role is frozen by design - its whole point is that no operator, and
+      // no compromised admin account, can quietly redefine what owning the instance means.
+      if (this._definitionFor(existing.name)?.immutable)
+        return {
+          role: null,
+          error: `The "${existing.displayName}" role cannot be edited.`,
+        };
 
       const data = {};
       if (updates.hasOwnProperty("displayName"))
@@ -463,9 +510,43 @@ const Role = {
     return FALLBACK_ROLE;
   },
 
-  /** @returns {string} */
+  /** The built-in role ordinary instance operators are given. @returns {string} */
+  adminRoleName: function () {
+    return ADMIN_ROLE;
+  },
+
+  /** The instance-owner role. @returns {string} */
   superAdminRoleName: function () {
     return SUPER_ADMIN_ROLE;
+  },
+
+  /**
+   * Every role name that carries the `system.admin` wildcard, owner role included.
+   * Used wherever "notify/tally the operators" is the intent.
+   * @returns {Promise<string[]>}
+   */
+  adminRoleNames: async function () {
+    const roles = await this.where();
+    return roles
+      .filter((role) => role.permissions.includes(PERMISSIONS.SYSTEM_ADMIN))
+      .map((role) => role.name);
+  },
+
+  /**
+   * The account holding the owner role, or null on an instance that has not finished
+   * first-run setup.
+   * @returns {Promise<import("@prisma/client").users|null>}
+   */
+  currentSuperAdmin: async function () {
+    try {
+      return await prisma.users.findFirst({
+        where: { role: SUPER_ADMIN_ROLE },
+        orderBy: { id: "asc" },
+      });
+    } catch (error) {
+      console.error(error.message);
+      return null;
+    }
   },
 };
 

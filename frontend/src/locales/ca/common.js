@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       welcome: "Benvingut",
       getStarted: "Comença",
     },
-    llm: {
-      title: "Preferència de LLM",
-      description:
-        "AnythingLLM pot treballar amb molts proveïdors de LLM. Aquest serà el servei que gestionarà les converses.",
-    },
     userSetup: {
       title: "Configuració d'usuari",
       description: "Configura els paràmetres d'usuari.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Les contrasenyes han de tenir almenys 8 caràcters.",
       teamHint:
         "Per defecte, seràs l'únic administrador. Un cop completat l'onboarding, podràs crear i convidar altres persones com a usuaris o administradors. No perdis la contrasenya, ja que només els administradors poden restablir contrasenyes.",
-    },
-    data: {
-      title: "Gestió de dades i privadesa",
-      description:
-        "Estem compromesos amb la transparència i el control de les teves dades personals.",
-      settingsHint:
-        "Aquests paràmetres es poden reconfigurar en qualsevol moment a la configuració.",
-    },
-    survey: {
-      title: "Benvingut a AnythingLLM",
-      description:
-        "Ajuda'ns a fer que AnythingLLM s'adapti a les teves necessitats. Opcional.",
-      email: "Quin és el teu correu electrònic?",
-      useCase: "Per a què faràs servir AnythingLLM?",
-      useCaseWork: "Per a la feina",
-      useCasePersonal: "Per a ús personal",
-      useCaseOther: "Altres",
-      comment: "Com has sabut d'AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. - Fes-nos saber com ens has trobat!",
-      skip: "Omet l'enquesta",
-      thankYou: "Gràcies pels teus comentaris!",
     },
   },
   common: {
@@ -62,6 +35,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Benvingut",
     chooseWorkspace: "Tria un espai de treball per començar a xatejar!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Actualment, no estàs assignat a cap espai de treball.\nPosa't en contacte amb el teu administrador per sol·licitar accés a un espai de treball.",
     goToWorkspace: 'Ves a "{{workspace}}"',

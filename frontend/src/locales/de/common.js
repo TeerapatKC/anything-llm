@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Jetzt starten",
       welcome: "Herzlich willkommen",
     },
-    llm: {
-      title: "LLM-Einstellung",
-      description:
-        "AnythingLLM ist mit vielen LLM-Anbietern kompatibel. Der ausgewählte Dienst wird für die Chats verwendet.",
-    },
     userSetup: {
       title: "Benutzer Setup",
       description: "Konfigurieren Sie Ihre Benutzereinstellungen.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Das Passwort muss mindestens 8 Zeichen enthalten.",
       teamHint:
         "Zu Beginn sind Sie der einzige Admin. Nach der Einrichtung können Sie weitere Benutzer oder Admins einladen. Verlieren Sie Ihr Passwort nicht – nur Admins können Passwörter zurücksetzen.",
-    },
-    data: {
-      title: "Datenverarbeitung & Datenschutz",
-      description:
-        "Wir setzen uns für Transparenz und Kontrolle im Umgang mit Ihren persönlichen Daten ein.",
-      settingsHint:
-        "Diese Einstellungen können jederzeit in den Einstellungen angepasst werden.",
-    },
-    survey: {
-      title: "Willkommen bei AnythingLLM",
-      description:
-        "Helfen Sie uns, AnythingLLM an Ihre Bedürfnisse anzupassen. (Optional)",
-      email: "Wie lautet Ihre E-Mail-Adresse?",
-      useCase: "Wofür möchten Sie AnythingLLM verwenden?",
-      useCaseWork: "Beruflich",
-      useCasePersonal: "Privat",
-      useCaseOther: "Sonstiges",
-      comment: "Wie haben Sie von AnythingLLM erfahren?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. – Teilen Sie uns mit, wie Sie uns entdeckt haben!",
-      skip: "Umfrage überspringen",
-      thankYou: "Vielen Dank für Ihr Feedback!",
     },
   },
   common: {
@@ -1504,6 +1477,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Willkommen",
     chooseWorkspace: "Wählen Sie ein Arbeitsbereich, um zu beginnen!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Sie sind nicht zugewiesen zu einem Arbeitsbereich.\nBitte kontaktieren Sie Ihren Administrator, um Zugriff auf einen Arbeitsbereich zu erhalten.",
     goToWorkspace: 'Zurück zum Arbeitsbereich "{{workspace}}"',

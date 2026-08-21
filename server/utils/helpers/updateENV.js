@@ -1560,4 +1560,7 @@ function dumpENV() {
 module.exports = {
   dumpENV,
   updateENV,
+  // Exported so a factory reset can find every environment variable this file manages
+  // and clear it, rather than keeping a second list that would drift out of sync.
+  KEY_MAPPING,
 };

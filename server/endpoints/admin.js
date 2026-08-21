@@ -59,10 +59,7 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/users",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.USERS_VIEW]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.USERS_VIEW])],
     async (_request, response) => {
       try {
         const users = await User.where();
@@ -76,10 +73,7 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/users/new",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.USERS_CREATE])],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
@@ -129,9 +123,11 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/user/:id",
+    // `users.edit` covers the profile fields; changing the role additionally needs
+    // `users.assign_roles` and suspending needs `users.suspend`, both checked below.
     [
       validatedRequest,
-      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
+      userPermissionValid([PERMISSIONS.USERS_EDIT, PERMISSIONS.USERS_SUSPEND]),
     ],
     async (request, response) => {
       try {
@@ -150,7 +146,11 @@ function adminEndpoints(app) {
           return;
         }
 
-        const roleValidation = await validRoleSelection(currUser, updates);
+        const roleValidation = await validRoleSelection(
+          currUser,
+          updates,
+          user
+        );
         if (!roleValidation.valid) {
           response
             .status(200)
@@ -180,10 +180,7 @@ function adminEndpoints(app) {
   // replace it the moment they log back in.
   app.post(
     "/admin/user/:id/reset-password",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.USERS_RESET_PASSWORD])],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
@@ -234,15 +231,18 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/user/:id",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.USERS_MANAGE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.USERS_DELETE])],
     async (request, response) => {
       try {
         const currUser = await userFromSession(request, response);
         const { id } = request.params;
         const user = await User.get({ id: Number(id) });
+        if (!user) {
+          response
+            .status(200)
+            .json({ success: false, error: "User not found" });
+          return;
+        }
 
         const canModify = await validCanModify(currUser, user);
         if (!canModify.valid) {
@@ -250,8 +250,28 @@ function adminEndpoints(app) {
           return;
         }
 
+        // Checked before any of the side effects below. `validCanModify` lets the owner
+        // act on their own account so they can edit their profile, but deleting it would
+        // orphan the instance - and the model refuses it, so without this the request
+        // would strip their extension keys and then report a success that never happened.
+        if (Role.isSuperAdmin(user)) {
+          response.status(200).json({
+            success: false,
+            error:
+              "The super admin account cannot be deleted. Transfer ownership first.",
+          });
+          return;
+        }
+
         await BrowserExtensionApiKey.deleteAllForUser(Number(id));
-        await User.delete({ id: Number(id) });
+        const deleted = await User.delete({ id: Number(id) });
+        if (!deleted) {
+          response
+            .status(200)
+            .json({ success: false, error: "Failed to delete the user." });
+          return;
+        }
+
         await EventLogs.logEvent(
           "user_deleted",
           {
@@ -270,10 +290,7 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/invites",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.INVITES_MANAGE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.INVITES_MANAGE])],
     async (_request, response) => {
       try {
         const invites = await Invite.whereWithUsers();
@@ -289,7 +306,7 @@ function adminEndpoints(app) {
     "/admin/invite/new",
     [
       validatedRequest,
-      userPermissionValid([PERMISSIONS.INVITES_MANAGE]),
+      userPermissionValid([PERMISSIONS.INVITES_CREATE]),
       simpleSSOLoginDisabledMiddleware,
     ],
     async (request, response) => {
@@ -319,10 +336,7 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/invite/:id",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.INVITES_MANAGE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.INVITES_DELETE])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -342,10 +356,7 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/workspaces",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.WORKSPACES_VIEW_ALL]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.WORKSPACES_VIEW_ALL])],
     async (_request, response) => {
       try {
         const workspaces = await Workspace.whereWithUsers();
@@ -377,10 +388,7 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/workspaces/new",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.WORKSPACES_CREATE]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.WORKSPACES_CREATE])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -604,10 +612,7 @@ function adminEndpoints(app) {
 
   app.get(
     "/admin/api-keys",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS])],
     async (_request, response) => {
       try {
         const apiKeys = await ApiKey.whereWithUser({});
@@ -627,10 +632,7 @@ function adminEndpoints(app) {
 
   app.post(
     "/admin/generate-api-key",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -654,10 +656,7 @@ function adminEndpoints(app) {
 
   app.delete(
     "/admin/delete-api-key/:id",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_API_KEYS])],
     async (request, response) => {
       try {
         const { id } = request.params;

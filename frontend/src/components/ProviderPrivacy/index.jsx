@@ -7,10 +7,19 @@ import { Link } from "react-router-dom";
 import { titleCase, sentenceCase } from "text-case";
 
 function defaultProvider(providerString) {
+  // Nothing chosen yet is a normal state during setup - onboarding no longer asks for an
+  // LLM - so say so, rather than reporting the policy of a provider called "undefined".
+  if (!providerString)
+    return {
+      name: "Not configured",
+      description: [
+        "No provider has been chosen yet. You can pick one under Settings once setup is finished.",
+      ],
+      logo: AnythingLLMIcon,
+    };
+
   return {
-    name: providerString
-      ? titleCase(sentenceCase(String(providerString)))
-      : "Unknown",
+    name: titleCase(sentenceCase(String(providerString))),
     description: [
       `"${providerString}" has no known data handling policy defined in AnythingLLM.`,
     ],

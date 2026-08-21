@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Začít",
       welcome: "Vítejte",
     },
-    llm: {
-      title: "Preferovaný LLM",
-      description:
-        "AnythingLLM může pracovat s mnoha poskytovateli LLM. Toto bude služba, která bude zpracovávat chatování.",
-    },
     userSetup: {
       title: "Nastavení uživatele",
       description: "Nakonfigurujte svá uživatelská nastavení.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Hesla musí mít alespoň 8 znaků.",
       teamHint:
         "Ve výchozím nastavení budete jediným správcem. Po dokončení onboardingu můžete vytvářet a zvat další uživatele nebo správce. Neztrácejte své heslo, protože pouze správci mohou resetovat hesla.",
-    },
-    data: {
-      title: "Zpracování dat a soukromí",
-      description:
-        "Jsme odhodláni být transparentní a dávat vám kontrolu nad vašimi osobními údaji.",
-      settingsHint:
-        "Tato nastavení lze kdykoliv znovu nakonfigurovat v nastavení.",
-    },
-    survey: {
-      title: "Vítejte v AnythingLLM",
-      description:
-        "Pomozte nám vybudovat AnythingLLM pro vaše potřeby. Volitelné.",
-      email: "Jaký je váš e-mail?",
-      useCase: "K čemu budete AnythingLLM používat?",
-      useCaseWork: "Pro práci",
-      useCasePersonal: "Pro osobní použití",
-      useCaseOther: "Jiné",
-      comment: "Jak jste se o AnythingLLM dozvěděli?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube atd. - Dejte nám vědět, jak jste nás našli!",
-      skip: "Přeskočit průzkum",
-      thankYou: "Děkujeme za vaši zpětnou vazbu!",
     },
   },
   common: {
@@ -62,6 +35,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Vítejte",
     chooseWorkspace: "Vyberte pracovní prostor pro začátek chatu!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "V současné době nemáte přiřazen žádný pracovní prostor.\nKontaktujte svého správce o žádost o přístup k pracovnímu prostoru.",
     goToWorkspace: 'Přejít na "{{workspace}}"',

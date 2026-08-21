@@ -15,6 +15,7 @@ import {
   clearPermissions,
   storeRoleLabel,
   clearRoleLabel,
+  isSuperAdmin,
 } from "@/utils/permissions";
 import UserMenu from "../UserMenu";
 import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
@@ -120,6 +121,37 @@ export function PermissionRoute({
       <Component />
     </KeyboardShortcutWrapper>
   ) : (
+    <KeyboardShortcutWrapper>
+      <UserMenu>
+        <Component />
+      </UserMenu>
+    </KeyboardShortcutWrapper>
+  );
+}
+
+/**
+ * Allows a route only to the instance owner.
+ *
+ * Deliberately a role check rather than a permission check, mirroring the server: the
+ * screens behind it (ownership transfer, instance reset) must never become reachable by
+ * ticking a box on a custom role.
+ * @param {{Component: React.ComponentType}} props
+ */
+export function SuperAdminRoute({ Component }) {
+  const { isAuthd, shouldRedirectToOnboarding, requiresPasswordChange } =
+    useIsAuthenticated();
+  if (isAuthd === null) return <FullScreenLoader />;
+
+  if (shouldRedirectToOnboarding) {
+    return <Navigate to={paths.onboarding.home()} />;
+  }
+
+  if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
+
+  if (!isAuthd || !isSuperAdmin(userFromStorage()))
+    return <Navigate to={paths.home()} />;
+
+  return (
     <KeyboardShortcutWrapper>
       <UserMenu>
         <Component />

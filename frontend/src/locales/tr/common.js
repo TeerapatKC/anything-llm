@@ -1,29 +1,9 @@
 // Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
-    survey: {
-      email: "E-posta adresiniz nedir?",
-      useCase: "AnythingLLM'yi ne için kullanacaksınız?",
-      useCaseWork: "İş için",
-      useCasePersonal: "Kişisel kullanım için",
-      useCaseOther: "Diğer",
-      comment: "AnythingLLM'yi nasıl duydunuz?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube vb. - Bizi nasıl buldunuz?",
-      skip: "Anketi Atla",
-      thankYou: "Geri bildiriminiz için teşekkür ederiz!",
-      title: "AnythingLLM'ye Hoş Geldiniz",
-      description:
-        "AnythingLLM'yi ihtiyaçlarınıza göre oluşturmamıza yardımcı olun. İsteğe bağlı.",
-    },
     home: {
       getStarted: "Başla",
       welcome: "Hoş geldiniz",
-    },
-    llm: {
-      title: "LLM Tercihi",
-      description:
-        "AnythingLLM birçok LLM sağlayıcısıyla çalışabilir. Bu, sohbeti yöneten hizmet olacaktır.",
     },
     userSetup: {
       title: "Kullanıcı Kurulumu",
@@ -33,13 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Şifreler en az 8 karakter olmalıdır.",
       teamHint:
         "Varsayılan olarak tek yönetici siz olacaksınız. Kurulum tamamlandığında, diğer kişileri kullanıcı veya yönetici olarak davet edebilirsiniz. Yalnızca yöneticiler şifreleri sıfırlayabildiğinden şifrenizi kaybetmeyin.",
-    },
-    data: {
-      title: "Veri İşleme & Gizlilik",
-      description:
-        "Kişisel verileriniz konusunda şeffaflık ve kontrol sağlamaya kararlıyız.",
-      settingsHint:
-        "Bu ayarlar istediğiniz zaman ayarlardan yeniden yapılandırılabilir.",
     },
   },
   common: {
@@ -1487,6 +1460,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Hoşgeldiniz",
     chooseWorkspace: "Bir çalışma alanı seçerek sohbete başlayın!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Şu anda hiçbir çalışma alanına atanmamışsınız.\nBir çalışma alanına erişmek için yöneticinize başvurun.",
     goToWorkspace: 'Çalışma alanına git "{{workspace}}"',

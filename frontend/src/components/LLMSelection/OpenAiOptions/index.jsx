@@ -42,6 +42,13 @@ export default function OpenAiOptions({ settings }) {
 function OpenAIModelSelection({ apiKey, settings }) {
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.OpenAiModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.OpenAiModelPref || "");
+  }, [settings?.OpenAiModelPref]);
 
   useEffect(() => {
     async function findCustomModels() {
@@ -65,6 +72,10 @@ function OpenAIModelSelection({ apiKey, settings }) {
     findCustomModels();
   }, [apiKey]);
 
+  const defaultFirstModel =
+    groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id || "";
+  const currentModel = selectedModel || settings?.OpenAiModelPref || defaultFirstModel;
+
   if (loading) {
     return (
       <div className="flex flex-col w-60">
@@ -85,10 +96,8 @@ function OpenAIModelSelection({ apiKey, settings }) {
       <Select
         name="OpenAiModelPref"
         required={true}
-        defaultValue={
-          settings?.OpenAiModelPref ??
-          groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
-        }
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

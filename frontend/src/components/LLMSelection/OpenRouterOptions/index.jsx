@@ -115,16 +115,27 @@ function OpenRouterModelSelection({ settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.OpenRouterModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.OpenRouterModelPref || "");
+  }, [settings?.OpenRouterModelPref]);
+
+  const defaultFirstModel =
+    groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id || "";
+  const currentModel =
+    selectedModel || settings?.OpenRouterModelPref || defaultFirstModel;
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="OpenRouterModelPref"
         required={true}
-        defaultValue={
-          settings?.OpenRouterModelPref ??
-          groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
-        }
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

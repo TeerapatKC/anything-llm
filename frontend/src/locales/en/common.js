@@ -4,11 +4,6 @@ const TRANSLATIONS = {
       welcome: "Welcome",
       getStarted: "Get Started",
     },
-    llm: {
-      title: "LLM Preference",
-      description:
-        "AnythingLLM can work with many LLM providers. This will be the service which handles chatting.",
-    },
     userSetup: {
       title: "User Setup",
       description: "Configure your user settings.",
@@ -18,27 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Passwords must be at least 8 characters.",
       teamHint:
         "By default, you will be the only admin. Once onboarding is completed you can create and invite others to be users or admins. Do not lose your password as only admins can reset passwords.",
-    },
-    data: {
-      title: "Data Handling & Privacy",
-      description:
-        "We are committed to transparency and control when it comes to your personal data.",
-      settingsHint:
-        "These settings can be reconfigured at any time in the settings.",
-    },
-    survey: {
-      title: "Welcome to AnythingLLM",
-      description: "Help us make AnythingLLM built for your needs. Optional.",
-      email: "What's your email?",
-      useCase: "What will you use AnythingLLM for?",
-      useCaseWork: "For work",
-      useCasePersonal: "For personal use",
-      useCaseOther: "Other",
-      comment: "How did you hear about AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. - Let us know how you found us!",
-      skip: "Skip Survey",
-      thankYou: "Thank you for your feedback!",
     },
   },
   common: {
@@ -61,6 +35,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Welcome",
     chooseWorkspace: "Choose a workspace to start chatting!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "You currently aren't assigned to any workspaces.\nPlease contact your administrator to request access to a workspace.",
     goToWorkspace: 'Go to "{{workspace}}"',

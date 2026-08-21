@@ -4,6 +4,7 @@ const {
   WORKSPACE_PERMISSION_KEYS,
   WORKSPACE_ROLES,
   FALLBACK_WORKSPACE_ROLE,
+  expandPermissions,
 } = require("../utils/permissions");
 
 /**
@@ -188,9 +189,16 @@ const WorkspaceRole = {
         include: { permissions: { include: { permission: true } } },
       });
       for (const role of roles) {
+        // Expanded down the permission tree so a role holding only a coarse parent
+        // (`workspace.settings.manage`) still satisfies checks written against the
+        // finer children a later release split out of it.
         cache.byId.set(
           role.id,
-          new Set(role.permissions.map((entry) => entry.permission.key))
+          new Set(
+            expandPermissions(
+              role.permissions.map((entry) => entry.permission.key)
+            )
+          )
         );
         if (role.isDefault) cache.defaultId = role.id;
       }
@@ -219,7 +227,7 @@ const WorkspaceRole = {
     const { Role } = require("./role");
     if (
       await Role.userCanAny(user, [
-        PERMISSIONS.SUPER_ADMIN,
+        PERMISSIONS.SYSTEM_ADMIN,
         PERMISSIONS.WORKSPACES_MANAGE_ALL,
       ])
     )
@@ -283,7 +291,7 @@ const WorkspaceRole = {
     const { Role } = require("./role");
     if (
       await Role.userCanAny(user, [
-        PERMISSIONS.SUPER_ADMIN,
+        PERMISSIONS.SYSTEM_ADMIN,
         PERMISSIONS.WORKSPACES_MANAGE_ALL,
       ])
     )

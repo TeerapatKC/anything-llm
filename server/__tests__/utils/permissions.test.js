@@ -97,7 +97,7 @@ describe("built-in roles", () => {
     expect(
       SYSTEM_ROLES.find((role) => role.name === SUPER_ADMIN_ROLE)
         .protectedPermissions
-    ).toContain(PERMISSIONS.SUPER_ADMIN);
+    ).toContain(PERMISSIONS.SYSTEM_ADMIN);
   });
 
   it("seeds the workspace roles with exactly one default", () => {
@@ -156,7 +156,7 @@ describe("built-in roles", () => {
         PERMISSIONS.CHATS_VIEW_ALL,
       ])
     );
-    expect(manager.permissions).not.toContain(PERMISSIONS.SUPER_ADMIN);
+    expect(manager.permissions).not.toContain(PERMISSIONS.SYSTEM_ADMIN);
     expect(manager.permissions).not.toContain(PERMISSIONS.SYSTEM_SETTINGS);
     expect(manager.permissions).not.toContain(PERMISSIONS.ROLES_MANAGE);
 
@@ -167,29 +167,46 @@ describe("built-in roles", () => {
 });
 
 describe("system setting permissions", () => {
-  it("routes branding settings to the appearance permission", () => {
+  it("routes branding settings to the branding permission", () => {
     for (const label of [
       "custom_app_name",
-      "footer_data",
-      "support_email",
       "meta_page_title",
       "meta_page_favicon",
+      "logo_filename",
     ])
-      expect(permissionForSetting(label)).toBe(PERMISSIONS.SYSTEM_APPEARANCE);
+      expect(permissionForSetting(label)).toBe(
+        PERMISSIONS.SYSTEM_APPEARANCE_BRANDING
+      );
+
+    for (const label of ["footer_data", "support_email"])
+      expect(permissionForSetting(label)).toBe(
+        PERMISSIONS.SYSTEM_APPEARANCE_FOOTER
+      );
+  });
+
+  it("routes each settings label to its own finer-grained permission", () => {
+    expect(permissionForSetting("text_splitter_chunk_size")).toBe(
+      PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING
+    );
+    expect(permissionForSetting("message_limit")).toBe(
+      PERMISSIONS.SYSTEM_SETTINGS_SECURITY
+    );
   });
 
   it("falls back to the general system settings permission", () => {
-    expect(permissionForSetting("text_splitter_chunk_size")).toBe(
-      PERMISSIONS.SYSTEM_SETTINGS
-    );
     expect(permissionForSetting("some_future_setting")).toBe(
       PERMISSIONS.SYSTEM_SETTINGS
     );
   });
 
-  it("exposes every setting permission as a route gate", () => {
+  it("exposes every setting permission, and its parents, as a route gate", () => {
     expect(SETTINGS_ROUTE_PERMISSIONS).toContain(PERMISSIONS.SYSTEM_SETTINGS);
+    // The coarse parents have to be listed too, otherwise a role holding only
+    // `system.appearance` would be turned away at the door.
     expect(SETTINGS_ROUTE_PERMISSIONS).toContain(PERMISSIONS.SYSTEM_APPEARANCE);
+    expect(SETTINGS_ROUTE_PERMISSIONS).toContain(
+      PERMISSIONS.SYSTEM_APPEARANCE_BRANDING
+    );
     expect(SETTINGS_ROUTE_PERMISSIONS).toContain(
       PERMISSIONS.AGENTS_MANAGE_SKILLS
     );

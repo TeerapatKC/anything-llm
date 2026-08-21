@@ -25,6 +25,9 @@ import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSetti
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
 import { userIsChatOnly } from "@/utils/permissions";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import NewWorkspaceModal from "@/components/Modals/NewWorkspace";
 
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
@@ -39,19 +42,7 @@ async function getTargetWorkspace() {
   return workspaces.length > 0 ? workspaces[0] : null;
 }
 
-async function createDefaultWorkspace(workspaceName = "My Workspace") {
-  const { workspace, message: errorMsg } = await Workspace.new({
-    name: workspaceName,
-  });
-  if (!workspace) {
-    showToast(errorMsg || "Failed to create workspace", "error");
-    return null;
-  }
-  return workspace;
-}
-
 export default function Home() {
-  const { t } = useTranslation();
   const { user } = useUser();
   const [workspace, setWorkspace] = useState(null);
   const [threadSlug, setThreadSlug] = useState(null);
@@ -98,13 +89,8 @@ export default function Home() {
       if (!files?.length) return;
 
       pendingFilesRef.current = files;
-      let ws = workspace;
-      if (!ws) {
-        ws = await createDefaultWorkspace(t("new-workspace.placeholder"));
-        if (!ws) return;
-        setWorkspace(ws);
-      }
-      const { thread } = await Workspace.threads.new(ws.slug);
+      if (!workspace) return;
+      const { thread } = await Workspace.threads.new(workspace.slug);
       if (thread) setThreadSlug(thread.slug);
     }
 
@@ -112,16 +98,6 @@ export default function Home() {
     return () =>
       window.removeEventListener(PASTE_ATTACHMENT_EVENT, handlePaste);
   }, [workspace, threadSlug]);
-
-  async function handleDropWithoutWorkspace(acceptedFiles) {
-    setDragging(false);
-    pendingFilesRef.current = acceptedFiles;
-    const ws = await createDefaultWorkspace(t("new-workspace.placeholder"));
-    if (!ws) return;
-    setWorkspace(ws);
-    const { thread } = await Workspace.threads.new(ws.slug);
-    if (thread) setThreadSlug(thread.slug);
-  }
 
   async function handleDropWithWorkspace(acceptedFiles) {
     setDragging(false);
@@ -139,8 +115,12 @@ export default function Home() {
     );
   }
 
-  if (!workspace && userIsChatOnly(user)) {
-    return <NoWorkspacesAssigned />;
+  // Nothing to chat into. Members who cannot create workspaces are told to ask an
+  // admin; everyone else is pointed at the button that makes one. Either way the prompt
+  // box below is never rendered without a workspace behind it, which is what used to
+  // cause a "My Workspace" to appear out of nowhere on someone's first message.
+  if (!workspace) {
+    return userIsChatOnly(user) ? <NoWorkspacesAssigned /> : <NoWorkspaceYet />;
   }
 
   if (workspace && threadSlug) {
@@ -148,7 +128,6 @@ export default function Home() {
       <DnDFileUploaderProvider workspace={workspace} threadSlug={threadSlug}>
         <HomeContent
           workspace={workspace}
-          setWorkspace={setWorkspace}
           threadSlug={threadSlug}
           setThreadSlug={setThreadSlug}
         />
@@ -163,15 +142,12 @@ export default function Home() {
         ready: true,
         dragging,
         setDragging,
-        onDrop: workspace
-          ? handleDropWithWorkspace
-          : handleDropWithoutWorkspace,
+        onDrop: handleDropWithWorkspace,
         parseAttachments: () => [],
       }}
     >
       <HomeContent
         workspace={workspace}
-        setWorkspace={setWorkspace}
         threadSlug={null}
         setThreadSlug={setThreadSlug}
       />
@@ -179,7 +155,7 @@ export default function Home() {
   );
 }
 
-function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
+function HomeContent({ workspace, threadSlug, setThreadSlug }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -199,19 +175,8 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
     if (!message || loading) return;
     setLoading(true);
     try {
-      let targetWorkspace = workspace;
+      const targetWorkspace = workspace;
       let targetThread = threadSlug;
-
-      if (!targetWorkspace) {
-        targetWorkspace = await createDefaultWorkspace(
-          t("new-workspace.placeholder")
-        );
-        if (!targetWorkspace) {
-          setLoading(false);
-          return;
-        }
-        setWorkspace(targetWorkspace);
-      }
 
       if (!targetThread) {
         const { thread } = await Workspace.threads.new(targetWorkspace.slug);
@@ -265,18 +230,8 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
     );
   }
 
-  async function handleEditWorkspace() {
-    let targetWorkspace = workspace;
-
-    if (!targetWorkspace) {
-      targetWorkspace = await createDefaultWorkspace(
-        t("new-workspace.placeholder")
-      );
-      if (!targetWorkspace) return;
-      setWorkspace(targetWorkspace);
-    }
-
-    navigate(paths.workspace.settings.generalAppearance(targetWorkspace.slug));
+  function handleEditWorkspace() {
+    navigate(paths.workspace.settings.generalAppearance(workspace.slug));
   }
 
   return (
@@ -329,6 +284,36 @@ function HomeContent({ workspace, setWorkspace, threadSlug, setThreadSlug }) {
         <MemoriesSidebar workspace={workspace} />
       </div>
     </ChatSidebarProvider>
+  );
+}
+
+/**
+ * Shown to someone who can create workspaces but has none. The home screen used to
+ * quietly create one called "My Workspace" the first time they typed; now the choice -
+ * and the name - is theirs.
+ */
+function NoWorkspaceYet() {
+  const { t } = useTranslation();
+  const [showing, setShowing] = useState(false);
+
+  return (
+    <div
+      style={{ height: "100%" }}
+      className="transition-all duration-500 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden"
+    >
+      <div className="h-full w-full overflow-y-auto">
+        <div className="flex flex-col min-h-full w-full items-center justify-center gap-y-4 p-6">
+          <p className="text-theme-text-secondary text-sm text-center whitespace-pre-line">
+            {t("home.noWorkspaces")}
+          </p>
+          <Button type="button" onClick={() => setShowing(true)}>
+            <Plus className="h-4 w-4" />
+            {t("new-workspace.title")}
+          </Button>
+        </div>
+      </div>
+      {showing && <NewWorkspaceModal hideModal={() => setShowing(false)} />}
+    </div>
   );
 }
 

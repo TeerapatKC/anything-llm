@@ -69,8 +69,8 @@ export default function GeneratedPasswordModal({
             </Button>
           </div>
           <div className="flex items-start gap-x-2 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3">
-            <TriangleAlert className="h-4 w-4 shrink-0 mt-0.5 text-yellow-400" />
-            <p className="text-xs text-yellow-200">
+            <TriangleAlert className="h-4 w-4 shrink-0 mt-0.5 text-yellow-500" />
+            <p className="text-xs text-yellow-700 dark:text-yellow-400">
               Copy it now - this password cannot be shown again. If it is lost,
               reset the user's password to generate a new one.
             </p>

@@ -1,28 +1,9 @@
 // Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
-    survey: {
-      email: "Adresse e-mail",
-      useCase: "Pour quel usage utiliserez-vous AnythingLLM ?",
-      useCaseWork: "Pour le travail",
-      useCasePersonal: "Pour un usage personnel",
-      useCaseOther: "Autre",
-      comment: "Comment avez-vous découvert AnythingLLM ?",
-      commentPlaceholder: "Recherche, recommandation, Twitter, YouTube, etc.",
-      skip: "Ignorer l'enquête",
-      thankYou: "Merci pour votre retour !",
-      title: "Bienvenue",
-      description:
-        "Aidez-nous à améliorer AnythingLLM en répondant à quelques questions.",
-    },
     home: {
       getStarted: "Commencer",
       welcome: "Bienvenue",
-    },
-    llm: {
-      title: "Préférence LLM",
-      description:
-        "AnythingLLM peut fonctionner avec de nombreux fournisseurs LLM. Ce sera le service qui traitera vos discussions.",
     },
     userSetup: {
       title: "Configuration utilisateur",
@@ -32,13 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Le mot de passe doit contenir au moins 8 caractères.",
       teamHint:
         "Vous pourrez ajouter d'autres utilisateurs après la configuration initiale.",
-    },
-    data: {
-      title: "Gestion des données",
-      description:
-        "Configurez comment AnythingLLM stocke et traite vos données.",
-      settingsHint:
-        "Ces paramètres peuvent être modifiés ultérieurement dans les paramètres.",
     },
   },
   common: {
@@ -1498,6 +1472,8 @@ const TRANSLATIONS = {
     welcome: "Bienvenue",
     chooseWorkspace:
       "Choisissez un espace de travail pour commencer à chatter!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Vous n'êtes actuellement pas affecté à aucun espace de travail.\nPour accéder à un espace de travail, veuillez contacter votre administrateur.",
     goToWorkspace: 'Aller à "{{workspace}}"',

@@ -5,6 +5,7 @@ import App from "@/App.jsx";
 import PrivateRoute, {
   PermissionRoute,
   WorkspacePermissionRoute,
+  SuperAdminRoute,
 } from "@/components/PrivateRoute";
 import { PERMISSIONS, WORKSPACE_PERMISSIONS } from "@/utils/permissions";
 import Login from "@/pages/Login";
@@ -500,6 +501,17 @@ const router = createBrowserRouter([
         },
       },
       {
+        // Gated on being the instance owner rather than on a permission - the screens
+        // behind it must never become reachable by ticking a box on a custom role.
+        path: "/settings/instance-owner",
+        lazy: async () => {
+          const { default: AdminSuperAdmin } = await import(
+            "@/pages/Admin/SuperAdmin"
+          );
+          return { element: <SuperAdminRoute Component={AdminSuperAdmin} /> };
+        },
+      },
+      {
         path: "/settings/users",
         lazy: async () => {
           const { default: AdminUsers } = await import("@/pages/Admin/Users");
@@ -629,7 +641,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={TelegramBotSettings}
-                permissions={[PERMISSIONS.SUPER_ADMIN]}
+                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
               />
             ),
           };
@@ -645,7 +657,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobs}
-                permissions={[PERMISSIONS.SUPER_ADMIN]}
+                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
               />
             ),
           };
@@ -661,7 +673,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobRuns}
-                permissions={[PERMISSIONS.SUPER_ADMIN]}
+                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
               />
             ),
           };
@@ -677,7 +689,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobRunDetail}
-                permissions={[PERMISSIONS.SUPER_ADMIN]}
+                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
               />
             ),
           };

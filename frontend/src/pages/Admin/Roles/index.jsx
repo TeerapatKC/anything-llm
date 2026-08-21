@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Lock, Pencil, Plus, Star, Trash2 } from "lucide-react";
+import { Crown, Eye, Lock, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import Role, { WorkspaceRole } from "@/models/role";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -177,12 +177,20 @@ function RolesPanel({ scope }) {
                       <span className="text-theme-text-primary font-medium">
                         {role.displayName}
                       </span>
-                      {role.isSystem && (
+                      {role.isSystem && !role.isImmutable && (
                         <Badge
                           variant="outline"
                           className="gap-x-1 text-[10px]"
                         >
                           <Lock className="h-3 w-3" /> Built-in
+                        </Badge>
+                      )}
+                      {role.isImmutable && (
+                        <Badge
+                          variant="secondary"
+                          className="gap-x-1 text-[10px]"
+                        >
+                          <Crown className="h-3 w-3" /> Instance owner
                         </Badge>
                       )}
                       {isWorkspace && !role.isSystem && (
@@ -225,8 +233,17 @@ function RolesPanel({ scope }) {
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem onClick={() => setEditing(role)}>
-                        <Pencil />
-                        Edit
+                        {role.isImmutable ? (
+                          <>
+                            <Eye />
+                            View permissions
+                          </>
+                        ) : (
+                          <>
+                            <Pencil />
+                            Edit
+                          </>
+                        )}
                       </DropdownMenuItem>
                       {!role.isSystem && (
                         <>

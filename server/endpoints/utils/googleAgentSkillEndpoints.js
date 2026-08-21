@@ -13,7 +13,7 @@ function googleAgentSkillEndpoints(app) {
 
   app.get(
     "/admin/agent-skills/gmail/status",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.INTEGRATIONS_GOOGLE])],
     async (_request, response) => {
       try {
         const config = await GmailBridge.getConfig();
@@ -41,7 +41,7 @@ function googleAgentSkillEndpoints(app) {
 
   app.get(
     "/admin/agent-skills/google-calendar/status",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SUPER_ADMIN])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.INTEGRATIONS_GOOGLE])],
     async (_request, response) => {
       try {
         const config = await GoogleCalendarBridge.getConfig();

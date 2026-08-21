@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "開始使用",
       welcome: "歡迎",
     },
-    llm: {
-      title: "LLM 偏好",
-      description:
-        "AnythingLLM 可搭配多種 LLM 提供者使用。這項服務會負責處理對話。",
-    },
     userSetup: {
       title: "使用者設定",
       description: "設定使用者偏好。",
@@ -18,25 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "密碼必須至少包含 8 個字元。",
       teamHint:
         "預設只有您擁有管理員權限。完成初始設定後，即可建立帳號並邀請其他人成為使用者或管理員。請勿遺失密碼，因為只有管理員能重設密碼。",
-    },
-    data: {
-      title: "資料處理與隱私",
-      description: "對於個人資料的處理方式，我們致力於提供透明度與控制權。",
-      settingsHint: "這些設定之後都可以在設定頁面重新調整。",
-    },
-    survey: {
-      title: "歡迎使用 AnythingLLM",
-      description: "協助我們打造更符合需求的 AnythingLLM。此問卷為選填。",
-      email: "您的電子郵件是什麼？",
-      useCase: "您將如何使用 AnythingLLM？",
-      useCaseWork: "用於工作",
-      useCasePersonal: "用於個人使用",
-      useCaseOther: "其他",
-      comment: "您是從哪裡知道 AnythingLLM 的？",
-      commentPlaceholder:
-        "例如 Reddit、Twitter、GitHub、YouTube 等，告訴我們您是怎麼找到 AnythingLLM 的！",
-      skip: "略過問卷",
-      thankYou: "感謝您的回饋！",
     },
   },
   common: {
@@ -1374,6 +1350,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "歡迎",
     chooseWorkspace: "選擇一個工作區開始對話！",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "您目前尚未被分配到任何工作區。\n請聯絡您的管理員以申請工作區的存取權限。",
     goToWorkspace: '前往 "{{workspace}}"',

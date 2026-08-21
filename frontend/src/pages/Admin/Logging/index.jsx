@@ -15,6 +15,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableEmptyRow,
 } from "@/components/ui/table";
 
 export default function AdminLogs() {
@@ -69,12 +70,17 @@ export default function AdminLogs() {
       <PageHeader
         title={t("event.title")}
         description={t("event.description")}
+        actions={
+          <Button
+            type="button"
+            size="lg"
+            variant="destructive"
+            onClick={handleResetLogs}
+          >
+            {t("event.clear")}
+          </Button>
+        }
       />
-      <div className="w-full justify-end flex">
-        <Button size="lg" onClick={handleResetLogs} className="mt-3 mb-4">
-          {t("event.clear")}
-        </Button>
-      </div>
       <div className="overflow-x-auto mt-6">
         <LogsContainer
           loading={loading}
@@ -121,28 +127,38 @@ function LogsContainer({
             <TableHead scope="col">{t("event.table.type")}</TableHead>
             <TableHead scope="col">{t("event.table.user")}</TableHead>
             <TableHead scope="col">{t("event.table.occurred")}</TableHead>
-            <TableHead scope="col"> </TableHead>
+            <TableHead scope="col" className="text-right"> </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {!!logs && logs.map((log) => <LogRow key={log.id} log={log} />)}
+          {logs.length === 0 ? (
+            <TableEmptyRow colSpan={4}>No event logs found</TableEmptyRow>
+          ) : (
+            logs.map((log) => <LogRow key={log.id} log={log} />)
+          )}
         </TableBody>
       </Table>
       <div className="flex w-full justify-between items-center mt-6">
-        <button
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
           onClick={handlePrevious}
-          className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 light:text-theme-text-secondary light:border-theme-sidebar-border text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
+          className="disabled:invisible"
           disabled={offset === 0}
         >
           {t("common.previous")}
-        </button>
-        <button
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          variant="outline"
           onClick={handleNext}
-          className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 light:text-theme-text-secondary light:border-theme-sidebar-border text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
+          className="disabled:invisible"
           disabled={!canNext}
         >
           {t("common.next")}
-        </button>
+        </Button>
       </div>
     </>
   );

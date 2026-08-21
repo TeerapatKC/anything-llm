@@ -1,29 +1,9 @@
 // Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
-    survey: {
-      email: "Wat is je e-mailadres?",
-      useCase: "Waarvoor ga je AnythingLLM gebruiken?",
-      useCaseWork: "Voor werk",
-      useCasePersonal: "Voor persoonlijk gebruik",
-      useCaseOther: "Anders",
-      comment: "Hoe heb je over AnythingLLM gehoord?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, enz. - Laat ons weten hoe je ons gevonden hebt!",
-      skip: "Enquête overslaan",
-      thankYou: "Bedankt voor je feedback!",
-      title: "Welkom bij AnythingLLM",
-      description:
-        "Help ons AnythingLLM af te stemmen op jouw behoeften. (Optioneel)",
-    },
     home: {
       getStarted: "Aan de slag",
       welcome: "Welkom",
-    },
-    llm: {
-      title: "LLM-voorkeuren",
-      description:
-        "AnythingLLM kan samenwerken met veel LLM-aanbieders. Deze service verzorgt de chatfunctie.",
     },
     userSetup: {
       title: "Gebruikersinstellingen",
@@ -33,13 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Wachtwoorden moeten minimaal 8 tekens lang zijn.",
       teamHint:
         "Standaard bent u de enige beheerder. Zodra de onboarding is voltooid, kunt u gebruikers of beheerders aanmaken en anderen uitnodigen. Raak uw wachtwoord niet kwijt, want alleen beheerders kunnen wachtwoorden opnieuw instellen.",
-    },
-    data: {
-      title: "Gegevensverwerking en privacy",
-      description:
-        "Wij streven naar transparantie en controle als het gaat om uw persoonlijke gegevens.",
-      settingsHint:
-        "Deze instellingen kunnen op elk moment opnieuw worden geconfigureerd in de instellingen.",
     },
   },
   common: {
@@ -1492,6 +1465,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Welkom",
     chooseWorkspace: "Kies een werkruimte om te beginnen!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Je bent nog niet toegewezen aan een werkruimte.\nNeem contact op met je beheerder om toegang te vragen tot een werkruimte.",
     goToWorkspace: 'Ga naar de werkruimte "{{workspace}}"',

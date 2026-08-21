@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Alusta",
       welcome: "Tere tulemast",
     },
-    llm: {
-      title: "LLM-i eelistus",
-      description:
-        "AnythingLLM töötab paljude LLM-teenusepakkujatega. See teenus haldab vestlust.",
-    },
     userSetup: {
       title: "Kasutaja seadistus",
       description: "Seadista oma kasutajasätted.",
@@ -18,27 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Parool peab olema vähemalt 8 märki.",
       teamHint:
         "Vaikimisi oled ainus administraator. Pärast häälestust saad luua ning kutsuda teisi kasutajaid või administreerida neid. Parooli kaotamisel saab paroole lähtestada vaid administraator.",
-    },
-    data: {
-      title: "Andmetöötlus ja privaatsus",
-      description:
-        "Oleme pühendunud läbipaistvusele ning kontrollile sinu andmete osas.",
-      settingsHint: "Neid sätteid saab igal ajal seadetes muuta.",
-    },
-    survey: {
-      title: "Tere tulemast AnythingLLM-i",
-      description:
-        "Aita meil AnythingLLM sinu vajadustele vastavaks kujundada. Valikuline.",
-      email: "Mis on su e-post?",
-      useCase: "Milleks kasutad AnythingLLM-i?",
-      useCaseWork: "Töö jaoks",
-      useCasePersonal: "Isiklikuks kasutuseks",
-      useCaseOther: "Muu",
-      comment: "Kust kuulsid AnythingLLM-ist?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube jne – anna meile teada!",
-      skip: "Jäta vahele",
-      thankYou: "Aitäh tagasiside eest!",
     },
   },
   common: {
@@ -1434,6 +1408,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Tere tulemast",
     chooseWorkspace: "Vali tööruum, et alustada vestlust!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Sa ei ole täidetud ühtegi tööruumi.\nPäringu tööruumiks, palun pööra teie administraatorile.",
     goToWorkspace: 'Mine tööruumiks "{{workspace}}"',

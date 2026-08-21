@@ -116,16 +116,27 @@ function NovitaModelSelection({ settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.NovitaLLMModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.NovitaLLMModelPref || "");
+  }, [settings?.NovitaLLMModelPref]);
+
+  const defaultFirstModel =
+    groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id || "";
+  const currentModel =
+    selectedModel || settings?.NovitaLLMModelPref || defaultFirstModel;
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="NovitaLLMModelPref"
         required={true}
-        defaultValue={
-          settings?.NovitaLLMModelPref ??
-          groupedModels[Object.keys(groupedModels).sort()[0]]?.[0]?.id
-        }
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

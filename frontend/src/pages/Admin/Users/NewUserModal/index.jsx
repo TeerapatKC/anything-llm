@@ -14,7 +14,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import GeneratedPasswordModal from "@/components/Modals/GeneratedPassword";
 import {
   DialogClose,
   DialogHeader,
@@ -29,11 +28,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function NewUserModal() {
+export default function NewUserModal({ closeModal, onSuccess }) {
   const { roles, permissionLabels } = useRoles();
   const [error, setError] = useState(null);
   const [role, setRole] = useState("default");
-  const [createdUser, setCreatedUser] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [messageLimit, setMessageLimit] = useState({
     enabled: false,
     limit: 10,
@@ -43,16 +42,19 @@ export default function NewUserModal() {
   const handleCreate = async (e) => {
     setError(null);
     e.preventDefault();
+    setLoading(true);
     const data = {};
     const form = new FormData(e.target);
     for (var [key, value] of form.entries()) data[key] = value;
     data.dailyMessageLimit = messageLimit.enabled ? messageLimit.limit : null;
 
     const { user, initialPassword, error } = await Admin.newUser(data);
-    // The generated password is only ever returned here, so hold the page open until
-    // the admin has dismissed it - the reload happens once they close the dialog.
-    if (!!user) setCreatedUser({ username: user.username, initialPassword });
-    setError(error);
+    setLoading(false);
+    if (!!user) {
+      onSuccess?.({ username: user.username, initialPassword });
+    } else {
+      setError(error);
+    }
   };
 
   const user = userFromStorage();
@@ -158,17 +160,11 @@ export default function NewUserModal() {
           <DialogClose render={<Button variant="outline" type="button" />}>
             Cancel
           </DialogClose>
-          <Button variant="default" type="submit">
-            Add user
+          <Button variant="default" type="submit" disabled={loading}>
+            {loading ? "Adding..." : "Add user"}
           </Button>
         </DialogFooter>
       </form>
-      <GeneratedPasswordModal
-        open={!!createdUser}
-        username={createdUser?.username}
-        password={createdUser?.initialPassword}
-        onClose={() => window.location.reload()}
-      />
     </>
   );
 }

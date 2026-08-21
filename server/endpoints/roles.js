@@ -27,7 +27,7 @@ const {
  */
 async function canGrantPermissions(request, response, requestedPermissions) {
   const actor = await userFromSession(request, response);
-  if (await Role.userCan(actor, PERMISSIONS.SUPER_ADMIN))
+  if (await Role.userCan(actor, PERMISSIONS.SYSTEM_ADMIN))
     return { valid: true, error: null };
 
   const held = new Set(await Role.permissionsForUser(actor));

@@ -1,4 +1,5 @@
 import { TriangleAlert } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ContextualSaveBar({
   showing = false,
@@ -8,24 +9,18 @@ export default function ContextualSaveBar({
   if (!showing) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 h-14 bg-dark-input flex items-center justify-end px-4 z-999">
-      <div className="absolute ml-4 left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center gap-x-2">
-        <TriangleAlert size={18} className="text-[#FFFFFF]" />
-        <p className="text-[#FFFFFF] font-medium text-xs">Unsaved Changes</p>
+    <div className="fixed bottom-0 left-0 right-0 h-16 bg-theme-bg-primary border-t border-theme-sidebar-border shadow-md flex items-center justify-end px-6 z-[999] transition-all">
+      <div className="absolute ml-6 left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center gap-x-2">
+        <TriangleAlert size={18} className="text-yellow-600 dark:text-yellow-400" />
+        <p className="text-theme-text-primary font-medium text-sm">Unsaved Changes</p>
       </div>
-      <div className="flex items-center gap-x-2">
-        <button
-          className="border-none text-theme-text-primary font-medium text-sm px-[10px] py-[6px] rounded-md bg-theme-bg-secondary hover:bg-theme-bg-primary"
-          onClick={onCancel}
-        >
+      <div className="flex items-center gap-x-3">
+        <Button variant="outline" onClick={onCancel}>
           Cancel
-        </button>
-        <button
-          className="border-none text-theme-text-primary font-medium text-sm px-[10px] py-[6px] rounded-md bg-primary-button hover:bg-primary-button-hover"
-          onClick={onSave}
-        >
+        </Button>
+        <Button variant="default" onClick={onSave}>
           Save
-        </button>
+        </Button>
       </div>
     </div>
   );

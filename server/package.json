@@ -14,7 +14,8 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "lint": "eslint --fix .",
     "lint:check": "eslint .",
-    "swagger": "node ./swagger/init.js"
+    "swagger": "node ./swagger/init.js",
+    "owner": "node ./utils/boot/breakGlass.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"

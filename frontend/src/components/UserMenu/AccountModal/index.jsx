@@ -93,7 +93,12 @@ export default function AccountModal({ user, hideModal }) {
   };
   return (
     <>
-      <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
+      <Dialog
+        open={!showChangePassword}
+        onOpenChange={(open) => {
+          if (!open && !showChangePassword) hideModal();
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">

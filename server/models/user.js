@@ -2,7 +2,12 @@ const { Prisma } = require("@prisma/client");
 const prisma = require("../utils/prisma");
 const { EventLogs } = require("./eventLogs");
 const { Role } = require("./role");
-const { PERMISSIONS, FALLBACK_ROLE } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  FALLBACK_ROLE,
+  ADMIN_ROLE,
+  SUPER_ADMIN_ROLE,
+} = require("../utils/permissions");
 
 /**
  * @typedef {Object} User
@@ -154,6 +159,49 @@ const User = {
   },
 
   /**
+   * The instance-owner guard, enforced here rather than in the endpoints because the
+   * developer API, invite redemption and the admin console all reach the database
+   * through this model, and only one of those three walks the admin helper checks.
+   *
+   * The owner role is never reachable through any user-supplied payload: it is set once
+   * by `createSuperAdmin` during first-run setup and afterwards only ever moves through
+   * `transferSuperAdmin`. Everything else about that account - deleting it, suspending
+   * it, demoting it - is refused outright.
+   *
+   * @param {Object|null} existingUser - the account being changed, if any
+   * @param {Object} updates - the fields being written
+   * @returns {{allowed: boolean, error: string|null}}
+   */
+  _superAdminGuard: function (existingUser = null, updates = {}) {
+    if (Role.isSuperAdminRole(updates.role))
+      return {
+        allowed: false,
+        error:
+          "The super admin role cannot be assigned. It moves only through an ownership transfer.",
+      };
+
+    if (!Role.isSuperAdmin(existingUser)) return { allowed: true, error: null };
+
+    if (updates.hasOwnProperty("role") && updates.role !== existingUser.role)
+      return {
+        allowed: false,
+        error:
+          "The super admin cannot be moved off their role. Transfer ownership instead.",
+      };
+
+    if (
+      updates.hasOwnProperty("suspended") &&
+      Number(updates.suspended) !== Number(existingUser.suspended)
+    )
+      return {
+        allowed: false,
+        error: "The super admin account cannot be suspended.",
+      };
+
+    return { allowed: true, error: null };
+  },
+
+  /**
    * Creates a user. When `requiresPasswordChange` is set the account is locked out of
    * every endpoint except the change-password one until they pick their own password -
    * this is how admin-issued initial passwords are handed over safely.
@@ -171,6 +219,11 @@ const User = {
     if (!passwordCheck.checkedOK) {
       return { user: null, error: passwordCheck.error };
     }
+
+    // Checked before anything else so a request body that names the owner role cannot
+    // mint a second owner, whichever endpoint it arrived through.
+    const guard = this._superAdminGuard(null, { role });
+    if (!guard.allowed) return { user: null, error: guard.error };
 
     try {
       // Validate username format (validation function handles all checks)
@@ -219,6 +272,9 @@ const User = {
         where: { id: parseInt(userId) },
       });
       if (!currentUser) return { success: false, error: "User not found" };
+
+      const guard = this._superAdminGuard(currentUser, updates);
+      if (!guard.allowed) return { success: false, error: guard.error };
 
       // We previously had more lenient username validation, but now with more strict validation
       // we dont want to break existing users by changing non-username fields.
@@ -300,6 +356,18 @@ const User = {
     if (!id) throw new Error("No user id provided for update");
 
     try {
+      // Direct updates skip every validation above, so the owner guard is re-applied
+      // here rather than trusting each caller to have thought about it. Ownership moves
+      // through `transferSuperAdmin`, which writes its own transaction.
+      if (data.hasOwnProperty("role") || data.hasOwnProperty("suspended")) {
+        const existing = await prisma.users.findUnique({ where: { id } });
+        const guard = this._superAdminGuard(existing, data);
+        if (!guard.allowed) {
+          console.error(`REFUSED DIRECT USER UPDATE. ${guard.error}`);
+          return { user: null, message: guard.error };
+        }
+      }
+
       const user = await prisma.users.update({
         where: { id },
         data,
@@ -366,13 +434,124 @@ const User = {
     }
   },
 
+  /**
+   * Deletes every user matching the clause. Refuses outright - rather than skipping the
+   * row - if the clause would take the instance owner with it, so a broad `deleteMany`
+   * can never quietly orphan the deployment.
+   * @param {Object} clause
+   * @returns {Promise<boolean>}
+   */
   delete: async function (clause = {}) {
     try {
+      const owner = await Role.currentSuperAdmin();
+      if (owner) {
+        const targetsOwner = await prisma.users.findFirst({
+          where: { AND: [clause, { id: owner.id }] },
+          select: { id: true },
+        });
+        if (targetsOwner) {
+          console.error(
+            "REFUSED TO DELETE USERS. The super admin account cannot be deleted."
+          );
+          return false;
+        }
+      }
+
       await prisma.users.deleteMany({ where: clause });
       return true;
     } catch (error) {
       console.error(error.message);
       return false;
+    }
+  },
+
+  /**
+   * Moves the owner role from one account to another in a single transaction, demoting
+   * the outgoing owner to Admin so the instance is never left with two owners or none.
+   * The only sanctioned way the owner role ever changes hands.
+   * @param {number} toUserId
+   * @returns {Promise<{success: boolean, error: string|null, from: Object|null, to: Object|null}>}
+   */
+  transferSuperAdmin: async function (toUserId = null) {
+    const failure = (error) => ({
+      success: false,
+      error,
+      from: null,
+      to: null,
+    });
+    try {
+      const target = await prisma.users.findUnique({
+        where: { id: Number(toUserId) },
+      });
+      if (!target) return failure("That account no longer exists.");
+      if (Role.isSuperAdmin(target))
+        return failure("That account already owns this instance.");
+      if (Number(target.suspended) === 1)
+        return failure(
+          "A suspended account cannot be made the owner. Unsuspend it first."
+        );
+      if (!(await Role.exists(ADMIN_ROLE)))
+        return failure(
+          `The "${ADMIN_ROLE}" role is missing, so the outgoing owner has nowhere to land.`
+        );
+
+      const outgoing = await Role.currentSuperAdmin();
+      await prisma.$transaction([
+        ...(outgoing
+          ? [
+              prisma.users.update({
+                where: { id: outgoing.id },
+                data: { role: ADMIN_ROLE, lastUpdatedAt: new Date() },
+              }),
+            ]
+          : []),
+        prisma.users.update({
+          where: { id: target.id },
+          data: { role: SUPER_ADMIN_ROLE, lastUpdatedAt: new Date() },
+        }),
+      ]);
+
+      return {
+        success: true,
+        error: null,
+        from: outgoing ? this.filterFields(outgoing) : null,
+        to: this.filterFields(target),
+      };
+    } catch (error) {
+      console.error("FAILED TO TRANSFER OWNERSHIP.", error.message);
+      return failure(this._identifyErrorAndFormatMessage(error));
+    }
+  },
+
+  /**
+   * Creates the instance owner. Separate from `create` on purpose: `create` can be
+   * reached with a caller-supplied role, this cannot, so no request body can ever mint
+   * an owner. Refuses if one already exists.
+   * @param {{username: string, email: string, password: string}} credentials
+   * @returns {Promise<{user: Object|null, error: string|null}>}
+   */
+  createSuperAdmin: async function ({ username, email, password }) {
+    if (await Role.currentSuperAdmin())
+      return { user: null, error: "This instance already has an owner." };
+
+    const passwordCheck = this.checkPasswordComplexity(password);
+    if (!passwordCheck.checkedOK)
+      return { user: null, error: passwordCheck.error };
+
+    try {
+      const bcrypt = require("bcryptjs");
+      const user = await prisma.users.create({
+        data: {
+          username: this.validations.username(username),
+          email: this.validations.email(email),
+          password: bcrypt.hashSync(password, 10),
+          role: await this.validateRole(SUPER_ADMIN_ROLE),
+        },
+      });
+      return { user: this.filterFields(user), error: null };
+    } catch (error) {
+      console.error("FAILED TO CREATE THE INSTANCE OWNER.", error.message);
+      return { user: null, error: this._identifyErrorAndFormatMessage(error) };
     }
   },
 

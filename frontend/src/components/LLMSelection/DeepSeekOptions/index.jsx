@@ -76,13 +76,27 @@ function DeepSeekModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.DeepSeekModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.DeepSeekModelPref || "");
+  }, [settings?.DeepSeekModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.DeepSeekModelPref ||
+    (models.length > 0 ? models[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="DeepSeekModelPref"
         required={true}
-        defaultValue={settings?.DeepSeekModelPref ?? models?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

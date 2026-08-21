@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       welcome: "Selamat Datang",
       getStarted: "Mulai",
     },
-    llm: {
-      title: "Preferensi LLM",
-      description:
-        "AnythingLLM dapat bekerja dengan banyak penyedia LLM. Ini akan menjadi layanan yang menangani obrolan.",
-    },
     userSetup: {
       title: "Pengaturan Pengguna",
       description: "Konfigurasikan pengaturan pengguna Anda.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Kata sandi harus minimal 8 karakter.",
       teamHint:
         "Secara bawaan, Anda akan menjadi satu-satunya admin. Setelah onboarding selesai, Anda dapat membuat dan mengundang orang lain sebagai pengguna atau admin. Jangan kehilangan kata sandi Anda karena hanya admin yang dapat mereset kata sandi.",
-    },
-    data: {
-      title: "Penanganan Data & Privasi",
-      description:
-        "Kami berkomitmen pada transparansi dan kontrol terkait data pribadi Anda.",
-      settingsHint:
-        "Pengaturan ini dapat dikonfigurasi ulang kapan saja di pengaturan.",
-    },
-    survey: {
-      title: "Selamat Datang di AnythingLLM",
-      description:
-        "Bantu kami membuat AnythingLLM yang sesuai dengan kebutuhan Anda. Opsional.",
-      email: "Apa email Anda?",
-      useCase: "Untuk apa Anda akan menggunakan AnythingLLM?",
-      useCaseWork: "Untuk pekerjaan",
-      useCasePersonal: "Untuk penggunaan pribadi",
-      useCaseOther: "Lainnya",
-      comment: "Bagaimana Anda mengetahui AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, dll. - Beri tahu kami bagaimana Anda menemukan kami!",
-      skip: "Lewati Survei",
-      thankYou: "Terima kasih atas umpan balik Anda!",
     },
   },
   common: {
@@ -62,6 +35,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Selamat Datang",
     chooseWorkspace: "Pilih ruang kerja untuk mulai mengobrol!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Anda saat ini tidak ditugaskan ke ruang kerja mana pun.\nSilakan hubungi administrator Anda untuk meminta akses ke ruang kerja.",
     goToWorkspace: 'Buka "{{workspace}}"',

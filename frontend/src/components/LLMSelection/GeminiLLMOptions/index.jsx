@@ -106,22 +106,32 @@ function GeminiModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.GeminiLLMModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.GeminiLLMModelPref || "");
+  }, [settings?.GeminiLLMModelPref]);
+
+  const defaultFirstModel =
+    groupedModels[
+      Object.keys(groupedModels).sort((a, b) => {
+        if (a === "Stable") return -1;
+        if (b === "Stable") return 1;
+        return a.localeCompare(b);
+      })[0]
+    ]?.[0]?.id || "";
+  const currentModel = selectedModel || settings?.GeminiLLMModelPref || defaultFirstModel;
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="GeminiLLMModelPref"
         required={true}
-        defaultValue={
-          settings?.GeminiLLMModelPref ??
-          groupedModels[
-            Object.keys(groupedModels).sort((a, b) => {
-              if (a === "Stable") return -1;
-              if (b === "Stable") return 1;
-              return a.localeCompare(b);
-            })[0]
-          ]?.[0]?.id
-        }
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

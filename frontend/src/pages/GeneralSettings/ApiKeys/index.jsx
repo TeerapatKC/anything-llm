@@ -77,7 +77,7 @@ export default function AdminApiKeys() {
             containerClassName="flex w-full"
           />
         ) : (
-          <Table className="text-left rounded-lg min-w-[720px] border-spacing-0 md:mt-6 mt-0">
+          <Table className="text-left min-w-[720px]">
             <TableHeader>
               <TableRow>
                 <TableHead scope="col">{t("api.table.name")}</TableHead>

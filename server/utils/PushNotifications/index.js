@@ -172,7 +172,7 @@ class PushNotifications {
       return this.#log(".sendNotificationToAdmins() - No subscriptions found");
 
     const admins = await User._where({
-      role: Role.superAdminRoleName(),
+      role: { in: await Role.adminRoleNames() },
       web_push_subscription_config: { not: null },
     });
     if (admins.length === 0)

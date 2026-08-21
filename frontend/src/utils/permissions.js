@@ -11,41 +11,100 @@ import {
  * which controls are worth rendering.
  */
 export const PERMISSIONS = {
-  SUPER_ADMIN: "system.admin",
+  SYSTEM_ADMIN: "system.admin",
+
   SYSTEM_SETTINGS: "system.settings",
+  SYSTEM_SETTINGS_LLM: "system.settings.llm",
+  SYSTEM_SETTINGS_EMBEDDER: "system.settings.embedder",
+  SYSTEM_SETTINGS_VECTOR_DB: "system.settings.vector_db",
+  SYSTEM_SETTINGS_TRANSCRIPTION: "system.settings.transcription",
+  SYSTEM_SETTINGS_TEXT_SPLITTING: "system.settings.text_splitting",
+  SYSTEM_SETTINGS_SECURITY: "system.settings.security",
+  SYSTEM_SETTINGS_PRIVACY: "system.settings.privacy",
+
   SYSTEM_MODEL_ROUTING: "system.model_routing",
   SYSTEM_PROMPTS: "system.prompts",
+
   SYSTEM_APPEARANCE: "system.appearance",
+  SYSTEM_APPEARANCE_BRANDING: "system.appearance.branding",
+  SYSTEM_APPEARANCE_FOOTER: "system.appearance.footer",
+
   SYSTEM_EVENT_LOGS: "system.event_logs",
+  SYSTEM_EVENT_LOGS_VIEW: "system.event_logs.view",
+  SYSTEM_EVENT_LOGS_CLEAR: "system.event_logs.clear",
+
   SYSTEM_API_KEYS: "system.api_keys",
   SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
+
   SYSTEM_COMMUNITY_HUB: "system.community_hub",
+  SYSTEM_COMMUNITY_HUB_BROWSE: "system.community_hub.browse",
+  SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
+  SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
+
   SYSTEM_EXPERIMENTAL: "system.experimental",
 
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
+  USERS_CREATE: "users.create",
+  USERS_EDIT: "users.edit",
+  USERS_SUSPEND: "users.suspend",
+  USERS_DELETE: "users.delete",
+  USERS_RESET_PASSWORD: "users.reset_password",
   USERS_ASSIGN_ROLES: "users.assign_roles",
+
   INVITES_MANAGE: "invites.manage",
+  INVITES_CREATE: "invites.create",
+  INVITES_DELETE: "invites.delete",
+
   ROLES_MANAGE: "roles.manage",
+  ROLES_CREATE: "roles.create",
+  ROLES_EDIT: "roles.edit",
+  ROLES_DELETE: "roles.delete",
+
   WORKSPACE_ROLES_MANAGE: "workspace_roles.manage",
+  WORKSPACE_ROLES_CREATE: "workspace_roles.create",
+  WORKSPACE_ROLES_EDIT: "workspace_roles.edit",
+  WORKSPACE_ROLES_DELETE: "workspace_roles.delete",
 
   WORKSPACES_CREATE: "workspaces.create",
   WORKSPACES_VIEW_ALL: "workspaces.view_all",
   WORKSPACES_MANAGE_ALL: "workspaces.manage_all",
+  WORKSPACES_DELETE_ANY: "workspaces.delete_any",
 
   DOCUMENTS_MANAGE: "documents.manage",
+  DOCUMENTS_VIEW: "documents.view",
+  DOCUMENTS_UPLOAD: "documents.upload",
+  DOCUMENTS_ORGANIZE: "documents.organize",
+  DOCUMENTS_DELETE: "documents.delete",
 
   CHATS_VIEW_ALL: "chats.view_all",
+  CHATS_EXPORT: "chats.export",
+  CHATS_DELETE_ANY: "chats.delete_any",
   CHATS_UNLIMITED: "chats.unlimited",
 
   AGENTS_MANAGE_SKILLS: "agents.manage_skills",
   AGENTS_FLOWS: "agents.flows",
+  AGENTS_FLOWS_VIEW: "agents.flows.view",
+  AGENTS_FLOWS_EDIT: "agents.flows.edit",
+  AGENTS_FLOWS_DELETE: "agents.flows.delete",
   AGENTS_MCP_SERVERS: "agents.mcp_servers",
+  AGENTS_SCHEDULED_JOBS: "agents.scheduled_jobs",
 
   EMBEDS_MANAGE: "embeds.manage",
   EMBEDS_VIEW_CHATS: "embeds.view_chats",
+
+  INTEGRATIONS_TELEGRAM: "integrations.telegram",
+  INTEGRATIONS_GOOGLE: "integrations.google",
+  INTEGRATIONS_OUTLOOK: "integrations.outlook",
 };
+
+/**
+ * The instance-owner role. The one role the UI recognises by name, mirroring the server:
+ * it is never offered in a role picker, and the account holding it cannot be edited,
+ * suspended or deleted from the user administration screens.
+ */
+export const SUPER_ADMIN_ROLE = "super-admin";
 
 /**
  * Mirror of the workspace-scope catalog. These are held per workspace, never globally -
@@ -53,17 +112,43 @@ export const PERMISSIONS = {
  */
 export const WORKSPACE_PERMISSIONS = {
   VIEW: "workspace.view",
+
   CHAT: "workspace.chat",
+  CHAT_AGENTS: "workspace.chat.agents",
+  CHAT_ATTACH_FILES: "workspace.chat.attach_files",
+  CHAT_SLASH_COMMANDS: "workspace.chat.slash_commands",
+
   THREADS_MANAGE: "workspace.threads.manage",
+  THREADS_CREATE: "workspace.threads.create",
+  THREADS_RENAME: "workspace.threads.rename",
+  THREADS_DELETE: "workspace.threads.delete",
+
   CHATS_VIEW_ALL: "workspace.chats.view_all",
   CHATS_DELETE: "workspace.chats.delete",
+  CHATS_EXPORT: "workspace.chats.export",
+
   DOCUMENTS_VIEW: "workspace.documents.view",
   DOCUMENTS_UPLOAD: "workspace.documents.upload",
   DOCUMENTS_MANAGE: "workspace.documents.manage",
+  DOCUMENTS_REMOVE: "workspace.documents.remove",
+  DOCUMENTS_PIN: "workspace.documents.pin",
+  DOCUMENTS_WATCH: "workspace.documents.watch",
   DATA_CONNECTORS: "workspace.data_connectors",
+
   SETTINGS_MANAGE: "workspace.settings.manage",
+  SETTINGS_GENERAL: "workspace.settings.general",
+  SETTINGS_LLM: "workspace.settings.llm",
+  SETTINGS_PROMPT: "workspace.settings.prompt",
+  SETTINGS_VECTOR: "workspace.settings.vector",
+  SETTINGS_APPEARANCE: "workspace.settings.appearance",
+
   AGENTS_MANAGE: "workspace.agents.manage",
+
   MEMBERS_MANAGE: "workspace.members.manage",
+  MEMBERS_ADD: "workspace.members.add",
+  MEMBERS_REMOVE: "workspace.members.remove",
+  MEMBERS_SET_ROLE: "workspace.members.set_role",
+
   ROLES_MANAGE: "workspace.roles.manage",
   DELETE: "workspace.delete",
 };
@@ -193,7 +278,7 @@ function permissionsOf(user) {
 export function userCan(permissions, user) {
   const required = Array.isArray(permissions) ? permissions : [permissions];
   const held = permissionsOf(user);
-  if (held.includes(PERMISSIONS.SUPER_ADMIN)) return true;
+  if (held.includes(PERMISSIONS.SYSTEM_ADMIN)) return true;
   return required.every((permission) => held.includes(permission));
 }
 
@@ -206,7 +291,7 @@ export function userCan(permissions, user) {
  */
 export function userCanAny(permissions = [], user) {
   const held = permissionsOf(user);
-  if (held.includes(PERMISSIONS.SUPER_ADMIN)) return true;
+  if (held.includes(PERMISSIONS.SYSTEM_ADMIN)) return true;
   return permissions.some((permission) => held.includes(permission));
 }
 
@@ -220,7 +305,7 @@ export function roleNamesWith(roles = [], permission) {
   return roles
     .filter(
       (role) =>
-        role.permissions?.includes(PERMISSIONS.SUPER_ADMIN) ||
+        role.permissions?.includes(PERMISSIONS.SYSTEM_ADMIN) ||
         role.permissions?.includes(permission)
     )
     .map((role) => role.name);
@@ -236,10 +321,49 @@ export function roleNamesWith(roles = [], permission) {
  * @returns {boolean}
  */
 export function canManageRole(actor, roleName, roles = []) {
-  if (userCan(PERMISSIONS.SUPER_ADMIN, actor)) return true;
+  // The owner role is not manageable by anyone, including its own holder - it moves
+  // only through an ownership transfer, and its permission set is frozen.
+  if (isSuperAdminRole(roleName)) return false;
+  if (userCan(PERMISSIONS.SYSTEM_ADMIN, actor)) return true;
   const target = roles.find((role) => role.name === roleName);
   if (!target) return false;
   return userCan(target.permissions || [], actor);
+}
+
+/**
+ * Whether a role name is the instance-owner role.
+ * @param {string|null} roleName
+ * @returns {boolean}
+ */
+export function isSuperAdminRole(roleName) {
+  return String(roleName ?? "") === SUPER_ADMIN_ROLE;
+}
+
+/**
+ * Whether an account owns this instance. Mirrors the server, which is the enforcement
+ * point - this only decides which controls are worth rendering.
+ * @param {Object|null} [user] - omit to read the cached session user
+ * @returns {boolean}
+ */
+export function isSuperAdmin(user) {
+  const currentUser = user === undefined ? userFromStorage() : user;
+  return isSuperAdminRole(currentUser?.role);
+}
+
+/**
+ * The roles that may actually be picked in a user's role dropdown. Excludes the owner
+ * role and any role the actor could not hand out.
+ * @param {Array<{name: string, isAssignable?: boolean}>} roles
+ * @param {Object|null} [actor]
+ * @returns {Array}
+ */
+export function assignableRoles(roles = [], actor) {
+  return roles.filter(
+    (role) =>
+      role.isAssignable !== false &&
+      !isSuperAdminRole(role.name) &&
+      canManageRole(actor, role.name, roles)
+  );
 }
 
 /**

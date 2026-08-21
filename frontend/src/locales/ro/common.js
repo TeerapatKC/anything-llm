@@ -5,11 +5,6 @@ const TRANSLATIONS = {
       getStarted: "Începe",
       welcome: "Bine ați venit",
     },
-    llm: {
-      title: "Preferința LLM",
-      description:
-        "AnythingLLM poate funcționa cu mai mulți furnizori LLM. Acesta va fi serviciul care gestionează conversațiile.",
-    },
     userSetup: {
       title: "Configurare Utilizator",
       description: "Configurează setările utilizatorului tău.",
@@ -18,28 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Parolele trebuie să aibă cel puțin 8 caractere.",
       teamHint:
         "Implicit, vei fi singurul administrator. După finalizarea configurării inițiale, poți crea și invita alți utilizatori sau administratori. Nu pierde parola, deoarece doar administratorii pot reseta parolele.",
-    },
-    data: {
-      title: "Gestionarea datelor & Confidențialitate",
-      description:
-        "Suntem dedicați transparenței și controlului asupra datelor tale personale.",
-      settingsHint:
-        "Aceste setări pot fi reconfigurate oricând în setările aplicației.",
-    },
-    survey: {
-      title: "Bun venit la AnythingLLM",
-      description:
-        "Ajută-ne să facem AnythingLLM potrivit pentru nevoile tale. Opțional.",
-      email: "Care este adresa ta de email?",
-      useCase: "Pentru ce vei folosi AnythingLLM?",
-      useCaseWork: "Pentru muncă",
-      useCasePersonal: "Pentru uz personal",
-      useCaseOther: "Altele",
-      comment: "De unde ai aflat despre AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, etc. - Spune-ne cum ne-ai găsit!",
-      skip: "Sari peste sondaj",
-      thankYou: "Îți mulțumim pentru feedback!",
     },
   },
   common: {
@@ -1495,6 +1468,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Bine ai venit",
     chooseWorkspace: "Alege un spațiu de lucru pentru a începe să chatezi!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Momentan nu te-ai atribuit la niciun spațiu de lucru.\nContactează-ți administratorul pentru a solicita acces la un spațiu de lucru.",
     goToWorkspace: 'Mai departe la spațiul de lucru "{{workspace}}"',

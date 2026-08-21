@@ -4,6 +4,8 @@ import paths from "@/utils/paths";
 import { humanizeCron } from "../utils/cron";
 import { useTranslation } from "react-i18next";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 // One row of the scheduled-jobs list. Clicking the name navigates to the
 // run history; CRUD callbacks come from the parent.
@@ -26,7 +28,7 @@ export default function JobRow({ job, onTrigger, onToggle, onEdit, onDelete }) {
   };
 
   return (
-    <div
+    <TableRow
       role="button"
       tabIndex={0}
       onClick={() => navigate(paths.settings.scheduledJobRuns(job.id))}
@@ -36,63 +38,71 @@ export default function JobRow({ job, onTrigger, onToggle, onEdit, onDelete }) {
           navigate(paths.settings.scheduledJobRuns(job.id));
         }
       }}
-      className="flex items-center justify-between px-4 h-14 hover:bg-white/5 light:hover:bg-slate-200 transition-colors cursor-pointer"
+      className="cursor-pointer"
       title={t("scheduledJobs.row.viewRuns")}
     >
-      <span className="w-[150px] text-sm font-medium text-theme-text-primary light:text-slate-950 truncate">
+      <TableCell className="font-medium text-theme-text-primary">
         {job.name}
-      </span>
-      <span className="w-[180px] text-sm text-zinc-400 light:text-slate-600 truncate">
+      </TableCell>
+      <TableCell className="text-theme-text-secondary">
         {humanizeCron(job.schedule, i18n.language)}
-      </span>
-      <span className="w-[120px] text-sm text-zinc-400 light:text-slate-600 truncate">
+      </TableCell>
+      <TableCell className="text-theme-text-secondary">
         {statusText}
-      </span>
-      <span className="w-[180px] text-sm text-zinc-400 light:text-slate-600 truncate">
+      </TableCell>
+      <TableCell className="text-theme-text-secondary">
         {job.lastRunAt ? new Date(job.lastRunAt).toLocaleString() : "—"}
-      </span>
-      <span className="w-[180px] text-sm text-zinc-400 light:text-slate-600 truncate">
+      </TableCell>
+      <TableCell className="text-theme-text-secondary">
         {job.enabled && job.nextRunAt
           ? new Date(job.nextRunAt).toLocaleString()
           : "—"}
-      </span>
-      <div className="w-[140px] flex items-center justify-end gap-1">
-        <button
-          type="button"
-          onClick={stop(() => onDelete(job.id))}
-          className="border-none p-2 rounded-full text-zinc-400 light:text-slate-950 hover:text-red-400 light:hover:text-red-600 hover:bg-white/10 light:hover:bg-slate-300/50 transition-colors"
-          title={t("scheduledJobs.row.delete")}
-        >
-          <X className="h-4 w-4 shrink-0" />
-        </button>
-        <button
-          type="button"
-          onClick={stop(() => onEdit(job))}
-          className="border-none p-2 rounded-full text-zinc-400 light:text-slate-950 hover:text-white light:hover:text-slate-700 hover:bg-white/10 light:hover:bg-slate-300/50 transition-colors"
-          title={t("scheduledJobs.row.edit")}
-        >
-          <Pencil className="h-4 w-4 shrink-0" />
-        </button>
-        <button
-          type="button"
-          onClick={stop(() => onTrigger(job.id))}
-          disabled={inFlight}
-          className="border-none p-2 rounded-full text-zinc-400 light:text-slate-950 hover:text-white light:hover:text-slate-700 hover:bg-white/10 light:hover:bg-slate-300/50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
-          title={t("scheduledJobs.row.runNow")}
-        >
-          <Play className="h-4 w-4 shrink-0" />
-        </button>
-        <SimpleToggleSwitch
-          size="sm"
-          enabled={job.enabled}
-          onChange={() => onToggle(job.id)}
-          aria-label={
-            job.enabled
-              ? t("scheduledJobs.row.disable")
-              : t("scheduledJobs.row.enable")
-          }
-        />
-      </div>
-    </div>
+      </TableCell>
+      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-end gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={stop(() => onDelete(job.id))}
+            title={t("scheduledJobs.row.delete")}
+            className="text-theme-text-secondary hover:text-destructive hover:bg-destructive/10"
+          >
+            <X className="h-4 w-4 shrink-0" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={stop(() => onEdit(job))}
+            title={t("scheduledJobs.row.edit")}
+            className="text-theme-text-secondary"
+          >
+            <Pencil className="h-4 w-4 shrink-0" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={stop(() => onTrigger(job.id))}
+            disabled={inFlight}
+            title={t("scheduledJobs.row.runNow")}
+            className="text-theme-text-secondary"
+          >
+            <Play className="h-4 w-4 shrink-0" />
+          </Button>
+          <SimpleToggleSwitch
+            size="sm"
+            enabled={job.enabled}
+            onChange={() => onToggle(job.id)}
+            aria-label={
+              job.enabled
+                ? t("scheduledJobs.row.disable")
+                : t("scheduledJobs.row.enable")
+            }
+          />
+        </div>
+      </TableCell>
+    </TableRow>
   );
 }

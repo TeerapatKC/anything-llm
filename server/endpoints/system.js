@@ -870,7 +870,10 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/event-logs",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW]),
+    ],
     async (request, response) => {
       try {
         const { offset = 0, limit = 10 } = reqBody(request);
@@ -890,7 +893,10 @@ function systemEndpoints(app) {
 
   app.delete(
     "/system/event-logs",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS])],
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS_CLEAR]),
+    ],
     async (_, response) => {
       try {
         await EventLogs.delete();

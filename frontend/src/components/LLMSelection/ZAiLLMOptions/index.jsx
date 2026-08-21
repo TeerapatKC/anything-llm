@@ -83,13 +83,27 @@ function ZAiModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.ZAiModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.ZAiModelPref || "");
+  }, [settings?.ZAiModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.ZAiModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="ZAiModelPref"
         required={true}
-        defaultValue={settings?.ZAiModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

@@ -83,13 +83,27 @@ function XAIModelSelection({ apiKey, settings }) {
     );
   }
 
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.XAIModelPref || ""
+  );
+
+  useEffect(() => {
+    setSelectedModel(settings?.XAIModelPref || "");
+  }, [settings?.XAIModelPref]);
+
+  const currentModel =
+    selectedModel ||
+    settings?.XAIModelPref ||
+    (customModels.length > 0 ? customModels[0]?.id : "");
+
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
         name="XAIModelPref"
         required={true}
-        defaultValue={settings?.XAIModelPref ?? customModels?.[0]?.id}
+        value={currentModel}
+        onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select an option" />

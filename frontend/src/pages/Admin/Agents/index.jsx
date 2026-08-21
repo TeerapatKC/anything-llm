@@ -83,7 +83,7 @@ export default function AdminAgents() {
 
   // Skills marked `adminOnly` hold instance-wide third-party credentials (a single
   // OAuth grant shared by everyone), so only a system administrator may configure them.
-  const isSystemAdmin = userCan(PERMISSIONS.SUPER_ADMIN, userFromStorage());
+  const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, userFromStorage());
   const filterSkillsByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
     if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;

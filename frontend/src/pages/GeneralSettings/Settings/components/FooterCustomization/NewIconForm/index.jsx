@@ -1,6 +1,8 @@
 import { ICON_COMPONENTS } from "@/components/Footer";
 import React, { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function NewIconForm({ icon, url, onSave, onRemove }) {
   const [selectedIcon, setSelectedIcon] = useState(icon || "Plus");
@@ -53,29 +55,29 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-x-1.5">
+    <form onSubmit={handleSubmit} className="flex items-center gap-x-2">
       <div className="relative" ref={dropdownRef}>
         <div
-          className="h-[34px] w-[34px] bg-theme-settings-input-bg rounded-full flex items-center justify-center cursor-pointer hover:outline-primary-button hover:outline"
+          className="h-8 w-8 bg-theme-bg-secondary border border-theme-sidebar-border rounded-full flex items-center justify-center cursor-pointer hover:border-theme-text-secondary transition-colors"
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
         >
           {React.createElement(ICON_COMPONENTS[selectedIcon] || Plus, {
-            className: "h-5 w-5",
+            className: "h-4 w-4",
             weight: selectedIcon === "Plus" ? "bold" : "fill",
             color: "var(--theme-sidebar-footer-icon-fill)",
           })}
         </div>
         {isDropdownOpen && (
-          <div className="absolute z-10 grid grid-cols-4 bg-theme-settings-input-bg mt-2 rounded-md w-[150px] h-[78px] overflow-y-auto border border-white/20 shadow-lg">
+          <div className="absolute z-10 grid grid-cols-4 bg-theme-bg-primary mt-2 rounded-lg w-[160px] max-h-[100px] overflow-y-auto border border-theme-sidebar-border shadow-lg p-1.5 gap-1">
             {Object.keys(ICON_COMPONENTS).map((iconName) => (
               <button
                 key={iconName}
                 type="button"
-                className="flex justify-center items-center border border-transparent hover:bg-theme-sidebar-footer-icon-hover hover:border-slate-100 light:hover:border-black/80 rounded-full p-2"
+                className="flex justify-center items-center rounded-md p-1.5 hover:bg-theme-bg-secondary transition-colors"
                 onClick={() => handleIconChange(iconName)}
               >
                 {React.createElement(ICON_COMPONENTS[iconName], {
-                  className: "h-5 w-5",
+                  className: "h-4 w-4",
                   weight: "fill",
                   color: "var(--theme-sidebar-footer-icon-fill)",
                 })}
@@ -84,31 +86,36 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
           </div>
         )}
       </div>
-      <input
+      <Input
         type="url"
         value={selectedUrl}
         onChange={handleUrlChange}
         placeholder="https://example.com"
-        className="border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-md p-2.5 w-[300px] h-[32px] focus:outline-primary-button active:outline-primary-button outline-none"
+        className="w-[320px]"
         required
       />
       {selectedIcon !== "Plus" && (
         <>
           {isEdited ? (
-            <button
+            <Button
               type="submit"
-              className="text-sky-400 px-2 py-2 rounded-md text-sm font-bold hover:text-sky-500"
+              size="sm"
+              variant="default"
+              className="h-8 px-3"
             >
               Save
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-theme-text-secondary hover:text-destructive"
               onClick={handleRemove}
-              className="hover:text-red-500 text-white/80 px-2 py-2 rounded-md text-sm font-bold"
+              aria-label="Remove icon"
             >
-              <X size={20} />
-            </button>
+              <X className="h-4 w-4" />
+            </Button>
           )}
         </>
       )}

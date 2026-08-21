@@ -1,29 +1,9 @@
 // Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
-    survey: {
-      email: "آدرس ایمیل شما چیست؟",
-      useCase: "شما از AnythingLLM برای چه منظوری استفاده خواهید کرد؟",
-      useCaseWork: "برای کار",
-      useCasePersonal: "برای استفاده شخصی",
-      useCaseOther: "سایر",
-      comment: "شما از کجا در مورد AnythingLLM مطلع شدید؟",
-      commentPlaceholder:
-        "Reddit، توییتر، گیت‌هاب، یوتیوب و غیره - لطفاً به ما بگویید که چگونه ما را پیدا کردید!",
-      skip: "پرش از نظرسنجی",
-      thankYou: "از بازخورد شما سپاسگزاریم.",
-      title: "به AnythingLLM خوش آمدید",
-      description:
-        "ما را در ساخت مدل AnythingLLM متناسب با نیازهای شما یاری دهید. (این بخش اختیاری است)",
-    },
     home: {
       getStarted: "شروع کنید",
       welcome: "به شما خوش آمد می‌گوییم",
-    },
-    llm: {
-      title: "ترجیحات مدل‌های زبان بزرگ",
-      description:
-        "AnythingLLM می‌تواند با بسیاری از ارائه‌دهندگان مدل‌های زبانی کار کند. این سرویس، مسئولیت انجام مکالمات را بر عهده خواهد داشت.",
     },
     userSetup: {
       title: "راه‌اندازی حساب کاربری",
@@ -33,13 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "رمز عبور باید حداقل 8 کاراکتر باشد.",
       teamHint:
         "به طور پیش‌فرض، شما تنها مدیر خواهید بود. پس از اتمام فرآیند ثبت‌نام، می‌توانید افراد دیگری را به عنوان کاربران یا مدیران اضافه کنید. لطفاً رمز عبور خود را فراموش نکنید، زیرا تنها مدیران می‌توانند رمز عبور را بازنشانی کنند.",
-    },
-    data: {
-      title: "مدیریت داده‌ها و حریم خصوصی",
-      description:
-        "ما متعهد به شفافیت و کنترل در رابطه با اطلاعات شخصی شما هستیم.",
-      settingsHint:
-        "این تنظیمات می‌توانند در هر زمان در بخش تنظیمات تغییر داده شوند.",
     },
   },
   common: {
@@ -1463,6 +1436,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "خوش آمدید",
     chooseWorkspace: "انتخاب یک فضای کار برای شروع گفتگو!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "شما در حال حاضر به هیچ فضای کاری اختصاص نیافته‌اید.\nلطفاً با مدیر خود تماس بگیرید تا دسترسی به یک فضای کار را درخواست کنید.",
     goToWorkspace: 'به فضای کار "{{workspace}}" بروید',

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
+import PageHeader from "@/components/layout/PageHeader";
 import ScheduledJobs from "@/models/scheduledJobs";
 import { subscribeToPushNotifications } from "@/hooks/useWebPushNotifications";
 import useWebPushNotifications from "@/hooks/useWebPushNotifications";
@@ -10,7 +11,17 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import JobRow from "./components/JobRow";
-import { Bell } from "lucide-react";
+import { Bell, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableEmptyRow,
+} from "@/components/ui/table";
 import {
   Tooltip,
   TooltipContent,
@@ -105,65 +116,75 @@ export default function ScheduledJobsPage() {
     openModal();
   };
 
-  if (loading) {
-    return (
-      <BaseLayout showNewJobButton={false} handleCreate={handleCreate}>
-        <div className="w-full flex items-center justify-center text-zinc-400 light:text-slate-600 text-sm pt-8">
-          {t("scheduledJobs.loading")}
-        </div>
-      </BaseLayout>
-    );
-  }
-
   return (
-    <BaseLayout
-      showNewJobButton={jobs.length !== 0}
-      handleCreate={handleCreate}
-    >
-      <div className="pt-8">
-        <div className="flex items-center justify-between px-4 pb-[18px] text-xs font-semibold uppercase tracking-[1.4px] text-zinc-400 light:text-slate-600">
-          <span className="w-[150px]">{t("scheduledJobs.table.name")}</span>
-          <span className="w-[180px]">{t("scheduledJobs.table.schedule")}</span>
-          <span className="w-[120px]">{t("scheduledJobs.table.status")}</span>
-          <span className="w-[180px]">{t("scheduledJobs.table.lastRun")}</span>
-          <span className="w-[180px]">{t("scheduledJobs.table.nextRun")}</span>
-          <span className="w-[140px] text-right">
-            {t("scheduledJobs.table.actions")}
-          </span>
-        </div>
-        <div className="h-px w-full bg-white/10 light:bg-slate-300" />
-
-        {jobs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center gap-8 py-24 text-center">
-            <div className="flex flex-col gap-1.5">
-              <p className="text-base font-semibold text-zinc-50 light:text-slate-950">
-                {t("scheduledJobs.emptyTitle")}
-              </p>
-              <p className="text-sm font-medium text-zinc-400 light:text-slate-600">
-                {t("scheduledJobs.emptySubtitle")}
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleCreate}
-              className="border-none h-9 px-5 rounded-lg bg-zinc-50 text-zinc-950 light:bg-slate-900 light:text-white text-sm font-medium hover:bg-zinc-200 light:hover:bg-slate-800 transition-colors"
-            >
+    <SettingsLayout>
+      <PageHeader
+        title={t("scheduledJobs.title")}
+        description={t("scheduledJobs.description")}
+        actions={
+          <div className="flex items-center gap-x-2 shrink-0">
+            <NotificationBellButton />
+            <Button size="lg" onClick={handleCreate}>
+              <Plus className="h-4 w-4" />
               {t("scheduledJobs.newJob")}
-            </button>
+            </Button>
           </div>
+        }
+      />
+
+      <div className="overflow-x-auto mt-6">
+        {loading ? (
+          <Skeleton
+            height="80vh"
+            width="100%"
+            highlightColor="var(--theme-bg-primary)"
+            baseColor="var(--theme-bg-secondary)"
+            count={1}
+            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
+            containerClassName="flex w-full"
+          />
         ) : (
-          <div className="flex flex-col divide-y divide-white/5 light:divide-slate-300">
-            {jobs.map((job) => (
-              <JobRow
-                key={job.id}
-                job={job}
-                onTrigger={handleTrigger}
-                onToggle={handleToggle}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <Table className="text-left min-w-[720px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.schedule")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.status")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.lastRun")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.nextRun")}</TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t("scheduledJobs.table.actions")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {jobs.length === 0 ? (
+                <TableEmptyRow
+                  colSpan="6"
+                  description={t("scheduledJobs.emptySubtitle")}
+                  action={
+                    <Button onClick={handleCreate}>
+                      <Plus className="h-4 w-4" />
+                      {t("scheduledJobs.newJob")}
+                    </Button>
+                  }
+                >
+                  {t("scheduledJobs.emptyTitle")}
+                </TableEmptyRow>
+              ) : (
+                jobs.map((job) => (
+                  <JobRow
+                    key={job.id}
+                    job={job}
+                    onTrigger={handleTrigger}
+                    onToggle={handleToggle}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
+            </TableBody>
+          </Table>
         )}
       </div>
 
@@ -188,42 +209,6 @@ export default function ScheduledJobsPage() {
           dismissUpdate();
         }}
       />
-    </BaseLayout>
-  );
-}
-
-function BaseLayout({
-  showNewJobButton = false,
-  handleCreate = () => {},
-  children,
-}) {
-  const { t } = useTranslation();
-
-  return (
-    <SettingsLayout>
-      <div className="w-full flex items-end justify-between gap-x-4 pb-6 border-theme-sidebar-border light:border-slate-300 border-b-2">
-        <div className="flex flex-col gap-y-2">
-          <p className="text-lg leading-7 font-semibold text-zinc-50 light:text-slate-950">
-            {t("scheduledJobs.title")}
-          </p>
-          <p className="text-xs leading-4 text-zinc-400 light:text-slate-600 max-w-[700px]">
-            {t("scheduledJobs.description")}
-          </p>
-        </div>
-        <div className="flex items-center gap-x-2 shrink-0">
-          <NotificationBellButton />
-          {showNewJobButton && (
-            <button
-              type="button"
-              onClick={handleCreate}
-              className="border-none h-9 px-5 rounded-lg bg-zinc-50 text-zinc-950 light:bg-slate-900 light:text-white text-sm font-medium hover:bg-zinc-200 light:hover:bg-slate-800 transition-colors"
-            >
-              {t("scheduledJobs.newJob")}
-            </button>
-          )}
-        </div>
-      </div>
-      {children}
     </SettingsLayout>
   );
 }
@@ -248,26 +233,25 @@ function NotificationBellButton() {
   };
 
   return (
-    <>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <button
-              type="button"
-              onClick={handleClick}
-              className="border-none flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/10 light:hover:bg-slate-200 transition-colors"
-            />
-          }
-        >
-          <Bell size={20} className="text-orange-400" />
-        </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-          {t(
-            "scheduledJobs.enableNotifications",
-            "Enable browser notifications for job results"
-          )}
-        </TooltipContent>
-      </Tooltip>
-    </>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={handleClick}
+          />
+        }
+      >
+        <Bell size={20} className="text-orange-400" />
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+        {t(
+          "scheduledJobs.enableNotifications",
+          "Enable browser notifications for job results"
+        )}
+      </TooltipContent>
+    </Tooltip>
   );
 }

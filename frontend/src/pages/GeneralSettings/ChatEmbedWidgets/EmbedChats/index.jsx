@@ -8,6 +8,7 @@ import { ChevronDown, Download } from "lucide-react";
 import showToast from "@/utils/toast";
 import { saveAs } from "file-saver";
 import System from "@/models/system";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -145,35 +146,40 @@ export default function EmbedChatsView() {
             {t("embed-chats.title")}
           </p>
           <div className="relative">
-            <button
+            <Button
+              type="button"
+              size="lg"
               ref={openMenuButton}
               onClick={toggleMenu}
-              className="flex items-center gap-x-2 px-4 py-1 rounded-lg text-theme-bg-chat bg-primary-button hover:bg-secondary hover:text-white text-xs font-semibold h-[34px] w-fit"
+              aria-expanded={showMenu}
             >
-              <Download size={18} />
+              <Download />
               {t("embed-chats.export")}
-              <ChevronDown size={18} />
-            </button>
+              <ChevronDown
+                className={`transition-transform ${
+                  showMenu ? "rotate-180" : ""
+                }`}
+              />
+            </Button>
             <div
               ref={menuRef}
               className={`${
                 showMenu ? "slide-down" : "slide-up hidden"
-              } z-20 w-fit rounded-lg absolute top-full right-0 bg-secondary light:bg-theme-bg-secondary mt-2 shadow-md`}
+              } absolute right-0 top-full z-20 mt-2 min-w-40 overflow-hidden rounded-lg border border-theme-sidebar-border bg-theme-bg-secondary py-1 shadow-lg`}
             >
-              <div className="py-2">
-                {Object.entries(exportOptions).map(([key, data]) => (
-                  <button
-                    key={key}
-                    onClick={() => {
-                      handleDumpChats(key);
-                      setShowMenu(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-theme-text-primary text-sm hover:bg-[#3D4147] light:hover:bg-theme-sidebar-item-hover"
-                  >
-                    {data.name}
-                  </button>
-                ))}
-              </div>
+              {Object.entries(exportOptions).map(([key, data]) => (
+                <button
+                  type="button"
+                  key={key}
+                  onClick={() => {
+                    handleDumpChats(key);
+                    setShowMenu(false);
+                  }}
+                  className="w-full px-3 py-2 text-left text-sm text-theme-text-primary transition-colors hover:bg-theme-sidebar-item-hover"
+                >
+                  {data.name}
+                </button>
+              ))}
             </div>
           </div>
         </div>

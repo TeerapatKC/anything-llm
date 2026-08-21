@@ -147,7 +147,7 @@ async function findFileSource(storageFilename, { user }) {
     const fromChat = await findInWorkspaceChats(storageFilename, { user });
     if (fromChat) return fromChat;
 
-    if (!(await Role.userCan(user, PERMISSIONS.SUPER_ADMIN))) return null;
+    if (!(await Role.userCan(user, PERMISSIONS.SYSTEM_ADMIN))) return null;
     return await findInScheduledJobRuns(storageFilename);
   } catch (error) {
     console.error("[findFileSource] Error:", error.message);

@@ -25,11 +25,15 @@ export function AuthProvider(props) {
 
   const navigate = useNavigate();
 
-  /* NOTE:
-   * 1. There's no reason for these helper functions to be stateful. They could
-   * just be regular funcs or methods on a basic object.
-   * 2. These actions are not being invoked anywhere in the
-   * codebase, dead code.
+  /* NOTE: There's no reason for these helper functions to be stateful. They
+   * could just be regular funcs or methods on a basic object.
+   *
+   * `updateUser` is how a newly issued session is handed to this provider.
+   * Writing AUTH_USER/AUTH_TOKEN to local storage directly instead does not
+   * work: `authToken` below is read once, at mount, and the refresh effect only
+   * fires when it *changes* - so a session created after mount (onboarding, which
+   * runs before any account exists) would leave `store.user` null for the rest of
+   * the page's life, and anything reading `useUser()` renders empty.
    */
   const [actions] = useState({
     updateUser: (user, authToken = "") => {

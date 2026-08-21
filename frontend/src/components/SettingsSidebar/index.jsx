@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import paths from "@/utils/paths";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
+import { PERMISSIONS, userCan, isSuperAdmin } from "@/utils/permissions";
 import useLogo from "@/hooks/useLogo";
 import {
   Bot,
@@ -62,16 +62,14 @@ export default function SettingsSidebar() {
           >
             <SheetHeader className="sr-only">
               <SheetTitle>{t("settings.title")}</SheetTitle>
-              <SheetDescription>Displays the settings sidebar.</SheetDescription>
+              <SheetDescription>
+                Displays the settings sidebar.
+              </SheetDescription>
             </SheetHeader>
             <div className="flex h-full w-full flex-col">
               <SidebarHeader className="gap-3 pt-4">
                 <div className="flex items-center justify-between gap-2">
-                  <Link
-                    to={paths.home()}
-                    aria-label="Home"
-                    className="min-w-0"
-                  >
+                  <Link to={paths.home()} aria-label="Home" className="min-w-0">
                     <img
                       src={logo}
                       alt="Logo"
@@ -278,6 +276,14 @@ const SidebarOptions = ({ user = null, t }) => (
               href: paths.settings.defaultSystemPrompt(),
               permissions: [PERMISSIONS.SYSTEM_PROMPTS],
             },
+            {
+              // Role-gated, not permission-gated - ownership transfer and instance
+              // reset can never be handed to a custom role.
+              hidden: !isSuperAdmin(user),
+              btnText: "Instance Owner",
+              href: paths.settings.superAdmin(),
+              permissions: [PERMISSIONS.SYSTEM_ADMIN],
+            },
           ]}
         />
         <Option
@@ -334,7 +340,7 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.available-channels.telegram"),
               href: paths.settings.telegram(),
-              permissions: [PERMISSIONS.SUPER_ADMIN],
+              permissions: [PERMISSIONS.SYSTEM_ADMIN],
             },
           ]}
         />
@@ -357,7 +363,7 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.scheduled-jobs"),
               href: paths.settings.scheduledJobs(),
-              permissions: [PERMISSIONS.SUPER_ADMIN],
+              permissions: [PERMISSIONS.SYSTEM_ADMIN],
             },
             {
               btnText: t("settings.api-keys"),

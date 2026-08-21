@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function CustomSiteSettings() {
   const { t } = useTranslation();
@@ -40,67 +42,62 @@ export default function CustomSiteSettings() {
 
   return (
     <form
-      className="flex flex-col gap-y-0.5 my-4 border-t/20 border-white light:border-black/20 pt-6"
-      onChange={() => setHasChanges(true)}
+      className="flex flex-col gap-y-2 my-4 border-t border-theme-sidebar-border pt-6"
       onSubmit={handleSiteSettingUpdate}
     >
-      <p className="text-sm leading-6 font-semibold text-theme-text-primary">
-        {t("customization.items.browser-appearance.title")}
-      </p>
-      <p className="text-xs text-theme-text-secondary">
-        {t("customization.items.browser-appearance.description")}
-      </p>
-
-      <div className="w-fit">
-        <p className="text-sm leading-6 font-medium text-theme-text-primary mt-2">
-          {t("customization.items.browser-appearance.tab.title")}
+      <div>
+        <p className="text-sm leading-6 font-semibold text-theme-text-primary">
+          {t("customization.items.browser-appearance.title")}
         </p>
         <p className="text-xs text-theme-text-secondary">
-          {t("customization.items.browser-appearance.tab.description")}
+          {t("customization.items.browser-appearance.description")}
         </p>
-        <div className="flex items-center gap-x-4">
-          <input
-            name="meta_page_title"
-            type="text"
-            className="border-none bg-theme-settings-input-bg mt-2 text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4"
-            placeholder="AnythingLLM | Your personal LLM trained on anything"
-            autoComplete="off"
-            onChange={(e) => {
-              setSettings((prev) => {
-                return { ...prev, title: e.target.value };
-              });
-            }}
-            value={
-              settings.title ??
-              "AnythingLLM | Your personal LLM trained on anything"
-            }
-          />
-        </div>
       </div>
 
-      <div className="w-fit">
-        <p className="text-sm leading-6 font-medium text-theme-text-primary mt-2">
+      <div className="w-full max-w-lg mt-2">
+        <p className="text-sm leading-6 font-medium text-theme-text-primary">
+          {t("customization.items.browser-appearance.tab.title")}
+        </p>
+        <p className="text-xs text-theme-text-secondary mb-1">
+          {t("customization.items.browser-appearance.tab.description")}
+        </p>
+        <Input
+          name="meta_page_title"
+          type="text"
+          placeholder="AnythingLLM | Your personal LLM trained on anything"
+          autoComplete="off"
+          onChange={(e) => {
+            setHasChanges(true);
+            setSettings((prev) => ({ ...prev, title: e.target.value }));
+          }}
+          value={
+            settings.title ??
+            "AnythingLLM | Your personal LLM trained on anything"
+          }
+        />
+      </div>
+
+      <div className="w-full max-w-lg mt-2">
+        <p className="text-sm leading-6 font-medium text-theme-text-primary">
           {t("customization.items.browser-appearance.favicon.title")}
         </p>
-        <p className="text-xs text-theme-text-secondary">
+        <p className="text-xs text-theme-text-secondary mb-1">
           {t("customization.items.browser-appearance.favicon.description")}
         </p>
         <div className="flex items-center gap-x-2">
           <img
             src={settings.faviconUrl ?? "/favicon.png"}
             onError={(e) => (e.target.src = "/favicon.png")}
-            className="h-10 w-10 rounded-lg mt-2"
+            className="h-8 w-8 rounded-lg border border-theme-sidebar-border object-contain shrink-0"
             alt="Site favicon"
           />
-          <input
+          <Input
             name="meta_page_favicon"
             type="url"
-            className="border-none bg-theme-settings-input-bg mt-2 text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4"
-            placeholder="url to your image"
+            placeholder="https://example.com/favicon.png"
             onChange={(e) => {
-              setSettings((prev) => {
-                return { ...prev, faviconUrl: e.target.value };
-              });
+              setHasChanges(true);
+              setSettings((prev) => ({ ...prev, faviconUrl: e.target.value }));
             }}
             autoComplete="off"
             value={settings.faviconUrl ?? ""}
@@ -109,12 +106,14 @@ export default function CustomSiteSettings() {
       </div>
 
       {hasChanges && (
-        <button
+        <Button
           type="submit"
-          className="transition-all mt-2 w-fit duration-300 border border-slate-200 px-5 py-2.5 rounded-lg text-theme-text-primary text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 focus:ring-gray-800"
+          variant="default"
+          size="sm"
+          className="mt-2 w-fit"
         >
           Save
-        </button>
+        </Button>
       )}
     </form>
   );

@@ -1,29 +1,9 @@
 // Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
-    survey: {
-      email: "Email của bạn là gì?",
-      useCase: "Bạn sẽ sử dụng AnythingLLM để làm gì?",
-      useCaseWork: "Cho công việc",
-      useCasePersonal: "Cho mục đích cá nhân",
-      useCaseOther: "Khác",
-      comment: "Bạn biết đến AnythingLLM như thế nào?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, v.v. - Hãy cho chúng tôi biết bạn tìm thấy chúng tôi như thế nào!",
-      skip: "Bỏ qua Khảo sát",
-      thankYou: "Cảm ơn phản hồi của bạn!",
-      title: "Chào mừng đến với AnythingLLM",
-      description:
-        "Giúp chúng tôi xây dựng AnythingLLM phù hợp với nhu cầu của bạn. Tùy chọn.",
-    },
     home: {
       getStarted: "Bắt đầu",
       welcome: "Chào mừng",
-    },
-    llm: {
-      title: "Tùy chọn LLM",
-      description:
-        "AnythingLLM có thể hoạt động với nhiều nhà cung cấp LLM. Đây sẽ là dịch vụ xử lý trò chuyện.",
     },
     userSetup: {
       title: "Thiết lập Người dùng",
@@ -33,13 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Mật khẩu phải có ít nhất 8 ký tự.",
       teamHint:
         "Theo mặc định, bạn sẽ là quản trị viên duy nhất. Sau khi hoàn tất thiết lập, bạn có thể tạo và mời người khác làm người dùng hoặc quản trị viên. Không được mất mật khẩu vì chỉ quản trị viên mới có thể đặt lại mật khẩu.",
-    },
-    data: {
-      title: "Xử lý Dữ liệu & Quyền riêng tư",
-      description:
-        "Chúng tôi cam kết minh bạch và kiểm soát khi liên quan đến dữ liệu cá nhân của bạn.",
-      settingsHint:
-        "Các cài đặt này có thể được cấu hình lại bất cứ lúc nào trong cài đặt.",
     },
   },
   common: {
@@ -1474,6 +1447,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Chào mừng bạn",
     chooseWorkspace: "Chọn một khu vực làm việc để bắt đầu trò chuyện!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Bạn hiện không được giao việc nào.\nLiên hệ với quản trị viên của bạn để yêu cầu truy cập vào khu vực làm việc.",
     goToWorkspace: 'Chuyển đến khu vực làm việc "{{workspace}}"',

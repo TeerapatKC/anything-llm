@@ -1,29 +1,9 @@
 // Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
-    survey: {
-      email: "Qual è il tuo indirizzo email?",
-      useCase: "Quali utilizzi intende fare con AnythingLLM?",
-      useCaseWork: "Per lavoro",
-      useCasePersonal: "Per uso personale",
-      useCaseOther: "Altro",
-      comment: "Come ha saputo di AnythingLLM?",
-      commentPlaceholder:
-        "Reddit, Twitter, GitHub, YouTube, ecc. – Fateci sapere come ci avete trovato!",
-      skip: "Salta la domanda",
-      thankYou: "Grazie per il tuo feedback.",
-      title: "Benvenuti in AnythingLLM",
-      description:
-        "Aiutaci a sviluppare AnythingLLM in base alle tue esigenze. Facoltativo.",
-    },
     home: {
       getStarted: "Inizia",
       welcome: "Benvenuti",
-    },
-    llm: {
-      title: "Preferenza per i modelli LLM",
-      description:
-        "AnythingLLM può collaborare con numerosi fornitori di modelli linguistici. Questo sarà il servizio che gestirà le conversazioni.",
     },
     userSetup: {
       title: "Configurazione dell'utente",
@@ -33,13 +13,6 @@ const TRANSLATIONS = {
       adminPasswordReq: "Le password devono essere di almeno 8 caratteri.",
       teamHint:
         "Per impostazione predefinita, sarai l'unico amministratore. Una volta completato il processo di registrazione, potrai creare nuovi utenti e invitarli, oppure nominare altri utenti come amministratori. Ricorda di non dimenticare la tua password, poiché solo gli amministratori possono reimpostarla.",
-    },
-    data: {
-      title: "Gestione dei dati e privacy",
-      description:
-        "Ci impegniamo a garantire la trasparenza e il controllo in relazione ai vostri dati personali.",
-      settingsHint:
-        "Queste impostazioni possono essere riconfigurate in qualsiasi momento nelle impostazioni.",
     },
   },
   common: {
@@ -1514,6 +1487,8 @@ const TRANSLATIONS = {
   home: {
     welcome: "Benvenuto",
     chooseWorkspace: "Scegli uno spazio di lavoro per iniziare a chattare!",
+    noWorkspaces:
+      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Non sei assegnato a nessuno spazio di lavoro.\nContatta il tuo amministratore per richiedere l'accesso a uno spazio di lavoro.",
     goToWorkspace: 'Vai allo spazio di lavoro "{{workspace}}"',

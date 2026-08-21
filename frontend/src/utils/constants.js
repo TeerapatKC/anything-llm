@@ -1,6 +1,4 @@
 export const API_BASE = import.meta.env.VITE_API_BASE || "/api";
-export const ONBOARDING_SURVEY_URL = "https://onboarding.anythingllm.com";
-
 export const AUTH_USER = "anythingllm_user";
 export const AUTH_TOKEN = "anythingllm_authToken";
 export const AUTH_TIMESTAMP = "anythingllm_authTimestamp";
@@ -14,7 +12,6 @@ export const AUTH_ROLE_LABEL = "anythingllm_roleLabel";
 // What the user may do inside each workspace, keyed by workspace id. Workspace
 // permissions are per-workspace, so they cannot live in the flat permission list.
 export const AUTH_WORKSPACE_PERMISSIONS = "anythingllm_workspacePermissions";
-export const COMPLETE_QUESTIONNAIRE = "anythingllm_completed_questionnaire";
 export const SEEN_DOC_PIN_ALERT = "anythingllm_pinned_document_alert";
 export const SEEN_WATCH_ALERT = "anythingllm_watched_document_alert";
 export const LAST_VISITED_WORKSPACE = "anythingllm_last_visited_workspace";

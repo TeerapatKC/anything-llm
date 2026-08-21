@@ -82,13 +82,14 @@ export default function SystemPromptVariables() {
             No variables found
           </div>
         ) : (
-          <Table className="text-left rounded-lg min-w-[640px] border-spacing-0">
+          <Table className="text-left min-w-[640px]">
             <TableHeader>
               <TableRow>
                 <TableHead scope="col">Key</TableHead>
                 <TableHead scope="col">Value</TableHead>
                 <TableHead scope="col">Description</TableHead>
                 <TableHead scope="col">Type</TableHead>
+                <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
