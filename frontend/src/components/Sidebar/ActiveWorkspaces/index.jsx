@@ -7,7 +7,7 @@ import { Link, useParams, useNavigate, useMatch } from "react-router-dom";
 import { GripVertical, Settings } from "lucide-react";
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import showToast from "@/utils/toast";
 import { LAST_VISITED_WORKSPACE } from "@/utils/constants";
 import { safeJsonParse } from "@/utils/request";
