@@ -67,26 +67,29 @@ export default function DockerModelRunnerOptions({ settings }) {
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full" />
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
                 }
-              >
-                <Info size={18} className="text-theme-text-secondary" />
-              </TooltipTrigger>
+              />
               <TooltipContent side="top" className="max-w-[250px] text-xs">
-                Enter the URL where the Docker Model Runner is running.
-                <br />
-                <br />
-                You <b>must</b> have enabled the Docker Model Runner TCP support
-                for this to work.
-                <br />
-                <br />
-                <Link
-                  to="https://docs.docker.com/ai/model-runner/get-started/#docker-desktop"
-                  target="_blank"
-                  className="text-blue-500 hover:underline"
-                >
-                  Learn more &rarr;
-                </Link>
+                <p className="text-xs leading-[18px] font-base whitespace-normal text-left">
+                  Enter the URL where the Docker Model Runner is running.
+                  <br />
+                  <br />
+                  You <b>must</b> have enabled the Docker Model Runner TCP
+                  support for this to work.
+                  <br />
+                  <br />
+                  <Link
+                    to="https://docs.docker.com/ai/model-runner/get-started/#docker-desktop"
+                    target="_blank"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Learn more &rarr;
+                  </Link>
+                </p>
               </TooltipContent>
             </Tooltip>
           </div>
@@ -110,34 +113,37 @@ export default function DockerModelRunnerOptions({ settings }) {
             <Tooltip>
               <TooltipTrigger
                 render={
-                  <div className="text-theme-text-secondary cursor-pointer hover:bg-theme-bg-primary flex items-center justify-center rounded-full" />
+                  <Info
+                    size={18}
+                    className="text-theme-text-secondary cursor-pointer"
+                  />
                 }
-              >
-                <Info size={18} className="text-theme-text-secondary" />
-              </TooltipTrigger>
+              />
               <TooltipContent side="top" className="max-w-[250px] text-xs">
-                The maximum number of tokens that can be used for a model
-                context window.
-                <br />
-                <br />
-                To set the context window limit for a model, you can use the{" "}
-                <code>docker run</code> command with the{" "}
-                <code>--context-window</code> parameter.
-                <br />
-                <br />
-                <code>
-                  docker model configure --context-size {maxTokens || 8192}{" "}
-                  {selectedModelId ?? "ai/qwen3:latest"}
-                </code>
-                <br />
-                <br />
-                <Link
-                  to="https://docs.docker.com/ai/model-runner/#context-size"
-                  target="_blank"
-                  className="text-blue-500 hover:underline"
-                >
-                  Learn more &rarr;
-                </Link>
+                <p className="text-xs leading-[18px] font-base whitespace-normal text-left break-words">
+                  The maximum number of tokens that can be used for a model
+                  context window.
+                  <br />
+                  <br />
+                  To set the context window limit for a model, you can use the{" "}
+                  <code>docker run</code> command with the{" "}
+                  <code>--context-window</code> parameter.
+                  <br />
+                  <br />
+                  <code className="break-all">
+                    docker model configure --context-size {maxTokens || 8192}{" "}
+                    {selectedModelId ?? "ai/qwen3:latest"}
+                  </code>
+                  <br />
+                  <br />
+                  <Link
+                    to="https://docs.docker.com/ai/model-runner/#context-size"
+                    target="_blank"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Learn more &rarr;
+                  </Link>
+                </p>
               </TooltipContent>
             </Tooltip>
           </div>

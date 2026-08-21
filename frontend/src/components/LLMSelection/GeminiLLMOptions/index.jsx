@@ -96,7 +96,17 @@ function GeminiModelSelection({ apiKey, settings }) {
     return (
       <div className="flex flex-col w-60">
         <Label className="block mb-3">Chat Model Selection</Label>
-        <Select name="GeminiLLMModelPref" disabled={true}>
+        {/*
+          Keyed apart from the loaded select below. Base UI's `useControlled`
+          decides once, on an instance's first render, whether it is controlled -
+          and this placeholder renders without a value. Without distinct keys React
+          reuses the instance for both, so the saved model never shows.
+        */}
+        <Select
+          key="model-select-loading"
+          name="GeminiLLMModelPref"
+          disabled={true}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available models --" />
           </SelectTrigger>
@@ -122,12 +132,14 @@ function GeminiModelSelection({ apiKey, settings }) {
         return a.localeCompare(b);
       })[0]
     ]?.[0]?.id || "";
-  const currentModel = selectedModel || settings?.GeminiLLMModelPref || defaultFirstModel;
+  const currentModel =
+    selectedModel || settings?.GeminiLLMModelPref || defaultFirstModel;
 
   return (
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
+        key="model-select-loaded"
         name="GeminiLLMModelPref"
         required={true}
         value={currentModel}

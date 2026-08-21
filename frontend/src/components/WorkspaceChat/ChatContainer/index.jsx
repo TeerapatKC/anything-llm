@@ -459,7 +459,7 @@ export default function ChatContainer({
           className="relative flex w-full h-full z-2"
         >
           <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white w-full h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-            <div className="absolute z-30 flex items-center justify-end top-[68px] left-4 right-4 min-[1100px]:top-2 min-[1100px]:left-3 min-[1100px]:right-3">
+            <div className="absolute z-30 hidden min-[1100px]:flex items-center justify-end top-2 left-3 right-3">
               <ChatSettingsMenu
                 history={chatHistory}
                 workspace={workspace}
@@ -528,7 +528,7 @@ export default function ChatContainer({
         className="relative flex w-full h-full z-2"
       >
         <div className="flex-1 min-w-0 relative bg-zinc-900 light:bg-white text-theme-text-primary light:text-slate-900 h-full overflow-hidden border-none light:border-solid light:border light:border-theme-modal-border">
-          <div className="absolute z-30 flex items-center justify-end top-[68px] left-4 right-4 min-[1100px]:top-2 min-[1100px]:left-3 min-[1100px]:right-3">
+          <div className="absolute z-30 hidden min-[1100px]:flex items-center justify-end top-2 left-3 right-3">
             <ChatSettingsMenu
               history={chatHistory}
               workspace={workspace}

@@ -70,7 +70,13 @@ function XAIModelSelection({ apiKey, settings }) {
     return (
       <div className="flex flex-col w-60">
         <Label className="block mb-3">Chat Model Selection</Label>
-        <Select name="XAIModelPref" disabled={true}>
+        {/*
+          Keyed apart from the loaded select below. Base UI's `useControlled`
+          decides once, on an instance's first render, whether it is controlled -
+          and this placeholder renders without a value. Without distinct keys React
+          reuses the instance for both, so the saved model never shows.
+        */}
+        <Select key="model-select-loading" name="XAIModelPref" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="--loading available models--" />
           </SelectTrigger>
@@ -100,6 +106,7 @@ function XAIModelSelection({ apiKey, settings }) {
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
+        key="model-select-loaded"
         name="XAIModelPref"
         required={true}
         value={currentModel}

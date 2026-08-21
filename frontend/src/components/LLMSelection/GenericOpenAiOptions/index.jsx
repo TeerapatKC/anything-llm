@@ -18,7 +18,9 @@ export default function GenericOpenAiOptions({ settings }) {
   );
   // GenericOpenAiKey from server is boolean (whether key exists) - use null so server uses saved env key
   const [genericOpenAiApiKey, setGenericOpenAiApiKey] = useState(
-    typeof settings?.GenericOpenAiKey === "boolean" ? null : settings?.GenericOpenAiKey || null
+    typeof settings?.GenericOpenAiKey === "boolean"
+      ? null
+      : settings?.GenericOpenAiKey || null
   );
   const [genericOpenAiModelPref, setGenericOpenAiModelPref] = useState(
     settings?.GenericOpenAiModelPref || ""
@@ -27,7 +29,9 @@ export default function GenericOpenAiOptions({ settings }) {
   useEffect(() => {
     setGenericOpenAiBasePath(settings?.GenericOpenAiBasePath || "");
     setGenericOpenAiApiKey(
-      typeof settings?.GenericOpenAiKey === "boolean" ? null : settings?.GenericOpenAiKey || null
+      typeof settings?.GenericOpenAiKey === "boolean"
+        ? null
+        : settings?.GenericOpenAiKey || null
     );
     setGenericOpenAiModelPref(settings?.GenericOpenAiModelPref || "");
   }, [settings]);
@@ -151,7 +155,19 @@ function GenericOpenAiModelSelection({
         <div className="flex items-center mb-2 gap-x-1">
           <Label>Selected Model</Label>
         </div>
-        <Select name="GenericOpenAiModelPref" disabled={true}>
+        {/*
+          Keyed apart from the loaded select below. Base UI's `useControlled` decides
+          once, on an instance's first render, whether it is controlled - and this
+          placeholder renders without a `value`. Without distinct keys React reuses the
+          same instance for both, so the real `value` that arrives with the model list is
+          ignored for the rest of the page's life and the trigger keeps showing its
+          placeholder even though a model is saved.
+        */}
+        <Select
+          key="generic-openai-model-loading"
+          name="GenericOpenAiModelPref"
+          disabled={true}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="--loading available models--" />
           </SelectTrigger>
@@ -163,8 +179,7 @@ function GenericOpenAiModelSelection({
 
   // Determine if saved model preference exists in the fetched model list
   const savedModelInList =
-    customModels.length > 0 &&
-    customModels.some((m) => m.id === selectedModel);
+    customModels.length > 0 && customModels.some((m) => m.id === selectedModel);
 
   // If no models are found OR saved model is not in the list, show a free-text input
   if (customModels.length === 0 || !savedModelInList) {
@@ -189,6 +204,7 @@ function GenericOpenAiModelSelection({
     <div className="flex flex-col w-60">
       <Label className="block mb-2">Selected Model</Label>
       <Select
+        key="generic-openai-model-loaded"
         name="GenericOpenAiModelPref"
         required={true}
         value={selectedModel}

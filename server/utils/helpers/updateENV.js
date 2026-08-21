@@ -1344,8 +1344,14 @@ async function updateENV(newENVs = {}, force = false, userId = null) {
   let error = "";
   const runAfterAll = [];
   const validKeys = Object.keys(KEY_MAPPING);
+  // Strip out answers where the value is the field's own asterisk placeholder, which is
+  // what a key input renders for an already-saved secret. Coerced to a string first: the
+  // settings payload can carry booleans (`!!process.env.KEY` is how saved keys are
+  // reported back to the UI), and calling `.includes` on one throws, which would take
+  // the entire save down rather than skipping the one field.
   const ENV_KEYS = Object.keys(newENVs).filter(
-    (key) => validKeys.includes(key) && !newENVs[key].includes("******") // strip out answers where the value is all asterisks
+    (key) =>
+      validKeys.includes(key) && !String(newENVs[key] ?? "").includes("******")
   );
   const newValues = {};
 

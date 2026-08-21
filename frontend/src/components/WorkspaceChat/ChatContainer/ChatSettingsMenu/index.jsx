@@ -1,9 +1,13 @@
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { SlidersHorizontal } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MOBILE_TOPBAR_ACTIONS_ID } from "@/components/Sidebar/MobileTopbar";
 import TextSizeRow from "./TextSize";
 import MemoriesRow from "./Memories";
 import CopyLinkToChatRow from "./CopyLinkToChat";
@@ -14,7 +18,18 @@ export default function ChatSettingsMenu({
   workspace = null,
   threadSlug = null,
 }) {
-  return (
+  const isMobile = useIsMobile();
+  const [mobileSlot, setMobileSlot] = useState(null);
+
+  useEffect(() => {
+    if (!isMobile) {
+      setMobileSlot(null);
+      return;
+    }
+    setMobileSlot(document.getElementById(MOBILE_TOPBAR_ACTIONS_ID));
+  }, [isMobile]);
+
+  const menu = (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
@@ -41,4 +56,7 @@ export default function ChatSettingsMenu({
       </DropdownMenuContent>
     </DropdownMenu>
   );
+
+  if (mobileSlot) return createPortal(menu, mobileSlot);
+  return menu;
 }

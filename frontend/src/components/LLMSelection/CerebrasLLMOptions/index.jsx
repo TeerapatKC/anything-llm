@@ -71,7 +71,17 @@ function CerebrasModelSelection({ apiKey: _apiKey, settings }) {
     return (
       <div className="flex flex-col w-60">
         <Label className="block mb-3">Chat Model Selection</Label>
-        <Select name="CerebrasModelPref" disabled={true}>
+        {/*
+          Keyed apart from the loaded select below. Base UI's `useControlled`
+          decides once, on an instance's first render, whether it is controlled -
+          and this placeholder renders without a value. Without distinct keys React
+          reuses the instance for both, so the saved model never shows.
+        */}
+        <Select
+          key="model-select-loading"
+          name="CerebrasModelPref"
+          disabled={true}
+        >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="--loading available models--" />
           </SelectTrigger>
@@ -85,6 +95,7 @@ function CerebrasModelSelection({ apiKey: _apiKey, settings }) {
     <div className="flex flex-col w-60">
       <Label className="block mb-3">Chat Model Selection</Label>
       <Select
+        key="model-select-loaded"
         name="CerebrasModelPref"
         required={true}
         defaultValue={settings?.CerebrasModelPref ?? customModels?.[0]?.id}

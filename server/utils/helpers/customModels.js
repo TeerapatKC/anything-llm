@@ -74,6 +74,30 @@ const SUPPORT_CUSTOM_MODELS = [
   "kokoro-tts",
 ];
 
+/**
+ * Whether a value handed to us as an API key is actually one.
+ *
+ * The settings UI shows a row of asterisks in the key field when a key is already saved,
+ * and `SystemSettings` reports saved keys as booleans (`!!process.env.KEY`) so the real
+ * secret never leaves the server. Either can end up posted back as the "key", and the
+ * model-listing helpers below cache whatever they are given into `process.env` - which
+ * `dumpENV` then writes to the env file, destroying the real credential.
+ *
+ * `updateENV` already refuses masked values on the settings-save path; this is the same
+ * rule for the model-listing path, which does not go through it.
+ *
+ * @param {any} value
+ * @returns {boolean}
+ */
+function usableCredential(value) {
+  if (typeof value !== "string") return false; // booleans from `!!key` settings payloads
+  const trimmed = value.trim();
+  if (!trimmed) return false;
+  if (/^\*+$/.test(trimmed)) return false; // the field's own placeholder
+  if (trimmed.includes("******")) return false; // matches updateENV's rule
+  return true;
+}
+
 async function getCustomModels(
   provider = "",
   apiKey = null,
@@ -82,6 +106,12 @@ async function getCustomModels(
 ) {
   if (!SUPPORT_CUSTOM_MODELS.includes(provider))
     return { models: [], error: "Invalid provider for custom models" };
+
+  // Normalised once, here, rather than in each of the ~19 helpers below: they all treat
+  // a truthy `apiKey` as "the user supplied a new key", both for the outbound request and
+  // for caching it back into `process.env`. Anything that is not a real secret becomes
+  // null so they fall back to the stored key and cache nothing.
+  if (!usableCredential(apiKey)) apiKey = null;
 
   switch (provider) {
     case "openai":
@@ -934,7 +964,7 @@ async function getMoonshotAiModels(_apiKey = null) {
     });
 
   // Api Key was successful so lets save it for future uses
-  if (models.length > 0) process.env.MOONSHOT_AI_API_KEY = apiKey;
+  if (models.length > 0 && !!apiKey) process.env.MOONSHOT_AI_API_KEY = apiKey;
   return { models, error: null };
 }
 

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import useLogo from "@/hooks/useLogo";
 import paths from "@/utils/paths";
 
+export const MOBILE_TOPBAR_ACTIONS_ID = "mobile-topbar-actions";
+
 export default function MobileSidebarTopbar({ onToggle }) {
   const { logo } = useLogo();
 
@@ -29,7 +31,10 @@ export default function MobileSidebarTopbar({ onToggle }) {
           style={{ maxHeight: "32px" }}
         />
       </Link>
-      <div className="h-9 w-9" />
+      <div
+        id={MOBILE_TOPBAR_ACTIONS_ID}
+        className="flex h-9 w-9 items-center justify-center"
+      />
     </div>
   );
 }
