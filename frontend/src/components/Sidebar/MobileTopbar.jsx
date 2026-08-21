@@ -1,6 +1,8 @@
 import React from "react";
 import { Menu } from "lucide-react";
+import { Link } from "react-router-dom";
 import useLogo from "@/hooks/useLogo";
+import paths from "@/utils/paths";
 
 export default function MobileSidebarTopbar({ onToggle }) {
   const { logo } = useLogo();
@@ -15,12 +17,18 @@ export default function MobileSidebarTopbar({ onToggle }) {
       >
         <Menu className="h-5 w-5" />
       </button>
-      <img
-        src={logo}
-        alt="Logo"
-        className="h-6 w-auto object-contain"
-        style={{ maxHeight: "32px" }}
-      />
+      <Link
+        to={paths.home()}
+        aria-label="Home"
+        className="flex items-center"
+      >
+        <img
+          src={logo}
+          alt="Logo"
+          className="h-6 w-auto object-contain"
+          style={{ maxHeight: "32px" }}
+        />
+      </Link>
       <div className="h-9 w-9" />
     </div>
   );
