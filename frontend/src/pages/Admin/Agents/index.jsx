@@ -6,7 +6,7 @@ import Admin from "@/models/admin";
 import System from "@/models/system";
 import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
-import { userCan, PERMISSIONS } from "@/utils/permissions";
+import { userCan, PERMISSIONS, SUPER_ADMIN_ROLE } from "@/utils/permissions";
 import { userFromStorage } from "@/utils/request";
 import {
   Bot,
@@ -83,7 +83,10 @@ export default function AdminAgents() {
 
   // Skills marked `adminOnly` hold instance-wide third-party credentials (a single
   // OAuth grant shared by everyone), so only a system administrator may configure them.
-  const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, userFromStorage());
+  const currentUser = userFromStorage();
+  const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
+  // #TEMPORARILY_HIDDEN: Advanced agent menus are visible only to super admins.
+  const isSuperAdmin = currentUser?.role === SUPER_ADMIN_ROLE;
   const filterSkillsByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
     if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;
@@ -412,62 +415,66 @@ export default function AdminAgents() {
               activeSkills={agentSkills}
             />
 
-            {Object.keys(appIntegrationSkills).length > 0 && (
+            {isSuperAdmin && (
               <>
-                <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
-                  <Package size={24} />
-                  <p className="text-lg font-medium">App Integrations</p>
+                {Object.keys(appIntegrationSkills).length > 0 && (
+                  <>
+                    <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
+                      <Package size={24} />
+                      <p className="text-lg font-medium">App Integrations</p>
+                    </div>
+                    <SkillList
+                      skills={appIntegrationSkills}
+                      selectedSkill={selectedSkill}
+                      handleClick={handleSkillClick}
+                      activeSkills={agentSkills}
+                    />
+                  </>
+                )}
+
+                <div className="text-theme-text-primary flex items-center gap-x-2">
+                  <Plug size={24} />
+                  <p className="text-lg font-medium">Custom Skills</p>
                 </div>
-                <SkillList
-                  skills={appIntegrationSkills}
+                <ImportedSkillList
+                  skills={importedSkills}
                   selectedSkill={selectedSkill}
                   handleClick={handleSkillClick}
-                  activeSkills={agentSkills}
                 />
+
+                <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
+                  <Workflow size={24} />
+                  <p className="text-lg font-medium">Agent Flows</p>
+                </div>
+                <AgentFlowsList
+                  flows={agentFlows}
+                  selectedFlow={selectedFlow}
+                  handleClick={handleFlowClick}
+                  activeFlowIds={activeFlowIds}
+                />
+                <MCPServerHeader
+                  setMcpServers={setMcpServers}
+                  setSelectedMcpServer={setSelectedMcpServer}
+                >
+                  {({ loadingMcpServers }) => {
+                    return (
+                      <MCPServersList
+                        isLoading={loadingMcpServers}
+                        servers={mcpServers}
+                        selectedServer={selectedMcpServer}
+                        handleClick={handleMCPClick}
+                      />
+                    );
+                  }}
+                </MCPServerHeader>
               </>
             )}
-
-            <div className="text-theme-text-primary flex items-center gap-x-2">
-              <Plug size={24} />
-              <p className="text-lg font-medium">Custom Skills</p>
-            </div>
-            <ImportedSkillList
-              skills={importedSkills}
-              selectedSkill={selectedSkill}
-              handleClick={handleSkillClick}
-            />
-
-            <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
-              <Workflow size={24} />
-              <p className="text-lg font-medium">Agent Flows</p>
-            </div>
-            <AgentFlowsList
-              flows={agentFlows}
-              selectedFlow={selectedFlow}
-              handleClick={handleFlowClick}
-              activeFlowIds={activeFlowIds}
-            />
             <input
               type="hidden"
               name="system::active_agent_flows"
               id="active_agent_flows"
               value={activeFlowIds.join(",")}
             />
-            <MCPServerHeader
-              setMcpServers={setMcpServers}
-              setSelectedMcpServer={setSelectedMcpServer}
-            >
-              {({ loadingMcpServers }) => {
-                return (
-                  <MCPServersList
-                    isLoading={loadingMcpServers}
-                    servers={mcpServers}
-                    selectedServer={selectedMcpServer}
-                    handleClick={handleMCPClick}
-                  />
-                );
-              }}
-            </MCPServerHeader>
           </div>
 
           {/* Selected agent skill modal */}
@@ -662,76 +669,82 @@ export default function AdminAgents() {
                   activeSkills={agentSkills}
                 />
 
-                {Object.keys(appIntegrationSkills).length > 0 && (
+                {isSuperAdmin && (
                   <>
-                    <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
-                      <Package size={24} />
-                      <p className="text-lg font-medium">App Integrations</p>
+                    {Object.keys(appIntegrationSkills).length > 0 && (
+                      <>
+                        <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
+                          <Package size={24} />
+                          <p className="text-lg font-medium">
+                            App Integrations
+                          </p>
+                        </div>
+                        <SkillList
+                          skills={appIntegrationSkills}
+                          selectedSkill={selectedSkill}
+                          handleClick={handleSkillClick}
+                          activeSkills={agentSkills}
+                        />
+                      </>
+                    )}
+
+                    <div className="text-theme-text-primary flex items-center gap-x-2 mt-4">
+                      <Plug size={24} />
+                      <p className="text-lg font-medium">Custom Skills</p>
                     </div>
-                    <SkillList
-                      skills={appIntegrationSkills}
+                    <ImportedSkillList
+                      skills={importedSkills}
                       selectedSkill={selectedSkill}
                       handleClick={handleSkillClick}
-                      activeSkills={agentSkills}
                     />
+
+                    <div className="text-theme-text-primary flex items-center justify-between gap-x-2 mt-4">
+                      <div className="flex items-center gap-x-2">
+                        <Workflow size={24} />
+                        <p className="text-lg font-medium">Agent Flows</p>
+                      </div>
+                      {agentFlows.length === 0 ? (
+                        <Link
+                          to={paths.agents.builder()}
+                          className="text-cta-button flex items-center gap-x-1 hover:underline"
+                        >
+                          <Hammer size={16} />
+                          <p className="text-sm">Create Flow</p>
+                        </Link>
+                      ) : (
+                        <Link
+                          to={paths.agents.builder()}
+                          className="text-theme-text-secondary hover:text-cta-button flex items-center gap-x-1"
+                        >
+                          <Hammer size={16} />
+                          <p className="text-sm">Open Builder</p>
+                        </Link>
+                      )}
+                    </div>
+                    <AgentFlowsList
+                      flows={agentFlows}
+                      selectedFlow={selectedFlow}
+                      handleClick={handleFlowClick}
+                      activeFlowIds={activeFlowIds}
+                    />
+
+                    <MCPServerHeader
+                      setMcpServers={setMcpServers}
+                      setSelectedMcpServer={setSelectedMcpServer}
+                    >
+                      {({ loadingMcpServers }) => {
+                        return (
+                          <MCPServersList
+                            isLoading={loadingMcpServers}
+                            servers={mcpServers}
+                            selectedServer={selectedMcpServer}
+                            handleClick={handleMCPClick}
+                          />
+                        );
+                      }}
+                    </MCPServerHeader>
                   </>
                 )}
-
-                <div className="text-theme-text-primary flex items-center gap-x-2 mt-4">
-                  <Plug size={24} />
-                  <p className="text-lg font-medium">Custom Skills</p>
-                </div>
-                <ImportedSkillList
-                  skills={importedSkills}
-                  selectedSkill={selectedSkill}
-                  handleClick={handleSkillClick}
-                />
-
-                <div className="text-theme-text-primary flex items-center justify-between gap-x-2 mt-4">
-                  <div className="flex items-center gap-x-2">
-                    <Workflow size={24} />
-                    <p className="text-lg font-medium">Agent Flows</p>
-                  </div>
-                  {agentFlows.length === 0 ? (
-                    <Link
-                      to={paths.agents.builder()}
-                      className="text-cta-button flex items-center gap-x-1 hover:underline"
-                    >
-                      <Hammer size={16} />
-                      <p className="text-sm">Create Flow</p>
-                    </Link>
-                  ) : (
-                    <Link
-                      to={paths.agents.builder()}
-                      className="text-theme-text-secondary hover:text-cta-button flex items-center gap-x-1"
-                    >
-                      <Hammer size={16} />
-                      <p className="text-sm">Open Builder</p>
-                    </Link>
-                  )}
-                </div>
-                <AgentFlowsList
-                  flows={agentFlows}
-                  selectedFlow={selectedFlow}
-                  handleClick={handleFlowClick}
-                  activeFlowIds={activeFlowIds}
-                />
-
-                <MCPServerHeader
-                  setMcpServers={setMcpServers}
-                  setSelectedMcpServer={setSelectedMcpServer}
-                >
-                  {({ loadingMcpServers }) => {
-                    return (
-                      <MCPServersList
-                        isLoading={loadingMcpServers}
-                        servers={mcpServers}
-                        selectedServer={selectedMcpServer}
-                        handleClick={handleMCPClick}
-                      />
-                    );
-                  }}
-                </MCPServerHeader>
               </div>
             </div>
           </div>

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { userCan, PERMISSIONS } from "@/utils/permissions";
+import { userCan, PERMISSIONS, SUPER_ADMIN_ROLE } from "@/utils/permissions";
 import { userFromStorage } from "@/utils/request";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -116,6 +116,10 @@ export default function AgentSkillSelection({
     fileSystemAgentAvailable: false,
     createFilesAgentAvailable: false,
   });
+  const currentUser = userFromStorage();
+  const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
+  // #TEMPORARILY_HIDDEN: Advanced agent menus are visible only to super admins.
+  const isSuperAdmin = currentUser?.role === SUPER_ADMIN_ROLE;
 
   useEffect(() => {
     async function fetchSkills() {
@@ -136,9 +140,8 @@ export default function AgentSkillSelection({
         fileSystemAgentAvailable: fsAvailable,
         createFilesAgentAvailable: createFilesAvailable,
       });
-      const isAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, userFromStorage());
       const canShow = ([id, skill]) => {
-        if (skill.mode?.includes("adminOnly") && !isAdmin) return false;
+        if (skill.mode?.includes("adminOnly") && !isSystemAdmin) return false;
         return skills?.skillCredentials?.[id]
           ? skills.skillCredentials[id].configured === true
           : true;
@@ -173,6 +176,64 @@ export default function AgentSkillSelection({
       const withEmptyState = (items, category, text) =>
         items.length > 0 ? items : [emptyNavItem(category, text)];
 
+      const advancedNavItems = isSuperAdmin
+        ? [
+            // Integrations whose credential an administrator has not supplied are
+            // filtered out by `canShow`, so an all-unconfigured instance lands on
+            // the empty state rather than on unusable toggles.
+            ...withEmptyState(
+              toNavItems(
+                "App integrations",
+                getAppIntegrationSkills(t),
+                resolvedConfig.activeSkills
+              ),
+              "App integrations",
+              "No integrations connected on this instance."
+            ),
+            ...withEmptyState(
+              (skills?.catalog?.importedSkills ?? []).map((item) => ({
+                key: `imported:${item.id}`,
+                category: "Custom skills",
+                title: item.name,
+                icon: Package,
+                status: resolvedConfig.activeImportedSkills?.includes(item.id)
+                  ? "On"
+                  : "Off",
+              })),
+              "Custom skills",
+              "No custom skills installed on this instance."
+            ),
+            ...withEmptyState(
+              (skills?.catalog?.flows ?? []).map((item) => ({
+                key: `flow:${item.id}`,
+                category: "Agent flows",
+                title: item.name,
+                icon: Workflow,
+                status: resolvedConfig.activeFlows?.includes(item.id)
+                  ? "On"
+                  : "Off",
+              })),
+              "Agent flows",
+              "No agent flows on this instance."
+            ),
+            ...withEmptyState(
+              (skills?.catalog?.mcpServers ?? []).map((item) => ({
+                key: `mcp:${item.id}`,
+                category: "MCP servers",
+                title: item.name,
+                icon: Server,
+                status:
+                  resolvedConfig.activeMcpServers == null ||
+                  resolvedConfig.activeMcpServers?.includes(item.id)
+                    ? "On"
+                    : "Off",
+              })),
+              "MCP servers",
+              "No MCP servers running on this instance."
+            ),
+          ]
+        : [];
+
       onNavigationChange?.([
         ...toNavItems(
           "Default skills",
@@ -187,59 +248,7 @@ export default function AgentSkillSelection({
           }),
           resolvedConfig.activeSkills
         ),
-        // Integrations whose credential an administrator has not supplied are
-        // filtered out by `canShow`, so an all-unconfigured instance lands on
-        // the empty state rather than on a list of toggles that cannot work.
-        ...withEmptyState(
-          toNavItems(
-            "App integrations",
-            getAppIntegrationSkills(t),
-            resolvedConfig.activeSkills
-          ),
-          "App integrations",
-          "No integrations connected on this instance."
-        ),
-        ...withEmptyState(
-          (skills?.catalog?.importedSkills ?? []).map((item) => ({
-            key: `imported:${item.id}`,
-            category: "Custom skills",
-            title: item.name,
-            icon: Package,
-            status: resolvedConfig.activeImportedSkills?.includes(item.id)
-              ? "On"
-              : "Off",
-          })),
-          "Custom skills",
-          "No custom skills installed on this instance."
-        ),
-        ...withEmptyState(
-          (skills?.catalog?.flows ?? []).map((item) => ({
-            key: `flow:${item.id}`,
-            category: "Agent flows",
-            title: item.name,
-            icon: Workflow,
-            status: resolvedConfig.activeFlows?.includes(item.id)
-              ? "On"
-              : "Off",
-          })),
-          "Agent flows",
-          "No agent flows on this instance."
-        ),
-        ...withEmptyState(
-          (skills?.catalog?.mcpServers ?? []).map((item) => ({
-            key: `mcp:${item.id}`,
-            category: "MCP servers",
-            title: item.name,
-            icon: Server,
-            status:
-              resolvedConfig.activeMcpServers == null ||
-              resolvedConfig.activeMcpServers?.includes(item.id)
-                ? "On"
-                : "Off",
-          })),
-          "MCP servers",
-          "No MCP servers running on this instance."
-        ),
+        ...advancedNavItems,
         {
           key: "agent-skill-settings",
           category: "Settings",
@@ -250,7 +259,7 @@ export default function AgentSkillSelection({
       setLoading(false);
     }
     fetchSkills();
-  }, [onNavigationChange, t, workspace?.slug]);
+  }, [isSuperAdmin, isSystemAdmin, onNavigationChange, t, workspace?.slug]);
 
   /**
    * Toggle membership of `id` within one of the config's string-array fields.
@@ -352,7 +361,6 @@ export default function AgentSkillSelection({
 
   // Skills marked `adminOnly` hold instance-wide third-party credentials, so only a
   // system administrator sees them here.
-  const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, userFromStorage());
   const filterByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
     if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;
@@ -383,9 +391,12 @@ export default function AgentSkillSelection({
 
   const defaultSkills = getDefaultSkills(t);
   const configurableSkills = usableSkills(allConfigurableSkills);
-  const appIntegrationSkills = usableSkills(allAppIntegrationSkills);
+  const appIntegrationSkills = isSuperAdmin
+    ? usableSkills(allAppIntegrationSkills)
+    : {};
   const hiddenSkillCount =
-    countHidden(allConfigurableSkills) + countHidden(allAppIntegrationSkills);
+    countHidden(allConfigurableSkills) +
+    (isSuperAdmin ? countHidden(allAppIntegrationSkills) : 0);
 
   const focusedSkill =
     defaultSkills[focusSkillId] ??
@@ -520,8 +531,9 @@ export default function AgentSkillSelection({
   const [focusedEntityType, focusedEntityId] = String(focusSkillId ?? "").split(
     ":"
   );
-  const focusedEntityCatalog =
-    focusedEntityType === "imported"
+  const focusedEntityCatalog = !isSuperAdmin
+    ? null
+    : focusedEntityType === "imported"
       ? catalog?.importedSkills
       : focusedEntityType === "flow"
         ? catalog?.flows
@@ -662,16 +674,65 @@ export default function AgentSkillSelection({
         }}
       />
 
-      <SkillGroup
-        title="App integrations"
-        Icon={Plug}
-        skills={appIntegrationSkills}
-        activeIds={config.activeSkills}
-        onToggle={(id, enabled) => toggleInList("activeSkills", id, enabled)}
-        t={t}
-        disabledSubSkills={config.disabledSubSkills}
-        onToggleSubSkill={toggleSubSkill}
-      />
+      {isSuperAdmin && (
+        <>
+          <SkillGroup
+            title="App integrations"
+            Icon={Plug}
+            skills={appIntegrationSkills}
+            activeIds={config.activeSkills}
+            onToggle={(id, enabled) =>
+              toggleInList("activeSkills", id, enabled)
+            }
+            t={t}
+            disabledSubSkills={config.disabledSubSkills}
+            onToggleSubSkill={toggleSubSkill}
+          />
+
+          <EntityGroup
+            title="Imported skills"
+            Icon={Package}
+            emptyText="No active imported skills on this instance."
+            items={catalog?.importedSkills ?? []}
+            activeIds={config.activeImportedSkills}
+            onToggle={(id, enabled) =>
+              toggleInList("activeImportedSkills", id, enabled)
+            }
+          />
+
+          <EntityGroup
+            title="Agent flows"
+            Icon={Workflow}
+            emptyText="No active agent flows on this instance."
+            items={catalog?.flows ?? []}
+            activeIds={config.activeFlows}
+            onToggle={(id, enabled) => toggleInList("activeFlows", id, enabled)}
+          />
+
+          <EntityGroup
+            title="MCP servers"
+            Icon={Server}
+            emptyText="No running MCP servers on this instance."
+            items={catalog?.mcpServers ?? []}
+            // A null list means "every running server", which is what an
+            // unconfigured workspace inherits.
+            activeIds={
+              config.activeMcpServers ??
+              (catalog?.mcpServers ?? []).map((server) => server.id)
+            }
+            onToggle={(id, enabled) => {
+              const current = Array.isArray(config.activeMcpServers)
+                ? config.activeMcpServers
+                : (catalog?.mcpServers ?? []).map((server) => server.id);
+              const next = enabled
+                ? [...new Set([...current, id])]
+                : current.filter((item) => item !== id);
+              setConfig((prev) => ({ ...prev, activeMcpServers: next }));
+              setHasChanges(true);
+            }}
+          />
+        </>
+      )}
 
       {hiddenSkillCount > 0 && (
         <p className="text-theme-text-primary/40 text-xs">
@@ -681,49 +742,6 @@ export default function AgentSkillSelection({
           administrator configures those under Agent Skills.
         </p>
       )}
-
-      <EntityGroup
-        title="Imported skills"
-        Icon={Package}
-        emptyText="No active imported skills on this instance."
-        items={catalog?.importedSkills ?? []}
-        activeIds={config.activeImportedSkills}
-        onToggle={(id, enabled) =>
-          toggleInList("activeImportedSkills", id, enabled)
-        }
-      />
-
-      <EntityGroup
-        title="Agent flows"
-        Icon={Workflow}
-        emptyText="No active agent flows on this instance."
-        items={catalog?.flows ?? []}
-        activeIds={config.activeFlows}
-        onToggle={(id, enabled) => toggleInList("activeFlows", id, enabled)}
-      />
-
-      <EntityGroup
-        title="MCP servers"
-        Icon={Server}
-        emptyText="No running MCP servers on this instance."
-        items={catalog?.mcpServers ?? []}
-        // A null list means "every running server", which is what an
-        // unconfigured workspace inherits.
-        activeIds={
-          config.activeMcpServers ??
-          (catalog?.mcpServers ?? []).map((server) => server.id)
-        }
-        onToggle={(id, enabled) => {
-          const current = Array.isArray(config.activeMcpServers)
-            ? config.activeMcpServers
-            : (catalog?.mcpServers ?? []).map((server) => server.id);
-          const next = enabled
-            ? [...new Set([...current, id])]
-            : current.filter((item) => item !== id);
-          setConfig((prev) => ({ ...prev, activeMcpServers: next }));
-          setHasChanges(true);
-        }}
-      />
 
       <RuntimeGroup
         runtime={config.runtime}
