@@ -28,3 +28,7 @@ yarn.lock
 # Local working notes and prompt drafts - not part of the deployable source.
 /Claude Code Master Prompt*.md
 *.local.md
+
+# Machine-local working area: generated documents, decks, screenshots, scratch build
+# output and env backups. Nothing in here is part of the deployable source.
+.local/
