@@ -796,6 +796,21 @@ const SystemSettings = {
     }
   },
 
+  /**
+   * Reopens onboarding. Only ever called from the boot check in
+   * `utils/boot/markOnboarded`, to release an instance that was marked onboarded
+   * without ever having been set up.
+   */
+  markOnboardingIncomplete: async function () {
+    try {
+      await this._updateSettings({ onboarding_complete: false });
+      return true;
+    } catch (error) {
+      console.error(error.message);
+      return false;
+    }
+  },
+
   currentLogoFilename: async function () {
     try {
       const setting = await this.get({ label: "logo_filename" });

@@ -12,9 +12,9 @@ const { SUPER_ADMIN_ROLE } = require("../../utils/permissions");
  *
  *   1. every table is emptied even when foreign keys force a particular order;
  *   2. the built-in roles and permission catalog come back, as they would on a first boot;
- *   3. the managed environment keys are cleared - without that, `markOnboarded` sees a
- *      surviving `JWT_SECRET` on the next restart and quietly marks the instance onboarded
- *      again, undoing the whole thing.
+ *   3. the managed environment keys are cleared - a reset instance that kept its old
+ *      provider keys and JWT secret would hand the next operator someone else's
+ *      credentials, and sessions signed before the reset would still verify.
  */
 
 const mockDb = { tables: {} };
@@ -173,9 +173,9 @@ describe("factory reset", () => {
 
     const { results } = await SystemReset.factoryReset({ actor: OWNER });
 
-    // These three are exactly what `utils/boot/markOnboarded` treats as proof of a
-    // completed setup, so a factory reset that left any of them behind would be undone
-    // by the next restart.
+    // Provider credentials and the session-signing secret are instance content, not
+    // deployment configuration, so a reset that left any of them behind would carry the
+    // previous owner's secrets into the next setup.
     expect(process.env.JWT_SECRET).toBeUndefined();
     expect(process.env.LLM_PROVIDER).toBeUndefined();
     expect(process.env.VECTOR_DB).toBeUndefined();
