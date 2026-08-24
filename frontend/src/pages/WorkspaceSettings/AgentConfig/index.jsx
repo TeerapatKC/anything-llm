@@ -22,7 +22,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [selectedSection, setSelectedSection] = useState(CONFIG_SECTIONS.MODEL);
+  const [selectedSection, setSelectedSection] = useState(null);
   const [skillNavigation, setSkillNavigation] = useState([]);
   const formEl = useRef(null);
   // This is a workspace screen, so it has to gate on the *workspace* permission
@@ -136,12 +136,15 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
             </p>
           </div>
           <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
-            <ConfigNavItem
-              icon={Cpu}
-              title="Model & provider"
-              selected={selectedSection === CONFIG_SECTIONS.MODEL}
-              onClick={() => setSelectedSection(CONFIG_SECTIONS.MODEL)}
-            />
+            {/* #TEMPORARILY_HIDDEN: Remove `hidden` to restore this settings section. */}
+            <div hidden>
+              <ConfigNavItem
+                icon={Cpu}
+                title="Model & provider"
+                selected={selectedSection === CONFIG_SECTIONS.MODEL}
+                onClick={() => setSelectedSection(CONFIG_SECTIONS.MODEL)}
+              />
+            </div>
             {canManageSkills && (
               <>
                 {skillNavigation.map((item, index) => (
@@ -176,8 +179,12 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           </div>
         </nav>
 
-        <section className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary">
-          <div hidden={selectedSection !== CONFIG_SECTIONS.MODEL}>
+        <section
+          hidden={!selectedSection}
+          className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary"
+        >
+          {/* #TEMPORARILY_HIDDEN: Remove `hidden` and restore the default section to show this settings section. */}
+          <div hidden>
             <div className="mb-5">
               <h2 className="text-base font-semibold text-theme-text-primary">
                 Model &amp; provider

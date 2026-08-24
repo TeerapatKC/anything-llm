@@ -7,7 +7,8 @@ import ChatHistorySettings from "./ChatHistorySettings";
 import ChatPromptSettings from "./ChatPromptSettings";
 import ChatTemperatureSettings from "./ChatTemperatureSettings";
 import ChatModeSelection from "./ChatModeSelection";
-import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
+// #TEMPORARILY_HIDDEN: Uncomment to restore this settings section.
+// import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
 import ChatQueryRefusalResponse from "./ChatQueryRefusalResponse";
 import { Button } from "@/components/ui/button";
 
@@ -62,11 +63,13 @@ export default function ChatSettings({ workspace }) {
             </Button>
           </div>
         )}
+        {/* #TEMPORARILY_HIDDEN: Uncomment to restore this settings section.
         <WorkspaceLLMSelection
           settings={settings}
           workspace={workspace}
           setHasChanges={setHasChanges}
         />
+        */}
         <ChatModeSelection
           workspace={workspace}
           setHasChanges={setHasChanges}

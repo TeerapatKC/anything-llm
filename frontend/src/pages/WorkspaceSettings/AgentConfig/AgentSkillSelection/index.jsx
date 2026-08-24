@@ -103,7 +103,6 @@ export default function AgentSkillSelection({
   const [config, setConfig] = useState(null);
   const [catalog, setCatalog] = useState(null);
   const [instanceSearchProvider, setInstanceSearchProvider] = useState(null);
-  const [systemSettings, setSystemSettings] = useState({});
   // What "inherit" currently resolves to for each runtime knob.
   const [instanceRuntime, setInstanceRuntime] = useState(null);
   // Which credential-gated skills an administrator has actually set up. Skills
@@ -121,13 +120,11 @@ export default function AgentSkillSelection({
   useEffect(() => {
     async function fetchSkills() {
       if (!workspace?.slug) return;
-      const [skills, settings, fsAvailable, createFilesAvailable] =
-        await Promise.all([
-          Workspace.agentSkills(workspace.slug),
-          System.keys(),
-          System.isFileSystemAgentAvailable(),
-          System.isCreateFilesAgentAvailable(),
-        ]);
+      const [skills, fsAvailable, createFilesAvailable] = await Promise.all([
+        Workspace.agentSkills(workspace.slug),
+        System.isFileSystemAgentAvailable(),
+        System.isCreateFilesAgentAvailable(),
+      ]);
       setConfigured(skills?.configured ?? false);
       setConfig(skills?.config ?? null);
       setCatalog(skills?.catalog ?? null);
@@ -135,7 +132,6 @@ export default function AgentSkillSelection({
       setInstanceRuntime(skills?.instanceRuntime ?? null);
       setSkillCredentials(skills?.skillCredentials ?? {});
       setAvailableSearchProviders(skills?.availableSearchProviders ?? []);
-      setSystemSettings(settings ?? {});
       setAvailability({
         fileSystemAgentAvailable: fsAvailable,
         createFilesAgentAvailable: createFilesAvailable,
@@ -610,6 +606,10 @@ export default function AgentSkillSelection({
       </div>
     );
   }
+
+  // The navigation already lists every available skill and integration.
+  // With nothing selected there is no separate overview to render here.
+  if (!focusSkillId) return null;
 
   return (
     <div className="flex flex-col gap-y-6">
