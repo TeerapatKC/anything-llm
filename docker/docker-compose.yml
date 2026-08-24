@@ -1,5 +1,11 @@
 name: anythingllm
 
+volumes:
+  # Declared so STORAGE_LOCATION can name a docker-managed volume rather than a host
+  # directory. Compose reads a value that looks like a path as a bind mount and anything
+  # else as a reference to a volume declared here, so one variable covers both.
+  nexusai-storage:
+
 networks:
   anything-llm:
     driver: bridge
@@ -17,7 +23,11 @@ services:
       - SYS_ADMIN
     volumes:
       - "./.env:/app/server/.env"
-      - "../server/storage:/app/server/storage"
+      # Where all persistent state lives - the SQLite database, embedded documents and the
+      # vector cache. Either a docker volume name (see the volumes: block below) or a host
+      # directory. Deliberately has no default: state kept inside this repository would be
+      # destroyed by a `git clean -xfd` on the deploy checkout.
+      - "${STORAGE_LOCATION:?set STORAGE_LOCATION in docker/.env - a docker volume name, or a host directory outside this repo. See docker/.env.example}:/app/server/storage"
       - "../collector/hotdir/:/app/collector/hotdir"
       - "../collector/outputs/:/app/collector/outputs"
     user: "${UID:-1000}:${GID:-1000}"
