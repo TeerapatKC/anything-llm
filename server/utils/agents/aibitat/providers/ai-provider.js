@@ -548,7 +548,7 @@ class Provider {
       );
     return promptWithMemories({
       systemPrompt,
-      userId: user?.id ?? null,
+      user,
       workspaceId: workspace?.id,
       prompt,
     });

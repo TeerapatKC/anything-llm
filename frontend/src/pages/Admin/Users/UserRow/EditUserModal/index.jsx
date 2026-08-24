@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Admin from "@/models/admin";
-import { MessageLimitInput, RoleHintDisplay } from "../..";
+import { MessageLimitInput, RoleHintDisplay, roleOptionLabel } from "../..";
 import { AUTH_USER } from "@/utils/constants";
 import { canManageRole } from "@/utils/permissions";
 import { useTranslation } from "react-i18next";
@@ -147,12 +147,22 @@ export default function EditUserModal({
               onValueChange={setRole}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a role" />
+                <SelectValue placeholder="Select a role">
+                  {(value) =>
+                    roleOptionLabel(
+                      assignableRoles.find((entry) => entry.name === value)
+                    ) || value
+                  }
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {assignableRoles.map((entry) => (
-                  <SelectItem key={entry.id} value={entry.name}>
-                    {entry.displayName}
+                  <SelectItem
+                    key={entry.id}
+                    value={entry.name}
+                    label={roleOptionLabel(entry)}
+                  >
+                    {roleOptionLabel(entry)}
                   </SelectItem>
                 ))}
               </SelectContent>

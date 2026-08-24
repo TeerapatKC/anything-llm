@@ -13,7 +13,46 @@ import { baseHeaders } from "@/utils/request";
  * @property {string} updatedAt
  */
 
+const DEFAULT_PREFERENCES = {
+  preferences: { memoryEnabled: null, memoryAutoExtraction: null },
+  instance: { memoryEnabled: false, memoryAutoExtraction: true },
+  effective: { memoryEnabled: false, memoryAutoExtraction: false },
+};
+
 const Memory = {
+  /**
+   * The signed-in user's personalization preferences.
+   *
+   * `preferences` is what they chose (`null` = follow the instance), `instance`
+   * is the admin policy they sit under, and `effective` is the two ANDed - the
+   * UI needs all three to show the right state and explain why it is off.
+   * @returns {Promise<typeof DEFAULT_PREFERENCES>}
+   */
+  preferences: async function () {
+    return await fetch(`${API_BASE}/memories/preferences`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => ({ ...DEFAULT_PREFERENCES, ...res }))
+      .catch(() => DEFAULT_PREFERENCES);
+  },
+
+  /**
+   * Update the signed-in user's own preferences.
+   * @param {{memoryEnabled?: boolean|null, memoryAutoExtraction?: boolean|null}} updates
+   * @returns {Promise<{success: boolean, error: string|null}>}
+   */
+  updatePreferences: async function (updates) {
+    return await fetch(`${API_BASE}/memories/preferences`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(updates),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({ success: false, error: e.message }));
+  },
+
   /**
    * Fetch all memories (global + workspace) for a workspace.
    * @param {string} slug

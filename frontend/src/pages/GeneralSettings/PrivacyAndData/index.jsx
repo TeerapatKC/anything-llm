@@ -7,6 +7,8 @@ import PreLoader from "@/components/Preloader";
 import { useTranslation } from "react-i18next";
 import ProviderPrivacy from "@/components/ProviderPrivacy";
 import Toggle from "@/components/lib/Toggle";
+import Admin from "@/models/admin";
+import { Separator } from "@/components/ui/separator";
 
 export default function PrivacyAndDataHandling() {
   const [settings, setSettings] = useState({});
@@ -37,10 +39,68 @@ export default function PrivacyAndDataHandling() {
       ) : (
         <div className="overflow-x-auto flex flex-col gap-y-6 pt-6">
           <ProviderPrivacy />
+          <Separator />
+          <Personalization settings={settings} />
+          <Separator />
           <TelemetryLogs settings={settings} />
         </div>
       )}
     </SettingsLayout>
+  );
+}
+
+/**
+ * The instance-wide personalization policy.
+ *
+ * This lives here rather than in the chat sidebar because it is a deployment
+ * decision - it governs LLM spend and what the product may retain about people
+ * - and only an admin can make it. Each user then opts themselves in or out
+ * underneath it, from the Memories panel in chat.
+ */
+function Personalization({ settings }) {
+  const [enabled, setEnabled] = useState(!!settings?.MemoryEnabled);
+  const [autoExtraction, setAutoExtraction] = useState(
+    settings?.MemoryAutoExtraction !== false
+  );
+  const { t } = useTranslation();
+
+  async function persist(updates, apply) {
+    const { success, error } = await Admin.updateSystemPreferences(updates);
+    if (!success) return showToast(error || "Failed to save.", "error");
+    apply();
+  }
+
+  return (
+    <div className="relative w-full max-h-full">
+      <div className="flex w-full flex-col gap-y-4">
+        <Toggle
+          size="lg"
+          label={t("privacy.personalization.label")}
+          enabled={enabled}
+          onChange={() =>
+            persist({ memory_enabled: enabled ? "false" : "true" }, () =>
+              setEnabled(!enabled)
+            )
+          }
+        />
+        {enabled && (
+          <Toggle
+            size="lg"
+            label={t("privacy.personalization.auto_label")}
+            enabled={autoExtraction}
+            onChange={() =>
+              persist(
+                { memory_auto_extraction: autoExtraction ? "false" : "true" },
+                () => setAutoExtraction(!autoExtraction)
+              )
+            }
+          />
+        )}
+        <p className="w-96 text-xs text-theme-text-secondary">
+          {t("privacy.personalization.description")}
+        </p>
+      </div>
+    </div>
   );
 }
 

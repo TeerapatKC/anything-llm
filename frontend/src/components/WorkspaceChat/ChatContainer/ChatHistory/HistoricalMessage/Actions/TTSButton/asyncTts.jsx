@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { CirclePause, Volume2 } from "lucide-react";
+import { Pause, Volume2 } from "lucide-react";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -61,28 +61,22 @@ export default function AsyncTTSMessage({ slug, chatId }) {
 
   if (!chatId) return null;
   return (
-    <div className="mt-3 relative">
+    <div className="relative">
       <Tooltip>
         <TooltipTrigger
           render={
             <button
               onClick={speakMessage}
               data-auto-play-chat-id={chatId}
-              className="border-none text-zinc-300 light:text-slate-500"
+              className="flex size-7 items-center justify-center rounded-md border-none text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200 light:text-slate-500 light:hover:bg-black/5 light:hover:text-slate-700"
               aria-label={speaking ? "Pause speech" : "Speak message"}
             />
           }
         >
           {speaking ? (
-            <CirclePause size={18} className="mb-1" />
+            <Pause size={16} />
           ) : (
-            <>
-              {loading ? (
-                <Spinner className="mb-1" />
-              ) : (
-                <Volume2 size={18} className="mb-1" />
-              )}
-            </>
+            <>{loading ? <Spinner /> : <Volume2 size={16} />}</>
           )}
           <audio
             ref={playerRef}

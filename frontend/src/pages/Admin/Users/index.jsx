@@ -120,6 +120,11 @@ export default function AdminUsers() {
   );
 }
 
+export function roleOptionLabel(role) {
+  const label = role?.displayName ?? role?.name ?? "";
+  return role?.name === "default" ? `${label} (Default)` : label;
+}
+
 /**
  * Summarises what a role unlocks by listing the permissions it was ticked for, so the
  * person assigning it can see the consequences without leaving the modal.

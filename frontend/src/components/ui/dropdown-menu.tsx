@@ -14,9 +14,22 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
-}
+// Forwards its ref so the trigger can itself be composed into another
+// primitive's `render` prop - `<TooltipTrigger render={<DropdownMenuTrigger />}>`
+// is how a button gets both a tooltip and a menu, and without this the outer
+// primitive has nothing to anchor to.
+const DropdownMenuTrigger = React.forwardRef<
+  HTMLElement,
+  MenuPrimitive.Trigger.Props
+>(function DropdownMenuTrigger(props, ref) {
+  return (
+    <MenuPrimitive.Trigger
+      ref={ref}
+      data-slot="dropdown-menu-trigger"
+      {...props}
+    />
+  )
+})
 
 function DropdownMenuContent({
   align = "start",

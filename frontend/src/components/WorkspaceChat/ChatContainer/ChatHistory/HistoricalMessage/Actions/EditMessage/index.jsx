@@ -1,4 +1,4 @@
-import { Info, Pencil } from "lucide-react";
+import { Info, SquarePen } from "lucide-react";
 import { useRef, useEffect } from "react";
 import Appearance from "@/models/appearance";
 import { useTranslation } from "react-i18next";
@@ -29,21 +29,19 @@ export function EditMessageAction({ chatId = null, role, isEditing }) {
   if (!chatId || isEditing) return null;
   return (
     <div
-      className={`mt-3 relative ${
-        role === "user" && !isEditing ? "" : "opacity-100!"
-      }`}
+      className={`relative ${role === "user" && !isEditing ? "" : "opacity-100!"}`}
     >
       <Tooltip>
         <TooltipTrigger
           render={
             <button
               onClick={handleEditClick}
-              className="border-none text-zinc-300 light:text-slate-500 px-0"
+              className="flex size-7 items-center justify-center rounded-md border-none p-0 text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200 light:text-slate-500 light:hover:bg-black/5 light:hover:text-slate-700"
               aria-label={`Edit ${role === "user" ? t("chat_window.edit_prompt") : t("chat_window.edit_response")}`}
             />
           }
         >
-          <Pencil size={21} className="mb-1" />
+          <SquarePen size={16} />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">{`${
           role === "user"

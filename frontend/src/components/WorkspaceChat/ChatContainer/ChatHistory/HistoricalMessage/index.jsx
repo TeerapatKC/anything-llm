@@ -202,7 +202,7 @@ const HistoricalMessage = ({
           </div>
         )}
         {hasVisibleContent(message) && (
-          <div className="flex items-start md:items-center gap-x-1">
+          <div className="mt-1 flex items-center gap-x-0.5">
             <TTSMessage
               slug={workspace?.slug}
               chatId={chatId}

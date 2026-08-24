@@ -3,7 +3,7 @@ import Admin from "@/models/admin";
 import { userFromStorage } from "@/utils/request";
 import useRoles from "@/hooks/useRoles";
 import { canManageRole } from "@/utils/permissions";
-import { MessageLimitInput, RoleHintDisplay } from "..";
+import { MessageLimitInput, RoleHintDisplay, roleOptionLabel } from "..";
 import { useTranslation } from "react-i18next";
 import {
   USERNAME_MIN_LENGTH,
@@ -126,12 +126,22 @@ export default function NewUserModal({ closeModal, onSuccess }) {
               onValueChange={setRole}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a role" />
+                <SelectValue placeholder="Select a role">
+                  {(value) =>
+                    roleOptionLabel(
+                      assignableRoles.find((entry) => entry.name === value)
+                    ) || value
+                  }
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {assignableRoles.map((entry) => (
-                  <SelectItem key={entry.id} value={entry.name}>
-                    {entry.displayName}
+                  <SelectItem
+                    key={entry.id}
+                    value={entry.name}
+                    label={roleOptionLabel(entry)}
+                  >
+                    {roleOptionLabel(entry)}
                   </SelectItem>
                 ))}
               </SelectContent>

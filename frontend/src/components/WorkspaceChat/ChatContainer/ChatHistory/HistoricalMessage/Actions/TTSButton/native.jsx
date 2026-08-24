@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { CirclePause, Volume2 } from "lucide-react";
+import { Pause, Volume2 } from "lucide-react";
 import messageToSpeech from "@/utils/chat/messageToSpeech";
 import {
   Tooltip,
@@ -39,23 +39,19 @@ export default function NativeTTSMessage({ chatId, message }) {
 
   if (!supported) return null;
   return (
-    <div className="mt-3 relative">
+    <div className="relative">
       <Tooltip>
         <TooltipTrigger
           render={
             <button
               onClick={speakMessage}
               data-auto-play-chat-id={chatId}
-              className="border-none text-zinc-300 light:text-slate-500"
+              className="flex size-7 items-center justify-center rounded-md border-none text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200 light:text-slate-500 light:hover:bg-black/5 light:hover:text-slate-700"
               aria-label={speaking ? "Pause speech" : "Speak message"}
             />
           }
         >
-          {speaking ? (
-            <CirclePause size={18} className="mb-1" />
-          ) : (
-            <Volume2 size={18} className="mb-1" />
-          )}
+          {speaking ? <Pause size={16} /> : <Volume2 size={16} />}
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {speaking ? "Pause TTS speech of message" : "TTS Speak message"}

@@ -120,7 +120,7 @@ async function chatPrompt(workspace, user = null, opts = {}) {
   );
   return promptWithMemories({
     systemPrompt,
-    userId: user?.id ?? null,
+    user,
     workspaceId: workspace?.id,
     prompt: opts.prompt ?? "",
     rawHistory: opts.rawHistory ?? [],

@@ -415,6 +415,41 @@ const Memory = {
   },
 
   /**
+   * Whether memories are on for this user.
+   *
+   * Two settings answer two different questions and both have to say yes: the
+   * instance policy (`memory_enabled`, admin-only, covers cost and privacy for
+   * the whole deployment) and the person's own preference. A `null` preference
+   * means "follow the instance", which is what every account carries until it
+   * touches the switch - so turning this feature on for an existing deployment
+   * does not require every user to opt in first.
+   *
+   * @param {{memoryEnabled?: boolean|null}|null} user
+   * @returns {Promise<boolean>}
+   */
+  enabledForUser: async function (user = null) {
+    const { SystemSettings } = require("./systemSettings");
+    if (!(await SystemSettings.memoriesEnabled())) return false;
+    return user?.memoryEnabled ?? true;
+  },
+
+  /**
+   * Whether the background extractor may write memories for this user. Sits
+   * below `enabledForUser`: automatic extraction is meaningless when memories
+   * are off, and it additionally costs an LLM call per user/workspace pair, so
+   * a user who opts out here also stops being billed for.
+   *
+   * @param {{memoryEnabled?: boolean|null, memoryAutoExtraction?: boolean|null}|null} user
+   * @returns {Promise<boolean>}
+   */
+  autoEnabledForUser: async function (user = null) {
+    const { SystemSettings } = require("./systemSettings");
+    if (!(await this.enabledForUser(user))) return false;
+    if (!(await SystemSettings.memoryAutoExtractionSetting())) return false;
+    return user?.memoryAutoExtraction ?? true;
+  },
+
+  /**
    * Fetch the first memory matching the given where clause.
    * @param {object} [clause] - Prisma where clause
    * @returns {Promise<Memory|null>}

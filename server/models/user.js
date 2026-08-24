@@ -265,6 +265,66 @@ const User = {
     return changes;
   },
 
+  /**
+   * Read someone's personalization preferences.
+   *
+   * `null` on either field means the account has never touched the switch and
+   * should follow the instance setting - callers resolve that through
+   * `Memory.enabledForUser`, which is the only place the two layers are ANDed.
+   *
+   * @param {number} userId
+   * @returns {Promise<{memoryEnabled: boolean|null, memoryAutoExtraction: boolean|null}>}
+   */
+  memoryPreferences: async function (userId) {
+    try {
+      const user = await prisma.users.findUnique({
+        where: { id: Number(userId) },
+        select: { memoryEnabled: true, memoryAutoExtraction: true },
+      });
+      return {
+        memoryEnabled: user?.memoryEnabled ?? null,
+        memoryAutoExtraction: user?.memoryAutoExtraction ?? null,
+      };
+    } catch (error) {
+      console.error(error.message);
+      return { memoryEnabled: null, memoryAutoExtraction: null };
+    }
+  },
+
+  /**
+   * Write someone's own personalization preferences.
+   *
+   * Deliberately kept off `writable` and out of the generic `update` path: this
+   * is a personal preference, so it is only ever reachable from the session
+   * user's own request, never from the admin user-editing screens.
+   *
+   * @param {number} userId
+   * @param {{memoryEnabled?: boolean|null, memoryAutoExtraction?: boolean|null}} preferences
+   * @returns {Promise<{success: boolean, error: string|null}>}
+   */
+  setMemoryPreferences: async function (userId, preferences = {}) {
+    try {
+      if (!userId) throw new Error("No user id provided for update");
+      const data = {};
+      for (const key of ["memoryEnabled", "memoryAutoExtraction"]) {
+        if (!preferences.hasOwnProperty(key)) continue;
+        const value = preferences[key];
+        data[key] = value === null ? null : Boolean(value);
+      }
+      if (Object.keys(data).length === 0)
+        return { success: false, error: "No preferences provided" };
+
+      await prisma.users.update({
+        where: { id: Number(userId) },
+        data: { ...data, lastUpdatedAt: new Date() },
+      });
+      return { success: true, error: null };
+    } catch (error) {
+      console.error(error.message);
+      return { success: false, error: error.message };
+    }
+  },
+
   update: async function (userId, updates = {}) {
     try {
       if (!userId) throw new Error("No user id provided for update");

@@ -73,6 +73,11 @@ model users {
   dailyMessageLimit            Int?
   bio                          String?                       @default("")
   web_push_subscription_config String?
+  // Per-user personalization preferences. NULL means "follow the instance
+  // setting" so upgrades do not silently switch memories off for anyone; the
+  // effective value is always the instance policy AND the user's choice.
+  memoryEnabled                Boolean?                      @map("memory_enabled")
+  memoryAutoExtraction         Boolean?                      @map("memory_auto_extraction")
   workspace_chats              workspace_chats[]
   workspace_users              workspace_users[]
   embed_configs                embed_configs[]

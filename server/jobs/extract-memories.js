@@ -3,6 +3,7 @@ const { SystemSettings } = require("../models/systemSettings.js");
 const { Memory } = require("../models/memory.js");
 const { WorkspaceChats } = require("../models/workspaceChats.js");
 const { Workspace } = require("../models/workspace.js");
+const { User } = require("../models/user.js");
 const truncate = require("truncate");
 const {
   groupByUserWorkspace,
@@ -65,6 +66,20 @@ const MIN_CHATS_TO_PROCESS = 5;
 async function processGroup(groupChats) {
   const { user_id: userId, workspaceId } = groupChats[0];
   const tag = `user ${userId}, workspace ${workspaceId}`;
+
+  // Checked per group rather than once up front: automatic extraction is a
+  // per-user preference, and bailing here also skips this group's LLM calls.
+  //
+  // Unlike the "not yet" skips below, these chats are marked processed rather
+  // than left for the next run. They would otherwise pile up and be re-scanned
+  // forever, and re-enabling the setting later should start from that point
+  // rather than retroactively mining everything said while it was off.
+  const user = userId ? await User.get({ id: userId }) : null;
+  if (!(await Memory.autoEnabledForUser(user))) {
+    log(`${tag} has automatic memories switched off. Marking processed.`);
+    await WorkspaceChats.markMemoryProcessed(groupChats.map((c) => c.id));
+    return;
+  }
 
   if (groupChats.length < MIN_CHATS_TO_PROCESS) {
     log(

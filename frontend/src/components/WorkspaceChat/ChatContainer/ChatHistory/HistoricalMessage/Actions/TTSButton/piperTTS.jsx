@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { CirclePause, Volume2 } from "lucide-react";
+import { Pause, Volume2 } from "lucide-react";
 import PiperTTSClient from "@/utils/piperTTS";
 import messageToSpeech from "@/utils/chat/messageToSpeech";
 import {
@@ -161,7 +161,7 @@ export default function PiperTTS({ chatId, voiceId = null, message }) {
   }, [chatId]);
 
   return (
-    <div className="mt-3 relative">
+    <div className="relative">
       <Tooltip>
         <TooltipTrigger
           render={
@@ -170,21 +170,15 @@ export default function PiperTTS({ chatId, voiceId = null, message }) {
               onClick={speakMessage}
               disabled={loading}
               data-auto-play-chat-id={chatId}
-              className="border-none text-(--theme-sidebar-footer-icon-fill)"
+              className="flex size-7 items-center justify-center rounded-md border-none text-zinc-400 transition-colors hover:bg-white/5 hover:text-zinc-200 light:text-slate-500 light:hover:bg-black/5 light:hover:text-slate-700"
               aria-label={speaking ? "Pause speech" : "Speak message"}
             />
           }
         >
           {speaking ? (
-            <CirclePause size={18} className="mb-1" />
+            <Pause size={16} />
           ) : (
-            <>
-              {loading ? (
-                <Spinner className="mb-1" />
-              ) : (
-                <Volume2 size={18} className="mb-1" />
-              )}
-            </>
+            <>{loading ? <Spinner /> : <Volume2 size={16} />}</>
           )}
           <audio ref={playerRef} hidden={true} controls={false} />
         </TooltipTrigger>

@@ -12,25 +12,25 @@
  * original prompt unchanged when memories are disabled or the user has none.
  */
 const { Memory } = require("../../models/memory");
-const { SystemSettings } = require("../../models/systemSettings");
 
 /**
  * Fetches and formats relevant memories for injection into the system prompt.
  * Returns global memories (up to 5) + top 5 workspace memories (reranked if >5 exist).
- * @param {number|null} userId
+ * @param {Object|null} user - the requesting user, carrying their personalization preferences
  * @param {number} workspaceId
  * @param {string} prompt - The current user message
  * @param {object[]} rawHistory - Recent chat history objects with .prompt field
  * @returns {Promise<string>} Formatted memory section or empty string
  */
-async function getMemoriesForPrompt(userId, workspaceId, prompt, rawHistory) {
+async function getMemoriesForPrompt(user, workspaceId, prompt, rawHistory) {
   try {
-    const enabled = await SystemSettings.memoriesEnabled();
-    if (!enabled) return "";
+    // Both the instance policy and this person's own preference have to allow it.
+    if (!(await Memory.enabledForUser(user))) return "";
 
+    const userId = user?.id ?? null;
     const [globalMemories, workspaceMemories] = await Promise.all([
-      Memory.globalForUser(userId ?? null),
-      Memory.forUserWorkspace(userId ?? null, workspaceId),
+      Memory.globalForUser(userId),
+      Memory.forUserWorkspace(userId, workspaceId),
     ]);
 
     if (globalMemories.length === 0 && workspaceMemories.length === 0)
@@ -112,7 +112,7 @@ function formatMemories(globalMemories, workspaceMemories) {
  * Appends any relevant memories onto a base system prompt.
  * @param {Object} opts
  * @param {string} opts.systemPrompt - The base system prompt
- * @param {number|null} opts.userId
+ * @param {Object|null} opts.user - the requesting user
  * @param {number} opts.workspaceId
  * @param {string} [opts.prompt] - Current user message (used for reranking)
  * @param {object[]} [opts.rawHistory] - Recent chat history (used for reranking)
@@ -120,13 +120,13 @@ function formatMemories(globalMemories, workspaceMemories) {
  */
 async function promptWithMemories({
   systemPrompt,
-  userId,
+  user,
   workspaceId,
   prompt = "",
   rawHistory = [],
 }) {
   const memoriesContext = await getMemoriesForPrompt(
-    userId,
+    user,
     workspaceId,
     prompt,
     rawHistory

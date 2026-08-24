@@ -1248,6 +1248,12 @@ const TRANSLATIONS = {
     description:
       "This is your configuration for how connected third party providers and AnythingLLM handle your data.",
     anonymous: "Anonymous Telemetry Enabled",
+    personalization: {
+      label: "Personalization & Memories Enabled",
+      auto_label: "Automatic Memory Extraction Enabled",
+      description:
+        "Lets your assistant remember facts about a user or workspace and use them in later conversations. This is an instance-wide policy: turning it off removes the feature for everyone. Each user still chooses whether to be remembered from the Memories panel in chat, and memories are never shared between users. Automatic extraction runs a background job that costs an LLM call per active user and workspace.",
+    },
   },
   connectors: {
     "search-placeholder": "Search data connectors",
@@ -1565,6 +1571,8 @@ const TRANSLATIONS = {
         description:
           "Have your assistant automatically create memories in the background",
       },
+      scope_hint:
+        "These settings apply to your account only. Your memories are never shared with other users.",
       menu: {
         edit: "Edit",
         delete: "Delete",

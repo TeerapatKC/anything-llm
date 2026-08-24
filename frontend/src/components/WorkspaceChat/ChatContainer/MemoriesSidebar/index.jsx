@@ -18,9 +18,13 @@ export default function MemoriesSidebar({ workspace }) {
 }
 
 function MemoriesSidebarContent() {
-  const { sidebarOpen, canToggle, enabled } = useMemoriesContext();
+  const { sidebarOpen, instance } = useMemoriesContext();
 
-  if (!canToggle && !enabled) return null;
+  // Gated on the instance policy, not on the user's own switch: someone who
+  // turned personalization off for themselves still needs this panel to turn it
+  // back on. When an admin has switched the feature off for the deployment
+  // there is nothing actionable here for anyone, so it stays hidden.
+  if (!instance.memoryEnabled) return null;
   return (
     <>
       <ChatSidebar isOpen={sidebarOpen}>

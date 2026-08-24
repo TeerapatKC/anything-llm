@@ -1,9 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useMemoriesSidebar } from "../ChatSidebar";
-import useUser from "@/hooks/useUser";
-import System from "@/models/system";
 import Memory from "@/models/memory";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
 
 export const LIMITS = {
   workspace: 20,
@@ -22,25 +19,46 @@ export function useMemoriesContext() {
 
 export function MemoriesProvider({ workspace, children }) {
   const { sidebarOpen, closeSidebar } = useMemoriesSidebar();
-  const { user } = useUser();
-  const canToggle = userCan(PERMISSIONS.SYSTEM_SETTINGS, user);
 
   const [memories, setMemories] = useState({ global: [], workspace: [] });
   const [activeTab, setActiveTab] = useState("workspace");
   const [modalState, setModalState] = useState({ open: false, mode: "create" });
   const [editingMemory, setEditingMemory] = useState(null);
+  // `enabled`/`autoExtraction` are the *effective* state - the instance policy
+  // ANDed with this user's own choice. `instance` is kept alongside so the UI
+  // can say "an admin turned this off" instead of showing a dead switch.
   const [enabled, setEnabled] = useState(false);
   const [autoExtraction, setAutoExtraction] = useState(true);
+  const [instance, setInstance] = useState({
+    memoryEnabled: false,
+    memoryAutoExtraction: true,
+  });
   const [loadingEnabled, setLoadingEnabled] = useState(true);
+
+  async function loadPreferences() {
+    const { instance, effective } = await Memory.preferences();
+    setInstance(instance);
+    setEnabled(effective.memoryEnabled);
+    setAutoExtraction(effective.memoryAutoExtraction);
+    setLoadingEnabled(false);
+  }
 
   useEffect(() => {
     if (!sidebarOpen) return;
-    System.keys().then((settings) => {
-      setEnabled(!!settings?.MemoryEnabled);
-      setAutoExtraction(settings?.MemoryAutoExtraction !== false);
-      setLoadingEnabled(false);
-    });
+    loadPreferences();
   }, [sidebarOpen]);
+
+  /**
+   * Writes the caller's own preference and re-reads the resolved state, so the
+   * switches always reflect what the server actually decided rather than an
+   * optimistic guess that ignores the instance policy above it.
+   * @param {{memoryEnabled?: boolean, memoryAutoExtraction?: boolean}} updates
+   */
+  async function updatePreferences(updates) {
+    const { success } = await Memory.updatePreferences(updates);
+    if (!success) return;
+    await loadPreferences();
+  }
 
   async function fetchMemories() {
     if (!workspace?.slug) return;
@@ -103,15 +121,14 @@ export function MemoriesProvider({ workspace, children }) {
     workspace,
     sidebarOpen,
     closeSidebar,
-    canToggle,
     memories,
     activeTab,
     setActiveTab,
     activeMemories,
     enabled,
-    setEnabled,
     autoExtraction,
-    setAutoExtraction,
+    instance,
+    updatePreferences,
     loadingEnabled,
     modalState,
     editingMemory,

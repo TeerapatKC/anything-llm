@@ -1,5 +1,5 @@
 import React from "react";
-import { EllipsisVertical, ListTree, Trash2 } from "lucide-react";
+import { Ellipsis, GitFork, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,7 +28,7 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
 
   return (
     <DropdownMenu>
-      <div className="mt-2 -ml-0.5">
+      <div>
         <Tooltip>
           <TooltipTrigger
             render={
@@ -37,14 +37,14 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    className="text-zinc-300 light:text-slate-500"
+                    className="size-7 text-zinc-400 hover:bg-white/5 hover:text-zinc-200 light:text-slate-500 light:hover:bg-black/5 light:hover:text-slate-700"
                     aria-label={t("chat_window.more_actions")}
                   />
                 }
               />
             }
           >
-            <EllipsisVertical />
+            <Ellipsis className="size-4" />
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-[250px] text-xs">
             {t("chat_window.more_actions")}
@@ -53,7 +53,7 @@ function ActionMenu({ chatId, forkThread, isEditing, role }) {
       </div>
       <DropdownMenuContent align="start" className="w-40">
         <DropdownMenuItem onClick={handleFork}>
-          <ListTree />
+          <GitFork />
           {t("chat_window.fork")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />

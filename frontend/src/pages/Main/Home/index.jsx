@@ -18,7 +18,6 @@ import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { safeJsonParse } from "@/utils/request";
-import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import useUser from "@/hooks/useUser";
 import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSettingsMenu";
@@ -230,10 +229,6 @@ function HomeContent({ workspace, threadSlug, setThreadSlug }) {
     );
   }
 
-  function handleEditWorkspace() {
-    navigate(paths.workspace.settings.generalAppearance(workspace.slug));
-  }
-
   return (
     <ChatSidebarProvider>
       <div
@@ -263,14 +258,6 @@ function HomeContent({ workspace, threadSlug, setThreadSlug }) {
                     centered={true}
                     workspaceSlug={workspace?.slug}
                     threadSlug={threadSlug}
-                  />
-                  <QuickActions
-                    hasAvailableWorkspace={!!workspace}
-                    onCreateAgent={() => navigate(paths.settings.agentSkills())}
-                    onEditWorkspace={handleEditWorkspace}
-                    onUploadDocument={() =>
-                      document.getElementById("dnd-chat-file-uploader")?.click()
-                    }
                   />
                 </div>
                 <SuggestedMessages

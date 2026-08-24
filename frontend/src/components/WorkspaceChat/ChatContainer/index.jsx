@@ -29,7 +29,6 @@ import { clearPromptInputDraft } from "@/hooks/usePromptInputStorage";
 import { safeJsonParse } from "@/utils/request";
 import { useTranslation } from "react-i18next";
 import paths from "@/utils/paths";
-import QuickActions from "@/components/lib/QuickActions";
 import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import ChatSettingsMenu from "./ChatSettingsMenu";
 import { ChatSidebarProvider } from "./ChatSidebar";
@@ -488,24 +487,6 @@ export default function ChatContainer({
                         centered={true}
                       />
                     )}
-                    <QuickActions
-                      hasAvailableWorkspace={!!workspace}
-                      onCreateAgent={() =>
-                        navigate(paths.settings.agentSkills())
-                      }
-                      onEditWorkspace={() =>
-                        navigate(
-                          paths.workspace.settings.generalAppearance(
-                            workspace.slug
-                          )
-                        )
-                      }
-                      onUploadDocument={() =>
-                        document
-                          .getElementById("dnd-chat-file-uploader")
-                          ?.click()
-                      }
-                    />
                   </div>
                   <SuggestedMessages
                     suggestedMessages={workspace?.suggestedMessages}
