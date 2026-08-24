@@ -7,10 +7,10 @@ import ChatHistorySettings from "./ChatHistorySettings";
 import ChatPromptSettings from "./ChatPromptSettings";
 import ChatTemperatureSettings from "./ChatTemperatureSettings";
 import ChatModeSelection from "./ChatModeSelection";
-// #TEMPORARILY_HIDDEN: Uncomment to restore this settings section.
-// import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
+import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
 import ChatQueryRefusalResponse from "./ChatQueryRefusalResponse";
 import { Button } from "@/components/ui/button";
+import { isSuperAdmin } from "@/utils/permissions";
 
 export default function ChatSettings({ workspace }) {
   const [settings, setSettings] = useState({});
@@ -63,13 +63,14 @@ export default function ChatSettings({ workspace }) {
             </Button>
           </div>
         )}
-        {/* #TEMPORARILY_HIDDEN: Uncomment to restore this settings section.
-        <WorkspaceLLMSelection
-          settings={settings}
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
-        */}
+        {/* #TEMPORARILY_HIDDEN: Per-workspace LLM choice is limited to super admins. */}
+        {isSuperAdmin() && (
+          <WorkspaceLLMSelection
+            settings={settings}
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+        )}
         <ChatModeSelection
           workspace={workspace}
           setHasChanges={setHasChanges}

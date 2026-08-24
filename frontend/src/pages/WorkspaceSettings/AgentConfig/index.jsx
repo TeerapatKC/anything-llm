@@ -8,7 +8,11 @@ import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
 import useUser from "@/hooks/useUser";
 import AgentSkillSelection from "./AgentSkillSelection";
-import { WORKSPACE_PERMISSIONS, workspaceCan } from "@/utils/permissions";
+import {
+  WORKSPACE_PERMISSIONS,
+  workspaceCan,
+  isSuperAdmin,
+} from "@/utils/permissions";
 import { Bot, ChevronRight, Cpu, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -136,8 +140,8 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
             </p>
           </div>
           <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
-            {/* #TEMPORARILY_HIDDEN: Remove `hidden` to restore this settings section. */}
-            <div hidden>
+            {/* #TEMPORARILY_HIDDEN: Model & provider is limited to super admins. */}
+            <div hidden={!isSuperAdmin()}>
               <ConfigNavItem
                 icon={Cpu}
                 title="Model & provider"
@@ -183,8 +187,9 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           hidden={!selectedSection}
           className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary"
         >
-          {/* #TEMPORARILY_HIDDEN: Remove `hidden` and restore the default section to show this settings section. */}
-          <div hidden>
+          {/* #TEMPORARILY_HIDDEN: Model & provider is limited to super admins. Anyone
+              else cannot reach it anyway - the nav item that selects it is hidden too. */}
+          <div hidden={!isSuperAdmin()}>
             <div className="mb-5">
               <h2 className="text-base font-semibold text-theme-text-primary">
                 Model &amp; provider
