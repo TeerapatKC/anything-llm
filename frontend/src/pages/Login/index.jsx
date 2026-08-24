@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import paths from "@/utils/paths";
 import useQuery from "@/hooks/useQuery";
 import useSimpleSSO from "@/hooks/useSimpleSSO";
+import { useRedirectToOnboardingIfIncomplete } from "@/hooks/useOnboardingComplete";
 
 /**
  * Login page.
@@ -16,10 +17,14 @@ import useSimpleSSO from "@/hooks/useSimpleSSO";
  */
 export default function Login() {
   const query = useQuery();
+  // This page is public, so nothing else checks whether the instance has been set up.
+  // Without this, a fresh deploy shows a password form for an instance that has no
+  // account to sign in to.
+  const onboardingChecked = useRedirectToOnboardingIfIncomplete();
   const { loading: ssoLoading, ssoConfig } = useSimpleSSO();
   const { loading, requiresAuth } = usePasswordModal(!!query.get("nt"));
 
-  if (loading || ssoLoading) return <FullScreenLoader />;
+  if (loading || ssoLoading || !onboardingChecked) return <FullScreenLoader />;
 
   // If simple SSO is enabled and no login is allowed, redirect to the SSO login page.
   if (ssoConfig.enabled && ssoConfig.noLogin) {

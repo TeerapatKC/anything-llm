@@ -38,7 +38,11 @@ const System = {
 
   /**
    * Checks if the onboarding is complete.
-   * @returns {Promise<boolean>}
+   *
+   * Returns null rather than a boolean when the server cannot be reached, because callers
+   * route on this: reporting a failed request as "not onboarded" would send everyone to
+   * the setup screen the moment the backend hiccups.
+   * @returns {Promise<boolean|null>} true or false, or null if the answer is unknown
    */
   isOnboardingComplete: async function () {
     return await fetch(`${API_BASE}/onboarding`)
@@ -47,7 +51,7 @@ const System = {
         return res.json();
       })
       .then((res) => res.onboardingComplete)
-      .catch(() => false);
+      .catch(() => null);
   },
   /**
    * Marks the onboarding as complete.
