@@ -5,6 +5,8 @@ import LiveDocumentSync from "./experimental/liveSync";
 import AgentPlugins from "./experimental/agentPlugins";
 import SystemPromptVariable from "./systemPromptVariable";
 
+export const SUPPORT_EMAIL_UPDATED_EVENT = "support-email-updated";
+
 const System = {
   cacheKeys: {
     footerIcons: "anythingllm_footer_links",

@@ -8,7 +8,7 @@ import {
   FlaskConical,
   PanelLeftIcon,
   PenLine,
-  Settings,
+  // Settings, // #TEMPORARILY_HIDDEN
   Store,
   Unplug,
   UserCog,
@@ -18,7 +18,7 @@ import Footer from "../Footer";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import showToast from "@/utils/toast";
-import System from "@/models/system";
+import System, { SUPPORT_EMAIL_UPDATED_EVENT } from "@/models/system";
 import Option from "./MenuOption";
 import { CanViewChatHistoryProvider } from "../CanViewChatHistory";
 import useAppVersion from "@/hooks/useAppVersion";
@@ -164,20 +164,32 @@ export default function SettingsSidebar() {
 }
 
 function SupportEmail() {
-  const [supportEmail, setSupportEmail] = useState(paths.mailToMintplex());
+  const [supportEmail, setSupportEmail] = useState("");
   const { t } = useTranslation();
 
   useEffect(() => {
+    const applySupportEmail = (email) =>
+      setSupportEmail(email ? `mailto:${email}` : "");
     const fetchSupportEmail = async () => {
-      const supportEmail = await System.fetchSupportEmail();
-      setSupportEmail(
-        supportEmail?.email
-          ? `mailto:${supportEmail.email}`
-          : paths.mailToMintplex()
-      );
+      const { email } = await System.fetchSupportEmail();
+      applySupportEmail(email);
     };
+    const handleSupportEmailUpdate = (event) =>
+      applySupportEmail(event.detail?.email);
+
     fetchSupportEmail();
+    window.addEventListener(
+      SUPPORT_EMAIL_UPDATED_EVENT,
+      handleSupportEmailUpdate
+    );
+    return () =>
+      window.removeEventListener(
+        SUPPORT_EMAIL_UPDATED_EVENT,
+        handleSupportEmailUpdate
+      );
   }, []);
+
+  if (!supportEmail) return null;
 
   return (
     <Link
@@ -193,6 +205,7 @@ const SidebarOptions = ({ user = null, t }) => (
   <CanViewChatHistoryProvider>
     {({ viewable: canViewChatHistory }) => (
       <>
+        {/* #TEMPORARILY_HIDDEN: Uncomment to restore the AI Providers menu.
         <Option
           btnText={t("settings.ai-providers")}
           icon={<Settings className="h-5 w-5 shrink-0" />}
@@ -240,6 +253,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
+        */}
         <Option
           btnText={t("settings.admin")}
           icon={<UserCog className="h-5 w-5 shrink-0" />}

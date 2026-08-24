@@ -1,6 +1,6 @@
 import useUser from "@/hooks/useUser";
 import Admin from "@/models/admin";
-import System from "@/models/system";
+import System, { SUPPORT_EMAIL_UPDATED_EVENT } from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +32,7 @@ export default function SupportEmail() {
       const form = new FormData(e.target);
       support_email = form.get("supportEmail");
     }
+    support_email = support_email?.trim() ?? "";
 
     const { success, error } = await Admin.updateSystemPreferences({
       support_email,
@@ -43,6 +44,11 @@ export default function SupportEmail() {
     } else {
       showToast("Successfully updated support email.", "success");
       window.localStorage.removeItem(System.cacheKeys.supportEmail);
+      window.dispatchEvent(
+        new CustomEvent(SUPPORT_EMAIL_UPDATED_EVENT, {
+          detail: { email: support_email },
+        })
+      );
       setSupportEmail(support_email);
       setOriginalEmail(support_email);
       setHasChanges(false);

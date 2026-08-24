@@ -1,6 +1,7 @@
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
-import FooterCustomization from "../components/FooterCustomization";
+// #TEMPORARILY_HIDDEN: Uncomment when restoring Sidebar Footer Items.
+// import FooterCustomization from "../components/FooterCustomization";
 import SupportEmail from "../components/SupportEmail";
 import CustomLogo from "../components/CustomLogo";
 import { useTranslation } from "react-i18next";
@@ -18,7 +19,9 @@ export default function BrandingSettings() {
       />
       <CustomAppName />
       <CustomLogo />
+      {/* #TEMPORARILY_HIDDEN: Uncomment to restore Sidebar Footer Items.
       <FooterCustomization />
+      */}
       <SupportEmail />
       <CustomSiteSettings />
     </SettingsLayout>

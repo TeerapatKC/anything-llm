@@ -1,6 +1,6 @@
 import usePfp from "@/hooks/usePfp";
 import useUser from "@/hooks/useUser";
-import System from "@/models/system";
+import System, { SUPPORT_EMAIL_UPDATED_EVENT } from "@/models/system";
 import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
 import {
@@ -77,15 +77,25 @@ export default function UserButton() {
   const [supportEmail, setSupportEmail] = useState("");
 
   useEffect(() => {
+    const applySupportEmail = (email) =>
+      setSupportEmail(email ? `mailto:${email}` : "");
     const fetchSupportEmail = async () => {
-      const supportEmail = await System.fetchSupportEmail();
-      setSupportEmail(
-        supportEmail?.email
-          ? `mailto:${supportEmail.email}`
-          : paths.mailToMintplex()
-      );
+      const { email } = await System.fetchSupportEmail();
+      applySupportEmail(email);
     };
+    const handleSupportEmailUpdate = (event) =>
+      applySupportEmail(event.detail?.email);
+
     fetchSupportEmail();
+    window.addEventListener(
+      SUPPORT_EMAIL_UPDATED_EVENT,
+      handleSupportEmailUpdate
+    );
+    return () =>
+      window.removeEventListener(
+        SUPPORT_EMAIL_UPDATED_EVENT,
+        handleSupportEmailUpdate
+      );
   }, []);
 
   if (!user) return null;
@@ -193,13 +203,15 @@ export default function UserButton() {
               Settings
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
-            render={<a href={supportEmail} />}
-          >
-            <CircleQuestionMark size={16} />
-            {t("profile_settings.support")}
-          </DropdownMenuItem>
+          {!!supportEmail && (
+            <DropdownMenuItem
+              className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
+              render={<a href={supportEmail} />}
+            >
+              <CircleQuestionMark size={16} />
+              {t("profile_settings.support")}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator className="bg-theme-modal-border" />
           <DropdownMenuItem
             onClick={() => {
