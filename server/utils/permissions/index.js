@@ -520,7 +520,7 @@ const PERMISSION_CATALOG = [
     key: PERMISSIONS.WORKSPACE_ROLES_MANAGE,
     label: "Manage workspace roles",
     description:
-      "Define the reusable workspace roles (Viewer, Contributor, ...) that can be assigned to workspace members.",
+      "Define the reusable workspace roles (Member, Contributor, ...) that can be assigned to workspace members.",
     category: "people",
   },
   {
@@ -1159,17 +1159,6 @@ const SYSTEM_ROLES = [
  * different workspaces.
  */
 const WORKSPACE_ROLES = [
-  {
-    name: "viewer",
-    displayName: "Viewer",
-    description:
-      "Reads the workspace but cannot chat in it or change anything.",
-    isDefault: false,
-    permissions: [
-      WORKSPACE_PERMISSIONS.VIEW,
-      WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
-    ],
-  },
   {
     name: "member",
     displayName: "Member",

@@ -124,18 +124,19 @@ describe("built-in roles", () => {
     expect(fallback.permissions).not.toContain(WORKSPACE_PERMISSIONS.DELETE);
   });
 
-  it("escalates cleanly from viewer to workspace manager", () => {
+  it("escalates cleanly from member to workspace manager", () => {
     const of = (name) =>
       WORKSPACE_ROLES.find((role) => role.name === name).permissions;
     // Each rung is a superset of the one below it.
     for (const [lower, higher] of [
-      ["viewer", "member"],
       ["member", "contributor"],
       ["contributor", "workspace-manager"],
     ])
       expect(of(higher)).toEqual(expect.arrayContaining(of(lower)));
 
-    expect(of("viewer")).not.toContain(WORKSPACE_PERMISSIONS.CHAT);
+    // Every built-in role can chat - being in a workspace means being able to use it.
+    for (const role of WORKSPACE_ROLES)
+      expect(role.permissions).toContain(WORKSPACE_PERMISSIONS.CHAT);
     expect(of("workspace-manager")).toEqual(
       expect.arrayContaining(WORKSPACE_PERMISSION_KEYS)
     );

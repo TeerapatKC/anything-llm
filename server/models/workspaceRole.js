@@ -19,7 +19,7 @@ const {
  */
 
 /**
- * Workspace roles are reusable definitions (Viewer, Contributor, ...) that are assigned
+ * Workspace roles are reusable definitions (Member, Contributor, ...) that are assigned
  * per membership, so one account can hold different powers in different workspaces.
  *
  * Resolving what a user may do in a workspace considers three things, in order:

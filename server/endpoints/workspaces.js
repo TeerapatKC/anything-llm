@@ -396,7 +396,7 @@ function workspaceEndpoints(app) {
     "/workspace/:slug",
     // Reading a workspace needs VIEW, not DELETE. This route sat directly below
     // `app.delete("/workspace/:slug")` and had inherited its gate, so every role
-    // that could not delete the workspace - viewer, member, contributor, and any
+    // that could not delete the workspace - member, contributor, and any
     // custom role without `workspace.delete` - got a 401 just opening it.
     [validatedRequest, workspacePermissionValid([WS_PERMISSIONS.VIEW])],
     async (request, response) => {

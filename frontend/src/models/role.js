@@ -68,7 +68,7 @@ const Role = {
 };
 
 /**
- * Workspace roles are the reusable per-workspace roles (Viewer, Contributor, ...) that
+ * Workspace roles are the reusable per-workspace roles (Member, Contributor, ...) that
  * are assigned to each member of a workspace.
  */
 export const WorkspaceRole = {

@@ -276,7 +276,6 @@ describe("WorkspaceRole.seed", () => {
     expect(roles.map((r) => r.name).sort()).toEqual([
       "contributor",
       "member",
-      "viewer",
       "workspace-manager",
     ]);
     expect(roles.filter((r) => r.isDefault)).toHaveLength(1);
@@ -311,7 +310,7 @@ describe("per-workspace resolution", () => {
   it("gives the same account different powers in different workspaces", async () => {
     const user = { id: 7, role: "default" };
     await join(7, ALPHA, "workspace-manager");
-    await join(7, BETA, "viewer");
+    await join(7, BETA, "member");
 
     // Manager of alpha
     expect(
@@ -329,19 +328,19 @@ describe("per-workspace resolution", () => {
       )
     ).toBe(true);
 
-    // Read-only in beta
+    // An ordinary member in beta: can use the workspace, cannot run it.
     expect(
       await WorkspaceRole.userCanInWorkspace(
         user,
         BETA,
-        WORKSPACE_PERMISSIONS.VIEW
+        WORKSPACE_PERMISSIONS.CHAT
       )
     ).toBe(true);
     expect(
       await WorkspaceRole.userCanInWorkspace(
         user,
         BETA,
-        WORKSPACE_PERMISSIONS.CHAT
+        WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE
       )
     ).toBe(false);
     expect(
@@ -423,7 +422,7 @@ describe("instance-wide overrides", () => {
 describe("userCanInAnyWorkspace", () => {
   it("is true when the permission is held in at least one workspace", async () => {
     const user = { id: 7, role: "default" };
-    await join(7, ALPHA, "viewer");
+    await join(7, ALPHA, "member");
     await join(7, BETA, "contributor");
 
     expect(
@@ -501,7 +500,8 @@ describe("custom workspace roles", () => {
   });
 
   it("refuses to delete built-in or default roles", async () => {
-    const builtIn = await WorkspaceRole.get({ name: "viewer" });
+    // Built-in but not the default one, so the two guards are checked separately.
+    const builtIn = await WorkspaceRole.get({ name: "contributor" });
     expect((await WorkspaceRole.delete(builtIn.id)).success).toBe(false);
 
     const fallback = await WorkspaceRole.get({ name: "member" });

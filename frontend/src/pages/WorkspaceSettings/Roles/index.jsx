@@ -26,7 +26,7 @@ import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSetting
 /**
  * Roles defined inside one workspace.
  *
- * The shared roles (Viewer, Contributor, ...) are defined instance-wide and are shown
+ * The shared roles (Member, Contributor, ...) are defined instance-wide and are shown
  * here read-only - editing them from a workspace would silently change what every other
  * workspace means by that role. Roles created here belong to this workspace alone.
  */
