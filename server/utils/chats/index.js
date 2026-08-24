@@ -111,6 +111,7 @@ async function recentChatHistory({
 async function chatPrompt(workspace, user = null, opts = {}) {
   const { SystemSettings } = require("../../models/systemSettings");
   const { promptWithMemories } = require("../memories");
+  const { withBrandIdentity } = require("../brandIdentity");
   const basePrompt =
     workspace?.openAiPrompt ?? SystemSettings.saneDefaultSystemPrompt;
   const systemPrompt = await SystemPromptVariables.expandSystemPromptVariables(
@@ -119,7 +120,7 @@ async function chatPrompt(workspace, user = null, opts = {}) {
     workspace?.id
   );
   return promptWithMemories({
-    systemPrompt,
+    systemPrompt: withBrandIdentity(systemPrompt),
     user,
     workspaceId: workspace?.id,
     prompt: opts.prompt ?? "",

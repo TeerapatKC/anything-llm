@@ -119,7 +119,7 @@ const TRANSLATIONS = {
       add: "新しいメッセージを追加",
       save: "メッセージを保存",
       heading: "説明してください",
-      body: "AnythingLLMの利点",
+      body: "NexusAIの利点",
     },
     delete: {
       title: "ワークスペースを削除",

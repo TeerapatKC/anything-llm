@@ -538,6 +538,7 @@ class Provider {
   static async systemPrompt({ workspace = null, user = null, prompt = "" }) {
     const { SystemSettings } = require("../../../../models/systemSettings");
     const { promptWithMemories } = require("../../../memories");
+    const { withBrandIdentity } = require("../../../brandIdentity");
     const basePrompt =
       workspace?.openAiPrompt ?? SystemSettings.saneDefaultSystemPrompt;
     const systemPrompt =
@@ -547,7 +548,7 @@ class Provider {
         workspace?.id || null
       );
     return promptWithMemories({
-      systemPrompt,
+      systemPrompt: withBrandIdentity(systemPrompt),
       user,
       workspaceId: workspace?.id,
       prompt,

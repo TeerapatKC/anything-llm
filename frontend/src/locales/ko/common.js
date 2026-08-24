@@ -126,7 +126,7 @@ const TRANSLATIONS = {
       add: "새 메시지 추가",
       save: "메시지 저장",
       heading: "저에게 설명해주세요",
-      body: "AnythingLLM의 장점",
+      body: "NexusAI의 장점",
     },
     delete: {
       title: "워크스페이스 삭제",

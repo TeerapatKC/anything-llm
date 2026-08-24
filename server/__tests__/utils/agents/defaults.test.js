@@ -22,6 +22,7 @@ jest.mock("../../../utils/MCP", () => {
   }));
 });
 
+const { withBrandIdentity } = require("../../../utils/brandIdentity");
 const { WORKSPACE_AGENT } = require("../../../utils/agents/defaults");
 
 describe("WORKSPACE_AGENT.getDefinition", () => {
@@ -80,7 +81,7 @@ describe("WORKSPACE_AGENT.getDefinition", () => {
       user.id,
       workspace.id
     );
-    expect(definition.role).toBe(expandedPrompt);
+    expect(definition.role).toBe(withBrandIdentity(expandedPrompt));
   });
 
   it("should handle workspace system prompt without user context", async () => {
@@ -105,7 +106,7 @@ describe("WORKSPACE_AGENT.getDefinition", () => {
       null,
       workspace.id
     );
-    expect(definition.role).toBe(expandedPrompt);
+    expect(definition.role).toBe(withBrandIdentity(expandedPrompt));
   });
 
   it("should return functions array in definition", async () => {
