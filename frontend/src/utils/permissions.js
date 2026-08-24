@@ -272,6 +272,13 @@ function permissionsOf(user) {
 
 /**
  * Whether the user holds every one of the given permissions.
+ *
+ * There is deliberately no shortcut for `system.admin` here. The server expands that
+ * wildcard into the concrete list before it caches it, so a holder's cached permissions
+ * already name everything they actually have - and, crucially, exclude anything the owner
+ * has reserved. Short-circuiting on the wildcard would hand every screen back to an
+ * administrator that the server then refuses to serve.
+ *
  * @param {string|string[]} permissions
  * @param {Object|null} [user] - omit to read the cached session user
  * @returns {boolean}
@@ -279,7 +286,6 @@ function permissionsOf(user) {
 export function userCan(permissions, user) {
   const required = Array.isArray(permissions) ? permissions : [permissions];
   const held = permissionsOf(user);
-  if (held.includes(PERMISSIONS.SYSTEM_ADMIN)) return true;
   return required.every((permission) => held.includes(permission));
 }
 
@@ -292,7 +298,6 @@ export function userCan(permissions, user) {
  */
 export function userCanAny(permissions = [], user) {
   const held = permissionsOf(user);
-  if (held.includes(PERMISSIONS.SYSTEM_ADMIN)) return true;
   return permissions.some((permission) => held.includes(permission));
 }
 

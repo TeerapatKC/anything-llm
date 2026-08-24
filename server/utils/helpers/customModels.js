@@ -70,8 +70,10 @@ const SUPPORT_CUSTOM_MODELS = [
   "deepgram-stt",
   "lemonade-stt",
   "groq-stt",
+  "generic-openai-stt",
   // TTS Engines
   "kokoro-tts",
+  "generic-openai-tts",
 ];
 
 /**
@@ -216,6 +218,10 @@ async function getCustomModels(
       return await getGroqSTTModels(apiKey);
     case "kokoro-tts":
       return await kokoroTtsVoices(basePath, apiKey);
+    case "generic-openai-stt":
+      return await getOpenAiCompatibleAudioModels("stt", basePath, apiKey);
+    case "generic-openai-tts":
+      return await getOpenAiCompatibleAudioModels("tts", basePath, apiKey);
     default:
       return { models: [], error: "Invalid provider for custom models" };
   }
@@ -1535,6 +1541,63 @@ async function getOpenRouterImageModels() {
       return [];
     });
   return { models, error: null };
+}
+
+/**
+ * Lists the models advertised by a user-provided OpenAI-compatible STT or TTS
+ * service via its `/models` endpoint. Nothing is cached back into `process.env`
+ * here - these endpoints are configured on the audio preferences page and share
+ * no credential with the generic-openai LLM provider.
+ * @param {"stt"|"tts"} type - Which audio provider's endpoint/key to read.
+ * @param {string} basePath - The OpenAI-compatible base URL (eg: http://localhost:8000/v1).
+ * @param {string} apiKey - The API key to use, if any.
+ * @returns {Promise<{models: Array<{id: string, organization: string, name: string}>, error: string | null}>}
+ */
+async function getOpenAiCompatibleAudioModels(
+  type = "stt",
+  basePath = null,
+  apiKey = null
+) {
+  const endpoint =
+    basePath ||
+    (type === "stt"
+      ? process.env.STT_OPEN_AI_COMPATIBLE_ENDPOINT
+      : process.env.TTS_OPEN_AI_COMPATIBLE_ENDPOINT);
+  if (!endpoint) return { models: [], error: "No base URL was provided." };
+
+  const key =
+    apiKey ||
+    (type === "stt"
+      ? process.env.STT_OPEN_AI_COMPATIBLE_KEY
+      : process.env.TTS_OPEN_AI_COMPATIBLE_KEY) ||
+    null;
+
+  try {
+    const { OpenAI: OpenAIApi } = require("openai");
+    const openai = new OpenAIApi({ baseURL: endpoint, apiKey: key });
+    const models = await openai.models
+      .list()
+      .then((results) => results.data)
+      .then((models) =>
+        models.map((model) => ({
+          id: model.id,
+          name: model.id,
+          organization: model.owned_by ?? "generic-openai",
+        }))
+      );
+    return { models, error: null };
+  } catch (e) {
+    // Plenty of self-hosted STT/TTS servers do not implement `/models` at all -
+    // the UI falls back to a free-text model field when nothing comes back.
+    console.error(
+      `OpenAiCompatible${type.toUpperCase()}:listModels`,
+      e.message
+    );
+    return {
+      models: [],
+      error: `Could not fetch models from ${endpoint}`,
+    };
+  }
 }
 
 module.exports = {

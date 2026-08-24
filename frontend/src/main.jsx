@@ -487,6 +487,15 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/settings",
+        lazy: async () => {
+          const { default: SettingsLanding } = await import(
+            "@/pages/GeneralSettings/Landing"
+          );
+          return { element: <PrivateRoute Component={SettingsLanding} /> };
+        },
+      },
+      {
         path: "/settings/roles",
         lazy: async () => {
           const { default: AdminRoles } = await import("@/pages/Admin/Roles");
@@ -641,7 +650,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={TelegramBotSettings}
-                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
+                permissions={[PERMISSIONS.INTEGRATIONS_TELEGRAM]}
               />
             ),
           };
@@ -657,7 +666,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobs}
-                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
+                permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
               />
             ),
           };
@@ -673,7 +682,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobRuns}
-                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
+                permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
               />
             ),
           };
@@ -689,7 +698,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobRunDetail}
-                permissions={[PERMISSIONS.SYSTEM_ADMIN]}
+                permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
               />
             ),
           };

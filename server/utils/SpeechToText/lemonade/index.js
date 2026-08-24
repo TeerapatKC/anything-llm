@@ -39,7 +39,15 @@ class LemonadeSTT {
     let payloadBuffer = audioBuffer;
     let payloadFilename = filename;
     if (extension !== ".wav") {
-      payloadBuffer = await convertAudioBufferToWav(audioBuffer, extension);
+      try {
+        payloadBuffer = await convertAudioBufferToWav(audioBuffer, extension);
+      } catch (e) {
+        // Unlike the OpenAI-compatible provider this conversion is mandatory, so
+        // say what is actually needed instead of surfacing "FFMPEG binary not found."
+        throw new Error(
+          `Could not convert the recording to WAV, which Lemonade requires: ${e.message} Install ffmpeg and make sure it is on the PATH of the process running the collector.`
+        );
+      }
       payloadFilename = "audio.wav";
     }
     const file = await toFile(payloadBuffer, payloadFilename);

@@ -15,11 +15,18 @@ const FFT_SIZE = 2048;
  * @param {() => void} options.onSilence - Called when sustained silence is detected
  * @param {number} options.silenceMs - Milliseconds of continuous silence before firing
  */
-export default function useSilenceDetector(stream, { onSilence, silenceMs }) {
+export default function useSilenceDetector(
+  stream,
+  { onSilence, silenceMs, onLevel }
+) {
   const onSilenceRef = useRef(onSilence);
+  const onLevelRef = useRef(onLevel);
   useEffect(() => {
     onSilenceRef.current = onSilence;
   }, [onSilence]);
+  useEffect(() => {
+    onLevelRef.current = onLevel;
+  }, [onLevel]);
 
   useEffect(() => {
     if (!stream) return;
@@ -36,6 +43,7 @@ export default function useSilenceDetector(stream, { onSilence, silenceMs }) {
     let raf = null;
     let silenceTimer = null;
     let hasSpoken = false;
+    let smoothedLevel = 0;
 
     const tick = () => {
       analyser.getByteTimeDomainData(buffer);
@@ -45,6 +53,9 @@ export default function useSilenceDetector(stream, { onSilence, silenceMs }) {
         sumSquares += sample * sample;
       }
       const rms = Math.sqrt(sumSquares / buffer.length);
+      const normalizedLevel = Math.min(1, rms * 10);
+      smoothedLevel = smoothedLevel * 0.65 + normalizedLevel * 0.35;
+      onLevelRef.current?.(smoothedLevel);
 
       if (rms > RMS_THRESHOLD) {
         hasSpoken = true;
@@ -64,6 +75,7 @@ export default function useSilenceDetector(stream, { onSilence, silenceMs }) {
       if (raf) cancelAnimationFrame(raf);
       if (silenceTimer) clearTimeout(silenceTimer);
       if (ctx.state !== "closed") ctx.close().catch(() => {});
+      onLevelRef.current?.(0);
     };
   }, [stream, silenceMs]);
 }

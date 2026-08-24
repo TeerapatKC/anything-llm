@@ -52,6 +52,8 @@ export default function PromptInput({
   const { isDisabled } = useIsDisabled();
   const agentSessionActive = useIsAgentSessionActive();
   const [promptInput, setPromptInput] = useState("");
+  const [voiceState, setVoiceState] = useState("idle");
+  const [voiceLevel, setVoiceLevel] = useState(0);
   const [showTools, setShowTools] = useState(false);
   const autoOpenedToolsRef = useRef(false);
   const toolsHighlightRef = useRef(-1);
@@ -363,27 +365,34 @@ export default function PromptInput({
             />
             <div className="bg-zinc-800 light:bg-white light:border light:border-slate-300 rounded-[20px] pwa:rounded-3xl flex flex-col px-5 overflow-hidden">
               <AttachmentManager attachments={attachments} />
-              <div className="flex items-center">
-                <textarea
-                  id={PROMPT_INPUT_ID}
-                  ref={textareaRef}
-                  onChange={handleChange}
-                  onKeyDown={captureEnterOrUndo}
-                  onPaste={(e) => {
-                    saveCurrentState();
-                    handlePasteEvent(e);
-                  }}
-                  required={true}
-                  onFocus={() => setFocused(true)}
-                  onBlur={(e) => {
-                    setFocused(false);
-                    adjustTextArea(e);
-                  }}
-                  value={promptInput}
-                  spellCheck={Appearance.get("enableSpellCheck")}
-                  className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] pt-[20px] w-full leading-5 text-theme-text-primary light:text-slate-600 bg-transparent placeholder:text-white/60 light:placeholder:text-slate-400 resize-none active:outline-none focus:outline-none grow pwa:text-[16px]! ${textSizeClass}`}
-                  placeholder={t("chat_window.send_message")}
-                />
+              <div className="flex min-h-[60px] items-center">
+                {voiceState === "idle" ? (
+                  <textarea
+                    id={PROMPT_INPUT_ID}
+                    ref={textareaRef}
+                    onChange={handleChange}
+                    onKeyDown={captureEnterOrUndo}
+                    onPaste={(e) => {
+                      saveCurrentState();
+                      handlePasteEvent(e);
+                    }}
+                    required={true}
+                    onFocus={() => setFocused(true)}
+                    onBlur={(e) => {
+                      setFocused(false);
+                      adjustTextArea(e);
+                    }}
+                    value={promptInput}
+                    spellCheck={Appearance.get("enableSpellCheck")}
+                    className={`border-none cursor-text max-h-[50vh] md:max-h-[350px] md:min-h-[40px] pt-[20px] w-full leading-5 text-theme-text-primary light:text-slate-600 bg-transparent placeholder:text-white/60 light:placeholder:text-slate-400 resize-none active:outline-none focus:outline-none grow pwa:text-[16px]! ${textSizeClass}`}
+                    placeholder={t("chat_window.send_message")}
+                  />
+                ) : (
+                  <VoiceWaveform
+                    processing={voiceState === "processing"}
+                    level={voiceLevel}
+                  />
+                )}
               </div>
               <div className="flex justify-between items-center pt-3.5 pb-3">
                 <div className="flex items-center gap-x-0.25">
@@ -407,7 +416,11 @@ export default function PromptInput({
                   />
                 </div>
                 <div className="flex gap-x-2 items-center">
-                  <SpeechToText sendCommand={sendCommand} />
+                  <SpeechToText
+                    sendCommand={sendCommand}
+                    onStateChange={setVoiceState}
+                    onAudioLevel={setVoiceLevel}
+                  />
                   {isStreaming ? (
                     <StopGenerationButton />
                   ) : (
@@ -423,6 +436,36 @@ export default function PromptInput({
           </div>
         </div>
       </form>
+    </div>
+  );
+}
+
+function VoiceWaveform({ processing = false, level = 0 }) {
+  const bars = [8, 15, 22, 12, 26, 18, 10, 20, 14, 24, 11, 17];
+
+  return (
+    <div
+      className="flex w-full items-center justify-center gap-1 pt-2"
+      role="status"
+      aria-label={processing ? "Transcribing speech" : "Listening"}
+    >
+      {bars.map((height, index) => {
+        const variation = 0.68 + ((index * 7) % 5) * 0.08;
+        const scale = processing ? 0.35 : 0.22 + level * variation;
+        return (
+          <span
+            key={index}
+            className="w-1 rounded-full bg-theme-text-primary/65 transition-transform duration-75 ease-out light:bg-slate-600/65"
+            style={{
+              height,
+              transform: `scaleY(${Math.min(1, scale)})`,
+            }}
+          />
+        );
+      })}
+      <span className="ml-2 text-xs text-white/45 light:text-slate-900/45">
+        {processing ? "Transcribing..." : "Listening..."}
+      </span>
     </div>
   );
 }

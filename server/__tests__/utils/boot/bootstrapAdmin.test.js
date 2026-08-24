@@ -100,3 +100,30 @@ describe("createInitialAdmin", () => {
     expect(Workspace.new).not.toHaveBeenCalled();
   });
 });
+
+describe("ensureJWTSecret", () => {
+  const { updateENV } = require("../../../utils/helpers/updateENV");
+  const { ensureJWTSecret } = require("../../../utils/boot/bootstrapAdmin");
+
+  it("leaves an existing secret alone", async () => {
+    process.env.JWT_SECRET = "already-set";
+    expect(await ensureJWTSecret()).toBe(false);
+    expect(updateENV).not.toHaveBeenCalled();
+  });
+
+  it("mints one when there is none", async () => {
+    // Without a secret `decodeJWT` cannot verify anything, so every authenticated
+    // request answers 401 - and the browser reads that as "this user has no
+    // permissions" rather than as a broken session, which is how an administrator ends
+    // up apparently signed in with every settings screen missing.
+    delete process.env.JWT_SECRET;
+
+    expect(await ensureJWTSecret()).toBe(true);
+    expect(updateENV).toHaveBeenCalledWith(
+      expect.objectContaining({ JWTSecret: expect.any(String) }),
+      true
+    );
+
+    process.env.JWT_SECRET = "already-set";
+  });
+});

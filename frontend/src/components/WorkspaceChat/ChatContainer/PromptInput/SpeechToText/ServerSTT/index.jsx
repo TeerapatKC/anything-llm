@@ -1,10 +1,10 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import Appearance from "@/models/appearance";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import MicButton from "../MicButton";
 import useSilenceDetector from "../useSilenceDetector";
+import { audioBlobToWav } from "@/utils/audio/toWav";
 
 const SILENCE_INTERVAL = 3_200; // ms of silence before auto-stop, matches BrowserNative.
 const MIME_CANDIDATES = [
@@ -16,18 +16,38 @@ const MIME_CANDIDATES = [
 /**
  * Records mic audio with MediaRecorder and uploads it to the configured
  * server-side STT provider. Auto-stops after SILENCE_INTERVAL of mic silence
- * via useSilenceDetector. Honors `autoSubmitSttInput` on completion.
+ * via useSilenceDetector, then returns the transcript to the prompt for review.
  * @param {Object} props - The component props
  * @param {(textToAppend: string, autoSubmit: boolean) => void} props.sendCommand - The function to send the command
  * @returns {React.ReactElement} The ServerSTT component
  */
-export default function ServerSTT({ sendCommand }) {
+export default function ServerSTT({
+  sendCommand,
+  onStateChange,
+  onAudioLevel,
+}) {
   const { t } = useTranslation();
   const [listening, setListening] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [stream, setStream] = useState(null);
   const recorderRef = useRef(null);
   const chunksRef = useRef([]);
+
+  useEffect(
+    () => () => {
+      onStateChange?.("idle");
+      onAudioLevel?.(0);
+    },
+    [onAudioLevel, onStateChange]
+  );
+
+  const updateListening = useCallback(
+    (value) => {
+      setListening(value);
+      onStateChange?.(value ? "listening" : "idle");
+    },
+    [onStateChange]
+  );
 
   const stopListening = useCallback(() => {
     const recorder = recorderRef.current;
@@ -37,6 +57,7 @@ export default function ServerSTT({ sendCommand }) {
   useSilenceDetector(listening ? stream : null, {
     onSilence: stopListening,
     silenceMs: SILENCE_INTERVAL,
+    onLevel: onAudioLevel,
   });
 
   const startListening = useCallback(async () => {
@@ -63,20 +84,28 @@ export default function ServerSTT({ sendCommand }) {
       recorder.onstop = async () => {
         audioStream.getTracks().forEach((t) => t.stop());
         setStream(null);
+        onAudioLevel?.(0);
         setListening(false);
         recorderRef.current = null;
 
         const chunks = chunksRef.current;
         chunksRef.current = [];
-        if (!chunks.length) return;
+        if (!chunks.length) {
+          onStateChange?.("idle");
+          return;
+        }
         const blob = new Blob(chunks, { type: recorder.mimeType });
-        if (blob.size === 0) return;
+        if (blob.size === 0) {
+          onStateChange?.("idle");
+          return;
+        }
 
         await uploadAndDispatch(
           blob,
           recorder.mimeType,
           sendCommand,
           setProcessing,
+          onStateChange,
           t
         );
       };
@@ -84,12 +113,12 @@ export default function ServerSTT({ sendCommand }) {
       recorderRef.current = recorder;
       recorder.start();
       setStream(audioStream);
-      setListening(true);
+      updateListening(true);
     } catch (e) {
       console.error("Failed to start microphone:", e);
       showToast(t("chat_window.stt_mic_denied"), "error", { clear: true });
     }
-  }, [sendCommand, t]);
+  }, [sendCommand, t, updateListening, onAudioLevel, onStateChange]);
 
   return (
     <MicButton
@@ -106,15 +135,22 @@ async function uploadAndDispatch(
   mimeType,
   sendCommand,
   setProcessing,
+  onStateChange,
   t
 ) {
   setProcessing(true);
+  onStateChange?.("processing");
+  // Prefer WAV: whisper backends want it, and converting here means the server
+  // does not need an ffmpeg binary to do it. Falls back to the raw recording if
+  // the browser cannot decode its own output.
+  const wavBlob = await audioBlobToWav(blob);
   const extension = mimeType.includes("ogg") ? "ogg" : "webm";
   const { text, error } = await System.transcribeAudio(
-    blob,
-    `audio.${extension}`
+    wavBlob ?? blob,
+    wavBlob ? "audio.wav" : `audio.${extension}`
   );
   setProcessing(false);
+  onStateChange?.("idle");
 
   if (error) {
     showToast(t("chat_window.stt_transcription_failed", { error }), "error", {
@@ -126,7 +162,7 @@ async function uploadAndDispatch(
 
   sendCommand({
     text,
-    autoSubmit: !!Appearance.get("autoSubmitSttInput"),
+    autoSubmit: false,
     writeMode: "append",
   });
 }

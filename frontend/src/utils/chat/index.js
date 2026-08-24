@@ -182,6 +182,7 @@ export default function handleChat(
       ...existingHistory,
       sources: [],
       closed: true,
+      stopped: true,
       error: null,
       animate: false,
       pending: false,

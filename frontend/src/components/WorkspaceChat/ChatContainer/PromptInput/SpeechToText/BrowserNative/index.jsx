@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "regenerator-runtime"; //required polyfill for speech recognition;
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import Appearance from "@/models/appearance";
 import MicButton from "../MicButton";
+import useAudioLevel from "../useAudioLevel";
 
 let timeout;
 const SILENCE_INTERVAL = 3_200; // wait in seconds of silence before closing.
@@ -12,11 +12,17 @@ const SILENCE_INTERVAL = 3_200; // wait in seconds of silence before closing.
 /**
  * Browser-native speech-to-text using the Web Speech API.
  * @param {Object} props - The component props
- * @param {(textToAppend: string, autoSubmit: boolean) => void} props.sendCommand - The function to send the command
+ * @param {Function} props.sendCommand - Adds the completed transcript to the prompt
  * @returns {React.ReactElement} The SpeechToText component
  */
-export default function BrowserNativeSTT({ sendCommand }) {
-  const previousTranscriptRef = useRef("");
+export default function BrowserNativeSTT({
+  sendCommand,
+  onStateChange,
+  onAudioLevel,
+}) {
+  const transcriptRef = useRef("");
+  const wasListeningRef = useRef(false);
+  const [levelStream, setLevelStream] = useState(null);
   const {
     transcript,
     listening,
@@ -28,7 +34,15 @@ export default function BrowserNativeSTT({ sendCommand }) {
     clearTranscriptOnListen: true,
   });
 
-  function startSTTSession() {
+  useAudioLevel(listening ? levelStream : null, onAudioLevel);
+
+  function closeLevelStream() {
+    levelStream?.getTracks().forEach((track) => track.stop());
+    setLevelStream(null);
+    onAudioLevel?.(0);
+  }
+
+  async function startSTTSession() {
     if (!isMicrophoneAvailable) {
       alert(
         "AnythingLLM does not have access to microphone. Please enable for this site to use this feature."
@@ -36,49 +50,62 @@ export default function BrowserNativeSTT({ sendCommand }) {
       return;
     }
 
-    resetTranscript();
-    previousTranscriptRef.current = "";
-    SpeechRecognition.startListening({
-      continuous: browserSupportsContinuousListening,
-      language: window?.navigator?.language ?? "en-US",
-    });
+    try {
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+      setLevelStream(audioStream);
+      resetTranscript();
+      transcriptRef.current = "";
+      SpeechRecognition.startListening({
+        continuous: browserSupportsContinuousListening,
+        language: window?.navigator?.language ?? "en-US",
+      });
+    } catch {
+      closeLevelStream();
+      alert(
+        "AnythingLLM does not have access to microphone. Please enable for this site to use this feature."
+      );
+    }
   }
 
   function endSTTSession() {
     SpeechRecognition.stopListening();
-
-    // If auto submit is enabled, send an empty string to the chat window to submit the current transcript
-    // since every chunk of text should have been streamed to the chat window by now.
-    if (Appearance.get("autoSubmitSttInput")) {
-      sendCommand({
-        text: "",
-        autoSubmit: true,
-        writeMode: "append",
-      });
-    }
-
-    resetTranscript();
-    previousTranscriptRef.current = "";
+    closeLevelStream();
     clearTimeout(timeout);
   }
 
   useEffect(() => {
+    transcriptRef.current = transcript;
+    onStateChange?.(listening ? "listening" : "idle");
+
     if (transcript?.length > 0 && listening) {
-      const previousTranscript = previousTranscriptRef.current;
-      const newContent = transcript.slice(previousTranscript.length);
-
-      // Stream just the diff of the new content since transcript is an accumulating string.
-      // and not just the new content transcribed.
-      if (newContent.length > 0)
-        sendCommand({ text: newContent, writeMode: "append" });
-
-      previousTranscriptRef.current = transcript;
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         endSTTSession();
       }, SILENCE_INTERVAL);
     }
-  }, [transcript, listening]);
+
+    if (wasListeningRef.current && !listening) {
+      closeLevelStream();
+      const finalTranscript = transcriptRef.current.trim();
+      if (finalTranscript)
+        sendCommand({ text: finalTranscript, writeMode: "append" });
+      resetTranscript();
+      transcriptRef.current = "";
+    }
+    wasListeningRef.current = listening;
+  }, [transcript, listening, onStateChange, sendCommand, resetTranscript]);
+
+  useEffect(
+    () => () => {
+      clearTimeout(timeout);
+      levelStream?.getTracks().forEach((track) => track.stop());
+      onStateChange?.("idle");
+      onAudioLevel?.(0);
+    },
+    [levelStream, onAudioLevel, onStateChange]
+  );
 
   if (!browserSupportsSpeechRecognition) return null;
   return (

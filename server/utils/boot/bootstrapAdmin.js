@@ -28,13 +28,26 @@ async function hasAnyUser() {
 }
 
 /**
- * Sessions are JWT-backed, so a secret must exist before the first admin can log in.
- * Persisted to the env file so it survives restarts and tokens stay valid.
- * @returns {Promise<void>}
+ * Sessions are JWT-backed, so a secret must exist before anyone can log in.
+ *
+ * Called on every boot, not just when the first owner is created. Without a secret
+ * `decodeJWT` cannot verify anything, so every authenticated request answers 401 - and
+ * the failure is quiet from the browser's side: the permission fetch falls back to an
+ * empty list, so the user stays apparently signed in while every menu and settings screen
+ * they should have vanishes. Minting one instead leaves them to sign in again, which is
+ * an obvious failure rather than a baffling one.
+ *
+ * @returns {Promise<boolean>} whether a new secret had to be created
  */
 async function ensureJWTSecret() {
-  if (process.env.JWT_SECRET) return;
+  if (process.env.JWT_SECRET) return false;
   await updateENV({ JWTSecret: v4() }, true);
+  console.log(
+    "\x1b[33m[SESSIONS]\x1b[0m No JWT_SECRET was set, so a new one was generated. " +
+      "Everyone will have to sign in again. Set JWT_SECRET in the env file this server " +
+      "reads to stop this recurring on the next restart."
+  );
+  return true;
 }
 
 /**
@@ -117,6 +130,7 @@ async function bootstrapAdminFromEnv() {
 
 module.exports = {
   hasAnyUser,
+  ensureJWTSecret,
   createInitialAdmin,
   bootstrapAdminFromEnv,
 };

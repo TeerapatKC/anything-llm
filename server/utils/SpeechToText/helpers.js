@@ -33,4 +33,25 @@ async function convertAudioBufferToWav(audioBuffer, extension) {
   }
 }
 
-module.exports = { convertAudioBufferToWav };
+/**
+ * Best-effort variant of `convertAudioBufferToWav` for providers that only
+ * *prefer* WAV input. Conversion needs an `ffmpeg` binary on the collector's
+ * PATH, which is not installed everywhere - when it is missing we would rather
+ * forward the browser's original recording (most OpenAI-compatible services
+ * accept webm/opus) than fail the whole transcription.
+ * @param {Buffer} audioBuffer - Source audio buffer.
+ * @param {string} extension - Source file extension including the leading dot (e.g. ".webm").
+ * @returns {Promise<Buffer|null>} The converted WAV buffer, or null if it could not be converted.
+ */
+async function tryConvertAudioBufferToWav(audioBuffer, extension) {
+  try {
+    return await convertAudioBufferToWav(audioBuffer, extension);
+  } catch (e) {
+    console.log(
+      `\x1b[33m[SpeechToText]\x1b[0m Could not convert ${extension} audio to WAV (${e.message}). Sending the original recording to the provider instead - install ffmpeg and make it available on PATH if your provider rejects it.`
+    );
+    return null;
+  }
+}
+
+module.exports = { convertAudioBufferToWav, tryConvertAudioBufferToWav };

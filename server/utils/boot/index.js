@@ -5,7 +5,10 @@ const { CommunicationKey } = require("../comKey");
 const setupTelemetry = require("../telemetry");
 const eagerLoadContextWindows = require("./eagerLoadContextWindows");
 const markOnboarded = require("./markOnboarded");
-const { bootstrapAdminFromEnv } = require("./bootstrapAdmin");
+const {
+  bootstrapAdminFromEnv,
+  ensureJWTSecret,
+} = require("./bootstrapAdmin");
 const {
   ensureSuperAdminExists,
   applyBreakGlassFromEnv,
@@ -38,6 +41,7 @@ function bootSSL(app, port = 3001) {
 
     server
       .listen(port, async () => {
+        await ensureJWTSecret();
         await markOnboarded();
         await Role.seed();
         await WorkspaceRole.seed();
@@ -79,6 +83,7 @@ function bootHTTP(app, port = 3001) {
 
   app
     .listen(port, async () => {
+      await ensureJWTSecret();
       await markOnboarded();
       await Role.seed();
       await WorkspaceRole.seed();

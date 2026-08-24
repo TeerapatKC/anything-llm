@@ -101,6 +101,11 @@ export default {
     return `${API_BASE}/docs`;
   },
   settings: {
+    // Resolves to the first settings screen the user may open - see
+    // pages/GeneralSettings/Landing. Deliberately not an alias for any one page.
+    landing: () => {
+      return "/settings";
+    },
     roles: () => {
       return `/settings/roles`;
     },

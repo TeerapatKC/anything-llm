@@ -50,6 +50,7 @@ export default function ChatContainer({
   const { chatHistoryRef } = useChatContainerQuickScroll();
   const pendingMessageChecked = useRef(false);
   const pendingResetRef = useRef(false);
+  const agentAbortRequestedRef = useRef(false);
   const activeThreadSlug = threadSlug;
 
   const isEmpty =
@@ -347,6 +348,7 @@ export default function ChatContainer({
   // TODO: Simplify this WSS stuff
   useEffect(() => {
     let socket = null;
+    let handleAgentAbort = null;
 
     function handleWSS() {
       try {
@@ -356,12 +358,14 @@ export default function ChatContainer({
         );
         socket.supportsAgentStreaming = false;
 
-        window.addEventListener(ABORT_STREAM_EVENT, () => {
+        handleAgentAbort = () => {
+          agentAbortRequestedRef.current = true;
           setAgentSessionActive(false);
           setAgentSessionSocket(null);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
           socket?.close();
-        });
+        };
+        window.addEventListener(ABORT_STREAM_EVENT, handleAgentAbort);
 
         socket.addEventListener("message", (event) => {
           try {
@@ -391,21 +395,26 @@ export default function ChatContainer({
           if (pendingResetRef.current) {
             pendingResetRef.current = false;
           } else {
+            const wasStopped = agentAbortRequestedRef.current;
             setChatHistory((prev) => [
               ...prev.filter((msg) => !!msg.content),
               {
                 uuid: v4(),
                 type: "statusResponse",
-                content: "Agent session complete.",
+                content: wasStopped
+                  ? "Response stopped."
+                  : "Agent session complete.",
                 role: "assistant",
                 sources: [],
                 closed: true,
+                stopped: wasStopped,
                 error: null,
                 animate: false,
                 pending: false,
               },
             ]);
           }
+          agentAbortRequestedRef.current = false;
           setLoadingResponse(false);
           setWebsocket(null);
           setSocketId(null);
@@ -443,6 +452,8 @@ export default function ChatContainer({
 
     return () => {
       if (socket) {
+        if (handleAgentAbort)
+          window.removeEventListener(ABORT_STREAM_EVENT, handleAgentAbort);
         setAgentSessionActive(false);
         window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
         socket.close();

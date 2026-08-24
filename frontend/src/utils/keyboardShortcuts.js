@@ -9,7 +9,7 @@ export const SHORTCUTS = {
   "⌘ + ,": {
     translationKey: "settings",
     action: () => {
-      window.location.href = paths.settings.branding();
+      window.location.href = paths.settings.landing();
     },
   },
   "⌘ + H": {

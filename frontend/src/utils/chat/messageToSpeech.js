@@ -14,8 +14,9 @@
  * underlying spoken content. It is intentionally regex-based (no extra
  * dependency) so it can be safely used both on the client and inside the
  * native browser TTS path which has no access to the server's markdown-it
- * tokenizer. AsyncTTS does not use this helper as the cloud based TTS engines
- * do not need this cleanup and seem to handle the Markdown syntax just fine.
+ * tokenizer. The AsyncTTS path does the same cleanup server-side before it
+ * reaches the provider - see `server/utils/TextToSpeech/messageToSpeech.js`,
+ * and keep the two in sync.
  *
  * @param {string} message - The raw markdown message body.
  * @returns {string} A plain-text string suitable for TTS.
@@ -90,6 +91,15 @@ export default function messageToSpeech(message = "") {
 
   // HTML tags: strip but keep their text content.
   text = text.replace(/<\/?[^>]+>/g, " ");
+
+  /*
+   * Emoji and other pictographs: engines either name them out loud
+   * ("smiling face") or choke on them - neither is wanted in speech.
+   */
+  text = text.replace(
+    /[\p{Extended_Pictographic}\p{Regional_Indicator}](?:\uFE0F|\u200D[\p{Extended_Pictographic}\p{Regional_Indicator}]|\p{Emoji_Modifier})*/gu,
+    " "
+  );
 
   // Collapse repeated whitespace (newlines and spaces) to single spaces.
   text = text.replace(/\s+/g, " ").trim();

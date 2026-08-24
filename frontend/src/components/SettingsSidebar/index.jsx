@@ -340,7 +340,7 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.available-channels.telegram"),
               href: paths.settings.telegram(),
-              permissions: [PERMISSIONS.SYSTEM_ADMIN],
+              permissions: [PERMISSIONS.INTEGRATIONS_TELEGRAM],
             },
           ]}
         />
@@ -358,12 +358,12 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.event-logs"),
               href: paths.settings.logs(),
-              permissions: [PERMISSIONS.SYSTEM_EVENT_LOGS],
+              permissions: [PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW],
             },
             {
               btnText: t("settings.scheduled-jobs"),
               href: paths.settings.scheduledJobs(),
-              permissions: [PERMISSIONS.SYSTEM_ADMIN],
+              permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
             },
             {
               btnText: t("settings.api-keys"),

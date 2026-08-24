@@ -78,7 +78,7 @@ export default function CustomLogo() {
         {t("customization.items.logo.description")}
       </p>
       {isDefaultLogo ? (
-        <div className="flex md:flex-row flex-col items-center">
+        <div className="flex flex-col items-start md:flex-row md:items-center">
           <div className="flex flex-row gap-x-8">
             <label
               className="mt-3 transition-all duration-300 hover:opacity-80"
@@ -111,7 +111,7 @@ export default function CustomLogo() {
           </div>
         </div>
       ) : (
-        <div className="flex md:flex-row flex-col items-center relative">
+        <div className="relative flex flex-col items-start md:flex-row md:items-center">
           <div className="group w-80 h-[130px] mt-3 overflow-hidden rounded-2xl relative">
             <img
               src={logo}

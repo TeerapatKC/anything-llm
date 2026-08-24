@@ -132,8 +132,12 @@ async function photoToAttachment(bot, photos) {
 async function sendVoiceResponse(bot, chatId, text) {
   try {
     const { getTTSProvider } = require("../../TextToSpeech");
+    const { messageToSpeech } = require("../../TextToSpeech/messageToSpeech");
     const provider = getTTSProvider();
-    const buffer = await provider.ttsBuffer(text);
+    // Reasoning blocks and Markdown would otherwise be read aloud verbatim.
+    const spokenText = messageToSpeech(text);
+    if (!spokenText) return false;
+    const buffer = await provider.ttsBuffer(spokenText);
     if (!buffer) return false;
     const { mime, extension } = getAudioFileInfo(buffer);
     await bot.sendAudio(

@@ -1,13 +1,8 @@
 import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CircleStop } from "lucide-react";
 
 import AgentAnimation from "@/media/animations/agent-animation.webm";
 import AgentStatic from "@/media/animations/agent-static.png";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 /**
  * The agent's running commentary - "Swapping over to agent chat", the thought before
@@ -24,6 +19,7 @@ export default function StatusResponse({
   messages = [],
   isThinking = false,
   isComplete = false,
+  isStopped = false,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const currentThought = messages[messages.length - 1];
@@ -33,28 +29,28 @@ export default function StatusResponse({
   // answer to read.
   if (isComplete || !currentThought) return null;
 
-  function handleExpandClick() {
-    if (previousThoughts.length === 0) return;
-    setIsExpanded(!isExpanded);
-  }
-
-  const canExpand = previousThoughts.length > 0;
-
   return (
-    <div className="flex justify-center w-full pr-4">
+    <div className="flex w-full justify-center px-4 md:pl-0">
       <div className="w-full flex flex-col">
-        <div
-          onClick={handleExpandClick}
-          className={`flex items-start gap-x-2.5 py-2 ${canExpand ? "cursor-pointer" : ""}`}
+        <button
+          type="button"
+          onClick={() => setIsExpanded(!isExpanded)}
+          aria-expanded={isExpanded}
+          className="flex w-full cursor-pointer items-center gap-x-2.5 py-2 text-left"
         >
-          <div className="shrink-0 w-[18px] h-[18px] mt-[1px] opacity-50">
-            {isThinking ? (
+          <span className="size-[18px] shrink-0 opacity-50">
+            {isStopped ? (
+              <CircleStop
+                className="size-[17px]"
+                aria-label="Response stopped"
+              />
+            ) : isThinking ? (
               <video
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-[18px] h-[18px] scale-[165%] light:invert"
+                className="size-[18px] scale-[165%] light:invert"
                 aria-label="Agent is thinking..."
               >
                 <source src={AgentAnimation} type="video/webm" />
@@ -63,74 +59,42 @@ export default function StatusResponse({
               <img
                 src={AgentStatic}
                 alt="Agent complete"
-                className="w-[18px] h-[18px] light:invert"
+                className="size-[18px] light:invert"
                 aria-label="Agent has finished thinking"
               />
             )}
-          </div>
+          </span>
 
-          <div
-            className={`min-w-0 flex-1 transition-[max-height] duration-300 ease-in-out origin-top ${
-              isExpanded ? "" : "overflow-hidden max-h-[18px]"
+          <span
+            className={`min-w-0 flex-1 font-mono text-sm leading-[18px] ${
+              isThinking && !isStopped
+                ? "text-shimmer"
+                : "text-white/40 light:text-slate-900/40"
             }`}
           >
-            <div className="font-mono text-sm leading-[18px]">
-              {!isExpanded ? (
-                <span
-                  className={`block w-full truncate ${
-                    isThinking
-                      ? "text-shimmer"
-                      : "text-white/40 light:text-slate-900/40"
-                  }`}
-                >
-                  {currentThought.content}
-                </span>
-              ) : (
-                <>
-                  {previousThoughts.map((thought, index) => (
-                    <div
-                      key={`cot-${thought.uuid || index}`}
-                      className="mb-2 text-white/40 light:text-slate-900/40"
-                    >
-                      {thought.content}
-                    </div>
-                  ))}
-                  <div
-                    className={
-                      isThinking
-                        ? "text-shimmer"
-                        : "text-white/40 light:text-slate-900/40"
-                    }
-                  >
-                    {currentThought.content}
-                  </div>
-                </>
-              )}
+            {isStopped ? "Stopped" : "Thinking"}
+          </span>
+
+          <ChevronDown
+            className={`size-4 shrink-0 transform text-white/40 transition-transform duration-200 light:text-slate-900/40 ${isExpanded ? "rotate-180" : ""}`}
+          />
+        </button>
+
+        <div
+          className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+            isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="pb-2 pl-7 font-mono text-sm leading-5 text-white/40 light:text-slate-900/40">
+              {previousThoughts.map((thought, index) => (
+                <div key={`cot-${thought.uuid || index}`} className="mb-2">
+                  {thought.content}
+                </div>
+              ))}
+              <div>{currentThought.content}</div>
             </div>
           </div>
-
-          {canExpand && (
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <button
-                    onClick={handleExpandClick}
-                    className="shrink-0 border-none text-white/40 light:text-slate-900/40 hover:text-white/70 light:hover:text-slate-900/70 transition-colors"
-                    aria-label={
-                      isExpanded ? "Hide thought chain" : "Show thought chain"
-                    }
-                  />
-                }
-              >
-                <ChevronDown
-                  className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                />
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-                {isExpanded ? "Hide thought chain" : "Show thought chain"}
-              </TooltipContent>
-            </Tooltip>
-          )}
         </div>
       </div>
     </div>

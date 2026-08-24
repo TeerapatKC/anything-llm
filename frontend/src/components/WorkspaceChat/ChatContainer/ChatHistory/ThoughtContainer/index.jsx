@@ -8,16 +8,10 @@ import {
   useCallback,
 } from "react";
 import renderMarkdown from "@/utils/chat/markdown";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, CircleStop } from "lucide-react";
 import DOMPurify from "dompurify";
-import { isMobile } from "react-device-detect";
 import ThinkingAnimation from "@/media/animations/thinking-animation.webm";
 import ThinkingStatic from "@/media/animations/thinking-static.png";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 /**
  * Context to persist thought expansion state across component transitions
@@ -77,8 +71,6 @@ export const THOUGHT_REGEX_COMPLETE = new RegExp(
       `<${keyword}\\s*(?:[^>]*?)?\\s*>[\\s\\S]*?<\\/${keyword}\\s*(?:[^>]*?)?>`
   ).join("|")
 );
-const THOUGHT_PREVIEW_LENGTH = isMobile ? 25 : 50;
-
 /**
  * Checks if the content has readable content.
  * @param {string} content - The content to check.
@@ -101,7 +93,15 @@ function contentIsNotEmpty(content = "") {
  * @returns {JSX.Element}
  */
 export const ThoughtChainComponent = forwardRef(
-  ({ content: initialContent, messageId, allowAnimation = false }, ref) => {
+  (
+    {
+      content: initialContent,
+      messageId,
+      allowAnimation = false,
+      stopped = false,
+    },
+    ref
+  ) => {
     const [content, setContent] = useState(initialContent);
     const [hasReadableContent, setHasReadableContent] = useState(
       contentIsNotEmpty(initialContent)
@@ -139,7 +139,7 @@ export const ThoughtChainComponent = forwardRef(
     const tagStrippedContent = content
       .replace(THOUGHT_REGEX_OPEN, "")
       .replace(THOUGHT_REGEX_CLOSE, "");
-    const canExpand = tagStrippedContent.length > THOUGHT_PREVIEW_LENGTH;
+    const canExpand = tagStrippedContent.trim().length > 0;
     if (!content || !content.length || !hasReadableContent) return null;
 
     // Once the model has closed its thought and moved on to the answer, the reasoning
@@ -147,98 +147,77 @@ export const ThoughtChainComponent = forwardRef(
     // agent's status commentary follows, so the two behave alike.
     if (!isThinking && isComplete) return null;
 
-    function handleExpandClick() {
-      if (!canExpand) return;
-      setIsExpanded(!isExpanded);
-    }
-
     const dimText = "text-white/40 light:text-slate-900/40";
 
     return (
       <div className="flex justify-center w-full">
         <div className="w-full flex flex-col">
-          <div
-            onClick={handleExpandClick}
-            className={`flex items-start gap-x-2.5 py-2 ${canExpand ? "cursor-pointer" : ""}`}
+          <button
+            type="button"
+            onClick={() => canExpand && setIsExpanded(!isExpanded)}
+            aria-expanded={isExpanded}
+            className={`flex w-full items-center gap-x-2.5 py-2 text-left ${canExpand ? "cursor-pointer" : "cursor-default"}`}
           >
-            <div className="shrink-0 w-[18px] h-[18px] mt-[1px] opacity-50">
-              {isThinking ? (
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <video
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-[18px] h-[18px] scale-[115%] light:invert"
-                        aria-label="Model is thinking..."
-                      />
-                    }
-                  >
-                    <source src={ThinkingAnimation} type="video/webm" />
-                  </TooltipTrigger>
-                  <TooltipContent
-                    side="bottom"
-                    className="max-w-[250px] text-xs"
-                  >
-                    Model is thinking...
-                  </TooltipContent>
-                </Tooltip>
+            <span className="size-[18px] shrink-0 opacity-50">
+              {stopped ? (
+                <CircleStop
+                  className="size-[17px]"
+                  aria-label="Response stopped"
+                />
+              ) : isThinking ? (
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="size-[18px] scale-[115%] light:invert"
+                  aria-label="Model is thinking"
+                >
+                  <source src={ThinkingAnimation} type="video/webm" />
+                </video>
               ) : (
                 <img
                   src={ThinkingStatic}
                   alt="Thinking"
-                  className="w-[18px] h-[18px] light:invert"
+                  className="size-[18px] light:invert"
                   aria-label="Model is thinking"
                 />
               )}
-            </div>
+            </span>
 
-            <div
-              className={`min-w-0 flex-1 transition-[max-height] duration-300 ease-in-out origin-top ${
-                isExpanded ? "" : "overflow-hidden max-h-[18px]"
+            <span
+              className={`min-w-0 flex-1 font-mono text-sm leading-[18px] ${
+                isThinking && !stopped ? "text-shimmer" : dimText
               }`}
             >
-              <div className="font-mono text-sm leading-[18px] [&_p]:m-0">
-                <span
-                  className={`block w-full ${!isExpanded ? "truncate" : ""} ${
-                    isThinking ? "text-shimmer" : dimText
-                  }`}
+              {stopped ? "Stopped" : "Thinking"}
+            </span>
+
+            {canExpand && (
+              <ChevronDown
+                className={`size-4 shrink-0 transform ${dimText} transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+              />
+            )}
+          </button>
+
+          {canExpand && (
+            <div
+              className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${
+                isExpanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div
+                  className={`pb-2 pl-7 font-mono text-sm leading-5 [&_p]:m-0 ${dimText}`}
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(
-                      isExpanded
-                        ? renderMarkdown(tagStrippedContent)
-                        : tagStrippedContent
+                      renderMarkdown(tagStrippedContent)
                     ),
                   }}
                 />
               </div>
             </div>
-
-            {canExpand && (
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <button
-                      onClick={handleExpandClick}
-                      className={`shrink-0 border-none ${dimText} hover:text-white/70 light:hover:text-slate-900/70 transition-colors`}
-                      aria-label={
-                        isExpanded ? "Hide thought chain" : "Show thought chain"
-                      }
-                    />
-                  }
-                >
-                  <ChevronDown
-                    className={`w-4 h-4 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
-                  />
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-                  {isExpanded ? "Hide thought chain" : "Show thought chain"}
-                </TooltipContent>
-              </Tooltip>
-            )}
-          </div>
+          )}
         </div>
       </div>
     );

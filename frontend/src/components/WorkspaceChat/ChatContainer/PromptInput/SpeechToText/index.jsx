@@ -11,7 +11,11 @@ import ServerSTT from "./ServerSTT";
  * @param {(textToAppend: string, autoSubmit: boolean) => void} props.sendCommand - The function to send the command
  * @returns {React.ReactElement|null} The SpeechToText component
  */
-export default function SpeechToText({ sendCommand }) {
+export default function SpeechToText({
+  sendCommand,
+  onStateChange,
+  onAudioLevel,
+}) {
   const [provider, setProvider] = useState(null);
 
   useEffect(() => {
@@ -31,6 +35,18 @@ export default function SpeechToText({ sendCommand }) {
 
   if (provider === null) return null;
   if (provider === "native")
-    return <BrowserNativeSTT sendCommand={sendCommand} />;
-  return <ServerSTT sendCommand={sendCommand} />;
+    return (
+      <BrowserNativeSTT
+        sendCommand={sendCommand}
+        onStateChange={onStateChange}
+        onAudioLevel={onAudioLevel}
+      />
+    );
+  return (
+    <ServerSTT
+      sendCommand={sendCommand}
+      onStateChange={onStateChange}
+      onAudioLevel={onAudioLevel}
+    />
+  );
 }

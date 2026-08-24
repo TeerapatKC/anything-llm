@@ -25,6 +25,7 @@ const { validWorkspaceSlug } = require("../utils/middleware/validWorkspace");
 const { convertToChatHistory } = require("../utils/helpers/chat/responses");
 const { CollectorApi } = require("../utils/collectorApi");
 const { getTTSProvider } = require("../utils/TextToSpeech");
+const { messageToSpeech } = require("../utils/TextToSpeech/messageToSpeech");
 const { getAudioFileInfo } = require("../utils/TextToSpeech/audioFormat");
 const { WorkspaceThread } = require("../models/workspaceThread");
 const { SlashCommandPresets } = require("../models/slashCommandsPresets");
@@ -766,7 +767,11 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const text = safeJsonParse(wsChat.response, null)?.text;
+        // The stored response is raw model output - strip the reasoning block and
+        // Markdown so the engine speaks the answer only. See messageToSpeech.
+        const text = messageToSpeech(
+          safeJsonParse(wsChat.response, null)?.text
+        );
         if (!text) return response.sendStatus(204).end();
 
         const TTSProvider = getTTSProvider();
@@ -805,12 +810,12 @@ function workspaceEndpoints(app) {
         // Get threadId we are branching from if that request body is sent
         // and is a valid thread slug.
         const threadId = !!threadSlug
-          ? (
+          ? ((
               await WorkspaceThread.get({
                 slug: String(threadSlug),
                 workspace_id: workspace.id,
               })
-            )?.id ?? null
+            )?.id ?? null)
           : null;
         const chatsToFork = await WorkspaceChats.where(
           {

@@ -901,6 +901,18 @@ onboarding flow since its background is dark and is the same fill as the inputs.
     background: transparent !important;
   }
 
+  .thin-scrollbar::-webkit-scrollbar-button,
+  .thin-scrollbar::-webkit-scrollbar-button:single-button,
+  .thin-scrollbar::-webkit-scrollbar-button:vertical:start:decrement,
+  .thin-scrollbar::-webkit-scrollbar-button:vertical:end:increment,
+  .thin-scrollbar::-webkit-scrollbar-button:horizontal:start:decrement,
+  .thin-scrollbar::-webkit-scrollbar-button:horizontal:end:increment {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    background: transparent !important;
+  }
+
   .thin-scrollbar::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.3) !important;
     border-radius: 9999px !important;

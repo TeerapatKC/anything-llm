@@ -1,4 +1,4 @@
-const { convertAudioBufferToWav } = require("../helpers");
+const { tryConvertAudioBufferToWav } = require("../helpers");
 const path = require("path");
 
 class GenericOpenAiSTT {
@@ -42,16 +42,51 @@ class GenericOpenAiSTT {
     const extension = path.extname(filename).toLowerCase() || ".webm";
     let payloadBuffer = audioBuffer;
     let payloadFilename = filename;
+    // WAV is the safest input for whisper backends, but it needs ffmpeg on the
+    // collector - when that is unavailable we forward the original recording
+    // rather than failing outright. See tryConvertAudioBufferToWav.
     if (extension !== ".wav") {
-      payloadBuffer = await convertAudioBufferToWav(audioBuffer, extension);
-      payloadFilename = "audio.wav";
+      const wavBuffer = await tryConvertAudioBufferToWav(
+        audioBuffer,
+        extension
+      );
+      if (wavBuffer) {
+        payloadBuffer = wavBuffer;
+        payloadFilename = "audio.wav";
+      }
     }
     const file = await toFile(payloadBuffer, payloadFilename);
-    const result = await this.openai.audio.transcriptions.create({
-      file,
-      model: this.model,
-    });
-    return result?.text ?? "";
+    try {
+      const result = await this.openai.audio.transcriptions.create({
+        file,
+        model: this.model,
+      });
+      return result?.text ?? "";
+    } catch (e) {
+      throw new Error(this.#transcriptionErrorMessage(e, payloadFilename));
+    }
+  }
+
+  /**
+   * Build an error a user can act on. The OpenAI SDK only reads `message` out of
+   * an error body, so a service answering in another shape (FastAPI's
+   * `{"detail": "..."}`, for one) surfaces as "500 status code (no body)" - and
+   * a service that rejected the audio for its format says nothing about ffmpeg.
+   * @param {Error & {status?: number, error?: object}} error - The error the SDK threw.
+   * @param {string} sentFilename - The filename actually sent to the service.
+   * @returns {string}
+   */
+  #transcriptionErrorMessage(error, sentFilename) {
+    const detail =
+      error?.error?.detail ||
+      error?.error?.message ||
+      error?.message ||
+      "Unknown error";
+    const status = error?.status ? ` (HTTP ${error.status})` : "";
+    const conversionHint = sentFilename.endsWith(".wav")
+      ? ""
+      : ` The recording was sent as ${path.extname(sentFilename) || "webm"} because it could not be converted to WAV - install ffmpeg on the collector's PATH if your service only accepts WAV.`;
+    return `Transcription failed${status}: ${detail}${conversionHint}`;
   }
 }
 

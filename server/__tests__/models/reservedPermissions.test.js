@@ -395,3 +395,43 @@ describe("reserving a coarse permission", () => {
     expect(await Role.userCan(ADMIN, PERMISSIONS.SYSTEM_SETTINGS)).toBe(true);
   });
 });
+
+describe("the permission list handed to the browser", () => {
+  it("names every permission explicitly instead of implying them by the wildcard", async () => {
+    // The frontend decides which menus to render from this list alone. It used to take a
+    // shortcut - "holds system.admin, therefore allow everything" - which handed every
+    // reserved screen straight back to administrators. That only works if the list is
+    // complete on its own, so this pins that it is.
+    await ReservedPermissions.set([]);
+    const held = await Role.permissionsForUser(ADMIN);
+
+    expect(held).toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB);
+    expect(held).toContain(PERMISSIONS.SYSTEM_SETTINGS_LLM);
+    expect(held).toContain(PERMISSIONS.INTEGRATIONS_TELEGRAM);
+    expect(held).toContain(PERMISSIONS.AGENTS_SCHEDULED_JOBS);
+  });
+
+  it("omits a reserved permission so the menu behind it cannot render", async () => {
+    await ReservedPermissions.set([
+      PERMISSIONS.SYSTEM_COMMUNITY_HUB,
+      PERMISSIONS.INTEGRATIONS_TELEGRAM,
+      PERMISSIONS.AGENTS_SCHEDULED_JOBS,
+    ]);
+    const held = await Role.permissionsForUser(ADMIN);
+
+    expect(held).not.toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB);
+    // Reserving the hub takes its children with it, which is what the menu entries use.
+    expect(held).not.toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB_BROWSE);
+    expect(held).not.toContain(PERMISSIONS.INTEGRATIONS_TELEGRAM);
+    expect(held).not.toContain(PERMISSIONS.AGENTS_SCHEDULED_JOBS);
+
+    // The wildcard is still there - an admin is still an admin - which is precisely why
+    // the client must not treat it as "allow everything".
+    expect(held).toContain(PERMISSIONS.SYSTEM_ADMIN);
+
+    // And the owner is unaffected.
+    const ownerHolds = await Role.permissionsForUser(OWNER);
+    expect(ownerHolds).toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB);
+    expect(ownerHolds).toContain(PERMISSIONS.INTEGRATIONS_TELEGRAM);
+  });
+});

@@ -44,7 +44,7 @@ export default function SettingsButton() {
         <TooltipTrigger
           render={
             <Link
-              to={paths.settings.branding()}
+              to={paths.settings.landing()}
               className="transition-all duration-300 p-2 rounded-full bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover"
               aria-label="Settings"
             />

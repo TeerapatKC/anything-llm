@@ -187,7 +187,7 @@ export default function UserButton() {
           {canSeeSettings && (
             <DropdownMenuItem
               className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
-              render={<Link to={paths.settings.branding()} />}
+              render={<Link to={paths.settings.landing()} />}
             >
               <Wrench size={16} />
               Settings

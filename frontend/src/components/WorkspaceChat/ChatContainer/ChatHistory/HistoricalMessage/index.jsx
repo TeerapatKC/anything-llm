@@ -1,5 +1,5 @@
 import React, { memo, useLayoutEffect, useRef, useState } from "react";
-import { Info, TriangleAlert } from "lucide-react";
+import { CircleStop, Info, TriangleAlert } from "lucide-react";
 import Actions from "./Actions";
 import renderMarkdown from "@/utils/chat/markdown";
 import Citations from "../Citation";
@@ -58,6 +58,7 @@ const HistoricalMessage = ({
   metrics = {},
   outputs = [],
   clarifyingQuestions = [],
+  stopped = false,
 }) => {
   // Freeze uuid on first render. User messages arrive without a uuid and this value
   // is used as the wrapper div's `key` — a default param fallback would regenerate
@@ -171,8 +172,12 @@ const HistoricalMessage = ({
               role={role}
               message={message}
               messageId={uuid}
-              allowAnimation={isLastMessage}
+              allowAnimation={isLastMessage && !stopped}
+              stopped={stopped}
             />
+            {stopped && !message?.match(THOUGHT_REGEX_OPEN) && (
+              <StoppedResponse />
+            )}
             {isRefusalMessage && (
               <Tooltip>
                 <TooltipTrigger
@@ -332,7 +337,7 @@ function TruncatableContent({ children }) {
 }
 
 const RenderChatContent = memo(
-  ({ role, message, messageId, allowAnimation = false }) => {
+  ({ role, message, messageId, allowAnimation = false, stopped = false }) => {
     // If the message is not from the assistant, we can render it directly
     // as normal since the user cannot think (lol)
     if (role !== "assistant")
@@ -346,7 +351,7 @@ const RenderChatContent = memo(
       );
     let thoughtChain = null;
     let msgToRender = message;
-    if (!message) return null;
+    if (!message) return stopped ? <StoppedResponse /> : null;
 
     // If the message is a perfect thought chain, we can render it directly
     // Complete == open and close tags match perfectly.
@@ -373,6 +378,7 @@ const RenderChatContent = memo(
             content={thoughtChain}
             messageId={messageId}
             allowAnimation={allowAnimation}
+            stopped={stopped}
           />
         )}
         {msgToRender.trim().length > 0 && (
@@ -391,7 +397,17 @@ const RenderChatContent = memo(
       prevProps.role === nextProps.role &&
       prevProps.message === nextProps.message &&
       prevProps.messageId === nextProps.messageId &&
-      prevProps.allowAnimation === nextProps.allowAnimation
+      prevProps.allowAnimation === nextProps.allowAnimation &&
+      prevProps.stopped === nextProps.stopped
     );
   }
 );
+
+function StoppedResponse() {
+  return (
+    <div className="mt-2 flex items-center gap-x-2 font-mono text-xs text-white/40 light:text-slate-900/40">
+      <CircleStop className="size-3.5" />
+      <span>Response stopped</span>
+    </div>
+  );
+}

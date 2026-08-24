@@ -73,7 +73,7 @@ function ShowWorkspaceChat() {
       <WorkspaceSettingsSidebar workspace={workspace} />
       <div
         style={{ height: "100%" }}
-        className="transition-all duration-500 relative min-w-0 bg-theme-bg-secondary w-full h-full overflow-y-scroll"
+        className="thin-scrollbar transition-all duration-500 relative min-w-0 bg-theme-bg-secondary w-full h-full overflow-y-scroll"
       >
         <div className="px-4 pb-6 pt-20 min-[1100px]:px-16 min-[1100px]:pt-6">
           <TabContent

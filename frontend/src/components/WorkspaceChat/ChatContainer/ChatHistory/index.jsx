@@ -147,6 +147,7 @@ export default forwardRef(function (
           messages={item}
           isThinking={!hasSubsequentMessages && lastMessageInfo.isAnimating}
           isComplete={hasSubsequentMessages}
+          isStopped={item.some((message) => message.stopped)}
         />
       );
     },
@@ -328,6 +329,7 @@ function buildMessages({
           metrics={props.metrics}
           outputs={props.outputs}
           clarifyingQuestions={props.clarifyingQuestions}
+          stopped={props.stopped}
         />
       );
     }
