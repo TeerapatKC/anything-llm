@@ -77,7 +77,7 @@ const TRANSLATIONS = {
     "experimental-features": "Funcions experimentals",
     contact: "Contacta el suport",
     "browser-extension": "Extensió del navegador",
-    "mobile-app": "AnythingLLM Mòbil",
+    "mobile-app": "NexusAI Mòbil",
     channels: "Canals",
     "available-channels": {
       telegram: "Telegram",
@@ -138,7 +138,7 @@ const TRANSLATIONS = {
       add: "Afegeix un missatge nou",
       save: "Desa els missatges",
       heading: "Explica'm",
-      body: "els beneficis d'AnythingLLM",
+      body: "els beneficis d'NexusAI",
     },
     delete: {
       title: "Elimina l'espai de treball",
@@ -735,7 +735,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "Selecció intel·ligent d'habilitats",
         description:
-          "Activa eines il·limitades i redueix l'ús de tokens fins a un 80% per consulta: AnythingLLM selecciona automàticament les habilitats adequades per a cada missatge.",
+          "Activa eines il·limitades i redueix l'ús de tokens fins a un 80% per consulta: NexusAI selecciona automàticament les habilitats adequades per a cada missatge.",
         "max-tools": {
           title: "Màxim d'eines",
           description:
@@ -773,16 +773,16 @@ const TRANSLATIONS = {
     interface: {
       title: "Preferències d'interfície",
       description:
-        "Estableix les teves preferències d'interfície per a AnythingLLM.",
+        "Estableix les teves preferències d'interfície per a NexusAI.",
     },
     branding: {
       title: "Marca i etiqueta blanca",
       description:
-        "Personalitza la teva instància d'AnythingLLM amb una marca pròpia.",
+        "Personalitza la teva instància d'NexusAI amb una marca pròpia.",
     },
     chat: {
       title: "Xat",
-      description: "Estableix les teves preferències de xat per a AnythingLLM.",
+      description: "Estableix les teves preferències de xat per a NexusAI.",
       auto_submit: {
         title: "Envia automàticament l'entrada de veu",
         description:
@@ -822,7 +822,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Idioma de visualització",
         description:
-          "Selecciona l'idioma preferit per mostrar la interfície d'AnythingLLM, quan les traduccions estiguin disponibles.",
+          "Selecciona l'idioma preferit per mostrar la interfície d'NexusAI, quan les traduccions estiguin disponibles.",
       },
       logo: {
         title: "Logotip de la marca",
@@ -870,7 +870,7 @@ const TRANSLATIONS = {
   api: {
     title: "Claus API",
     description:
-      "Les claus API permeten al titular accedir i gestionar programàticament aquesta instància d'AnythingLLM.",
+      "Les claus API permeten al titular accedir i gestionar programàticament aquesta instància d'NexusAI.",
     link: "Llegeix la documentació de l'API",
     generate: "Genera una nova clau API",
     empty: "No s'han trobat claus API",
@@ -884,7 +884,7 @@ const TRANSLATIONS = {
       close: "Tanca",
       create: "Crea la clau API",
       helper:
-        "Un cop creada, la clau API es pot usar per accedir i configurar programàticament aquesta instància d'AnythingLLM.",
+        "Un cop creada, la clau API es pot usar per accedir i configurar programàticament aquesta instància d'NexusAI.",
       name: {
         label: "Nom",
         placeholder: "Integració de producció",
@@ -909,7 +909,7 @@ const TRANSLATIONS = {
   llm: {
     title: "Preferència de LLM",
     description:
-      "Aquestes són les credencials i la configuració del teu proveïdor preferit de xat i embedding de LLM. És important que aquestes claus siguin actuals i correctes, o bé AnythingLLM no funcionarà correctament.",
+      "Aquestes són les credencials i la configuració del teu proveïdor preferit de xat i embedding de LLM. És important que aquestes claus siguin actuals i correctes, o bé NexusAI no funcionarà correctament.",
     provider: "Proveïdor de LLM",
     providers: {
       azure_openai: {
@@ -931,7 +931,7 @@ const TRANSLATIONS = {
       "Aquestes són les credencials i la configuració del teu proveïdor de model de transcripció preferit. És important que aquestes claus siguin actuals i correctes, o bé els fitxers multimèdia i d'àudio no es transcriuran.",
     provider: "Proveïdor de transcripció",
     "warn-start":
-      "L'ús del model whisper local en màquines amb poca RAM o CPU pot bloquejar AnythingLLM en processar fitxers multimèdia.",
+      "L'ús del model whisper local en màquines amb poca RAM o CPU pot bloquejar NexusAI en processar fitxers multimèdia.",
     "warn-recommend":
       "Recomanem almenys 2 GB de RAM i pujar fitxers de menys de 10 MB.",
     "warn-end":
@@ -942,7 +942,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Quan s'usa un LLM que no admet de manera nativa un motor d'embedding, pot ser que hagis d'especificar addicionalment les credencials per a l'embedding de text.",
     "desc-end":
-      "L'embedding és el procés de convertir text en vectors. Aquestes credencials són necessàries per convertir els teus fitxers i missatges en un format que AnythingLLM pugui processar.",
+      "L'embedding és el procés de convertir text en vectors. Aquestes credencials són necessàries per convertir els teus fitxers i missatges en un format que NexusAI pugui processar.",
     provider: {
       title: "Proveïdor d'embedding",
     },
@@ -968,7 +968,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Base de dades vectorial",
     description:
-      "Aquestes són les credencials i la configuració de com funcionarà la teva instància d'AnythingLLM. És important que aquestes claus siguin actuals i correctes.",
+      "Aquestes són les credencials i la configuració de com funcionarà la teva instància d'NexusAI. És important que aquestes claus siguin actuals i correctes.",
     provider: {
       title: "Proveïdor de la base de dades vectorial",
       description: "No cal cap configuració per a LanceDB.",
@@ -1002,7 +1002,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "Bot de Telegram",
     description:
-      "Connecta la teva instància d'AnythingLLM a Telegram per poder xatejar amb els teus espais de treball des de qualsevol dispositiu.",
+      "Connecta la teva instància d'NexusAI a Telegram per poder xatejar amb els teus espais de treball des de qualsevol dispositiu.",
     setup: {
       step1: {
         title: "Pas 1: Crea el teu bot de Telegram",
@@ -1076,7 +1076,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privadesa i gestió de dades",
     description:
-      "Aquesta és la teva configuració de com els proveïdors de tercers connectats i AnythingLLM gestionen les teves dades.",
+      "Aquesta és la teva configuració de com els proveïdors de tercers connectats i NexusAI gestionen les teves dades.",
     anonymous: "Telemetria anònima activada",
   },
   connectors: {
@@ -1250,22 +1250,22 @@ const TRANSLATIONS = {
       fetching: "Obtenint...",
       "fetch-website": "Obtén el lloc web",
       "privacy-notice":
-        "Aquests fitxers es pujaran al processador de documents que s'executa en aquesta instància d'AnythingLLM. Aquests fitxers no s'envien ni es comparteixen amb tercers.",
+        "Aquests fitxers es pujaran al processador de documents que s'executa en aquesta instància d'NexusAI. Aquests fitxers no s'envien ni es comparteixen amb tercers.",
     },
     pinning: {
       what_pinning: "Què és l'ancoratge de documents?",
       pin_explained_block1:
-        "Quan <b>ancore</b>s un document a AnythingLLM, injectarem tot el contingut del document a la teva finestra de missatge perquè el teu LLM el comprengui completament.",
+        "Quan <b>ancore</b>s un document a NexusAI, injectarem tot el contingut del document a la teva finestra de missatge perquè el teu LLM el comprengui completament.",
       pin_explained_block2:
         "Funciona millor amb <b>models de context gran</b> o fitxers petits que siguin crítics per a la seva base de coneixement.",
       pin_explained_block3:
-        "Si per defecte no obtens les respostes que desitges d'AnythingLLM, l'ancoratge és una manera excel·lent d'obtenir respostes de major qualitat amb un sol clic.",
+        "Si per defecte no obtens les respostes que desitges d'NexusAI, l'ancoratge és una manera excel·lent d'obtenir respostes de major qualitat amb un sol clic.",
       accept: "D'acord, entès",
     },
     watching: {
       what_watching: "Què fa observar un document?",
       watch_explained_block1:
-        "Quan <b>observes</b> un document a AnythingLLM, sincronitzarem <i>automàticament</i> el contingut del document des de la seva font original a intervals regulars. Això actualitzarà automàticament el contingut a cada espai de treball on es gestioni aquest fitxer.",
+        "Quan <b>observes</b> un document a NexusAI, sincronitzarem <i>automàticament</i> el contingut del document des de la seva font original a intervals regulars. Això actualitzarà automàticament el contingut a cada espai de treball on es gestioni aquest fitxer.",
       watch_explained_block2:
         "Aquesta funció admet actualment contingut en línia i no estarà disponible per a documents pujats manualment.",
       watch_explained_block3_start:
@@ -1405,7 +1405,7 @@ const TRANSLATIONS = {
         edit_description: "Actualitza el contingut d'aquesta memòria.",
         label: "Memòria",
         placeholder:
-          "Per exemple, el nom de l'usuari és Jordi, l'usuari treballa a AnythingLLM, etc.",
+          "Per exemple, el nom de l'usuari és Jordi, l'usuari treballa a NexusAI, etc.",
         create: "Crear",
         save: "Guarda",
         cancel: "Cancel·lar",
@@ -1540,7 +1540,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Autenticació requerida",
           description:
-            "Has d'autenticar-te amb el Centre de la comunitat d'AnythingLLM abans de publicar elements.",
+            "Has d'autenticar-te amb el Centre de la comunitat d'NexusAI abans de publicar elements.",
           button: "Connecta al Centre de la comunitat",
         },
       },

@@ -56,7 +56,7 @@ function useCommunityHubAuthentication() {
       if (!response.success)
         return showToast("Failed to disconnect from hub", "error");
       setHasChanges(false);
-      showToast("Disconnected from AnythingLLM Community Hub", "success");
+      showToast("Disconnected from NexusAI Community Hub", "success");
       setOriginalConnectionKey("");
       setConnectionKey("");
     } catch (error) {
@@ -115,12 +115,12 @@ export default function CommunityHubAuthentication() {
         onCancel={resetChanges}
       />
       <PageHeader
-        title="Your AnythingLLM Community Hub Account"
+        title="Your NexusAI Community Hub Account"
         description={
           <>
-            Connecting your AnythingLLM Community Hub account allows you to
-            access your <b>private</b> AnythingLLM Community Hub items as well
-            as upload your own items to the AnythingLLM Community Hub.
+            Connecting your NexusAI Community Hub account allows you to access
+            your <b>private</b> NexusAI Community Hub items as well as upload
+            your own items to the NexusAI Community Hub.
           </>
         }
       />
@@ -131,20 +131,18 @@ export default function CommunityHubAuthentication() {
             <div className="gap-x-2 flex items-center">
               <Info size={25} />
               <h1 className="text-lg font-semibold">
-                Why connect my AnythingLLM Community Hub account?
+                Why connect my NexusAI Community Hub account?
               </h1>
             </div>
             <p className="text-sm text-theme-text-secondary">
-              Connecting your AnythingLLM Community Hub account allows you to
-              pull in your <b>private</b> items from the AnythingLLM Community
-              Hub as well as upload your own items to the AnythingLLM Community
-              Hub.
+              Connecting your NexusAI Community Hub account allows you to pull
+              in your <b>private</b> items from the NexusAI Community Hub as
+              well as upload your own items to the NexusAI Community Hub.
               <br />
               <br />
               <i>
-                You do not need to connect your AnythingLLM Community Hub
-                account to pull in public items from the AnythingLLM Community
-                Hub.
+                You do not need to connect your NexusAI Community Hub account to
+                pull in public items from the NexusAI Community Hub.
               </i>
             </p>
           </div>
@@ -155,13 +153,13 @@ export default function CommunityHubAuthentication() {
       <div className="mt-6 mb-12">
         <div className="flex flex-col w-full max-w-[400px]">
           <label className="text-theme-text-primary text-sm font-semibold block mb-2">
-            AnythingLLM Hub API Key
+            NexusAI Hub API Key
           </label>
           <Input
             type="password"
             value={connectionKey || ""}
             onChange={onConnectionKeyChange}
-            placeholder="Enter your AnythingLLM Hub API key"
+            placeholder="Enter your NexusAI Hub API key"
           />
           <div className="flex items-center justify-between mt-2">
             <p className="text-theme-text-secondary text-xs">
@@ -170,7 +168,7 @@ export default function CommunityHubAuthentication() {
                 href={paths.communityHub.profile()}
                 className="underline text-primary-button"
               >
-                AnythingLLM Community Hub profile page
+                NexusAI Community Hub profile page
               </a>
               .
             </p>

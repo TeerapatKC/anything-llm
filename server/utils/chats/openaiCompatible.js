@@ -96,19 +96,19 @@ async function chatSync({
   const vectorSearchResults =
     embeddingsCount !== 0
       ? await VectorDb.performSimilaritySearch({
-          namespace: workspace.slug,
-          input: String(prompt),
-          LLMConnector,
-          similarityThreshold: workspace?.similarityThreshold,
-          topN: workspace?.topN,
-          filterIdentifiers: pinnedDocIdentifiers,
-          rerank: workspace?.vectorSearchMode === "rerank",
-        })
+        namespace: workspace.slug,
+        input: String(prompt),
+        LLMConnector,
+        similarityThreshold: workspace?.similarityThreshold,
+        topN: workspace?.topN,
+        filterIdentifiers: pinnedDocIdentifiers,
+        rerank: workspace?.vectorSearchMode === "rerank",
+      })
       : {
-          contextTexts: [],
-          sources: [],
-          message: null,
-        };
+        contextTexts: [],
+        sources: [],
+        message: null,
+      };
 
   // Failed similarity search if it was run at all and failed.
   if (!!vectorSearchResults.message) {
@@ -256,7 +256,7 @@ async function streamChat({
   // We don't want to write a new method for every LLM to support openAI calls
   // via the `handleStreamResponseV2` method handler. So here we create a passthrough
   // that on writes to the main response, transforms the chunk to OpenAI format.
-  // The chunk is coming in the format from `writeResponseChunk` but in the AnythingLLM
+  // The chunk is coming in the format from `writeResponseChunk` but in the NexusAI
   // response chunk schema, so we here we mutate each chunk.
   const responseInterceptor = new PassThrough({});
   responseInterceptor.on("data", (chunk) => {
@@ -336,19 +336,19 @@ async function streamChat({
   const vectorSearchResults =
     embeddingsCount !== 0
       ? await VectorDb.performSimilaritySearch({
-          namespace: workspace.slug,
-          input: String(prompt),
-          LLMConnector,
-          similarityThreshold: workspace?.similarityThreshold,
-          topN: workspace?.topN,
-          filterIdentifiers: pinnedDocIdentifiers,
-          rerank: workspace?.vectorSearchMode === "rerank",
-        })
+        namespace: workspace.slug,
+        input: String(prompt),
+        LLMConnector,
+        similarityThreshold: workspace?.similarityThreshold,
+        topN: workspace?.topN,
+        filterIdentifiers: pinnedDocIdentifiers,
+        rerank: workspace?.vectorSearchMode === "rerank",
+      })
       : {
-          contextTexts: [],
-          sources: [],
-          message: null,
-        };
+        contextTexts: [],
+        sources: [],
+        message: null,
+      };
 
   // Failed similarity search if it was run at all and failed.
   if (!!vectorSearchResults.message) {

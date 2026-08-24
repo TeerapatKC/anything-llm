@@ -361,7 +361,7 @@ function superAdminEndpoints(app) {
  */
 async function instanceName() {
   const custom = await SystemSettings.get({ label: "custom_app_name" });
-  return custom?.value?.trim() || "AnythingLLM";
+  return custom?.value?.trim() || "NexusAI";
 }
 
 module.exports = { superAdminEndpoints };

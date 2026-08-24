@@ -2,7 +2,7 @@ const { WorkspaceChats } = require("../../../../models/workspaceChats");
 const { WorkspaceThread } = require("../../../../models/workspaceThread");
 
 /**
- * Plugin to save chat history to AnythingLLM DB.
+ * Plugin to save chat history to NexusAI DB.
  */
 const chatHistory = {
   name: "chat-history",
@@ -91,7 +91,7 @@ const chatHistory = {
               response: last.content,
               attachments,
             });
-          } catch {}
+          } catch { }
         });
       },
       _store: async function (

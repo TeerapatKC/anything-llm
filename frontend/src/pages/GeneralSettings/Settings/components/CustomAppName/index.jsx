@@ -1,5 +1,5 @@
 import Admin from "@/models/admin";
-import System from "@/models/system";
+import System, { CUSTOM_APP_NAME_UPDATED_EVENT } from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -32,6 +32,7 @@ export default function CustomAppName() {
       const form = new FormData(e.target);
       custom_app_name = form.get("customAppName");
     }
+    custom_app_name = custom_app_name?.trim() ?? "";
     const { success, error } = await Admin.updateSystemPreferences({
       custom_app_name,
     });
@@ -41,6 +42,11 @@ export default function CustomAppName() {
     } else {
       showToast("Successfully updated custom app name.", "success");
       window.localStorage.removeItem(System.cacheKeys.customAppName);
+      window.dispatchEvent(
+        new CustomEvent(CUSTOM_APP_NAME_UPDATED_EVENT, {
+          detail: { appName: custom_app_name },
+        })
+      );
       setCustomAppName(custom_app_name);
       setOriginalAppName(custom_app_name);
       setHasChanges(false);
@@ -72,7 +78,7 @@ export default function CustomAppName() {
           name="customAppName"
           type="text"
           className="max-w-xs"
-          placeholder="AnythingLLM"
+          placeholder="NexusAI"
           required={true}
           autoComplete="off"
           onChange={handleChange}

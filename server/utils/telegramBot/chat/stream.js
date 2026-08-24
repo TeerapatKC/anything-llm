@@ -36,7 +36,7 @@ function historyIsAgentic(chatMode, chatHistory) {
 /**
  * Stream a response to Telegram by running the full RAG pipeline.
  * Uses the same pipeline as the web UI (RAG, parsed docs, pinned docs, etc.)
- * and stores chats with thread_id so they appear in the AnythingLLM UI.
+ * and stores chats with thread_id so they appear in the NexusAI UI.
  *
  * However, we are able to consistently handle agentic conversations in "chat" mode by checking the chat history
  * without needing to open/close an agent invocation every chat which is wasteful on the DB.
@@ -94,7 +94,7 @@ async function streamResponse({
   }
 
   const typingInterval = setInterval(() => {
-    ctx.bot.sendChatAction(chatId, "typing").catch(() => {});
+    ctx.bot.sendChatAction(chatId, "typing").catch(() => { });
   }, 4000);
 
   const { connector: LLMConnector } = await resolveProviderConnector({
@@ -221,14 +221,14 @@ async function buildSearchContext({
   const vectorSearchResults =
     embeddingsCount !== 0
       ? await VectorDb.performSimilaritySearch({
-          namespace: workspace.slug,
-          input: message,
-          LLMConnector,
-          similarityThreshold: workspace?.similarityThreshold,
-          topN: workspace?.topN,
-          filterIdentifiers: pinnedDocIdentifiers,
-          rerank: workspace?.vectorSearchMode === "rerank",
-        })
+        namespace: workspace.slug,
+        input: message,
+        LLMConnector,
+        similarityThreshold: workspace?.similarityThreshold,
+        topN: workspace?.topN,
+        filterIdentifiers: pinnedDocIdentifiers,
+        rerank: workspace?.vectorSearchMode === "rerank",
+      })
       : { contextTexts: [], sources: [], message: null };
 
   if (vectorSearchResults.message) {
@@ -384,7 +384,7 @@ function createStreamHandler({ ctx, chatId }) {
       completeText.slice(msgOffset, msgOffset + MAX_MSG_LEN),
       ctx.log,
       { format: true }
-    ).catch(() => {});
+    ).catch(() => { });
     msgOffset += MAX_MSG_LEN;
     messageId = null;
     messagePending = null;
@@ -424,7 +424,7 @@ function createStreamHandler({ ctx, chatId }) {
         messageId,
         currentText() + CURSOR_CHAR,
         ctx.log
-      ).catch(() => {});
+      ).catch(() => { });
     } else if (!editTimer) {
       editTimer = setTimeout(() => {
         lastEditTime = Date.now();
@@ -434,7 +434,7 @@ function createStreamHandler({ ctx, chatId }) {
           messageId,
           currentText() + CURSOR_CHAR,
           ctx.log
-        ).catch(() => {});
+        ).catch(() => { });
         editTimer = null;
       }, STREAM_EDIT_INTERVAL);
     }
@@ -449,12 +449,12 @@ function createStreamHandler({ ctx, chatId }) {
     const display = final ? text : text + CURSOR_CHAR;
     await editMessage(ctx.bot, chatId, messageId, display, ctx.log, {
       format: final,
-    }).catch(() => {});
+    }).catch(() => { });
   };
 
   const responseHandler = {
-    on: () => {},
-    removeListener: () => {},
+    on: () => { },
+    removeListener: () => { },
     write: (data) => {
       const token = parseSSEChunk(data);
       if (!token) return;

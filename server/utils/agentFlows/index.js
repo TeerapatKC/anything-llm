@@ -19,7 +19,7 @@ class AgentFlows {
     ? path.join(process.env.STORAGE_DIR, "plugins", "agent-flows")
     : path.join(process.cwd(), "storage", "plugins", "agent-flows");
 
-  constructor() {}
+  constructor() { }
 
   /**
    * Ensure flows directory exists
@@ -117,7 +117,7 @@ class AgentFlows {
       );
       if (!supportsAllBlocks)
         throw new Error(
-          "This flow includes unsupported blocks. They may not be supported by your version of AnythingLLM or are not available on this platform."
+          "This flow includes unsupported blocks. They may not be supported by your version of NexusAI or are not available on this platform."
         );
 
       fs.writeFileSync(filePath, JSON.stringify({ ...config, name }, null, 2));

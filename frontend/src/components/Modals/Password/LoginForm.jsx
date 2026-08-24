@@ -89,13 +89,13 @@ export default function LoginForm() {
     >
       <div className="flex items-start justify-between pt-7 pb-9">
         <div className="flex items-center flex-col gap-y-[18px] max-w-[300px]">
-          <div className="flex gap-x-1">
+          {/* <div className="flex gap-x-1">
             <h3 className="text-theme-text-primary light:text-slate-950 text-[38px] leading-[28px] font-medium text-center white-space-nowrap block">
               {t("login.form.welcome")}
             </h3>
-          </div>
+          </div> */}
           <p className="text-zinc-400 light:text-zinc-600 text-sm text-center">
-            {t("login.sign-in", { appName: customAppName || "AnythingLLM" })}
+            {t("login.sign-in", { appName: customAppName || "NexusAI" })}
           </p>
         </div>
       </div>

@@ -22,17 +22,15 @@ export default function MobileConnectModal({ isOpen, onClose }) {
           backgroundPosition: "center",
         }}
       >
-        <DialogTitle className="sr-only">
-          Connect AnythingLLM Mobile
-        </DialogTitle>
+        <DialogTitle className="sr-only">Connect NexusAI Mobile</DialogTitle>
         <div className="flex w-full h-full justify-between p-[35px]">
           {/* left column */}
           <div className="flex flex-col w-1/2 gap-y-[16px]">
             <p className="text-white text-xl font-bold">
-              Go mobile. Stay local. AnythingLLM Mobile.
+              Go mobile. Stay local. NexusAI Mobile.
             </p>
             <p className="text-white text-lg">
-              AnythingLLM for mobile allows you to connect to your workspace's
+              NexusAI for mobile allows you to connect to your workspace's
               chats, threads, tools, and documents for you to use on the go.
               <br />
               <br />
@@ -57,8 +55,8 @@ export default function MobileConnectModal({ isOpen, onClose }) {
               <ConnectionQrCode isOpen={isOpen} />
             </div>
             <p className="text-white text-sm w-[300px] text-center">
-              Scan the QR code with the AnythingLLM Mobile app to enable live
-              sync of your workspaces, chats, threads and documents.
+              Scan the QR code with the NexusAI Mobile app to enable live sync
+              of your workspaces, chats, threads and documents.
               <br />
               <Link
                 to={paths.documentation.mobileIntroduction()}

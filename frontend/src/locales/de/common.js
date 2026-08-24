@@ -62,7 +62,7 @@ const TRANSLATIONS = {
     "browser-extension": "Browser-Extension",
     "system-prompt-variables": "Systempromptvariablen",
     "slash-commands": "Slash Commands",
-    "mobile-app": "AnythingLLM Mobile",
+    "mobile-app": "NexusAI Mobile",
     "community-hub": {
       title: "Community Hub",
       trending: "Neuigkeiten",
@@ -127,7 +127,7 @@ const TRANSLATIONS = {
       add: "Neue Nachricht hinzufügen",
       save: "Nachrichten speichern",
       heading: "Erkläre mir",
-      body: "die Vorteile von AnythingLLM",
+      body: "die Vorteile von NexusAI",
     },
     delete: {
       title: "Workspace löschen",
@@ -727,7 +727,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "Intelligente Auswahl von Fähigkeiten",
         description:
-          "Ermöglichen Sie die uneingeschränkte Nutzung von Werkzeugen und reduzieren Sie die Token-Nutzung pro Anfrage um bis zu 80 % – AnythingLLM wählt automatisch die passenden Fähigkeiten für jede Anfrage aus.",
+          "Ermöglichen Sie die uneingeschränkte Nutzung von Werkzeugen und reduzieren Sie die Token-Nutzung pro Anfrage um bis zu 80 % – NexusAI wählt automatisch die passenden Fähigkeiten für jede Anfrage aus.",
         "max-tools": {
           title: "Max Tools",
           description:
@@ -765,16 +765,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI Einstellungen",
-      description: "Passen Sie die Benutzeroberfläche von AnythingLLM an.",
+      description: "Passen Sie die Benutzeroberfläche von NexusAI an.",
     },
     branding: {
       title: "Branding & Whitelabeling",
       description:
-        "Individualisieren Sie Ihre AnythingLLM-Instanz durch eigenes Branding.",
+        "Individualisieren Sie Ihre NexusAI-Instanz durch eigenes Branding.",
     },
     chat: {
       title: "Chat",
-      description: "Passen Sie Ihre Chat-Einstellungen für AnythingLLM an.",
+      description: "Passen Sie Ihre Chat-Einstellungen für NexusAI an.",
       auto_submit: {
         title: "Spracheingaben automatisch senden",
         description:
@@ -859,7 +859,7 @@ const TRANSLATIONS = {
   api: {
     title: "API-Schlüssel",
     description:
-      "API-Schlüssel ermöglichen es dem Besitzer, programmatisch auf diese AnythingLLM-Instanz zuzugreifen und sie zu verwalten.",
+      "API-Schlüssel ermöglichen es dem Besitzer, programmatisch auf diese NexusAI-Instanz zuzugreifen und sie zu verwalten.",
     link: "Lesen Sie die API-Dokumentation",
     generate: "Neuen API-Schlüssel generieren",
     empty: "Keine API-Schlüssel gefunden",
@@ -873,7 +873,7 @@ const TRANSLATIONS = {
       close: "Schließen",
       create: "API-Schlüssel erstellen",
       helper:
-        "Nach der Erstellung kann der API-Schlüssel verwendet werden, um programmgesteuert auf diese AnythingLLM-Instanz zuzugreifen und sie zu konfigurieren.",
+        "Nach der Erstellung kann der API-Schlüssel verwendet werden, um programmgesteuert auf diese NexusAI-Instanz zuzugreifen und sie zu konfigurieren.",
       name: {
         label: "Name",
         placeholder: "Produktionsintegration",
@@ -898,7 +898,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM-Präferenz",
     description:
-      "Dies sind die Anmeldeinformationen und Einstellungen für Ihren bevorzugten LLM-Chat- und Einbettungsanbieter. Es ist wichtig, dass diese Schlüssel aktuell und korrekt sind, sonst wird AnythingLLM nicht richtig funktionieren.",
+      "Dies sind die Anmeldeinformationen und Einstellungen für Ihren bevorzugten LLM-Chat- und Einbettungsanbieter. Es ist wichtig, dass diese Schlüssel aktuell und korrekt sind, sonst wird NexusAI nicht richtig funktionieren.",
     provider: "LLM-Anbieter",
     providers: {
       azure_openai: {
@@ -920,7 +920,7 @@ const TRANSLATIONS = {
       "Dies sind die Anmeldeinformationen und Einstellungen für Ihren bevorzugten Transkriptionsmodellanbieter. Es ist wichtig, dass diese Schlüssel aktuell und korrekt sind, sonst werden Mediendateien und Audio nicht transkribiert.",
     provider: "Transkriptionsanbieter",
     "warn-start":
-      "Die Verwendung des lokalen Whisper-Modells auf Maschinen mit begrenztem RAM oder CPU kann AnythingLLM bei der Verarbeitung von Mediendateien zum Stillstand bringen.",
+      "Die Verwendung des lokalen Whisper-Modells auf Maschinen mit begrenztem RAM oder CPU kann NexusAI bei der Verarbeitung von Mediendateien zum Stillstand bringen.",
     "warn-recommend":
       "Wir empfehlen mindestens 2 GB RAM und das Hochladen von Dateien <10 MB.",
     "warn-end":
@@ -931,7 +931,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Bei der Verwendung eines LLM, das keine native Unterstützung für eine Einbettungs-Engine bietet, müssen Sie möglicherweise zusätzlich Anmeldeinformationen für die Texteinbettung angeben.",
     "desc-end":
-      "Einbettung ist der Prozess, Text in Vektoren umzuwandeln. Diese Anmeldeinformationen sind erforderlich, um Ihre Dateien und Prompts in ein Format umzuwandeln, das AnythingLLM zur Verarbeitung verwenden kann.",
+      "Einbettung ist der Prozess, Text in Vektoren umzuwandeln. Diese Anmeldeinformationen sind erforderlich, um Ihre Dateien und Prompts in ein Format umzuwandeln, das NexusAI zur Verarbeitung verwenden kann.",
     provider: {
       title: "Einbettungsanbieter",
     },
@@ -957,7 +957,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Vektordatenbank",
     description:
-      "Dies sind die Anmeldeinformationen und Einstellungen für die Funktionsweise Ihrer AnythingLLM-Instanz. Es ist wichtig, dass diese Schlüssel aktuell und korrekt sind.",
+      "Dies sind die Anmeldeinformationen und Einstellungen für die Funktionsweise Ihrer NexusAI-Instanz. Es ist wichtig, dass diese Schlüssel aktuell und korrekt sind.",
     provider: {
       title: "Vektordatenbankanbieter",
       description: "Für LanceDB ist keine Konfiguration erforderlich.",
@@ -1002,7 +1002,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Datenschutz & Datenverarbeitung",
     description:
-      "Dies ist Ihre Konfiguration dafür, wie verbundene Drittanbieter und AnythingLLM Ihre Daten behandeln.",
+      "Dies ist Ihre Konfiguration dafür, wie verbundene Drittanbieter und NexusAI Ihre Daten behandeln.",
     anonymous: "Anonyme Telemetrie aktiviert",
   },
   connectors: {
@@ -1178,7 +1178,7 @@ const TRANSLATIONS = {
       fetching: "Wird abgerufen...",
       "fetch-website": "Website abrufen",
       "privacy-notice":
-        "Diese Dateien werden zum Dokumentenprozessor hochgeladen, der auf dieser AnythingLLM-Instanz läuft. Diese Dateien werden nicht an Dritte gesendet oder geteilt.",
+        "Diese Dateien werden zum Dokumentenprozessor hochgeladen, der auf dieser NexusAI-Instanz läuft. Diese Dateien werden nicht an Dritte gesendet oder geteilt.",
     },
     pinning: {
       what_pinning: "Was bedeutet es Dokumente anzuheften?",
@@ -1331,7 +1331,7 @@ const TRANSLATIONS = {
         edit_description: "Aktualisieren Sie den Inhalt dieses Speichers.",
         label: "Gedächtnis",
         placeholder:
-          "z.B. Benutzername: Joe, Benutzer arbeitet an AnythingLLM, usw.",
+          "z.B. Benutzername: Joe, Benutzer arbeitet an NexusAI, usw.",
         create: "Erstellen",
         save: "Speichern",
         cancel: "Abbrechen",
@@ -1439,7 +1439,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Benötigte Authentifizierung",
           description:
-            "Sie müssen sich vor der Veröffentlichung von Inhalten über den AnythingLLM Community Hub authentifizieren.",
+            "Sie müssen sich vor der Veröffentlichung von Inhalten über den NexusAI Community Hub authentifizieren.",
           button: "Verbinden Sie sich mit dem Community Hub",
         },
       },

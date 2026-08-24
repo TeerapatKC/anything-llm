@@ -62,7 +62,7 @@ const TRANSLATIONS = {
     interface: "Tùy chọn Giao diện",
     branding: "Thương hiệu & Nhãn trắng",
     chat: "Trò chuyện",
-    "mobile-app": "AnythingLLM Di động",
+    "mobile-app": "NexusAI Di động",
     "community-hub": {
       title: "Trung tâm cộng đồng",
       trending: "Khám phá các nội dung đang thịnh hành",
@@ -120,7 +120,7 @@ const TRANSLATIONS = {
       add: "Thêm tin nhắn mới",
       save: "Lưu Tin nhắn",
       heading: "Giải thích cho tôi",
-      body: "các lợi ích của AnythingLLM",
+      body: "các lợi ích của NexusAI",
     },
     delete: {
       title: "Xóa không gian làm việc",
@@ -703,7 +703,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "Lựa chọn kỹ năng thông minh",
         description:
-          "Cho phép sử dụng không giới hạn các công cụ và giảm mức sử dụng token lên đến 80% cho mỗi truy vấn – AnythingLLM tự động chọn các kỹ năng phù hợp nhất cho mỗi yêu cầu.",
+          "Cho phép sử dụng không giới hạn các công cụ và giảm mức sử dụng token lên đến 80% cho mỗi truy vấn – NexusAI tự động chọn các kỹ năng phù hợp nhất cho mỗi yêu cầu.",
         "max-tools": {
           title: "Công cụ Max",
           description:
@@ -740,7 +740,7 @@ const TRANSLATIONS = {
   api: {
     title: "Khóa API",
     description:
-      "Khóa API cho phép người sở hữu truy cập và quản lý phiên bản AnythingLLM này theo chương trình.",
+      "Khóa API cho phép người sở hữu truy cập và quản lý phiên bản NexusAI này theo chương trình.",
     link: "Đọc tài liệu API",
     generate: "Tạo Khóa API Mới",
     empty: "Không tìm thấy khóa API nào",
@@ -754,7 +754,7 @@ const TRANSLATIONS = {
       close: "Đóng",
       create: "Tạo khóa API",
       helper:
-        "Sau khi được tạo, khóa API có thể được dùng để truy cập và cấu hình phiên bản AnythingLLM này theo chương trình.",
+        "Sau khi được tạo, khóa API có thể được dùng để truy cập và cấu hình phiên bản NexusAI này theo chương trình.",
       name: {
         label: "Tên",
         placeholder: "Tích hợp production",
@@ -779,7 +779,7 @@ const TRANSLATIONS = {
   llm: {
     title: "Tùy chọn LLM",
     description:
-      "Đây là thông tin đăng nhập và cài đặt cho nhà cung cấp LLM trò chuyện & nhúng ưa thích của bạn. Điều quan trọng là các khóa này phải chính xác, nếu không AnythingLLM sẽ không hoạt động đúng.",
+      "Đây là thông tin đăng nhập và cài đặt cho nhà cung cấp LLM trò chuyện & nhúng ưa thích của bạn. Điều quan trọng là các khóa này phải chính xác, nếu không NexusAI sẽ không hoạt động đúng.",
     provider: "Nhà cung cấp LLM",
     providers: {
       azure_openai: {
@@ -801,7 +801,7 @@ const TRANSLATIONS = {
       "Đây là thông tin đăng nhập và cài đặt cho nhà cung cấp mô hình chuyển đổi giọng nói ưa thích của bạn. Điều quan trọng là các khóa này phải chính xác, nếu không tệp media và âm thanh sẽ không được chuyển đổi.",
     provider: "Nhà cung cấp Chuyển đổi giọng nói",
     "warn-start":
-      "Sử dụng mô hình whisper cục bộ trên máy có RAM hoặc CPU hạn chế có thể làm AnythingLLM bị treo khi xử lý tệp media.",
+      "Sử dụng mô hình whisper cục bộ trên máy có RAM hoặc CPU hạn chế có thể làm NexusAI bị treo khi xử lý tệp media.",
     "warn-recommend":
       "Chúng tôi khuyến nghị ít nhất 2GB RAM và tải lên tệp <10Mb.",
     "warn-end": "Mô hình tích hợp sẽ tự động tải xuống khi sử dụng lần đầu.",
@@ -811,7 +811,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Khi sử dụng LLM không hỗ trợ bộ máy nhúng nguyên bản - bạn có thể cần chỉ định thêm thông tin đăng nhập để nhúng văn bản.",
     "desc-end":
-      "Nhúng là quá trình chuyển đổi văn bản thành vector. Thông tin đăng nhập này cần thiết để chuyển đổi tệp và prompt của bạn thành định dạng mà AnythingLLM có thể sử dụng để xử lý.",
+      "Nhúng là quá trình chuyển đổi văn bản thành vector. Thông tin đăng nhập này cần thiết để chuyển đổi tệp và prompt của bạn thành định dạng mà NexusAI có thể sử dụng để xử lý.",
     provider: {
       title: "Nhà cung cấp Nhúng",
     },
@@ -837,7 +837,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Cơ sở dữ liệu Vector",
     description:
-      "Đây là thông tin đăng nhập và cài đặt cho cách phiên bản AnythingLLM của bạn sẽ hoạt động. Điều quan trọng là các khóa này phải chính xác.",
+      "Đây là thông tin đăng nhập và cài đặt cho cách phiên bản NexusAI của bạn sẽ hoạt động. Điều quan trọng là các khóa này phải chính xác.",
     provider: {
       title: "Nhà cung cấp Cơ sở dữ liệu Vector",
       description: "Không cần cấu hình cho LanceDB.",
@@ -882,7 +882,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Quyền riêng tư & Xử lý Dữ liệu",
     description:
-      "Đây là cấu hình của bạn về cách các nhà cung cấp bên thứ ba được kết nối và AnythingLLM xử lý dữ liệu của bạn.",
+      "Đây là cấu hình của bạn về cách các nhà cung cấp bên thứ ba được kết nối và NexusAI xử lý dữ liệu của bạn.",
     anonymous: "Đã Bật Telemetry Ẩn danh",
   },
   connectors: {
@@ -1042,22 +1042,22 @@ const TRANSLATIONS = {
       fetching: "Đang lấy...",
       "fetch-website": "Lấy website",
       "privacy-notice":
-        "Các tệp này sẽ được tải lên trình xử lý tài liệu đang chạy trên phiên bản AnythingLLM này. Các tệp này không được gửi hoặc chia sẻ với bên thứ ba.",
+        "Các tệp này sẽ được tải lên trình xử lý tài liệu đang chạy trên phiên bản NexusAI này. Các tệp này không được gửi hoặc chia sẻ với bên thứ ba.",
     },
     pinning: {
       what_pinning: "Ghim tài liệu là gì?",
       pin_explained_block1:
-        "Khi bạn <b>ghim</b> một tài liệu trong AnythingLLM, chúng tôi sẽ đưa toàn bộ nội dung của tài liệu vào cửa sổ prompt của bạn để LLM hiểu đầy đủ.",
+        "Khi bạn <b>ghim</b> một tài liệu trong NexusAI, chúng tôi sẽ đưa toàn bộ nội dung của tài liệu vào cửa sổ prompt của bạn để LLM hiểu đầy đủ.",
       pin_explained_block2:
         "Điều này hoạt động tốt nhất với <b>mô hình ngữ cảnh lớn</b> hoặc các tệp nhỏ quan trọng với cơ sở kiến thức của nó.",
       pin_explained_block3:
-        "Nếu bạn không nhận được câu trả lời mong muốn từ AnythingLLM theo mặc định, ghim là một cách tuyệt vời để có được câu trả lời chất lượng cao hơn chỉ với một cú nhấp chuột.",
+        "Nếu bạn không nhận được câu trả lời mong muốn từ NexusAI theo mặc định, ghim là một cách tuyệt vời để có được câu trả lời chất lượng cao hơn chỉ với một cú nhấp chuột.",
       accept: "Ok, tôi hiểu rồi",
     },
     watching: {
       what_watching: "Theo dõi tài liệu làm gì?",
       watch_explained_block1:
-        "Khi bạn <b>theo dõi</b> một tài liệu trong AnythingLLM, chúng tôi sẽ <i>tự động</i> đồng bộ nội dung tài liệu của bạn từ nguồn gốc theo các khoảng thời gian đều đặn. Điều này sẽ tự động cập nhật nội dung trong mọi không gian làm việc nơi tệp này được quản lý.",
+        "Khi bạn <b>theo dõi</b> một tài liệu trong NexusAI, chúng tôi sẽ <i>tự động</i> đồng bộ nội dung tài liệu của bạn từ nguồn gốc theo các khoảng thời gian đều đặn. Điều này sẽ tự động cập nhật nội dung trong mọi không gian làm việc nơi tệp này được quản lý.",
       watch_explained_block2:
         "Tính năng này hiện chỉ hỗ trợ nội dung dựa trên trực tuyến và sẽ không khả dụng cho các tài liệu được tải lên thủ công.",
       watch_explained_block3_start:
@@ -1207,7 +1207,7 @@ const TRANSLATIONS = {
         edit_description: "Cập nhật nội dung của bộ nhớ này.",
         label: "Bộ nhớ",
         placeholder:
-          "Ví dụ: Tên người dùng là Joe, người dùng làm việc trên AnythingLLM, v.v.",
+          "Ví dụ: Tên người dùng là Joe, người dùng làm việc trên NexusAI, v.v.",
         create: "Tạo",
         save: "Lưu",
         cancel: "Hủy",
@@ -1243,16 +1243,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "Tùy chọn Giao diện",
-      description: "Đặt tùy chọn giao diện của bạn cho AnythingLLM.",
+      description: "Đặt tùy chọn giao diện của bạn cho NexusAI.",
     },
     branding: {
       title: "Thương hiệu & Nhãn trắng",
       description:
-        "Nhãn trắng phiên bản AnythingLLM của bạn với thương hiệu tùy chỉnh.",
+        "Nhãn trắng phiên bản NexusAI của bạn với thương hiệu tùy chỉnh.",
     },
     chat: {
       title: "Trò chuyện",
-      description: "Đặt tùy chọn trò chuyện của bạn cho AnythingLLM.",
+      description: "Đặt tùy chọn trò chuyện của bạn cho NexusAI.",
       auto_submit: {
         title: "Tự động Gửi Đầu vào Giọng nói",
         description:
@@ -1290,7 +1290,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Ngôn ngữ Hiển thị",
         description:
-          "Chọn ngôn ngữ ưa thích để hiển thị giao diện người dùng của AnythingLLM - khi bản dịch có sẵn.",
+          "Chọn ngôn ngữ ưa thích để hiển thị giao diện người dùng của NexusAI - khi bản dịch có sẵn.",
       },
       logo: {
         title: "Logo Thương hiệu",
@@ -1439,7 +1439,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Yêu cầu Xác thực",
           description:
-            "Bạn cần xác thực với AnythingLLM Community Hub trước khi đăng các mục.",
+            "Bạn cần xác thực với NexusAI Community Hub trước khi đăng các mục.",
           button: "Kết nối với Community Hub",
         },
       },
@@ -1457,7 +1457,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "Bot Telegram",
     description:
-      "Kết nối phiên bản AnythingLLM của bạn với Telegram để bạn có thể trò chuyện với các không gian làm việc của mình từ bất kỳ thiết bị nào.",
+      "Kết nối phiên bản NexusAI của bạn với Telegram để bạn có thể trò chuyện với các không gian làm việc của mình từ bất kỳ thiết bị nào.",
     setup: {
       step1: {
         title: "Bước 1: Tạo bot Telegram của bạn",

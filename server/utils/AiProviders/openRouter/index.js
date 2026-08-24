@@ -40,7 +40,7 @@ class OpenRouterLLM {
       apiKey: process.env.OPENROUTER_API_KEY ?? null,
       defaultHeaders: {
         "HTTP-Referer": "https://anythingllm.com",
-        "X-Title": "AnythingLLM",
+        "X-Title": "NexusAI",
       },
     });
     this.model =
@@ -164,9 +164,9 @@ class OpenRouterLLM {
     const cacheModelPath = path.resolve(cacheFolder, "models.json");
     const availableModels = fs.existsSync(cacheModelPath)
       ? safeJsonParse(
-          fs.readFileSync(cacheModelPath, { encoding: "utf-8" }),
-          {}
-        )
+        fs.readFileSync(cacheModelPath, { encoding: "utf-8" }),
+        {}
+      )
       : {};
     return availableModels[modelName]?.maxLength || 4096;
   }

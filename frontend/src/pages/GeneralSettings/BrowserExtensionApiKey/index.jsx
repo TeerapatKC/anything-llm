@@ -48,7 +48,7 @@ export default function BrowserExtensionApiKeys() {
       <PageHeader
         title={"Browser Extension API Keys"}
         description={
-          "Manage API keys for browser extensions connecting to your AnythingLLM instance."
+          "Manage API keys for browser extensions connecting to your NexusAI instance."
         }
       />
       <div className="w-full justify-end flex">

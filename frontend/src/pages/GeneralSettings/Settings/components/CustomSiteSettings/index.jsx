@@ -64,15 +64,14 @@ export default function CustomSiteSettings() {
         <Input
           name="meta_page_title"
           type="text"
-          placeholder="AnythingLLM | Your personal LLM trained on anything"
+          placeholder="NexusAI | Your personal LLM trained on anything"
           autoComplete="off"
           onChange={(e) => {
             setHasChanges(true);
             setSettings((prev) => ({ ...prev, title: e.target.value }));
           }}
           value={
-            settings.title ??
-            "AnythingLLM | Your personal LLM trained on anything"
+            settings.title ?? "NexusAI | Your personal LLM trained on anything"
           }
         />
       </div>

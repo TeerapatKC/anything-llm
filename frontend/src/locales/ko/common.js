@@ -62,7 +62,7 @@ const TRANSLATIONS = {
     interface: "UI 환경 설정",
     branding: "브랜딩 및 화이트라벨링",
     chat: "채팅",
-    "mobile-app": "AnythingLLM 모바일",
+    "mobile-app": "NexusAI 모바일",
     "community-hub": {
       title: "지역 커뮤니티 허브",
       trending: "인기 트렌드 탐색",
@@ -732,7 +732,7 @@ const TRANSLATIONS = {
     branding: {
       title: "브랜딩 및 화이트라벨링",
       description:
-        "AnythingLLM 인스턴스에 맞춤 브랜딩을 적용해 화이트라벨링할 수 있습니다.",
+        "NexusAI 인스턴스에 맞춤 브랜딩을 적용해 화이트라벨링할 수 있습니다.",
     },
     chat: {
       title: "채팅",
@@ -818,7 +818,7 @@ const TRANSLATIONS = {
   api: {
     title: "API 키",
     description:
-      "API 키는 소유자가 프로그래밍 방식으로 이 AnythingLLM 인스턴스에 액세스하고 관리할 수 있도록 합니다.",
+      "API 키는 소유자가 프로그래밍 방식으로 이 NexusAI 인스턴스에 액세스하고 관리할 수 있도록 합니다.",
     link: "API 문서 읽기",
     generate: "새 API 키 생성",
     empty: "API 키를 찾을 수 없습니다",
@@ -832,7 +832,7 @@ const TRANSLATIONS = {
       close: "닫기",
       create: "API 키 만들기",
       helper:
-        "생성된 API 키는 이 AnythingLLM 인스턴스에 프로그래밍 방식으로 접근하고 구성하는 데 사용할 수 있습니다.",
+        "생성된 API 키는 이 NexusAI 인스턴스에 프로그래밍 방식으로 접근하고 구성하는 데 사용할 수 있습니다.",
       name: {
         label: "이름",
         placeholder: "프로덕션 통합",
@@ -913,7 +913,7 @@ const TRANSLATIONS = {
   vector: {
     title: "벡터 데이터베이스",
     description:
-      "이것은 AnythingLLM 인스턴스가 벡터 데이터베이스 사용을 위한 인증 설정입니다. 이 키가 활성 상태이고 정확해야 합니다.",
+      "이것은 NexusAI 인스턴스가 벡터 데이터베이스 사용을 위한 인증 설정입니다. 이 키가 활성 상태이고 정확해야 합니다.",
     provider: {
       title: "벡터 데이터베이스 제공자",
       description: "LanceDB를 선택하면 설정이 필요 없습니다.",
@@ -1128,7 +1128,7 @@ const TRANSLATIONS = {
       fetching: "가져오는 중...",
       "fetch-website": "웹사이트 가져오기",
       "privacy-notice":
-        "이 파일들은 이 AnythingLLM 인스턴스에서 실행 중인 문서 처리기로 업로드됩니다. 파일은 제3자에게 전송되거나 공유되지 않습니다.",
+        "이 파일들은 이 NexusAI 인스턴스에서 실행 중인 문서 처리기로 업로드됩니다. 파일은 제3자에게 전송되거나 공유되지 않습니다.",
     },
     pinning: {
       what_pinning: "문서 고정이란 무엇인가요?",
@@ -1406,7 +1406,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "인증 필요",
           description:
-            "항목을 게시하려면 AnythingLLM 커뮤니티 허브에 인증해야 합니다.",
+            "항목을 게시하려면 NexusAI 커뮤니티 허브에 인증해야 합니다.",
           button: "커뮤니티 허브에 연결",
         },
       },

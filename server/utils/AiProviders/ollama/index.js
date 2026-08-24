@@ -234,7 +234,7 @@ class OllamaAILLM {
     switch (e.message) {
       case "fetch failed":
         throw new Error(
-          "Your Ollama instance could not be reached or is not responding. Please make sure it is running the API server and your connection information is correct in AnythingLLM."
+          "Your Ollama instance could not be reached or is not responding. Please make sure it is running the API server and your connection information is correct in NexusAI."
         );
       default:
         return e;
@@ -458,9 +458,8 @@ class OllamaAILLM {
           type: "textResponseChunk",
           textResponse: "",
           close: true,
-          error: `Ollama:streaming - could not stream chat. ${
-            error?.cause ?? error.message
-          }`,
+          error: `Ollama:streaming - could not stream chat. ${error?.cause ?? error.message
+            }`,
         });
         response.removeListener("close", handleAbort);
         stream?.endMeasurement(usage);

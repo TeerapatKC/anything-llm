@@ -72,13 +72,13 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
             with your account. Please share it cautiously.
           </p>
           <p className="text-theme-text-primary/60 text-xs md:text-sm">
-            After clicking "Create API Key", AnythingLLM will attempt to connect
-            to your browser extension automatically.
+            After clicking "Create API Key", NexusAI will attempt to connect to
+            your browser extension automatically.
           </p>
           <p className="text-theme-text-primary/60 text-xs md:text-sm">
-            If you see "Connected to AnythingLLM" in the extension, the
-            connection was successful. If not, please copy the connection string
-            and paste it into the extension manually.
+            If you see "Connected to NexusAI" in the extension, the connection
+            was successful. If not, please copy the connection string and paste
+            it into the extension manually.
           </p>
         </div>
         <DialogFooter>

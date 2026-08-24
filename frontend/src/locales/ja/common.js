@@ -62,7 +62,7 @@ const TRANSLATIONS = {
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
     chat: "チャット",
-    "mobile-app": "AnythingLLM モバイル版",
+    "mobile-app": "NexusAI モバイル版",
     "community-hub": {
       title: "地域交流拠点",
       trending: "人気のあるものを探す",
@@ -1228,7 +1228,7 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI設定",
-      description: "AnythingLLM の UI 設定を調整してください。",
+      description: "NexusAI の UI 設定を調整してください。",
     },
     branding: {
       title: "ブランディングとホワイトレーベル化",
@@ -1237,7 +1237,7 @@ const TRANSLATIONS = {
     },
     chat: {
       title: "チャット",
-      description: "AnythingLLM のチャット設定をカスタマイズしてください。",
+      description: "NexusAI のチャット設定をカスタマイズしてください。",
       auto_submit: {
         title: "自動音声入力送信",
         description: "沈黙の後に自動で音声入力を行う",

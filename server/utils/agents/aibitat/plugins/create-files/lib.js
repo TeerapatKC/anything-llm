@@ -302,7 +302,7 @@ class CreateFilesManager {
   }
 
   /**
-   * Gets the AnythingLLM logo for branding.
+   * Gets the NexusAI logo for branding.
    * @param {Object} options
    * @param {boolean} [options.forDarkBackground=false] - True to get light logo (for dark backgrounds), false for dark logo (for light backgrounds)
    * @param {"buffer"|"dataUri"} [options.format="buffer"] - Return format: "buffer" for raw Buffer, "dataUri" for base64 data URI
@@ -313,7 +313,7 @@ class CreateFilesManager {
     // Does not honor Whitelabeling changes/preferences right now.
     const assetsPath = path.join(__dirname, "assets");
     const filename = forDarkBackground
-      ? "anything-llm.png"
+      ? "nexus-ai-re-bg-light.png"
       : "anything-llm-invert.png";
     try {
       if (format === "dataUri") {

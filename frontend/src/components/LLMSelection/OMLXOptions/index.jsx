@@ -151,8 +151,8 @@ export default function OMLXOptions({ settings }) {
                       limit to 16,384 tokens if the model supports more than
                       that and no value is specified.
                       <br /> <br />
-                      If an invalid value is entered, AnythingLLM will handle
-                      this for you so that chats do not fail.
+                      If an invalid value is entered, NexusAI will handle this
+                      for you so that chats do not fail.
                     </p>
                   </TooltipContent>
                 </Tooltip>

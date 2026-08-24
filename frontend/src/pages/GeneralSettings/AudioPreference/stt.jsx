@@ -134,7 +134,7 @@ export default function SpeechToTextProvider({ settings }) {
         <PageHeader
           title={"Speech-to-text Preference"}
           description={
-            "Here you can specify what kind of text-to-speech and speech-to-text providers you would want to use in your AnythingLLM experience. By default, we use the browser's built in support for these services, but you may want to use others."
+            "Here you can specify what kind of text-to-speech and speech-to-text providers you would want to use in your NexusAI experience. By default, we use the browser's built in support for these services, but you may want to use others."
           }
         />
         <div className="w-full justify-end flex">

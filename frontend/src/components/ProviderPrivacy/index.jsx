@@ -21,7 +21,7 @@ function defaultProvider(providerString) {
   return {
     name: titleCase(sentenceCase(String(providerString))),
     description: [
-      `"${providerString}" has no known data handling policy defined in AnythingLLM.`,
+      `"${providerString}" has no known data handling policy defined in NexusAI.`,
     ],
     logo: AnythingLLMIcon,
   };

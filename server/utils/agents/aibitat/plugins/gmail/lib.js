@@ -115,7 +115,7 @@ async function parseAttachment(attachment) {
     if (fs.existsSync(tempFilePath)) {
       try {
         fs.unlinkSync(tempFilePath);
-      } catch {}
+      } catch { }
     }
     return { success: false, content: null, error: e.message };
   }
@@ -207,7 +207,7 @@ async function handleAttachments(context, messages) {
 
 /**
  * Gmail Bridge Library
- * Handles communication with the AnythingLLM Gmail Google Apps Script deployment.
+ * Handles communication with the NexusAI Gmail Google Apps Script deployment.
  */
 class GmailBridge {
   #deploymentId = null;
@@ -335,7 +335,7 @@ class GmailBridge {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-AnythingLLM-UA": "AnythingLLM-Gmail-Agent/1.0",
+          "X-NexusAI-UA": "NexusAI-Gmail-Agent/1.0",
         },
         body: JSON.stringify({
           key: this.#apiKey,

@@ -223,7 +223,7 @@ class Weaviate extends VectorDatabase {
               .classCreator()
               .withClass({
                 class: camelCase(namespace),
-                description: `Class created by AnythingLLM named ${camelCase(
+                description: `Class created by NexusAI named ${camelCase(
                   namespace
                 )}`,
                 vectorizer: "none",
@@ -330,7 +330,7 @@ class Weaviate extends VectorDatabase {
           .classCreator()
           .withClass({
             class: camelCase(namespace),
-            description: `Class created by AnythingLLM named ${camelCase(
+            description: `Class created by NexusAI named ${camelCase(
               namespace
             )}`,
             vectorizer: "none",
@@ -439,9 +439,8 @@ class Weaviate extends VectorDatabase {
     const details = await this.namespace(client, namespace);
     await this.deleteVectorsInNamespace(client, namespace);
     return {
-      message: `Namespace ${camelCase(namespace)} was deleted along with ${
-        details?.vectorCount
-      } vectors.`,
+      message: `Namespace ${camelCase(namespace)} was deleted along with ${details?.vectorCount
+        } vectors.`,
     };
   }
 

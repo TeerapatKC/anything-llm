@@ -3,7 +3,7 @@
 .env.test
 server/.env
 storage/assets/*
-!storage/assets/anything-llm.png
+!storage/assets/nexus-ai-re-bg-light.png
 !storage/assets/anything-llm-invert.png
 storage/documents/*
 storage/comkey/*

@@ -45,7 +45,7 @@ export default function BrowserNativeSTT({
   async function startSTTSession() {
     if (!isMicrophoneAvailable) {
       alert(
-        "AnythingLLM does not have access to microphone. Please enable for this site to use this feature."
+        "NexusAI does not have access to microphone. Please enable for this site to use this feature."
       );
       return;
     }
@@ -64,7 +64,7 @@ export default function BrowserNativeSTT({
     } catch {
       closeLevelStream();
       alert(
-        "AnythingLLM does not have access to microphone. Please enable for this site to use this feature."
+        "NexusAI does not have access to microphone. Please enable for this site to use this feature."
       );
     }
   }

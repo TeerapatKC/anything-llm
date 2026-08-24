@@ -22,9 +22,9 @@ const webBrowsing = {
             "Search the internet for real-time information. Look online for current news, recent updates, latest changes, or any information not available locally. Browse the web to find answers about current events, prices, weather, or live data.",
           examples: [
             {
-              prompt: "Look online for recent changes to AnythingLLM",
+              prompt: "Look online for recent changes to NexusAI",
               call: JSON.stringify({
-                query: "AnythingLLM recent changes updates",
+                query: "NexusAI recent changes updates",
               }),
             },
             {
@@ -177,8 +177,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using SerpApi to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using SerpApi to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -436,8 +435,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using SearchApi to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using SearchApi to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -453,7 +451,7 @@ const webBrowsing = {
               headers: {
                 Authorization: `Bearer ${process.env.AGENT_SEARCHAPI_API_KEY}`,
                 "Content-Type": "application/json",
-                "X-SearchApi-Source": "AnythingLLM",
+                "X-SearchApi-Source": "NexusAI",
               },
             })
               .then((res) => {
@@ -511,8 +509,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Serper.dev to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Serper.dev to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
             const { response, error } = await fetch(
@@ -579,8 +576,7 @@ const webBrowsing = {
             searchURL.searchParams.append("q", query);
 
             this.super.introspect(
-              `${this.caller}: Using Bing Web Search to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Bing Web Search to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -630,8 +626,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Baidu Search to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Baidu Search to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -750,8 +745,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Serply to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Serply to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -835,8 +829,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using SearXNG to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using SearXNG to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -895,8 +888,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Tavily to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Tavily to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -972,8 +964,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using DuckDuckGo to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using DuckDuckGo to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -1048,8 +1039,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Exa to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Exa to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -1117,8 +1107,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Perplexity to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Perplexity to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -1214,8 +1203,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using Brave to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using Brave to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -1271,8 +1259,7 @@ const webBrowsing = {
             }
 
             this.super.introspect(
-              `${this.caller}: Using fastCRW to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using fastCRW to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 
@@ -1353,8 +1340,7 @@ const webBrowsing = {
             const usingKey = !!apiKey;
 
             this.super.introspect(
-              `${this.caller}: Using You.com${usingKey ? "" : " (free tier)"} to search for "${
-                query.length > 100 ? `${query.slice(0, 100)}...` : query
+              `${this.caller}: Using You.com${usingKey ? "" : " (free tier)"} to search for "${query.length > 100 ? `${query.slice(0, 100)}...` : query
               }"`
             );
 

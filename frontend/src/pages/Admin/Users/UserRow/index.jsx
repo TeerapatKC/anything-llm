@@ -77,7 +77,7 @@ export default function UserRow({
     setConfirm({
       title: `${suspended ? "Unsuspend" : "Suspend"} ${user.username}?`,
       description: suspended
-        ? "The user will be able to log back into this instance of AnythingLLM."
+        ? "The user will be able to log back into this instance of NexusAI."
         : "After suspending they will be logged out and unable to log back in until unsuspended by an admin.",
       confirmText: suspended ? "Unsuspend" : "Suspend",
       variant: suspended ? "default" : "destructive",
@@ -102,7 +102,7 @@ export default function UserRow({
     setConfirm({
       title: `Delete ${user.username}?`,
       description:
-        "After deleting they will be logged out and unable to use this instance of AnythingLLM. This action is irreversible.",
+        "After deleting they will be logged out and unable to use this instance of NexusAI. This action is irreversible.",
       confirmText: "Delete",
       variant: "destructive",
       onConfirm: async () => {

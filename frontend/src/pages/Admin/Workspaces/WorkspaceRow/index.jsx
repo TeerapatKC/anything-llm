@@ -30,7 +30,7 @@ export default function WorkspaceRow({
     setConfirm({
       title: `Delete ${workspace.name}?`,
       description:
-        "After deleting it will be unavailable in this instance of AnythingLLM. This action is irreversible.",
+        "After deleting it will be unavailable in this instance of NexusAI. This action is irreversible.",
       confirmText: "Delete",
       variant: "destructive",
       onConfirm: async () => {

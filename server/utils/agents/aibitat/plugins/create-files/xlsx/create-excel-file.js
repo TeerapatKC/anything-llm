@@ -182,12 +182,12 @@ module.exports.CreateExcelFile = {
               const sheetDefinitions = sheets
                 ? sheets
                 : [
-                    {
-                      name: "Sheet1",
-                      csvData,
-                      options: {},
-                    },
-                  ];
+                  {
+                    name: "Sheet1",
+                    csvData,
+                    options: {},
+                  },
+                ];
 
               for (const sheet of sheetDefinitions) {
                 if (!sheet.csvData || sheet.csvData.trim() === "") {
@@ -221,7 +221,7 @@ module.exports.CreateExcelFile = {
               const ExcelJS = await import("exceljs");
               const workbook = new ExcelJS.default.Workbook();
 
-              workbook.creator = "AnythingLLM";
+              workbook.creator = "NexusAI";
               workbook.created = new Date();
               workbook.modified = new Date();
 
@@ -244,7 +244,7 @@ module.exports.CreateExcelFile = {
                 };
                 const delimiter = sheetOptions.delimiter
                   ? delimiterMap[sheetOptions.delimiter] ||
-                    sheetOptions.delimiter
+                  sheetOptions.delimiter
                   : detectDelimiter(sheetDef.csvData);
 
                 const parsedData = parseCSV(sheetDef.csvData, delimiter);

@@ -7,7 +7,7 @@ export default function CommunityHub() {
     <SettingsLayout>
       <PageHeader
         title={"Community Hub"}
-        description={"Share and collaborate with the AnythingLLM community."}
+        description={"Share and collaborate with the NexusAI community."}
       />
       <HubItems />
     </SettingsLayout>

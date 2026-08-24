@@ -1,7 +1,7 @@
 /**
  * The permission catalog.
  *
- * Access control in AnythingLLM is permission-based, not role-name based. A role is
+ * Access control in NexusAI is permission-based, not role-name based. A role is
  * simply a named bag of permissions that an operator creates and ticks boxes for, so
  * nothing in the codebase should ever branch on a role name like "admin" or "manager".
  * The one deliberate exception is the `super-admin` role - see SUPER_ADMIN_ROLE below.
@@ -1067,7 +1067,7 @@ function expandPermissions(permissionKeys = []) {
 }
 
 /**
- * The instance-wide roles that ship with AnythingLLM. Seeded on boot, cannot be deleted
+ * The instance-wide roles that ship with NexusAI. Seeded on boot, cannot be deleted
  * or renamed, and their permission sets reproduce the behavior of the legacy hardcoded
  * admin/manager/default roles so upgrading an existing instance changes nothing.
  *
@@ -1154,7 +1154,7 @@ const SYSTEM_ROLES = [
 }));
 
 /**
- * The reusable workspace roles that ship with AnythingLLM. One of these is assigned to
+ * The reusable workspace roles that ship with NexusAI. One of these is assigned to
  * each `workspace_users` row, so the same account can hold different powers in
  * different workspaces.
  */

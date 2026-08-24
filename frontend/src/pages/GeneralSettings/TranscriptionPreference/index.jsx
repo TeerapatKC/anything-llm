@@ -38,7 +38,7 @@ const PROVIDERS = [
       "Transcribe audio using any OpenAI-compatible API via custom configuration.",
   },
   {
-    name: "AnythingLLM Built-In",
+    name: "NexusAI Built-In",
     value: "local",
     logo: AnythingLLMIcon,
     options: (settings) => <NativeTranscriptionOptions settings={settings} />,

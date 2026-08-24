@@ -6,7 +6,7 @@
  * the application - that is the guarantee. The cost of that guarantee is that losing the
  * account would otherwise brick the deployment, so this script is the escape hatch.
  *
- * It requires shell access to the machine running AnythingLLM, which is a level of
+ * It requires shell access to the machine running NexusAI, which is a level of
  * control that already implies ownership. Nothing here is reachable over HTTP.
  *
  *   node utils/boot/breakGlass.js whoami
@@ -27,7 +27,7 @@ const { Role } = require("../../models/role");
 const { EventLogs } = require("../../models/eventLogs");
 
 const USAGE = `
-Owner recovery for this AnythingLLM instance.
+Owner recovery for this NexusAI instance.
 
   whoami                                  Show which account currently owns the instance
   transfer <username>                     Make <username> the owner; the current owner becomes an Admin
@@ -75,8 +75,7 @@ async function transfer(username) {
     to.id
   );
   console.log(
-    `"${to.username}" now owns this instance${
-      from ? `. "${from.username}" was demoted to Admin.` : "."
+    `"${to.username}" now owns this instance${from ? `. "${from.username}" was demoted to Admin.` : "."
     }`
   );
   return 0;

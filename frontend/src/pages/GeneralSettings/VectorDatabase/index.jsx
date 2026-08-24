@@ -46,7 +46,7 @@ const VECTOR_DBS = [
     logo: LanceDbLogo,
     options: (_) => <LanceDBOptions />,
     description:
-      "100% local vector DB that runs on the same instance as AnythingLLM.",
+      "100% local vector DB that runs on the same instance as NexusAI.",
   },
   {
     name: "PGVector",

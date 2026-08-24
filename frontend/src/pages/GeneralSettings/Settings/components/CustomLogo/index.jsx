@@ -1,4 +1,5 @@
 import useLogo from "@/hooks/useLogo";
+import { REFETCH_LOGO_EVENT } from "@/LogoContext";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
 import { useEffect, useRef, useState } from "react";
@@ -40,6 +41,7 @@ export default function CustomLogo() {
 
     const { logoURL } = await System.fetchLogo();
     _setLogo(logoURL);
+    window.dispatchEvent(new CustomEvent(REFETCH_LOGO_EVENT));
 
     showToast("Image uploaded successfully.", "success");
     setIsDefaultLogo(false);
@@ -61,6 +63,7 @@ export default function CustomLogo() {
 
     const { logoURL } = await System.fetchLogo();
     _setLogo(logoURL);
+    window.dispatchEvent(new CustomEvent(REFETCH_LOGO_EVENT));
 
     showToast("Image successfully removed.", "success");
   };

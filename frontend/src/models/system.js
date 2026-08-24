@@ -6,6 +6,7 @@ import AgentPlugins from "./experimental/agentPlugins";
 import SystemPromptVariable from "./systemPromptVariable";
 
 export const SUPPORT_EMAIL_UPDATED_EVENT = "support-email-updated";
+export const CUSTOM_APP_NAME_UPDATED_EVENT = "custom-app-name-updated";
 
 const System = {
   cacheKeys: {

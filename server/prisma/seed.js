@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 async function main() {
-  const settings = [{ label: "logo_filename", value: "anything-llm.png" }];
+  const settings = [{ label: "logo_filename", value: "nexus-ai-re-bg-light.png" }];
 
   for (let setting of settings) {
     const existing = await prisma.system_settings.findUnique({

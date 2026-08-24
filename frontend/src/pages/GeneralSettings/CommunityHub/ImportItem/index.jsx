@@ -82,7 +82,7 @@ export default function CommunityHubImportItemFlow() {
           <PageHeader
             title={"Import a Community Item"}
             description={
-              "Import items from the AnythingLLM Community Hub to enhance your instance with community-created prompts, skills, and commands."
+              "Import items from the NexusAI Community Hub to enhance your instance with community-created prompts, skills, and commands."
             }
           />
           <div className="flex-1 flex flex-col 2xl:flex-row h-full">

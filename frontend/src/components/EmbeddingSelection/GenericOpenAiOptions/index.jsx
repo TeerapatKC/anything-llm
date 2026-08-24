@@ -145,7 +145,7 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                     from queries (e.g. "passage: " or "search_document: ").
                     <br />
                     <br />
-                    AnythingLLM <b>does not</b> append anything to this text
+                    NexusAI <b>does not</b> append anything to this text
                     including the ":" character.
                   </p>
                 </TooltipContent>
@@ -180,7 +180,7 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                     passages (e.g. "query: " or "search_query: ").
                     <br />
                     <br />
-                    AnythingLLM <b>does not</b> append anything to this text
+                    NexusAI <b>does not</b> append anything to this text
                     including the ":" character.
                   </p>
                 </TooltipContent>
