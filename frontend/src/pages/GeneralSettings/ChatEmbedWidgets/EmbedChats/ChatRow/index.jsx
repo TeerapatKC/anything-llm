@@ -61,7 +61,7 @@ export default function ChatRow({ chat, onDelete }) {
         </TableCell>
         <TableCell
           onClick={openConnectionDetailsModal}
-          className="cursor-pointer hover:shadow-lg"
+          className="cursor-pointer hover:underline"
         >
           <div className="flex flex-col">
             <p>{truncate(chat.session_id, 20)}</p>
@@ -69,13 +69,13 @@ export default function ChatRow({ chat, onDelete }) {
         </TableCell>
         <TableCell
           onClick={openPromptModal}
-          className="border-transparent cursor-pointer hover:shadow-lg"
+          className="border-transparent cursor-pointer hover:underline"
         >
           {truncate(chat.prompt, 40)}
         </TableCell>
         <TableCell
           onClick={openResponseModal}
-          className="cursor-pointer hover:shadow-lg"
+          className="cursor-pointer hover:underline"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
         </TableCell>

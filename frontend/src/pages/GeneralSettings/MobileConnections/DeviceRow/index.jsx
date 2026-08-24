@@ -3,7 +3,7 @@ import MobileConnection from "@/models/mobile";
 import { useState } from "react";
 import moment from "moment";
 import { Bug } from "lucide-react";
-import { AppleLogo } from "@phosphor-icons/react";
+import { AppleLogo } from "@/components/lib/BrandIcon";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import { TableCell, TableRow } from "@/components/ui/table";
@@ -35,11 +35,7 @@ export default function DeviceRow({ device, removeDevice }) {
         <TableCell scope="row">
           <div className="flex items-center gap-x-2">
             {device.deviceOs === "ios" ? (
-              <AppleLogo
-                weight="fill"
-                size={16}
-                className="fill-theme-text-primary"
-              />
+              <AppleLogo size={16} className="fill-theme-text-primary" />
             ) : (
               <Bug size={16} className="fill-theme-text-primary fill-current" />
             )}

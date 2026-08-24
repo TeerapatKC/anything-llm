@@ -1,20 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import showToast from "@/utils/toast";
-import { ChevronDown, Settings, TriangleAlert } from "lucide-react";
+import {
+  ChevronDown,
+  Play,
+  Settings,
+  Square,
+  Trash2,
+  TriangleAlert,
+} from "lucide-react";
 import MCPLogo from "@/media/agents/mcp-logo.svg";
 import { titleCase } from "text-case";
 import MCPServers from "@/models/mcpServers";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { useTranslation, Trans } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 function ManageServerMenu({ server, toggleServer, onDelete }) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
   const [running, setRunning] = useState(server.running);
   const [confirm, setConfirm] = useState(null);
-  const menuRef = useRef(null);
 
   async function deleteServer() {
     setConfirm({
@@ -64,54 +76,30 @@ function ManageServerMenu({ server, toggleServer, onDelete }) {
     }
   }
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="p-1.5 rounded-lg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-      >
-        <Settings className="h-5 w-5" />
-      </button>
-      {open && (
-        <div className="absolute w-[150px] top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={handleToggleServer}
-            className="justify-start"
-          >
-            <span className="text-sm">
-              {running
-                ? t("agent.mcp.stop-server")
-                : t("agent.mcp.start-server")}
-            </span>
-          </Button>
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={deleteServer}
-            className="justify-start"
-          >
-            <span className="text-sm">{t("agent.mcp.delete-server")}</span>
-          </Button>
-        </div>
-      )}
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon-sm" aria-label="Manage server" />
+          }
+        >
+          <Settings />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-44">
+          <DropdownMenuItem onClick={handleToggleServer}>
+            {running ? <Square /> : <Play />}
+            {running ? t("agent.mcp.stop-server") : t("agent.mcp.start-server")}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={deleteServer}>
+            <Trash2 />
+            {t("agent.mcp.delete-server")}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </div>
+    </>
   );
 }
 

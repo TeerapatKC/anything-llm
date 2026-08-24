@@ -22,7 +22,6 @@ export default function DefaultSkillPanel({
               React.createElement(icon, {
                 size: 24,
                 color: "var(--theme-text-primary)",
-                weight: "bold",
               })}
             <label
               htmlFor="name"

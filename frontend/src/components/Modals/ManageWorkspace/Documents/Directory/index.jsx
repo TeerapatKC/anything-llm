@@ -9,6 +9,10 @@ import { Search, Plus, Trash2, FolderInput } from "lucide-react";
 import Document from "@/models/document";
 import showToast from "@/utils/toast";
 import FolderSelectionPopup from "./FolderSelectionPopup";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useModal } from "@/hooks/useModal";
 import NewFolderModal from "./NewFolderModal";
 import debounce from "lodash.debounce";
@@ -31,7 +35,6 @@ export default function Directory({
 }) {
   const { t } = useTranslation();
   const [confirm, setConfirm] = useState(null);
-  const [showFolderSelection, setShowFolderSelection] = useState(false);
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
@@ -184,7 +187,6 @@ export default function Directory({
   };
 
   const moveToFolder = async (folder) => {
-    setShowFolderSelection(false);
     const toMove = await resolveSelection();
     if (toMove.length === 0) return;
 
@@ -377,7 +379,7 @@ export default function Directory({
 
           {hasSelection && (
             <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
-              <div className="mx-auto flex items-center gap-x-1.5 bg-theme-bg-secondary border border-theme-modal-border rounded-lg py-1 px-1.5 pointer-events-auto shadow-lg">
+              <div className="pointer-events-auto mx-auto flex items-center gap-x-1.5 rounded-lg bg-popover px-1.5 py-1 shadow-md ring-1 ring-foreground/10">
                 <Button
                   type="button"
                   variant="outline"
@@ -389,24 +391,25 @@ export default function Directory({
                 >
                   {t("connectors.directory.move-workspace")}
                 </Button>
-                <div className="relative">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={() => setShowFolderSelection(!showFolderSelection)}
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="h-7 w-7"
+                        aria-label={t("connectors.directory.move-workspace")}
+                      />
+                    }
                   >
                     <FolderInput className="h-4 w-4" />
-                  </Button>
-                  {showFolderSelection && (
-                    <FolderSelectionPopup
-                      folders={folders}
-                      onSelect={moveToFolder}
-                      onClose={() => setShowFolderSelection(false)}
-                    />
-                  )}
-                </div>
+                  </DropdownMenuTrigger>
+                  <FolderSelectionPopup
+                    folders={folders}
+                    onSelect={moveToFolder}
+                  />
+                </DropdownMenu>
                 <Button
                   type="button"
                   variant="outline"

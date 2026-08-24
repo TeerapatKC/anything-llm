@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Eye, EyeOff } from "lucide-react";
-import { TelegramLogo } from "@phosphor-icons/react";
+import { TelegramLogo } from "@/components/lib/BrandIcon";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import CreateBotSection from "./CreateBotSection";
@@ -55,7 +55,7 @@ export default function SetupView({ onConnected }) {
             </>
           ) : (
             <>
-              <TelegramLogo className="h-5 w-5" weight="fill" />
+              <TelegramLogo className="h-5 w-5" />
               {t("telegram.setup.step2.connect-bot")}
             </>
           )}

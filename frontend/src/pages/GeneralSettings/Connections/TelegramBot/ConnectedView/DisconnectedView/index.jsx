@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Eye, EyeOff } from "lucide-react";
-import { TelegramLogo } from "@phosphor-icons/react";
+import { TelegramLogo } from "@/components/lib/BrandIcon";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
@@ -45,10 +45,7 @@ export default function DisconnectedView({
         </p>
         <div className="flex items-start gap-x-1 border border-red-500/30 light:border-red-300 rounded-xl p-3 w-[700px]">
           <div className="flex items-center justify-center w-9 h-9 rounded-full bg-red-500/20 shrink-0">
-            <TelegramLogo
-              className="h-5 w-5 text-red-400 light:text-red-500"
-              weight="fill"
-            />
+            <TelegramLogo className="h-5 w-5 text-red-400 light:text-red-500" />
           </div>
           <div className="flex flex-col gap-y-1 ml-1">
             <p className="text-sm font-semibold text-theme-text-primary light:text-slate-900">

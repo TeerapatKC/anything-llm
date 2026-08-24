@@ -201,37 +201,37 @@ const SidebarOptions = ({ user = null, t }) => (
             {
               btnText: t("settings.llm"),
               href: paths.settings.llmPreference(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_LLM],
             },
             {
               btnText: t("settings.vector-database"),
               href: paths.settings.vectorDatabase(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB],
             },
             {
               btnText: t("settings.embedder"),
               href: paths.settings.embedder.modelPreference(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER],
             },
             {
               btnText: t("settings.text-splitting"),
               href: paths.settings.embedder.chunkingPreference(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING],
             },
             {
               btnText: t("settings.image-generation"),
               href: paths.settings.imageGenerationPreference(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION],
             },
             {
               btnText: t("settings.voice-speech"),
               href: paths.settings.audioPreference(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION],
             },
             {
               btnText: t("settings.transcription"),
               href: paths.settings.transcriptionPreference(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION],
             },
             {
               btnText: t("settings.model-router"),

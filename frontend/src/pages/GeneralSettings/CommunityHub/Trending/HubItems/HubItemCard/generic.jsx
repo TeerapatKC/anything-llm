@@ -2,31 +2,75 @@ import paths from "@/utils/paths";
 import { Eye, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export default function GenericHubCard({ item }) {
+/**
+ * Shared shell for every hub item card so the surface, spacing and footer stay
+ * identical across the item types. Elevation is the `Card` ring — these sit in
+ * the page grid, so they never get a drop shadow.
+ * @param {{item: object, children?: React.ReactNode}} props
+ */
+export function HubItemCardShell({ item, children }) {
   return (
-    <div
-      key={item.id}
-      className="bg-zinc-800 light:bg-slate-100 rounded-lg p-3 hover:bg-zinc-700 light:hover:bg-slate-200 transition-all duration-200"
+    <Link
+      to={paths.communityHub.importItem(item.importId)}
+      className="group/hub-card flex h-full rounded-xl"
     >
-      <p className="text-theme-text-primary text-sm font-medium">{item.name}</p>
-      <p className="text-theme-text-secondary text-xs mt-1">
-        {item.description}
-      </p>
-      <div className="flex justify-end mt-2">
-        <Link
-          className="text-primary-button hover:text-primary-button/80 text-xs"
-          to={paths.communityHub.importItem(item.importId)}
-        >
-          Import →
-        </Link>
-      </div>
-    </div>
+      <Card
+        size="sm"
+        className="flex-1 gap-0 transition-colors hover:bg-muted/50"
+      >
+        <CardHeader>
+          <CardTitle>{item.name}</CardTitle>
+          <CardAction>
+            <VisibilityIcon visibility={item.visibility} />
+          </CardAction>
+          <CardDescription className="text-xs">
+            {item.description}
+          </CardDescription>
+        </CardHeader>
+        {children ? (
+          <CardContent className="mt-3 flex flex-1 flex-col gap-2">
+            {children}
+          </CardContent>
+        ) : (
+          <div className="flex-1" />
+        )}
+        <CardContent className="mt-3 flex justify-end">
+          <span className="text-sm font-medium text-primary-button transition-colors group-hover/hub-card:text-primary-button/80">
+            Import →
+          </span>
+        </CardContent>
+      </Card>
+    </Link>
   );
+}
+
+/** Monospaced value block used for commands, prompts and step lists. */
+export function HubItemDetail({ label, children }) {
+  return (
+    <>
+      <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+      <div className="rounded-md bg-muted px-2 py-1 font-mono text-xs text-muted-foreground ring-1 ring-foreground/10">
+        {children}
+      </div>
+    </>
+  );
+}
+
+export default function GenericHubCard({ item }) {
+  return <HubItemCardShell item={item} />;
 }
 
 export function VisibilityIcon({ visibility = "public" }) {

@@ -1,5 +1,5 @@
 import { QRCodeSVG } from "qrcode.react";
-import { TelegramLogo } from "@phosphor-icons/react";
+import { TelegramLogo } from "@/components/lib/BrandIcon";
 import Logo from "@/media/logo/anything-llm-infinity.png";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -54,7 +54,7 @@ export default function CreateBotSection() {
             rel="noreferrer"
             className="flex items-center justify-center gap-x-1.5 text-sm font-medium bg-zinc-50 light:bg-slate-900 text-zinc-900 light:text-white rounded-lg h-9 w-[172px] hover:opacity-90 transition-opacity duration-200"
           >
-            <TelegramLogo className="h-5 w-5" weight="fill" />
+            <TelegramLogo className="h-5 w-5" />
             {t("telegram.setup.step1.open-botfather")}
           </Link>
         </div>

@@ -1,9 +1,15 @@
 import { ChevronDown, ChevronLeft, ChevronUp, Plus } from "lucide-react";
 import AnythingInfinityLogo from "@/media/logo/anything-llm-infinity.png";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import paths from "@/utils/paths";
 import { Link } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function HeaderMenu({
   agentName,
@@ -15,22 +21,8 @@ export default function HeaderMenu({
   const { flowId = null } = useParams();
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
-  const dropdownRef = useRef(null);
   const hasOtherFlows =
     availableFlows.filter((flow) => flow.uuid !== flowId).length > 0;
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   return (
     <div className="absolute top-[56px] left-4 right-4">
@@ -42,10 +34,7 @@ export default function HeaderMenu({
           >
             <ChevronLeft className="w-5 h-5 text-theme-text-primary" />
           </button>
-          <div
-            className="flex items-center bg-theme-settings-input-bg rounded-md border border-theme-sidebar-border pointer-events-auto"
-            ref={dropdownRef}
-          >
+          <div className="flex items-center bg-theme-settings-input-bg rounded-md border border-theme-sidebar-border pointer-events-auto">
             <button
               onClick={() => navigate(paths.settings.agentSkills())}
               className="border-t-transparent! border-l-transparent! border-b-transparent! flex items-center gap-x-2 px-4 py-2 border-r border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
@@ -59,19 +48,17 @@ export default function HeaderMenu({
                 Builder
               </span>
             </button>
-            <div className="relative">
-              <button
+            <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
+              <DropdownMenuTrigger
                 disabled={!hasOtherFlows}
-                className="border-none flex items-center justify-between gap-x-1 text-theme-text-primary text-sm px-4 py-2 enabled:hover:bg-theme-action-menu-bg transition-colors duration-300 min-w-[200px] max-w-[300px]"
+                className="flex min-w-[200px] max-w-[300px] items-center justify-between gap-x-1 border-none px-4 py-2 text-sm text-theme-text-primary transition-colors duration-300 enabled:hover:bg-theme-action-menu-bg"
                 onClick={() => {
                   if (!agentName && !hasOtherFlows) {
                     const agentNameInput = document.getElementById(
                       "agent-flow-name-input"
                     );
                     if (agentNameInput) agentNameInput.focus();
-                    return;
                   }
-                  setShowDropdown(!showDropdown);
                 }}
               >
                 <span
@@ -80,33 +67,29 @@ export default function HeaderMenu({
                   {agentName || "Untitled Flow"}
                 </span>
                 {hasOtherFlows && (
-                  <div className="flex flex-col ml-2 shrink-0">
+                  <div className="ml-2 flex shrink-0 flex-col">
                     <ChevronUp size={10} />
                     <ChevronDown size={10} />
                   </div>
                 )}
-              </button>
-              {showDropdown && (
-                <div className="absolute top-full left-0 mt-1 w-full min-w-[200px] max-w-[350px] bg-theme-settings-input-bg border border-theme-sidebar-border rounded-md shadow-lg z-50 animate-fadeUpIn">
-                  {availableFlows
-                    .filter((flow) => flow.uuid !== flowId)
-                    .map((flow, index) => (
-                      <button
-                        key={flow?.uuid || `flow-${index}`}
-                        onClick={() => {
-                          navigate(paths.agents.editAgent(flow.uuid));
-                          setShowDropdown(false);
-                        }}
-                        className="border-none w-full text-left px-2 py-1 text-sm text-theme-text-primary hover:bg-theme-action-menu-bg transition-colors duration-300"
-                      >
-                        <span className="block truncate">
-                          {flow?.name || "Untitled Flow"}
-                        </span>
-                      </button>
-                    ))}
-                </div>
-              )}
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="max-w-[350px]">
+                {availableFlows
+                  .filter((flow) => flow.uuid !== flowId)
+                  .map((flow, index) => (
+                    <DropdownMenuItem
+                      key={flow?.uuid || `flow-${index}`}
+                      onClick={() =>
+                        navigate(paths.agents.editAgent(flow.uuid))
+                      }
+                    >
+                      <span className="block truncate">
+                        {flow?.name || "Untitled Flow"}
+                      </span>
+                    </DropdownMenuItem>
+                  ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 

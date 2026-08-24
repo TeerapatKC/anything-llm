@@ -490,7 +490,7 @@ export default function AdminAgents() {
                   </button>
                 </div>
                 <div className="min-h-0 flex-1 overflow-y-auto p-4">
-                  <div className="thin-scrollbar h-full overflow-y-auto overflow-x-visible rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary p-4 text-theme-text-primary">
+                  <div className="thin-scrollbar h-full overflow-y-auto overflow-x-visible rounded-xl bg-card ring-1 ring-foreground/10 p-4 text-theme-text-primary">
                     {SelectedSkillComponent ? (
                       <>
                         {selectedSkill === AGENT_SKILL_SETTINGS_KEY ? (
@@ -629,7 +629,7 @@ export default function AdminAgents() {
 
         <div className="flex min-h-0 flex-1 gap-6">
           {/* Skill settings nav - Make this section scrollable */}
-          <div className="flex min-h-0 w-[400px] shrink-0 flex-col overflow-hidden rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary shadow-sm">
+          <div className="flex min-h-0 w-[400px] shrink-0 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
             <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
               <h2 className="text-base font-semibold text-theme-text-primary">
                 Agent skills &amp; settings
@@ -738,7 +738,7 @@ export default function AdminAgents() {
 
           {/* Selected agent skill setting panel */}
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-visible rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary p-5 text-theme-text-primary">
+            <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-visible rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary">
               {SelectedSkillComponent ? (
                 <>
                   {selectedSkill === AGENT_SKILL_SETTINGS_KEY ? (

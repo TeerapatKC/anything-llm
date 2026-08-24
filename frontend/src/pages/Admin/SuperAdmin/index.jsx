@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import SuperAdmin from "@/models/superAdmin";
 import TransferOwnership from "./TransferOwnership";
+import ReservedPermissions from "./ReservedPermissions";
 import ResetInstance from "./ResetInstance";
 
 /**
@@ -55,6 +56,7 @@ export default function AdminSuperAdmin() {
           <Tabs defaultValue="ownership" className="mt-6">
             <TabsList>
               <TabsTrigger value="ownership">Transfer ownership</TabsTrigger>
+              <TabsTrigger value="permissions">Owner-only access</TabsTrigger>
               <TabsTrigger value="reset">Reset & cleanup</TabsTrigger>
             </TabsList>
             <TabsContent value="ownership">
@@ -62,6 +64,9 @@ export default function AdminSuperAdmin() {
                 candidates={state?.transferCandidates ?? []}
                 onTransferred={reload}
               />
+            </TabsContent>
+            <TabsContent value="permissions">
+              <ReservedPermissions />
             </TabsContent>
             <TabsContent value="reset">
               <ResetInstance />
@@ -76,7 +81,7 @@ export default function AdminSuperAdmin() {
 /** Who owns the instance today, and what owning it actually means. */
 function OwnerCard({ owner, capabilities = [] }) {
   return (
-    <div className="mt-6 rounded-lg border border-theme-sidebar-border bg-muted/20 p-5">
+    <div className="mt-6 rounded-lg bg-muted/20 ring-1 ring-foreground/10 p-5">
       <div className="flex items-center gap-x-3">
         <Crown className="h-5 w-5 text-yellow-400 light:text-yellow-600" />
         <div>

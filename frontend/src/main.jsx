@@ -97,7 +97,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={GeneralLLMPreference}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_LLM]}
               />
             ),
           };
@@ -113,7 +113,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={GeneralTranscriptionPreference}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION]}
               />
             ),
           };
@@ -129,7 +129,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={GeneralAudioPreference}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION]}
               />
             ),
           };
@@ -145,7 +145,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={GeneralEmbeddingPreference}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER]}
               />
             ),
           };
@@ -161,7 +161,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ImageGenerationPreference}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION]}
               />
             ),
           };
@@ -177,7 +177,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={EmbeddingTextSplitterPreference}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING]}
               />
             ),
           };
@@ -193,7 +193,7 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={GeneralVectorDatabase}
-                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB]}
               />
             ),
           };

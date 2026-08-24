@@ -1,6 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import { EllipsisVertical, ListTree, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
@@ -9,79 +17,52 @@ import {
 
 function ActionMenu({ chatId, forkThread, isEditing, role }) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef(null);
 
-  const toggleMenu = () => setOpen(!open);
-
-  const handleFork = () => {
-    forkThread(chatId);
-    setOpen(false);
-  };
-
-  const handleDelete = () => {
+  const handleFork = () => forkThread(chatId);
+  const handleDelete = () =>
     window.dispatchEvent(
       new CustomEvent("delete-message", { detail: { chatId } })
     );
-    setOpen(false);
-  };
-
-  useEffect(() => {
-    if (!open) return;
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open]);
 
   if (!chatId || isEditing || role === "user") return null;
 
   return (
-    <div className="mt-2 -ml-0.5 relative" ref={menuRef}>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <button
-              onClick={toggleMenu}
-              className="border-none text-zinc-300 light:text-slate-500 transition-colors duration-200"
-              aria-label={t("chat_window.more_actions")}
-            />
-          }
-        >
-          <EllipsisVertical size={24} />
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-[250px] text-xs">
-          {t("chat_window.more_actions")}
-        </TooltipContent>
-      </Tooltip>
-      {open && (
-        <div
-          data-action-menu-open
-          className="absolute -top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99"
-        >
-          <button
-            onClick={handleFork}
-            className="border-none rounded-t-lg flex items-center text-theme-text-primary gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
+    <DropdownMenu>
+      <div className="mt-2 -ml-0.5">
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-zinc-300 light:text-slate-500"
+                    aria-label={t("chat_window.more_actions")}
+                  />
+                }
+              />
+            }
           >
-            <ListTree size={18} />
-            <span className="text-sm">{t("chat_window.fork")}</span>
-          </button>
-          <button
-            onClick={handleDelete}
-            className="border-none flex rounded-b-lg items-center text-theme-text-primary gap-x-2 hover:bg-theme-action-menu-item-hover py-1.5 px-2 transition-colors duration-200 w-full text-left"
-          >
-            <Trash2 size={18} />
-            <span className="text-sm">{t("chat_window.delete")}</span>
-          </button>
-        </div>
-      )}
-    </div>
+            <EllipsisVertical />
+          </TooltipTrigger>
+          <TooltipContent side="top" className="max-w-[250px] text-xs">
+            {t("chat_window.more_actions")}
+          </TooltipContent>
+        </Tooltip>
+      </div>
+      <DropdownMenuContent align="start" className="w-40">
+        <DropdownMenuItem onClick={handleFork}>
+          <ListTree />
+          {t("chat_window.fork")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+          <Trash2 />
+          {t("chat_window.delete")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 

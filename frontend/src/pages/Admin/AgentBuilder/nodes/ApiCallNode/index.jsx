@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/refs */
-import React, { useRef, useState } from "react";
-import { ChevronDown, Plus, X } from "lucide-react";
+import React, { useRef } from "react";
+import { Plus, X } from "lucide-react";
 import VariableInput from "../../VariableInput";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,8 +17,6 @@ export default function ApiCallNode({
   renderVariableSelect,
 }) {
   const urlInputRef = useRef(null);
-  const [showVarMenu, setShowVarMenu] = useState(false);
-  const varButtonRef = useRef(null);
 
   const handleHeaderChange = (index, field, value) => {
     const newHeaders = [...(config.headers || [])];
@@ -54,7 +52,6 @@ export default function ApiCallNode({
       currentValue.substring(end);
 
     onConfigChange({ url: newValue });
-    setShowVarMenu(false);
 
     // Set cursor position after the inserted variable
     setTimeout(() => {
@@ -76,25 +73,15 @@ export default function ApiCallNode({
             value={config.url}
             onChange={(e) => onConfigChange({ url: e.target.value })}
           />
-          <div className="relative">
-            <button
-              ref={varButtonRef}
-              onClick={() => setShowVarMenu(!showVarMenu)}
-              className="h-full px-3 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300 flex items-center gap-1"
-              title="Insert variable"
-            >
-              <Plus className="w-4 h-4" />
-              <ChevronDown className="w-3 h-3" />
-            </button>
-            {showVarMenu && (
-              <div className="absolute right-0 top-[calc(100%+4px)] w-48 bg-theme-settings-input-bg border-none rounded-lg shadow-lg z-10">
-                {renderVariableSelect(
-                  "",
-                  insertVariableAtCursor,
-                  "Select variable to insert",
-                  true
-                )}
-              </div>
+          {/* `renderVariableSelect` is a `Select`, which already owns its popup -
+              a second hand-rolled dropdown around it just added a layer that
+              could be clipped. */}
+          <div className="w-48 shrink-0">
+            {renderVariableSelect(
+              "",
+              insertVariableAtCursor,
+              "Insert variable",
+              true
             )}
           </div>
         </div>

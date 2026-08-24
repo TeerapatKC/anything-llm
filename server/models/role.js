@@ -231,18 +231,38 @@ const Role = {
       const roles = await prisma.roles.findMany({
         include: { permissions: { include: { permission: true } } },
       });
+      // Permissions the owner keeps to themselves. Subtracted below rather than
+      // filtered at each call site, so one rule covers route gates, the permission list
+      // the frontend caches, and the privilege-escalation checks alike.
+      //
+      // Expanded down the tree first, the same way a grant is: ticking a coarse
+      // permission has to reserve everything beneath it, or reserving "Manage system
+      // settings" would leave the LLM and vector database pages open and read, from the
+      // screen, as though it had closed them.
+      const { ReservedPermissions } = require("./reservedPermissions");
+      const reserved = new Set(
+        expandPermissions(await ReservedPermissions.get())
+      );
+
       for (const role of roles) {
         const keys = role.permissions.map((entry) => entry.permission.key);
         // `system.admin` is an implicit wildcard so that permissions added by a future
         // update never lock the administrator out of their own instance. Everything
         // else is expanded down the permission tree, so a role holding only a coarse
         // parent still satisfies checks written against its finer children.
+        const granted = keys.includes(PERMISSIONS.SYSTEM_ADMIN)
+          ? SYSTEM_PERMISSION_KEYS
+          : expandPermissions(keys);
+
+        // The owner is exempt by name - reserving a permission is how they take it away
+        // from everyone else, so applying the subtraction to them too would mean the
+        // feature could only ever lock the instance's owner out of their own settings.
         cache.set(
           role.name,
           new Set(
-            keys.includes(PERMISSIONS.SYSTEM_ADMIN)
-              ? SYSTEM_PERMISSION_KEYS
-              : expandPermissions(keys)
+            this.isSuperAdminRole(role.name)
+              ? granted
+              : granted.filter((permission) => !reserved.has(permission))
           )
         );
       }

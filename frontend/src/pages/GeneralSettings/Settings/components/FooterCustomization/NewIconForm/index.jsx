@@ -63,12 +63,11 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
         >
           {React.createElement(ICON_COMPONENTS[selectedIcon] || Plus, {
             className: "h-4 w-4",
-            weight: selectedIcon === "Plus" ? "bold" : "fill",
             color: "var(--theme-sidebar-footer-icon-fill)",
           })}
         </div>
         {isDropdownOpen && (
-          <div className="absolute z-10 grid grid-cols-4 bg-theme-bg-primary mt-2 rounded-lg w-[160px] max-h-[100px] overflow-y-auto border border-theme-sidebar-border shadow-lg p-1.5 gap-1">
+          <div className="absolute z-10 mt-2 grid max-h-[100px] w-[160px] grid-cols-4 gap-1 overflow-y-auto rounded-lg bg-popover p-1.5 text-popover-foreground shadow-md ring-1 ring-foreground/10">
             {Object.keys(ICON_COMPONENTS).map((iconName) => (
               <button
                 key={iconName}
@@ -78,7 +77,6 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
               >
                 {React.createElement(ICON_COMPONENTS[iconName], {
                   className: "h-4 w-4",
-                  weight: "fill",
                   color: "var(--theme-sidebar-footer-icon-fill)",
                 })}
               </button>

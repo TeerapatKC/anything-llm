@@ -52,6 +52,7 @@ const PERMISSIONS = {
   SYSTEM_SETTINGS_VECTOR_DB: "system.settings.vector_db",
   SYSTEM_SETTINGS_TRANSCRIPTION: "system.settings.transcription",
   SYSTEM_SETTINGS_TEXT_SPLITTING: "system.settings.text_splitting",
+  SYSTEM_SETTINGS_IMAGE_GENERATION: "system.settings.image_generation",
   SYSTEM_SETTINGS_SECURITY: "system.settings.security",
   SYSTEM_SETTINGS_PRIVACY: "system.settings.privacy",
 
@@ -274,6 +275,14 @@ const PERMISSION_CATALOG = [
     label: "Configure text splitting",
     description:
       "Set the chunk size and overlap used when documents are split.",
+    category: "system",
+    parent: PERMISSIONS.SYSTEM_SETTINGS,
+  },
+  {
+    key: PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
+    label: "Configure image generation",
+    description:
+      "Choose the image generation provider, model and credentials for the instance.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
@@ -1251,6 +1260,42 @@ const SUPER_ADMIN_ONLY_CAPABILITIES = [
   },
 ];
 
+/**
+ * Permissions the owner may reserve to themselves.
+ *
+ * A reserved permission is stripped from every role except `super-admin` when a role's
+ * effective permission set is resolved, so it does not matter what an operator has ticked
+ * or that `admin` carries the `system.admin` wildcard - the capability simply is not
+ * theirs. That makes it a real access decision rather than a hidden menu item.
+ *
+ * `system.admin` itself is deliberately not reservable: it is the wildcard every
+ * administrator is defined by, and reserving it would silently strip every admin of
+ * everything rather than of one capability.
+ */
+const RESERVABLE_PERMISSION_KEYS = SYSTEM_PERMISSION_KEYS.filter(
+  (key) => key !== PERMISSIONS.SYSTEM_ADMIN
+);
+
+/**
+ * What an instance reserves to the owner out of the box: the provider configuration.
+ *
+ * These carry the instance's credentials and decide what every workspace talks to, which
+ * is the one area an operator usually wants kept to the person who owns the deployment.
+ * It is only a starting point - the owner can change the whole set from their console.
+ */
+const DEFAULT_RESERVED_PERMISSIONS = [
+  PERMISSIONS.SYSTEM_SETTINGS_LLM,
+  PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER,
+  PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB,
+  PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION,
+  PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
+  PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
+  PERMISSIONS.SYSTEM_MODEL_ROUTING,
+];
+
+/** The system setting the reserved list is persisted under. */
+const RESERVED_PERMISSIONS_SETTING = "reserved_permissions";
+
 /** The workspace role given to a member when none is specified. */
 const FALLBACK_WORKSPACE_ROLE = "member";
 
@@ -1286,6 +1331,64 @@ const SETTING_PERMISSIONS = {
   agent_search_provider: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_sql_connections: PERMISSIONS.AGENTS_MANAGE_SKILLS,
 };
+
+/**
+ * Which permission an `updateENV` key belongs to, by the provider family its name gives
+ * it away as.
+ *
+ * The settings *pages* are already gated on the fine-grained permissions, but the write
+ * endpoint they all post to takes raw environment keys - so without this a caller who has
+ * lost `system.settings.llm` could still set `OpenAiKey` by posting to it directly.
+ *
+ * Rules are matched in order and anything unmatched keeps the coarse `system.settings`
+ * it has always required, so this only ever narrows the specific families named here and
+ * cannot quietly lock an operator out of a setting that used to work.
+ *
+ * @type {Array<{test: RegExp, permission: string}>}
+ */
+const ENV_KEY_PERMISSION_RULES = [
+  // Ordered before the LLM catch-alls: these names contain provider words too.
+  {
+    test: /^Text(Splitter|Chunk)|ChunkSize|ChunkOverlap|MaxEmbedChunk/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
+  },
+  {
+    test: /^Embedding|Embedder/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER,
+  },
+  {
+    test: /^(ImageGeneration|ImageGen)/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
+  },
+  {
+    test: /^(Whisper|Speech|Tts|Stt|Deepgram|ElevenLabs|Kokoro|Piper)/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION,
+  },
+  {
+    test: /^(VectorDB|Pinecone|Chroma|Weaviate|Qdrant|Milvus|Zilliz|Astra|PGVector|Lance)/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB,
+  },
+  { test: /^ModelRouter/i, permission: PERMISSIONS.SYSTEM_MODEL_ROUTING },
+  { test: /^Agent/i, permission: PERMISSIONS.AGENTS_MANAGE_SKILLS },
+  // Everything else that names a chat provider, plus the provider selector itself.
+  { test: /^LLMProvider$/i, permission: PERMISSIONS.SYSTEM_SETTINGS_LLM },
+  {
+    test: /(Model(Pref|Preference|TokenLimit|Type)|ApiKey|Key|Token|BasePath|Endpoint|MaxTokens|TokenLimit|TimeoutMs|SafetySetting|CacheControl)$/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_LLM,
+  },
+];
+
+/**
+ * The permission needed to write one `updateENV` key.
+ * @param {string} envKeyName - the KEY_MAPPING key, e.g. "OpenAiKey"
+ * @returns {string}
+ */
+function permissionForEnvKey(envKeyName = "") {
+  const rule = ENV_KEY_PERMISSION_RULES.find((entry) =>
+    entry.test.test(String(envKeyName))
+  );
+  return rule?.permission ?? PERMISSIONS.SYSTEM_SETTINGS;
+}
 
 /**
  * The permission required to read/write a given system setting label.
@@ -1331,9 +1434,13 @@ module.exports = {
   ADMIN_ROLE,
   SUPER_ADMIN_ROLE,
   SUPER_ADMIN_ONLY_CAPABILITIES,
+  RESERVABLE_PERMISSION_KEYS,
+  DEFAULT_RESERVED_PERMISSIONS,
+  RESERVED_PERMISSIONS_SETTING,
   FALLBACK_WORKSPACE_ROLE,
   SETTINGS_ROUTE_PERMISSIONS,
   expandPermissions,
   ancestorsOf,
   permissionForSetting,
+  permissionForEnvKey,
 };

@@ -1,6 +1,10 @@
-import { useEffect, useRef, useState } from "react";
 import { EllipsisVertical } from "lucide-react";
 import { useMemoriesContext, LIMITS } from "../MemoriesContext";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import CardMenu from "./CardMenu";
 
 export default function MemoryCard({ memory }) {
@@ -12,26 +16,6 @@ export default function MemoryCard({ memory }) {
     handlePromote,
     handleDemote,
   } = useMemoriesContext();
-
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
-  const buttonRef = useRef(null);
-
-  useEffect(() => {
-    if (!menuOpen) return;
-    function handleClickOutside(e) {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(e.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target)
-      ) {
-        setMenuOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuOpen]);
 
   const isWorkspace = activeTab === "workspace";
   const canMove = isWorkspace
@@ -52,35 +36,30 @@ export default function MemoryCard({ memory }) {
           })}
         </p>
       </div>
-      <button
-        ref={buttonRef}
-        type="button"
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="shrink-0 border-none bg-transparent cursor-pointer text-zinc-400 light:text-slate-400 hover:text-zinc-50 light:hover:text-slate-900 transition-colors p-0"
-      >
-        <EllipsisVertical size={20} />
-      </button>
-      {menuOpen && (
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="shrink-0 text-zinc-400 light:text-slate-400"
+              aria-label="Memory actions"
+            />
+          }
+        >
+          <EllipsisVertical />
+        </DropdownMenuTrigger>
         <CardMenu
-          menuRef={menuRef}
-          buttonRef={buttonRef}
           isWorkspace={isWorkspace}
           canMove={canMove}
-          onEdit={() => {
-            setMenuOpen(false);
-            openEditModal(memory);
-          }}
+          onEdit={() => openEditModal(memory)}
           onMove={() => {
-            setMenuOpen(false);
             if (isWorkspace) handlePromote(memory.id);
             else handleDemote(memory.id);
           }}
-          onDelete={() => {
-            setMenuOpen(false);
-            handleDelete(memory.id);
-          }}
+          onDelete={() => handleDelete(memory.id)}
         />
-      )}
+      </DropdownMenu>
     </div>
   );
 }

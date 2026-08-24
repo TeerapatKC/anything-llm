@@ -75,7 +75,7 @@ export default function TransferOwnership({ candidates = [], onTransferred }) {
 
   if (candidates.length === 0) {
     return (
-      <p className="mt-6 rounded-lg border border-theme-sidebar-border bg-muted/20 p-5 text-sm text-theme-text-secondary">
+      <p className="mt-6 rounded-lg bg-muted/20 ring-1 ring-foreground/10 p-5 text-sm text-theme-text-secondary">
         There is nobody to hand this instance to yet. Ownership can only go to
         another active account, so create one first.
       </p>
@@ -86,7 +86,7 @@ export default function TransferOwnership({ candidates = [], onTransferred }) {
     <>
       <form
         onSubmit={handleSubmit}
-        className="mt-6 flex max-w-xl flex-col gap-y-5 rounded-lg border border-theme-sidebar-border bg-muted/20 p-5"
+        className="mt-6 flex max-w-xl flex-col gap-y-5 rounded-lg bg-muted/20 ring-1 ring-foreground/10 p-5"
       >
         <div>
           <Label htmlFor="targetUserId" className="block mb-2">

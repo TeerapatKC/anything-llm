@@ -19,6 +19,7 @@ export const PERMISSIONS = {
   SYSTEM_SETTINGS_VECTOR_DB: "system.settings.vector_db",
   SYSTEM_SETTINGS_TRANSCRIPTION: "system.settings.transcription",
   SYSTEM_SETTINGS_TEXT_SPLITTING: "system.settings.text_splitting",
+  SYSTEM_SETTINGS_IMAGE_GENERATION: "system.settings.image_generation",
   SYSTEM_SETTINGS_SECURITY: "system.settings.security",
   SYSTEM_SETTINGS_PRIVACY: "system.settings.privacy",
 

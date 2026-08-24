@@ -46,7 +46,7 @@ export default function Tooltip({ legendColor, ...props }) {
       {...props}
       content={({ active, payload, label }) => {
         return active && payload ? (
-          <div className="bg-theme-bg-primary text-sm rounded-md border shadow-lg">
+          <div className="rounded-md bg-popover text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10">
             <div className="border-b py-2 px-4">
               <p className="text-theme-bg-primary font-medium">{label}</p>
             </div>
@@ -58,7 +58,7 @@ export default function Tooltip({ legendColor, ...props }) {
                 >
                   <div className="flex items-center space-x-2">
                     <span
-                      className="shrink-0 h-3 w-3 border-theme-bg-primary rounded-md rounded-full border-2 shadow-md"
+                      className="shrink-0 h-3 w-3 border-theme-bg-primary rounded-md rounded-full border-2"
                       style={{ backgroundColor: legendColor }}
                     />
                     <p

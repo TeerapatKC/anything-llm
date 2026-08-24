@@ -67,7 +67,7 @@ ${details.stack}
               )}
             </button>
           </div>
-          <pre className="w-full text-xs md:text-sm text-theme-text-secondary bg-theme-bg-secondary p-4 md:p-6 rounded-lg overflow-x-auto overflow-y-auto max-h-[60vh] md:max-h-[70vh] whitespace-pre-wrap wrap-break-word font-mono border border-theme-border shadow-xs">
+          <pre className="w-full text-xs md:text-sm text-theme-text-secondary bg-theme-bg-secondary p-4 md:p-6 rounded-lg overflow-x-auto overflow-y-auto max-h-[60vh] md:max-h-[70vh] whitespace-pre-wrap wrap-break-word font-mono ring-1 ring-foreground/10">
             {error?.stack}
           </pre>
         </div>

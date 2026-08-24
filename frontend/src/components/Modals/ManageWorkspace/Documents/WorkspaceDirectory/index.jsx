@@ -244,7 +244,7 @@ function WorkspaceDirectory({
 
             {Object.keys(selectedItems).length > 0 && !hasChanges && (
               <div className="absolute bottom-3 left-0 right-0 flex justify-center pointer-events-none">
-                <div className="mx-auto flex items-center gap-x-1.5 bg-theme-bg-secondary border border-theme-modal-border rounded-lg py-1 px-1.5 pointer-events-auto shadow-lg">
+                <div className="pointer-events-auto mx-auto flex items-center gap-x-1.5 rounded-lg bg-popover px-1.5 py-1 shadow-md ring-1 ring-foreground/10">
                   <Button
                     type="button"
                     variant="outline"

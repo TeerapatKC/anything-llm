@@ -126,7 +126,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
         {/* `overflow-hidden` keeps the rounded corners from being painted over,
             so the item list below has to do the scrolling itself — the list
             grows with every skill, flow and MCP server the instance has. */}
-        <nav className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary shadow-sm min-[1100px]:w-[400px]">
+        <nav className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 min-[1100px]:w-[400px]">
           <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
             <h2 className="text-base font-semibold text-theme-text-primary">
               Agent skills &amp; settings
@@ -176,7 +176,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           </div>
         </nav>
 
-        <section className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary p-5 text-theme-text-primary">
+        <section className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary">
           <div hidden={selectedSection !== CONFIG_SECTIONS.MODEL}>
             <div className="mb-5">
               <h2 className="text-base font-semibold text-theme-text-primary">

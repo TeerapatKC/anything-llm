@@ -96,6 +96,18 @@ function roleEndpoints(app) {
           request.query?.scope === SCOPES.WORKSPACE
             ? SCOPES.WORKSPACE
             : SCOPES.SYSTEM;
+
+        // Permissions the owner has reserved are not on offer to anyone else: leaving
+        // them tickable would let an operator build a role that silently grants nothing,
+        // since the resolver strips them again. The owner still sees them, flagged, so
+        // the reservation is visible from the screen it affects.
+        const {
+          ReservedPermissions,
+        } = require("../models/reservedPermissions");
+        const actor = await userFromSession(request, response);
+        const isOwner = Role.isSuperAdmin(actor);
+        const reserved = new Set(await ReservedPermissions.get());
+
         const categories = Object.entries(PERMISSION_CATEGORIES)
           .filter(([, category]) => category.scope === scope)
           .sort(([, a], [, b]) => a.order - b.order)
@@ -103,8 +115,15 @@ function roleEndpoints(app) {
             key,
             label: category.label,
             permissions: PERMISSION_CATALOG.filter(
-              (permission) => permission.category === key
-            ).sort((a, b) => a.order - b.order),
+              (permission) =>
+                permission.category === key &&
+                (isOwner || !reserved.has(permission.key))
+            )
+              .sort((a, b) => a.order - b.order)
+              .map((permission) => ({
+                ...permission,
+                reserved: reserved.has(permission.key),
+              })),
           }))
           .filter((category) => category.permissions.length > 0);
         response.status(200).json({ scope, categories, error: null });

@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
@@ -9,6 +9,12 @@ import showToast from "@/utils/toast";
 import { saveAs } from "file-saver";
 import System from "@/models/system";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -54,10 +60,7 @@ const exportOptions = {
 
 export default function EmbedChatsView() {
   const { t } = useTranslation();
-  const menuRef = useRef();
   const query = useQuery();
-  const openMenuButton = useRef();
-  const [showMenu, setShowMenu] = useState(false);
   const [loading, setLoading] = useState(true);
   const [chats, setChats] = useState([]);
   const [offset, setOffset] = useState(Number(query.get("offset") || 0));
@@ -75,27 +78,6 @@ export default function EmbedChatsView() {
       showToast("Failed to export embed chats.", "error");
     }
   };
-
-  const toggleMenu = () => {
-    setShowMenu(!showMenu);
-  };
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target) &&
-        !openMenuButton.current.contains(event.target)
-      ) {
-        setShowMenu(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
 
   useEffect(() => {
     async function fetchChats() {
@@ -145,43 +127,23 @@ export default function EmbedChatsView() {
           <p className="text-lg leading-6 font-bold text-theme-text-primary">
             {t("embed-chats.title")}
           </p>
-          <div className="relative">
-            <Button
-              type="button"
-              size="lg"
-              ref={openMenuButton}
-              onClick={toggleMenu}
-              aria-expanded={showMenu}
-            >
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button type="button" size="lg" />}>
               <Download />
               {t("embed-chats.export")}
-              <ChevronDown
-                className={`transition-transform ${
-                  showMenu ? "rotate-180" : ""
-                }`}
-              />
-            </Button>
-            <div
-              ref={menuRef}
-              className={`${
-                showMenu ? "slide-down" : "slide-up hidden"
-              } absolute right-0 top-full z-20 mt-2 min-w-40 overflow-hidden rounded-lg border border-theme-sidebar-border bg-theme-bg-secondary py-1 shadow-lg`}
-            >
+              <ChevronDown className="transition-transform group-aria-expanded/button:rotate-180" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="min-w-40">
               {Object.entries(exportOptions).map(([key, data]) => (
-                <button
-                  type="button"
+                <DropdownMenuItem
                   key={key}
-                  onClick={() => {
-                    handleDumpChats(key);
-                    setShowMenu(false);
-                  }}
-                  className="w-full px-3 py-2 text-left text-sm text-theme-text-primary transition-colors hover:bg-theme-sidebar-item-hover"
+                  onClick={() => handleDumpChats(key)}
                 >
                   {data.name}
-                </button>
+                </DropdownMenuItem>
               ))}
-            </div>
-          </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
           {t("embed-chats.description")}

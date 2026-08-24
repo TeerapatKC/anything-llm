@@ -1,21 +1,25 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import AgentFlows from "@/models/agentFlows";
 import showToast from "@/utils/toast";
-import { Settings, Workflow } from "lucide-react";
+import { Pencil, Settings, Trash2, Workflow } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 function ManageFlowMenu({ flow, onDelete }) {
-  const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(null);
-  const menuRef = useRef(null);
   const navigate = useNavigate();
 
   async function deleteFlow() {
-    setOpen(false);
     setConfirm({
       title: "Delete this flow?",
       description: "This action cannot be undone.",
@@ -33,52 +37,32 @@ function ManageFlowMenu({ flow, onDelete }) {
     });
   }
 
-  useEffect(() => {
-    if (!open) return;
-
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [open]);
-
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="p-1.5 rounded-lg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-      >
-        <Settings className="h-5 w-5" />
-      </button>
-      {open && (
-        <div className="absolute min-w-[140px] top-full right-0 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
-          <Button
-            variant="ghost"
-            type="button"
-            className="justify-start"
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon-sm" aria-label="Manage flow" />
+          }
+        >
+          <Settings />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem
             onClick={() => navigate(paths.agents.editAgent(flow.uuid))}
           >
-            <span className="text-sm whitespace-nowrap">Edit Flow</span>
-          </Button>
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={deleteFlow}
-            className="justify-start"
-          >
-            <span className="text-sm whitespace-nowrap">Delete Flow</span>
-          </Button>
-        </div>
-      )}
+            <Pencil />
+            Edit flow
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={deleteFlow}>
+            <Trash2 />
+            Delete flow
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </div>
+    </>
   );
 }
 

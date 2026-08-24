@@ -133,7 +133,7 @@ export default function RoleModal({
 
       <form id="role-editor-form" onSubmit={handleSubmit}>
         <div className="space-y-4">
-          <div className="grid gap-4 rounded-lg border border-theme-sidebar-border bg-muted/20 p-4 md:grid-cols-2">
+          <div className="grid gap-4 rounded-lg bg-muted/20 ring-1 ring-foreground/10 p-4 md:grid-cols-2">
             <div>
               <Label htmlFor="displayName" className="block mb-2">
                 Label
@@ -177,7 +177,7 @@ export default function RoleModal({
             </div>
           </div>
 
-          <div className="rounded-lg border border-theme-sidebar-border bg-muted/20 p-4">
+          <div className="rounded-lg bg-muted/20 ring-1 ring-foreground/10 p-4">
             <Label htmlFor="description" className="block mb-2">
               Description
             </Label>

@@ -74,7 +74,7 @@ const EventMetadata = ({ metadata, expanded = false }) => {
   return (
     <TableRow className="bg-theme-bg-secondary/40 hover:bg-theme-bg-secondary/40">
       <TableCell colSpan={4} className="p-4">
-        <div className="flex flex-col gap-y-2 rounded-lg border border-theme-sidebar-border bg-theme-bg-secondary p-3 shadow-xs">
+        <div className="flex flex-col gap-y-2 rounded-lg bg-card ring-1 ring-foreground/10 p-3">
           <p className="text-xs font-semibold text-theme-text-secondary uppercase tracking-wider">
             Event Metadata
           </p>

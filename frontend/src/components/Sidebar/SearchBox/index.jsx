@@ -57,7 +57,7 @@ export default function SearchBox({ user, showNewWsModal }) {
   }, []);
 
   return (
-    <div className="flex gap-x-[5px] w-full items-center h-[32px]">
+    <div className="relative flex h-[32px] w-full items-center gap-x-[5px]">
       <div className="relative h-full w-full flex">
         <input
           ref={searchRef}
@@ -89,7 +89,10 @@ export default function SearchBox({ user, showNewWsModal }) {
 
 function SearchResultWrapper({ children }) {
   return (
-    <div className="absolute right-0 top-[6.2%] w-full flex flex-col gap-y-[24px] h-auto bg-theme-modal-border light:bg-theme-bg-primary light:border-2 light:border-theme-modal-border rounded-lg p-[16px] z-10 max-h-[calc(100%-24px)] overflow-y-scroll no-scroll">
+    // Anchored to the search row (which is `relative`) rather than to the
+    // sidebar: `SidebarContainer` is `fixed inset-y-0`, so a percentage offset
+    // here resolves against the viewport height and lands on the input itself.
+    <div className="thin-scrollbar absolute inset-x-0 top-full z-30 mt-2 flex max-h-[min(50vh,420px)] flex-col gap-y-[24px] overflow-y-auto rounded-lg bg-popover p-[16px] text-popover-foreground shadow-md ring-1 ring-foreground/10">
       {children}
     </div>
   );

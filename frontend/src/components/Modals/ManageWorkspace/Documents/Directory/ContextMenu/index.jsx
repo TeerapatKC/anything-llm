@@ -1,6 +1,21 @@
-import { useRef, useEffect } from "react";
 import { CheckSquare, Square, X } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
+/**
+ * Right-click menu for the document picker.
+ *
+ * `DropdownMenu` anchors to its trigger, so the trigger here is a zero-size
+ * element parked at the pointer coordinates — that buys the portal, the
+ * dismiss-on-outside-click and the keyboard handling for free instead of
+ * hand-rolling them again.
+ *
+ * @param {{contextMenu: {visible: boolean, x: number, y: number}, closeContextMenu: function, allSelected: boolean, onSelectAll: function, onClearSelection: function}} props
+ */
 export default function ContextMenu({
   contextMenu,
   closeContextMenu,
@@ -8,59 +23,34 @@ export default function ContextMenu({
   onSelectAll,
   onClearSelection,
 }) {
-  const contextMenuRef = useRef(null);
-
-  useEffect(() => {
-    if (!contextMenu.visible) return;
-    const handleClickOutside = (event) => {
-      if (
-        contextMenuRef.current &&
-        !contextMenuRef.current.contains(event.target)
-      ) {
-        closeContextMenu();
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [contextMenu.visible, closeContextMenu]);
-
-  if (!contextMenu.visible) return null;
-
-  const toggleSelectAll = () => {
+  const toggleSelectAll = () =>
     allSelected ? onClearSelection() : onSelectAll();
-    closeContextMenu();
-  };
 
   return (
-    <div
-      ref={contextMenuRef}
-      style={{
-        position: "fixed",
-        top: `${contextMenu.y}px`,
-        left: `${contextMenu.x}px`,
-        zIndex: 1000,
-      }}
-      className="min-w-[160px] bg-theme-bg-secondary border border-theme-modal-border rounded-md shadow-lg py-1"
+    <DropdownMenu
+      open={contextMenu.visible}
+      onOpenChange={(open) => !open && closeContextMenu()}
     >
-      <button
-        onClick={toggleSelectAll}
-        className="flex items-center gap-x-2 w-full text-left px-3 py-1.5 text-sm text-theme-text-primary hover:bg-theme-file-picker-hover"
-      >
-        {allSelected ? (
-          <Square className="h-3.5 w-3.5" />
-        ) : (
-          <CheckSquare className="h-3.5 w-3.5" />
-        )}
-        {allSelected ? "Unselect All" : "Select All"}
-      </button>
-      <button
-        onClick={closeContextMenu}
-        className="flex items-center gap-x-2 w-full text-left px-3 py-1.5 text-sm text-theme-text-primary hover:bg-theme-file-picker-hover"
-      >
-        <X className="h-3.5 w-3.5" />
-        Cancel
-      </button>
-    </div>
+      <DropdownMenuTrigger
+        render={<span aria-hidden="true" />}
+        style={{
+          position: "fixed",
+          top: contextMenu.y,
+          left: contextMenu.x,
+          width: 0,
+          height: 0,
+        }}
+      />
+      <DropdownMenuContent align="start" className="min-w-[160px]">
+        <DropdownMenuItem onClick={toggleSelectAll}>
+          {allSelected ? <Square /> : <CheckSquare />}
+          {allSelected ? "Unselect All" : "Select All"}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={closeContextMenu}>
+          <X />
+          Cancel
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

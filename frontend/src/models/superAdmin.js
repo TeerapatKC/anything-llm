@@ -38,6 +38,33 @@ const SuperAdmin = {
       .catch((e) => ({ success: false, error: e.message }));
   },
 
+  /**
+   * The system permissions the owner can keep to themselves, plus the current selection.
+   * @returns {Promise<{categories: Array, reserved: string[], error: string|null}>}
+   */
+  reservedPermissions: async function () {
+    return await fetch(`${API_BASE}/super-admin/reserved-permissions`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({ categories: [], reserved: [], error: e.message }));
+  },
+
+  /**
+   * Replaces the reserved list. This is an access-control change: anything listed stops
+   * being available to every other role, whatever their role grants.
+   * @param {string[]} permissions
+   */
+  setReservedPermissions: async function (permissions) {
+    return await fetch(`${API_BASE}/super-admin/reserved-permissions`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ permissions }),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({ success: false, error: e.message }));
+  },
+
   /** What each reset scope would remove, and the phrase required to confirm. */
   resetPreview: async function () {
     return await fetch(`${API_BASE}/super-admin/reset/preview`, {

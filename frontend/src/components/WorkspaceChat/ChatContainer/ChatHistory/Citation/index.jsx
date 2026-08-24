@@ -14,7 +14,11 @@ import {
   Link,
   SquareArrowOutUpRight,
 } from "lucide-react";
-import { GithubLogo, GitlabLogo, YoutubeLogo } from "@phosphor-icons/react";
+import {
+  GithubLogo,
+  GitlabLogo,
+  YoutubeLogo,
+} from "@/components/lib/BrandIcon";
 import GmailLogo from "@/pages/Admin/Agents/GMailSkillPanel/gmail.png";
 import GoogleCalendarLogo from "@/pages/Admin/Agents/GoogleCalendarSkillPanel/google-calendar.png";
 import OutlookLogo from "@/pages/Admin/Agents/OutlookSkillPanel/outlook.png";

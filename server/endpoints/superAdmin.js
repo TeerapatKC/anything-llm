@@ -6,7 +6,16 @@ const { SystemSettings } = require("../models/systemSettings");
 const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { superAdminOnly } = require("../utils/middleware/authorizedRequest");
-const { SUPER_ADMIN_ONLY_CAPABILITIES } = require("../utils/permissions");
+const { ReservedPermissions } = require("../models/reservedPermissions");
+const {
+  SUPER_ADMIN_ONLY_CAPABILITIES,
+  SCOPES,
+  PERMISSION_CATALOG,
+  PERMISSION_CATEGORIES,
+  PERMISSION_CHILDREN,
+  RESERVABLE_PERMISSION_KEYS,
+  DEFAULT_RESERVED_PERMISSIONS,
+} = require("../utils/permissions");
 
 /**
  * The owner-only console: ownership transfer, scoped reset, and factory reset.
@@ -110,6 +119,86 @@ function superAdminEndpoints(app) {
         );
 
         response.status(200).json({ success: true, error: null, owner: to });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * The system permissions the owner can keep to themselves, and which are currently
+   * reserved. Grouped the same way the role editor groups them so the two screens read
+   * alike.
+   */
+  app.get(
+    "/super-admin/reserved-permissions",
+    [validatedRequest, superAdminOnly()],
+    async (_request, response) => {
+      try {
+        const reserved = await ReservedPermissions.get();
+        const categories = Object.entries(PERMISSION_CATEGORIES)
+          .filter(([, category]) => category.scope === SCOPES.SYSTEM)
+          .sort(([, a], [, b]) => a.order - b.order)
+          .map(([key, category]) => ({
+            key,
+            label: category.label,
+            permissions: PERMISSION_CATALOG.filter(
+              (permission) =>
+                permission.category === key &&
+                RESERVABLE_PERMISSION_KEYS.includes(permission.key)
+            )
+              .sort((a, b) => a.order - b.order)
+              .map((permission) => ({
+                ...permission,
+                // Reserving a coarse permission reaches further than reserving its
+                // children: it takes the whole subtree, and - for `system.settings` -
+                // it is also the fallback every unmapped settings key falls back to, so
+                // things like the support email and password policy go with it. The UI
+                // warns rather than forbids; an owner may well mean it.
+                hasChildren:
+                  (PERMISSION_CHILDREN.get(permission.key) ?? []).length > 0,
+              })),
+          }))
+          .filter((category) => category.permissions.length > 0);
+
+        response.status(200).json({
+          categories,
+          reserved,
+          defaults: DEFAULT_RESERVED_PERMISSIONS,
+          error: null,
+        });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Replaces the reserved list. Anything listed here stops being available to every other
+   * role on the instance, whatever their role grants - so this is an access-control
+   * change, not a matter of hiding menu entries.
+   */
+  app.post(
+    "/super-admin/reserved-permissions",
+    [validatedRequest, superAdminOnly()],
+    async (request, response) => {
+      try {
+        const actor = await userFromSession(request, response);
+        const { permissions = [] } = reqBody(request);
+        const previous = await ReservedPermissions.get();
+
+        const { reserved, error } = await ReservedPermissions.set(permissions);
+        if (error) return response.status(200).json({ success: false, error });
+
+        await EventLogs.logEvent(
+          "reserved_permissions_updated",
+          { by: actor.username, from: previous, to: reserved },
+          actor.id
+        );
+
+        response.status(200).json({ success: true, error: null, reserved });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

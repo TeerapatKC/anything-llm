@@ -8,7 +8,7 @@ export default function AgentSkillSettings() {
   const { t } = useTranslation();
 
   return (
-    <section className="rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary/70 p-3 text-theme-text-primary">
+    <section className="rounded-xl bg-card/70 ring-1 ring-foreground/10 p-3 text-theme-text-primary">
       <div className="flex items-center gap-2">
         <span className="flex size-7 shrink-0 items-center justify-center rounded-md bg-muted/40 text-theme-text-secondary">
           <SlidersHorizontal className="size-4" />

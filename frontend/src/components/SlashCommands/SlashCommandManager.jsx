@@ -98,12 +98,7 @@ export default function SlashCommandManager({
         title={title}
         description={description}
         actions={
-          <Button
-            type="button"
-            size="lg"
-            onClick={openAdd}
-            disabled={loading}
-          >
+          <Button type="button" size="lg" onClick={openAdd} disabled={loading}>
             <Plus className="mr-1.5 size-4" />
             New command
           </Button>
@@ -132,7 +127,7 @@ export default function SlashCommandManager({
                   setSelectedPreset(preset);
                   openEdit();
                 }}
-                className="flex w-full flex-col items-start gap-y-1 rounded-md border border-theme-sidebar-border bg-theme-bg-secondary px-4 py-3 text-left transition-colors hover:border-theme-text-secondary"
+                className="flex w-full flex-col items-start gap-y-1 rounded-md bg-card px-4 py-3 text-left ring-1 ring-foreground/10 transition-colors hover:ring-foreground/25"
               >
                 <code className="font-mono text-sm text-theme-text-primary">
                   {preset.command}

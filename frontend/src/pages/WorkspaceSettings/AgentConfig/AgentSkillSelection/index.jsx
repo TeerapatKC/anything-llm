@@ -781,7 +781,7 @@ function SkillGroup({
   const entries = Object.entries(skills);
   if (entries.length === 0) return null;
   return (
-    <section className="overflow-hidden rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary">
+    <section className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
       <div className="flex items-center gap-2 border-b border-theme-sidebar-border bg-sidebar-accent/40 px-4 py-3">
         {Icon && <Icon size={17} className="text-theme-text-secondary" />}
         <h3 className="text-sm font-semibold text-theme-text-primary">
@@ -802,7 +802,7 @@ function SkillGroup({
           return (
             <div
               key={id}
-              className="flex min-w-0 flex-col gap-y-3 rounded-xl border border-theme-sidebar-border bg-muted/10 p-3"
+              className="flex min-w-0 flex-col gap-y-3 rounded-xl bg-muted/10 ring-1 ring-foreground/10 p-3"
             >
               <div className="flex min-w-0 items-start gap-3">
                 <SkillVisual skill={skill} fallbackIcon={Icon} />
@@ -1070,7 +1070,7 @@ function RuntimeGroup({ runtime, instanceRuntime, onChange }) {
     typeof value === "boolean" ? (value ? "On" : "Off") : value;
 
   return (
-    <section className="overflow-hidden rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary">
+    <section className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
       <div className="flex items-center gap-2 border-b border-theme-sidebar-border bg-sidebar-accent/40 px-4 py-3">
         <SlidersHorizontal size={17} className="text-theme-text-secondary" />
         <div className="min-w-0">
@@ -1177,7 +1177,7 @@ function EntityGroup({
   emptyText,
 }) {
   return (
-    <section className="overflow-hidden rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary">
+    <section className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
       <div className="flex items-center gap-2 border-b border-theme-sidebar-border bg-sidebar-accent/40 px-4 py-3">
         {Icon && <Icon size={17} className="text-theme-text-secondary" />}
         <h3 className="text-sm font-semibold text-theme-text-primary">
@@ -1196,7 +1196,7 @@ function EntityGroup({
           items.map((item) => (
             <div
               key={item.id}
-              className="rounded-lg border border-theme-sidebar-border bg-muted/10 p-3"
+              className="rounded-lg bg-muted/10 ring-1 ring-foreground/10 p-3"
             >
               <Toggle
                 size="md"

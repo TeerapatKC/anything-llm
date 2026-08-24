@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { useRef, useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
@@ -87,11 +88,12 @@ export default function VariableRow({ variable, onRefresh }) {
         </TableCell>
         <TableCell>{truncate(variable.description || "-", 50)}</TableCell>
         <TableCell>
-          <span
-            className={`rounded-full ${colorTheme.bg} px-2 py-0.5 text-xs leading-5 font-semibold ${colorTheme.text} shadow-xs`}
+          <Badge
+            variant="secondary"
+            className={`${colorTheme.bg} ${colorTheme.text}`}
           >
             {titleCase(variable?.type ?? "static")}
-          </span>
+          </Badge>
         </TableCell>
         <TableCell className="text-right">
           <TableRowActions>

@@ -188,7 +188,7 @@ export default function ToolsSelector({
 
         {open && (
           <div
-            className={`absolute left-0 right-0 z-20 max-h-80 overflow-y-auto p-1.5 bg-zinc-800 light:bg-white rounded-lg flex flex-col shadow-[0px_4px_12px_0px_rgba(0,0,0,0.35)] border border-zinc-700 light:border-slate-300 ${
+            className={`absolute left-0 right-0 z-20 flex max-h-80 flex-col overflow-y-auto rounded-lg bg-popover p-1.5 text-popover-foreground shadow-md ring-1 ring-foreground/10 ${
               placement === "top" ? "bottom-full mb-1" : "top-full mt-1"
             }`}
           >

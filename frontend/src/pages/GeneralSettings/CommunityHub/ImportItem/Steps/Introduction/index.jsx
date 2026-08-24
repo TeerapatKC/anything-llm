@@ -1,3 +1,5 @@
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TriangleAlert } from "lucide-react";
 import CommunityHubImportItemSteps from "..";
 import { Button } from "@/components/ui/button";
 import paths from "@/utils/paths";
@@ -37,16 +39,19 @@ export default function Introduction({ settings, setSettings, setStep }) {
               items are visible to everyone.
             </p>
 
-            <p className="p-4 bg-yellow-800/30 light:bg-orange-100 light:text-orange-500 light:border-orange-500 rounded-lg border border-yellow-500 text-yellow-500">
-              If you are pulling in a private item, make sure it is{" "}
-              <b>shared with a team</b> you belong to, and you have added a{" "}
-              <a
-                href={paths.communityHub.authentication()}
-                className="underline text-yellow-100 light:text-orange-500 font-semibold"
-              >
-                Connection Key.
-              </a>
-            </p>
+            <Alert variant="warning" className="p-4">
+              <TriangleAlert />
+              <AlertDescription>
+                If you are pulling in a private item, make sure it is{" "}
+                <b>shared with a team</b> you belong to, and you have added a{" "}
+                <a
+                  href={paths.communityHub.authentication()}
+                  className="font-semibold underline"
+                >
+                  Connection Key.
+                </a>
+              </AlertDescription>
+            </Alert>
           </div>
 
           <div className="flex flex-col gap-y-2 mt-4">

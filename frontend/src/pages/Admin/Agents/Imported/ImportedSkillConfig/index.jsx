@@ -1,11 +1,17 @@
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { Plug, Settings } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { Plug, Settings, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { sentenceCase } from "text-case";
 import Toggle from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 /**
@@ -194,9 +200,7 @@ export default function ImportedSkillConfig({
 }
 
 function ManageSkillMenu({ config, setImportedSkills }) {
-  const [open, setOpen] = useState(false);
   const [confirm, setConfirm] = useState(null);
-  const menuRef = useRef(null);
 
   async function deleteSkill() {
     setConfirm({
@@ -215,48 +219,30 @@ function ManageSkillMenu({ config, setImportedSkills }) {
     if (success) {
       setImportedSkills((prev) => prev.filter((s) => s.hubId !== config.hubId));
       showToast("Skill deleted successfully.", "success");
-      setOpen(false);
     } else {
       showToast("Failed to delete skill.", "error");
     }
   }
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   if (!config.hubId) return null;
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        type="button"
-        onClick={() => setOpen(!open)}
-        className="p-1.5 rounded-lg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-      >
-        <Settings className="h-5 w-5" />
-      </button>
-      {open && (
-        <div className="absolute w-[100px] -top-1 left-7 mt-1 border-[1.5px] border-white/40 rounded-lg bg-theme-action-menu-bg flex flex-col shadow-[0_4px_14px_rgba(0,0,0,0.25)] text-theme-text-primary z-99 md:z-10">
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={deleteSkill}
-            className="justify-start"
-          >
-            <span className="text-sm">Delete Skill</span>
-          </Button>
-        </div>
-      )}
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button variant="ghost" size="icon-sm" aria-label="Manage skill" />
+          }
+        >
+          <Settings />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-40">
+          <DropdownMenuItem variant="destructive" onClick={deleteSkill}>
+            <Trash2 />
+            Delete skill
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </div>
+    </>
   );
 }

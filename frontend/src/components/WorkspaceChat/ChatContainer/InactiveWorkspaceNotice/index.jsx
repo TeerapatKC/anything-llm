@@ -1,4 +1,5 @@
 import { Ban } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -10,12 +11,10 @@ export default function InactiveWorkspaceNotice() {
   const { t } = useTranslation();
   return (
     <div className="w-full flex justify-center px-4 pb-6">
-      <div className="w-full md:max-w-[800px] flex items-center gap-x-3 rounded-lg border border-theme-modal-border bg-theme-bg-secondary px-4 py-3">
-        <Ban className="h-4 w-4 shrink-0 text-theme-text-secondary" />
-        <p className="text-sm text-theme-text-secondary">
-          {t("general.status.chat-disabled")}
-        </p>
-      </div>
+      <Alert className="w-full items-center px-4 py-3 md:max-w-[800px]">
+        <Ban />
+        <AlertDescription>{t("general.status.chat-disabled")}</AlertDescription>
+      </Alert>
     </div>
   );
 }

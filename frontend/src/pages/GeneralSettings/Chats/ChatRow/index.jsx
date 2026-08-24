@@ -49,13 +49,13 @@ export default function ChatRow({ chat, onDelete }) {
         <TableCell>{chat.workspace?.name}</TableCell>
         <TableCell
           onClick={openPromptModal}
-          className="border-transparent cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
+          className="border-transparent cursor-pointer hover:underline"
         >
           {truncate(chat.prompt, 40)}
         </TableCell>
         <TableCell
           onClick={openResponseModal}
-          className="cursor-pointer transform transition-transform duration-200 hover:scale-105 hover:shadow-lg"
+          className="cursor-pointer hover:underline"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
         </TableCell>

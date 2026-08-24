@@ -1,5 +1,12 @@
 import { useRef, useState, useEffect } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   ChevronDown,
   ChevronRight,
@@ -7,6 +14,7 @@ import {
   CloudDownload,
   Cpu,
   EllipsisVertical,
+  Trash2,
 } from "lucide-react";
 import pluralize from "pluralize";
 import { titleCase } from "text-case";
@@ -175,7 +183,6 @@ function ModelRow({
   },
 }) {
   const modelRowRef = useRef(null);
-  const [showOptions, setShowOptions] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [downloadPercentage, setDownloadPercentage] = useState(0);
   const fileSize =
@@ -266,31 +273,28 @@ function ModelRow({
 
       <div className="relative justify-self-end">
         {uninstallModel && model.downloaded ? (
-          <>
-            <button
-              type="button"
-              className="border-none hover:bg-white/20 rounded-lg p-1"
-              onClick={() => setShowOptions(!showOptions)}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Model actions"
+                />
+              }
             >
-              <EllipsisVertical
-                size={22}
-                className="text-theme-text-primary cursor-pointer"
-              />
-            </button>
-            {showOptions && (
-              <div className="absolute top-[20px] right-[20px] bg-theme-action-menu-bg border border-theme-modal-border rounded-lg py-2 px-4 shadow-lg">
-                <button
-                  type="button"
-                  className="border-none font-medium group"
-                  onClick={handleUninstallModel}
-                >
-                  <p className="text-sm text-theme-text-primary group-hover:underline group-hover:text-theme-text-secondary">
-                    Uninstall
-                  </p>
-                </button>
-              </div>
-            )}
-          </>
+              <EllipsisVertical />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-36">
+              <DropdownMenuItem
+                variant="destructive"
+                onClick={handleUninstallModel}
+              >
+                <Trash2 />
+                Uninstall
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : null}
         {/* Only offer the install affordance when the caller can actually
         install — a provider may list a catalog it cannot download from. */}

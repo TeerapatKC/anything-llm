@@ -96,10 +96,12 @@ function FeedbackButton({
             />
           }
         >
+          {/* lucide icons are stroked outlines; filling with the current
+              colour is how the selected state reads as "solid". */}
           <IconComponent
             size={20}
             className="mb-1"
-            weight={isSelected ? "fill" : "regular"}
+            fill={isSelected ? "currentColor" : "none"}
           />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">

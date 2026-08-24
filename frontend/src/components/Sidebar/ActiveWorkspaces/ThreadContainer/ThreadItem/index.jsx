@@ -99,7 +99,9 @@ export default function ThreadItem({
                 : "bg-sidebar-foreground/30 group-hover/thread:bg-sidebar-foreground/60"
             )}
           />
-          <span className={cn("truncate", isActive && "font-medium")}>
+          <span
+            className={cn("min-w-0 flex-1 truncate", isActive && "font-medium")}
+          >
             {thread.name}
           </span>
         </TooltipTrigger>

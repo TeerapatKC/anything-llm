@@ -140,7 +140,7 @@ export default function ToolsMenu({
           if (e.currentTarget.contains(e.target)) e.preventDefault();
         }}
         style={{ maxHeight }}
-        className={`absolute left-2 right-2 md:left-14 md:right-auto md:w-[400px] z-50 bg-zinc-800 light:bg-white border border-zinc-700 light:border-slate-300 rounded-lg p-3 flex flex-col gap-2.5 shadow-lg overflow-hidden ${
+        className={`absolute left-2 right-2 z-50 flex flex-col gap-2.5 overflow-hidden rounded-lg bg-popover p-3 text-popover-foreground shadow-md ring-1 ring-foreground/10 md:left-14 md:right-auto md:w-[400px] ${
           centered ? "top-full mt-2" : "bottom-full mb-2"
         }`}
       >

@@ -44,7 +44,12 @@ const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   userPermissionValid,
 } = require("../utils/middleware/authorizedRequest");
-const { PERMISSIONS } = require("../utils/permissions");
+const {
+  PERMISSIONS,
+  SETTINGS_ROUTE_PERMISSIONS,
+  permissionForEnvKey,
+} = require("../utils/permissions");
+const { Role } = require("../models/role");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { EventLogs } = require("../models/eventLogs");
@@ -467,16 +472,37 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/update-env",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    // Any settings permission gets you through the door; which keys you may actually
+    // write is decided per key below, since one endpoint serves every settings page.
+    [validatedRequest, userPermissionValid(SETTINGS_ROUTE_PERMISSIONS)],
     async (request, response) => {
       try {
         const body = reqBody(request);
+        const user =
+          response.locals?.user ?? (await userFromSession(request, response));
+        const granted = new Set(await Role.permissionsForUser(user));
+
+        // Drop anything the caller is not allowed to set rather than refusing the whole
+        // request: the provider pages post several keys at once, and a permission the
+        // owner has reserved should quietly not apply rather than break the save.
+        const permitted = {};
+        const refused = [];
+        for (const key of Object.keys(body)) {
+          if (granted.has(permissionForEnvKey(key))) permitted[key] = body[key];
+          else refused.push(key);
+        }
+
+        if (refused.length > 0)
+          console.log(
+            `[33m[SETTINGS][0m "${user?.username}" may not change: ${refused.join(", ")}`
+          );
+
         const { newValues, error } = await updateENV(
-          body,
+          permitted,
           false,
           response?.locals?.user?.id
         );
-        response.status(200).json({ newValues, error });
+        response.status(200).json({ newValues, error, refused });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();

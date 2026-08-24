@@ -1,5 +1,11 @@
-import { memo, useEffect, useState, useRef } from "react";
+import { memo, useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useTranslation } from "react-i18next";
 import { saveAs } from "file-saver";
 import {
@@ -27,8 +33,6 @@ function ImageGenerationCard({ props }) {
   const [objectUrl, setObjectUrl] = useState(null);
   const [status, setStatus] = useState("loading");
   const [copied, setCopied] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuRef = useRef(null);
 
   useEffect(() => {
     let revokeUrl = null;
@@ -50,20 +54,9 @@ function ImageGenerationCard({ props }) {
     };
   }, [storageFilename]);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    function handleClickOutside(e) {
-      if (menuRef.current && !menuRef.current.contains(e.target))
-        setMenuOpen(false);
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuOpen]);
-
   const handleDownload = () => {
     if (!blob) return;
     saveAs(blob, filename || storageFilename);
-    setMenuOpen(false);
   };
 
   const handleCopy = async () => {
@@ -78,7 +71,6 @@ function ImageGenerationCard({ props }) {
   };
 
   const handleEdit = async () => {
-    setMenuOpen(false);
     if (!blob) return;
 
     const file = new File([blob], filename || storageFilename, {
@@ -160,35 +152,30 @@ function ImageGenerationCard({ props }) {
             </div>
 
             {/* 3-dot menu — top right */}
-            <div
-              ref={menuRef}
-              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <button
-                onClick={() => setMenuOpen((prev) => !prev)}
-                className="border-none p-2 rounded-lg bg-black/60 hover:bg-black/80 light:bg-slate-200/60 light:hover:bg-slate-200 text-theme-text-primary light:text-slate-700"
-              >
-                <Ellipsis size={16} />
-              </button>
-
-              {menuOpen && (
-                <div className="absolute right-0 mt-1 w-36 rounded-lg bg-zinc-900 light:bg-white border border-zinc-700 light:border-slate-200 shadow-lg z-10 overflow-hidden">
-                  <button
-                    onClick={handleEdit}
-                    className="w-full flex items-center gap-x-2 px-3 py-2 text-sm text-theme-text-primary light:text-slate-700 hover:bg-zinc-800 light:hover:bg-slate-100 border-none"
-                  >
-                    <Pencil size={14} />
+            <div className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100">
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <button
+                      type="button"
+                      className="border-none p-2 rounded-lg bg-black/60 hover:bg-black/80 light:bg-slate-200/60 light:hover:bg-slate-200 text-theme-text-primary light:text-slate-700"
+                      aria-label={t("imageGeneration.card.edit")}
+                    />
+                  }
+                >
+                  <Ellipsis size={16} />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-36">
+                  <DropdownMenuItem onClick={handleEdit}>
+                    <Pencil />
                     {t("imageGeneration.card.edit")}
-                  </button>
-                  <button
-                    onClick={handleDownload}
-                    className="w-full flex items-center gap-x-2 px-3 py-2 text-sm text-theme-text-primary light:text-slate-700 hover:bg-zinc-800 light:hover:bg-slate-100 border-none"
-                  >
-                    <Download size={14} />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleDownload}>
+                    <Download />
                     {t("imageGeneration.card.download")}
-                  </button>
-                </div>
-              )}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         )}

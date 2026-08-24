@@ -1,5 +1,12 @@
-import React, { useRef, useEffect } from "react";
+import React from "react";
 import { ChevronDown, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { BLOCK_TYPES, BLOCK_INFO } from "../BlockList";
 
 /**
@@ -23,65 +30,42 @@ export default function AddBlockMenu({
   setShowBlockMenu,
   addBlock,
 }) {
-  const menuRef = useRef(null);
-
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setShowBlockMenu(false);
-      }
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [setShowBlockMenu]);
-
   if (checkIfCanAddBlock(blocks) === false) return null;
   return (
-    <div className="relative mt-4 w-[280px] mx-auto pb-4" ref={menuRef}>
-      <button
-        onClick={() => setShowBlockMenu(!showBlockMenu)}
-        className="transition-all duration-300 w-full p-2.5 bg-theme-action-menu-bg hover:bg-theme-action-menu-item-hover border border-theme-sidebar-border rounded-lg text-theme-text-primary flex items-center justify-center gap-2 text-sm font-medium"
-      >
-        <Plus className="w-4 h-4" />
-        Add Block
-        <ChevronDown
-          className={`w-3.5 h-3.5 transition-transform duration-300 ${showBlockMenu ? "rotate-180" : ""}`}
-        />
-      </button>
-      {showBlockMenu && (
-        <div className="absolute left-0 right-0 mt-2 bg-theme-action-menu-bg border border-theme-sidebar-border rounded-lg shadow-lg overflow-hidden z-10 animate-fadeUpIn">
+    <div className="mx-auto mt-4 w-[280px] pb-4">
+      <DropdownMenu open={showBlockMenu} onOpenChange={setShowBlockMenu}>
+        <DropdownMenuTrigger
+          render={<Button variant="outline" size="lg" className="w-full" />}
+        >
+          <Plus />
+          Add Block
+          <ChevronDown className="transition-transform duration-300 group-aria-expanded/button:rotate-180" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start">
           {Object.entries(BLOCK_INFO).map(
             ([type, info]) =>
               type !== BLOCK_TYPES.START &&
               type !== BLOCK_TYPES.FINISH &&
               type !== BLOCK_TYPES.FLOW_INFO && (
-                <button
+                <DropdownMenuItem
                   key={type}
-                  onClick={() => {
-                    addBlock(type);
-                    setShowBlockMenu(false);
-                  }}
-                  className="w-full p-2.5 flex items-center gap-3 hover:bg-theme-action-menu-item-hover text-theme-text-primary transition-colors duration-300 group"
+                  onClick={() => addBlock(type)}
+                  className="gap-3 p-2.5"
                 >
-                  <div className="w-7 h-7 rounded-lg bg-white/10 flex items-center justify-center">
-                    <div className="w-fit h-fit text-theme-text-primary">
-                      {info.icon}
-                    </div>
+                  <div className="flex size-7 items-center justify-center rounded-lg bg-white/10">
+                    {info.icon}
                   </div>
-                  <div className="text-left flex-1">
+                  <div className="flex-1 text-left">
                     <div className="text-sm font-medium">{info.label}</div>
-                    <div className="text-xs text-theme-text-secondary">
+                    <div className="text-xs text-muted-foreground">
                       {info.description}
                     </div>
                   </div>
-                </button>
+                </DropdownMenuItem>
               )
           )}
-        </div>
-      )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

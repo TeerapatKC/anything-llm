@@ -1,11 +1,9 @@
 import Workspace from "@/models/workspace";
-import { Spinner } from "@/components/ui/spinner";
 import paths from "@/utils/paths";
-import showToast from "@/utils/toast";
-import { Plus, Trash2 } from "lucide-react";
+import { SquarePen, Trash2 } from "lucide-react";
 import { forwardRef, useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import useHoverMetaKey from "./hooks";
 import {
   SidebarMenuSub,
@@ -107,15 +105,16 @@ export default function ThreadContainer({
     );
   }
 
-  // Show a virtual thread when on a bare workspace route (no threadSlug) and
-  // the default thread has no chats — mimics the Home page virtual thread behavior.
-  const showVirtualThread =
+  // The new-thread action represents the virtual draft shown on Home. No
+  // persisted thread is created until the first message is submitted.
+  const newThreadIsActive =
     isVirtualThread || (!threadSlug && !defaultThreadHasChats);
   const defaultThreadIsActive =
-    defaultThreadHasChats && !threadSlug && !showVirtualThread;
+    defaultThreadHasChats && !threadSlug && !newThreadIsActive;
 
   return (
     <ThreadList ref={containerRef}>
+      <NewThreadButton workspace={workspace} isActive={newThreadIsActive} />
       {defaultThreadHasChats && (
         <ThreadItem
           isActive={defaultThreadIsActive}
@@ -128,25 +127,17 @@ export default function ThreadContainer({
           key={thread.slug}
           ctrlPressed={ctrlPressed}
           toggleMarkForDeletion={toggleForDeletion}
-          isActive={!showVirtualThread && thread.slug === threadSlug}
+          isActive={!newThreadIsActive && thread.slug === threadSlug}
           workspace={workspace}
           onRemove={removeThread}
           thread={thread}
         />
       ))}
-      {showVirtualThread && (
-        <ThreadItem
-          isActive={true}
-          workspace={workspace}
-          thread={{ slug: null, name: "*New Thread", virtual: true }}
-        />
-      )}
       <DeleteAllThreadButton
         ctrlPressed={ctrlPressed}
         threads={threads}
         onDelete={handleDeleteAll}
       />
-      <NewThreadButton workspace={workspace} />
     </ThreadList>
   );
 }
@@ -170,29 +161,22 @@ const ThreadList = forwardRef(({ children, ...props }, ref) => (
 ));
 ThreadList.displayName = "ThreadList";
 
-function NewThreadButton({ workspace }) {
-  const [loading, setLoading] = useState(false);
-  const onClick = async () => {
-    setLoading(true);
-    const { thread, error } = await Workspace.threads.new(workspace.slug);
-    if (!!error) {
-      showToast(`Could not create thread - ${error}`, "error", { clear: true });
-      setLoading(false);
-      return;
-    }
-    window.location.replace(
-      paths.workspace.thread(workspace.slug, thread.slug)
-    );
-  };
-
+function NewThreadButton({ workspace, isActive }) {
   return (
     <SidebarMenuSubItem>
       <SidebarMenuSubButton
-        className="cursor-pointer text-sidebar-foreground/70"
-        render={<button type="button" onClick={onClick} disabled={loading} />}
+        isActive={isActive}
+        className="text-sidebar-foreground/70"
+        render={
+          <Link
+            to={paths.home()}
+            aria-label={`Start a new thread in ${workspace.name}`}
+            aria-current={isActive ? "page" : ""}
+          />
+        }
       >
-        {loading ? <Spinner size="sm" /> : <Plus />}
-        <span>{loading ? "Starting thread..." : "New Thread"}</span>
+        <SquarePen />
+        <span>New Thread</span>
       </SidebarMenuSubButton>
     </SidebarMenuSubItem>
   );

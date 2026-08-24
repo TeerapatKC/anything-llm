@@ -1,3 +1,4 @@
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
 import { Check, Copy, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -68,13 +69,13 @@ export default function GeneratedPasswordModal({
               )}
             </Button>
           </div>
-          <div className="flex items-start gap-x-2 rounded-lg border border-yellow-500/40 bg-yellow-500/10 p-3">
-            <TriangleAlert className="h-4 w-4 shrink-0 mt-0.5 text-yellow-500" />
-            <p className="text-xs text-yellow-700 dark:text-yellow-400">
+          <Alert variant="warning">
+            <TriangleAlert />
+            <AlertDescription className="text-xs">
               Copy it now - this password cannot be shown again. If it is lost,
               reset the user's password to generate a new one.
-            </p>
-          </div>
+            </AlertDescription>
+          </Alert>
         </div>
         <DialogFooter>
           <Button variant="default" type="button" onClick={onClose}>

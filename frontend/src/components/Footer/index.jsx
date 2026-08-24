@@ -8,7 +8,7 @@ import {
   Link as LinkIcon,
   Mail,
 } from "lucide-react";
-import { DiscordLogo, GithubLogo } from "@phosphor-icons/react";
+import { DiscordLogo, GithubLogo } from "@/components/lib/BrandIcon";
 import React, { useEffect, useState } from "react";
 import UserButton from "../UserMenu/UserButton";
 
@@ -55,7 +55,6 @@ export default function Footer() {
               {React.createElement(
                 ICON_COMPONENTS?.[item.icon] ?? ICON_COMPONENTS.Info,
                 {
-                  weight: "fill",
                   className: "h-5 w-5",
                   color: "var(--theme-sidebar-footer-icon-fill)",
                 }

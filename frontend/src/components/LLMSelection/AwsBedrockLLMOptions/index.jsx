@@ -1,3 +1,8 @@
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Info, SquareArrowOutUpRight } from "lucide-react";
 import { AWS_REGIONS } from "./regions";
 import { useState, useEffect } from "react";
@@ -105,16 +110,15 @@ export default function AwsBedrockLLMOptions({ settings }) {
             <div className="flex flex-col w-60">
               <div className="flex items-center gap-x-1 mb-3">
                 <Label className="block">Max Tokens</Label>
-                <div className="group relative">
-                  <Info
-                    size={14}
-                    className="text-theme-text-secondary cursor-pointer"
-                  />
-                  <div className="hidden group-hover:block absolute left-0 bottom-full mb-1 w-64 p-2 bg-theme-settings-input-bg text-theme-text-primary text-xs rounded-lg shadow-lg z-10">
+                <Tooltip>
+                  <TooltipTrigger render={<span className="cursor-pointer" />}>
+                    <Info size={14} className="text-theme-text-secondary" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-64 text-xs">
                     Maximum number of tokens the model can generate per
                     response. Increase for longer outputs. Default is 4096.
-                  </div>
-                </div>
+                  </TooltipContent>
+                </Tooltip>
               </div>
               <Input
                 type="number"

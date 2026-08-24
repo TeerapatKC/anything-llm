@@ -6,7 +6,7 @@ const {
 
 // An in-memory stand-in for the tables the Role model touches, so the permission
 // resolution and privilege-escalation rules can be exercised without a database.
-const mockDb = { permissions: [], roles: [], grants: [], users: [] };
+const mockDb = { permissions: [], roles: [], grants: [], users: [], settings: [] };
 let mockNextId = { permissions: 1, roles: 1, grants: 1 };
 
 function mockReset() {
@@ -14,6 +14,7 @@ function mockReset() {
   mockDb.roles = [];
   mockDb.grants = [];
   mockDb.users = [];
+  mockDb.settings = [];
   mockNextId = { permissions: 1, roles: 1, grants: 1 };
 }
 
@@ -80,6 +81,17 @@ jest.mock("../../utils/prisma", () => ({
     },
     findMany: async ({ where }) => mockGrantsFor(where.role_id),
   },
+  system_settings: {
+    findFirst: async ({ where }) =>
+      mockDb.settings.find((s) => s.label === where.label) ?? null,
+    upsert: async ({ where, update, create }) => {
+      const existing = mockDb.settings.find((s) => s.label === where.label);
+      if (existing) return Object.assign(existing, update);
+      const row = { id: mockDb.settings.length + 1, ...create };
+      mockDb.settings.push(row);
+      return row;
+    },
+  },
   $transaction: async (operations) => Promise.all(operations),
   users: {
     updateMany: async ({ where, data }) => {
@@ -143,6 +155,12 @@ describe("Role.seed", () => {
 
 describe("permission resolution", () => {
   it("treats the super-admin grant as a wildcard", async () => {
+    // With nothing reserved to the owner the wildcard really is everything. What the
+    // owner has reserved is subtracted from it - that rule has its own test file.
+    const { ReservedPermissions } = require("../../models/reservedPermissions");
+    ReservedPermissions.flushCache();
+    await ReservedPermissions.set([]);
+
     const admin = { role: "admin" };
     expect(await Role.userCan(admin, PERMISSIONS.EMBEDS_MANAGE)).toBe(true);
     expect(await Role.userCan(admin, PERMISSIONS.SYSTEM_SETTINGS)).toBe(true);
