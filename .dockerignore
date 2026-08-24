@@ -16,3 +16,12 @@
 **/.log
 !docker/.env.example
 !frontend/.env.production
+**/server/storage/*.db.bak*
+**/server/storage/*.db-shm
+**/server/storage/*.db-wal
+**/server/storage/generated-files/**
+**/server/storage/generated-images/**
+**/server/storage/direct-uploads/**
+**/.pnpm-store/
+**/.claude/worktrees/
+**/.git/

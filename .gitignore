@@ -10,3 +10,21 @@ aws_cf_deploy_anything_llm.json
 yarn.lock
 *.bak
 .idea
+
+# Package-manager local stores and caches - machine-local, never deployable.
+.pnpm-store/
+.yarn/cache
+.npm
+
+# Local agent / editor scratch state.
+.claude/worktrees/
+.claude/settings.local.json
+.claude/.env
+
+# SQLite sidecar files that appear next to any *.db
+*.db-shm
+*.db-wal
+
+# Local working notes and prompt drafts - not part of the deployable source.
+/Claude Code Master Prompt*.md
+*.local.md
