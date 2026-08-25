@@ -101,8 +101,7 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "og:image",
-          content:
-            "https://raw.githubusercontent.com/Mintplex-Labs/anything-llm/master/images/promo.png",
+          content: "/promo.png",
         },
       },
 
@@ -133,8 +132,7 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "twitter:image",
-          content:
-            "https://raw.githubusercontent.com/Mintplex-Labs/anything-llm/master/images/promo.png",
+          content: "/promo.png",
         },
       },
 
