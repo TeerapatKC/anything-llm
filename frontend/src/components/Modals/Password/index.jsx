@@ -12,7 +12,7 @@ import useLogo from "../../../hooks/useLogo";
 export default function PasswordModal() {
   const { loginLogo, isCustomLogo } = useLogo();
   return (
-    <div className="fixed inset-0 bg-zinc-950 light:bg-slate-50 flex flex-col items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 bg-zinc-950 light:bg-slate-50 flex flex-col items-center justify-center overflow-hidden px-8">
       <img
         src={loginLogo}
         alt="Logo"
