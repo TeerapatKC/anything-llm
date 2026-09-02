@@ -188,8 +188,16 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary"
         >
           {/* #TEMPORARILY_HIDDEN: Model & provider is limited to super admins. Anyone
-              else cannot reach it anyway - the nav item that selects it is hidden too. */}
-          <div hidden={!isSuperAdmin()}>
+              else cannot reach it anyway - the nav item that selects it is hidden too.
+              It also only belongs to its own nav item: the provider/model is one
+              setting for the whole workspace agent, not something a skill carries,
+              so rendering it alongside a skill panel implied a per-skill choice
+              that does not exist. */}
+          <div
+            hidden={
+              !isSuperAdmin() || selectedSection !== CONFIG_SECTIONS.MODEL
+            }
+          >
             <div className="mb-5">
               <h2 className="text-base font-semibold text-theme-text-primary">
                 Model &amp; provider

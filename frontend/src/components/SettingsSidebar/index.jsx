@@ -303,7 +303,7 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.INVITES_MANAGE],
             },
             {
-              btnText: "Default System Prompt",
+              btnText: t("settings.default-system-prompt"),
               href: paths.settings.defaultSystemPrompt(),
               permissions: [PERMISSIONS.SYSTEM_PROMPTS],
             },
@@ -311,7 +311,7 @@ const SidebarOptions = ({ user = null, t }) => (
               // Role-gated, not permission-gated - ownership transfer and instance
               // reset can never be handed to a custom role.
               hidden: !isSuperAdmin(user),
-              btnText: "Instance Owner",
+              btnText: t("settings.instance-owner"),
               href: paths.settings.superAdmin(),
               permissions: [PERMISSIONS.SYSTEM_ADMIN],
             },
@@ -327,7 +327,7 @@ const SidebarOptions = ({ user = null, t }) => (
               // list is temporarily restricted to the instance owner regardless of
               // who else holds the AGENTS_FLOWS permission.
               hidden: !isSuperAdmin(user),
-              btnText: "Agent Flow",
+              btnText: t("settings.agent-flow"),
               href: paths.settings.agentFlow(),
               permissions: [PERMISSIONS.AGENTS_FLOWS],
             },
@@ -335,12 +335,12 @@ const SidebarOptions = ({ user = null, t }) => (
               // Same treatment as Agent Flow above - the DB connections configured
               // here are instance-wide credentials shared by every workspace.
               hidden: !isSuperAdmin(user),
-              btnText: "SQL Connector",
+              btnText: t("settings.sql-connector"),
               href: paths.settings.sqlConnector(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
             },
             {
-              btnText: "Setting",
+              btnText: t("settings.agent-skills-settings"),
               href: paths.settings.agentSkills(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
             },
@@ -396,7 +396,7 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.INTEGRATIONS_TELEGRAM],
             },
             {
-              btnText: "LINE",
+              btnText: t("settings.available-channels.line"),
               href: paths.settings.line(),
               permissions: [PERMISSIONS.INTEGRATIONS_LINE],
             },

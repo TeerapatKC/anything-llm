@@ -66,6 +66,11 @@ const TRANSLATIONS = {
     privacy: "ความเป็นส่วนตัวและข้อมูล",
     "ai-providers": "ผู้ให้บริการ AI",
     "agent-skills": "ทักษะของเอเจนต์",
+    "agent-flow": "Agent Flow",
+    "sql-connector": "ตัวเชื่อมต่อ SQL",
+    "agent-skills-settings": "การตั้งค่า",
+    "default-system-prompt": "System Prompt เริ่มต้น",
+    "instance-owner": "เจ้าของอินสแตนซ์",
     "model-router": "ตัวจัดเส้นทางโมเดล",
     "community-hub": {
       title: "ศูนย์รวมชุมชน",
@@ -85,6 +90,7 @@ const TRANSLATIONS = {
     channels: "ช่องทาง",
     "available-channels": {
       telegram: "Telegram",
+      line: "LINE",
     },
   },
   login: {

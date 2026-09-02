@@ -67,6 +67,11 @@ const TRANSLATIONS = {
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
     "agent-skills": "Agent Skills",
+    "agent-flow": "Agent Flow",
+    "sql-connector": "SQL Connector",
+    "agent-skills-settings": "Settings",
+    "default-system-prompt": "Default System Prompt",
+    "instance-owner": "Instance Owner",
     "model-router": "Model Router",
     "community-hub": {
       title: "Community Hub",
@@ -86,6 +91,7 @@ const TRANSLATIONS = {
     channels: "Channels",
     "available-channels": {
       telegram: "Telegram",
+      line: "LINE",
     },
   },
   login: {
