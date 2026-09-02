@@ -4,7 +4,7 @@ import paths from "@/utils/paths";
 import { SquarePen, Trash2 } from "lucide-react";
 import { forwardRef, useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import useHoverMetaKey from "./hooks";
 import {
   SidebarMenuSub,
@@ -12,14 +12,15 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { THREAD_RENAME_EVENT } from "./constants";
+import { THREAD_RENAME_EVENT, THREAD_FORK_EVENT } from "./constants";
 
-export { THREAD_RENAME_EVENT };
+export { THREAD_RENAME_EVENT, THREAD_FORK_EVENT };
 
 export default function ThreadContainer({
   workspace,
   isVirtualThread = false,
 }) {
+  const navigate = useNavigate();
   const { threadSlug = null } = useParams();
   const [threads, setThreads] = useState([]);
   const [defaultThreadHasChats, setDefaultThreadHasChats] = useState(false);
@@ -45,6 +46,24 @@ export default function ThreadContainer({
       window.removeEventListener(THREAD_RENAME_EVENT, chatHandler);
     };
   }, []);
+
+  // Handle new fork events from chat actions. Forking navigates via the router
+  // now, so a blocked/cancelled navigation would otherwise leave the new thread
+  // missing from this list until the next refetch.
+  useEffect(() => {
+    const forkHandler = () => {
+      if (!workspace?.slug) return;
+      Workspace.threads
+        .all(workspace.slug)
+        .then(({ threads }) => setThreads(threads))
+        .catch((e) => console.error(e));
+    };
+
+    window.addEventListener(THREAD_FORK_EVENT, forkHandler);
+    return () => {
+      window.removeEventListener(THREAD_FORK_EVENT, forkHandler);
+    };
+  }, [workspace?.slug]);
 
   useEffect(() => {
     async function fetchThreads() {
@@ -73,9 +92,10 @@ export default function ThreadContainer({
     await Workspace.threads.deleteBulk(workspace.slug, slugs);
     setThreads((prev) => prev.filter((t) => !t.deleted));
 
-    // Only redirect if current thread is being deleted
+    // Only redirect if current thread is being deleted. Use router navigation
+    // so ActiveGenerationGuard can intercept if a response is generating.
     if (slugs.includes(threadSlug)) {
-      window.location.href = paths.workspace.chat(workspace.slug);
+      navigate(paths.workspace.chat(workspace.slug));
     }
   };
 

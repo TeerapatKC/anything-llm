@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ChevronDown, TriangleAlert } from "lucide-react";
 
 /**
@@ -6,11 +7,15 @@ import { ChevronDown, TriangleAlert } from "lucide-react";
  * visually heavy message card. The technical detail stays available on demand.
  */
 export default function ErrorResponse({ error }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const detail = String(error || "Unknown error");
 
+  // role="alert" rather than "status": a failed reply is the one case where the
+  // user needs interrupting, because nothing else on the page changes to tell
+  // them the turn ended.
   return (
-    <div className="flex w-full justify-center px-4 md:pl-0">
+    <div className="flex w-full justify-center px-4 md:pl-0" role="alert">
       <div className="flex w-full flex-col">
         <button
           type="button"
@@ -23,7 +28,7 @@ export default function ErrorResponse({ error }) {
             aria-hidden="true"
           />
           <span className="min-w-0 flex-1 font-mono text-sm leading-[18px] text-red-500/80">
-            Could not respond to message.
+            {t("chat_window.response_failed")}
           </span>
           <ChevronDown
             className={`size-4 shrink-0 transform text-red-500/60 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}

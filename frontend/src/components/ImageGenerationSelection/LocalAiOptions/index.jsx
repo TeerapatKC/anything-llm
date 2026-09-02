@@ -1,12 +1,22 @@
-import { CircleNotch, Info } from "@phosphor-icons/react";
-import { Tooltip } from "react-tooltip";
+import { useTranslation } from "react-i18next";
+import { Info } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { LOCALAI_COMMON_URLS } from "@/utils/constants";
 import ImageModelSelection from "../ImageModelSelection";
 import ImageDimensionSelection from "../ImageDimensionSelection";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export default function LocalAiImageOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -29,61 +39,49 @@ export default function LocalAiImageOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center gap-1">
-              <label className="text-white text-sm font-semibold">
-                LocalAI Base URL
-              </label>
-              <Info
-                size={18}
-                className="text-theme-text-secondary cursor-pointer"
-                data-tooltip-id="image-gen-localai-base-url"
-              />
-              <Tooltip
-                id="image-gen-localai-base-url"
-                place="top"
-                delayShow={300}
-                delayHide={800}
-                clickable={true}
-                className="tooltip !text-xs !opacity-100 z-99"
-                style={{
-                  maxWidth: "250px",
-                  whiteSpace: "normal",
-                  wordWrap: "break-word",
-                }}
-              >
-                Enter the URL where LocalAI is running.
-                <br />
-                <br />
-                <Link
-                  to="https://localai.io/features/image-generation/"
-                  target="_blank"
-                  className="text-blue-500 hover:underline"
-                >
-                  Learn more &rarr;
-                </Link>
+              <Label>LocalAI Base URL</Label>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Info
+                      size={18}
+                      className="text-theme-text-secondary cursor-pointer"
+                    />
+                  }
+                ></TooltipTrigger>
+                <TooltipContent side="top" className="max-w-[250px] text-xs">
+                  Enter the URL where LocalAI is running.
+                  <br />
+                  <br />
+                  <Link
+                    to="https://localai.io/features/image-generation/"
+                    target="_blank"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Learn more &rarr;
+                  </Link>
+                </TooltipContent>
               </Tooltip>
             </div>
             {loading ? (
-              <CircleNotch
-                size={16}
-                className="text-theme-text-secondary animate-spin"
-              />
+              <Spinner className="text-theme-text-secondary" />
             ) : (
               <>
                 {!basePathValue.value && (
-                  <button
+                  <Button
+                    variant="secondary"
+                    size="xs"
                     onClick={handleAutoDetectClick}
-                    className="border-none bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]"
                   >
                     Auto-Detect
-                  </button>
+                  </Button>
                 )}
               </>
             )}
           </div>
-          <input
+          <Input
             type="url"
             name="ImageGenerationLocalAiBasePath"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="http://localhost:8080/v1"
             value={basePathValue.value || ""}
             required={true}
@@ -94,18 +92,18 @@ export default function LocalAiImageOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <label className="text-white text-sm font-semibold block mb-3">
-            API Key <span className="text-white/40">(optional)</span>
-          </label>
-          <input
+          <Label className="block mb-3">
+            {t("provider-options.api-key")}{" "}
+            <span className="text-white/40">(optional)</span>
+          </Label>
+          <Input
             type="password"
             name="ImageGenerationLocalAiApiKey"
-            className="border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5"
             placeholder="LocalAI API Key"
             value={authTokenValue.value || ""}
             onChange={authToken.onChange}
             onBlur={authToken.onBlur}
-            autoComplete="off"
+            autoComplete="new-password"
             spellCheck={false}
           />
         </div>
@@ -116,10 +114,7 @@ export default function LocalAiImageOptions({ settings }) {
           settings={settings}
           endpointName="LocalAI URL"
         />
-        <ImageDimensionSelection
-          provider="localai-imggen"
-          settings={settings}
-        />
+        <ImageDimensionSelection provider="localai-imggen" settings={settings} />
       </div>
     </div>
   );

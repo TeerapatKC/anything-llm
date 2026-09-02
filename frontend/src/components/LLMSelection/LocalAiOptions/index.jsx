@@ -18,6 +18,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function LocalAiOptions({ settings, showAlert = false }) {
   const { t } = useTranslation();
@@ -35,6 +40,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
   });
   const [apiKeyValue, setApiKeyValue] = useState(settings?.LocalAiApiKey);
   const [apiKey, setApiKey] = useState(settings?.LocalAiApiKey);
+  const [maxTokens, setMaxTokens] = useState(settings?.LocalAiTokenLimit || "");
 
   return (
     <div className="w-full flex flex-col gap-y-7">
@@ -56,28 +62,11 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
       )}
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         {!settings?.credentialsOnly && (
-          <>
-            <LocalAIModelSelection
-              settings={settings}
-              basePath={basePath.value}
-              apiKey={apiKey}
-            />
-            <div className="flex flex-col w-60">
-              <Label className="block mb-2">
-                {t("provider-options.model-context-window")}
-              </Label>
-              <Input
-                type="number"
-                name="LocalAiTokenLimit"
-                placeholder="4096"
-                min={1}
-                onScroll={(e) => e.target.blur()}
-                defaultValue={settings?.LocalAiTokenLimit}
-                required={true}
-                autoComplete="off"
-              />
-            </div>
-          </>
+          <LocalAIModelSelection
+            settings={settings}
+            basePath={basePath.value}
+            apiKey={apiKey}
+          />
         )}
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-2">
@@ -146,6 +135,35 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
               spellCheck={false}
               onChange={basePath.onChange}
               onBlur={basePath.onBlur}
+            />
+          </div>
+          <div className="flex flex-col w-60">
+            <div className="flex items-center mb-2 gap-x-1">
+              <Label className="block">
+                {t("provider-options.model-context-window")}
+              </Label>
+              <Tooltip>
+                <TooltipTrigger render={<span className="cursor-pointer" />}>
+                  <Info size={14} className="text-theme-text-secondary" />
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-64 text-xs">
+                  Override the context window limit. Leave empty to auto-detect
+                  from the model (defaults to 8192 if detection fails).
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <Input
+              type="number"
+              name="LocalAiTokenLimit"
+              placeholder="Automatically managed"
+              min={1}
+              value={maxTokens}
+              onChange={(e) =>
+                setMaxTokens(e.target.value ? Number(e.target.value) : "")
+              }
+              onScroll={(e) => e.target.blur()}
+              required={false}
+              autoComplete="off"
             />
           </div>
         </div>

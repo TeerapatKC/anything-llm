@@ -22,6 +22,7 @@ import SuggestedMessages from "@/components/lib/SuggestedMessages";
 import useUser from "@/hooks/useUser";
 import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSettingsMenu";
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
+import { clearPromptInputDraft } from "@/hooks/usePromptInputStorage";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
 import { userIsChatOnly } from "@/utils/permissions";
 import { Plus } from "lucide-react";
@@ -187,6 +188,11 @@ function HomeContent({ workspace, threadSlug, setThreadSlug }) {
         PENDING_HOME_MESSAGE,
         JSON.stringify({ message, attachments })
       );
+
+      // The message is replayed via PENDING_HOME_MESSAGE on the thread route -
+      // drop the local draft so the sent text cannot be restored later.
+      if (threadSlug || workspace?.slug)
+        clearPromptInputDraft(threadSlug ?? workspace.slug);
 
       if (targetThread) {
         navigate(paths.workspace.thread(targetWorkspace.slug, targetThread));

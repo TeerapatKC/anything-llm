@@ -32,6 +32,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import WorkspaceMonogram from "@/components/Sidebar/WorkspaceMonogram";
 
+export const REFETCH_WORKSPACES_EVENT = "refetchWorkspaces";
+
 /**
  * The primary way to create a workspace. It used to be an icon-only `+` sharing
  * the search row, where it read as a search affordance; as a full-width row
@@ -84,6 +86,13 @@ export default function ActiveWorkspaces({
       setWorkspaces(Workspace.orderWorkspaces(workspaces));
     }
     getWorkspaces();
+
+    // Refetch when a workspace is created elsewhere in the app (eg: the
+    // NewWorkspace modal) since those flows navigate via the router and no
+    // longer trigger a full page reload.
+    window.addEventListener(REFETCH_WORKSPACES_EVENT, getWorkspaces);
+    return () =>
+      window.removeEventListener(REFETCH_WORKSPACES_EVENT, getWorkspaces);
   }, []);
 
   if (loading) {

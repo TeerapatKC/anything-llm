@@ -1,5 +1,6 @@
 const { WorkspaceChats } = require("../../../models/workspaceChats");
 const { getVectorDbClass, resolveProviderConnector } = require("../../helpers");
+const { addChatCostToMetrics } = require("../../helpers/modelPricing");
 const { DocumentManager } = require("../../DocumentManager");
 const {
   sourceIdentifier,
@@ -107,12 +108,13 @@ async function streamResponse({
     ctx.bot.sendChatAction(chatId, "typing").catch(() => {});
   }, 4000);
 
-  const { connector: LLMConnector } = await resolveProviderConnector({
-    workspace,
-    prompt: message,
-    thread,
-    attachments,
-  });
+  const { connector: LLMConnector, routingMetadata } =
+    await resolveProviderConnector({
+      workspace,
+      prompt: message,
+      thread,
+      attachments,
+    });
   const VectorDb = getVectorDbClass();
   const embeddingsCount = await VectorDb.namespaceCount(workspace.slug);
 
@@ -160,6 +162,7 @@ async function streamResponse({
   try {
     const { completeText, metrics, answerMessageId } = await generateResponse({
       LLMConnector,
+      routingMetadata,
       messages,
       workspace,
       ctx,
@@ -276,6 +279,7 @@ async function buildSearchContext({
  */
 async function generateResponse({
   LLMConnector,
+  routingMetadata = null,
   messages,
   workspace,
   ctx,
@@ -316,6 +320,11 @@ async function generateResponse({
     }
   }
 
+  metrics = addChatCostToMetrics(metrics, {
+    routingMetadata,
+    workspace,
+    connector: LLMConnector,
+  });
   return { completeText, metrics, answerMessageId };
 }
 

@@ -1,24 +1,26 @@
 import { useBlocker } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ABORT_STREAM_EVENT } from "@/utils/chat";
-import Modal, {
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalPrimaryButton,
-  ModalSecondaryButton,
-} from "@/components/lib/Modal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 /**
  * Guards against accidentally leaving a chat while a response is actively
  * generating (eg: the Stop button is showing). Internal route changes are
- * intercepted via react-router's `useBlocker` and confirmed through a modal.
+ * intercepted via react-router's `useBlocker` and confirmed through a dialog.
  * Closing/refreshing the app entirely is intentionally not guarded - only
  * in-app navigation. All navigation must go through the router (`navigate`/
  * `<Link>`) for this guard to intercept it - `window.location` bypasses it.
  *
  * The guard is non-blocking: the stream keeps flowing in the background while
- * the modal is open. Generation is only aborted if the user confirms leaving.
+ * the dialog is open. Generation is only aborted if the user confirms leaving.
  *
  * @note `useBlocker` constraints - do not lose these as this evolves:
  * - It requires a data router (`createBrowserRouter`/`createHashRouter`) and
@@ -45,7 +47,7 @@ export default function ActiveGenerationGuard({ isGenerating = false }) {
       isGenerating && currentLocation.pathname !== nextLocation.pathname
   );
 
-  // The modal stays open even if the response finishes while it is showing -
+  // The dialog stays open even if the response finishes while it is showing -
   // auto-resuming the navigation underneath the user is jarring. They decide
   // via Cancel/Continue either way, so only emit the abort if a response is
   // actually still generating.
@@ -56,24 +58,26 @@ export default function ActiveGenerationGuard({ isGenerating = false }) {
 
   if (blocker.state !== "blocked") return null;
   return (
-    <Modal isOpen={true} onClose={blocker.reset} size="md">
-      <ModalHeader
-        title={t("chat_window.leave_generating.title")}
-        onClose={blocker.reset}
-      />
-      <ModalBody>
-        <p className="text-sm text-zinc-400 light:text-slate-600">
-          {t("chat_window.leave_generating.description")}
-        </p>
-      </ModalBody>
-      <ModalFooter>
-        <ModalSecondaryButton type="button" onClick={blocker.reset}>
-          {t("chat_window.leave_generating.cancel")}
-        </ModalSecondaryButton>
-        <ModalPrimaryButton type="button" onClick={stopGenerationAndLeave}>
-          {t("chat_window.leave_generating.confirm")}
-        </ModalPrimaryButton>
-      </ModalFooter>
-    </Modal>
+    <Dialog open={true} onOpenChange={(open) => !open && blocker.reset()}>
+      <DialogContent size="sm">
+        <div className="p-6 flex flex-col gap-y-4">
+          <DialogHeader>
+            <DialogTitle>{t("chat_window.leave_generating.title")}</DialogTitle>
+            <DialogDescription className="text-theme-text-secondary mt-1">
+              {t("chat_window.leave_generating.description")}
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="flex flex-row justify-end gap-x-2">
+            <Button variant="outline" onClick={blocker.reset}>
+              {t("chat_window.leave_generating.cancel")}
+            </Button>
+            <Button variant="default" onClick={stopGenerationAndLeave}>
+              {t("chat_window.leave_generating.confirm")}
+            </Button>
+          </DialogFooter>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

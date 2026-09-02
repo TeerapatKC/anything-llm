@@ -5,7 +5,7 @@ import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 import { MoreHorizontal, Pencil, RotateCcw, Trash2, X } from "lucide-react";
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   Tooltip,
   TooltipContent,
@@ -153,6 +153,7 @@ function ThreadOptions({
   onConfirm,
   onRename,
 }) {
+  const navigate = useNavigate();
   const deleteThread = async () => {
     const success = await Workspace.threads.delete(workspace.slug, thread.slug);
     if (!success) {
@@ -161,9 +162,10 @@ function ThreadOptions({
     }
     showToast("Thread deleted successfully!", "success", { clear: true });
     onRemove(thread.id);
-    // Redirect if deleting the active thread
+    // Redirect if deleting the active thread. Use router navigation so
+    // ActiveGenerationGuard can intercept if a response is generating.
     if (currentThreadSlug === thread.slug)
-      window.location.href = paths.workspace.chat(workspace.slug);
+      navigate(paths.workspace.chat(workspace.slug));
   };
 
   return (
