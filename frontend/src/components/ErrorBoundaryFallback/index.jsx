@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { NavLink, useRouteError } from "react-router-dom";
 import { Check, Copy, House, RotateCw } from "lucide-react";
 import { useState } from "react";
 
 export default function ErrorBoundaryFallback({ error, resetErrorBoundary }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const copyErrorDetails = async () => {
@@ -52,7 +54,7 @@ ${details.stack}
             <button
               onClick={copyErrorDetails}
               className="flex items-center gap-2 px-3 py-1.5 bg-theme-bg-secondary text-theme-text-primary rounded hover:bg-theme-sidebar-item-hover transition-all duration-200 text-xs font-medium"
-              title="Copy error details"
+              title={t("ui.copy-error-details")}
             >
               {copied ? (
                 <>

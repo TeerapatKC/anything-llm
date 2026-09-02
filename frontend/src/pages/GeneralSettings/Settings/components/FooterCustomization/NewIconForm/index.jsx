@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ICON_COMPONENTS } from "@/components/Footer";
 import React, { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function NewIconForm({ icon, url, onSave, onRemove }) {
+  const { t } = useTranslation();
   const [selectedIcon, setSelectedIcon] = useState(icon || "Plus");
   const [selectedUrl, setSelectedUrl] = useState(url || "");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -110,7 +112,7 @@ export default function NewIconForm({ icon, url, onSave, onRemove }) {
               size="icon"
               className="h-8 w-8 text-theme-text-secondary hover:text-destructive"
               onClick={handleRemove}
-              aria-label="Remove icon"
+              aria-label={t("ui.remove-icon")}
             >
               <X className="h-4 w-4" />
             </Button>

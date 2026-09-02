@@ -1,17 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 import Preloader from "@/components/Preloader";
 import debounce from "lodash.debounce";
 import Workspace from "@/models/workspace";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { userIsChatOnly } from "@/utils/permissions";
 
 const DEFAULT_SEARCH_RESULTS = {
   workspaces: [],
@@ -19,7 +13,7 @@ const DEFAULT_SEARCH_RESULTS = {
 };
 
 const SEARCH_RESULT_SELECTED = "search-result-selected";
-export default function SearchBox({ user, showNewWsModal }) {
+export default function SearchBox() {
   const { t } = useTranslation();
   const searchRef = useRef(null);
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +51,7 @@ export default function SearchBox({ user, showNewWsModal }) {
   }, []);
 
   return (
-    <div className="relative flex h-[32px] w-full items-center gap-x-[5px]">
+    <div className="relative flex h-[38px] w-full items-center">
       <div className="relative h-full w-full flex">
         <input
           ref={searchRef}
@@ -66,18 +60,14 @@ export default function SearchBox({ user, showNewWsModal }) {
           onChange={handleSearch}
           onReset={handleReset}
           onFocus={(e) => e.target.select()}
-          className="border-none w-full h-full rounded-lg bg-theme-sidebar-item-default pl-9 focus:pl-4 pr-1 placeholder:text-white/50 light:placeholder:text-slate-500 placeholder:font-semibold outline-none text-theme-text-primary search-input peer text-sm"
+          className="border-none w-full h-full rounded-lg bg-theme-sidebar-item-default pl-10 focus:pl-4 pr-2 placeholder:text-white/50 light:placeholder:text-slate-500 placeholder:font-semibold outline-none text-theme-text-primary search-input peer text-[15px]"
         />
         <Search
-          size={14}
+          size={16}
           className="absolute left-3 top-1/2 transform -translate-y-1/2 text-theme-settings-input-placeholder peer-focus:invisible"
           hidden={!!searchTerm}
         />
       </div>
-      <ShortWidthNewWorkspaceButton
-        user={user}
-        showNewWsModal={showNewWsModal}
-      />
       <SearchResults
         searchResults={searchResults}
         searchTerm={searchTerm}
@@ -182,7 +172,7 @@ function SearchResultItem({ to, name, hint }) {
       onClick={() => window.dispatchEvent(new Event(SEARCH_RESULT_SELECTED))}
       className="hover:bg-white/10 light:hover:bg-black/10 transition-all duration-300 rounded-sm px-[8px] py-[2px]"
     >
-      <p className="text-theme-text-primary text-sm truncate w-[80%]">
+      <p className="text-theme-text-primary text-[15px] truncate w-[80%]">
         {name}
         {hint && (
           <span className="text-theme-text-secondary text-xs ml-[4px]">
@@ -191,30 +181,5 @@ function SearchResultItem({ to, name, hint }) {
         )}
       </p>
     </Link>
-  );
-}
-
-function ShortWidthNewWorkspaceButton({ user, showNewWsModal }) {
-  const { t } = useTranslation();
-  if (userIsChatOnly(user)) return null;
-
-  return (
-    <>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <button
-              onClick={showNewWsModal}
-              className="border-none flex items-center justify-center bg-white  rounded-lg p-[8px] hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
-            />
-          }
-        >
-          <Plus size={16} className="text-black light:text-slate-500" />
-        </TooltipTrigger>
-        <TooltipContent side="top" className="max-w-[250px] text-xs">
-          {t("new-workspace.title")}
-        </TooltipContent>
-      </Tooltip>
-    </>
   );
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,7 @@ import { userFromStorage } from "@/utils/request";
  * instance is never left with two owners or none.
  */
 export default function TransferOwnership({ candidates = [], onTransferred }) {
+  const { t } = useTranslation();
   const [targetUserId, setTargetUserId] = useState("");
   const [password, setPassword] = useState("");
   const [saving, setSaving] = useState(false);
@@ -76,8 +78,7 @@ export default function TransferOwnership({ candidates = [], onTransferred }) {
   if (candidates.length === 0) {
     return (
       <p className="mt-6 rounded-lg bg-muted/20 ring-1 ring-foreground/10 p-5 text-sm text-theme-text-secondary">
-        There is nobody to hand this instance to yet. Ownership can only go to
-        another active account, so create one first.
+        {t("help.transfer-ownership")}
       </p>
     );
   }
@@ -98,7 +99,7 @@ export default function TransferOwnership({ candidates = [], onTransferred }) {
             onValueChange={setTargetUserId}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Choose an account" />
+              <SelectValue placeholder={t("ui.choose-an-account")} />
             </SelectTrigger>
             <SelectContent>
               {candidates.map((candidate) => (
@@ -110,8 +111,7 @@ export default function TransferOwnership({ candidates = [], onTransferred }) {
             </SelectContent>
           </Select>
           <p className="mt-2 text-xs text-theme-text-secondary">
-            Suspended accounts are not listed — the new owner has to be able to
-            sign in.
+            {t("help.transfer-ownership-2")}
           </p>
         </div>
 
@@ -125,7 +125,7 @@ export default function TransferOwnership({ candidates = [], onTransferred }) {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Confirm it is you"
+            placeholder={t("ui.confirm-it-is-you")}
             autoComplete="current-password"
             required={true}
           />

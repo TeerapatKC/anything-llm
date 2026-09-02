@@ -11,13 +11,11 @@ const { decryptToken } = require("./utils");
 const {
   WorkspaceAgentInvocation,
 } = require("../../models/workspaceAgentInvocation");
-const {
-  isVerified,
-  sendPairingRequest,
-  approveUser,
-  denyUser,
-  revokeUser,
-} = require("./utils/verification");
+const { TelegramUser } = require("../../models/telegramUser");
+const { resolveSession } = require("./utils/access");
+const { sendLinkInstructions } = require("./utils/linking");
+const { resolveTabAction, removeTabKeyboard } = require("./utils/keyboard");
+const { translatorFor, t, CATALOGS } = require("./utils/i18n");
 const { BOT_COMMANDS } = require("./utils/commands");
 const { handleKeyboardQueryCallback } = require("./utils/navigation");
 const {
@@ -32,6 +30,9 @@ class TelegramBotService {
   static #MAX_POLLING_RETRIES = 10;
   static #BASE_RETRY_DELAY_MS = 1000;
   static #MAX_RETRY_DELAY_MS = 5 * 60 * 1000; // 5 minutes
+  // How long the bot keeps treating the next message as the reason for a
+  // thumbs-down before assuming the person moved on and meant to ask something.
+  static #FEEDBACK_REASON_TTL_MS = 5 * 60 * 1000;
   static #NETWORK_ERROR_PATTERNS = [
     "EPIPE",
     "EPROTO",
@@ -71,10 +72,12 @@ class TelegramBotService {
   #config = null;
   #queue = new MessageQueue();
   #pollingRetry = { timer: null, count: 0 };
-  // Per-chat state: { workspaceSlug, threadSlug }
-  #chatState = new Map();
-  // Pending pairing requests: chatId -> { code, telegramUsername, firstName }
-  #pendingPairings = new Map();
+  // Per-chat session resolved from the database on each interaction:
+  // chatId -> { user, link, workspaceSlug, threadSlug }
+  #sessions = new Map();
+  // Chats that have been asked why they marked an answer unhelpful:
+  // chatId -> { chatRecordId, expiresAt }
+  #pendingFeedback = new Map();
   // Active workers per chat: chatId -> { worker, jobId }
   #activeWorkers = new Map();
   // Pending tool approval requests: requestId -> { worker, chatId, messageId }
@@ -87,14 +90,6 @@ class TelegramBotService {
 
   get isRunning() {
     return this.#bot !== null;
-  }
-
-  get pendingPairings() {
-    const pairings = [];
-    for (const [chatId, data] of this.#pendingPairings) {
-      pairings.push({ chatId: String(chatId), ...data });
-    }
-    return pairings;
   }
 
   #log(text, ...args) {
@@ -111,16 +106,6 @@ class TelegramBotService {
     const lastMessages = await this.#clearPendingUpdates();
     this.#bot.startPolling();
 
-    // Restore per-user workspace/thread state from saved config
-    for (const user of config.approved_users || []) {
-      if (user.active_workspace) {
-        this.#chatState.set(Number(user.chatId), {
-          workspaceSlug: user.active_workspace,
-          threadSlug: user.active_thread || null,
-        });
-      }
-    }
-
     this.#setupHandlers();
     await this.#registerCommands();
     this.#log(`Started polling as @${config.bot_username || "unknown"}`);
@@ -132,7 +117,8 @@ class TelegramBotService {
       );
       const ctx = this.#createContext();
       for (const [chatId, msg] of lastMessages) {
-        if (!isVerified(this.#config.approved_users, chatId)) continue;
+        const session = await this.#loadSession(chatId);
+        if (!session) continue;
         this.#processPendingMessage(ctx, msg);
       }
     }
@@ -154,7 +140,14 @@ class TelegramBotService {
       const command = BOT_COMMANDS.find((c) => c.command === commandName);
       if (command) {
         const handler = command.initHandler();
-        handler(ctx, msg.chat.id, text);
+        this.#safely(`/${commandName} (pending)`, () =>
+          handler(
+            ctx,
+            msg.chat.id,
+            text,
+            command.wantsMessage ? msg : undefined
+          )
+        );
         return;
       }
     }
@@ -195,8 +188,8 @@ class TelegramBotService {
     this.#bot = null;
     this.#config = null;
     this.#queue.clear();
-    this.#chatState.clear();
-    this.#pendingPairings.clear();
+    this.#sessions.clear();
+    this.#pendingFeedback.clear();
     this.#activeWorkers.clear();
     this.#pendingToolApprovals.clear();
     this.#log("Stopped");
@@ -328,49 +321,106 @@ class TelegramBotService {
     return lastMessages;
   }
 
+  /**
+   * Publish the command list Telegram shows in its "/" menu.
+   *
+   * Registered once per language we translate. Telegram picks the list by the
+   * viewer's own app language, which is not the same thing as the chat's reply
+   * language - it is the only signal available before a chat says anything, and
+   * a Thai-language Telegram is a fair guess at a Thai reader.
+   */
   async #registerCommands() {
-    try {
-      const commands = BOT_COMMANDS.map((c) => ({
+    const describe = (lang) =>
+      BOT_COMMANDS.map((c) => ({
         command: c.command,
-        description: c.description,
+        description: t(lang, `command.${c.command}`),
       }));
-      await this.#bot.setMyCommands(commands);
+
+    try {
+      await this.#bot.setMyCommands(describe(null));
+      for (const lang of Object.keys(CATALOGS)) {
+        if (lang === "en") continue; // Already registered as the default list
+        await this.#bot.setMyCommands(describe(lang), { language_code: lang });
+      }
     } catch (error) {
       this.#log("Failed to register commands:", error.message);
     }
   }
 
-  #getState(chatId) {
-    if (!this.#chatState.has(chatId)) {
-      this.#chatState.set(chatId, {
-        workspaceSlug: this.#config.default_workspace,
-        threadSlug: null,
-      });
+  /**
+   * Re-read the account behind a chat and cache it for the handlers that run off
+   * this message. Every inbound message and callback refreshes it, so a revoked
+   * link or a suspended account is locked out on its next interaction.
+   * @param {number} chatId
+   * @returns {Promise<object|null>} The session, or null when the chat is unlinked.
+   */
+  async #loadSession(chatId) {
+    const session = await resolveSession(chatId);
+    if (!session) {
+      this.#sessions.delete(chatId);
+      return null;
     }
-    return this.#chatState.get(chatId);
+
+    // Transient menu state (the citations behind a /proof keyboard) belongs to the
+    // conversation, not the database row, so it survives the refresh that the next
+    // callback triggers.
+    const previous = this.#sessions.get(chatId);
+    if (previous && previous.user?.id === session.user.id)
+      session._proofSources = previous._proofSources;
+
+    this.#sessions.set(chatId, session);
+    return session;
+  }
+
+  /**
+   * The session cached for the currently-handled message. Handlers only ever run
+   * behind the guard, which loads it first.
+   * @param {number} chatId
+   * @returns {{user: object, workspaceSlug: string|null, threadSlug: string|null}|null}
+   */
+  #getState(chatId) {
+    return this.#sessions.get(chatId) || null;
   }
 
   #setState(chatId, updates) {
     const state = this.#getState(chatId);
+    if (!state) return;
     Object.assign(state, updates);
-    this.#persistChatState(chatId, state);
+    this.#persistChatState(chatId, updates).catch((error) =>
+      this.#log("Failed to persist chat state:", error.message)
+    );
   }
 
-  async #persistChatState(chatId, state) {
-    const approved = (this.#config.approved_users || []).map((u) => {
-      if (String(u.chatId) === String(chatId)) {
-        return {
-          ...u,
-          active_workspace: state.workspaceSlug,
-          active_thread: state.threadSlug,
-        };
-      }
-      return u;
-    });
-    this.#config.approved_users = approved;
-    await ExternalCommunicationConnector.updateConfig("telegram", {
-      approved_users: approved,
-    });
+  /**
+   * Store which workspace/thread a chat is pointed at. Callers that already hold
+   * the records pass their ids; the slugs are resolved only when they do not.
+   */
+  async #persistChatState(chatId, updates) {
+    const state = {};
+
+    if (updates.hasOwnProperty("workspaceId"))
+      state.workspaceId = updates.workspaceId;
+    else if (updates.hasOwnProperty("workspaceSlug")) {
+      const { Workspace } = require("../../models/workspace");
+      const workspace = updates.workspaceSlug
+        ? await Workspace.get({ slug: updates.workspaceSlug })
+        : null;
+      state.workspaceId = workspace?.id || null;
+    }
+
+    if (updates.hasOwnProperty("threadId")) state.threadId = updates.threadId;
+    else if (updates.hasOwnProperty("threadSlug")) {
+      const { WorkspaceThread } = require("../../models/workspaceThread");
+      const thread = updates.threadSlug
+        ? await WorkspaceThread.get({ slug: updates.threadSlug })
+        : null;
+      state.threadId = thread?.id || null;
+    }
+
+    if (updates.hasOwnProperty("language")) state.language = updates.language;
+
+    if (!Object.keys(state).length) return;
+    await TelegramUser.setActiveState(chatId, state);
   }
 
   /**
@@ -383,20 +433,46 @@ class TelegramBotService {
       config: this.#config,
       getState: (chatId) => this.#getState(chatId),
       setState: (chatId, updates) => this.#setState(chatId, updates),
+      loadSession: (chatId) => this.#loadSession(chatId),
+      forgetSession: (chatId) => this.#sessions.delete(chatId),
+      awaitFeedbackReason: (chatId, chatRecordId) =>
+        this.#pendingFeedback.set(chatId, {
+          chatRecordId,
+          expiresAt: Date.now() + TelegramBotService.#FEEDBACK_REASON_TTL_MS,
+        }),
+      cancelFeedbackReason: (chatId) => this.#pendingFeedback.delete(chatId),
       log: (text, ...args) => this.#log(text, ...args),
     };
   }
 
-  async approvePendingUser(chatId) {
-    await approveUser(this.#bot, chatId, this.#config, this.#pendingPairings);
-  }
-
-  async denyPendingUser(chatId) {
-    await denyUser(this.#bot, chatId, this.#pendingPairings);
-  }
-
-  async revokeExistingUser(chatId) {
-    await revokeUser(chatId, this.#config);
+  /**
+   * Drop a link from outside the bot (an admin removing it in settings). The
+   * cached session goes with it so an in-flight conversation cannot outlive it.
+   *
+   * The notice is named by key rather than passed as text: the caller is an HTTP
+   * endpoint that has no idea what language this chat reads.
+   * @param {string|number} chatId
+   * @param {{key: string}|null} notice - Optional message to send the user.
+   */
+  async unlinkChat(chatId, notice = null) {
+    const session = this.#sessions.get(Number(chatId));
+    this.#sessions.delete(Number(chatId));
+    this.abortChat(Number(chatId));
+    if (this.#bot && notice) {
+      try {
+        // The button bar goes with the link - it would only lead to commands
+        // this chat can no longer run.
+        await this.#bot.sendMessage(
+          chatId,
+          translatorFor(session)(notice.key),
+          {
+            reply_markup: removeTabKeyboard(),
+          }
+        );
+      } catch {
+        // User may have blocked the bot
+      }
+    }
   }
 
   /**
@@ -408,18 +484,77 @@ class TelegramBotService {
     this.#pollingRetry.timer = null;
   }
 
+  /**
+   * Store a plain message as the reason for a pending thumbs-down.
+   *
+   * Returns true when the message was consumed, so the caller knows not to send
+   * it to the LLM - the person was answering the bot's question, not asking one.
+   * @param {import("./utils/commands").BotContext} ctx
+   * @param {number} chatId
+   * @param {string} text
+   * @returns {boolean}
+   */
+  #takeFeedbackReason(ctx, chatId, text) {
+    const pending = this.#pendingFeedback.get(chatId);
+    if (!pending) return false;
+
+    this.#pendingFeedback.delete(chatId);
+    if (Date.now() > pending.expiresAt) return false;
+    if (resolveTabAction(text)) return false; // A button tap, not a reason
+
+    const session = this.#getState(chatId);
+    const t = translatorFor(session);
+    this.#safely("feedback reason", async () => {
+      const { WorkspaceChats } = require("../../models/workspaceChats");
+      const chat = await WorkspaceChats.get({
+        id: pending.chatRecordId,
+        user_id: session.user.id,
+      });
+      if (!chat) return;
+
+      await WorkspaceChats.updateFeedbackScore(pending.chatRecordId, 0, text);
+      await ctx.bot.sendMessage(chatId, t("feedback.reason_saved"));
+    });
+    return true;
+  }
+
+  /**
+   * Run a handler so that a rejection is logged instead of thrown.
+   *
+   * Telegram event callbacks are fired by the library and nothing awaits their
+   * result, so an unhandled rejection - a message the user deleted before we
+   * could edit it is enough - would reach the process and take the whole server
+   * down with it. Everything the bot registers goes through here.
+   * @param {string} label - What failed, for the log line.
+   * @param {() => Promise<any>} run
+   * @returns {Promise<void>}
+   */
+  #safely(label, run) {
+    return Promise.resolve()
+      .then(run)
+      .catch((error) => this.#log(`${label} failed:`, error.message));
+  }
+
   #setupHandlers() {
     const ctx = this.#createContext();
-    const guard = async (msg, handler) => {
+    /**
+     * Nothing reaches a handler until the chat resolves to a live NexusAI account.
+     * `/link` is the single exception - it is how a chat becomes linked in the
+     * first place, so it runs with no session and resolves the account itself.
+     */
+    const guard = async (msg, handler, { allowUnlinked = false } = {}) => {
       if (!this.#config) return;
       this.#resetPollingRetry(); // Reset the polling on successful message receipt
 
-      if (!isVerified(this.#config.approved_users, msg.chat.id)) {
-        sendPairingRequest(this.#bot, msg, this.#pendingPairings);
+      if (msg.text?.startsWith("/")) this.#pendingFeedback.delete(msg.chat.id);
+
+      const session = await this.#loadSession(msg.chat.id);
+      if (!session && !allowUnlinked) {
+        await sendLinkInstructions(this.#bot, msg);
         return;
       }
 
-      handler();
+      await handler();
     };
 
     // Register all commands (history is registered separately below)
@@ -427,7 +562,21 @@ class TelegramBotService {
       if (command.skipAutoSetup) continue;
       const handler = command.initHandler();
       this.#bot.onText(new RegExp(`\\/${command.command}`), (msg) =>
-        guard(msg, () => handler(ctx, msg.chat.id, msg.text))
+        this.#safely(`/${command.command}`, () =>
+          guard(
+            msg,
+            () =>
+              handler(
+                ctx,
+                msg.chat.id,
+                msg.text,
+                // Only for handlers that asked for it: the menu handlers read a
+                // messageId in this position and would try to edit the object.
+                command.wantsMessage ? msg : undefined
+              ),
+            { allowUnlinked: command.allowUnlinked === true }
+          )
+        )
       );
     }
 
@@ -437,20 +586,29 @@ class TelegramBotService {
       const handler = BOT_COMMANDS.find(
         (c) => c.command === "history"
       ).initHandler();
-      guard(msg, () => handler(ctx, msg.chat.id, msg.text));
+      this.#safely("/history", () =>
+        guard(msg, () => handler(ctx, msg.chat.id, msg.text))
+      );
     });
 
     // Register callback queries, used for workspace/thread selection, tool approval, etc.
+    // The session is refreshed first so a callback fired from an old keyboard is
+    // still judged against the account's current access.
     this.#bot.on("callback_query", (query) =>
-      handleKeyboardQueryCallback(ctx, query, {
-        pendingToolApprovals: this.#pendingToolApprovals,
-        log: this.#log.bind(this),
+      this.#safely("callback query", async () => {
+        await this.#loadSession(query.message.chat.id);
+        await handleKeyboardQueryCallback(ctx, query, {
+          pendingToolApprovals: this.#pendingToolApprovals,
+          log: this.#log.bind(this),
+        });
       })
     );
 
     this.#bot.on("message", (msg) => {
       if (msg.text?.startsWith("/")) return;
-      guard(msg, () => this.#handleMessage(ctx, msg));
+      this.#safely("message", () =>
+        guard(msg, () => this.#handleMessage(ctx, msg))
+      );
     });
 
     this.#bot.on("polling_error", (error) => {
@@ -460,6 +618,14 @@ class TelegramBotService {
 
   async #runChatJob(ctx, chatId, payload) {
     const state = this.#getState(chatId);
+    if (!state) return;
+    if (!state.workspaceSlug) {
+      await ctx.bot.sendMessage(
+        chatId,
+        translatorFor(state)("chat.no_workspace")
+      );
+      return;
+    }
     try {
       const bgService = new BackgroundService();
       const jobId = `handle-telegram-chat-${Date.now()}`;
@@ -481,8 +647,10 @@ class TelegramBotService {
         worker.send({
           botToken: this.#config.bot_token,
           chatId,
+          userId: state.user.id,
           workspaceSlug: state.workspaceSlug,
           threadSlug: state.threadSlug,
+          language: state.language || null,
           ...payload,
         });
       }
@@ -530,7 +698,7 @@ class TelegramBotService {
       this.#log("Chat worker error:", error.message);
       await ctx.bot.sendMessage(
         chatId,
-        "Sorry, something went wrong. Please try again."
+        translatorFor(this.#getState(chatId))("common.error")
       );
     }
   }
@@ -579,26 +747,27 @@ class TelegramBotService {
     );
 
     try {
+      const t = translatorFor(this.#getState(chatId));
       const payloadText =
         payload && Object.keys(payload).length > 0
-          ? `\n\n<b>Parameters:</b>\n<code>${JSON.stringify(payload, null, 2)}</code>`
+          ? `\n\n${t("tool.approval_params")}\n<code>${JSON.stringify(payload, null, 2)}</code>`
           : "";
 
       const descText = description ? `\n${description}` : "";
 
       const messageText =
-        `🔧 <b>Tool Approval Required</b>\n\n` +
-        `The agent wants to execute: <b>${skillName}</b>${descText}${payloadText}\n\n` +
-        `Do you want to allow this action?`;
+        `${t("tool.approval_title")}\n\n` +
+        `${t("tool.approval_body", { skill: skillName })}${descText}${payloadText}\n\n` +
+        `${t("tool.approval_question")}`;
 
       const keyboard = {
         inline_keyboard: [
           [
             {
-              text: "✅ Approve",
+              text: t("tool.approve"),
               callback_data: `tool:approve:${requestId}`,
             },
-            { text: "❌ Deny", callback_data: `tool:deny:${requestId}` },
+            { text: t("tool.deny"), callback_data: `tool:deny:${requestId}` },
           ],
         ],
       };
@@ -620,14 +789,11 @@ class TelegramBotService {
         if (this.#pendingToolApprovals.has(requestId)) {
           this.#pendingToolApprovals.delete(requestId);
           this.#bot
-            .editMessageText(
-              `⏱️ Tool approval for <b>${skillName}</b> timed out.`,
-              {
-                chat_id: chatId,
-                message_id: sent.message_id,
-                parse_mode: "HTML",
-              }
-            )
+            .editMessageText(t("tool.timed_out", { skill: skillName }), {
+              chat_id: chatId,
+              message_id: sent.message_id,
+              parse_mode: "HTML",
+            })
             .catch(() => {});
         }
       }, timeoutMs + 1000);
@@ -660,9 +826,23 @@ class TelegramBotService {
   #handleMessage(ctx, msg) {
     const chatId = msg.chat.id;
 
+    // A tap on the button bar arrives as a plain message carrying the button's
+    // label. Route it to the command it stands for rather than letting the LLM
+    // answer it.
+    if (msg.text && this.#takeFeedbackReason(ctx, chatId, msg.text)) return;
+
+    const tabAction = resolveTabAction(msg.text);
+    if (tabAction) {
+      // Nothing past chatId: the handlers behind the buttons read a page number
+      // and a messageId in those positions.
+      this.#queue.enqueue(chatId, () => tabAction(ctx, chatId));
+      return;
+    }
+
     // Voice messages: transcribe then send to LLM
     if (msg.voice || msg.audio) {
       this.#queue.enqueue(chatId, async () => {
+        const t = translatorFor(this.#getState(chatId));
         try {
           const audioInfo = msg.voice || msg.audio;
           const fileId = audioInfo.file_id;
@@ -671,10 +851,7 @@ class TelegramBotService {
           const audioBuffer = await downloadTelegramFile(ctx.bot, fileId);
           const transcription = await transcribeAudio(audioBuffer, mimeType);
           if (!transcription?.trim()) {
-            await ctx.bot.sendMessage(
-              chatId,
-              "Could not transcribe the voice message."
-            );
+            await ctx.bot.sendMessage(chatId, t("media.transcribe_empty"));
             return;
           }
           await this.#runChatJob(ctx, chatId, {
@@ -689,9 +866,7 @@ class TelegramBotService {
             error.message.includes("OpenAI");
           await ctx.bot.sendMessage(
             chatId,
-            isConfigError
-              ? error.message
-              : "Failed to process voice message. Please try again."
+            isConfigError ? error.message : t("media.voice_failed")
           );
         }
       });
@@ -701,20 +876,18 @@ class TelegramBotService {
     // Photo messages: extract image and send to LLM with vision
     if (msg.photo) {
       this.#queue.enqueue(chatId, async () => {
+        const t = translatorFor(this.#getState(chatId));
         try {
           await ctx.bot.sendChatAction(chatId, "typing");
           const attachment = await photoToAttachment(ctx.bot, msg.photo);
           await this.#runChatJob(ctx, chatId, {
-            message: msg.caption || "Describe this image.",
+            message: msg.caption || t("media.describe_image"),
             attachments: [attachment],
             voiceResponse: this.#shouldVoiceRespond(false),
           });
         } catch (error) {
           this.#log("Photo handling error:", error.message);
-          await ctx.bot.sendMessage(
-            chatId,
-            "Failed to process the image. Please try again."
-          );
+          await ctx.bot.sendMessage(chatId, t("media.image_failed"));
         }
       });
       return;
@@ -723,6 +896,7 @@ class TelegramBotService {
     // Document messages: parse and send extracted text to LLM
     if (msg.document) {
       this.#queue.enqueue(chatId, async () => {
+        const t = translatorFor(this.#getState(chatId));
         try {
           await ctx.bot.sendChatAction(chatId, "typing");
           const filename = msg.document.file_name || "document";
@@ -750,7 +924,7 @@ class TelegramBotService {
             chatId,
             error.message.includes("collector")
               ? error.message
-              : "Failed to process the document. Please try again."
+              : t("media.document_failed")
           );
         }
       });

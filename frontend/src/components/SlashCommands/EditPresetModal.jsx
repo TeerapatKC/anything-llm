@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { CMD_REGEX } from "./constants";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,7 @@ export default function EditPresetModal({
   onDelete,
   preset,
 }) {
+  const { t } = useTranslation();
   const [command, setCommand] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [confirm, setConfirm] = useState(null);
@@ -100,7 +102,7 @@ export default function EditPresetModal({
                   </Label>
                   <Textarea
                     name="prompt"
-                    placeholder="This is a test prompt. Please respond with a poem about LLMs."
+                    placeholder={t("ui.test-prompt-placeholder")}
                     defaultValue={preset.prompt}
                     required={true}
                   ></Textarea>
@@ -113,7 +115,7 @@ export default function EditPresetModal({
                     type="text"
                     name="description"
                     defaultValue={preset.description}
-                    placeholder="Responds with a poem about LLMs."
+                    placeholder={t("ui.preset-description-placeholder")}
                     required={true}
                   />
                 </div>

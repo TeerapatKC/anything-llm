@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -13,13 +14,14 @@ import {
 } from "@/components/ui/select";
 
 export default function OpenAiOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.OpenAiKey);
   const [openAIKey, setOpenAIKey] = useState(settings?.OpenAiKey);
 
   return (
     <div className="flex gap-9 mt-1.5">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="OpenAiKey"
@@ -40,6 +42,7 @@ export default function OpenAiOptions({ settings }) {
 }
 
 function OpenAIModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedModel, setSelectedModel] = useState(
@@ -80,7 +83,9 @@ function OpenAIModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -93,7 +98,7 @@ function OpenAIModelSelection({ apiKey, settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -103,7 +108,9 @@ function OpenAIModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="OpenAiModelPref"
@@ -112,7 +119,7 @@ function OpenAIModelSelection({ apiKey, settings }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

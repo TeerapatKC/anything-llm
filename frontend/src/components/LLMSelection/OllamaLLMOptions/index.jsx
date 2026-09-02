@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
@@ -24,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function OllamaLLMOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -156,10 +158,12 @@ export default function OllamaLLMOptions({ settings }) {
                 defaultValue={settings?.OllamaLLMKeepAliveSeconds ?? "300"}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select an option" />
+                  <SelectValue
+                    placeholder={t("provider-options.select-option")}
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="0">No cache</SelectItem>
+                  <SelectItem value="0">{t("ui.no-cache")}</SelectItem>
                   <SelectItem value="300">5 minutes</SelectItem>
                   <SelectItem value="3600">1 hour</SelectItem>
                   <SelectItem value="-1">Forever</SelectItem>
@@ -170,7 +174,9 @@ export default function OllamaLLMOptions({ settings }) {
           <div className="w-full flex items-start gap-4">
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label className="block">Model context window</Label>
+                <Label className="block">
+                  {t("provider-options.model-context-window")}
+                </Label>
                 <Tooltip>
                   <TooltipTrigger
                     render={
@@ -182,13 +188,9 @@ export default function OllamaLLMOptions({ settings }) {
                   ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     <p className="text-xs leading-[18px] font-base">
-                      Specify the maximum number of tokens that can be used for
-                      the model context window.
+                      {t("help.ollama-llmoptions")}
                       <br /> <br />
-                      If you leave this field blank, the context window limit
-                      will be auto-detected from the model and applied to all
-                      chats. If auto-detection fails, a fallback context window
-                      limit of 4096 will be used.
+                      {t("help.ollama-llmoptions-2")}
                       <br /> <br />
                       <b>Important:</b> Some models have very large context
                       windows using the full context window limit can
@@ -197,8 +199,7 @@ export default function OllamaLLMOptions({ settings }) {
                       limit to 16,384 tokens if the model supports more than
                       that and no value is specified.
                       <br /> <br />
-                      If an invalid value is entered, NexusAI will handle this
-                      for you so that chats do not fail.
+                      {t("help.ollama-llmoptions-3")}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -206,7 +207,7 @@ export default function OllamaLLMOptions({ settings }) {
               <Input
                 type="number"
                 name="OllamaLLMTokenLimit"
-                placeholder="Automatically managed"
+                placeholder={t("provider-options.automatically-managed")}
                 min={1}
                 value={maxTokens}
                 onChange={(e) =>
@@ -220,7 +221,7 @@ export default function OllamaLLMOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label>Authentication Token</Label>
+                <Label>{t("provider-options.auth-token")}</Label>
                 <Tooltip>
                   <TooltipTrigger
                     render={
@@ -268,6 +269,7 @@ function OllamaLLMModelSelection({
   basePath = null,
   authToken = null,
 }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -312,8 +314,7 @@ function OllamaLLMModelSelection({
           <SelectContent />
         </Select>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-          Select the Ollama model you want to use. Models will load after
-          entering a valid Ollama URL.
+          {t("help.ollama-llmoptions-4")}
         </p>
       </div>
     );
@@ -342,12 +343,14 @@ function OllamaLLMModelSelection({
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

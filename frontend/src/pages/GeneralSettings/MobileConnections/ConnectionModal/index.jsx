@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import BG from "./bg.png";
 import { QRCodeSVG } from "qrcode.react";
 import { Link } from "react-router-dom";
@@ -10,6 +11,7 @@ import GetOnGooglePlay from "./gplay-badge.svg";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 
 export default function MobileConnectModal({ isOpen, onClose }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -30,12 +32,10 @@ export default function MobileConnectModal({ isOpen, onClose }) {
               Go mobile. Stay local. NexusAI Mobile.
             </p>
             <p className="text-white text-lg">
-              NexusAI for mobile allows you to connect to your workspace's
-              chats, threads, tools, and documents for you to use on the go.
+              {t("help.connection-modal")}
               <br />
               <br />
-              Run with local models on your phone privately or relay chats
-              directly to this instance seamlessly.
+              {t("help.connection-modal-2")}
             </p>
             <Link
               to="https://play.google.com/store/apps/details?id=com.anythingllm"
@@ -55,8 +55,7 @@ export default function MobileConnectModal({ isOpen, onClose }) {
               <ConnectionQrCode isOpen={isOpen} />
             </div>
             <p className="text-white text-sm w-[300px] text-center">
-              Scan the QR code with the NexusAI Mobile app to enable live sync
-              of your workspaces, chats, threads and documents.
+              {t("help.connection-modal-3")}
               <br />
               <Link
                 to={paths.documentation.mobileIntroduction()}

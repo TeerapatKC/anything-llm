@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { RotateCw, Search } from "lucide-react";
@@ -9,6 +10,7 @@ export default function ModelTableLayout({
   setSearchQuery = () => {},
   loading = false,
 }) {
+  const { t } = useTranslation();
   const [isRefreshing, setIsRefreshing] = useState(false);
   async function refreshModels() {
     setIsRefreshing(true);
@@ -36,7 +38,7 @@ export default function ModelTableLayout({
           />
           <input
             type="search"
-            placeholder="Search models"
+            placeholder={t("ui.search-models")}
             value={searchQuery}
             disabled={loading}
             className="min-h-[32px] border-none bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5 pl-[30px] py-2 search-input disabled:opacity-50 disabled:cursor-not-allowed"

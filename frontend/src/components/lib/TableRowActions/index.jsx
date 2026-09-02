@@ -1,4 +1,5 @@
 import { Children } from "react";
+import { useTranslation } from "react-i18next";
 import { MoreHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,13 +19,17 @@ import {
  *
  * @param {{children: import("react").ReactNode, label?: string}} props
  */
-export default function TableRowActions({ children, label = "Open actions" }) {
+export default function TableRowActions({ children, label }) {
+  const { t } = useTranslation();
+  const menuLabel = label ?? t("ui.open-actions");
   if (Children.toArray(children).length === 0) return null;
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button variant="ghost" size="icon-sm" aria-label={label} />}
+        render={
+          <Button variant="ghost" size="icon-sm" aria-label={menuLabel} />
+        }
       >
         <MoreHorizontal />
       </DropdownMenuTrigger>

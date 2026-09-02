@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,26 +21,34 @@ const SerpApiEngines = [
   { name: "Baidu", value: "baidu" },
 ];
 export function SerpApiOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        Get a free API key{" "}
-        <a
-          href="https://serpapi.com/"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from SerpApi.
-        </a>
+        <Trans
+          i18nKey="web-search.get-free-key"
+          values={{ provider: "SerpApi" }}
+          components={{
+            a: (
+              <a
+                href="https://serpapi.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentSerpApiKey"
-            placeholder="SerpApi API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "SerpApi",
+            })}
             defaultValue={settings?.AgentSerpApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -47,14 +56,14 @@ export function SerpApiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Engine</Label>
+          <Label className="block mb-3">{t("web-search.engine")}</Label>
           <Select
             name="env::AgentSerpApiEngine"
             required={true}
             defaultValue={settings?.AgentSerpApiEngine || "google"}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {SerpApiEngines.map(({ name, value }) => (
@@ -96,26 +105,34 @@ const SearchApiEngines = [
   { name: "Baidu", value: "baidu" },
 ];
 export function SearchApiOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get a free API key{" "}
-        <a
-          href="https://www.searchapi.io/"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from SearchApi.
-        </a>
+        <Trans
+          i18nKey="web-search.get-free-key"
+          values={{ provider: "SearchApi" }}
+          components={{
+            a: (
+              <a
+                href="https://www.searchapi.io/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentSearchApiKey"
-            placeholder="SearchApi API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "SearchApi",
+            })}
             defaultValue={settings?.AgentSearchApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -123,14 +140,14 @@ export function SearchApiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Engine</Label>
+          <Label className="block mb-3">{t("web-search.engine")}</Label>
           <Select
             name="env::AgentSearchApiEngine"
             required={true}
             defaultValue={settings?.AgentSearchApiEngine || "google"}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {SearchApiEngines.map(({ name, value }) => (
@@ -157,26 +174,34 @@ export function SearchApiOptions({ settings }) {
 }
 
 export function SerperDotDevOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get a free API key{" "}
-        <a
-          href="https://serper.dev"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Serper.dev.
-        </a>
+        <Trans
+          i18nKey="web-search.get-free-key"
+          values={{ provider: "Serper.dev" }}
+          components={{
+            a: (
+              <a
+                href="https://serper.dev"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentSerperApiKey"
-            placeholder="Serper.dev API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Serper.dev",
+            })}
             defaultValue={settings?.AgentSerperApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -189,26 +214,33 @@ export function SerperDotDevOptions({ settings }) {
 }
 
 export function BingSearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get a Bing Web Search API subscription key{" "}
-        <a
-          href="https://portal.azure.com/"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from the Azure portal.
-        </a>
+        <Trans
+          i18nKey="web-search.bing-key"
+          components={{
+            a: (
+              <a
+                href="https://portal.azure.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentBingSearchApiKey"
-            placeholder="Bing Web Search API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Bing Web Search",
+            })}
             defaultValue={settings?.AgentBingSearchApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -217,11 +249,11 @@ export function BingSearchOptions({ settings }) {
         </div>
       </div>
       <p className="text-sm text-theme-text-secondary my-2">
-        To set up a Bing Web Search API subscription:
+        {t("web-search.bing-steps-title")}
       </p>
       <ol className="list-decimal text-sm text-theme-text-secondary ml-6">
         <li>
-          Go to the Azure portal:{" "}
+          {t("web-search.bing-step-1")}{" "}
           <a
             href="https://portal.azure.com/"
             target="_blank"
@@ -231,45 +263,45 @@ export function BingSearchOptions({ settings }) {
             https://portal.azure.com/
           </a>
         </li>
-        <li>Create a new Azure account or sign in with an existing one.</li>
-        <li>
-          Navigate to the "Create a resource" section and search for "Grounding
-          with Bing Search".
-        </li>
-        <li>
-          Select the "Grounding with Bing Search" resource and create a new
-          subscription.
-        </li>
-        <li>Choose the pricing tier that suits your needs.</li>
-        <li>
-          Obtain the API key for your Grounding with Bing Search subscription.
-        </li>
+        <li>{t("web-search.bing-step-2")}</li>
+        <li>{t("web-search.bing-step-3")}</li>
+        <li>{t("web-search.bing-step-4")}</li>
+        <li>{t("web-search.bing-step-5")}</li>
+        <li>{t("web-search.bing-step-6")}</li>
       </ol>
     </>
   );
 }
 
 export function BaiduSearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get an API key{" "}
-        <a
-          href="https://cloud.baidu.com/doc/qianfan-api/s/Wmbq4z7e5"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Baidu AI Cloud Qianfan.
-        </a>
+        <Trans
+          i18nKey="web-search.get-key"
+          values={{ provider: "Baidu AI Cloud Qianfan" }}
+          components={{
+            a: (
+              <a
+                href="https://cloud.baidu.com/doc/qianfan-api/s/Wmbq4z7e5"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentBaiduSearchApiKey"
-            placeholder="Baidu Search API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Baidu Search",
+            })}
             defaultValue={
               settings?.AgentBaiduSearchApiKey ? "*".repeat(20) : ""
             }
@@ -284,26 +316,34 @@ export function BaiduSearchOptions({ settings }) {
 }
 
 export function SerplySearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get a free API key{" "}
-        <a
-          href="https://serply.io"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Serply.io.
-        </a>
+        <Trans
+          i18nKey="web-search.get-free-key"
+          values={{ provider: "Serply.io" }}
+          components={{
+            a: (
+              <a
+                href="https://serply.io"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentSerplyApiKey"
-            placeholder="Serply API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Serply",
+            })}
             defaultValue={settings?.AgentSerplyApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -316,14 +356,15 @@ export function SerplySearchOptions({ settings }) {
 }
 
 export function SearXNGOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">SearXNG API Base URL</Label>
+        <Label className="block mb-3">{t("web-search.searxng-base-url")}</Label>
         <Input
           type="url"
           name="env::AgentSearXNGApiUrl"
-          placeholder="SearXNG API Base URL"
+          placeholder={t("web-search.searxng-base-url")}
           defaultValue={settings?.AgentSearXNGApiUrl}
           required={true}
           autoComplete="off"
@@ -335,26 +376,34 @@ export function SearXNGOptions({ settings }) {
 }
 
 export function TavilySearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get an API key{" "}
-        <a
-          href="https://tavily.com/"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Tavily.
-        </a>
+        <Trans
+          i18nKey="web-search.get-key"
+          values={{ provider: "Tavily" }}
+          components={{
+            a: (
+              <a
+                href="https://tavily.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentTavilyApiKey"
-            placeholder="Tavily API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Tavily",
+            })}
             defaultValue={settings?.AgentTavilyApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -367,6 +416,7 @@ export function TavilySearchOptions({ settings }) {
 }
 
 export function CrwSearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
@@ -379,23 +429,29 @@ export function CrwSearchOptions({ settings }) {
         >
           from fastCRW.
         </a>
-        You can also{" "}
-        <a
-          href="https://github.com/us/crw"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          self-host.
-        </a>
+        <Trans
+          i18nKey="web-search.crw-self-host"
+          components={{
+            a: (
+              <a
+                href="https://github.com/us/crw"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentCrwApiKey"
-            placeholder="fastCRW API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "fastCRW",
+            })}
             defaultValue={settings?.AgentCrwApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -403,7 +459,9 @@ export function CrwSearchOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Base URL (optional)</Label>
+          <Label className="block mb-3">
+            {t("web-search.base-url-optional")}
+          </Label>
           <Input
             type="url"
             name="env::AgentCrwApiUrl"
@@ -419,36 +477,45 @@ export function CrwSearchOptions({ settings }) {
 }
 
 export function DuckDuckGoOptions() {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        DuckDuckGo is ready to use without any additional configuration.
+        {t("web-search.duckduckgo-ready")}
       </p>
     </>
   );
 }
 
 export function ExaSearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get an API key{" "}
-        <a
-          href="https://exa.ai"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Exa.
-        </a>
+        <Trans
+          i18nKey="web-search.get-key"
+          values={{ provider: "Exa" }}
+          components={{
+            a: (
+              <a
+                href="https://exa.ai"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentExaApiKey"
-            placeholder="Exa API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Exa",
+            })}
             defaultValue={settings?.AgentExaApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -461,26 +528,34 @@ export function ExaSearchOptions({ settings }) {
 }
 
 export function PerplexitySearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get an API key{" "}
-        <a
-          href="https://console.perplexity.ai"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Perplexity.
-        </a>
+        <Trans
+          i18nKey="web-search.get-key"
+          values={{ provider: "Perplexity" }}
+          components={{
+            a: (
+              <a
+                href="https://console.perplexity.ai"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentPerplexityApiKey"
-            placeholder="Perplexity API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Perplexity",
+            })}
             defaultValue={settings?.AgentPerplexityApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -493,26 +568,34 @@ export function PerplexitySearchOptions({ settings }) {
 }
 
 export function BraveSearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You can get an API key{" "}
-        <a
-          href="https://brave.com/search/api"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from Brave.
-        </a>
+        <Trans
+          i18nKey="web-search.get-key"
+          values={{ provider: "Brave" }}
+          components={{
+            a: (
+              <a
+                href="https://brave.com/search/api"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="env::AgentBraveApiKey"
-            placeholder="Brave API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "Brave",
+            })}
             defaultValue={settings?.AgentBraveApiKey ? "*".repeat(20) : ""}
             required={true}
             autoComplete="off"
@@ -525,28 +608,35 @@ export function BraveSearchOptions({ settings }) {
 }
 
 export function YouSearchOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm text-theme-text-secondary my-2">
-        You.com works without an API key (free tier, IP rate-limited). For
-        higher limits, get an API key{" "}
-        <a
-          href="https://you.com/platform"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 underline"
-        >
-          from You.com
-        </a>
-        .
+        <Trans
+          i18nKey="web-search.you-notice"
+          components={{
+            a: (
+              <a
+                href="https://you.com/platform"
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-300 underline"
+              />
+            ),
+          }}
+        />
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key (optional)</Label>
+          <Label className="block mb-3">
+            {t("provider-options.api-key-optional")}
+          </Label>
           <Input
             type="password"
             name="env::AgentYouApiKey"
-            placeholder="You.com API Key"
+            placeholder={t("web-search.api-key-placeholder", {
+              provider: "You.com",
+            })}
             defaultValue={settings?.AgentYouApiKey ? "*".repeat(20) : ""}
             required={false}
             autoComplete="off"

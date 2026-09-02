@@ -195,7 +195,7 @@ export default function ImageGenerationPreference() {
                   type="text"
                   name="provider-search"
                   autoComplete="off"
-                  placeholder="Search image generation providers"
+                  placeholder={t("ui.search-image-providers")}
                   className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
                   onChange={(e) => setSearchQuery(e.target.value)}
                   ref={searchInputRef}

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -13,29 +14,38 @@ export default function FileNode({
   onConfigChange,
   renderVariableSelect,
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div>
-        <Label className="block mb-2">Operation</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.file.operation")}
+        </Label>
         <Select
           value={config.operation}
           onValueChange={(value) => onConfigChange({ operation: value })}
         >
           <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none">
-            <SelectValue placeholder="Select an option" />
+            <SelectValue
+              placeholder={t("agent-builder.common.select-option")}
+            />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="read">Read File</SelectItem>
-            <SelectItem value="write">Write File</SelectItem>
-            <SelectItem value="append">Append to File</SelectItem>
+            <SelectItem value="read">{t("agent-builder.file.read")}</SelectItem>
+            <SelectItem value="write">
+              {t("agent-builder.file.write")}
+            </SelectItem>
+            <SelectItem value="append">
+              {t("agent-builder.file.append")}
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
       <div>
-        <Label className="block mb-2">File Path</Label>
+        <Label className="block mb-2">{t("agent-builder.file.path")}</Label>
         <input
           type="text"
-          placeholder="/path/to/file"
+          placeholder={t("agent-builder.file.path-placeholder")}
           value={config.path}
           onChange={(e) => onConfigChange({ path: e.target.value })}
           className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary placeholder:text-white/20 focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
@@ -45,9 +55,11 @@ export default function FileNode({
       </div>
       {config.operation !== "read" && (
         <div>
-          <Label className="block mb-2">Content</Label>
+          <Label className="block mb-2">
+            {t("agent-builder.file.content")}
+          </Label>
           <textarea
-            placeholder="File content..."
+            placeholder={t("agent-builder.file.content-placeholder")}
             value={config.content}
             onChange={(e) => onConfigChange({ content: e.target.value })}
             className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary placeholder:text-white/20 focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none"
@@ -58,11 +70,13 @@ export default function FileNode({
         </div>
       )}
       <div>
-        <Label className="block mb-2">Store Result In</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.common.store-result-in")}
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ resultVariable: value }),
-          "Select or create variable"
+          t("agent-builder.common.select-or-create-variable")
         )}
       </div>
     </div>

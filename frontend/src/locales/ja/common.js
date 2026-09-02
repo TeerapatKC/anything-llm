@@ -9,6 +9,7 @@ const TRANSLATIONS = {
       title: "ユーザー設定",
       description: "ユーザー設定を構成します。",
       adminUsername: "管理者アカウントのユーザー名",
+      adminEmail: "管理者アカウントのメールアドレス",
       adminPassword: "管理者アカウントのパスワード",
       adminPasswordReq: "パスワードは8文字以上である必要があります。",
       teamHint:
@@ -31,6 +32,7 @@ const TRANSLATIONS = {
     stopped: "停止",
     loading: "読み込み中",
     refresh: "リフレッシュ",
+    delete: "削除",
   },
   settings: {
     title: "インスタンス設定",
@@ -59,6 +61,7 @@ const TRANSLATIONS = {
     "experimental-features": "実験的機能",
     contact: "サポートに連絡",
     "browser-extension": "ブラウザ拡張",
+    smtp: "SMTP",
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
     chat: "チャット",
@@ -90,6 +93,8 @@ const TRANSLATIONS = {
     "sign-in": "{{appName}} アカウントにサインインします。",
     "password-reset": {
       title: "パスワードリセット",
+      "admin-reset-description":
+        "管理者にパスワードのリセットを依頼してください。管理者が新しいパスワードを発行し、次回ログイン時にご自身でパスワードを設定していただきます。",
       "back-to-login": "ログイン画面に戻る",
     },
   },
@@ -103,6 +108,7 @@ const TRANSLATIONS = {
     vector: "ベクターデータベース",
     members: "メンバー",
     agent: "エージェント構成",
+    "upload-documents": "ドキュメントをアップロード",
   },
   general: {
     vector: {
@@ -120,6 +126,22 @@ const TRANSLATIONS = {
       save: "メッセージを保存",
       heading: "説明してください",
       body: "NexusAIの利点",
+    },
+    status: {
+      title: "ワークスペースのステータス",
+      description:
+        "非アクティブなワークスペースはドキュメント、チャット、メンバーをすべて保持しますが、誰もチャットできなくなり、そこを参照している埋め込みも応答を停止します。",
+      active: "アクティブ",
+      inactive: "非アクティブ",
+      deactivate: "非アクティブにする",
+      activated: "ワークスペースはアクティブになりました。",
+      deactivated: "ワークスペースは非アクティブになりました。",
+      "chat-disabled":
+        "このワークスペースは非アクティブです。ここでチャットするには管理者がアクティブにする必要があります。",
+      failed: "ワークスペースのステータスを更新できませんでした。",
+      "confirm-title": "このワークスペースを非アクティブにしますか？",
+      "confirm-description":
+        "再度アクティブにするまで、メンバーはこのワークスペースでチャットできなくなります。データは削除されません。",
     },
     delete: {
       title: "ワークスペースを削除",
@@ -721,7 +743,17 @@ const TRANSLATIONS = {
       workspace: "ワークスペース",
       prompt: "プロンプト",
       response: "応答",
+      feedback: "評価",
       at: "送信日時",
+    },
+    feedback: {
+      up: "役に立ったと評価",
+      down: "役に立たなかったと評価",
+      none: "評価なし",
+      filter_all: "すべての評価",
+      filter_up: "役に立ったのみ",
+      filter_down: "役に立たなかったのみ",
+      filter_none: "未評価のみ",
     },
   },
   api: {
@@ -869,6 +901,12 @@ const TRANSLATIONS = {
     description:
       "これは、接続されているサードパーティプロバイダーとAnythingLLMがデータをどのように処理するかの設定です。",
     anonymous: "匿名テレメトリが有効",
+    personalization: {
+      label: "パーソナライズと記憶を有効にする",
+      auto_label: "記憶の自動抽出を有効にする",
+      description:
+        "アシスタントがユーザーやワークスペースに関する事実を記憶し、以降の会話で利用できるようにします。これはインスタンス全体のポリシーです。無効にすると全員がこの機能を利用できなくなります。各ユーザーはチャットの記憶パネルで記憶されるかどうかを選択でき、記憶がユーザー間で共有されることはありません。自動抽出は、アクティブなユーザーとワークスペースごとにLLM呼び出しのコストがかかるバックグラウンドジョブを実行します。",
+    },
   },
   connectors: {
     "search-placeholder": "データコネクタを検索",
@@ -1097,11 +1135,18 @@ const TRANSLATIONS = {
     send: "ワークスペースにプロンプトメッセージを送信",
     attachments_processing:
       "添付ファイルの処理中です。しばらくお待ちください。",
+    response_streaming:
+      "次のメッセージを送信する前に、現在の返答が完了するまでお待ちください。",
     tts_speak_message: "TTS Speak メッセージ",
     copy: "以下に翻訳を示します。",
     regenerate: "再生",
     regenerate_response: "申し訳ありませんが、その質問にはお答えできません。",
     good_response: "良い反応",
+    bad_response: "良くない回答",
+    feedback_reason_title: "どこが問題でしたか?",
+    feedback_reason_placeholder: "この回答の問題点を教えてください (任意)",
+    feedback_reason_skip: "スキップ",
+    feedback_reason_submit: "フィードバックを送信",
     more_actions:
       "さらに詳細な情報が必要な場合は、お気軽にお問い合わせください。",
     fork: "フォーク",
@@ -1131,11 +1176,17 @@ const TRANSLATIONS = {
     text_size_label: "文字サイズ",
     sources: "出典",
     document: "文書",
+    database_source: "データベース",
+    mcp_source: "MCP ツール",
     similarity_match: "試合",
     source_count_one: "{{count}} 参照",
     source_count_other: "{{count}} への参照",
     stop_generating: "応答の生成を停止する",
     slash_commands: "スラッシュコマンド",
+    agents: "利用可能なエージェント",
+    at_agent: "@agent",
+    default_agent_description:
+      " - このワークスペースのデフォルトエージェントです。ウェブ検索やサイトのスクレイピングなどが行えます。",
     start_agent_session: "エージェントセッションを開始",
     agent_invocation: {
       model_wants_to_call: "モデルは電話をかけたい。",
@@ -1177,6 +1228,8 @@ const TRANSLATIONS = {
         description:
           "アシスタントに、バックグラウンドで自動的に思い出を作成させるように設定してください。",
       },
+      scope_hint:
+        "これらの設定はご自身のアカウントにのみ適用されます。あなたの記憶が他のユーザーと共有されることはありません。",
       menu: {
         edit: "編集",
         delete: "削除",
@@ -1211,6 +1264,8 @@ const TRANSLATIONS = {
     profile_picture: "プロフィール画像",
     remove_profile_picture: "プロフィール画像を削除",
     username: "ユーザー名",
+    email: "メールアドレス",
+    password: "パスワード",
     password_description: "パスワードは8文字以上である必要があります",
     cancel: "キャンセル",
     update_account: "アカウントを更新",
@@ -1224,6 +1279,64 @@ const TRANSLATIONS = {
     account: "アカウント",
     support: "サポート",
     signout: "ログアウト",
+    speech: {
+      title: "音声",
+    },
+    connections: {
+      title: "連携アプリ",
+      status_connected: "連携済み",
+      status_disconnected: "未連携",
+      status_unavailable: "未設定",
+    },
+    telegram: {
+      title: "Telegram",
+      unavailable:
+        "このインスタンスにはまだ Telegram ボットが接続されていません。管理者に設定を依頼してください。",
+      description:
+        "このインスタンスのボットを使って、Telegram からワークスペースとチャットできます。",
+      connect: "接続",
+      connected_chat: "接続済みのチャット",
+      connected_description:
+        "ボットはこのチャットであなたとして、あなたのワークスペースに応答します。",
+      disconnect: "接続を解除",
+      disconnected: "Telegram の接続を解除しました。",
+      disconnect_failed: "Telegram の接続解除に失敗しました。",
+      send_this: "Telegram で {{bot}} に次を送信してください:",
+      the_bot: "ボット",
+      copy: "コマンドをコピー",
+      copy_failed: "クリップボードにコピーできませんでした。",
+      expires_in: "残り {{seconds}} 秒で期限切れ",
+      open_bot: "ボットを開く",
+      scan_hint: "スキャンして Telegram でボットを開く",
+      status_connected: "連携済み",
+      status_disconnected: "未連携",
+      code_failed: "連携コードを生成できませんでした。",
+    },
+    line: {
+      title: "LINE",
+      unavailable:
+        "このインスタンスにはまだ LINE ボットが接続されていません。管理者に設定を依頼してください。",
+      description:
+        "このインスタンスのボットを使って、LINE からワークスペースとチャットできます。",
+      connect: "接続",
+      connected_chat: "接続済みのチャット",
+      connected_description:
+        "ボットはこのチャットであなたとして、あなたのワークスペースに応答します。",
+      disconnect: "接続を解除",
+      disconnected: "LINE の接続を解除しました。",
+      disconnect_failed: "LINE の接続解除に失敗しました。",
+      send_this: "LINE で {{bot}} に次を送信してください:",
+      the_bot: "ボット",
+      copy: "コマンドをコピー",
+      copy_failed: "クリップボードにコピーできませんでした。",
+      expires_in: "残り {{seconds}} 秒で期限切れ",
+      open_bot: "ボットを開く",
+      scan_hint: "スキャンして LINE でボットを友だち追加",
+      scan_or_search: "スキャンして追加、または LINE で {{basicId}} を検索",
+      status_connected: "連携済み",
+      status_disconnected: "未連携",
+      code_failed: "連携コードを生成できませんでした。",
+    },
   },
   customization: {
     interface: {
@@ -1326,6 +1439,23 @@ const TRANSLATIONS = {
       uploadDocument: "ドキュメントをアップロードする",
     },
     greeting: "今日はどのようにお手伝いできますか？",
+  },
+  password_change: {
+    title: "パスワードの変更",
+    current_password: "現在のパスワード",
+    new_password: "新しいパスワード",
+    confirm_password: "新しいパスワードの確認",
+    password_requirements: "パスワードは8文字以上である必要があります",
+    mismatch: "新しいパスワードが一致しません。",
+    success: "パスワードを変更しました。",
+    updating: "更新中...",
+    cancel: "キャンセル",
+    page_description: "アカウントの新しいパスワードを選択してください。",
+    forced_title: "新しいパスワードを設定",
+    forced_description:
+      "パスワードは管理者によって発行されました。続行するにはご自身のパスワードを設定してください。",
+    forced_submit: "パスワードを設定して続行",
+    sign_out: "代わりにログアウトする",
   },
   "keyboard-shortcuts": {
     title: "キーボードショートカット",
@@ -1450,7 +1580,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "テレグラムボット",
     description:
-      "AnyLLM のインスタンスを Telegram に接続することで、あらゆるデバイスからワークスペースとのチャットが可能になります。",
+      "AnyLLM のインスタンスを Telegram に接続します。1 つのボットを全員で共有し、各自が自分のアカウントを連携して自分のワークスペースだけにアクセスします。",
     setup: {
       step1: {
         title: "ステップ1：Telegramボットを作成する",
@@ -1500,13 +1630,19 @@ const TRANSLATIONS = {
       "toast-disconnect-failed": "ボットとの接続を解除できませんでした。",
       "toast-reconnect-failed": "ボットとの再接続に失敗しました。",
       "toast-voice-failed": "音声モードの更新に失敗しました。",
-      "toast-approve-failed": "ユーザーの承認に失敗しました。",
-      "toast-deny-failed": "ユーザーからの拒否を拒否できませんでした。",
-      "toast-revoke-failed": "ユーザーの権限停止に失敗。",
+      "linked-accounts": "連携済みアカウント",
+      "per-user-note":
+        "各自がプロフィール設定から自分のアカウントを連携し、自分の権限で自分のワークスペースとチャットします。",
     },
     users: {
-      "pending-description":
-        "本人情報の確認待ちのユーザー。ここに表示されているペアリングコードを、彼らがTelegramで表示しているコードと照合してください。",
+      title: "連携済みアカウント",
+      description:
+        "このインスタンスのアカウントに紐づいた Telegram チャットです。ボットは各チャットにそのアカウントとして応答します。",
+      empty: "まだ誰も Telegram チャットを連携していません。",
+      "no-workspace": "ワークスペース未選択",
+      disconnect: "接続を解除",
+      "toast-unlink-failed": "そのチャットの接続解除に失敗しました。",
+      "toast-unlinked": "チャットの接続を解除しました。",
       unknown: "不明",
     },
   },
@@ -1561,6 +1697,8 @@ const TRANSLATIONS = {
       toolsDescription:
         "このタスクで使用できるエージェントツールを選択してください。 ツールが選択されていない場合、タスクはツールなしで実行されます。",
       toolsSearch: "検索",
+      needsSetup: "このスキルは使用前に設定が必要です",
+      needsSetupLabel: "設定が必要",
       toolsNoResults: "該当するツールは見つかりませんでした。",
       required: "必要",
       requiredFieldsBanner:
@@ -1855,6 +1993,869 @@ const TRANSLATIONS = {
         "これには少し時間がかかる場合があります。準備が整ったら、こちらに表示されます。",
       aborted: "画像の生成は中止されました。",
     },
+  },
+  "admin-users": {
+    title: "ユーザー",
+    description:
+      "これはこのインスタンスにアカウントを持つすべてのアカウントです。アカウントを削除すると、そのユーザーのアクセス権は即座に失われます。",
+    "add-user": "ユーザーを追加",
+    table: {
+      username: "ユーザー名",
+      email: "メールアドレス",
+      role: "ロール",
+      status: "ステータス",
+      "date-added": "追加日",
+    },
+    owner: "オーナー",
+    active: "アクティブ",
+    suspended: "停止中",
+    "role-default-suffix": "（デフォルト）",
+    permissions: {
+      title: "権限",
+      all: "このインスタンスのすべての権限を保持しています。",
+      none: "特別な権限はありません - 追加されたワークスペースでチャットのみ可能です。",
+    },
+    "message-limit": {
+      label: "1日あたりのメッセージ数を制限",
+      description:
+        "このユーザーが24時間以内に実行できる成功したクエリまたはチャットの数を制限します。",
+      "limit-label": "1日あたりのメッセージ上限",
+    },
+    modal: {
+      "new-title": "インスタンスにユーザーを追加",
+      "edit-title": "{{username}} を編集",
+      username: "ユーザー名",
+      "username-placeholder": "ユーザーのユーザー名",
+      email: "メールアドレス",
+      "email-placeholder": "user@example.com",
+      "email-help": "アカウント所有者の識別と連絡に使用されます。",
+      "email-help-edit":
+        "パスワードはここでは設定しません - ユーザー一覧の「パスワードをリセット」から新しいパスワードを発行してください。",
+      bio: "自己紹介",
+      "bio-placeholder": "ユーザーの自己紹介",
+      role: "ロール",
+      "role-placeholder": "ロールを選択",
+      "password-note":
+        "初期パスワードが自動生成され、ユーザー作成後に一度だけ表示されます。ユーザーはインスタンスを使用する前にパスワードを変更する必要があります。",
+      cancel: "キャンセル",
+      add: "ユーザーを追加",
+      adding: "追加中...",
+      update: "ユーザーを更新",
+      error: "エラー: {{error}}",
+    },
+    row: {
+      edit: "編集",
+      "reset-password": "パスワードをリセット",
+      suspend: "停止",
+      unsuspend: "停止を解除",
+      delete: "削除",
+      "reset-title": "{{username}} のパスワードをリセットしますか？",
+      "reset-description":
+        "新しいパスワードが生成され、一度だけ表示されます。現在のパスワードは直ちに無効になり、次回ログイン時に新しいパスワードを設定する必要があります。",
+      "suspend-title": "{{username}} を停止しますか？",
+      "unsuspend-title": "{{username}} の停止を解除しますか？",
+      "suspend-description":
+        "停止するとログアウトされ、管理者が停止を解除するまで再ログインできなくなります。",
+      "unsuspend-description":
+        "このユーザーは NexusAI のこのインスタンスに再度ログインできるようになります。",
+      "delete-title": "{{username}} を削除しますか？",
+      "delete-description":
+        "削除するとログアウトされ、NexusAI のこのインスタンスを利用できなくなります。この操作は元に戻せません。",
+      "suspend-toast": "ユーザーを停止しました。",
+      "unsuspend-toast": "ユーザーの停止を解除しました。",
+      "delete-toast": "ユーザーをシステムから削除しました。",
+      "new-password": "新しいパスワード",
+      "aria-suspend": "{{username}} を停止",
+      "aria-unsuspend": "{{username}} の停止を解除",
+    },
+  },
+  "admin-invites": {
+    title: "招待",
+    description:
+      "組織のメンバーが受け取ってサインアップできる招待リンクを作成します。招待リンクは1人のユーザーのみが使用できます。",
+    "create-link": "招待リンクを作成",
+    table: {
+      status: "ステータス",
+      email: "メールアドレス",
+      "accepted-by": "受諾者",
+      "created-by": "作成者",
+      created: "作成日",
+    },
+    empty: "招待はまだありません",
+    "empty-description":
+      "このインスタンスに誰かを招待するリンクを作成しましょう。",
+    "deleted-user": "削除されたユーザー",
+    row: {
+      copy: "招待リンクをコピー",
+      copied: "コピーしました",
+      delete: "削除",
+      "delete-title": "この招待を無効にしますか？",
+      "delete-description":
+        "実行後はこの招待を使用できなくなります。この操作は元に戻せません。",
+      "delete-confirm": "無効にする",
+      disabled: "無効",
+    },
+    modal: {
+      title: "新しい招待を作成",
+      error: "エラー: {{error}}",
+      "link-copied": "招待リンクをクリップボードにコピーしました",
+      "emailed-to": "<b>{{email}}</b> にもメールを送信しました。",
+      "not-emailed-disabled":
+        "メールは送信されませんでした - SMTP が無効か設定が不完全です。<a>設定 → SMTP</a> で設定するか、上のリンクをコピーしてご自身で共有してください。",
+      "not-emailed-failed":
+        "メールは送信されませんでした - 送信に失敗しました{{reason}}。上のリンクをコピーしてご自身で共有してください。",
+      helper:
+        "作成後、リンクをコピーして相手に送信できます。相手は <b>デフォルト</b> ロールでサインアップし、下で選択したワークスペースに参加します。",
+      "email-label": "メールアドレス（任意）",
+      "email-help":
+        "SMTP が設定されている場合、作成と同時に招待リンクがこのアドレスへ送信されます。自分で共有するリンクだけが必要な場合は空欄のままにしてください。",
+      "pick-user": "既存ユーザーのメールアドレスを選択…",
+      "email-placeholder": "someone@example.com",
+      "workspaces-label": "ワークスペースに追加",
+      "workspaces-selected": "{{total}} 件中 {{count}} 件を選択",
+      "workspaces-help":
+        "任意です。この招待で参加した人はここで選択したワークスペースに追加されます - 選択しない場合はどのワークスペースにも所属せず、受諾後に割り当てることができます。",
+      cancel: "キャンセル",
+      create: "招待を作成",
+      close: "閉じる",
+    },
+  },
+  smtp: {
+    title: "SMTP / 送信メール",
+    description:
+      "NexusAI がシステムメール（パスワードリセット、招待、通知）の送信に使用するメールボックスを設定します。インスタンスのオーナーのみが操作できます。",
+    "enable-aria": "SMTP を有効にする",
+    "enable-title": "送信メールを有効にする",
+    "enable-description":
+      "オフの場合、以下の項目が入力されていても NexusAI はメールを送信しません。",
+    "service-label": "メールサービス",
+    "service-placeholder": "サービスを選択",
+    providers: {
+      google: "Google (Gmail)",
+      microsoft: "Microsoft 365（Office 365 職場/学校）",
+      outlook: "Outlook.com / Hotmail（個人）",
+      custom: "カスタム SMTP サーバー",
+    },
+    hints: {
+      google:
+        "smtp.gmail.com を使用します。Google アカウントでサインインし、アプリパスワード（2段階認証が必要）を生成して以下のパスワードとして使用してください。",
+      microsoft:
+        "職場/学校の Microsoft 365 メールボックス向けに smtp.office365.com を使用します。テナントで MFA が有効な場合はアプリパスワードが必要です。",
+      outlook:
+        "個人の Outlook.com/Hotmail メールボックス向けに smtp-mail.outlook.com を使用します。2段階認証が有効な場合は Microsoft アカウントのセキュリティ設定からアプリパスワードを生成してください。",
+      custom:
+        "任意の SMTP サーバーのホスト、ポート、セキュリティモードを入力してください。",
+    },
+    host: "ホスト",
+    "host-placeholder": "smtp.example.com",
+    port: "ポート",
+    "tls-aria": "TLS を使用",
+    "tls-label": "TLS を使用（通常ポート 465 ではオン、587 ではオフ）",
+    username: "ユーザー名 / メールボックスアドレス",
+    "username-placeholder": "you@example.com",
+    password: "パスワード / アプリパスワード",
+    "password-unchanged": "変更なし",
+    "password-placeholder": "アプリパスワード",
+    "from-email": "送信元アドレス",
+    "from-email-placeholder": "noreply@example.com",
+    "from-name": "送信者名",
+    "from-name-placeholder": "NexusAI",
+    saving: "保存中…",
+    save: "変更を保存",
+    "save-failed": "SMTP 設定の保存に失敗しました。",
+    saved: "SMTP 設定を保存しました。",
+    "test-title": "テストメールを送信",
+    "test-description":
+      "まず設定を保存し、自分宛にテストメッセージを送信して動作を確認してください。",
+    "test-placeholder": "you@example.com",
+    "test-send": "テストメールを送信",
+    "test-sending": "送信中…",
+    "test-success": "{{email}} にテストメールを送信しました。",
+    "test-failed": "テストメールの送信に失敗しました。",
+  },
+  "generated-password": {
+    title: "初期パスワード",
+    "give-to":
+      "このパスワードを <b>{{username}}</b> に渡してください。初回ログイン時に自分のパスワードを設定する必要があります。",
+    generic:
+      "このユーザーは次回ログイン時に自分のパスワードを設定する必要があります。",
+    "copy-aria": "パスワードをコピー",
+    warning:
+      "今すぐコピーしてください - このパスワードは二度と表示されません。紛失した場合は、ユーザーのパスワードをリセットして新しいものを生成してください。",
+    "emailed-to": "<b>{{email}}</b> にもメールを送信しました。",
+    "the-user": "ユーザー",
+    "not-emailed":
+      "自動送信されませんでした - SMTP が無効か設定が不完全です。上のパスワードを直接共有してください。",
+    done: "完了",
+  },
+  "provider-options": {
+    "api-key": "API キー",
+    "api-key-optional": "API キー（任意）",
+    "base-url": "ベース URL",
+    "auth-token": "認証トークン",
+    "chat-model-selection": "チャットモデルの選択",
+    "model-preference": "モデル設定",
+    "selected-model": "選択中のモデル",
+    "select-option": "オプションを選択",
+    "select-model": "モデルを選択",
+    "loading-models": "-- 利用可能なモデルを読み込み中 --",
+    "no-models-found": "モデルが見つかりません！",
+    "available-models": "利用可能なモデル",
+    "your-loaded-models": "読み込み済みのモデル",
+    "downloaded-models": "ダウンロード済みのモデル",
+    "discovered-models": "検出されたモデル",
+    "model-context-window": "モデルのコンテキストウィンドウ",
+    "automatically-managed": "自動管理",
+    "max-tokens": "最大トークン数",
+    "stream-timeout": "ストリームタイムアウト（ミリ秒）",
+    "stream-timeout-placeholder":
+      "トークン応答の間隔がこの値を超えるとストリームを自動的に終了します",
+    "embedding-model": "埋め込みモデル",
+    "embedding-model-name": "埋め込みモデル名",
+    "embedding-model-selection": "埋め込みモデルの選択",
+    "available-embedding-models": "利用可能な埋め込みモデル",
+    "max-embedding-chunk": "埋め込みチャンクの最大長",
+    "max-embedding-chunk-help":
+      "埋め込み時のテキストチャンクの最大文字数です。",
+    "output-dimensions": "出力次元数",
+    "assume-default-dimensions": "デフォルトの次元数を使用",
+    "transcription-model": "文字起こしモデル",
+    "voice-model": "音声モデル",
+    "voice-model-selection": "音声モデルの選択",
+    "tts-model": "TTS モデル",
+  },
+  "web-search": {
+    engine: "エンジン",
+    "get-free-key": "無料の API キーは <a>{{provider}} から</a>取得できます。",
+    "get-key": "API キーは <a>{{provider}} から</a>取得できます。",
+    "api-key-placeholder": "{{provider}} の API キー",
+    "bing-key":
+      "Bing Web Search API のサブスクリプションキーは <a>Azure ポータルから</a>取得できます。",
+    "bing-steps-title":
+      "Bing Web Search API のサブスクリプションを設定する手順:",
+    "bing-step-1": "Azure ポータルにアクセスします:",
+    "bing-step-2":
+      "Azure アカウントを新規作成するか、既存のアカウントでサインインします。",
+    "bing-step-3":
+      "「リソースの作成」セクションに移動し、「Grounding with Bing Search」を検索します。",
+    "bing-step-4":
+      "「Grounding with Bing Search」リソースを選択し、新しいサブスクリプションを作成します。",
+    "bing-step-5": "ニーズに合った料金プランを選択します。",
+    "bing-step-6":
+      "Grounding with Bing Search サブスクリプションの API キーを取得します。",
+    "searxng-base-url": "SearXNG API ベース URL",
+    "base-url-optional": "ベース URL（任意）",
+    "crw-self-host": "<a>セルフホスト</a>することもできます。",
+    "duckduckgo-ready": "DuckDuckGo は追加設定なしでそのまま利用できます。",
+    "you-notice":
+      "You.com は API キーなしでも利用できます（無料枠、IP 単位のレート制限あり）。上限を引き上げるには <a>You.com から</a>API キーを取得してください。",
+  },
+  "agent-builder": {
+    common: {
+      "select-or-create-variable": "変数を選択または作成",
+      "insert-variable": "変数を挿入",
+      "select-variable": "変数を選択",
+      "select-option": "オプションを選択",
+      "store-result-in": "結果の保存先",
+      "result-variable": "結果変数",
+      url: "URL",
+    },
+    flowInfo: {
+      name: "フロー名",
+      "name-help": "LLM が理解しやすい名前をフローに付けることが重要です。",
+      "name-examples":
+        '"SendMessageToDiscord", "CheckStockPrice", "CheckWeather"',
+      "name-placeholder": "フロー名を入力",
+      description: "説明",
+      "description-help":
+        "LLM が理解しやすい説明をフローに付けることも同じく重要です。フローの目的、使用される状況、その他の関連情報を必ず含めてください。",
+      "description-placeholder": "フローの説明を入力",
+    },
+    start: {
+      "variable-name": "変数名",
+      "initial-value": "初期値",
+      "delete-variable": "変数を削除",
+      "add-variable": "変数を追加",
+    },
+    llmInstruction: {
+      instruction: "指示",
+      "instruction-placeholder": "LLM への指示を入力...",
+    },
+    apiCall: {
+      "url-placeholder": "https://api.example.com/endpoint",
+      method: "メソッド",
+      headers: "ヘッダー",
+      "add-header": "ヘッダーを追加",
+      "header-name": "ヘッダー名",
+      value: "値",
+      "remove-header": "ヘッダーを削除",
+      "request-body": "リクエストボディ",
+      json: "JSON",
+      "raw-text": "プレーンテキスト",
+      "form-data": "フォームデータ",
+      key: "キー",
+      "remove-field": "フィールドを削除",
+      "add-form-field": "フォームフィールドを追加",
+      "raw-body-placeholder": "リクエストボディを入力...",
+      "store-response-in": "レスポンスの保存先",
+    },
+    website: {
+      "url-placeholder": "https://example.com",
+      action: "アクション",
+      "read-content": "コンテンツを読み取る",
+      "click-element": "要素をクリック",
+      "type-text": "テキストを入力",
+      "css-selector": "CSS セレクター",
+      "selector-placeholder": "#element-id または .class-name",
+    },
+    file: {
+      operation: "操作",
+      read: "ファイルを読み取る",
+      write: "ファイルに書き込む",
+      append: "ファイルに追記する",
+      path: "ファイルパス",
+      "path-placeholder": "/path/to/file",
+      content: "内容",
+      "content-placeholder": "ファイルの内容...",
+    },
+    code: {
+      language: "言語",
+      javascript: "JavaScript",
+      python: "Python",
+      shell: "Shell",
+      code: "コード",
+      "code-placeholder": "コードを入力...",
+    },
+    webScraping: {
+      "url-to-scrape": "スクレイピングする URL",
+      "capture-as": "ページ内容の取得形式",
+      "capture-text": "テキストのみ",
+      "capture-html": "生の HTML",
+      "capture-selector": "CSS クエリセレクター",
+      "query-selector": "クエリセレクター",
+      "query-selector-help":
+        "ページの内容を取得するための有効な CSS セレクターを入力してください。",
+      "query-selector-placeholder":
+        ".article-content, #content, .main-content など",
+      summarization: "コンテンツの要約",
+      "summarization-hint":
+        "有効にすると、長いウェブページの内容が自動的に要約され、トークン使用量を削減します。",
+      "summarization-note":
+        "注意: データの品質に影響し、元の内容から具体的な詳細が失われる可能性があります。",
+    },
+    blockList: {
+      "direct-output": "直接出力",
+      "direct-output-description":
+        "このブロックの出力はチャットへ直接返されます。これ以降のツール呼び出しは実行されません。",
+      "coming-soon": "設定オプションは近日公開予定です...",
+    },
+  },
+  "sql-connector": {
+    title: "SQL コネクタ",
+    "list-description":
+      "このインスタンスに設定されたデータベース接続を一覧表示します。",
+    "connections-heading": "データベース接続",
+    "new-connection": "新しい接続",
+    "enable-title": "SQL コネクタを有効にする",
+    "enable-description":
+      "エージェントが以下の接続にクエリを実行できるようにします。",
+    "enable-first":
+      "データベース接続を管理するには、上の SQL コネクタを有効にしてください。",
+    "empty-list": "データベース接続はまだありません。",
+    on: "オン",
+    off: "オフ",
+    "select-connection": "接続を選択",
+    "select-connection-description":
+      "設定するデータベース接続を一覧から選択してください。",
+    "connector-off": "SQL コネクタはオフです",
+    "connector-off-description":
+      "左側で有効にすると、データベース接続の追加と管理ができます。",
+    "toggle-failed": "接続の更新に失敗しました。",
+    manage: {
+      "aria-label": "接続を管理",
+      edit: "接続を編集",
+      delete: "接続を削除",
+      "delete-title": "{{name}} を削除しますか？",
+      "delete-description":
+        "利用可能な SQL 接続の一覧から削除されます。この操作は元に戻せません。",
+      "delete-confirm": "削除",
+    },
+    visibility: {
+      title: "表示するワークスペース",
+      description:
+        "このデータベースにクエリできるワークスペースのエージェントを選択します。",
+      "select-all": "すべて選択",
+      "clear-all": "すべて解除",
+      loading: "ワークスペースを読み込み中...",
+      empty: "このインスタンスにはまだワークスペースがありません。",
+      save: "表示設定を保存",
+      saving: "保存中...",
+      updated: "ワークスペースの表示設定を更新しました。",
+      failed: "ワークスペースの表示設定の更新に失敗しました。",
+    },
+    modal: {
+      "edit-title": "SQL 接続を編集",
+      "new-title": "新しい SQL 接続",
+      "edit-description": "以下でデータベースの接続情報を更新してください。",
+      "new-description":
+        "以下にデータベースの接続情報を追加すると、今後の SQL エージェント呼び出しで利用できるようになります。",
+      warning:
+        "<b>警告:</b> SQL エージェントは変更を伴わないクエリのみを実行するよう<i>指示</i>されています。ただしこれは、ハルシネーションによるデータ削除を<b>防ぐものではありません</b>。<b>READ_ONLY</b> 権限を持つユーザーでのみ接続してください。",
+      "select-engine": "SQL エンジンを選択",
+      name: "接続名",
+      "name-placeholder": "この SQL 接続を識別する一意の名前",
+      username: "データベースユーザー",
+      "username-placeholder": "root",
+      password: "データベースユーザーのパスワード",
+      "password-placeholder": "password123",
+      host: "サーバーエンドポイント",
+      "host-placeholder": "データベースのホスト名またはエンドポイント",
+      port: "ポート",
+      "port-placeholder": "3306",
+      database: "データベース",
+      "database-placeholder": "エージェントが操作するデータベース",
+      schema: "スキーマ（任意）",
+      "schema-placeholder": "public（指定しない場合のデフォルトスキーマ）",
+      encrypt: "暗号化を有効にする",
+      ssl: "SSL を使用",
+      cancel: "キャンセル",
+      save: "接続を保存",
+      validating: "検証中...",
+      "validate-failed":
+        "接続の検証に失敗しました。接続情報を確認してください。",
+    },
+  },
+  "experimental-features": {
+    title: "実験的機能",
+    "select-feature": "実験的機能を選択してください",
+    on: "オン",
+    off: "オフ",
+    tos: {
+      title: "実験的機能の利用規約",
+      intro:
+        "NexusAI の実験的機能は試験運用中の機能であり、<b>オプトイン</b>制です。懸念事項がある場合は、機能を承認する前に事前に条件を提示または警告します。",
+      "risks-intro":
+        "このページの機能を使用すると、以下のような事態が発生する可能性があります（これらに限られません）。",
+      "risk-data-loss": "データの損失。",
+      "risk-quality": "結果の品質の変化。",
+      "risk-storage": "ストレージ使用量の増加。",
+      "risk-resources": "リソース消費量の増加。",
+      "risk-cost":
+        "接続中の LLM や埋め込みプロバイダーのコストまたは使用量の増加。",
+      "risk-bugs": "NexusAI 使用時の不具合や問題の発生。",
+      "conditions-intro":
+        "実験的機能の使用には、以下のような条件も伴います（これらに限られません）。",
+      "condition-removal":
+        "機能が今後のアップデートで存在しなくなる場合があります。",
+      "condition-stability": "使用中の機能は現時点で安定していません。",
+      "condition-availability":
+        "この機能は、今後のバージョン、構成、またはサブスクリプションの NexusAI では利用できない場合があります。",
+      "condition-privacy":
+        "ベータ機能の使用時も、プライバシー設定は<b>尊重されます</b>。",
+      "condition-change":
+        "これらの条件は今後のアップデートで変更される場合があります。",
+      "docs-prefix":
+        "機能を利用するにはこのダイアログの承認が必要です。詳しくは次をご覧ください:",
+      "docs-or-email": "またはメール:",
+      reject: "拒否して閉じる",
+      accept: "理解しました",
+    },
+  },
+  "admin-workspaces": {
+    table: {
+      name: "名前",
+      link: "リンク",
+      users: "ユーザー",
+      status: "ステータス",
+      "created-on": "作成日",
+    },
+  },
+  "workspace-members": {
+    title: "ワークスペースメンバー",
+    table: {
+      username: "ユーザー名",
+      role: "ワークスペースのロール",
+      "date-added": "追加日",
+    },
+    empty: "ワークスペースメンバーはいません",
+    description:
+      '"{{workspace}}" にアクセスできるユーザーを管理し、ワークスペースのロールを割り当てます。',
+    "manage-users": "ユーザーを管理",
+  },
+  "browser-extension-keys": {
+    table: {
+      "connection-string": "拡張機能の接続文字列",
+      "created-by": "作成者",
+      "created-at": "作成日時",
+      actions: "操作",
+    },
+    "empty-description":
+      "ブラウザ拡張機能をこのインスタンスに接続するためのキーを生成します。",
+    empty: "API キーはまだありません",
+    error: "エラー: {{error}}",
+  },
+  sidebar: {
+    workspaces: "ワークスペース",
+    "new-workspace": "新しいワークスペース",
+    "new-workspace-description":
+      "ドキュメントとチャットのためのスペースを作成します",
+    home: "ホーム",
+    "no-workspaces": "ワークスペースはまだありません。",
+    logo: "ロゴ",
+    "toggle-sidebar": "サイドバーの表示切替",
+    "general-appearance": "全般の外観設定",
+  },
+  "agent-panel": {
+    "agent-flow": "エージェントフロー",
+    "flows-description": "このインスタンスに設定されたフローを一覧表示します。",
+    "skills-title": "エージェントのスキルと設定",
+    "skills-description": "スキルと接続済みサービスを一覧表示します。",
+    "agent-flows": "エージェントフロー",
+    "custom-skills": "カスタムスキル",
+    back: "戻る",
+    "create-flow": "フローを作成",
+    "open-builder": "ビルダーを開く",
+  },
+  "vector-providers": {
+    pgvector: {
+      "connection-string": "Postgres 接続文字列",
+      "connection-string-tooltip":
+        "Postgres データベースへの接続文字列です。形式は次のとおりです:",
+      "permissions-intro": "データベースのユーザーには次の権限が必要です:",
+      "permission-read": "データベースへの読み取り権限",
+      "permission-read-schema": "データベーススキーマへの読み取り権限",
+      "permission-create": "データベースへの作成権限",
+      "extension-warning":
+        "データベースに pgvector 拡張機能がインストールされている必要があります。",
+      "table-name": "ベクターテーブル名",
+      "table-name-tooltip":
+        "ベクターを保存する Postgres データベース内のテーブル名です。",
+      "table-name-default": "デフォルトのテーブル名は次のとおりです:",
+      "table-name-warning":
+        "このテーブルはデータベースに存在していてはいけません。自動的に作成されます。",
+    },
+    milvus: {
+      address: "Milvus DB アドレス",
+      username: "Milvus ユーザー名",
+      password: "Milvus パスワード",
+    },
+  },
+  embeds: {
+    modal: {
+      "max-chats-day": "1日あたりの最大チャット数",
+      "max-chats-day-hint":
+        "この埋め込みチャットが24時間以内に処理できるチャット数を制限します。0 は無制限です。",
+      "max-chats-session": "セッションあたりの最大チャット数",
+      "max-chats-session-hint":
+        "セッションユーザーがこの埋め込みで24時間以内に送信できるチャット数を制限します。0 は無制限です。",
+      "message-limit": "メッセージ履歴の上限",
+      "message-limit-hint":
+        "チャットのコンテキストに含める過去のメッセージ数です。デフォルトは 20 です。",
+      "model-override": "動的なモデル指定を有効にする",
+      "model-override-hint":
+        "ワークスペースのデフォルトを上書きして、使用する LLM モデルを指定できるようにします。",
+      "temperature-override": "動的な LLM temperature を有効にする",
+      "temperature-override-hint":
+        "ワークスペースのデフォルトを上書きして、LLM の temperature を指定できるようにします。",
+      "prompt-override": "プロンプトの上書きを有効にする",
+      "prompt-override-hint":
+        "ワークスペースのデフォルトを上書きして、システムプロンプトを指定できるようにします。",
+      error: "エラー: {{error}}",
+    },
+  },
+  "hub-import": {
+    title: "コミュニティハブからアイテムをインポート",
+    "intro-1":
+      "コミュニティハブでは、エージェントスキル、システムプロンプト、スラッシュコマンドなどを探して共有・インポートできます。",
+    "intro-2":
+      "これらのアイテムは NexusAI チームとコミュニティによって作成されており、NexusAI を使い始めるのにも、ニーズに合わせて拡張するのにも最適です。",
+    "intro-3":
+      "コミュニティハブには<b>非公開</b>アイテムと<b>公開</b>アイテムがあります。非公開アイテムはあなたにのみ表示され、公開アイテムは全員に表示されます。",
+    warning:
+      "非公開アイテムを取り込む場合は、そのアイテムが所属する<b>チームに共有されている</b>こと、および<a>接続キー</a>を追加済みであることを確認してください。",
+    "item-id": "コミュニティハブのアイテムインポート ID",
+    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
+    "enter-item-id": "アイテム ID を入力してください",
+  },
+  ui: {
+    "select-option": "オプションを選択",
+    "select-model": "モデルを選択",
+    "select-model-dashed": "-- モデルを選択 --",
+    "type-or-select-model": "モデルを入力または選択",
+    "waiting-for-models": "-- モデルを待機中 --",
+    "select-role": "ロールを選択",
+    "select-region": "リージョンを選択",
+    "select-voice": "音声を選択",
+    "select-engine": "エンジンを選択",
+    "search-models": "モデルを検索",
+    "search-users": "ユーザーを検索",
+    "select-all-visible-users": "表示中のユーザーをすべて選択",
+    "open-actions": "操作メニューを開く",
+    "your-password": "パスワード",
+    "create-new-folder": "新しいフォルダを作成",
+    "enter-folder-name": "フォルダ名を入力",
+    "new-thread": "新しいスレッド",
+    "delete-selected": "選択項目を削除",
+    "enter-thread-name": "スレッド名を入力",
+    "mark-thread-deletion": "スレッドを削除対象にする",
+    "close-lightbox": "ライトボックスを閉じる",
+    "next-image": "次の画像",
+    "copy-error-details": "エラーの詳細をコピー",
+    "remove-icon": "アイコンを削除",
+    "remove-from-queue": "キューから削除",
+    "agent-thinking": "エージェントが考えています...",
+    "agent-finished-thinking": "エージェントの思考が完了しました",
+    "model-thinking": "モデルが考えています",
+    "routing-to-model": "モデルへルーティング中...",
+    "no-agent-flows": "エージェントフローが見つかりません",
+    "no-imported-skills": "インポート済みのスキルが見つかりません",
+    "no-event-logs": "イベントログが見つかりません",
+    "your-api-key": "API キーを入力...",
+    "your-client-secret": "クライアントシークレットを入力...",
+    "enter-api-token": "API トークンを入力してください",
+    "enter-auth-token": "認証トークンを入力してください",
+    "enter-api-key-dashed": "-- API キーを入力 --",
+    "search-web-search-providers": "利用可能なウェブ検索プロバイダーを検索",
+    "search-stt-providers": "音声認識プロバイダーを検索",
+    "search-tts-providers": "音声合成プロバイダーを検索",
+    "search-embedding-providers": "すべての埋め込みプロバイダーを検索",
+    "search-image-providers": "画像生成プロバイダーを検索",
+    "search-llm-providers": "すべての LLM プロバイダーを検索",
+    "search-available-llm-providers": "利用可能な LLM プロバイダーを検索",
+    "search-transcription-providers": "音声文字起こしプロバイダーを検索",
+    "search-vectordb-providers":
+      "すべてのベクターデータベースプロバイダーを検索",
+    "document-name": "ドキュメント名",
+    "time-until-refresh": "次回更新までの時間",
+    "created-on": "作成日",
+    "accept-invitation": "招待を承諾する",
+    "create-account": "アカウントを作成",
+    "use-existing-account": "既存のアカウントを使用",
+    "confirm-it-is-you": "本人であることを確認",
+    "what-to-clear": "消去する対象",
+    "choose-an-account": "アカウントを選択",
+    "hub-account-title": "NexusAI コミュニティハブのアカウント",
+    "hub-api-key-placeholder": "NexusAI Hub の API キーを入力してください",
+    "add-to-workspace": "ワークスペースに追加",
+    "apply-to-workspace": "ワークスペースに適用",
+    "max-vector-text-length": "ベクトル化するテキストの最大長",
+    "device-name": "デバイス名",
+    "register-device":
+      "スマートフォンからこのインスタンスを利用するデバイスを登録します。",
+    "admin-username-placeholder": "管理者のユーザー名",
+    "admin-password-placeholder": "管理者のパスワード",
+    "embedding-deployment-name": "埋め込みデプロイメント名",
+    "azure-embedding-deployment-placeholder":
+      "Azure OpenAI の埋め込みモデルのデプロイメント名",
+    "azure-chat-deployment-placeholder":
+      "Azure OpenAI のチャットモデルのデプロイメント名",
+    "no-image-models":
+      "このプロバイダーでは画像モデルが見つかりませんでした - モデル名を手動で入力してください。",
+    "image-model-name": "画像モデル名",
+    "fetch-wikis": "Wiki をドキュメントとして取得",
+    "test-prompt-placeholder":
+      "これはテスト用のプロンプトです。LLM についての詩で応答してください。",
+    "preset-description-placeholder": "LLM についての詩で応答します。",
+    "voice-model-identifier": "音声モデルの識別子",
+    "tts-model-identifier": "TTS モデルの識別子",
+    "stt-model-identifier": "STT モデルの識別子",
+    "feature-docs-warnings": "機能のドキュメントと注意事項",
+    "role-description-placeholder": "このロールの用途",
+    "slash-commands-inherited":
+      "すべてのワークスペースに継承されます。ワークスペース側で同名のコマンドを定義すると、既定の設定を上書きできます。",
+    "reserved-to-owner": "オーナー専用",
+    "refusal-placeholder":
+      "クエリモードで関連するコンテキストが見つからなかったときに返されるテキストです。",
+    "model-name-exact-placeholder":
+      "API で参照されるとおりに正確なモデル名を入力してください（例: gpt-4.1-nano）",
+    "model-id-for-chat": "チャットリクエストに使用するモデル ID",
+    "no-caching": "キャッシュしない",
+    "no-cache": "キャッシュしない",
+    "recovery-codes-once": "これらのリカバリーコードは一度しか表示されません！",
+    "database-name": "データベース名",
+    "pinecone-index-name": "Pinecone インデックス名",
+  },
+  help: {
+    "paperless-base-url":
+      "Paperless-ngx インスタンスが動作している URL です（例: http://localhost:8000）",
+    "drupal-wiki-token":
+      "認証には API トークンが必要です。ユーザー用の API トークンを生成する方法は、Drupal Wiki の<a>マニュアル</a>を参照してください。",
+    "lmstudio-context-window":
+      "コンテキストウィンドウの上限を上書きします。空欄にするとモデルから自動検出します（検出に失敗した場合は 4096 が使用されます）。",
+    "telemetry-note":
+      "すべてのイベントで IP アドレスは記録されず、<b>個人を特定できる</b>内容、設定、チャット、その他の利用状況以外の情報も含まれません。収集されるイベントタグの一覧は <a>GitHub のこちら</a>で確認できます。",
+    "finish-node":
+      "これがエージェントフローの終端です。上のすべてのステップが順番に実行されます。",
+    "agent-skill-settings":
+      "エージェントがスキルを選択・呼び出す方法を設定します。これらはインスタンス既定値であり、各ワークスペースは自身のエージェント設定で個別に上書きできます。",
+    agents:
+      "一覧からエージェントスキル、連携、フロー、または MCP サーバーを選択してください。",
+    "default-system-prompt":
+      "システムプロンプトは AI の応答と振る舞いを形づくる指示です。このプロンプトは新しく作成されるすべてのワークスペースに自動的に適用されます。<b>特定のワークスペース</b>のシステムプロンプトを変更するには、<b>ワークスペース設定</b>でプロンプトを編集してください。既定のシステムプロンプトに戻すには、この欄を空にして変更を保存します。",
+    "toggle-3":
+      "この機能は、ウェブサイト、Confluence、YouTube、GitHub のファイルなど、ウェブ由来のコンテンツにのみ適用されます。",
+    "toggle-2":
+      "監視中のドキュメントは、参照しているすべてのワークスペースで同時に自動更新されます。",
+    toggle:
+      "ドキュメントを「監視」対象に指定できるようにします。監視中のドキュメントの内容は定期的に取得され、NexusAI 上で更新されます。",
+    "role-modal":
+      "このロールはシステム管理者権限を持つため、下のチェックボックスに関わらず、今後のアップデートで追加されるものも含めてすべての権限を保持します。",
+    "factory-reset":
+      "デプロイ全体を消去し、インストール直後のようにセットアップ画面からやり直します。上のリセットとは異なり、この操作では<strong>あなた自身のアカウント</strong>と、LLM・埋め込み・ベクターデータベースの設定も削除されます。",
+    "reserved-permissions":
+      "ここでチェックした項目はあなた専用になります。権限の解決時に他のすべてのロールから除外され、通常はワイルドカードで包含される管理者ロールからも取り除かれます。そのため該当画面は表示されなくなり、背後のルートもリクエストを拒否します。チェックを外すと、その機能は各ロールの設定どおりに戻ります。",
+    "reset-instance":
+      "下でチェックした項目はすべて完全に削除されます。あなた自身のアカウント、定義済みのロールと権限、および LLM・埋め込み・ベクターデータベースの設定は変更されません。",
+    "transfer-ownership-2":
+      "停止中のアカウントは一覧に表示されません。新しいオーナーはサインインできる必要があります。",
+    "transfer-ownership":
+      "このインスタンスを引き継げる相手がまだいません。所有権は有効な別のアカウントにのみ移譲できるため、まずアカウントを作成してください。",
+    "new-workspace-modal":
+      "このワークスペースを作成した直後は管理者のみが閲覧できます。作成後にユーザーを追加できます。",
+    "new-browser-extension-api-key-modal-3":
+      "拡張機能に「Connected to NexusAI」と表示されれば接続成功です。表示されない場合は、接続文字列をコピーして拡張機能に手動で貼り付けてください。",
+    "new-browser-extension-api-key-modal-2":
+      "「API キーを作成」をクリックすると、NexusAI がブラウザ拡張機能への自動接続を試みます。",
+    "new-browser-extension-api-key-modal":
+      "警告: この API キーはアカウントに紐づくすべてのワークスペースへのアクセスを許可します。共有には十分ご注意ください。",
+    "code-snippet-modal":
+      "ワークスペースの埋め込みチャットを、ウェブサイトの隅に表示されるヘルプデスクチャットのように動作させます。",
+    "edit-embed-modal":
+      "埋め込みを作成すると、ウェブサイトに公開できるリンクが発行されます。次のような簡単な",
+    "new-embed-modal-5":
+      "このフィルターは、下の一覧以外のドメインから届いたリクエストをすべてブロックします。",
+    "new-embed-modal-4":
+      "チャットモードでは一般的な質問も受け付け、ワークスペースとまったく関係のない質問にも回答できます。",
+    "new-embed-modal-3":
+      "チャットボットの動作方法を設定します。クエリモードでは、質問の回答に役立つドキュメントがある場合にのみ応答します。",
+    "new-embed-modal-2":
+      "チャットウィンドウの土台となるワークスペースです。この設定で上書きしない限り、既定値はすべてワークスペースから継承されます。",
+    "new-embed-modal":
+      "埋め込みを作成すると、ウェブサイトに公開できるリンクが発行されます。次のような簡単な",
+    authentication:
+      "NexusAI コミュニティハブの公開アイテムを取り込むだけであれば、コミュニティハブのアカウントを接続する必要はありません。",
+    "agent-flow":
+      "エージェントフローを使うと、エージェントから呼び出せる再利用可能な一連の処理を作成できます。",
+    "agent-skill":
+      "エージェントスキルは NexusAI インスタンス上でコードを実行できるため、信頼できる提供元のスキルのみをインポートしてください。インポート前にコードを確認することも推奨します。スキルの動作が不明な場合は、インポートしないでください。",
+    "slash-command":
+      "スラッシュコマンドは、NexusAI のワークスペースでチャットする際にプロンプトへ情報をあらかじめ入力するために使用します。",
+    "system-prompt":
+      "システムプロンプトは AI エージェントの振る舞いを導くために使用され、既存の任意のワークスペースに適用できます。",
+    unknown:
+      "コミュニティハブでアイテムが見つかりましたが、種類を判別できないか、NexusAI へのインポートにまだ対応していません。",
+    "pull-and-review":
+      "アイテムの取得中にエラーが発生しました。しばらくしてからもう一度お試しください。",
+    "connection-modal-3":
+      "NexusAI Mobile アプリで QR コードをスキャンすると、ワークスペース、チャット、スレッド、ドキュメントのライブ同期が有効になります。",
+    "connection-modal-2":
+      "スマートフォン上のローカルモデルでプライベートに実行するか、チャットをこのインスタンスへシームレスに中継できます。",
+    "connection-modal":
+      "NexusAI モバイルを使うと、ワークスペースのチャット、スレッド、ツール、ドキュメントに接続して外出先でも利用できます。",
+    "privacy-and-data":
+      "オープンソースプロジェクトとして、私たちはあなたのプライバシーの権利を尊重します。AI とドキュメントをプライベートかつ安全に統合する最良のソリューションを構築することに専念しています。テレメトリを無効にする場合でも、ぜひご意見やご感想をお寄せいただければ幸いです。",
+    "existing-user-form":
+      "既存のアカウントでサインインすると、そのアカウントが招待のワークスペースに追加されます。ロールは変更されません。",
+    invite:
+      "新しいアカウントで参加するか、招待のワークスペースを既存のアカウントに追加してください。",
+    "new-user-modal":
+      "アカウントを作成すると、この認証情報でログインしてワークスペースを使い始めることができます。",
+    "agent-skill-selection-2":
+      "管理者が既に設定済みのエンジンのみが表示されます。API キーはエージェントスキルの画面でインスタンス全体に対して設定します。",
+    "agent-skill-selection":
+      "このワークスペースのエージェントが使用できるスキルを選択します。設定はこのワークスペースにのみ適用され、他のワークスペースは独自の選択を保持します。",
+    roles:
+      "インスタンス設定で定義され、すべてのワークスペースで使用されるため、ここからは変更できません。",
+    "gemini-options":
+      "モデルが複数の次元数の出力に対応している場合に、生成される埋め込みの次元数を指定します。",
+    "generic-open-ai-options-2":
+      '検索用の埋め込みを作成する前に、クエリテキストの先頭へ付加するテキストです。一部のモデルでは、クエリと文章を区別するためにこれが必要です（例: "query: " や "search_query: "）。<br /><br />NexusAI はこのテキストに「:」を含め、何も<b>追加しません</b>。',
+    "generic-open-ai-options":
+      '保存用の埋め込みを作成する前に、各コンテンツチャンクの先頭へ付加するテキストです。一部のモデルでは、文章とクエリを区別するためにこれが必要です（例: "passage: " や "search_document: "）。<br /><br />NexusAI はこのテキストに「:」を含め、何も<b>追加しません</b>。',
+    "lemonade-options":
+      "埋め込みに使用する Lemonade モデルを選択します。有効な Lemonade の URL を入力するとモデルが読み込まれます。",
+    "lmstudio-options-2":
+      "LM Studio に接続できませんでした。URL が正しいこと、LMStudio サーバーが起動していてアクセス可能であることを確認してください。",
+    "lmstudio-options":
+      "LM Studio を認証やプロキシの背後で実行している場合に便利です。",
+    "local-ai-options":
+      "モデルが複数の次元数の出力に対応している場合に、生成される埋め込みの次元数を指定します。",
+    "ollama-options-3":
+      "埋め込みに使用する Ollama モデルを選択します。有効な Ollama の URL を入力するとモデルが読み込まれます。",
+    "ollama-options-2":
+      "この値を大きくすると複数のチャンクを同時に処理し、埋め込みが高速になります。",
+    "ollama-options":
+      "並列で埋め込みを行うテキストチャンク数です。値を大きくすると速くなりますが、メモリ使用量が増えます。デフォルトは 1 です。",
+    "ollama-options-4":
+      "Ollama の画像生成は実験的機能で、macOS でのみ利用できます。画像生成に対応していると報告するモデルのみが表示されます。",
+    "aws-bedrock-llmoptions":
+      "1回の応答でモデルが生成できる最大トークン数です。長い出力が必要な場合は増やしてください。デフォルトは 4096 です。",
+    "docker-model-runner-options":
+      "モデルのコンテキストウィンドウに使用できる最大トークン数です。",
+    "foundry-options":
+      "コンテキストウィンドウの上限を上書きします。空欄にするとモデルから自動検出します。大きなコンテキストで動作が重くなる場合は値を下げてください。",
+    "kobold-cppoptions":
+      "使用する KoboldCPP モデルを選択します。有効な KoboldCPP の URL を入力するとモデルが読み込まれます。",
+    "lemonade-options-2":
+      "モデルのコンテキストウィンドウに使用できる最大トークン数です。モデルがサポートする値を設定する必要があります。",
+    "lmstudio-options-5":
+      "LM Studio に接続できませんでした。URL が正しいこと、LMStudio サーバーが起動していてアクセス可能であることを確認してください。",
+    "lmstudio-options-4":
+      "LM Studio を認証やプロキシの背後で実行している場合に便利です。",
+    "lmstudio-options-3":
+      "LLM として LMStudio を使用する場合は、別途、埋め込みサービスの設定が必要です。",
+    "local-ai-options-2":
+      "LLM として LocalAI を使用する場合は、別途、埋め込みサービスの設定が必要です。",
+    "ollama-llmoptions-4":
+      "使用する Ollama モデルを選択します。有効な Ollama の URL を入力するとモデルが読み込まれます。",
+    "ollama-llmoptions-3":
+      "無効な値が入力された場合でも、チャットが失敗しないように NexusAI が処理します。",
+    "ollama-llmoptions-2":
+      "この項目を空欄にすると、コンテキストウィンドウの上限をモデルから自動検出し、すべてのチャットに適用します。自動検出に失敗した場合は、フォールバック値の 4096 が使用されます。",
+    "ollama-llmoptions":
+      "モデルのコンテキストウィンドウに使用できる最大トークン数を指定します。",
+    "omlxoptions-4":
+      "使用する OMLX モデルを選択します。有効な OMLX の URL を入力するとモデルが読み込まれます。",
+    "omlxoptions-3":
+      "無効な値が入力された場合でも、チャットが失敗しないように NexusAI が処理します。",
+    "omlxoptions-2":
+      "この項目を空欄にすると、コンテキストウィンドウの上限をモデルから自動検出し、すべてのチャットに適用します。自動検出に失敗した場合は、フォールバック値の 16000 が使用されます。",
+    omlxoptions:
+      "モデルのコンテキストウィンドウに使用できる最大トークン数を指定します。",
+    "drupal-wiki":
+      "完了すると、すべてのページをワークスペースへ埋め込めるようになります。",
+    "paperless-ngx-2":
+      "完了すると、すべてのドキュメントをワークスペースへ埋め込めるようになります。",
+    "paperless-ngx":
+      "Paperless-ngx インスタンスが起動しており、このマシンからアクセスできることを確認してください。",
+    "generic-open-ai-options-4":
+      "一部の STT サービスでは文字起こしに API キーが必要です。サービスが不要な場合は任意です。",
+    "generic-open-ai-options-3":
+      "音声の文字起こしに使用する、OpenAI 互換 STT サービスのベース URL を指定してください。",
+    "lemonade-options-4":
+      "Whisper などの文字起こしモデルを Lemonade サーバーに読み込むと、ここに表示されます。",
+    "lemonade-options-3":
+      "Lemonade サーバーの API キーです。Lemonade の LLM および埋め込み設定と共有されます。",
+    "kokoro-options":
+      "Kokoro サーバーに接続して音声を読み込めませんでした。音声 ID を手動で入力してください。",
+    "open-ai-generic-options-3":
+      "ほとんどの TTS サービスには複数の音声モデルがあります。使用したい音声モデルの識別子です。",
+    "open-ai-generic-options-2":
+      "一部の TTS サービスでは音声生成に API キーが必要です。サービスが不要な場合は任意です。",
+    "open-ai-generic-options":
+      "音声を生成する、OpenAI 互換 TTS サービスのベース URL を指定してください。",
+    "piper-ttsoptions-2":
+      "「✔」は、そのモデルが既にローカルに保存されており、実行時にダウンロードが不要であることを示します。",
+    "piper-ttsoptions":
+      "PiperTTS のモデルはすべてブラウザ上でローカルに動作します。低スペックの端末では負荷が高くなる場合があります。",
+    "generic-open-ai-options-5":
+      "音声の文字起こしに使用する OpenAI 互換サービスのベース URL です。",
+    "parsed-files-menu-2":
+      "コンテキストウィンドウの上限を超えました。一部のファイルは切り詰められるか、応答から除外される可能性があります。応答が不正確になったり、必要な情報が欠けたりする場合があります。",
+    "parsed-files-menu":
+      "コンテキストウィンドウの空きが少なくなっています。一部のファイルは切り詰められるか、応答から除外される可能性があります。より良い結果を得るには、これらのファイルをワークスペースへ直接埋め込むことをおすすめします。",
+    "workspace-chat":
+      "お探しのワークスペースは利用できません。削除されたか、アクセス権がない可能性があります。",
   },
 };
 

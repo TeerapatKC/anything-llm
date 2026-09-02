@@ -96,7 +96,7 @@ export default function ConfluenceOptions() {
                   onValueChange={(value) => setIsCloud(value === "true")}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select an option" />
+                    <SelectValue placeholder={t("ui.select-option")} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="true">Atlassian Cloud</SelectItem>
@@ -154,7 +154,7 @@ export default function ConfluenceOptions() {
                   onValueChange={setAccessType}
                 >
                   <SelectTrigger className="border-none bg-theme-settings-input-bg w-fit mt-2 px-4 border-gray-500 text-theme-text-primary text-sm rounded-lg py-2">
-                    <SelectValue placeholder="Select an option" />
+                    <SelectValue placeholder={t("ui.select-option")} />
                   </SelectTrigger>
                   <SelectContent>
                     {[

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +9,7 @@ import UserRow from "./UserRow";
 import useUser from "@/hooks/useUser";
 import useRoles from "@/hooks/useRoles";
 import { PERMISSIONS } from "@/utils/permissions";
+import i18next from "@/i18n";
 import NewUserModal from "./NewUserModal";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -24,6 +26,7 @@ import {
 } from "@/components/ui/table";
 
 export default function AdminUsers() {
+  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [createdUser, setCreatedUser] = useState(null);
   const { user: currUser } = useUser();
@@ -41,9 +44,14 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
-  const handleUserCreated = ({ username, initialPassword }) => {
+  const handleUserCreated = ({
+    username,
+    initialPassword,
+    emailSent,
+    email,
+  }) => {
     closeModal();
-    setCreatedUser({ username, initialPassword });
+    setCreatedUser({ username, initialPassword, emailSent, email });
   };
 
   const handlePasswordModalClose = () => {
@@ -54,10 +62,8 @@ export default function AdminUsers() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Users"}
-        description={
-          "These are all the accounts which have an account on this instance. Removing an account will instantly remove their access to this instance."
-        }
+        title={t("admin-users.title")}
+        description={t("admin-users.description")}
       />
       <Dialog
         open={isOpen}
@@ -65,7 +71,7 @@ export default function AdminUsers() {
       >
         <div className="w-full justify-end flex">
           <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
-            <UserPlus className="h-4 w-4" /> Add user
+            <UserPlus className="h-4 w-4" /> {t("admin-users.add-user")}
           </DialogTrigger>
         </div>
         <DialogContent>
@@ -87,11 +93,19 @@ export default function AdminUsers() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col">Username</TableHead>
-                <TableHead scope="col">Email</TableHead>
-                <TableHead scope="col">Role</TableHead>
-                <TableHead scope="col">Status</TableHead>
-                <TableHead scope="col">Date Added</TableHead>
+                <TableHead scope="col">
+                  {t("admin-users.table.username")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("admin-users.table.email")}
+                </TableHead>
+                <TableHead scope="col">{t("admin-users.table.role")}</TableHead>
+                <TableHead scope="col">
+                  {t("admin-users.table.status")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("admin-users.table.date-added")}
+                </TableHead>
                 <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
@@ -114,6 +128,8 @@ export default function AdminUsers() {
         open={!!createdUser}
         username={createdUser?.username}
         password={createdUser?.initialPassword}
+        emailSent={createdUser?.emailSent}
+        recipientEmail={createdUser?.email}
         onClose={handlePasswordModalClose}
       />
     </SettingsLayout>
@@ -122,7 +138,9 @@ export default function AdminUsers() {
 
 export function roleOptionLabel(role) {
   const label = role?.displayName ?? role?.name ?? "";
-  return role?.name === "default" ? `${label} (Default)` : label;
+  return role?.name === "default"
+    ? `${label} ${i18next.t("admin-users.role-default-suffix")}`
+    : label;
 }
 
 /**
@@ -130,13 +148,16 @@ export function roleOptionLabel(role) {
  * person assigning it can see the consequences without leaving the modal.
  */
 export function RoleHintDisplay({ role, roles = [], permissionLabels = {} }) {
+  const { t } = useTranslation();
   const selected = roles.find((entry) => entry.name === role);
   const granted = selected?.permissions ?? [];
   const isSuperAdmin = granted.includes("system.admin");
 
   return (
     <div className="flex flex-col gap-y-1 py-1 pb-4">
-      <p className="text-sm font-medium text-theme-text-primary">Permissions</p>
+      <p className="text-sm font-medium text-theme-text-primary">
+        {t("admin-users.permissions.title")}
+      </p>
       {selected?.description && (
         <p className="text-xs text-theme-text-secondary">
           {selected.description}
@@ -144,12 +165,11 @@ export function RoleHintDisplay({ role, roles = [], permissionLabels = {} }) {
       )}
       {isSuperAdmin ? (
         <p className="text-xs text-theme-text-secondary">
-          Holds every permission on the instance.
+          {t("admin-users.permissions.all")}
         </p>
       ) : granted.length === 0 ? (
         <p className="text-xs text-theme-text-secondary">
-          No elevated permissions - can only chat in the workspaces they are
-          added to.
+          {t("admin-users.permissions.none")}
         </p>
       ) : (
         <ul className="flex flex-col gap-y-1 list-disc px-4 max-h-40 overflow-y-auto">
@@ -171,6 +191,7 @@ export function MessageLimitInput({
   role,
   roles = [],
 }) {
+  const { t } = useTranslation();
   // A role that bypasses the daily limit has nothing to configure here.
   const selected = roles.find((entry) => entry.name === role);
   if (selected?.permissions?.includes(PERMISSIONS.CHATS_UNLIMITED)) return null;
@@ -179,8 +200,8 @@ export function MessageLimitInput({
       <Toggle
         size="md"
         variant="horizontal"
-        label="Limit messages per day"
-        description="Restrict this user to a number of successful queries or chats within a 24 hour window."
+        label={t("admin-users.message-limit.label")}
+        description={t("admin-users.message-limit.description")}
         enabled={enabled}
         onChange={(checked) => {
           updateState((prev) => ({
@@ -192,7 +213,7 @@ export function MessageLimitInput({
       {enabled && (
         <div className="mt-4">
           <label className="text-theme-text-primary text-sm font-semibold block mb-4">
-            Message limit per day
+            {t("admin-users.message-limit.limit-label")}
           </label>
           <div className="relative mt-2">
             <Input

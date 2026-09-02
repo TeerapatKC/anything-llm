@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChevronRight } from "lucide-react";
 import { sentenceCase } from "text-case";
 
@@ -6,10 +7,11 @@ export default function ImportedSkillList({
   selectedSkill = null,
   handleClick = null,
 }) {
+  const { t } = useTranslation();
   if (skills.length === 0)
     return (
       <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
-        <p>No imported skills found</p>
+        <p>{t("ui.no-imported-skills")}</p>
         <p>
           Learn about agent skills in the{" "}
           <a

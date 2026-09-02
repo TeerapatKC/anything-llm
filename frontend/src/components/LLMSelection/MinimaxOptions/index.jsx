@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -11,13 +12,14 @@ import {
 } from "@/components/ui/select";
 
 export default function MinimaxOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.MinimaxApiKey);
   const [apiKey, setApiKey] = useState(settings?.MinimaxApiKey);
 
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="MinimaxApiKey"
@@ -37,6 +39,7 @@ export default function MinimaxOptions({ settings }) {
 }
 
 function MinimaxModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -62,7 +65,9 @@ function MinimaxModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -75,7 +80,7 @@ function MinimaxModelSelection({ apiKey, settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -85,7 +90,9 @@ function MinimaxModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="MinimaxModelPref"
@@ -93,7 +100,7 @@ function MinimaxModelSelection({ apiKey, settings }) {
         defaultValue={settings?.MinimaxModelPref ?? models?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

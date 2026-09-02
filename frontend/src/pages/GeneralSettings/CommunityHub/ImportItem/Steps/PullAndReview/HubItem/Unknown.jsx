@@ -1,8 +1,10 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import CommunityHubImportItemSteps from "../..";
 import { TriangleAlert } from "lucide-react";
 
 export default function UnknownItem({ item, setSettings, setStep }) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-col mt-4 gap-y-4">
       <div className="w-full flex items-center gap-x-2">
@@ -12,10 +14,7 @@ export default function UnknownItem({ item, setSettings, setStep }) {
         </h2>
       </div>
       <div className="flex flex-col gap-y-[25px] text-white/80 text-sm">
-        <p>
-          We found an item in the community hub, but we don't know what it is or
-          it is not yet supported for import into NexusAI.
-        </p>
+        <p>{t("help.unknown")}</p>
         <p>
           The item ID is: <b>{item.id}</b>
           <br />

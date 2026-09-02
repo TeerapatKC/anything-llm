@@ -1,4 +1,5 @@
 import { Info } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   Tooltip,
   TooltipContent,
@@ -8,12 +9,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function PGVectorOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-96">
           <div className="flex items-center gap-x-1 mb-3">
-            <Label className="block">Postgres Connection String</Label>
+            <Label className="block">
+              {t("vector-providers.pgvector.connection-string")}
+            </Label>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -25,22 +29,21 @@ export default function PGVectorOptions({ settings }) {
               ></TooltipTrigger>
               <TooltipContent side="right" className="max-w-[250px] text-xs">
                 <p className="text-md whitespace-pre-line wrap-break-word">
-                  This is the connection string for the Postgres database in the
-                  format of <br />
+                  {t("vector-providers.pgvector.connection-string-tooltip")}{" "}
+                  <br />
                   <code>postgresql://username:password@host:port/database</code>
                   <br />
                   <br />
-                  The user for the database must have the following permissions:
+                  {t("vector-providers.pgvector.permissions-intro")}
                   <ul className="list-disc list-inside">
-                    <li>Read access to the database</li>
-                    <li>Read access to the database schema</li>
-                    <li>Create access to the database</li>
+                    <li>{t("vector-providers.pgvector.permission-read")}</li>
+                    <li>
+                      {t("vector-providers.pgvector.permission-read-schema")}
+                    </li>
+                    <li>{t("vector-providers.pgvector.permission-create")}</li>
                   </ul>
                   <br />
-                  <b>
-                    You must have the pgvector extension installed on the
-                    database.
-                  </b>
+                  <b>{t("vector-providers.pgvector.extension-warning")}</b>
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -60,7 +63,9 @@ export default function PGVectorOptions({ settings }) {
 
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-x-1 mb-3">
-            <Label className="block">Vector Table Name</Label>
+            <Label className="block">
+              {t("vector-providers.pgvector.table-name")}
+            </Label>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -72,18 +77,14 @@ export default function PGVectorOptions({ settings }) {
               ></TooltipTrigger>
               <TooltipContent side="right" className="max-w-[250px] text-xs">
                 <p className="text-md whitespace-pre-line wrap-break-word">
-                  This is the name of the table in the Postgres database that
-                  will store the vectors.
+                  {t("vector-providers.pgvector.table-name-tooltip")}
                   <br />
                   <br />
-                  By default, the table name is <code>anythingllm_vectors</code>
-                  .
+                  {t("vector-providers.pgvector.table-name-default")}{" "}
+                  <code>anythingllm_vectors</code>.
                   <br />
                   <br />
-                  <b>
-                    This table must not already exist on the database - it will
-                    be created automatically.
-                  </b>
+                  <b>{t("vector-providers.pgvector.table-name-warning")}</b>
                 </p>
               </TooltipContent>
             </Tooltip>

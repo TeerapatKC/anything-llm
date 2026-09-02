@@ -1,5 +1,8 @@
 const { v4: uuidv4 } = require("uuid");
 const { EphemeralAgentHandler } = require("../../agents/ephemeral");
+const { withLanguageNote } = require("../utils/language");
+const { translator } = require("../utils/i18n");
+const { attachFeedbackButtons } = require("../utils/feedback");
 const { WorkspaceChats } = require("../../../models/workspaceChats");
 const { safeJsonParse } = require("../../http");
 const {
@@ -22,20 +25,24 @@ const THOUGHT_FLUSH_INTERVAL_MS = 1500;
  * Uses EphemeralAgentHandler to avoid creating a DB invocation record per call.
  * @param {import("../commands").BotContext} ctx
  * @param {number} chatId
+ * @param {import('@prisma/client').users} user - The account the Telegram chat is linked to
  * @param {import('@prisma/client').workspaces} workspace
  * @param {object|null} thread
  * @param {string} message
  * @param {boolean} voiceResponse - Whether to send the response as voice audio
  * @param {Array<{name: string, mime: string, contentString: string}>} attachments - Image/file attachments for multimodal support
+ * @param {string|null} language - Language code the agent must answer in, or null for auto
  */
 async function handleAgentResponse(
   ctx,
   chatId,
+  user,
   workspace,
   thread,
   message,
   voiceResponse = false,
-  attachments = []
+  attachments = [],
+  language = null
 ) {
   let finalResponse = "";
   let metrics = {};
@@ -236,8 +243,13 @@ async function handleAgentResponse(
     agentHandler = await new EphemeralAgentHandler({
       uuid: uuidv4(),
       workspace,
-      prompt: message,
-      userId: null,
+      // The agent path has no system prompt of ours to extend, so the language
+      // instruction rides along with the turn the model sees. The stored chat
+      // keeps the original message.
+      prompt: withLanguageNote(message, language),
+      // Agent skills that act on someone's behalf (mail, drive, memories) need to
+      // know whose behalf that is.
+      userId: user?.id || null,
       threadId: thread?.id || null,
       attachments,
     }).init();
@@ -278,7 +290,7 @@ async function handleAgentResponse(
       } catch {
         await ctx.bot.sendMessage(
           chatId,
-          `${chart.title}: failed to render chart.`
+          `${chart.title}: ${translator(language)("chat.chart_failed")}`
         );
       }
     }
@@ -291,7 +303,7 @@ async function handleAgentResponse(
     const responseText = finalResponse || streamingText;
 
     if (responseText) {
-      await WorkspaceChats.new({
+      const { chat } = await WorkspaceChats.new({
         workspaceId: workspace.id,
         prompt: message,
         response: {
@@ -302,10 +314,12 @@ async function handleAgentResponse(
           attachments,
           ...(outputs.length > 0 ? { outputs } : {}),
         },
+        user,
         threadId: thread?.id || null,
       });
 
       // Always deliver text response first
+      let answerMessageId = responseMsgId;
       if (responseMsgId) {
         await editMessage(
           ctx.bot,
@@ -318,8 +332,17 @@ async function handleAgentResponse(
           }
         ).catch(() => {});
       } else {
-        await sendFormattedMessage(ctx.bot, chatId, responseText);
+        const sent = await sendFormattedMessage(ctx.bot, chatId, responseText);
+        answerMessageId = sent?.message_id || null;
       }
+
+      await attachFeedbackButtons(
+        ctx.bot,
+        chatId,
+        answerMessageId,
+        chat?.id,
+        language
+      );
 
       // Send voice as an additional attachment if requested
       if (voiceResponse) {

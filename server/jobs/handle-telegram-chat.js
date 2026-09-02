@@ -3,9 +3,14 @@
 process.env.NTBA_FIX_350 = 1;
 const TelegramBot = require("node-telegram-bot-api");
 const { log, conclude } = require("./helpers/index.js");
-const { Workspace } = require("../models/workspace");
+const { User } = require("../models/user");
 const { WorkspaceThread } = require("../models/workspaceThread");
 const { streamResponse } = require("../utils/telegramBot/chat/stream");
+const {
+  activeUserById,
+  workspaceForUser,
+} = require("../utils/telegramBot/utils/access");
+const { translator } = require("../utils/telegramBot/utils/i18n");
 
 process.on("message", async (payload) => {
   // Ignore tool approval responses - these are handled by http-socket plugin
@@ -14,12 +19,16 @@ process.on("message", async (payload) => {
   const {
     botToken,
     chatId,
+    userId,
     workspaceSlug,
     threadSlug,
+    language = null,
     message,
     attachments = [],
     voiceResponse = false,
   } = payload;
+
+  const t = translator(language);
 
   try {
     const bot = new TelegramBot(botToken, { polling: false });
@@ -29,12 +38,25 @@ process.on("message", async (payload) => {
         log(args.length ? `${text} ${args.join(" ")}` : text),
     };
 
-    const workspace = await Workspace.get({ slug: workspaceSlug });
+    // The worker re-checks everything the bot process checked. It runs with the
+    // raw bot token and a chat id, so it cannot assume the caller was honest
+    // about who the message belongs to.
+    const user = await activeUserById(userId);
+    if (!user) {
+      await bot.sendMessage(chatId, t("chat.account_gone"));
+      conclude();
+      return;
+    }
+
+    const workspace = await workspaceForUser(user, { slug: workspaceSlug });
     if (!workspace) {
-      await bot.sendMessage(
-        chatId,
-        "No workspace configured. Use /switch to select one."
-      );
+      await bot.sendMessage(chatId, t("chat.lost_access"));
+      conclude();
+      return;
+    }
+
+    if (!(await User.canSendChat(user))) {
+      await bot.sendMessage(chatId, t("chat.daily_limit"));
       conclude();
       return;
     }
@@ -46,9 +68,11 @@ process.on("message", async (payload) => {
     await streamResponse({
       ctx,
       chatId,
+      user,
       workspace,
-      thread,
+      thread: thread?.user_id === user.id ? thread : null,
       message,
+      language,
       attachments,
       voiceResponse,
     });
@@ -56,10 +80,7 @@ process.on("message", async (payload) => {
     log(`Telegram chat error: ${error.message}`);
     try {
       const bot = new TelegramBot(botToken, { polling: false });
-      await bot.sendMessage(
-        chatId,
-        "Sorry, something went wrong. Please try again."
-      );
+      await bot.sendMessage(chatId, t("common.error"));
     } catch {}
   } finally {
     conclude();

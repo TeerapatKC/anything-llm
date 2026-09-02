@@ -64,7 +64,7 @@ export default function CronBuilder({ value, onChange }) {
           onValueChange={(value) => update({ frequency: value })}
         >
           <SelectTrigger className={inputClass}>
-            <SelectValue placeholder="Select an option" />
+            <SelectValue placeholder={t("ui.select-option")} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="minute">
@@ -96,7 +96,7 @@ export default function CronBuilder({ value, onChange }) {
             }
           >
             <SelectTrigger className={inputClass}>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("ui.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {MINUTE_INTERVALS.map((n) => (
@@ -123,7 +123,7 @@ export default function CronBuilder({ value, onChange }) {
             }
           >
             <SelectTrigger className={inputClass}>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("ui.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {MINUTES.map((n) => (
@@ -199,7 +199,7 @@ export default function CronBuilder({ value, onChange }) {
             }
           >
             <SelectTrigger className={inputClass}>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("ui.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {DAYS_OF_MONTH.map((n) => (

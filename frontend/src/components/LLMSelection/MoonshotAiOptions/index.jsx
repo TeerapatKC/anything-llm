@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/select";
 
 export default function MoonshotAiOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.MoonshotAiApiKey);
   const [moonshotAiKey, setMoonshotAiKey] = useState(
     settings?.MoonshotAiApiKey
@@ -19,7 +21,7 @@ export default function MoonshotAiOptions({ settings }) {
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="MoonshotAiApiKey"
@@ -40,6 +42,7 @@ export default function MoonshotAiOptions({ settings }) {
 }
 
 function MoonshotAiModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,10 +66,12 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
   if (!apiKey) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="MoonshotAiModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- Enter API key --" />
+            <SelectValue placeholder={t("ui.enter-api-key-dashed")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -77,7 +82,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -90,7 +97,7 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -100,7 +107,9 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="MoonshotAiModelPref"
@@ -108,7 +117,7 @@ function MoonshotAiModelSelection({ apiKey, settings }) {
         defaultValue={settings?.MoonshotAiModelPref ?? models?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

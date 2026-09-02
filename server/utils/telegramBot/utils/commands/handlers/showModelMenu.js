@@ -1,4 +1,7 @@
 const { Workspace } = require("../../../../../models/workspace");
+const { canManageWorkspaceLLM } = require("../../access");
+const { translatorFor } = require("../../i18n");
+const { asMessageId } = require("../../index");
 const { resolveWorkspaceProvider } = require("../../index");
 const {
   getCustomModels,
@@ -15,12 +18,25 @@ const MODELS_PER_PAGE = 8;
  */
 async function showModelMenu(ctx, chatId, page = 0, messageId = null) {
   const pageNum = typeof page === "number" && !isNaN(page) ? page : 0;
-  const state = ctx.getState(chatId);
-  const workspace = await Workspace.get({ slug: state.workspaceSlug });
+  const editId = asMessageId(messageId);
+  const session = ctx.getState(chatId);
+  if (!session) return;
+  const t = translatorFor(session);
+
+  const workspace = session.workspaceSlug
+    ? await Workspace.get({ slug: session.workspaceSlug })
+    : null;
   if (!workspace) {
+    await ctx.bot.sendMessage(chatId, t("model.no_workspace"));
+    return;
+  }
+
+  // Changing the model rewrites workspace settings, so it takes the same
+  // permission the settings screen does.
+  if (!(await canManageWorkspaceLLM(session.user, workspace))) {
     await ctx.bot.sendMessage(
       chatId,
-      "No workspace configured. Use /switch to select a workspace."
+      t("model.denied", { workspace: workspace.name })
     );
     return;
   }
@@ -29,7 +45,7 @@ async function showModelMenu(ctx, chatId, page = 0, messageId = null) {
   if (!SUPPORT_CUSTOM_MODELS.includes(provider)) {
     await ctx.bot.sendMessage(
       chatId,
-      `The "${provider}" provider does not support model selection via API.`
+      t("model.provider_unsupported", { provider })
     );
     return;
   }
@@ -38,7 +54,7 @@ async function showModelMenu(ctx, chatId, page = 0, messageId = null) {
   if (error || !models?.length) {
     await ctx.bot.sendMessage(
       chatId,
-      error || `No models available for "${provider}".`
+      error || t("model.none_available", { provider })
     );
     return;
   }
@@ -64,7 +80,9 @@ async function showModelMenu(ctx, chatId, page = 0, messageId = null) {
     const isActive = modelId === currentModel;
     return [
       {
-        text: isActive ? `🟢 ${displayName} (active)` : displayName,
+        text: isActive
+          ? `🟢 ${displayName} (${t("common.active")})`
+          : displayName,
         callback_data: `mdl:${workspace.id}:${modelId.slice(0, 40)}`,
       },
     ];
@@ -72,22 +90,35 @@ async function showModelMenu(ctx, chatId, page = 0, messageId = null) {
 
   const navRow = [];
   if (safePage > 0) {
-    navRow.push({ text: "← Prev", callback_data: `mdlpg:${safePage - 1}` });
+    navRow.push({
+      text: t("common.prev"),
+      callback_data: `mdlpg:${safePage - 1}`,
+    });
   }
   if (safePage < totalPages - 1) {
-    navRow.push({ text: "Next →", callback_data: `mdlpg:${safePage + 1}` });
+    navRow.push({
+      text: t("common.next"),
+      callback_data: `mdlpg:${safePage + 1}`,
+    });
   }
   if (navRow.length) buttons.push(navRow);
 
-  buttons.push([{ text: "✕ Cancel", callback_data: "mdl:cancel" }]);
+  buttons.push([
+    { text: `✕ ${t("model.cancel")}`, callback_data: "mdl:cancel" },
+  ]);
 
-  const text = `"${workspace.name}" — Select a model (${safePage + 1}/${totalPages}, ${sortedModels.length} total):`;
+  const text = t("model.select_paged", {
+    workspace: workspace.name,
+    page: safePage + 1,
+    pages: totalPages,
+    count: sortedModels.length,
+  });
   const opts = { reply_markup: { inline_keyboard: buttons } };
 
-  if (messageId) {
+  if (editId) {
     await ctx.bot.editMessageText(text, {
       chat_id: chatId,
-      message_id: messageId,
+      message_id: editId,
       ...opts,
     });
   } else {

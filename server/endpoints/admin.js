@@ -3,6 +3,7 @@ const { BrowserExtensionApiKey } = require("../models/browserExtensionApiKey");
 const { Document } = require("../models/documents");
 const { EventLogs } = require("../models/eventLogs");
 const { Invite } = require("../models/invite");
+const { sendWelcomeEmail, sendInviteEmail } = require("../utils/smtp");
 const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
 const { DocumentVectors } = require("../models/vectors");
@@ -98,6 +99,7 @@ function adminEndpoints(app) {
           password: initialPassword,
           requiresPasswordChange: true,
         });
+        let emailSent = false;
         if (!!newUser) {
           await EventLogs.logEvent(
             "user_created",
@@ -107,12 +109,24 @@ function adminEndpoints(app) {
             },
             currUser.id
           );
+
+          if (newUser.email) {
+            const { origin } = newUserParams;
+            const { sent } = await sendWelcomeEmail({
+              to: newUser.email,
+              username: newUser.username,
+              password: initialPassword,
+              loginUrl: typeof origin === "string" ? origin : "",
+            });
+            emailSent = sent;
+          }
         }
 
         response.status(200).json({
           user: newUser,
           error,
           initialPassword: !!newUser ? initialPassword : null,
+          emailSent,
         });
       } catch (e) {
         console.error(e);
@@ -313,20 +327,45 @@ function adminEndpoints(app) {
       try {
         const user = await userFromSession(request, response);
         const body = reqBody(request);
+        const email =
+          typeof body?.email === "string" ? body.email.trim() : "";
+        if (email && !User.emailRegex.test(email)) {
+          response
+            .status(200)
+            .json({ invite: null, error: "That is not a valid email address." });
+          return;
+        }
+
         const { invite, error } = await Invite.create({
           createdByUserId: user.id,
           workspaceIds: body?.workspaceIds || [],
+          email,
         });
+
+        let emailSent = false;
+        let emailReason = null;
+        if (!!invite && email) {
+          const origin =
+            typeof body?.origin === "string" ? body.origin : "";
+          const { sent, reason } = await sendInviteEmail({
+            to: email,
+            inviteUrl: `${origin}/accept-invite/${invite.code}`,
+          });
+          emailSent = sent;
+          emailReason = reason;
+        }
 
         await EventLogs.logEvent(
           "invite_created",
           {
             inviteCode: invite.code,
             createdBy: response.locals?.user?.username,
+            email: email || null,
+            emailSent,
           },
           response.locals?.user?.id
         );
-        response.status(200).json({ invite, error });
+        response.status(200).json({ invite, error, emailSent, emailReason });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

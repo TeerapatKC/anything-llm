@@ -25,6 +25,10 @@ const {
 } = require("../utils/files/multer");
 const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
+const { Workspace } = require("../models/workspace");
+const {
+  resolveConfigForWorkspace,
+} = require("../utils/agents/workspaceSkills");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const fs = require("fs");
 const path = require("path");
@@ -948,14 +952,22 @@ function systemEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const { offset = 0, limit = 20 } = reqBody(request);
+        const { offset = 0, limit = 20, feedback = null } = reqBody(request);
+
+        // Paging happens in the database, so the filter has to as well - a page
+        // filtered after the fact would be mostly empty and count wrongly.
+        const clause = {};
+        if (feedback === "up") clause.feedbackScore = true;
+        if (feedback === "down") clause.feedbackScore = false;
+        if (feedback === "none") clause.feedbackScore = null;
+
         const chats = await WorkspaceChats.whereWithData(
-          {},
+          clause,
           limit,
           offset * limit,
           { id: "desc" }
         );
-        const totalChats = await WorkspaceChats.count();
+        const totalChats = await WorkspaceChats.count(clause);
         const hasPages = totalChats > (offset + 1) * limit;
 
         response.status(200).json({ chats: chats, hasPages, totalChats });
@@ -1435,6 +1447,38 @@ function systemEndpoints(app) {
     }
   );
 
+  // Turn one SQL connection on or off instance-wide, without touching its
+  // credentials. Mirrors the equivalent agent-flows toggle endpoint.
+  app.post(
+    "/system/sql-connections/:databaseId/toggle",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
+    async (request, response) => {
+      try {
+        const { databaseId } = request.params;
+        const { active } = reqBody(request);
+        const {
+          listSQLConnections,
+        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
+        const connections = await listSQLConnections();
+        if (!connections.some((conn) => conn.database_id === databaseId))
+          return response
+            .status(404)
+            .json({ success: false, error: "Connection not found" });
+
+        await SystemSettings.updateSettings({
+          agent_sql_connections: JSON.stringify([
+            { action: "toggle", database_id: databaseId, active: !!active },
+          ]),
+        });
+
+        return response.status(200).json({ success: true, active: !!active });
+      } catch (error) {
+        console.error("Error toggling SQL connection:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
   app.post(
     "/system/validate-sql-connection",
     [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
@@ -1467,6 +1511,93 @@ function systemEndpoints(app) {
           success: false,
           error: `Unable to connect to ${engine}. Please verify your connection details.`,
         });
+      }
+    }
+  );
+
+  // Which workspaces can currently see/use this SQL connection, and which cannot.
+  // Mirrors the equivalent agent-flows endpoint.
+  app.get(
+    "/system/sql-connections/:databaseId/workspaces",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
+    async (request, response) => {
+      try {
+        const { databaseId } = request.params;
+        const {
+          listSQLConnections,
+        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
+        const connections = await listSQLConnections();
+        if (!connections.some((conn) => conn.database_id === databaseId))
+          return response
+            .status(404)
+            .json({ success: false, error: "Connection not found" });
+
+        const workspaces = await Workspace.where({});
+        const results = await Promise.all(
+          workspaces.map(async (workspace) => {
+            const config = await resolveConfigForWorkspace(workspace);
+            return {
+              id: workspace.id,
+              name: workspace.name,
+              slug: workspace.slug,
+              enabled: config.activeSqlConnections.includes(databaseId),
+            };
+          })
+        );
+
+        return response.status(200).json({ success: true, workspaces: results });
+      } catch (error) {
+        console.error("Error listing SQL connection workspaces:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  // Set the exact list of workspaces that can see/use this SQL connection. Only
+  // workspaces whose membership actually changes are written, so an untouched
+  // workspace's other agent skill settings are never disturbed.
+  app.post(
+    "/system/sql-connections/:databaseId/workspaces",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
+    async (request, response) => {
+      try {
+        const { databaseId } = request.params;
+        const { workspaceIds } = reqBody(request);
+        const {
+          listSQLConnections,
+        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
+        const connections = await listSQLConnections();
+        if (!connections.some((conn) => conn.database_id === databaseId))
+          return response
+            .status(404)
+            .json({ success: false, error: "Connection not found" });
+        if (!Array.isArray(workspaceIds))
+          return response
+            .status(400)
+            .json({ success: false, error: "workspaceIds must be an array" });
+
+        const desired = new Set(workspaceIds.map((id) => Number(id)));
+        const workspaces = await Workspace.where({});
+
+        for (const workspace of workspaces) {
+          const config = await resolveConfigForWorkspace(workspace);
+          const isEnabled = config.activeSqlConnections.includes(databaseId);
+          const shouldBeEnabled = desired.has(workspace.id);
+          if (isEnabled === shouldBeEnabled) continue;
+
+          const activeSqlConnections = shouldBeEnabled
+            ? [...new Set([...config.activeSqlConnections, databaseId])]
+            : config.activeSqlConnections.filter((id) => id !== databaseId);
+
+          await Workspace.update(workspace.id, {
+            agentSkillConfig: JSON.stringify({ ...config, activeSqlConnections }),
+          });
+        }
+
+        return response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error updating SQL connection workspaces:", error);
+        response.status(500).json({ success: false, error: error.message });
       }
     }
   );

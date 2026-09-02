@@ -571,11 +571,11 @@ const System = {
         return { models: [], error: e.message };
       });
   },
-  chats: async (offset = 0) => {
+  chats: async (offset = 0, feedback = null) => {
     return await fetch(`${API_BASE}/system/workspace-chats`, {
       method: "POST",
       headers: baseHeaders(),
-      body: JSON.stringify({ offset }),
+      body: JSON.stringify({ offset, feedback }),
     })
       .then((res) => res.json())
       .catch((e) => {
@@ -819,6 +819,76 @@ const System = {
       .then((res) => res.json())
       .catch((e) => {
         console.error("Failed to validate SQL connection:", e);
+        return { success: false, error: e.message };
+      });
+  },
+
+  /**
+   * Turn one SQL connection on or off instance-wide, without touching its credentials.
+   * @param {string} databaseId
+   * @param {boolean} active
+   * @returns {Promise<{success: boolean, error: string | null, active?: boolean}>}
+   */
+  toggleSQLConnection: async function (databaseId, active) {
+    return fetch(`${API_BASE}/system/sql-connections/${databaseId}/toggle`, {
+      method: "POST",
+      headers: {
+        ...baseHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ active }),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error("Failed to toggle SQL connection:", e);
+        return { success: false, error: e.message };
+      });
+  },
+
+  /**
+   * List every workspace and whether this SQL connection is currently active for it.
+   * @param {string} databaseId
+   * @returns {Promise<{success: boolean, error: string | null, workspaces: Array<{id: number, name: string, slug: string, enabled: boolean}>}>}
+   */
+  getSQLConnectionWorkspaces: async function (databaseId) {
+    return fetch(
+      `${API_BASE}/system/sql-connections/${databaseId}/workspaces`,
+      {
+        method: "GET",
+        headers: baseHeaders(),
+      }
+    )
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error("Failed to fetch SQL connection workspaces:", e);
+        return { success: false, error: e.message, workspaces: [] };
+      });
+  },
+
+  /**
+   * Set the exact list of workspaces that can see/use this SQL connection.
+   * @param {string} databaseId
+   * @param {number[]} workspaceIds
+   * @returns {Promise<{success: boolean, error: string | null}>}
+   */
+  updateSQLConnectionWorkspaces: async function (
+    databaseId,
+    workspaceIds = []
+  ) {
+    return fetch(
+      `${API_BASE}/system/sql-connections/${databaseId}/workspaces`,
+      {
+        method: "POST",
+        headers: {
+          ...baseHeaders(),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ workspaceIds }),
+      }
+    )
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error("Failed to update SQL connection workspaces:", e);
         return { success: false, error: e.message };
       });
   },

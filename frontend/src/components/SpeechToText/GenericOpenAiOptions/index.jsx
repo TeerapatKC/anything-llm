@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function GenericOpenAiSpeechToTextOptions({ settings }) {
+  const { t } = useTranslation();
   const [endpoint, setEndpoint] = useState(
     settings?.STTOpenAICompatibleEndpoint || ""
   );
@@ -26,7 +28,7 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-2">Base URL</Label>
+          <Label className="block mb-2">{t("provider-options.base-url")}</Label>
           <Input
             type="url"
             name="STTOpenAICompatibleEndpoint"
@@ -39,12 +41,11 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
             onBlur={() => setEndpoint(inputEndpoint)}
           />
           <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-            This should be the base URL of the OpenAI compatible STT service you
-            will transcribe audio with.
+            {t("help.generic-open-ai-options-3")}
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-2">API Key</Label>
+          <Label className="block mb-2">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="STTOpenAICompatibleKey"
@@ -58,8 +59,7 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
             onBlur={() => setApiKey(inputApiKey)}
           />
           <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-            Some STT services require an API key to transcribe audio - this is
-            optional if your service does not require one.
+            {t("help.generic-open-ai-options-4")}
           </p>
         </div>
         <STTModelSelection
@@ -73,6 +73,7 @@ export default function GenericOpenAiSpeechToTextOptions({ settings }) {
 }
 
 function STTModelSelection({ settings, endpoint, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -103,7 +104,9 @@ function STTModelSelection({ settings, endpoint, apiKey = null }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-2">Transcription Model</Label>
+        <Label className="block mb-2">
+          {t("provider-options.transcription-model")}
+        </Label>
         {/*
           Keyed apart from the loaded select below so Base UI's `useControlled`
           does not lock this instance into uncontrolled mode - see the same note
@@ -115,7 +118,7 @@ function STTModelSelection({ settings, endpoint, apiKey = null }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="--loading available models--" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -132,11 +135,13 @@ function STTModelSelection({ settings, endpoint, apiKey = null }) {
   if (customModels.length === 0 || (savedModel && !savedModelInList)) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-2">Transcription Model</Label>
+        <Label className="block mb-2">
+          {t("provider-options.transcription-model")}
+        </Label>
         <Input
           type="text"
           name="STTOpenAICompatibleModel"
-          placeholder="Your STT model identifier"
+          placeholder={t("ui.stt-model-identifier")}
           defaultValue={savedModel}
           required={true}
           autoComplete="off"
@@ -152,7 +157,9 @@ function STTModelSelection({ settings, endpoint, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-2">Transcription Model</Label>
+      <Label className="block mb-2">
+        {t("provider-options.transcription-model")}
+      </Label>
       <Select
         key="stt-openai-compatible-model-loaded"
         name="STTOpenAICompatibleModel"
@@ -160,11 +167,11 @@ function STTModelSelection({ settings, endpoint, apiKey = null }) {
         defaultValue={savedModel || customModels[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t("provider-options.select-model")} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Available models</SelectLabel>
+            <SelectLabel>{t("provider-options.available-models")}</SelectLabel>
             {customModels.map((model) => (
               <SelectItem key={model.id} value={model.id}>
                 {model.id}

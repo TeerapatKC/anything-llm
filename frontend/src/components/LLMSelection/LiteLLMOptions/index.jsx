@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function LiteLLMOptions({ settings }) {
+  const { t } = useTranslation();
   const [basePathValue, setBasePathValue] = useState(settings?.LiteLLMBasePath);
   const [basePath, setBasePath] = useState(settings?.LiteLLMBasePath);
   const [apiKeyValue, setApiKeyValue] = useState(settings?.LiteLLMAPIKey);
@@ -22,7 +24,7 @@ export default function LiteLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7 mt-1.5">
       <div className="w-full flex items-center gap-[36px]">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Base URL</Label>
+          <Label className="block mb-3">{t("provider-options.base-url")}</Label>
           <Input
             type="url"
             name="LiteLLMBasePath"
@@ -41,7 +43,9 @@ export default function LiteLLMOptions({ settings }) {
           apiKey={apiKey}
         />
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Model context window</Label>
+          <Label className="block mb-3">
+            {t("provider-options.model-context-window")}
+          </Label>
           <Input
             type="number"
             name="LiteLLMTokenLimit"
@@ -58,7 +62,8 @@ export default function LiteLLMOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
             <Label className="flex items-center gap-x-2">
-              API Key <p className="text-xs! italic! font-thin!">optional</p>
+              {t("provider-options.api-key")}{" "}
+              <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
@@ -78,6 +83,7 @@ export default function LiteLLMOptions({ settings }) {
 }
 
 function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -103,7 +109,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="LiteLLMModelPref" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue
@@ -135,7 +143,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="LiteLLMModelPref"
         required={true}
@@ -143,12 +153,14 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

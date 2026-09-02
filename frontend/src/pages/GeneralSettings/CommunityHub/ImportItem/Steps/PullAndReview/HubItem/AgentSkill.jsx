@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import CommunityHubImportItemSteps from "../..";
@@ -11,6 +12,7 @@ import CommunityHub from "@/models/communityHub";
 import { setEventDelegatorForCodeSnippets } from "@/components/WorkspaceChat";
 
 export default function AgentSkill({ item, settings, setStep }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   async function importAgentSkill() {
     try {
@@ -42,12 +44,7 @@ export default function AgentSkill({ item, settings, setStep }) {
               Only import agent skills you trust{" "}
             </h1>
           </div>
-          <p className="text-sm">
-            Agent skills can execute code on your NexusAI instance, so only
-            import agent skills from sources you trust. You should also review
-            the code before importing. If you are unsure about what a skill does
-            - don't import it!
-          </p>
+          <p className="text-sm">{t("help.agent-skill")}</p>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/refs */
 import React, { useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, X } from "lucide-react";
 import VariableInput from "../../VariableInput";
 import { Label } from "@/components/ui/label";
@@ -16,6 +17,7 @@ export default function ApiCallNode({
   onConfigChange,
   renderVariableSelect,
 }) {
+  const { t } = useTranslation();
   const urlInputRef = useRef(null);
 
   const handleHeaderChange = (index, field, value) => {
@@ -64,12 +66,12 @@ export default function ApiCallNode({
   return (
     <div className="space-y-4">
       <div>
-        <Label className="block mb-2">URL</Label>
+        <Label className="block mb-2">{t("agent-builder.common.url")}</Label>
         <div className="flex gap-2">
           <VariableInput
             ref={urlInputRef}
             className="flex-1"
-            placeholder="https://api.example.com/endpoint"
+            placeholder={t("agent-builder.apiCall.url-placeholder")}
             value={config.url}
             onChange={(e) => onConfigChange({ url: e.target.value })}
           />
@@ -80,7 +82,7 @@ export default function ApiCallNode({
             {renderVariableSelect(
               "",
               insertVariableAtCursor,
-              "Insert variable",
+              t("agent-builder.common.insert-variable"),
               true
             )}
           </div>
@@ -88,13 +90,17 @@ export default function ApiCallNode({
       </div>
 
       <div>
-        <Label className="block mb-2">Method</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.apiCall.method")}
+        </Label>
         <Select
           value={config.method}
           onValueChange={(value) => onConfigChange({ method: value })}
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select an option" />
+            <SelectValue
+              placeholder={t("agent-builder.common.select-option")}
+            />
           </SelectTrigger>
           <SelectContent>
             {["GET", "POST", "DELETE", "PUT", "PATCH"].map((method) => (
@@ -109,12 +115,12 @@ export default function ApiCallNode({
       <div>
         <div className="flex items-center justify-between mb-2">
           <label className="text-sm font-medium text-theme-text-primary">
-            Headers
+            {t("agent-builder.apiCall.headers")}
           </label>
           <button
             onClick={addHeader}
             className="p-1.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-            title="Add header"
+            title={t("agent-builder.apiCall.add-header")}
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
@@ -124,7 +130,7 @@ export default function ApiCallNode({
             <div key={index} className="flex gap-2">
               <input
                 type="text"
-                placeholder="Header name"
+                placeholder={t("agent-builder.apiCall.header-name")}
                 value={header.key}
                 onChange={(e) =>
                   handleHeaderChange(index, "key", e.target.value)
@@ -135,7 +141,7 @@ export default function ApiCallNode({
               />
               <VariableInput
                 className="flex-1"
-                placeholder="Value"
+                placeholder={t("agent-builder.apiCall.value")}
                 value={header.value}
                 onChange={(e) =>
                   handleHeaderChange(index, "value", e.target.value)
@@ -144,7 +150,7 @@ export default function ApiCallNode({
               <button
                 onClick={() => removeHeader(index)}
                 className="p-2.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:text-red-500 hover:border-red-500/20 hover:bg-red-500/10 transition-colors duration-300"
-                title="Remove header"
+                title={t("agent-builder.apiCall.remove-header")}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -155,19 +161,29 @@ export default function ApiCallNode({
 
       {["POST", "PUT", "PATCH"].includes(config.method) && (
         <div>
-          <Label className="block mb-2">Request Body</Label>
+          <Label className="block mb-2">
+            {t("agent-builder.apiCall.request-body")}
+          </Label>
           <div className="space-y-2">
             <Select
               value={config.bodyType || "json"}
               onValueChange={(value) => onConfigChange({ bodyType: value })}
             >
               <SelectTrigger className="w-full p-2.5 text-sm rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary focus:border-primary-button focus:ring-1 focus:ring-primary-button outline-none light:bg-theme-settings-input-bg light:border-black/10">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue
+                  placeholder={t("agent-builder.common.select-option")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="json">JSON</SelectItem>
-                <SelectItem value="text">Raw Text</SelectItem>
-                <SelectItem value="form">Form Data</SelectItem>
+                <SelectItem value="json">
+                  {t("agent-builder.apiCall.json")}
+                </SelectItem>
+                <SelectItem value="text">
+                  {t("agent-builder.apiCall.raw-text")}
+                </SelectItem>
+                <SelectItem value="form">
+                  {t("agent-builder.apiCall.form-data")}
+                </SelectItem>
               </SelectContent>
             </Select>
             {config.bodyType === "json" ? (
@@ -185,7 +201,7 @@ export default function ApiCallNode({
                   <div key={index} className="flex gap-2">
                     <input
                       type="text"
-                      placeholder="Key"
+                      placeholder={t("agent-builder.apiCall.key")}
                       value={item.key}
                       onChange={(e) => {
                         const newFormData = [...(config.formData || [])];
@@ -198,7 +214,7 @@ export default function ApiCallNode({
                     />
                     <VariableInput
                       className="flex-1"
-                      placeholder="Value"
+                      placeholder={t("agent-builder.apiCall.value")}
                       value={item.value}
                       onChange={(e) => {
                         const newFormData = [...(config.formData || [])];
@@ -214,7 +230,7 @@ export default function ApiCallNode({
                         onConfigChange({ formData: newFormData });
                       }}
                       className="p-2.5 rounded-lg bg-theme-bg-primary border border-white/5 text-theme-text-primary hover:text-red-500 hover:border-red-500/20 hover:bg-red-500/10 transition-colors duration-300 light:bg-theme-settings-input-bg light:border-black/10"
-                      title="Remove field"
+                      title={t("agent-builder.apiCall.remove-field")}
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -230,14 +246,14 @@ export default function ApiCallNode({
                   }}
                   className="w-full p-2.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300 text-sm"
                 >
-                  Add Form Field
+                  {t("agent-builder.apiCall.add-form-field")}
                 </button>
               </div>
             ) : (
               <VariableInput
                 multiline
                 rows={4}
-                placeholder="Raw request body..."
+                placeholder={t("agent-builder.apiCall.raw-body-placeholder")}
                 value={config.body}
                 onChange={(e) => onConfigChange({ body: e.target.value })}
               />
@@ -247,11 +263,13 @@ export default function ApiCallNode({
       )}
 
       <div>
-        <Label className="block mb-2">Store Response In</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.apiCall.store-response-in")}
+        </Label>
         {renderVariableSelect(
           config.responseVariable,
           (value) => onConfigChange({ responseVariable: value }),
-          "Select or create variable"
+          t("agent-builder.common.select-or-create-variable")
         )}
       </div>
     </div>

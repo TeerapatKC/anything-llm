@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/select";
 
 export default function LemonadeSpeechToTextOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -42,7 +44,7 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <Label>Base URL</Label>
+              <Label>{t("provider-options.base-url")}</Label>
               {loading ? (
                 <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
@@ -92,7 +94,9 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
         />
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label className="block">API Key (optional)</Label>
+            <Label className="block">
+              {t("provider-options.api-key-optional")}
+            </Label>
 
             <Tooltip>
               <TooltipTrigger
@@ -103,8 +107,7 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
                 <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
-                The API key for your Lemonade server. Shared with the Lemonade
-                LLM and embedder settings.
+                {t("help.lemonade-options-3")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -121,6 +124,7 @@ export default function LemonadeSpeechToTextOptions({ settings }) {
 }
 
 function LemonadeSTTModelSelection({ settings, basePath = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -153,7 +157,9 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
   if (loading || customModels.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Transcription Model</Label>
+        <Label className="block mb-3">
+          {t("provider-options.transcription-model")}
+        </Label>
         <Select name="STTLemonadeModelPref" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue
@@ -167,8 +173,7 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
           <SelectContent />
         </Select>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-          Load a Whisper or transcription model into your Lemonade server, then
-          it will appear here.
+          {t("help.lemonade-options-4")}
         </p>
       </div>
     );
@@ -176,7 +181,9 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Transcription Model</Label>
+      <Label className="block mb-3">
+        {t("provider-options.transcription-model")}
+      </Label>
       <Select
         name="STTLemonadeModelPref"
         required={true}
@@ -188,12 +195,14 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
         }
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t("provider-options.select-model")} />
         </SelectTrigger>
         <SelectContent>
           {downloadedModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Downloaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.downloaded-models")}
+              </SelectLabel>
               {downloadedModels.map((model) => (
                 <SelectItem key={model.id} value={model.id}>
                   {model.id}
@@ -203,7 +212,9 @@ function LemonadeSTTModelSelection({ settings, basePath = null }) {
           )}
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Discovered models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.discovered-models")}
+              </SelectLabel>
               {customModels.map((model) => (
                 <SelectItem key={model.id} value={model.id}>
                   {model.id}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   useState,
   useEffect,
@@ -102,6 +103,7 @@ export const ThoughtChainComponent = forwardRef(
     },
     ref
   ) => {
+    const { t } = useTranslation();
     const [content, setContent] = useState(initialContent);
     const [hasReadableContent, setHasReadableContent] = useState(
       contentIsNotEmpty(initialContent)
@@ -171,7 +173,7 @@ export const ThoughtChainComponent = forwardRef(
                   muted
                   playsInline
                   className="size-[18px] scale-[115%] light:invert"
-                  aria-label="Model is thinking"
+                  aria-label={t("ui.model-thinking")}
                 >
                   <source src={ThinkingAnimation} type="video/webm" />
                 </video>
@@ -180,7 +182,7 @@ export const ThoughtChainComponent = forwardRef(
                   src={ThinkingStatic}
                   alt="Thinking"
                   className="size-[18px] light:invert"
-                  aria-label="Model is thinking"
+                  aria-label={t("ui.model-thinking")}
                 />
               )}
             </span>

@@ -3,7 +3,7 @@ module.exports.SqlAgentQuery = {
   plugin: function () {
     const {
       getDBClient,
-      listSQLConnections,
+      getSQLConnectionForWorkspace,
     } = require("./SQLConnectors/index.js");
 
     return {
@@ -61,8 +61,10 @@ module.exports.SqlAgentQuery = {
           handler: async function ({ database_id = "", sql_query = "" }) {
             this.super.handlerProps.log(`Using the sql-query tool.`);
             try {
-              const databaseConfig = (await listSQLConnections()).find(
-                (db) => db.database_id === database_id
+              const workspace = this.super.handlerProps.invocation.workspace;
+              const databaseConfig = await getSQLConnectionForWorkspace(
+                workspace,
+                database_id
               );
               if (!databaseConfig) {
                 this.super.handlerProps.log(
@@ -87,6 +89,13 @@ module.exports.SqlAgentQuery = {
                 this.super.introspect(`Error: ${result.error}`);
                 return `There was an error running the query: ${result.error}`;
               }
+
+              this.super.addCitation?.({
+                id: `sql-${database_id}-${Date.now()}`,
+                title: `Database: ${database_id}`,
+                text: sql_query,
+                chunkSource: `database://${database_id}`,
+              });
 
               return JSON.stringify(result);
             } catch (e) {

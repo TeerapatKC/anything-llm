@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -9,13 +10,14 @@ import {
 } from "@/components/ui/select";
 
 export default function OpenAiWhisperOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.OpenAiKey);
   const [_openAIKey, setOpenAIKey] = useState(settings?.OpenAiKey);
 
   return (
     <div className="flex gap-x-7 gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="OpenAiKey"

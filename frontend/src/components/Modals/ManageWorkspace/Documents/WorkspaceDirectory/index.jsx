@@ -480,6 +480,7 @@ const STATUS_STYLES = {
 };
 
 function EmbeddingFileRow({ filename, status: fileStatus, onRemove }) {
+  const { t } = useTranslation();
   const { status, chunksProcessed = 0, totalChunks = 0 } = fileStatus;
   const displayName = getDisplayName(filename);
   const isEmbedding = status === "embedding";
@@ -523,7 +524,7 @@ function EmbeddingFileRow({ filename, status: fileStatus, onRemove }) {
               <button
                 onClick={onRemove}
                 className="border-none hover:bg-white/10 light:hover:bg-sky-900/10 rounded p-0.5 transition-colors"
-                title="Remove from queue"
+                title={t("ui.remove-from-queue")}
               >
                 <X className="h-3.5 w-3.5 text-slate-100 light:text-slate-900/40 hover:text-slate-100 light:hover:text-slate-900" />
               </button>

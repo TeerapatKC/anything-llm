@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/table";
 
 export default function MobileDevices() {
+  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
   const [devices, setDevices] = useState([]);
@@ -77,7 +79,7 @@ export default function MobileDevices() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col">Device Name</TableHead>
+                <TableHead scope="col">{t("ui.device-name")}</TableHead>
                 <TableHead scope="col">Registered</TableHead>
                 <TableHead scope="col"> </TableHead>
               </TableRow>
@@ -86,7 +88,7 @@ export default function MobileDevices() {
               {devices.length === 0 ? (
                 <TableEmptyRow
                   colSpan="4"
-                  description="Register a device to use this instance from your phone."
+                  description={t("ui.register-device")}
                 >
                   No devices connected
                 </TableEmptyRow>

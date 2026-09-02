@@ -1,6 +1,6 @@
 import { Shuffle } from "lucide-react";
 import RouterAnimation from "@/media/animations/router-animation.webm";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 
 /**
  * Ephemeral notification shown during streaming when the model router
@@ -47,6 +47,7 @@ export default function ModelRouteNotification({ routedTo, isStreaming }) {
 }
 
 function RouterIcon({ isStreaming }) {
+  const { t } = useTranslation();
   if (!isStreaming)
     return (
       <Shuffle className="w-4 h-4 text-zinc-50 light:text-slate-950 shrink-0" />
@@ -58,7 +59,7 @@ function RouterIcon({ isStreaming }) {
       muted
       playsInline
       className="w-4 h-4 shrink-0 scale-[134%] invert light:invert-0"
-      aria-label="Routing to model..."
+      aria-label={t("ui.routing-to-model")}
     >
       <source src={RouterAnimation} type="video/webm" />
     </video>

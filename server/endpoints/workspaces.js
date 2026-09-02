@@ -639,7 +639,7 @@ function workspaceEndpoints(app) {
     async (request, response) => {
       try {
         const { chatId } = request.params;
-        const { feedback = null } = reqBody(request);
+        const { feedback = null, comment = undefined } = reqBody(request);
         const user = await userFromSession(request, response);
         const existingChat = await WorkspaceChats.get({
           id: Number(chatId),
@@ -648,7 +648,15 @@ function workspaceEndpoints(app) {
         });
 
         if (!existingChat) return response.status(404).json({ success: false });
-        await WorkspaceChats.updateFeedbackScore(chatId, feedback);
+        await WorkspaceChats.updateFeedbackScore(
+          chatId,
+          feedback,
+          // Capped rather than rejected: a reader who typed an essay should not
+          // lose the rating over it.
+          comment === undefined
+            ? undefined
+            : String(comment ?? "").slice(0, 1000)
+        );
         return response.status(200).json({ success: true });
       } catch (error) {
         console.error("Error updating chat feedback:", error);
@@ -810,12 +818,12 @@ function workspaceEndpoints(app) {
         // Get threadId we are branching from if that request body is sent
         // and is a valid thread slug.
         const threadId = !!threadSlug
-          ? ((
+          ? (
               await WorkspaceThread.get({
                 slug: String(threadSlug),
                 workspace_id: workspace.id,
               })
-            )?.id ?? null)
+            )?.id ?? null
           : null;
         const chatsToFork = await WorkspaceChats.where(
           {

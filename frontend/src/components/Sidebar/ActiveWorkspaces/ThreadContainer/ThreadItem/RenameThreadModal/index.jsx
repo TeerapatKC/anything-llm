@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Pencil } from "lucide-react";
 import Workspace from "@/models/workspace";
@@ -16,6 +17,7 @@ import {
 import { THREAD_RENAME_EVENT } from "../../constants";
 
 export default function RenameThreadModal({ workspace, thread, onClose }) {
+  const { t } = useTranslation();
   const [name, setName] = useState(thread.name ?? "");
   const [saving, setSaving] = useState(false);
 
@@ -68,7 +70,7 @@ export default function RenameThreadModal({ workspace, thread, onClose }) {
               id="threadName"
               name="threadName"
               type="text"
-              placeholder="Enter thread name"
+              placeholder={t("ui.enter-thread-name")}
               required={true}
               autoComplete="off"
               autoFocus

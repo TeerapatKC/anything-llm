@@ -9,7 +9,13 @@ export default function SourceItem({ source, onClick }) {
   const { t } = useTranslation();
   const info = parseChunkSource(source);
   const customImage = getCustomImage(info?.icon);
-  const subtitle = info?.isUrl ? info?.text : t("chat_window.document");
+  const subtitle = info?.isUrl
+    ? info?.text
+    : info?.icon === "database"
+      ? t("chat_window.database_source")
+      : info?.icon === "mcp"
+        ? t("chat_window.mcp_source")
+        : t("chat_window.document");
 
   return (
     <button

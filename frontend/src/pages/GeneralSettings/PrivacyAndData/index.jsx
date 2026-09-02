@@ -4,7 +4,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import ProviderPrivacy from "@/components/ProviderPrivacy";
 import Toggle from "@/components/lib/Toggle";
 import Admin from "@/models/admin";
@@ -139,25 +139,23 @@ function TelemetryLogs({ settings }) {
         </div>
         <div className="flex flex-col items-left space-y-2">
           <p className="text-theme-text-secondary text-xs rounded-lg w-96">
-            All events do not record IP-address and contain{" "}
-            <b>no identifying</b> content, settings, chats, or other non-usage
-            based information. To see the list of event tags collected you can
-            look on{" "}
-            <a
-              href="https://github.com/search?q=repo%3AMintplex-Labs%2Fanything-llm%20.sendTelemetry(&type=code"
-              className="underline text-blue-400"
-              target="_blank"
-              rel="noreferrer"
-            >
-              GitHub here
-            </a>
-            .
+            <Trans
+              i18nKey="help.telemetry-note"
+              components={{
+                b: <b />,
+                a: (
+                  <a
+                    href="https://github.com/search?q=repo%3AMintplex-Labs%2Fanything-llm%20.sendTelemetry(&type=code"
+                    className="underline text-blue-400"
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                ),
+              }}
+            />
           </p>
           <p className="text-theme-text-secondary text-xs rounded-lg w-96">
-            As an open-source project we respect your right to privacy. We are
-            dedicated to building the best solution for integrating AI and
-            documents privately and securely. If you do decide to turn off
-            telemetry all we ask is to consider sending us feedback and thoughts
+            {t("help.privacy-and-data")}
             so that we can continue to improve NexusAI for you.{" "}
             <a
               href="mailto:team@mintplexlabs.com"

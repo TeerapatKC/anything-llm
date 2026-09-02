@@ -192,7 +192,23 @@ async function upsertMessage(bot, chatId, msgId, text, log, opts = {}) {
   return msgId;
 }
 
+/**
+ * Normalise the "edit this message instead of sending a new one" argument.
+ *
+ * Menu handlers are reached two ways: from a callback, which hands them the id
+ * of the message its keyboard is attached to, and as a command, where the
+ * caller's own arguments land in the same positions. Only a real message id may
+ * become an edit - anything else has to send a new message, or Telegram answers
+ * "message to edit not found".
+ * @param {any} value
+ * @returns {number|null}
+ */
+function asMessageId(value) {
+  return Number.isInteger(value) ? value : null;
+}
+
 module.exports = {
+  asMessageId,
   editMessage,
   upsertMessage,
   sendBatchedMessages,

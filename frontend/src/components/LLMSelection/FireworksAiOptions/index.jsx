@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -44,6 +45,7 @@ export default function FireworksAiOptions({ settings }) {
   );
 }
 function FireworksAiModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -70,10 +72,12 @@ function FireworksAiModelSelection({ apiKey, settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="FireworksAiLLMModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -83,7 +87,9 @@ function FireworksAiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="FireworksAiLLMModelPref"
         required={true}
@@ -93,7 +99,7 @@ function FireworksAiModelSelection({ apiKey, settings }) {
         }
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

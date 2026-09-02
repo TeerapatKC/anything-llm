@@ -286,7 +286,7 @@ function BooleanValueField({ value, onChange }) {
   return (
     <Select value={value || "true"} onValueChange={onChange} required>
       <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
-        <SelectValue placeholder="Select an option" />
+        <SelectValue placeholder={t("ui.select-option")} />
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="true">

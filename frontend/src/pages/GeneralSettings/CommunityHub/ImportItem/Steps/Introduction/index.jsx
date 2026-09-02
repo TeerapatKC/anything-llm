@@ -1,4 +1,5 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trans, useTranslation } from "react-i18next";
 import { TriangleAlert } from "lucide-react";
 import CommunityHubImportItemSteps from "..";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function Introduction({ settings, setSettings, setStep }) {
+  const { t } = useTranslation();
   const [itemId, setItemId] = useState(settings.itemId);
   const handleContinue = () => {
-    if (!itemId) return showToast("Please enter an item ID", "error");
+    if (!itemId) return showToast(t("hub-import.enter-item-id"), "error");
     setSettings((prev) => ({ ...prev, itemId }));
     setStep(CommunityHubImportItemSteps.itemId.next());
   };
@@ -21,35 +23,30 @@ export default function Introduction({ settings, setSettings, setStep }) {
       <div className="bg-theme-bg-secondary rounded-xl flex-1 p-6">
         <div className="w-full flex flex-col gap-y-2 max-w-[700px]">
           <h2 className="text-base text-theme-text-primary font-semibold">
-            Import an item from the community hub
+            {t("hub-import.title")}
           </h2>
           <div className="flex flex-col gap-y-[25px] text-theme-text-secondary text-sm">
+            <p>{t("hub-import.intro-1")}</p>
+            <p>{t("hub-import.intro-2")}</p>
             <p>
-              The community hub is a place where you can find, share, and import
-              agent-skills, system prompts, slash commands, and more!
-            </p>
-            <p>
-              These items are created by the NexusAI team and community, and are
-              a great way to get started with NexusAI as well as extend NexusAI
-              in a way that is customized to your needs.
-            </p>
-            <p>
-              There are both <b>private</b> and <b>public</b> items in the
-              community hub. Private items are only visible to you, while public
-              items are visible to everyone.
+              <Trans i18nKey="hub-import.intro-3" components={{ b: <b /> }} />
             </p>
 
             <Alert variant="warning" className="p-4">
               <TriangleAlert />
               <AlertDescription>
-                If you are pulling in a private item, make sure it is{" "}
-                <b>shared with a team</b> you belong to, and you have added a{" "}
-                <a
-                  href={paths.communityHub.authentication()}
-                  className="font-semibold underline"
-                >
-                  Connection Key.
-                </a>
+                <Trans
+                  i18nKey="hub-import.warning"
+                  components={{
+                    b: <b />,
+                    a: (
+                      <a
+                        href={paths.communityHub.authentication()}
+                        className="font-semibold underline"
+                      />
+                    ),
+                  }}
+                />
               </AlertDescription>
             </Alert>
           </div>
@@ -57,14 +54,12 @@ export default function Introduction({ settings, setSettings, setStep }) {
           <div className="flex flex-col gap-y-2 mt-4">
             <div className="w-full flex flex-col gap-y-4">
               <div className="flex flex-col w-full">
-                <Label className="block mb-3">
-                  Community Hub Item Import ID
-                </Label>
+                <Label className="block mb-3">{t("hub-import.item-id")}</Label>
                 <Input
                   type="text"
                   value={itemId}
                   onChange={(e) => setItemId(e.target.value)}
-                  placeholder="allm-community-id:agent-skill:1234567890"
+                  placeholder={t("hub-import.item-id-placeholder")}
                 />
               </div>
             </div>

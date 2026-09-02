@@ -540,7 +540,11 @@ export default function GeneralLLMPreference() {
       {loading ? (
         <SpinnerBlock className="min-h-[60vh]" />
       ) : (
-        <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col w-full">
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="flex flex-col w-full"
+        >
           <PageHeader
             title={t("llm.title")}
             description={t("llm.description")}
@@ -600,7 +604,7 @@ export default function GeneralLLMPreference() {
                   type="text"
                   name="llm-search"
                   autoComplete="off"
-                  placeholder="Search all LLM providers"
+                  placeholder={t("ui.search-llm-providers")}
                   className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
                   onChange={(e) => setSearchQuery(e.target.value)}
                   ref={searchInputRef}

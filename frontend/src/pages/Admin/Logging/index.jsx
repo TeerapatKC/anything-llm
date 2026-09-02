@@ -127,12 +127,14 @@ function LogsContainer({
             <TableHead scope="col">{t("event.table.type")}</TableHead>
             <TableHead scope="col">{t("event.table.user")}</TableHead>
             <TableHead scope="col">{t("event.table.occurred")}</TableHead>
-            <TableHead scope="col" className="text-right"> </TableHead>
+            <TableHead scope="col" className="text-right">
+              {" "}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {logs.length === 0 ? (
-            <TableEmptyRow colSpan={4}>No event logs found</TableEmptyRow>
+            <TableEmptyRow colSpan={4}>{t("ui.no-event-logs")}</TableEmptyRow>
           ) : (
             logs.map((log) => <LogRow key={log.id} log={log} />)
           )}

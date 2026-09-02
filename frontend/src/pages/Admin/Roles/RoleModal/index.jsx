@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import Role, { WorkspaceRole } from "@/models/role";
 import { PERMISSIONS } from "@/utils/permissions";
@@ -37,6 +38,7 @@ export default function RoleModal({
   onClose,
   onSaved,
 }) {
+  const { t } = useTranslation();
   // The owner role is frozen server-side, so the editor opens as a viewer rather than
   // letting an operator make changes that would only be rejected on save.
   const readOnly = role?.isImmutable === true;
@@ -186,7 +188,7 @@ export default function RoleModal({
               name="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="What this role is for"
+              placeholder={t("ui.role-description-placeholder")}
               rows={2}
               autoComplete="off"
               disabled={readOnly}
@@ -203,9 +205,7 @@ export default function RoleModal({
 
             {hasWildcard && (
               <p className="mx-4 mt-3 rounded-md border border-yellow-500/30 bg-yellow-500/10 px-3 py-2 text-xs text-yellow-400 light:text-yellow-700">
-                This role holds the system administrator grant, so it has every
-                permission — including any added by future updates — regardless
-                of the boxes below.
+                {t("help.role-modal")}
               </p>
             )}
 

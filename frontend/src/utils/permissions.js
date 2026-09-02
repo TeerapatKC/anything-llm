@@ -98,6 +98,7 @@ export const PERMISSIONS = {
   INTEGRATIONS_TELEGRAM: "integrations.telegram",
   INTEGRATIONS_GOOGLE: "integrations.google",
   INTEGRATIONS_OUTLOOK: "integrations.outlook",
+  INTEGRATIONS_LINE: "integrations.line",
 };
 
 /**

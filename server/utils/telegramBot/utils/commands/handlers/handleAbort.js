@@ -5,11 +5,12 @@
  */
 async function handleAbort(ctx, chatId) {
   const { TelegramBotService } = require("../../../index");
+  const { translatorFor } = require("../../i18n");
+  const t = translatorFor(ctx.getState(chatId));
   const service = new TelegramBotService();
   const aborted = service.abortChat(chatId);
 
-  if (aborted) await ctx.bot.sendMessage(chatId, "Response aborted by user.");
-  else await ctx.bot.sendMessage(chatId, "No active response to abort.");
+  await ctx.bot.sendMessage(chatId, t(aborted ? "abort.done" : "abort.none"));
 }
 
 module.exports = { handleAbort };

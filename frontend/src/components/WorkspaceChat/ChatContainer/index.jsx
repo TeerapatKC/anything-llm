@@ -390,24 +390,22 @@ export default function ChatContainer({
           setAgentSessionActive(false);
           setAgentSessionSocket(null);
           window.dispatchEvent(new CustomEvent(AGENT_SESSION_END));
-          // When the close was triggered by /reset, skip the "Agent session
-          // complete." status - the pending /reset flow will clear history.
+          // A normal close does not need a synthetic completion thought. The
+          // final answer or error already communicates the outcome, while an
+          // explicit stop still needs a visible status.
           if (pendingResetRef.current) {
             pendingResetRef.current = false;
-          } else {
-            const wasStopped = agentAbortRequestedRef.current;
+          } else if (agentAbortRequestedRef.current) {
             setChatHistory((prev) => [
               ...prev.filter((msg) => !!msg.content),
               {
                 uuid: v4(),
                 type: "statusResponse",
-                content: wasStopped
-                  ? "Response stopped."
-                  : "Agent session complete.",
+                content: "Response stopped.",
                 role: "assistant",
                 sources: [],
                 closed: true,
-                stopped: wasStopped,
+                stopped: true,
                 error: null,
                 animate: false,
                 pending: false,

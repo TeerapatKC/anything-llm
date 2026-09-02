@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
@@ -16,6 +17,7 @@ export function openImageLightbox(images, initialIndex = 0) {
 }
 
 export default function ImageLightbox() {
+  const { t } = useTranslation();
   const [images, setImages] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -65,7 +67,7 @@ export default function ImageLightbox() {
         type="button"
         onClick={close}
         className="absolute top-4 right-4 p-2 text-theme-text-primary light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
-        aria-label="Close lightbox"
+        aria-label={t("ui.close-lightbox")}
       >
         <X size={24} />
       </button>
@@ -90,7 +92,7 @@ export default function ImageLightbox() {
               handleNext();
             }}
             className="absolute right-4 p-3 text-theme-text-primary light:text-white hover:text-white/70 transition-colors rounded-full bg-white/10 hover:bg-white/20 border-none cursor-pointer"
-            aria-label="Next image"
+            aria-label={t("ui.next-image")}
           >
             <ChevronRight size={24} />
           </button>

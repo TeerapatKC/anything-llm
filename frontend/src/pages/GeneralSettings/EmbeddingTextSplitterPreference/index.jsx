@@ -130,7 +130,7 @@ export default function EmbeddingTextSplitterPreference() {
                 min={1}
                 max={settings?.max_embed_chunk_size || 1000}
                 onWheel={(e) => e?.currentTarget?.blur()}
-                placeholder="maximum length of vectorized text"
+                placeholder={t("ui.max-vector-text-length")}
                 defaultValue={
                   isNullOrNaN(settings?.text_splitter_chunk_size)
                     ? 1000
@@ -159,7 +159,7 @@ export default function EmbeddingTextSplitterPreference() {
                 name="text_splitter_chunk_overlap"
                 min={0}
                 onWheel={(e) => e?.currentTarget?.blur()}
-                placeholder="maximum length of vectorized text"
+                placeholder={t("ui.max-vector-text-length")}
                 defaultValue={
                   isNullOrNaN(settings?.text_splitter_chunk_overlap)
                     ? 20

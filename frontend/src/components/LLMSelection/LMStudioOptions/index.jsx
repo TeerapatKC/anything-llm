@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { ChevronDown, ChevronUp, Info, TriangleAlert } from "lucide-react";
@@ -24,6 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function LMStudioOptions({ settings, showAlert = false }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -54,8 +56,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
           <div className="gap-x-2 flex items-center">
             <Info size={12} className="hidden md:visible" />
             <p className="text-sm md:text-base">
-              LMStudio as your LLM requires you to set an embedding service to
-              use.
+              {t("help.lmstudio-options-3")}
             </p>
           </div>
           <a
@@ -152,15 +153,14 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                   }
                 ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
-                  Override the context window limit. Leave empty to auto-detect
-                  from the model (defaults to 4096 if detection fails).
+                  {t("help.lmstudio-context-window")}
                 </TooltipContent>
               </Tooltip>
             </div>
             <Input
               type="number"
               name="LMStudioTokenLimit"
-              placeholder="Automatically managed"
+              placeholder={t("provider-options.automatically-managed")}
               min={1}
               value={maxTokens}
               onChange={handleMaxTokensChange}
@@ -174,7 +174,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
         <div className="flex items-start gap-4 mt-4">
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <Label>Authentication Token</Label>
+              <Label>{t("provider-options.auth-token")}</Label>
               <Tooltip>
                 <TooltipTrigger
                   render={
@@ -189,8 +189,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
                     Enter a <code>Bearer</code> Auth Token for interacting with
                     your LM Studio server.
                     <br /> <br />
-                    Useful if running LM Studio behind an authentication or
-                    proxy.
+                    {t("help.lmstudio-options-4")}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -215,6 +214,7 @@ export default function LMStudioOptions({ settings, showAlert = false }) {
 }
 
 function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -246,7 +246,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <Label>Selected Model</Label>
+          <Label>{t("provider-options.selected-model")}</Label>
           {!loading && !!basePath && (
             <>
               <Tooltip>
@@ -260,8 +260,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
                 ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
-                    Could not reach LM Studio. Verify the URL is correct and the
-                    LMStudio server is running and accessible.
+                    {t("help.lmstudio-options-5")}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -301,7 +300,9 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-2">Selected Model</Label>
+      <Label className="block mb-2">
+        {t("provider-options.selected-model")}
+      </Label>
       <Select
         name="LMStudioModelPref"
         required={true}
@@ -309,12 +310,14 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

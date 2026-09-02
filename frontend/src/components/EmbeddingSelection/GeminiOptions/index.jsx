@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Info } from "lucide-react";
 import {
   Tooltip,
@@ -24,12 +25,15 @@ const DEFAULT_MODELS = [
 ];
 
 export default function GeminiOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full flex flex-col gap-y-6">
       <div className="w-full flex flex-col gap-y-4">
         <div className="w-full flex items-center gap-[36px] mt-1.5">
           <div className="flex flex-col w-60">
-            <Label className="block mb-3">API Key</Label>
+            <Label className="block mb-3">
+              {t("provider-options.api-key")}
+            </Label>
             <Input
               type="password"
               name="GeminiEmbeddingApiKey"
@@ -43,7 +47,9 @@ export default function GeminiOptions({ settings }) {
             />
           </div>
           <div className="flex flex-col w-60">
-            <Label className="block mb-3">Model Preference</Label>
+            <Label className="block mb-3">
+              {t("provider-options.model-preference")}
+            </Label>
             <Select
               name="EmbeddingModelPref"
               required={true}
@@ -52,11 +58,15 @@ export default function GeminiOptions({ settings }) {
               }
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue
+                  placeholder={t("provider-options.select-option")}
+                />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Available embedding models</SelectLabel>
+                  <SelectLabel>
+                    {t("provider-options.available-embedding-models")}
+                  </SelectLabel>
                   {DEFAULT_MODELS.map((model) => {
                     return (
                       <SelectItem key={model.id} value={model.id}>
@@ -75,15 +85,16 @@ export default function GeminiOptions({ settings }) {
           <TooltipTrigger
             render={<div className="flex gap-x-1 items-center mb-3" />}
           >
-            <Label className="block">Output dimensions</Label>
+            <Label className="block">
+              {t("provider-options.output-dimensions")}
+            </Label>
             <Info
               size={16}
               className="text-theme-text-secondary cursor-pointer"
             />
           </TooltipTrigger>
           <TooltipContent side="top" className="max-w-[250px] text-xs">
-            The number of dimensions the resulting output embeddings should have
-            if it supports multiple dimensions output.
+            {t("help.gemini-options")}
             <br />
             <br /> Leave blank to use the default dimensions for the selected
             model.
@@ -92,7 +103,7 @@ export default function GeminiOptions({ settings }) {
         <Input
           type="number"
           name="EmbeddingOutputDimensions"
-          placeholder="Assume default dimensions"
+          placeholder={t("provider-options.assume-default-dimensions")}
           min={1}
           onScroll={(e) => e.target.blur()}
           defaultValue={settings?.EmbeddingOutputDimensions}

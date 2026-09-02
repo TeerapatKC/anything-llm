@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import CommunityHub from "@/models/communityHub";
 import CommunityHubImportItemSteps from "..";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ function useGetCommunityHubItem({ importId, updateSettings }) {
 }
 
 export default function PullAndReview({ settings, setSettings, setStep }) {
+  const { t } = useTranslation();
   const { item, loading, error } = useGetCommunityHubItem({
     importId: settings.itemId,
     updateSettings: setSettings,
@@ -54,10 +56,7 @@ export default function PullAndReview({ settings, setSettings, setStep }) {
           {!loading && error && (
             <>
               <div className="flex flex-col gap-y-2 mt-8">
-                <p className="text-red-500">
-                  An error occurred while fetching the item. Please try again
-                  later.
-                </p>
+                <p className="text-red-500">{t("help.pull-and-review")}</p>
                 <p className="text-red-500/80 text-sm font-mono">{error}</p>
               </div>
               <Button

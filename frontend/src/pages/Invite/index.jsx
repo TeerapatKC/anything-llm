@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { FullScreenLoader } from "@/components/Preloader";
@@ -15,6 +16,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function InvitePage() {
+  const { t } = useTranslation();
   const { code } = useParams();
   const [result, setResult] = useState({
     status: "loading",
@@ -64,16 +66,15 @@ export default function InvitePage() {
       <Dialog open={true}>
         <DialogContent showCloseButton={false} size="md">
           <DialogHeader>
-            <DialogTitle>Accept your invitation</DialogTitle>
-            <DialogDescription>
-              Join with a new account, or add the invite's workspaces to an
-              account you already have.
-            </DialogDescription>
+            <DialogTitle>{t("ui.accept-invitation")}</DialogTitle>
+            <DialogDescription>{t("help.invite")}</DialogDescription>
           </DialogHeader>
           <Tabs defaultValue={signedIn ? "existing" : "new"}>
             <TabsList className="w-full">
-              <TabsTrigger value="new">Create account</TabsTrigger>
-              <TabsTrigger value="existing">Use existing account</TabsTrigger>
+              <TabsTrigger value="new">{t("ui.create-account")}</TabsTrigger>
+              <TabsTrigger value="existing">
+                {t("ui.use-existing-account")}
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="new" className="mt-4">
               <NewUserModal />

@@ -4,6 +4,8 @@ const {
   resolveWorkspaceProvider,
   sendFormattedMessage,
 } = require("../../../utils");
+const { languageLabel } = require("../../language");
+const { translatorFor } = require("../../i18n");
 
 /**
  * /status - Show current workspace, thread, and model info.
@@ -11,26 +13,34 @@ const {
  * @param {number} chatId
  */
 async function handleStatus(ctx, chatId) {
-  const state = ctx.getState(chatId);
-  const workspace = await Workspace.get({ slug: state.workspaceSlug });
+  const session = ctx.getState(chatId);
+  if (!session) return;
+  const t = translatorFor(session);
+
+  const workspace = session.workspaceSlug
+    ? await Workspace.get({ slug: session.workspaceSlug })
+    : null;
   if (!workspace) {
-    await ctx.bot.sendMessage(chatId, "No workspace configured.");
+    await ctx.bot.sendMessage(chatId, t("thread.no_workspace"));
     return;
   }
 
-  let threadName = "Default";
-  if (state.threadSlug) {
-    const thread = await WorkspaceThread.get({ slug: state.threadSlug });
+  let threadName = t("common.default_thread");
+  if (session.threadSlug) {
+    const thread = await WorkspaceThread.get({ slug: session.threadSlug });
     if (thread) threadName = thread.name;
   }
 
   const markdown = [];
 
-  markdown.push(`# Workspace:
+  markdown.push(`# ${t("status.workspace")}
 ${workspace.name}
 
-# Thread:
+# ${t("status.thread")}
 _${threadName}_
+
+# ${t("status.language")}
+${languageLabel(session.language)}
 --------------------------------`);
 
   const AIbitat = require("../../../../agents/aibitat");
@@ -41,34 +51,32 @@ _${threadName}_
   );
   const nativeToolCalling = await agentProvider.supportsNativeToolCalling?.();
 
-  markdown.push(`# LLM Provider: 
+  markdown.push(`# ${t("status.provider")}
 ${provider}
 
-# LLM Model: 
+# ${t("status.model")}
 ${model}
 
-# Native Tool Calling: 
-${nativeToolCalling ? "Enabled" : "Disabled"}
+# ${t("status.native_tools")}
+${nativeToolCalling ? t("status.enabled") : t("status.disabled")}
 
-# Chat Mode: 
+# ${t("status.chat_mode")}
 ${workspace.chatMode ?? "chat"}`);
 
   if (workspace.chatMode === "automatic" && !nativeToolCalling) {
     markdown.unshift(
-      `<blockquote>**⚠️ Note**\nNative tool calling is unavailable for this provider/model. You can only use tools with the @agent command.</blockquote>`
+      `<blockquote>${t("status.note_no_native_tools")}</blockquote>`
     );
   }
 
   if (workspace.chatMode === "chat") {
-    if (nativeToolCalling) {
-      markdown.unshift(
-        `<blockquote>**💡 Tip**\nChange this workspace's chat mode to "automatic" to use tools without the @agent command.</blockquote>`
-      );
-    } else {
-      markdown.unshift(
-        `<blockquote>**⚠️ Note**\nNative tool calling is unavailable for this provider/model. You can only use tools with the @agent command.</blockquote>`
-      );
-    }
+    markdown.unshift(
+      `<blockquote>${
+        nativeToolCalling
+          ? t("status.tip_automatic_mode")
+          : t("status.note_no_native_tools")
+      }</blockquote>`
+    );
   }
 
   await sendFormattedMessage(ctx.bot, chatId, markdown.join("\n"), {

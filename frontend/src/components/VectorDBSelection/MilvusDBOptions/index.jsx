@@ -1,11 +1,15 @@
 import { Label } from "@/components/ui/label";
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 export default function MilvusDBOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Milvus DB Address</Label>
+          <Label className="block mb-3">
+            {t("vector-providers.milvus.address")}
+          </Label>
           <Input
             type="text"
             name="MilvusAddress"
@@ -18,7 +22,9 @@ export default function MilvusDBOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Milvus Username</Label>
+          <Label className="block mb-3">
+            {t("vector-providers.milvus.username")}
+          </Label>
           <Input
             type="text"
             name="MilvusUsername"
@@ -29,7 +35,9 @@ export default function MilvusDBOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Milvus Password</Label>
+          <Label className="block mb-3">
+            {t("vector-providers.milvus.password")}
+          </Label>
           <Input
             type="password"
             name="MilvusPassword"

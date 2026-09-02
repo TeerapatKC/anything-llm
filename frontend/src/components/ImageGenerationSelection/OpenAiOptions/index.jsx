@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import ImageModelSelection from "../ImageModelSelection";
 import ImageDimensionSelection from "../ImageDimensionSelection";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export default function OpenAiImageOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(
     settings?.ImageGenerationOpenAiKey
   );
@@ -14,7 +16,7 @@ export default function OpenAiImageOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-start gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="ImageGenerationOpenAiKey"

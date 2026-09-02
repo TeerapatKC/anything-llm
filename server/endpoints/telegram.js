@@ -8,11 +8,14 @@ const {
   userPermissionValid,
 } = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
-const { reqBody } = require("../utils/http");
+const { reqBody, userFromSession } = require("../utils/http");
 const { EventLogs } = require("../models/eventLogs");
-const { Workspace } = require("../models/workspace");
-const { WorkspaceThread } = require("../models/workspaceThread");
+const { TelegramUser } = require("../models/telegramUser");
 const { encryptToken } = require("../utils/telegramBot/utils");
+const {
+  createPairingCode,
+  revokeCodesForUser,
+} = require("../utils/telegramBot/utils/pairing");
 
 function telegramEndpoints(app) {
   if (!app) return;
@@ -32,38 +35,14 @@ function telegramEndpoints(app) {
 
         const service = new TelegramBotService();
 
-        // Resolve workspace, thread, and model from the first approved user's
-        // active state, falling back to the default workspace config.
-        const approvedUsers = connector.config.approved_users || [];
-        const activeUser = approvedUsers[0];
-        const workspaceSlug =
-          activeUser?.active_workspace ||
-          connector.config.default_workspace ||
-          null;
-        const threadSlug = activeUser?.active_thread || null;
-
-        let thread = null;
-        let workspace = await Workspace.get({ slug: workspaceSlug });
-        if (!workspace) {
-          const available = await Workspace.where({}, 1);
-          if (available.length) workspace = available[0];
-        }
-
-        if (!threadSlug) {
-          const availableThreads = await WorkspaceThread.where({
-            workspace_id: workspace.id,
-          });
-          if (availableThreads.length) thread = availableThreads[0];
-        }
-
+        // Deliberately bot-level only. Which workspace and thread a chat is
+        // pointed at belongs to the person using it, not to this page.
         return response.status(200).json({
           config: {
             active: connector.active,
             connected: service.isRunning,
             bot_username: connector.config.bot_username || null,
-            default_workspace: workspace?.name || workspaceSlug || "—",
-            active_thread_name: thread?.name || "Default",
-            chat_model: workspace?.chatModel || "System default",
+            linked_user_count: await TelegramUser.count(),
             voice_response_mode:
               connector.config.voice_response_mode || "text_only",
           },
@@ -86,7 +65,7 @@ function telegramEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const { bot_token, default_workspace = null } = reqBody(request);
+        const { bot_token } = reqBody(request);
         if (!bot_token) {
           return response.status(400).json({
             success: false,
@@ -105,34 +84,9 @@ function telegramEndpoints(app) {
           });
         }
 
-        let workspaceSlug = null;
-        if (default_workspace) workspaceSlug = String(default_workspace);
-        else {
-          const workspaces = await Workspace.where({}, 1);
-          if (workspaces.length) workspaceSlug = workspaces[0].slug;
-          else {
-            const { workspace } = await Workspace.new(
-              `${verification.username} Workspace`,
-              null,
-              { chatMode: "automatic" }
-            );
-            if (workspace) workspaceSlug = workspace.slug;
-          }
-        }
-
-        if (!workspaceSlug) {
-          return response.status(400).json({
-            success: false,
-            error: "No workspace found or could be created.",
-          });
-        }
-
-        // Preserve approved users when reconnecting with a new token
         const existing = await ExternalCommunicationConnector.get("telegram");
         const storedConfig = {
           bot_username: verification.username,
-          default_workspace: workspaceSlug,
-          approved_users: existing?.config?.approved_users || [],
           voice_response_mode:
             existing?.config?.voice_response_mode || "text_only",
         };
@@ -178,6 +132,9 @@ function telegramEndpoints(app) {
         const service = new TelegramBotService();
         await service.stop();
         await ExternalCommunicationConnector.delete("telegram");
+        // Links are bound to a bot that no longer exists. Leaving them behind
+        // would silently re-admit every chat the moment a new bot is connected.
+        await TelegramUser.deleteAll();
         await EventLogs.logEvent("telegram_bot_disconnected");
         return response.status(200).json({ success: true });
       } catch (e) {
@@ -208,18 +165,30 @@ function telegramEndpoints(app) {
     }
   );
 
+  /**
+   * Every Telegram chat bound to an account on this instance.
+   */
   app.get(
-    "/telegram/pending-users",
+    "/telegram/linked-users",
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
     ],
     async (_request, response) => {
       try {
-        const service = new TelegramBotService();
-        return response
-          .status(200)
-          .json({ users: service.pendingPairings || [] });
+        const links = await TelegramUser.all();
+        return response.status(200).json({
+          users: links.map((link) => ({
+            chatId: link.chat_id,
+            username: link.user?.username || null,
+            userId: link.user_id,
+            telegramUsername: link.telegram_username,
+            telegramFirstName: link.telegram_first_name,
+            workspace: link.active_workspace?.name || null,
+            linkedAt: link.createdAt,
+            lastActiveAt: link.lastActiveAt,
+          })),
+        });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500);
@@ -227,26 +196,11 @@ function telegramEndpoints(app) {
     }
   );
 
-  app.get(
-    "/telegram/approved-users",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
-    ],
-    async (_request, response) => {
-      try {
-        const connector = await ExternalCommunicationConnector.get("telegram");
-        const approved = connector?.config?.approved_users || [];
-        return response.status(200).json({ users: approved });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500);
-      }
-    }
-  );
-
+  /**
+   * Admin-side revocation of someone else's link.
+   */
   app.post(
-    "/telegram/approve-user",
+    "/telegram/unlink-user",
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
@@ -259,59 +213,25 @@ function telegramEndpoints(app) {
             .status(400)
             .json({ success: false, error: "chatId is required." });
 
-        const service = new TelegramBotService();
-        await service.approvePendingUser(chatId);
-        await EventLogs.logEvent("telegram_user_approved", { chatId });
-        return response.status(200).json({ success: true });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500);
-      }
-    }
-  );
-
-  app.post(
-    "/telegram/deny-user",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
-    ],
-    async (request, response) => {
-      try {
-        const { chatId } = reqBody(request);
-        if (!chatId)
+        const link = await TelegramUser.getByChatId(chatId);
+        if (!link)
           return response
-            .status(400)
-            .json({ success: false, error: "chatId is required." });
+            .status(404)
+            .json({ success: false, error: "No such linked chat." });
+
+        await TelegramUser.unlinkByChatId(chatId);
+        revokeCodesForUser(link.user_id);
 
         const service = new TelegramBotService();
-        await service.denyPendingUser(chatId);
-        await EventLogs.logEvent("telegram_user_denied", { chatId });
-        return response.status(200).json({ success: true });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500);
-      }
-    }
-  );
+        await service.unlinkChat(chatId, {
+          username: link.user?.username || null,
+          key: "unlink.by_admin",
+        });
 
-  app.post(
-    "/telegram/revoke-user",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
-    ],
-    async (request, response) => {
-      try {
-        const { chatId } = reqBody(request);
-        if (!chatId)
-          return response
-            .status(400)
-            .json({ success: false, error: "chatId is required." });
-
-        const service = new TelegramBotService();
-        await service.revokeExistingUser(chatId);
-        await EventLogs.logEvent("telegram_user_revoked", { chatId });
+        await EventLogs.logEvent("telegram_user_unlinked", {
+          chatId: String(chatId),
+          username: link.user?.username || null,
+        });
         return response.status(200).json({ success: true });
       } catch (e) {
         console.error(e.message, e);
@@ -356,6 +276,109 @@ function telegramEndpoints(app) {
         const service = new TelegramBotService();
         if (service.isRunning) service.updateConfig(updates);
 
+        return response.status(200).json({ success: true });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  // ---------------------------------------------------------------- self-service
+  // Anyone with an account may bind their own Telegram chat. These routes only
+  // ever act on the caller's own link, so they need no elevated permission.
+
+  /**
+   * Whether the caller's account is bound to a Telegram chat, and to which one.
+   */
+  app.get(
+    "/telegram/my-connection",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const connector = await ExternalCommunicationConnector.get("telegram");
+        const service = new TelegramBotService();
+        const link = await TelegramUser.getByUserId(user.id);
+
+        return response.status(200).json({
+          available: Boolean(connector?.active && service.isRunning),
+          bot_username: connector?.config?.bot_username || null,
+          link: link
+            ? {
+                chatId: link.chat_id,
+                telegramUsername: link.telegram_username,
+                telegramFirstName: link.telegram_first_name,
+                linkedAt: link.createdAt,
+              }
+            : null,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  /**
+   * Mint a short-lived linking code for the signed-in user. Being able to read
+   * this response is the proof of account ownership that /link relies on.
+   */
+  app.post(
+    "/telegram/pairing-code",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const connector = await ExternalCommunicationConnector.get("telegram");
+        const service = new TelegramBotService();
+
+        if (!connector?.active || !service.isRunning) {
+          return response.status(400).json({
+            success: false,
+            error: "The Telegram bot is not connected on this instance.",
+          });
+        }
+
+        const { code, expiresAt, ttlMs } = createPairingCode(user);
+        return response.status(200).json({
+          success: true,
+          code,
+          username: user.username,
+          expiresAt,
+          ttlMs,
+          bot_username: connector.config.bot_username || null,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  /**
+   * Detach the caller's own Telegram chat.
+   */
+  app.post(
+    "/telegram/unlink",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const link = await TelegramUser.getByUserId(user.id);
+        if (!link) return response.status(200).json({ success: true });
+
+        await TelegramUser.unlinkByUserId(user.id);
+        revokeCodesForUser(user.id);
+
+        const service = new TelegramBotService();
+        await service.unlinkChat(link.chat_id, { key: "unlink.self" });
+
+        await EventLogs.logEvent(
+          "telegram_user_unlinked",
+          { chatId: link.chat_id, username: user.username },
+          user.id
+        );
         return response.status(200).json({ success: true });
       } catch (e) {
         console.error(e.message, e);

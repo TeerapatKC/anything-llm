@@ -7,8 +7,11 @@
  * @param {number} params.messageId
  */
 async function handleModelCancel({ ctx, chatId, query, messageId } = {}) {
+  const { translatorFor } = require("../../i18n");
   await ctx.bot.deleteMessage(chatId, messageId);
-  await ctx.bot.answerCallbackQuery(query.id, { text: "Cancelled" });
+  await ctx.bot.answerCallbackQuery(query.id, {
+    text: translatorFor(ctx.getState(chatId))("model.cancelled"),
+  });
 }
 
 module.exports = { handleModelCancel };

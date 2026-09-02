@@ -1,5 +1,5 @@
 import truncate from "truncate";
-import { Trash2 } from "lucide-react";
+import { ThumbsDown, ThumbsUp, Trash2 } from "lucide-react";
 import System from "@/models/system";
 import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
@@ -14,6 +14,46 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { useTranslation } from "react-i18next";
+
+/**
+ * How the reader rated this answer, from either the web chat or Telegram - both
+ * write the same column.
+ */
+function FeedbackMark({ score, comment }) {
+  const { t } = useTranslation();
+  if (score === null || score === undefined)
+    return (
+      <span
+        className="text-theme-text-secondary"
+        aria-label={t("recorded.feedback.none")}
+      >
+        —
+      </span>
+    );
+
+  const Icon = score ? ThumbsUp : ThumbsDown;
+  const label = t(score ? "recorded.feedback.up" : "recorded.feedback.down");
+  return (
+    <div className="flex items-center gap-x-2">
+      <Icon
+        size={16}
+        className={`shrink-0 ${score ? "text-green-400" : "text-red-400"}`}
+        aria-label={label}
+      />
+      {/* The reason is the part worth reading; the icon alone only says a
+          rating happened. */}
+      {!!comment && (
+        <span
+          className="text-theme-text-secondary truncate max-w-[160px]"
+          title={comment}
+        >
+          {truncate(comment, 30)}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export default function ChatRow({ chat, onDelete }) {
   const {
@@ -58,6 +98,12 @@ export default function ChatRow({ chat, onDelete }) {
           className="cursor-pointer hover:underline"
         >
           {truncate(safeJsonParse(chat.response, {})?.text, 40)}
+        </TableCell>
+        <TableCell>
+          <FeedbackMark
+            score={chat.feedbackScore}
+            comment={chat.feedbackComment}
+          />
         </TableCell>
         <TableCell>{chat.createdAt}</TableCell>
         <TableCell className="flex items-center gap-x-6 h-full mt-1">

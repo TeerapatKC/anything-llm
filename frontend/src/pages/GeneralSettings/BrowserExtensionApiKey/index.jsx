@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/table";
 
 export default function BrowserExtensionApiKeys() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [apiKeys, setApiKeys] = useState([]);
   const [error, setError] = useState(null);
@@ -77,24 +79,34 @@ export default function BrowserExtensionApiKeys() {
             containerClassName="flex w-full"
           />
         ) : error ? (
-          <div className="text-red-500 mt-6">Error: {error}</div>
+          <div className="text-red-500 mt-6">
+            {t("browser-extension-keys.error", { error })}
+          </div>
         ) : (
           <Table className="text-left min-w-[640px]">
             <TableHeader>
               <TableRow>
-                <TableHead scope="col">Extension Connection String</TableHead>
-                <TableHead scope="col">Created By</TableHead>
-                <TableHead scope="col">Created At</TableHead>
-                <TableHead scope="col">Actions</TableHead>
+                <TableHead scope="col">
+                  {t("browser-extension-keys.table.connection-string")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("browser-extension-keys.table.created-by")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("browser-extension-keys.table.created-at")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("browser-extension-keys.table.actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {apiKeys.length === 0 ? (
                 <TableEmptyRow
                   colSpan="4"
-                  description="Generate a key to connect the browser extension to this instance."
+                  description={t("browser-extension-keys.empty-description")}
                 >
-                  No API keys yet
+                  {t("browser-extension-keys.empty")}
                 </TableEmptyRow>
               ) : (
                 apiKeys.map((apiKey) => (

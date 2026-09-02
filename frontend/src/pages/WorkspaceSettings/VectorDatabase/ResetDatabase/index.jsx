@@ -18,19 +18,15 @@ export default function ResetDatabase({ workspace }) {
         setDeleting(true);
         const success = await Workspace.wipeVectorDb(workspace.slug);
         if (!success) {
-          showToast(
-            t("vector-workspace.reset.error"),
-            t("vector-workspace.common.error"),
-            { clear: true }
-          );
+          showToast(t("vector-workspace.reset.error"), "error", {
+            clear: true,
+          });
           setDeleting(false);
           return;
         }
-        showToast(
-          t("vector-workspace.reset.success"),
-          t("vector-workspace.common.success"),
-          { clear: true }
-        );
+        showToast(t("vector-workspace.reset.success"), "success", {
+          clear: true,
+        });
         setDeleting(false);
       },
     });

@@ -1,6 +1,8 @@
+import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 export default function ChromaDBOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
@@ -29,7 +31,7 @@ export default function ChromaDBOptions({ settings }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             name="ChromaApiKey"
             autoComplete="new-password"

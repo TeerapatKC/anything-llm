@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import CommunityHubImportItemSteps from "../..";
@@ -8,6 +9,7 @@ import AgentFlows from "@/models/agentFlows";
 import { safeJsonParse } from "@/utils/request";
 
 export default function AgentFlow({ item, setStep }) {
+  const { t } = useTranslation();
   const flowInfo = safeJsonParse(item.flow, { steps: [] });
   const [loading, setLoading] = useState(false);
 
@@ -52,10 +54,7 @@ export default function AgentFlow({ item, setStep }) {
         )}
       </div>
       <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
-        <p>
-          Agent flows allow you to create reusable sequences of actions that can
-          be triggered by your agent.
-        </p>
+        <p>{t("help.agent-flow")}</p>
         <div className="flex flex-col gap-y-2">
           <p className="font-semibold">Flow Details:</p>
           <p>Description: {item.description}</p>

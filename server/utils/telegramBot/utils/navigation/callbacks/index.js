@@ -1,6 +1,10 @@
 const { handleWorkspaceCreate } = require("./handleWorkspaceCreate");
 const { handleWorkspacePagination } = require("./handleWorkspacePagination");
 const { handleWorkspaceSelect } = require("./handleWorkspaceSelect");
+const { handleWorkspaceQuickSwitch } = require("./handleWorkspaceQuickSwitch");
+const {
+  handleWorkspaceListPagination,
+} = require("./handleWorkspaceListPagination");
 const { handleThreadPagination } = require("./handleThreadPagination");
 const { handleThreadSelect } = require("./handleThreadSelect");
 const { handleBackWorkspaces } = require("./handleBackWorkspaces");
@@ -11,6 +15,8 @@ const { handleSourceSelect } = require("./handleSourceSelect");
 const { handleSourcePagination } = require("./handleSourcePagination");
 const { handleBackSources } = require("./handleBackSources");
 const { handleToolApproval } = require("./handleToolApproval");
+const { handleLanguageSelect } = require("./handleLanguageSelect");
+const { handleFeedback } = require("./handleFeedback");
 
 const ExactCallbackHandlers = {
   "ws-create": handleWorkspaceCreate,
@@ -22,6 +28,10 @@ const ExactCallbackHandlers = {
 
 const PrefixCallbackHandlers = [
   { prefix: "tool:", handler: handleToolApproval },
+  { prefix: "lang:", handler: handleLanguageSelect },
+  { prefix: "fb:", handler: handleFeedback },
+  { prefix: "wsqpg:", handler: handleWorkspaceListPagination },
+  { prefix: "wsq:", handler: handleWorkspaceQuickSwitch },
   { prefix: "wspg:", handler: handleWorkspacePagination },
   { prefix: "ws:", handler: handleWorkspaceSelect },
   { prefix: "thpg:", handler: handleThreadPagination },

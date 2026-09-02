@@ -97,7 +97,7 @@ export default function Sidebar() {
           <SidebarTrigger className="shrink-0 text-theme-text-secondary hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" />
         </div>
         <div className="group-data-[collapsible=icon]:hidden">
-          <SearchBox user={user} showNewWsModal={showNewWsModal} />
+          <SearchBox />
         </div>
         {canCreateWorkspace && (
           <Tooltip>
@@ -124,7 +124,10 @@ export default function Sidebar() {
         )}
       </SidebarHeader>
       <SidebarContent className="px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
-        <ActiveWorkspaces />
+        <ActiveWorkspaces
+          canCreateWorkspace={canCreateWorkspace}
+          showNewWsModal={showNewWsModal}
+        />
       </SidebarContent>
       <SidebarFooter className="border-t border-theme-sidebar-border pt-2">
         <Footer />

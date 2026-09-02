@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -14,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function OllamaImageOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -45,8 +47,7 @@ export default function OllamaImageOptions({ settings }) {
         <ImageDimensionSelection provider="ollama-imggen" settings={settings} />
       </div>
       <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary">
-        Ollama image generation is experimental and only available on macOS.
-        Only models that report image generation support will be listed.
+        {t("help.ollama-options-4")}
       </p>
       <div className="flex justify-start">
         <Button
@@ -117,7 +118,7 @@ export default function OllamaImageOptions({ settings }) {
 
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <Label>Authentication Token</Label>
+              <Label>{t("provider-options.auth-token")}</Label>
               <Tooltip>
                 <TooltipTrigger
                   render={

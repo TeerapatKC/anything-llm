@@ -1,9 +1,15 @@
 import * as React from "react"
 
-const MOBILE_BREAKPOINT = 768
+// Keep this aligned with the min-[1100px] sidebar visibility classes. Below
+// this width the desktop sidebar is hidden and the mobile sheet must render.
+const MOBILE_BREAKPOINT = 1100
 
 export function useIsMobile() {
-  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
+  const [isMobile, setIsMobile] = React.useState(() =>
+    typeof window === "undefined"
+      ? false
+      : window.innerWidth < MOBILE_BREAKPOINT
+  )
 
   React.useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)

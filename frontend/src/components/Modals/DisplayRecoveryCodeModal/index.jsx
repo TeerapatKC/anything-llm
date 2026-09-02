@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import showToast from "@/utils/toast";
 import { Download, Key } from "lucide-react";
 import { saveAs } from "file-saver";
@@ -16,6 +17,7 @@ export default function RecoveryCodeModal({
   onDownloadComplete,
   onClose,
 }) {
+  const { t } = useTranslation();
   const [downloadClicked, setDownloadClicked] = useState(false);
 
   const downloadRecoveryCodes = () => {
@@ -55,7 +57,7 @@ export default function RecoveryCodeModal({
             In order to reset your password in the future, you will need these
             recovery codes. Download or copy your recovery codes to save them.{" "}
             <br />
-            <b className="mt-4">These recovery codes are only shown once!</b>
+            <b className="mt-4">{t("ui.recovery-codes-once")}</b>
           </p>
           <div
             className="border-none bg-theme-settings-input-bg text-theme-text-primary hover:text-primary-button

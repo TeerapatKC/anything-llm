@@ -45,6 +45,10 @@ model invites {
   status        String   @default("pending")
   claimedBy     Int?
   workspaceIds  String?
+  // The address this invite was sent to - typed directly or pulled from an existing
+  // user's record. Purely informational (the code itself is what grants access), used
+  // to show who an invite is waiting on and to resend/send the email.
+  email         String?
   createdAt     DateTime @default(now())
   createdBy     Int
   lastUpdatedAt DateTime @default(now())
@@ -94,6 +98,8 @@ model users {
   desktop_mobile_devices       desktop_mobile_devices[]
   workspace_parsed_files       workspace_parsed_files[]
   memories                     memories[]
+  telegram_users               telegram_users[]
+  line_users                   line_users[]
 }
 
 model permissions {
@@ -233,6 +239,8 @@ model workspaces {
   workspace_parsed_files       workspace_parsed_files[]
   memories                     memories[]
   slash_command_presets        slash_command_presets[]
+  telegram_users               telegram_users[]
+  line_users                   line_users[]
 }
 
 model workspace_threads {
@@ -246,6 +254,7 @@ model workspace_threads {
   workspace              workspaces               @relation(fields: [workspace_id], references: [id], onDelete: Cascade)
   user                   users?                   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   workspace_parsed_files workspace_parsed_files[]
+  telegram_users         telegram_users[]
 
   @@index([workspace_id])
   @@index([user_id])
@@ -275,6 +284,9 @@ model workspace_chats {
   createdAt      DateTime @default(now())
   lastUpdatedAt  DateTime @default(now())
   feedbackScore   Boolean?
+  // Why the rating was given. Only ever set alongside feedbackScore, and
+  // cleared with it - a reason with no rating has nothing to explain.
+  feedbackComment String?  @map("feedback_comment")
   memoryProcessed Boolean? @map("memory_processed")
   users           users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
@@ -494,6 +506,51 @@ model external_communication_connectors {
   active        Boolean  @default(false)
   createdAt     DateTime @default(now())
   lastUpdatedAt DateTime @default(now())
+}
+
+/// One Telegram chat bound to one NexusAI account. The bot is a single shared
+/// bot for the whole instance - this table is what makes an incoming chat_id
+/// resolve to a real user so every workspace/permission check downstream is the
+/// same one the web UI performs.
+model telegram_users {
+  id                  Int                @id @default(autoincrement())
+  chat_id             String             @unique
+  user_id             Int
+  telegram_username   String?
+  telegram_first_name String?
+  // Language the assistant must answer in. NULL means "match whatever the
+  // person wrote in", which is how the bot behaved before this was a choice.
+  response_language   String?
+  active_workspace_id Int?
+  active_thread_id    Int?
+  createdAt           DateTime           @default(now())
+  lastActiveAt        DateTime           @default(now())
+  user                users              @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  active_workspace    workspaces?        @relation(fields: [active_workspace_id], references: [id], onDelete: SetNull)
+  active_thread       workspace_threads? @relation(fields: [active_thread_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id])
+}
+
+/// One LINE chat bound to one NexusAI account. The bot is a single shared bot
+/// for the whole instance - this table is what makes an incoming LINE userId
+/// resolve to a real user so every workspace/permission check downstream is
+/// the same one the web UI performs. Mirrors telegram_users.
+model line_users {
+  id                  Int         @id @default(autoincrement())
+  line_user_id        String      @unique
+  user_id             Int
+  line_display_name   String?
+  // Language the assistant must answer in. NULL means "match whatever the
+  // person wrote in", which is how the bot behaved before this was a choice.
+  response_language   String?
+  active_workspace_id Int?
+  createdAt           DateTime    @default(now())
+  lastActiveAt        DateTime    @default(now())
+  user                users       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  active_workspace    workspaces? @relation(fields: [active_workspace_id], references: [id], onDelete: SetNull)
+
+  @@index([user_id])
 }
 
 model scheduled_jobs {

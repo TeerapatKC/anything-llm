@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,7 @@ export default function PerplexityOptions({ settings }) {
 }
 
 function PerplexityModelSelection({ settings }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,10 +53,12 @@ function PerplexityModelSelection({ settings }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="PerplexityModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -64,14 +68,16 @@ function PerplexityModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="PerplexityModelPref"
         required={true}
         defaultValue={settings?.PerplexityModelPref ?? customModels?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (

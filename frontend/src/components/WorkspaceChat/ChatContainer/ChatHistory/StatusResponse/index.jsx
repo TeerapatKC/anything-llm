@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { ChevronDown, CircleStop } from "lucide-react";
 
@@ -21,6 +22,7 @@ export default function StatusResponse({
   isComplete = false,
   isStopped = false,
 }) {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
   const currentThought = messages[messages.length - 1];
   const previousThoughts = messages.slice(0, -1);
@@ -51,7 +53,7 @@ export default function StatusResponse({
                 muted
                 playsInline
                 className="size-[18px] scale-[165%] light:invert"
-                aria-label="Agent is thinking..."
+                aria-label={t("ui.agent-thinking")}
               >
                 <source src={AgentAnimation} type="video/webm" />
               </video>
@@ -60,7 +62,7 @@ export default function StatusResponse({
                 src={AgentStatic}
                 alt="Agent complete"
                 className="size-[18px] light:invert"
-                aria-label="Agent has finished thinking"
+                aria-label={t("ui.agent-finished-thinking")}
               />
             )}
           </span>

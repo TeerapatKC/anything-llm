@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useRef, useState } from "react";
 import Workspace from "@/models/workspace";
 import LoadingChat from "./LoadingChat";
@@ -25,6 +26,7 @@ import {
 import { PENDING_HOME_MESSAGE } from "@/utils/constants";
 
 export default function WorkspaceChat({ loading, workspace }) {
+  const { t } = useTranslation();
   useWatchForAutoPlayAssistantTTSResponse();
   const { threadSlug = null } = useParams();
   const navigate = useNavigate();
@@ -99,8 +101,7 @@ export default function WorkspaceChat({ loading, workspace }) {
                 </div>
               </DialogHeader>
               <p className="text-theme-text-primary text-sm">
-                The workspace you're looking for is not available. It may have
-                been deleted or you may not have access to it.
+                {t("help.workspace-chat")}
               </p>
               <DialogFooter>
                 <Button variant="default" render={<a href={paths.home()} />}>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/table";
 
 export default function AdminInvites() {
+  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [loading, setLoading] = useState(true);
   const [invites, setInvites] = useState([]);
@@ -36,10 +38,8 @@ export default function AdminInvites() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Invitations"}
-        description={
-          "Create invitation links for people in your organization to accept and sign up with. Invitations can only be used by a single user."
-        }
+        title={t("admin-invites.title")}
+        description={t("admin-invites.description")}
       />
       <Dialog
         open={isOpen}
@@ -47,7 +47,7 @@ export default function AdminInvites() {
       >
         <div className="w-full justify-end flex">
           <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
-            <Mail className="h-4 w-4" /> Create Invite Link
+            <Mail className="h-4 w-4" /> {t("admin-invites.create-link")}
           </DialogTrigger>
         </div>
         <DialogContent>
@@ -69,20 +69,31 @@ export default function AdminInvites() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead scope="col">Status</TableHead>
-                <TableHead scope="col">Accepted By</TableHead>
-                <TableHead scope="col">Created By</TableHead>
-                <TableHead scope="col">Created</TableHead>
+                <TableHead scope="col">
+                  {t("admin-invites.table.status")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("admin-invites.table.email")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("admin-invites.table.accepted-by")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("admin-invites.table.created-by")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("admin-invites.table.created")}
+                </TableHead>
                 <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {invites.length === 0 ? (
                 <TableEmptyRow
-                  colSpan="5"
-                  description="Create a link to invite someone to this instance."
+                  colSpan="6"
+                  description={t("admin-invites.empty-description")}
                 >
-                  No invitations yet
+                  {t("admin-invites.empty")}
                 </TableEmptyRow>
               ) : (
                 invites.map((invite) => (

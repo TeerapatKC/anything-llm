@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import Invite from "@/models/invite";
@@ -19,6 +20,7 @@ import { DialogFooter } from "@/components/ui/dialog";
  * someone's permissions.
  */
 export default function ExistingUserForm() {
+  const { t } = useTranslation();
   const { code } = useParams();
   const signedInUser = userFromStorage();
   const [error, setError] = useState(null);
@@ -90,8 +92,7 @@ export default function ExistingUserForm() {
     <form onSubmit={signInAndClaim}>
       <div className="space-y-4">
         <p className="text-sm text-muted-foreground">
-          Sign in with your existing account to add it to the invite's
-          workspaces. Your role does not change.
+          {t("help.existing-user-form")}
         </p>
         <div>
           <Label htmlFor="username" className="block mb-2">
@@ -112,7 +113,7 @@ export default function ExistingUserForm() {
           <Input
             name="password"
             type="password"
-            placeholder="Your password"
+            placeholder={t("ui.your-password")}
             required={true}
             autoComplete="current-password"
           />

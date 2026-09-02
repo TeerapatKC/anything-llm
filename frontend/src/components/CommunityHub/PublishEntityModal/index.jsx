@@ -2,7 +2,6 @@ import { useCommunityHubAuth } from "@/hooks/useCommunityHubAuth";
 import UnauthenticatedHubModal from "@/components/CommunityHub/UnauthenticatedHubModal";
 import SystemPrompts from "./SystemPrompts";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import AgentFlows from "./AgentFlows";
 import SlashCommands from "./SlashCommands";
 
 export default function PublishEntityModal({
@@ -20,8 +19,6 @@ export default function PublishEntityModal({
     switch (entityType) {
       case "system-prompt":
         return <SystemPrompts entity={entity} />;
-      case "agent-flow":
-        return <AgentFlows entity={entity} />;
       case "slash-command":
         return <SlashCommands entity={entity} />;
       default:

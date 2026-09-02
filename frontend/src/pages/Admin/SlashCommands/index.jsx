@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
@@ -9,6 +10,7 @@ import SlashCommandManager from "@/components/SlashCommands/SlashCommandManager"
  * A workspace that defines the same command shadows the built-in.
  */
 export default function BuiltInSlashCommands() {
+  const { t } = useTranslation();
   return (
     <SettingsLayout>
       <PageHeader
@@ -21,7 +23,7 @@ export default function BuiltInSlashCommands() {
       <div className="mt-6">
         <SlashCommandManager
           title="Default commands"
-          description="Inherited by every workspace. A workspace can define a command with the same name to override the default."
+          description={t("ui.slash-commands-inherited")}
           emptyHint="No built-in commands yet. Add one to make it available in every workspace."
           fetchPresets={() => System.getSlashCommandPresets()}
           createPreset={(preset) => System.createSlashCommandPreset(preset)}

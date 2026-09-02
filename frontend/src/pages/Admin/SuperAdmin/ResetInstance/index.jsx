@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,7 @@ import FactoryReset from "../FactoryReset";
  * server asks for the caller's password and the instance's own name on top of this.
  */
 export default function ResetInstance() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [scopes, setScopes] = useState([]);
   const [counts, setCounts] = useState({});
@@ -125,16 +127,12 @@ export default function ResetInstance() {
       <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-y-5">
         <p className="flex items-start gap-x-2 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2.5 text-sm text-red-400 light:text-red-600">
           <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>
-            Everything you tick below is deleted permanently. Your own account,
-            the roles and permissions you have defined, and your LLM, embedder
-            and vector database configuration are never touched.
-          </span>
+          <span>{t("help.reset-instance")}</span>
         </p>
 
         <div className="overflow-hidden rounded-lg border border-theme-sidebar-border">
           <div className="border-b border-theme-sidebar-border bg-muted/50 px-4 py-3">
-            <Label>What to clear</Label>
+            <Label>{t("ui.what-to-clear")}</Label>
           </div>
           <div className="flex flex-col gap-y-1 p-2">
             {scopes.map((scope) => {
@@ -184,7 +182,7 @@ export default function ResetInstance() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Confirm it is you"
+              placeholder={t("ui.confirm-it-is-you")}
               autoComplete="current-password"
             />
           </div>

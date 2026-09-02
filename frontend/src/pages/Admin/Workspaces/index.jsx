@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -50,6 +51,7 @@ export default function AdminWorkspaces() {
 }
 
 function WorkspacesContainer() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [workspaces, setWorkspaces] = useState([]);
@@ -88,11 +90,15 @@ function WorkspacesContainer() {
     <Table containerClassName="mt-6" className="text-left min-w-[640px]">
       <TableHeader>
         <TableRow>
-          <TableHead scope="col">Name</TableHead>
-          <TableHead scope="col">Link</TableHead>
-          <TableHead scope="col">Users</TableHead>
-          <TableHead scope="col">Status</TableHead>
-          <TableHead scope="col">Created On</TableHead>
+          <TableHead scope="col">{t("admin-workspaces.table.name")}</TableHead>
+          <TableHead scope="col">{t("admin-workspaces.table.link")}</TableHead>
+          <TableHead scope="col">{t("admin-workspaces.table.users")}</TableHead>
+          <TableHead scope="col">
+            {t("admin-workspaces.table.status")}
+          </TableHead>
+          <TableHead scope="col">
+            {t("admin-workspaces.table.created-on")}
+          </TableHead>
           <TableHead scope="col"> </TableHead>
         </TableRow>
       </TableHeader>

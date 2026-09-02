@@ -3,6 +3,9 @@ const { safeJsonParse } = require("../http");
 const AgentPlugins = require("./aibitat/plugins");
 const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
+const {
+  listSQLConnections,
+} = require("./aibitat/plugins/sql-agent/SQLConnectors");
 
 /**
  * Per-workspace agent skill configuration.
@@ -27,6 +30,7 @@ const { AgentFlows } = require("../agentFlows");
  *   disabledSubSkills: { [parent]: string[] },  // per-parent disabled child skills
  *   activeImportedSkills: string[],             // imported plugin hubIds
  *   activeFlows: string[],                      // agent flow uuids
+ *   activeSqlConnections: string[],              // sql-agent connection database_ids
  *   activeMcpServers: string[],                 // MCP server names
  *   runtime: { [knob]: value|null },            // per-knob overrides, null = inherit
  * }
@@ -93,6 +97,7 @@ const EMPTY_CONFIG = {
   disabledSubSkills: {},
   activeImportedSkills: [],
   activeFlows: [],
+  activeSqlConnections: [],
   activeMcpServers: [],
   runtime: { ...EMPTY_RUNTIME },
 };
@@ -161,6 +166,7 @@ function normalizeConfig(config = null) {
     "disabledSubSkills",
     "activeImportedSkills",
     "activeFlows",
+    "activeSqlConnections",
     "activeMcpServers",
     "searchProvider",
     "runtime",
@@ -188,6 +194,7 @@ function normalizeConfig(config = null) {
     disabledSubSkills,
     activeImportedSkills: stringArray(parsed.activeImportedSkills),
     activeFlows: stringArray(parsed.activeFlows),
+    activeSqlConnections: stringArray(parsed.activeSqlConnections),
     activeMcpServers: stringArray(parsed.activeMcpServers),
     // Which search engine web-browsing uses for this workspace. The engines'
     // API keys stay instance-wide; only the choice of engine is per-workspace.
@@ -246,6 +253,13 @@ async function instanceDefaultConfig() {
     activeFlows: AgentFlows.activeFlowPlugins().map((id) =>
       id.replace(/^@@flow_/, "")
     ),
+    // Same idea for sql-agent's connections: every one currently configured and
+    // turned on, so an unconfigured workspace can query all of them exactly as
+    // it could before per-connection visibility existed. A connection an admin
+    // has switched off is excluded instance-wide, the same as an inactive flow.
+    activeSqlConnections: (await listSQLConnections())
+      .filter((conn) => conn.active !== false)
+      .map((conn) => conn.database_id),
     activeMcpServers: null, // null => "all booted servers", resolved at call time
     searchProvider:
       (await SystemSettings.getValueOrFallback(

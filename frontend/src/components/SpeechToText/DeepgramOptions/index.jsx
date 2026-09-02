@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/select";
 
 export default function DeepgramSpeechToTextOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.STTDeepgramApiKey);
   const [deepgramApiKey, setDeepgramApiKey] = useState(
     settings?.STTDeepgramApiKey
@@ -19,7 +21,7 @@ export default function DeepgramSpeechToTextOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="STTDeepgramApiKey"
@@ -38,6 +40,7 @@ export default function DeepgramSpeechToTextOptions({ settings }) {
 }
 
 function DeepgramSttModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,10 +60,12 @@ function DeepgramSttModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Transcription Model</Label>
+        <Label className="block mb-3">
+          {t("provider-options.transcription-model")}
+        </Label>
         <Select name="STTDeepgramModel" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -70,14 +75,16 @@ function DeepgramSttModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Transcription Model</Label>
+      <Label className="block mb-3">
+        {t("provider-options.transcription-model")}
+      </Label>
       <Select
         name="STTDeepgramModel"
         required={true}
         defaultValue={settings?.STTDeepgramModel ?? "nova-3"}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

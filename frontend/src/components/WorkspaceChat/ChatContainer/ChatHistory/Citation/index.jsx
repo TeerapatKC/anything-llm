@@ -8,10 +8,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  Database,
   FileText,
   GitBranch,
   Info,
   Link,
+  Plug,
   SquareArrowOutUpRight,
 } from "lucide-react";
 import {
@@ -42,6 +44,8 @@ const CIRCLE_ICONS = {
   drupalwiki: FileText,
   obsidian: FileText,
   paperlessNgx: FileText,
+  database: Database,
+  mcp: Plug,
 };
 
 const CIRCLE_IMAGES = {
@@ -299,6 +303,8 @@ const supportedSources = [
   "google-calendar://",
   "outlook-thread://",
   "outlook-attachment://",
+  "database://",
+  "mcp://",
 ];
 
 /**
@@ -406,6 +412,16 @@ export function parseChunkSource({ title = "", chunks = [] }) {
       case "outlook-attachment://":
         text = title;
         icon = "outlookAttachment";
+        break;
+
+      case "database://":
+        text = title;
+        icon = "database";
+        break;
+
+      case "mcp://":
+        text = title;
+        icon = "mcp";
         break;
 
       default:

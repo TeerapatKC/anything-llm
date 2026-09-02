@@ -118,6 +118,46 @@ const AgentFlows = {
   },
 
   /**
+   * List every workspace and whether this flow is currently active for it
+   * @param {string} uuid - The UUID of the flow
+   * @returns {Promise<{success: boolean, error: string | null, workspaces: Array<{id: number, name: string, slug: string, enabled: boolean}>}>}
+   */
+  getFlowWorkspaces: async (uuid) => {
+    return await fetch(`${API_BASE}/agent-flows/${uuid}/workspaces`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({
+        success: false,
+        error: e.message,
+        workspaces: [],
+      }));
+  },
+
+  /**
+   * Set the exact list of workspaces that can see/use this flow
+   * @param {string} uuid - The UUID of the flow
+   * @param {number[]} workspaceIds - Workspace ids that should have this flow enabled
+   * @returns {Promise<{success: boolean, error: string | null}>}
+   */
+  updateFlowWorkspaces: async (uuid, workspaceIds = []) => {
+    return await fetch(`${API_BASE}/agent-flows/${uuid}/workspaces`, {
+      method: "POST",
+      headers: {
+        ...baseHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ workspaceIds }),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({
+        success: false,
+        error: e.message,
+      }));
+  },
+
+  /**
    * Toggle a flow's active status
    * @param {string} uuid - The UUID of the flow to toggle
    * @param {boolean} active - The new active status

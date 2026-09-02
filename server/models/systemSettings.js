@@ -1165,11 +1165,24 @@ function mergeConnections(existingConnections = [], updates = []) {
       connectionString,
       engine,
       schema,
+      active,
     } = update;
 
     switch (action) {
       case "remove": {
         connectionsMap.delete(database_id);
+        break;
+      }
+
+      case "toggle": {
+        const existing = connectionsMap.get(database_id);
+        if (!existing) {
+          console.warn(
+            `[mergeConnections] Toggle skipped: Connection "${database_id}" not found`
+          );
+          break;
+        }
+        connectionsMap.set(database_id, { ...existing, active: !!active });
         break;
       }
       case "update": {
@@ -1192,12 +1205,18 @@ function mergeConnections(existingConnections = [], updates = []) {
           break;
         }
 
+        // Editing a connection's details never changes whether it's turned on -
+        // that's a separate action (the toggle endpoint) from editing credentials.
+        const previousActive =
+          connectionsMap.get(originalDatabaseId)?.active ?? true;
+
         // Remove old and add updated connection
         connectionsMap.delete(originalDatabaseId);
         connectionsMap.set(newId, {
           engine,
           database_id: newId,
           connectionString,
+          active: previousActive,
           ...(schema && { schema }),
         });
         break;
@@ -1219,6 +1238,7 @@ function mergeConnections(existingConnections = [], updates = []) {
           engine,
           database_id: slugifiedId,
           connectionString,
+          active: true,
           ...(schema && { schema }),
         });
         break;

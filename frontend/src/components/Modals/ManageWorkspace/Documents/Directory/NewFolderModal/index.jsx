@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { FolderPlus } from "lucide-react";
 import Document from "@/models/document";
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function NewFolderModal({ closeModal, onCreated }) {
+  const { t } = useTranslation();
   const [error, setError] = useState(null);
   const [folderName, setFolderName] = useState("");
   const [creating, setCreating] = useState(false);
@@ -37,7 +39,7 @@ export default function NewFolderModal({ closeModal, onCreated }) {
         <DialogHeader>
           <div className="flex items-center gap-2">
             <FolderPlus className="h-5 w-5 text-theme-text-primary" />
-            <DialogTitle>Create New Folder</DialogTitle>
+            <DialogTitle>{t("ui.create-new-folder")}</DialogTitle>
           </div>
         </DialogHeader>
         <form onSubmit={handleCreate}>
@@ -49,7 +51,7 @@ export default function NewFolderModal({ closeModal, onCreated }) {
               <Input
                 name="folderName"
                 type="text"
-                placeholder="Enter folder name"
+                placeholder={t("ui.enter-folder-name")}
                 required={true}
                 autoComplete="off"
                 value={folderName}

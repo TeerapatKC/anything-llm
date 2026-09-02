@@ -8,15 +8,20 @@ import {
   CircleQuestionMark,
   Languages,
   LogOut,
+  Mic,
   Palette,
+  Plug,
   User,
   Wrench,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AccountModal from "../AccountModal";
+import ConnectionsModal from "../ConnectionsModal";
+import Appearance from "@/models/appearance";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -74,6 +79,7 @@ export default function UserButton() {
     changeLanguage,
   } = useLanguageOptions();
   const [showAccountSettings, setShowAccountSettings] = useState(false);
+  const [showConnections, setShowConnections] = useState(false);
   const [supportEmail, setSupportEmail] = useState("");
 
   useEffect(() => {
@@ -174,6 +180,16 @@ export default function UserButton() {
             <User size={16} />
             {t("profile_settings.account")}
           </DropdownMenuItem>
+          {/* Their own entries rather than sections of Edit Account: neither
+              is part of the account, and neither is saved by its form. */}
+          <DropdownMenuItem
+            onClick={() => setShowConnections(true)}
+            className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
+          >
+            <Plug size={16} />
+            {t("profile_settings.connections.title")}
+          </DropdownMenuItem>
+          <SpeechSubmenu />
           <PreferenceSubmenu
             icon={<Palette size={16} />}
             label={t("profile_settings.theme")}
@@ -238,7 +254,59 @@ export default function UserButton() {
           hideModal={() => setShowAccountSettings(false)}
         />
       )}
+      {user && showConnections && (
+        <ConnectionsModal
+          user={user}
+          open={showConnections}
+          onClose={() => setShowConnections(false)}
+        />
+      )}
     </div>
+  );
+}
+
+/**
+ * Speech settings, in the same shape as theme and language: a submenu that
+ * applies on click. They are browser-local appearance settings, so there is
+ * nothing to save and nothing to cancel - a dialog would only add a step.
+ */
+function SpeechSubmenu() {
+  const { t } = useTranslation();
+  const [settings, setSettings] = useState(() => Appearance.getSettings());
+
+  const toggle = (key) => (checked) => {
+    Appearance.updateSettings({ [key]: checked });
+    setSettings((prev) => ({ ...prev, [key]: checked }));
+  };
+
+  return (
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger className="cursor-pointer text-theme-text-primary focus:bg-theme-action-menu-item-hover data-[state=open]:bg-theme-action-menu-item-hover">
+        <Mic size={16} />
+        {t("profile_settings.speech.title")}
+      </DropdownMenuSubTrigger>
+      <DropdownMenuPortal>
+        <DropdownMenuSubContent className="min-w-64 bg-theme-action-menu-bg border-theme-modal-border">
+          <DropdownMenuCheckboxItem
+            checked={settings.autoSubmitSttInput ?? true}
+            onCheckedChange={toggle("autoSubmitSttInput")}
+            // Both switches live here, so a tap on one must not close the menu.
+            closeOnClick={false}
+            className="cursor-pointer text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary"
+          >
+            {t("customization.chat.auto_submit.title")}
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            checked={settings.autoPlayAssistantTtsResponse ?? false}
+            onCheckedChange={toggle("autoPlayAssistantTtsResponse")}
+            closeOnClick={false}
+            className="cursor-pointer text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary"
+          >
+            {t("customization.chat.auto_speak.title")}
+          </DropdownMenuCheckboxItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuPortal>
+    </DropdownMenuSub>
   );
 }
 

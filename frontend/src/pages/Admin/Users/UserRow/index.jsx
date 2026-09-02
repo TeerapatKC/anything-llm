@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { titleCase } from "text-case";
 import Admin from "@/models/admin";
 import EditUserModal from "./EditUserModal";
@@ -30,6 +31,7 @@ export default function UserRow({
   permissionLabels = {},
   fetchUsers,
 }) {
+  const { t } = useTranslation();
   const rowRef = useRef(null);
   // The instance owner is off-limits from this console to everyone but themselves - the
   // server refuses regardless, this just stops offering actions that would only fail.
@@ -55,10 +57,9 @@ export default function UserRow({
 
   const handleResetPassword = async () => {
     setConfirm({
-      title: `Reset password for ${user.username}?`,
-      description:
-        "A new password will be generated and shown to you once. Their current password stops working immediately and they must set a new one the next time they log in.",
-      confirmText: "Reset password",
+      title: t("admin-users.row.reset-title", { username: user.username }),
+      description: t("admin-users.row.reset-description"),
+      confirmText: t("admin-users.row.reset-password"),
       variant: "default",
       onConfirm: async () => {
         const { success, password, error } = await Admin.resetUserPassword(
@@ -75,11 +76,15 @@ export default function UserRow({
 
   const handleSuspend = async () => {
     setConfirm({
-      title: `${suspended ? "Unsuspend" : "Suspend"} ${user.username}?`,
+      title: suspended
+        ? t("admin-users.row.unsuspend-title", { username: user.username })
+        : t("admin-users.row.suspend-title", { username: user.username }),
       description: suspended
-        ? "The user will be able to log back into this instance of NexusAI."
-        : "After suspending they will be logged out and unable to log back in until unsuspended by an admin.",
-      confirmText: suspended ? "Unsuspend" : "Suspend",
+        ? t("admin-users.row.unsuspend-description")
+        : t("admin-users.row.suspend-description"),
+      confirmText: suspended
+        ? t("admin-users.row.unsuspend")
+        : t("admin-users.row.suspend"),
       variant: suspended ? "default" : "destructive",
       onConfirm: async () => {
         const { success, error } = await Admin.updateUser(user.id, {
@@ -88,7 +93,9 @@ export default function UserRow({
         if (!success) showToast(error, "error", { clear: true });
         if (success) {
           showToast(
-            `User ${!suspended ? "has been suspended" : "is no longer suspended"}.`,
+            !suspended
+              ? t("admin-users.row.suspend-toast")
+              : t("admin-users.row.unsuspend-toast"),
             "success",
             { clear: true }
           );
@@ -100,17 +107,18 @@ export default function UserRow({
 
   const handleDelete = async () => {
     setConfirm({
-      title: `Delete ${user.username}?`,
-      description:
-        "After deleting they will be logged out and unable to use this instance of NexusAI. This action is irreversible.",
-      confirmText: "Delete",
+      title: t("admin-users.row.delete-title", { username: user.username }),
+      description: t("admin-users.row.delete-description"),
+      confirmText: t("admin-users.row.delete"),
       variant: "destructive",
       onConfirm: async () => {
         const { success, error } = await Admin.deleteUser(user.id);
         if (!success) showToast(error, "error", { clear: true });
         if (success) {
           fetchUsers?.();
-          showToast("User deleted from system.", "success", { clear: true });
+          showToast(t("admin-users.row.delete-toast"), "success", {
+            clear: true,
+          });
         }
       },
     });
@@ -129,7 +137,7 @@ export default function UserRow({
               titleCase(user.role)}
             {isOwner && (
               <Badge variant="secondary" className="gap-x-1 text-[10px]">
-                <Crown className="h-3 w-3" /> Owner
+                <Crown className="h-3 w-3" /> {t("admin-users.owner")}
               </Badge>
             )}
           </div>
@@ -140,10 +148,20 @@ export default function UserRow({
               checked={!suspended}
               disabled={!canModify || currUser?.id === user.id}
               onCheckedChange={handleSuspend}
-              aria-label={`${!suspended ? "Suspend" : "Unsuspend"} ${user.username}`}
+              aria-label={
+                !suspended
+                  ? t("admin-users.row.aria-suspend", {
+                      username: user.username,
+                    })
+                  : t("admin-users.row.aria-unsuspend", {
+                      username: user.username,
+                    })
+              }
             />
             <span className="whitespace-nowrap text-sm text-theme-text-primary">
-              {!suspended ? "Active" : "Suspended"}
+              {!suspended
+                ? t("admin-users.active")
+                : t("admin-users.suspended")}
             </span>
           </div>
         </TableCell>
@@ -151,19 +169,23 @@ export default function UserRow({
         <TableCell className="text-right">
           <TableRowActions>
             {canModify && (
-              <DropdownMenuItem onClick={openModal}>Edit</DropdownMenuItem>
+              <DropdownMenuItem onClick={openModal}>
+                {t("admin-users.row.edit")}
+              </DropdownMenuItem>
             )}
             {currUser?.id !== user.id && canModify && (
               <>
                 <DropdownMenuItem onClick={handleResetPassword}>
-                  Reset password
+                  {t("admin-users.row.reset-password")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleSuspend}>
-                  {suspended ? "Unsuspend" : "Suspend"}
+                  {suspended
+                    ? t("admin-users.row.unsuspend")
+                    : t("admin-users.row.suspend")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={handleDelete}>
-                  Delete
+                  {t("admin-users.row.delete")}
                 </DropdownMenuItem>
               </>
             )}
@@ -188,7 +210,7 @@ export default function UserRow({
         open={!!generatedPassword}
         username={user.username}
         password={generatedPassword}
-        title="New password"
+        title={t("admin-users.row.new-password")}
         onClose={() => setGeneratedPassword(null)}
       />
     </>

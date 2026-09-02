@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import { fullApiUrl, POPUP_BROWSER_EXTENSION_EVENT } from "@/utils/constants";
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 
 export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
+  const { t } = useTranslation();
   const [apiKey, setApiKey] = useState(null);
   const [error, setError] = useState(null);
   const [copied, setCopied] = useState(false);
@@ -68,17 +70,13 @@ export default function NewBrowserExtensionApiKeyModal({ onSuccess }) {
             />
           )}
           <p className="text-yellow-300 light:text-orange-500 text-xs md:text-sm font-semibold">
-            Warning: this API key will allow access to all workspaces associated
-            with your account. Please share it cautiously.
+            {t("help.new-browser-extension-api-key-modal")}
           </p>
           <p className="text-theme-text-primary/60 text-xs md:text-sm">
-            After clicking "Create API Key", NexusAI will attempt to connect to
-            your browser extension automatically.
+            {t("help.new-browser-extension-api-key-modal-2")}
           </p>
           <p className="text-theme-text-primary/60 text-xs md:text-sm">
-            If you see "Connected to NexusAI" in the extension, the connection
-            was successful. If not, please copy the connection string and paste
-            it into the extension manually.
+            {t("help.new-browser-extension-api-key-modal-3")}
           </p>
         </div>
         <DialogFooter>

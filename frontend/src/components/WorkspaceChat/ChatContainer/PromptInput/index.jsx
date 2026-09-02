@@ -22,6 +22,7 @@ import usePromptInputStorage from "@/hooks/usePromptInputStorage";
 import ToolsMenu, { TOOLS_MENU_KEYBOARD_EVENT } from "./ToolsMenu";
 import { useSearchParams } from "react-router-dom";
 import { useIsAgentSessionActive } from "@/utils/chat/agent";
+import showToast from "@/utils/toast";
 
 export const PROMPT_INPUT_ID = "primary-prompt-input";
 export const PROMPT_INPUT_EVENT = "set_prompt_input";
@@ -192,7 +193,14 @@ export default function PromptInput({
     // Is simple enter key press w/o shift key
     if (event.keyCode === 13 && !event.shiftKey) {
       event.preventDefault();
-      if (isStreaming || isDisabled) return; // Prevent submission if streaming or disabled
+      if (isStreaming || isDisabled) {
+        // Otherwise Enter silently does nothing and the typed text just sits
+        // there with no explanation of why it wasn't sent.
+        showToast(t("chat_window.response_streaming"), "info", {
+          toastId: "response-streaming",
+        });
+        return;
+      }
       setShowTools(false);
       return submit(event);
     }

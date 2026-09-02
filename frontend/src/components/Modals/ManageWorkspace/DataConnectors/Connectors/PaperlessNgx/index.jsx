@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
@@ -7,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function PaperlessNgxOptions() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -56,8 +58,7 @@ export default function PaperlessNgxOptions() {
                 <div className="flex flex-col gap-y-1 mb-4">
                   <Label>Base URL</Label>
                   <p className="text-xs font-normal text-theme-text-secondary">
-                    The URL where your Paperless-ngx instance is running (e.g.,
-                    http://localhost:8000)
+                    {t("help.paperless-base-url")}
                   </p>
                 </div>
                 <Input
@@ -85,7 +86,7 @@ export default function PaperlessNgxOptions() {
                 <Input
                   type="password"
                   name="apiToken"
-                  placeholder="Enter your API token"
+                  placeholder={t("ui.enter-api-token")}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -98,10 +99,7 @@ export default function PaperlessNgxOptions() {
             <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary mb-4 bg-blue-800/30 w-fit rounded-lg px-4 py-2">
               <div className="gap-x-2 flex items-center">
                 <Info className="shrink-0" size={25} />
-                <p className="text-sm">
-                  Make sure your Paperless-ngx instance is running and
-                  accessible from this machine.
-                </p>
+                <p className="text-sm">{t("help.paperless-ngx")}</p>
               </div>
             </div>
             <Button variant="default" type="submit" disabled={loading}>
@@ -109,8 +107,7 @@ export default function PaperlessNgxOptions() {
             </Button>
             {loading && (
               <p className="text-xs text-white/50">
-                Once complete, all documents will be available for embedding
-                into workspaces.
+                {t("help.paperless-ngx-2")}
               </p>
             )}
           </div>

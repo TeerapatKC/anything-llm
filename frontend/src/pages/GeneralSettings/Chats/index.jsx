@@ -6,7 +6,7 @@ import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
-import { ChevronDown, Download, Trash2 } from "lucide-react";
+import { ChevronDown, Download, ListFilter, Trash2 } from "lucide-react";
 import { saveAs } from "file-saver";
 import { useTranslation } from "react-i18next";
 import { CanViewChatHistory } from "@/components/CanViewChatHistory";
@@ -25,6 +25,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+const FEEDBACK_FILTERS = ["all", "up", "down", "none"];
 
 const exportOptions = {
   csv: {
@@ -66,6 +68,7 @@ export default function WorkspaceChats() {
   const [loading, setLoading] = useState(true);
   const [chats, setChats] = useState([]);
   const [offset, setOffset] = useState(Number(query.get("offset") || 0));
+  const [feedback, setFeedback] = useState("all");
   const [canNext, setCanNext] = useState(false);
   const { t } = useTranslation();
   const [confirm, setConfirm] = useState(null);
@@ -99,14 +102,16 @@ export default function WorkspaceChats() {
 
   useEffect(() => {
     async function fetchChats() {
-      const { chats: _chats = [], hasPages = false } =
-        await System.chats(offset);
+      const { chats: _chats = [], hasPages = false } = await System.chats(
+        offset,
+        feedback === "all" ? null : feedback
+      );
       setChats(_chats);
       setCanNext(hasPages);
       setLoading(false);
     }
     fetchChats();
-  }, [offset]);
+  }, [offset, feedback]);
 
   return (
     <>
@@ -117,6 +122,30 @@ export default function WorkspaceChats() {
             description={t("recorded.description")}
           />
           <div className="mt-3 mb-4 flex w-full flex-wrap justify-end gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={<Button type="button" size="lg" variant="outline" />}
+              >
+                <ListFilter />
+                {t(`recorded.feedback.filter_${feedback}`)}
+                <ChevronDown className="transition-transform group-aria-expanded/button:rotate-180" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-40">
+                {FEEDBACK_FILTERS.map((value) => (
+                  <DropdownMenuItem
+                    key={value}
+                    onClick={() => {
+                      // A filtered result set is shorter, so the page the reader
+                      // was on may not exist any more.
+                      setOffset(0);
+                      setFeedback(value);
+                    }}
+                  >
+                    {t(`recorded.feedback.filter_${value}`)}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
             <DropdownMenu>
               <DropdownMenuTrigger render={<Button type="button" size="lg" />}>
                 <Download />
@@ -209,6 +238,7 @@ function ChatsContainer({
             <TableHead scope="col">{t("recorded.table.workspace")}</TableHead>
             <TableHead scope="col">{t("recorded.table.prompt")}</TableHead>
             <TableHead scope="col">{t("recorded.table.response")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.feedback")}</TableHead>
             <TableHead scope="col">{t("recorded.table.at")}</TableHead>
             <TableHead scope="col"> </TableHead>
           </TableRow>

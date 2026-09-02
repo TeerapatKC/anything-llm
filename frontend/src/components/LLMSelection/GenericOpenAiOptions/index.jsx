@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function GenericOpenAiOptions({ settings }) {
+  const { t } = useTranslation();
   const [genericOpenAiBasePath, setGenericOpenAiBasePath] = useState(
     settings?.GenericOpenAiBasePath || ""
   );
@@ -40,7 +42,7 @@ export default function GenericOpenAiOptions({ settings }) {
     <div className="flex flex-col gap-y-7">
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Base URL</Label>
+          <Label className="block mb-3">{t("provider-options.base-url")}</Label>
           <Input
             type="url"
             name="GenericOpenAiBasePath"
@@ -53,7 +55,7 @@ export default function GenericOpenAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="GenericOpenAiKey"
@@ -75,7 +77,9 @@ export default function GenericOpenAiOptions({ settings }) {
       </div>
       <div className="flex gap-[36px] flex-wrap">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Model context window</Label>
+          <Label className="block mb-3">
+            {t("provider-options.model-context-window")}
+          </Label>
           <Input
             type="number"
             name="GenericOpenAiTokenLimit"
@@ -88,7 +92,9 @@ export default function GenericOpenAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Max Tokens</Label>
+          <Label className="block mb-3">
+            {t("provider-options.max-tokens")}
+          </Label>
           <Input
             type="number"
             name="GenericOpenAiMaxTokens"
@@ -111,6 +117,7 @@ function GenericOpenAiModelSelection({
   genericOpenAiModelPref,
   setGenericOpenAiModelPref,
 }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -153,7 +160,7 @@ function GenericOpenAiModelSelection({
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <Label>Selected Model</Label>
+          <Label>{t("provider-options.selected-model")}</Label>
         </div>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled` decides
@@ -169,7 +176,7 @@ function GenericOpenAiModelSelection({
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="--loading available models--" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -185,11 +192,13 @@ function GenericOpenAiModelSelection({
   if (customModels.length === 0 || !savedModelInList) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-2">Selected Model</Label>
+        <Label className="block mb-2">
+          {t("provider-options.selected-model")}
+        </Label>
         <Input
           type="text"
           name="GenericOpenAiModelPref"
-          placeholder="Model id used for chat requests"
+          placeholder={t("ui.model-id-for-chat")}
           value={selectedModel}
           onChange={(e) => setGenericOpenAiModelPref(e.target.value)}
           required={true}
@@ -202,7 +211,9 @@ function GenericOpenAiModelSelection({
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-2">Selected Model</Label>
+      <Label className="block mb-2">
+        {t("provider-options.selected-model")}
+      </Label>
       <Select
         key="generic-openai-model-loaded"
         name="GenericOpenAiModelPref"
@@ -211,12 +222,14 @@ function GenericOpenAiModelSelection({
         onValueChange={(val) => setGenericOpenAiModelPref(val)}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

@@ -29,7 +29,6 @@ export default function BrowserNativeSTT({
     resetTranscript,
     browserSupportsSpeechRecognition,
     browserSupportsContinuousListening,
-    isMicrophoneAvailable,
   } = useSpeechRecognition({
     clearTranscriptOnListen: true,
   });
@@ -43,13 +42,11 @@ export default function BrowserNativeSTT({
   }
 
   async function startSTTSession() {
-    if (!isMicrophoneAvailable) {
-      alert(
-        "NexusAI does not have access to microphone. Please enable for this site to use this feature."
-      );
-      return;
-    }
-
+    // Always attempt getUserMedia rather than gating on the library's
+    // isMicrophoneAvailable flag - that flag only flips to false after a
+    // prior denial and never resets within the page session, so once set it
+    // pre-empts this call and the browser's permission prompt never appears
+    // again even after the user grants access in their browser settings.
     try {
       const audioStream = await navigator.mediaDevices.getUserMedia({
         audio: true,

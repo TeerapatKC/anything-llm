@@ -2,7 +2,7 @@ module.exports.SqlAgentListTables = {
   name: "sql-list-tables",
   plugin: function () {
     const {
-      listSQLConnections,
+      getSQLConnectionForWorkspace,
       getDBClient,
     } = require("./SQLConnectors/index.js");
 
@@ -57,8 +57,10 @@ module.exports.SqlAgentListTables = {
           handler: async function ({ database_id = "" }) {
             try {
               this.super.handlerProps.log(`Using the sql-list-tables tool.`);
-              const databaseConfig = (await listSQLConnections()).find(
-                (db) => db.database_id === database_id
+              const workspace = this.super.handlerProps.invocation.workspace;
+              const databaseConfig = await getSQLConnectionForWorkspace(
+                workspace,
+                database_id
               );
               if (!databaseConfig) {
                 this.super.handlerProps.log(

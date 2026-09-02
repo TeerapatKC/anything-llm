@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Info } from "lucide-react";
 import {
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/select";
 
 export default function PrivateModeOptions({ settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(!!settings?.PrivateModeBasePath);
   const [basePath, setBasePath] = useState(settings?.PrivateModeBasePath);
@@ -110,7 +112,7 @@ export default function PrivateModeOptions({ settings }) {
               required={true}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="-- Select a model --" />
+                <SelectValue placeholder={t("ui.select-model-dashed")} />
               </SelectTrigger>
               <SelectContent>
                 {models.length > 0 ? (

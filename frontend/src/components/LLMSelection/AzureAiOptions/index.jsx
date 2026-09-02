@@ -58,7 +58,7 @@ export default function AzureAiOptions({ settings }) {
           <Input
             type="text"
             name="AzureOpenAiModelPref"
-            placeholder="Azure OpenAI chat model deployment name"
+            placeholder={t("ui.azure-chat-deployment-placeholder")}
             defaultValue={settings?.AzureOpenAiModelPref}
             required={true}
             autoComplete="off"
@@ -80,7 +80,7 @@ export default function AzureAiOptions({ settings }) {
             required={true}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="4096">4,096 (gpt-3.5-turbo)</SelectItem>
@@ -126,7 +126,7 @@ export default function AzureAiOptions({ settings }) {
             required={true}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="default">

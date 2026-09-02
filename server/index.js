@@ -37,6 +37,7 @@ const { mcpServersEndpoints } = require("./endpoints/mcpServers");
 const { mobileEndpoints } = require("./endpoints/mobile");
 const { webPushEndpoints } = require("./endpoints/webPush");
 const { telegramEndpoints } = require("./endpoints/telegram");
+const { lineEndpoints } = require("./endpoints/line");
 const { scheduledJobEndpoints } = require("./endpoints/scheduledJobs");
 const {
   outlookAgentEndpoints,
@@ -47,6 +48,7 @@ const {
 const { memoryEndpoints } = require("./endpoints/memory");
 const { roleEndpoints } = require("./endpoints/roles");
 const { superAdminEndpoints } = require("./endpoints/superAdmin");
+const { smtpEndpoints } = require("./endpoints/smtp");
 const { httpLogger } = require("./middleware/httpLogger");
 const app = express();
 const apiRouter = express.Router();
@@ -65,7 +67,17 @@ if (
 }
 app.use(cors({ origin: true }));
 app.use(bodyParser.text({ limit: FILE_LIMIT }));
-app.use(bodyParser.json({ limit: FILE_LIMIT }));
+app.use(
+  bodyParser.json({
+    limit: FILE_LIMIT,
+    // Keep the raw bytes around for endpoints that must verify an HMAC
+    // signature over the exact request body (e.g. the LINE webhook) -
+    // JSON.stringify(req.body) is not guaranteed to reproduce it byte-for-byte.
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
 app.use(
   bodyParser.urlencoded({
     limit: FILE_LIMIT,
@@ -102,12 +114,14 @@ mcpServersEndpoints(apiRouter);
 mobileEndpoints(apiRouter);
 webPushEndpoints(apiRouter);
 telegramEndpoints(apiRouter);
+lineEndpoints(apiRouter);
 scheduledJobEndpoints(apiRouter);
 outlookAgentEndpoints(apiRouter);
 googleAgentSkillEndpoints(apiRouter);
 memoryEndpoints(apiRouter);
 roleEndpoints(apiRouter);
 superAdminEndpoints(apiRouter);
+smtpEndpoints(apiRouter);
 // Externally facing embedder endpoints
 embeddedEndpoints(apiRouter);
 

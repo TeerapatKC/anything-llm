@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ export default function CohereAiOptions({ settings }) {
 }
 
 function CohereModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -65,7 +67,9 @@ function CohereModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -78,7 +82,7 @@ function CohereModelSelection({ apiKey, settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -88,7 +92,9 @@ function CohereModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="CohereModelPref"
@@ -96,7 +102,7 @@ function CohereModelSelection({ apiKey, settings }) {
         defaultValue={settings?.CohereModelPref ?? models?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

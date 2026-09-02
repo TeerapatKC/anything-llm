@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -13,10 +14,11 @@ import {
 } from "@/components/ui/select";
 
 export default function GiteeAIOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="flex gap-[36px] mt-1.5">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="GiteeAIApiKey"
@@ -31,7 +33,9 @@ export default function GiteeAIOptions({ settings }) {
         <>
           <GiteeAIModelSelection settings={settings} />
           <div className="flex flex-col w-60">
-            <Label className="block mb-2">Model context window</Label>
+            <Label className="block mb-2">
+              {t("provider-options.model-context-window")}
+            </Label>
             <Input
               type="number"
               name="GiteeAITokenLimit"
@@ -50,6 +54,7 @@ export default function GiteeAIOptions({ settings }) {
 }
 
 function GiteeAIModelSelection({ settings }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -74,7 +79,9 @@ function GiteeAIModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -87,7 +94,7 @@ function GiteeAIModelSelection({ settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -97,7 +104,9 @@ function GiteeAIModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="GiteeAIModelPref"
@@ -108,7 +117,7 @@ function GiteeAIModelSelection({ settings }) {
         }
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

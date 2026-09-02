@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/refs */
 import { memo, useRef, useEffect } from "react";
-import { TriangleAlert } from "lucide-react";
 import renderMarkdown from "@/utils/chat/markdown";
 import DOMPurify from "@/utils/chat/purify";
 import Citations from "../Citation";
@@ -10,6 +9,7 @@ import {
   THOUGHT_REGEX_OPEN,
   ThoughtChainComponent,
 } from "../ThoughtContainer";
+import ErrorResponse from "../ErrorResponse";
 
 const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
   if (!reply && sources.length === 0 && !pending && !error) return null;
@@ -25,17 +25,7 @@ const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
   }
 
   if (error) {
-    return (
-      <div className="flex justify-start w-full">
-        <div className="py-4 pl-0 pr-4 flex flex-col md:max-w-[80%]">
-          <span className="inline-block p-2 rounded-lg bg-red-50 text-red-500">
-            <TriangleAlert className="h-4 w-4 mb-1 inline-block" /> Could not
-            respond to message.
-            <span className="text-xs">Reason: {error || "unknown"}</span>
-          </span>
-        </div>
-      </div>
-    );
+    return <ErrorResponse error={error} />;
   }
 
   return (

@@ -228,7 +228,7 @@ function GitHubBranchSelection({ repo, accessToken }) {
       </div>
       <Select name="branch" required={true}>
         <SelectTrigger className="border-none bg-theme-settings-input-bg border-gray-500 text-theme-text-primary focus:outline-primary-button active:outline-primary-button outline-none text-sm rounded-lg w-full p-2.5">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("ui.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {allBranches.map((branch) => {

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import CommunityHubImportItemSteps from "../..";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/select";
 
 export default function SystemPrompt({ item, setStep }) {
+  const { t } = useTranslation();
   const [destinationWorkspaceSlug, setDestinationWorkspaceSlug] =
     useState(null);
   const [workspaces, setWorkspaces] = useState([]);
@@ -67,10 +69,7 @@ export default function SystemPrompt({ item, setStep }) {
         )}
       </div>
       <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
-        <p>
-          System prompts are used to guide the behavior of the AI agents and can
-          be applied to any existing workspace.
-        </p>
+        <p>{t("help.system-prompt")}</p>
 
         <div className="flex flex-col gap-y-2">
           <p className="text-theme-text-secondary light:text-theme-text-secondary font-semibold">
@@ -84,14 +83,14 @@ export default function SystemPrompt({ item, setStep }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Apply to Workspace</Label>
+          <Label className="block mb-3">{t("ui.apply-to-workspace")}</Label>
           <Select
             name="destinationWorkspaceSlug"
             required={true}
             onValueChange={setDestinationWorkspaceSlug}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("ui.select-option")} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

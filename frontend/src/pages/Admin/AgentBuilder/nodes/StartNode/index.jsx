@@ -1,4 +1,5 @@
 import React, { Fragment } from "react";
+import { useTranslation } from "react-i18next";
 import { Plus, X } from "lucide-react";
 import { VARIABLE_HIGHLIGHT_CLASS } from "../../VariableInput";
 
@@ -7,6 +8,7 @@ export default function StartNode({
   onConfigChange,
   onDeleteVariable,
 }) {
+  const { t } = useTranslation();
   const handleDeleteVariable = (index, variableName) => {
     // First clean up references, then delete the variable
     onDeleteVariable(variableName);
@@ -53,7 +55,7 @@ export default function StartNode({
         <div key={index} className="flex gap-2">
           <input
             type="text"
-            placeholder="Variable name"
+            placeholder={t("agent-builder.start.variable-name")}
             value={variable.name}
             onChange={(e) => {
               const newVars = [...config.variables];
@@ -66,7 +68,7 @@ export default function StartNode({
           />
           <input
             type="text"
-            placeholder="Initial value"
+            placeholder={t("agent-builder.start.initial-value")}
             value={variable.value}
             onChange={(e) => {
               const newVars = [...config.variables];
@@ -81,7 +83,7 @@ export default function StartNode({
             <button
               onClick={() => handleDeleteVariable(index, variable.name)}
               className="p-2.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:text-red-500 hover:border-red-500/20 hover:bg-red-500/10 transition-colors duration-300"
-              title="Delete variable"
+              title={t("agent-builder.start.delete-variable")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -93,7 +95,7 @@ export default function StartNode({
                 onConfigChange({ variables: newVars });
               }}
               className="p-2.5 rounded-lg border-none bg-theme-settings-input-bg text-theme-text-primary hover:bg-theme-action-menu-item-hover transition-colors duration-300"
-              title="Add variable"
+              title={t("agent-builder.start.add-variable")}
             >
               <Plus className="w-4 h-4" />
             </button>

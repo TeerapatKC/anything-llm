@@ -55,6 +55,53 @@ async function listSQLConnections() {
 }
 
 /**
+ * Every connection visible to a given workspace. Mirrors how agent flows and MCP
+ * servers are scoped: a workspace whose `activeSqlConnections` was never set (or
+ * was explicitly cleared back to "inherit") sees every configured connection,
+ * which keeps every pre-existing workspace behaving exactly as it did before
+ * per-connection visibility existed. Only a workspace an admin has actually
+ * restricted gets a narrower list.
+ *
+ * A connection switched off entirely is excluded here regardless of workspace
+ * settings - the same as an inactive agent flow, being off instance-wide beats
+ * any one workspace's allow-list.
+ * @param {import("@prisma/client").workspaces | null} workspace
+ * @returns {Promise<[SQLConnection]>}
+ */
+async function listSQLConnectionsForWorkspace(workspace = null) {
+  const all = (await listSQLConnections()).filter(
+    (conn) => conn.active !== false
+  );
+  if (!workspace) return all;
+
+  // Required lazily - workspaceSkills pulls in a fair amount of the agent
+  // config machinery that this module otherwise has no reason to load.
+  const {
+    resolveConfigForWorkspace,
+  } = require("../../../../workspaceSkills");
+  const config = await resolveConfigForWorkspace(workspace);
+  if (!Array.isArray(config.activeSqlConnections)) return all;
+  return all.filter((conn) =>
+    config.activeSqlConnections.includes(conn.database_id)
+  );
+}
+
+/**
+ * One connection by id, scoped to what the given workspace may see. Returns
+ * `undefined` both when the id doesn't exist at all and when it exists but this
+ * workspace has been restricted from it - the caller can't tell the difference,
+ * which is the point: an agent has no more visibility into a hidden connection's
+ * existence than into one that was never configured.
+ * @param {import("@prisma/client").workspaces | null} workspace
+ * @param {string} database_id
+ * @returns {Promise<SQLConnection|undefined>}
+ */
+async function getSQLConnectionForWorkspace(workspace, database_id) {
+  const connections = await listSQLConnectionsForWorkspace(workspace);
+  return connections.find((conn) => conn.database_id === database_id);
+}
+
+/**
  * Validates a SQL connection by attempting to connect and run a simple query
  * @param {SQLEngine} identifier - The SQL engine type
  * @param {object} connectionConfig - The connection configuration
@@ -76,5 +123,7 @@ async function validateConnection(identifier = "", connectionConfig = {}) {
 module.exports = {
   getDBClient,
   listSQLConnections,
+  listSQLConnectionsForWorkspace,
+  getSQLConnectionForWorkspace,
   validateConnection,
 };

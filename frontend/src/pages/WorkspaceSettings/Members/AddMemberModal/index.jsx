@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { Search, Users } from "lucide-react";
 import Admin from "@/models/admin";
@@ -16,6 +17,7 @@ import useRoles from "@/hooks/useRoles";
 import { PERMISSIONS, roleNamesWith } from "@/utils/permissions";
 
 export default function AddMemberModal({ workspace, users = [] }) {
+  const { t } = useTranslation();
   const { roles } = useRoles();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUsers, setSelectedUsers] = useState(workspace?.userIds || []);
@@ -93,7 +95,7 @@ export default function AddMemberModal({ workspace, users = [] }) {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               className="h-9 pl-9"
-              placeholder="Search users"
+              placeholder={t("ui.search-users")}
               autoComplete="off"
             />
           </div>
@@ -108,7 +110,7 @@ export default function AddMemberModal({ workspace, users = [] }) {
               <Checkbox
                 checked={allFilteredSelected}
                 onCheckedChange={handleSelectAll}
-                aria-label="Select all visible users"
+                aria-label={t("ui.select-all-visible-users")}
               />
               <span>{searchTerm ? "Visible users" : "Available users"}</span>
             </label>

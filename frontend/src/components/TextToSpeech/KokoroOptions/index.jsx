@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/select";
 
 export default function KokoroTTSOptions({ settings }) {
+  const { t } = useTranslation();
   const [endpoint, setEndpoint] = useState(
     settings?.TTSKokoroEndpoint || "http://localhost:8880/v1"
   );
@@ -34,7 +36,7 @@ export default function KokoroTTSOptions({ settings }) {
       </p>
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
-          <Label className="block mb-2">Base URL</Label>
+          <Label className="block mb-2">{t("provider-options.base-url")}</Label>
           <Input
             type="url"
             name="TTSKokoroEndpoint"
@@ -51,7 +53,7 @@ export default function KokoroTTSOptions({ settings }) {
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-2">API Key</Label>
+          <Label className="block mb-2">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="TTSKokoroKey"
@@ -79,6 +81,7 @@ export default function KokoroTTSOptions({ settings }) {
 }
 
 function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
+  const { t } = useTranslation();
   const [voices, setVoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -109,7 +112,9 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Voice Model</Label>
+        <Label className="block mb-3">
+          {t("provider-options.voice-model")}
+        </Label>
         <Select name="TTSKokoroVoiceModel" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="-- loading available voices --" />
@@ -123,7 +128,9 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
   if (voices.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Voice Model</Label>
+        <Label className="block mb-3">
+          {t("provider-options.voice-model")}
+        </Label>
         <Input
           type="text"
           name="TTSKokoroVoiceModel"
@@ -134,8 +141,7 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
           spellCheck={false}
         />
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-          Could not reach the Kokoro server to load voices. Enter a voice id
-          manually.
+          {t("help.kokoro-options")}
         </p>
       </div>
     );
@@ -143,14 +149,14 @@ function KokoroVoiceSelection({ settings, endpoint, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Voice Model</Label>
+      <Label className="block mb-3">{t("provider-options.voice-model")}</Label>
       <Select
         name="TTSKokoroVoiceModel"
         required={true}
         defaultValue={settings?.TTSKokoroVoiceModel ?? "af_bella"}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {voices.map((voice) => (

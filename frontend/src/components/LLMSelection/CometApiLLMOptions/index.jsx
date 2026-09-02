@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -31,6 +32,7 @@ export default function CometApiLLMOptions({ settings }) {
 }
 
 function AdvancedControls({ settings }) {
+  const { t } = useTranslation();
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
 
   return (
@@ -52,11 +54,13 @@ function AdvancedControls({ settings }) {
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Stream Timeout (ms)</Label>
+          <Label className="block mb-3">
+            {t("provider-options.stream-timeout")}
+          </Label>
           <Input
             type="number"
             name="CometApiLLMTimeout"
-            placeholder="Timeout value between token responses to auto-timeout the stream"
+            placeholder={t("provider-options.stream-timeout-placeholder")}
             defaultValue={settings?.CometApiLLMTimeout ?? 3_000}
             autoComplete="off"
             onScroll={(e) => e.target.blur()}
@@ -73,6 +77,7 @@ function AdvancedControls({ settings }) {
 }
 
 function CometApiModelSelection({ settings }) {
+  const { t } = useTranslation();
   // TODO: For now, CometAPI models list is noisy; show a flat, deduped list without grouping.
   // Revisit after CometAPI model list API provides better categorization/metadata.
   const [models, setModels] = useState([]);
@@ -108,11 +113,13 @@ function CometApiModelSelection({ settings }) {
   if (loading || models.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Input
           type="text"
           name="CometApiLLMModelPref"
-          placeholder="-- loading available models --"
+          placeholder={t("provider-options.loading-models")}
           disabled
         />
       </div>
@@ -121,13 +128,15 @@ function CometApiModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Input
         type="text"
         name="CometApiLLMModelPref"
         list="cometapi-models-list"
         required
-        placeholder="Type or select a model"
+        placeholder={t("ui.type-or-select-model")}
         defaultValue={settings?.CometApiLLMModelPref || ""}
         autoComplete="off"
         spellCheck={false}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Copy, Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -31,6 +32,7 @@ import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSetting
  * workspace means by that role. Roles created here belong to this workspace alone.
  */
 export default function WorkspaceRoles({ workspace }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [roles, setRoles] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -176,8 +178,7 @@ export default function WorkspaceRoles({ workspace }) {
                   </p>
                   {!role.editableHere && (
                     <p className="text-xs text-theme-text-secondary/70 mt-1 italic">
-                      Defined in instance settings and used by every workspace,
-                      so it cannot be changed from here.
+                      {t("help.roles")}
                       {canDefine &&
                         " Duplicate it to make a version you can edit."}
                     </p>

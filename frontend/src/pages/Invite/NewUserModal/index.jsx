@@ -84,7 +84,7 @@ export default function NewUserModal() {
           <Input
             name="password"
             type="password"
-            placeholder="Your password"
+            placeholder={t("ui.your-password")}
             required={true}
             minLength={8}
             autoComplete="off"
@@ -92,8 +92,7 @@ export default function NewUserModal() {
         </div>
         {error && <p className="text-red-400 text-sm">Error: {error}</p>}
         <p className="text-theme-text-secondary text-xs md:text-sm">
-          After creating your account you will be able to login with these
-          credentials and start using workspaces.
+          {t("help.new-user-modal")}
         </p>
       </div>
       <DialogFooter>

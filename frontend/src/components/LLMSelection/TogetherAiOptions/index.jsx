@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
@@ -40,6 +41,7 @@ export default function TogetherAiOptions({ settings }) {
 }
 
 function TogetherAiModelSelection({ settings, apiKey }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -75,10 +77,12 @@ function TogetherAiModelSelection({ settings, apiKey }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="TogetherAiModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -101,7 +105,9 @@ function TogetherAiModelSelection({ settings, apiKey }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="TogetherAiModelPref"
         required={true}
@@ -109,7 +115,7 @@ function TogetherAiModelSelection({ settings, apiKey }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

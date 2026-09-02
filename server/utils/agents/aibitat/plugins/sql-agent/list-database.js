@@ -1,7 +1,9 @@
 module.exports.SqlAgentListDatabase = {
   name: "sql-list-databases",
   plugin: function () {
-    const { listSQLConnections } = require("./SQLConnectors");
+    const {
+      listSQLConnectionsForWorkspace,
+    } = require("./SQLConnectors");
     return {
       name: "sql-list-databases",
       setup(aibitat) {
@@ -36,7 +38,10 @@ module.exports.SqlAgentListDatabase = {
               `${this.caller}: Checking what are the available databases.`
             );
 
-            const connections = (await listSQLConnections()).map((conn) => {
+            const workspace = this.super.handlerProps.invocation.workspace;
+            const connections = (
+              await listSQLConnectionsForWorkspace(workspace)
+            ).map((conn) => {
               const { connectionString: _connectionString, ...rest } = conn;
               return rest;
             });

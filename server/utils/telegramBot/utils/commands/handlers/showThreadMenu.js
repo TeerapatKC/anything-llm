@@ -1,6 +1,8 @@
-const { Workspace } = require("../../../../../models/workspace");
 const { WorkspaceChats } = require("../../../../../models/workspaceChats");
 const { WorkspaceThread } = require("../../../../../models/workspaceThread");
+const { workspaceForUser } = require("../../access");
+const { asMessageId } = require("../../index");
+const { translatorFor } = require("../../i18n");
 const THREADS_PER_PAGE = 8;
 
 /**
@@ -19,25 +21,35 @@ async function showThreadMenu(
   messageId = null
 ) {
   const pageNum = typeof page === "number" && !isNaN(page) ? page : 0;
-  const workspace = await Workspace.get({ id: workspaceId });
+  const editId = asMessageId(messageId);
+  const session = ctx.getState(chatId);
+  if (!session) return;
+  const t = translatorFor(session);
+
+  const workspace = await workspaceForUser(session.user, { id: workspaceId });
   if (!workspace) return;
 
+  // Threads are per-account on the web and stay per-account here.
   const threads = await WorkspaceThread.where({
     workspace_id: workspace.id,
+    user_id: session.user.id,
   });
 
-  const state = ctx.getState(chatId);
+  const state = session;
 
   const allItems = [];
 
   const defaultThreadChatCount = await WorkspaceChats.count({
     workspaceId: workspace.id,
+    user_id: session.user.id,
     thread_id: null,
   });
   const isDefaultActive = !state.threadSlug;
-  let defaultThreadText = isDefaultActive ? "🟢 Default (active)" : "Default";
+  let defaultThreadText = isDefaultActive
+    ? `🟢 ${t("common.default_thread")} (${t("common.active")})`
+    : t("common.default_thread");
   if (defaultThreadChatCount > 0)
-    defaultThreadText += ` - ${defaultThreadChatCount} chats`;
+    defaultThreadText += ` - ${t("thread.chats_suffix", { count: defaultThreadChatCount })}`;
 
   allItems.push({
     text: defaultThreadText,
@@ -48,12 +60,16 @@ async function showThreadMenu(
   for (const thread of threads) {
     const threadChatCount = await WorkspaceChats.count({
       workspaceId: workspace.id,
+      user_id: session.user.id,
       thread_id: thread.id,
     });
 
     const isCurrent = thread.slug === state.threadSlug;
-    let threadText = isCurrent ? `🟢 ${thread.name} (active)` : thread.name;
-    if (threadChatCount > 0) threadText += ` - ${threadChatCount} chats`;
+    let threadText = isCurrent
+      ? `🟢 ${thread.name} (${t("common.active")})`
+      : thread.name;
+    if (threadChatCount > 0)
+      threadText += ` - ${t("thread.chats_suffix", { count: threadChatCount })}`;
     allItems.push({
       text: threadText,
       callback_data: `th:${workspace.id}:${thread.id}`,
@@ -79,13 +95,13 @@ async function showThreadMenu(
   const navRow = [];
   if (safePage > 0) {
     navRow.push({
-      text: "← Prev",
+      text: t("common.prev"),
       callback_data: `thpg:${workspaceId}:${safePage - 1}`,
     });
   }
   if (safePage < totalPages - 1) {
     navRow.push({
-      text: "Next →",
+      text: t("common.next"),
       callback_data: `thpg:${workspaceId}:${safePage + 1}`,
     });
   }
@@ -93,23 +109,28 @@ async function showThreadMenu(
 
   buttons.push([
     {
-      text: "← Back to workspaces",
+      text: t("thread.back"),
       callback_data: "back:workspaces",
     },
   ]);
 
   const text =
     totalPages > 1
-      ? `"${workspace.name}" — Select a thread (${safePage + 1}/${totalPages}, ${allItems.length} total):`
-      : `"${workspace.name}" — Select a thread:`;
+      ? t("thread.select_paged", {
+          workspace: workspace.name,
+          page: safePage + 1,
+          pages: totalPages,
+          count: allItems.length,
+        })
+      : t("thread.select", { workspace: workspace.name });
   const opts = {
     reply_markup: { inline_keyboard: buttons },
   };
 
-  if (messageId) {
+  if (editId) {
     await ctx.bot.editMessageText(text, {
       chat_id: chatId,
-      message_id: messageId,
+      message_id: editId,
       ...opts,
     });
   } else {

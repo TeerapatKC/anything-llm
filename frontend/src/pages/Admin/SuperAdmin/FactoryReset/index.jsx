@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,6 +18,7 @@ import paths from "@/utils/paths";
  * onboarding with local storage cleared.
  */
 export default function FactoryReset({ summary, phrase }) {
+  const { t } = useTranslation();
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
   const [running, setRunning] = useState(false);
@@ -65,10 +67,10 @@ export default function FactoryReset({ summary, phrase }) {
               Factory reset
             </h3>
             <p className="mt-1 text-sm text-theme-text-secondary">
-              Erases the entire deployment and starts it over from the setup
-              screen, as if it had just been installed. Unlike the reset above,
-              this deletes <strong>your own account</strong> and the LLM,
-              embedder and vector database configuration too.
+              <Trans
+                i18nKey="help.factory-reset"
+                components={{ strong: <strong /> }}
+              />
             </p>
             <FactorySummary summary={summary} />
           </div>
@@ -84,7 +86,7 @@ export default function FactoryReset({ summary, phrase }) {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Confirm it is you"
+              placeholder={t("ui.confirm-it-is-you")}
               autoComplete="current-password"
             />
           </div>

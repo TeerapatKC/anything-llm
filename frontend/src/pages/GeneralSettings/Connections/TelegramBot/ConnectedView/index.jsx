@@ -12,21 +12,16 @@ export default function ConnectedView({
 }) {
   const connected = config.connected;
   const [newToken, setNewToken] = useState("");
-  const [pendingUsers, setPendingUsers] = useState([]);
-  const [approvedUsers, setApprovedUsers] = useState([]);
+  const [linkedUsers, setLinkedUsers] = useState([]);
 
   const fetchUsers = useCallback(async () => {
-    const [pending, approved] = await Promise.all([
-      Telegram.getPendingUsers(),
-      Telegram.getApprovedUsers(),
-    ]);
-    setPendingUsers(pending?.users || []);
-    setApprovedUsers(approved?.users || []);
+    const { users } = await Telegram.getLinkedUsers();
+    setLinkedUsers(users || []);
   }, []);
 
   useEffect(() => {
     fetchUsers();
-    const interval = setInterval(fetchUsers, 5_000);
+    const interval = setInterval(fetchUsers, 30_000);
     return () => clearInterval(interval);
   }, [fetchUsers]);
 
@@ -45,11 +40,7 @@ export default function ConnectedView({
     <div className="flex flex-col gap-y-8 mt-8">
       <ConnectedBotCard config={config} />
       <DetailsSection config={config} onDisconnected={onDisconnected} />
-      <UsersSection
-        pendingUsers={pendingUsers}
-        approvedUsers={approvedUsers}
-        fetchUsers={fetchUsers}
-      />
+      <UsersSection linkedUsers={linkedUsers} fetchUsers={fetchUsers} />
     </div>
   );
 }

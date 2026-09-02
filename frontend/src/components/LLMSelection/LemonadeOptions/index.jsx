@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
@@ -24,6 +25,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function LemonadeOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -48,7 +50,7 @@ export default function LemonadeOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <Label>Base URL</Label>
+              <Label>{t("provider-options.base-url")}</Label>
               {loading ? (
                 <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
@@ -107,7 +109,9 @@ export default function LemonadeOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label className="block">Model context window</Label>
+            <Label className="block">
+              {t("provider-options.model-context-window")}
+            </Label>
 
             <Tooltip>
               <TooltipTrigger
@@ -118,9 +122,7 @@ export default function LemonadeOptions({ settings }) {
                 <Info size={18} className="text-theme-text-secondary" />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
-                The maximum number of tokens that can be used for a model
-                context window. This must be set to a value that is supported by
-                the model.
+                {t("help.lemonade-options-2")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -138,7 +140,9 @@ export default function LemonadeOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label className="block">API Key (optional)</Label>
+            <Label className="block">
+              {t("provider-options.api-key-optional")}
+            </Label>
 
             <Tooltip>
               <TooltipTrigger
@@ -175,6 +179,7 @@ function LemonadeModelSelection({
   setSelectedModelId,
   basePath = null,
 }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [filteredModels, setFilteredModels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -391,7 +396,9 @@ function LemonadeModelSelection({
         <ModelTableLoadingSkeleton />
       ) : filteredModels.length === 0 ? (
         <div className="flex flex-col w-full gap-y-2 mt-4">
-          <p className="text-theme-text-secondary text-sm">No models found!</p>
+          <p className="text-theme-text-secondary text-sm">
+            {t("provider-options.no-models-found")}
+          </p>
         </div>
       ) : (
         Object.entries(groupedModels).map(([alias, models]) => (

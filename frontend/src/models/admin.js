@@ -19,7 +19,10 @@ const Admin = {
     return await fetch(`${API_BASE}/admin/users/new`, {
       method: "POST",
       headers: baseHeaders(),
-      body: JSON.stringify(data),
+      // Origin lets the server build a sign-in link in the welcome email - it cannot
+      // reliably know its own public URL (reverse proxies, port mapping) the way the
+      // browser that is calling it already does.
+      body: JSON.stringify({ ...data, origin: window.location.origin }),
     })
       .then((res) => res.json())
       .catch((e) => {
@@ -81,13 +84,15 @@ const Admin = {
         return [];
       });
   },
-  newInvite: async ({ role = null, workspaceIds = null }) => {
+  newInvite: async ({ role = null, workspaceIds = null, email = "" }) => {
     return await fetch(`${API_BASE}/admin/invite/new`, {
       method: "POST",
       headers: baseHeaders(),
       body: JSON.stringify({
         role,
         workspaceIds,
+        email,
+        origin: window.location.origin,
       }),
     })
       .then((res) => res.json())

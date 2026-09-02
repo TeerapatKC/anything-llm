@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -13,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function AnthropicAiOptions({ settings }) {
+  const { t } = useTranslation();
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
   const [inputValue, setInputValue] = useState(settings?.AnthropicApiKey);
   const [anthropicApiKey, setAnthropicApiKey] = useState(
@@ -71,10 +73,12 @@ export default function AnthropicAiOptions({ settings }) {
               defaultValue={settings?.AnthropicCacheControl ?? "none"}
             >
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue
+                  placeholder={t("provider-options.select-option")}
+                />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">No caching</SelectItem>
+                <SelectItem value="none">{t("ui.no-caching")}</SelectItem>
                 <SelectItem value="5m">5 minutes</SelectItem>
                 <SelectItem value="1h">1 hour</SelectItem>
               </SelectContent>
@@ -87,6 +91,7 @@ export default function AnthropicAiOptions({ settings }) {
 }
 
 function AnthropicModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,7 +111,9 @@ function AnthropicModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -119,7 +126,7 @@ function AnthropicModelSelection({ apiKey, settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -142,7 +149,9 @@ function AnthropicModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="AnthropicModelPref"
@@ -151,7 +160,7 @@ function AnthropicModelSelection({ apiKey, settings }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

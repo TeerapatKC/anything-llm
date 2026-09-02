@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useScrollActiveItemIntoView from "@/hooks/useScrollActiveItemIntoView";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
@@ -32,6 +33,7 @@ export default function ThreadItem({
   toggleMarkForDeletion,
   ctrlPressed = false,
 }) {
+  const { t } = useTranslation();
   const { slug: urlSlug, threadSlug = null } = useParams();
   const workspaceSlug = workspace?.slug ?? urlSlug;
   const [confirm, setConfirm] = useState(null);
@@ -53,7 +55,7 @@ export default function ThreadItem({
   if (thread.deleted) {
     return (
       <SidebarMenuSubItem className="flex items-center justify-between gap-1 pr-1">
-        <span className="truncate px-2 py-1 text-sm italic text-sidebar-foreground/40">
+        <span className="truncate px-2 py-1.5 text-sm italic text-sidebar-foreground/40">
           deleted thread
         </span>
         {ctrlPressed && (
@@ -77,7 +79,7 @@ export default function ThreadItem({
           render={
             <SidebarMenuSubButton
               isActive={isActive}
-              className={cn("pr-7", thread.virtual && "italic")}
+              className={cn("h-9 pr-7 text-sm", thread.virtual && "italic")}
               render={
                 <Link
                   ref={ref}
@@ -115,7 +117,7 @@ export default function ThreadItem({
           <button
             type="button"
             onClick={() => toggleMarkForDeletion(thread.id)}
-            aria-label="Mark thread for deletion"
+            aria-label={t("ui.mark-thread-deletion")}
             className="absolute right-1 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center rounded-sm text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           >
             <X className="size-3.5" />

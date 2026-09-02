@@ -1,5 +1,5 @@
-const { isVerified } = require("../verification");
 const { resolveCallbackHandler } = require("./callbacks");
+const { translatorFor } = require("../i18n");
 
 /**
  * Handle inline keyboard callback queries (workspace/thread selection, tool approval, etc).
@@ -12,10 +12,21 @@ async function handleKeyboardQueryCallback(ctx, query, options = {}) {
   const messageId = query.message.message_id;
   const data = query.data;
 
-  if (!isVerified(ctx.config.approved_users, chatId)) {
-    await ctx.bot.answerCallbackQuery(query.id, {
-      text: "You are not approved.",
-    });
+  // Answering a callback query is best-effort: Telegram rejects one that is more
+  // than a minute old, and a failure here must not bury the error that caused it.
+  const answer = async (text) => {
+    try {
+      await ctx.bot.answerCallbackQuery(query.id, { text });
+    } catch {
+      // Query expired or was already answered
+    }
+  };
+
+  // The session was refreshed before this handler ran, so a keyboard left over
+  // from before a link was revoked is dead the moment it is tapped.
+  const t = translatorFor(ctx.getState(chatId));
+  if (!ctx.getState(chatId)) {
+    await answer(t("callback.not_linked"));
     return;
   }
 
@@ -25,9 +36,7 @@ async function handleKeyboardQueryCallback(ctx, query, options = {}) {
     await handler({ ctx, chatId, query, messageId, data, ...options });
   } catch (error) {
     ctx.log("Callback error:", error.message);
-    await ctx.bot.answerCallbackQuery(query.id, {
-      text: "Something went wrong.",
-    });
+    await answer(t("common.callback_error"));
   }
 }
 

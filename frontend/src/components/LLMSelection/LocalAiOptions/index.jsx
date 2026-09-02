@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import paths from "@/utils/paths";
@@ -19,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function LocalAiOptions({ settings, showAlert = false }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -41,8 +43,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
           <div className="gap-x-2 flex items-center">
             <Info size={12} className="hidden md:visible" />
             <p className="text-sm md:text-base">
-              LocalAI as your LLM requires you to set an embedding service to
-              use.
+              {t("help.local-ai-options-2")}
             </p>
           </div>
           <a
@@ -62,7 +63,9 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
               apiKey={apiKey}
             />
             <div className="flex flex-col w-60">
-              <Label className="block mb-2">Model context window</Label>
+              <Label className="block mb-2">
+                {t("provider-options.model-context-window")}
+              </Label>
               <Input
                 type="number"
                 name="LocalAiTokenLimit"
@@ -152,6 +155,7 @@ export default function LocalAiOptions({ settings, showAlert = false }) {
 }
 
 function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -177,7 +181,9 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-2">Chat Model Selection</Label>
+        <Label className="block mb-2">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="LocalAiModelPref" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue
@@ -209,7 +215,9 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-2">Chat Model Selection</Label>
+      <Label className="block mb-2">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="LocalAiModelPref"
         required={true}
@@ -217,12 +225,14 @@ function LocalAIModelSelection({ settings, basePath = null, apiKey = null }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

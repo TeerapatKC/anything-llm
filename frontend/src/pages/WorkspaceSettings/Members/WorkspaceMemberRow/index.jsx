@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import {
@@ -20,6 +21,7 @@ export default function WorkspaceMemberRow({
   workspaceRoles = [],
   canManage = false,
 }) {
+  const { t } = useTranslation();
   const memberRoleId =
     member.workspaceRole?.id ??
     member.workspace_role_id ??
@@ -70,7 +72,7 @@ export default function WorkspaceMemberRow({
             disabled={saving}
           >
             <SelectTrigger className="w-[190px]">
-              <SelectValue placeholder="Select a role">
+              <SelectValue placeholder={t("ui.select-role")}>
                 {(selectedRoleId) =>
                   workspaceRoles.find(
                     (role) => String(role.id) === String(selectedRoleId)

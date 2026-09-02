@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { titleCase } from "text-case";
 import Admin from "@/models/admin";
 import { Copy, Trash2 } from "lucide-react";
@@ -11,20 +12,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function InviteRow({ invite }) {
+  const { t } = useTranslation();
   const rowRef = useRef(null);
   const [status, setStatus] = useState(invite.status);
   const [copied, setCopied] = useState(false);
   const [confirm, setConfirm] = useState(null);
   const handleDelete = async () => {
     setConfirm({
-      title: "Deactivate this invite?",
-      description:
-        "After you do this it will no longer be usable. This action is irreversible.",
-      confirmText: "Deactivate",
+      title: t("admin-invites.row.delete-title"),
+      description: t("admin-invites.row.delete-description"),
+      confirmText: t("admin-invites.row.delete-confirm"),
       variant: "destructive",
       onConfirm: async () => {
         if (rowRef?.current) {
-          rowRef.current.children[0].innerText = "Disabled";
+          rowRef.current.children[0].innerText = t(
+            "admin-invites.row.disabled"
+          );
         }
         setStatus("disabled");
         await Admin.disableInvite(invite.id);
@@ -53,12 +56,15 @@ export default function InviteRow({ invite }) {
     <>
       <TableRow ref={rowRef}>
         <TableCell scope="row">{titleCase(status)}</TableCell>
+        <TableCell>{invite.email || "--"}</TableCell>
         <TableCell>
           {invite.claimedBy
-            ? invite.claimedBy?.username || "deleted user"
+            ? invite.claimedBy?.username || t("admin-invites.deleted-user")
             : "--"}
         </TableCell>
-        <TableCell>{invite.createdBy?.username || "deleted user"}</TableCell>
+        <TableCell>
+          {invite.createdBy?.username || t("admin-invites.deleted-user")}
+        </TableCell>
         <TableCell>{invite.createdAt}</TableCell>
         <TableCell className="text-right">
           <TableRowActions>
@@ -66,12 +72,14 @@ export default function InviteRow({ invite }) {
               <>
                 <DropdownMenuItem onClick={copyInviteLink} disabled={copied}>
                   <Copy />
-                  {copied ? "Copied" : "Copy invite link"}
+                  {copied
+                    ? t("admin-invites.row.copied")
+                    : t("admin-invites.row.copy")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={handleDelete}>
                   <Trash2 />
-                  Delete
+                  {t("admin-invites.row.delete")}
                 </DropdownMenuItem>
               </>
             )}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { CircleCheck, Copy } from "lucide-react";
 import showToast from "@/utils/toast";
@@ -49,6 +50,7 @@ https://github.com/Mintplex-Labs/anythingllm-embed/blob/main/README.md
 }
 
 const ScriptTag = ({ embed }) => {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const scriptHost = import.meta.env.DEV
     ? "http://localhost:3000"
@@ -74,8 +76,7 @@ const ScriptTag = ({ embed }) => {
       <div className="flex flex-col mb-2">
         <Label className="block">HTML Script Tag Embed Code</Label>
         <p className="text-theme-text-secondary text-xs">
-          Have your workspace chat embed function like a help desk chat bottom
-          in the corner of your website.
+          {t("help.code-snippet-modal")}
         </p>
         <a
           href="https://github.com/Mintplex-Labs/anythingllm-embed/blob/main/README.md"

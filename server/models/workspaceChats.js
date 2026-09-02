@@ -263,17 +263,32 @@ const WorkspaceChats = {
       return [];
     }
   },
-  updateFeedbackScore: async function (chatId = null, feedbackScore = null) {
+  /**
+   * Record how an answer was rated, and optionally why.
+   *
+   * Clearing the rating clears the reason with it: a comment explaining a
+   * thumbs-down is meaningless once the thumbs-down is gone.
+   * @param {number} chatId
+   * @param {number|boolean|null} feedbackScore - 1/0 or null to clear.
+   * @param {string|null|undefined} comment - undefined leaves the stored comment alone.
+   */
+  updateFeedbackScore: async function (
+    chatId = null,
+    feedbackScore = null,
+    comment = undefined
+  ) {
     if (!chatId) return;
     try {
+      const score = feedbackScore === null ? null : Number(feedbackScore) === 1;
+      const data = { feedbackScore: score };
+
+      if (score === null) data.feedbackComment = null;
+      else if (comment !== undefined)
+        data.feedbackComment = comment ? String(comment).trim() : null;
+
       await prisma.workspace_chats.update({
-        where: {
-          id: Number(chatId),
-        },
-        data: {
-          feedbackScore:
-            feedbackScore === null ? null : Number(feedbackScore) === 1,
-        },
+        where: { id: Number(chatId) },
+        data,
       });
       return;
     } catch (error) {

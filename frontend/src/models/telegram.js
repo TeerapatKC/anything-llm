@@ -18,19 +18,15 @@ const Telegram = {
   },
 
   /**
-   * Connect and start the Telegram bot with given token and workspace.
+   * Connect and start the Telegram bot with the given token.
    * @param {string} botToken - The bot API token from BotFather.
-   * @param {string} workspaceSlug - The default workspace slug.
    * @returns {Promise<{success: boolean, bot_username: string|null, error: string|null}>}
    */
-  connect: async function (botToken, workspaceSlug) {
+  connect: async function (botToken) {
     return await fetch(`${API_BASE}/telegram/connect`, {
       method: "POST",
       headers: baseHeaders(),
-      body: JSON.stringify({
-        bot_token: botToken,
-        default_workspace: workspaceSlug,
-      }),
+      body: JSON.stringify({ bot_token: botToken }),
     })
       .then((res) => res.json())
       .catch((e) => {
@@ -71,11 +67,11 @@ const Telegram = {
   },
 
   /**
-   * Get pending pairing requests.
+   * Every Telegram chat bound to an account on this instance. Admin view.
    * @returns {Promise<{users: Array}>}
    */
-  getPendingUsers: async function () {
-    return await fetch(`${API_BASE}/telegram/pending-users`, {
+  getLinkedUsers: async function () {
+    return await fetch(`${API_BASE}/telegram/linked-users`, {
       headers: baseHeaders(),
     })
       .then((res) => res.json())
@@ -86,45 +82,12 @@ const Telegram = {
   },
 
   /**
-   * Get approved users list.
-   * @returns {Promise<{users: Array}>}
-   */
-  getApprovedUsers: async function () {
-    return await fetch(`${API_BASE}/telegram/approved-users`, {
-      headers: baseHeaders(),
-    })
-      .then((res) => res.json())
-      .catch((e) => {
-        console.error(e);
-        return { users: [] };
-      });
-  },
-
-  /**
-   * Approve a pending user.
+   * Disconnect someone else's Telegram chat. Admin action.
    * @param {string} chatId
    * @returns {Promise<{success: boolean, error: string|null}>}
    */
-  approveUser: async function (chatId) {
-    return await fetch(`${API_BASE}/telegram/approve-user`, {
-      method: "POST",
-      headers: baseHeaders(),
-      body: JSON.stringify({ chatId }),
-    })
-      .then((res) => res.json())
-      .catch((e) => {
-        console.error(e);
-        return { success: false, error: e.message };
-      });
-  },
-
-  /**
-   * Deny a pending user.
-   * @param {string} chatId
-   * @returns {Promise<{success: boolean, error: string|null}>}
-   */
-  denyUser: async function (chatId) {
-    return await fetch(`${API_BASE}/telegram/deny-user`, {
+  unlinkUser: async function (chatId) {
+    return await fetch(`${API_BASE}/telegram/unlink-user`, {
       method: "POST",
       headers: baseHeaders(),
       body: JSON.stringify({ chatId }),
@@ -155,15 +118,44 @@ const Telegram = {
   },
 
   /**
-   * Revoke an approved user.
-   * @param {string} chatId
-   * @returns {Promise<{success: boolean, error: string|null}>}
+   * The signed-in user's own Telegram connection, if they have one.
+   * @returns {Promise<{available: boolean, bot_username: string|null, link: object|null}>}
    */
-  revokeUser: async function (chatId) {
-    return await fetch(`${API_BASE}/telegram/revoke-user`, {
+  myConnection: async function () {
+    return await fetch(`${API_BASE}/telegram/my-connection`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { available: false, bot_username: null, link: null };
+      });
+  },
+
+  /**
+   * Mint a short-lived code the signed-in user sends to the bot to link their chat.
+   * @returns {Promise<{success: boolean, code: string|null, username: string|null, expiresAt: number|null, bot_username: string|null, error: string|null}>}
+   */
+  requestPairingCode: async function () {
+    return await fetch(`${API_BASE}/telegram/pairing-code`, {
       method: "POST",
       headers: baseHeaders(),
-      body: JSON.stringify({ chatId }),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, code: null, error: e.message };
+      });
+  },
+
+  /**
+   * Detach the signed-in user's own Telegram chat.
+   * @returns {Promise<{success: boolean, error: string|null}>}
+   */
+  unlinkSelf: async function () {
+    return await fetch(`${API_BASE}/telegram/unlink`, {
+      method: "POST",
+      headers: baseHeaders(),
     })
       .then((res) => res.json())
       .catch((e) => {

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
@@ -96,6 +97,7 @@ function useCommunityHubAuthentication() {
 }
 
 export default function CommunityHubAuthentication() {
+  const { t } = useTranslation();
   const {
     connectionKey,
     originalConnectionKey,
@@ -115,7 +117,7 @@ export default function CommunityHubAuthentication() {
         onCancel={resetChanges}
       />
       <PageHeader
-        title="Your NexusAI Community Hub Account"
+        title={t("ui.hub-account-title")}
         description={
           <>
             Connecting your NexusAI Community Hub account allows you to access
@@ -140,10 +142,7 @@ export default function CommunityHubAuthentication() {
               well as upload your own items to the NexusAI Community Hub.
               <br />
               <br />
-              <i>
-                You do not need to connect your NexusAI Community Hub account to
-                pull in public items from the NexusAI Community Hub.
-              </i>
+              <i>{t("help.authentication")}</i>
             </p>
           </div>
         </div>
@@ -159,7 +158,7 @@ export default function CommunityHubAuthentication() {
             type="password"
             value={connectionKey || ""}
             onChange={onConnectionKeyChange}
-            placeholder="Enter your NexusAI Hub API key"
+            placeholder={t("ui.hub-api-key-placeholder")}
           />
           <div className="flex items-center justify-between mt-2">
             <p className="text-theme-text-secondary text-xs">

@@ -1,146 +1,83 @@
-import { Check, X } from "lucide-react";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 
-export default function UsersSection({
-  pendingUsers,
-  approvedUsers,
-  fetchUsers,
-}) {
+/**
+ * Every Telegram chat bound to an account on this instance. Each row is one
+ * person: the bot answers them as that account, with their own workspaces.
+ */
+export default function UsersSection({ linkedUsers, fetchUsers }) {
   const { t } = useTranslation();
 
-  async function handleApprove(chatId) {
-    const res = await Telegram.approveUser(chatId);
+  async function handleUnlink(chatId) {
+    const res = await Telegram.unlinkUser(chatId);
     if (!res.success) {
-      showToast(
-        res.error || t("telegram.connected.toast-approve-failed"),
-        "error"
-      );
+      showToast(res.error || t("telegram.users.toast-unlink-failed"), "error");
       return;
     }
+    showToast(t("telegram.users.toast-unlinked"), "success");
     fetchUsers();
   }
-
-  async function handleDeny(chatId) {
-    const res = await Telegram.denyUser(chatId);
-    if (!res.success) {
-      showToast(
-        res.error || t("telegram.connected.toast-deny-failed"),
-        "error"
-      );
-      return;
-    }
-    fetchUsers();
-  }
-
-  async function handleRevoke(chatId) {
-    const res = await Telegram.revokeUser(chatId);
-    if (!res.success) {
-      showToast(
-        res.error || t("telegram.connected.toast-revoke-failed"),
-        "error"
-      );
-      return;
-    }
-    fetchUsers();
-  }
-
-  const hasPending = pendingUsers.length > 0;
-  const hasApproved = approvedUsers.length > 0;
-  if (!hasPending && !hasApproved) return null;
 
   return (
     <div className="flex flex-col gap-y-[18px] w-[700px]">
       <div className="flex flex-col gap-y-2">
         <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
-          Users
+          {t("telegram.users.title")}
         </p>
         <p className="text-xs text-zinc-400 light:text-slate-600">
-          {t("telegram.users.pending-description")}
+          {t("telegram.users.description")}
         </p>
       </div>
       <div className="border-t border-zinc-700 light:border-slate-200" />
-      <div className="flex flex-col gap-y-2">
-        {pendingUsers.map((user) => (
-          <UserRow
-            key={user.chatId || user}
-            user={user}
-            isPending
-            onApprove={handleApprove}
-            onDeny={handleDeny}
-          />
-        ))}
-        {approvedUsers.map((user) => (
-          <UserRow
-            key={user.chatId || user}
-            user={user}
-            onRevoke={handleRevoke}
-          />
-        ))}
-      </div>
+      {linkedUsers.length === 0 ? (
+        <p className="text-xs text-zinc-400 light:text-slate-600 py-2">
+          {t("telegram.users.empty")}
+        </p>
+      ) : (
+        <div className="flex flex-col gap-y-2">
+          {linkedUsers.map((user) => (
+            <UserRow key={user.chatId} user={user} onUnlink={handleUnlink} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function UserRow({ user, isPending = false, onApprove, onDeny, onRevoke }) {
+function UserRow({ user, onUnlink }) {
   const { t } = useTranslation();
-  const chatId = typeof user === "string" ? user : user.chatId;
-  const username = user.telegramUsername || user.username || null;
-  const firstName = user.firstName || null;
-  const displayName = username
-    ? `@${username}`
-    : firstName || t("telegram.users.unknown");
-  const initial = (username || firstName || "?")[0].toUpperCase();
-  const code = user.code;
+  const account = user.username || t("telegram.users.unknown");
+  const telegramHandle = user.telegramUsername
+    ? `@${user.telegramUsername}`
+    : user.telegramFirstName || `ID ${user.chatId}`;
+  const initial = (account || "?")[0].toUpperCase();
 
   return (
     <>
-      <div className="flex items-center">
-        <div className="flex items-center gap-x-3 flex-1 min-w-0">
-          <div className="bg-zinc-800 light:bg-slate-300 size-8 rounded-full flex items-center justify-center shrink-0">
-            <span className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
-              {initial}
-            </span>
-          </div>
-          <span className="text-sm font-medium text-theme-text-primary light:text-slate-900 truncate">
-            {displayName}
+      <div className="flex items-center gap-x-3">
+        <div className="bg-zinc-800 light:bg-slate-300 size-8 rounded-full flex items-center justify-center shrink-0">
+          <span className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
+            {initial}
           </span>
         </div>
-        <div className="w-[60px] flex items-center justify-center shrink-0 mr-36">
-          {isPending && code && (
-            <div className="bg-zinc-950 light:bg-slate-200 h-[26px] w-[60px] flex items-center justify-center rounded">
-              <span className="text-sm text-white/80 light:text-slate-900 text-center">
-                {code}
-              </span>
-            </div>
-          )}
+        <div className="flex flex-col min-w-0 flex-1">
+          <span className="text-sm font-medium text-theme-text-primary light:text-slate-900 truncate">
+            {account}
+          </span>
+          <span className="text-xs text-zinc-400 light:text-slate-600 truncate">
+            {telegramHandle}
+          </span>
         </div>
-        <div className="flex items-center justify-end gap-x-3 w-[80px] shrink-0">
-          {isPending ? (
-            <>
-              <button
-                onClick={() => onDeny(chatId)}
-                className="text-zinc-400 light:text-slate-400 hover:text-red-400 light:hover:text-red-500 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => onApprove(chatId)}
-                className="text-zinc-400 light:text-slate-400 hover:text-green-400 light:hover:text-green-500 transition-colors"
-              >
-                <Check className="h-4 w-4" />
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => onRevoke(chatId)}
-              className="text-sm text-white/80 light:text-slate-500 hover:text-white light:hover:text-slate-700 transition-colors"
-            >
-              Remove
-            </button>
-          )}
-        </div>
+        <span className="text-xs text-zinc-400 light:text-slate-600 truncate w-[180px] shrink-0">
+          {user.workspace || t("telegram.users.no-workspace")}
+        </span>
+        <button
+          onClick={() => onUnlink(user.chatId)}
+          className="text-sm text-white/80 light:text-slate-500 hover:text-white light:hover:text-slate-700 transition-colors shrink-0"
+        >
+          {t("telegram.users.disconnect")}
+        </button>
       </div>
       <div className="border-t border-zinc-800 light:border-slate-200" />
     </>

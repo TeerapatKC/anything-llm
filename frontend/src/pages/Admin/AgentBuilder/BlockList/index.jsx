@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import {
   AppWindow,
   Braces,
@@ -159,6 +160,7 @@ export default function BlockList({
   moveBlock,
   refs,
 }) {
+  const { t } = useTranslation();
   const renderBlockConfig = (block) => {
     const isLastConfigurableBlock = blocks[blocks.length - 2]?.id === block.id;
     const props = {
@@ -181,8 +183,10 @@ export default function BlockList({
             <Toggle
               size="md"
               variant="horizontal"
-              label="Direct Output"
-              description="The output of this block will be returned directly to the chat. This will prevent any further tool calls from being executed."
+              label={t("agent-builder.blockList.direct-output")}
+              description={t(
+                "agent-builder.blockList.direct-output-description"
+              )}
               enabled={props.config.directOutput || false}
               onChange={(checked) =>
                 props.onConfigChange({
@@ -220,7 +224,7 @@ export default function BlockList({
       case BLOCK_TYPES.FINISH:
         return <FinishNode />;
       default:
-        return <div>Configuration options coming soon...</div>;
+        return <div>{t("agent-builder.blockList.coming-soon")}</div>;
     }
   };
 

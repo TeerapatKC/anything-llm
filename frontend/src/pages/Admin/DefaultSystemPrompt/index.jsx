@@ -1,3 +1,4 @@
+import { Trans } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { useEffect, useState, Fragment } from "react";
@@ -149,15 +150,10 @@ export default function DefaultSystemPrompt() {
               </label>
               <div className="space-y-1">
                 <p className="text-theme-text-primary/60 text-xs font-medium">
-                  A system prompt provides instructions that shape the AI’s
-                  responses and behavior. This prompt will be automatically
-                  applied to all newly created workspaces. To change the system
-                  prompt of a{" "}
-                  <span className="font-bold">specific workspace</span>, edit
-                  the prompt in the{" "}
-                  <span className="font-bold">workspace settings</span>. To
-                  restore the system prompt to our sane default, leave this
-                  field empty and save changes.
+                  <Trans
+                    i18nKey="help.default-system-prompt"
+                    components={{ b: <span className="font-bold" /> }}
+                  />
                 </p>
                 <p className="text-theme-text-primary/60 text-xs font-medium mb-2">
                   You can insert{" "}

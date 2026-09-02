@@ -36,6 +36,16 @@ const DYNAMIC_KEY_ALLOWLIST = [
   // Used for model router rules
   "model-router.rules.quantifier-any",
   "model-router.rules.quantifier-all",
+
+  // Used for the SMTP provider picker and its per-provider hint
+  "smtp.providers.google",
+  "smtp.providers.microsoft",
+  "smtp.providers.outlook",
+  "smtp.providers.custom",
+  "smtp.hints.google",
+  "smtp.hints.microsoft",
+  "smtp.hints.outlook",
+  "smtp.hints.custom",
 ];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

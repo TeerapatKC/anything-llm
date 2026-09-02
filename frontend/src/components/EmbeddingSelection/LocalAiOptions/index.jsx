@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import System from "@/models/system";
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function LocalAiOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -83,14 +85,16 @@ export default function LocalAiOptions({ settings }) {
             <TooltipTrigger
               render={<div className="flex gap-x-1 items-center mb-3" />}
             >
-              <Label className="block">Max embedding chunk length</Label>
+              <Label className="block">
+                {t("provider-options.max-embedding-chunk")}
+              </Label>
               <Info
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
-              Maximum length of text chunks, in characters, for embedding.
+              {t("provider-options.max-embedding-chunk-help")}
             </TooltipContent>
           </Tooltip>
           <Input
@@ -110,15 +114,16 @@ export default function LocalAiOptions({ settings }) {
             <TooltipTrigger
               render={<div className="flex gap-x-1 items-center mb-3" />}
             >
-              <Label className="block">Output dimensions</Label>
+              <Label className="block">
+                {t("provider-options.output-dimensions")}
+              </Label>
               <Info
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
-              The number of dimensions the resulting output embeddings should
-              have if it supports multiple dimensions output.
+              {t("help.local-ai-options")}
               <br />
               <br /> Leave blank to use the default dimensions for the selected
               model.
@@ -127,7 +132,7 @@ export default function LocalAiOptions({ settings }) {
           <Input
             type="number"
             name="EmbeddingOutputDimensions"
-            placeholder="Assume default dimensions"
+            placeholder={t("provider-options.assume-default-dimensions")}
             min={1}
             onScroll={(e) => e.target.blur()}
             defaultValue={settings?.EmbeddingOutputDimensions}
@@ -193,6 +198,7 @@ export default function LocalAiOptions({ settings }) {
 }
 
 function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -218,7 +224,9 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-2">Embedding Model Name</Label>
+        <Label className="block mb-2">
+          {t("provider-options.embedding-model-name")}
+        </Label>
         <Select name="EmbeddingModelPref" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue
@@ -237,19 +245,23 @@ function LocalAIModelSelection({ settings, apiKey = null, basePath = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-2">Embedding Model Name</Label>
+      <Label className="block mb-2">
+        {t("provider-options.embedding-model-name")}
+      </Label>
       <Select
         name="EmbeddingModelPref"
         required={true}
         defaultValue={settings?.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

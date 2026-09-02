@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function OpenAiGenericTextToSpeechOptions({ settings }) {
+  const { t } = useTranslation();
   const [endpoint, setEndpoint] = useState(
     settings?.TTSOpenAICompatibleEndpoint || ""
   );
@@ -27,7 +29,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
       <div className="flex gap-x-4">
         <div className="flex flex-col w-60">
           <div className="flex justify-between items-start mb-2">
-            <Label>Base URL</Label>
+            <Label>{t("provider-options.base-url")}</Label>
           </div>
           <Input
             type="url"
@@ -41,12 +43,11 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
             onBlur={() => setEndpoint(inputEndpoint)}
           />
           <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-            This should be the base URL of the OpenAI compatible TTS service you
-            will generate TTS responses from.
+            {t("help.open-ai-generic-options")}
           </p>
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-2">API Key</Label>
+          <Label className="block mb-2">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="TTSOpenAICompatibleKey"
@@ -60,8 +61,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
             onBlur={() => setApiKey(inputApiKey)}
           />
           <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-            Some TTS services require an API key to generate TTS responses -
-            this is optional if your service does not require one.
+            {t("help.open-ai-generic-options-2")}
           </p>
         </div>
       </div>
@@ -72,19 +72,20 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
           apiKey={apiKey}
         />
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Voice Model</Label>
+          <Label className="block mb-3">
+            {t("provider-options.voice-model")}
+          </Label>
           <Input
             type="text"
             name="TTSOpenAICompatibleVoiceModel"
-            placeholder="Your voice model identifier"
+            placeholder={t("ui.voice-model-identifier")}
             defaultValue={settings?.TTSOpenAICompatibleVoiceModel}
             required={true}
             autoComplete="off"
             spellCheck={false}
           />
           <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-            Most TTS services will have several voice models available, this is
-            the identifier for the voice model you want to use.
+            {t("help.open-ai-generic-options-3")}
           </p>
         </div>
       </div>
@@ -93,6 +94,7 @@ export default function OpenAiGenericTextToSpeechOptions({ settings }) {
 }
 
 function TTSModelSelection({ settings, endpoint, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -123,7 +125,7 @@ function TTSModelSelection({ settings, endpoint, apiKey = null }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">TTS Model</Label>
+        <Label className="block mb-3">{t("provider-options.tts-model")}</Label>
         {/*
           Keyed apart from the loaded select below so Base UI's `useControlled`
           does not lock this instance into uncontrolled mode - see the same note
@@ -135,7 +137,7 @@ function TTSModelSelection({ settings, endpoint, apiKey = null }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="--loading available models--" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -152,11 +154,11 @@ function TTSModelSelection({ settings, endpoint, apiKey = null }) {
   if (customModels.length === 0 || (savedModel && !savedModelInList)) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">TTS Model</Label>
+        <Label className="block mb-3">{t("provider-options.tts-model")}</Label>
         <Input
           type="text"
           name="TTSOpenAICompatibleModel"
-          placeholder="Your TTS model identifier"
+          placeholder={t("ui.tts-model-identifier")}
           defaultValue={savedModel}
           required={true}
           autoComplete="off"
@@ -173,7 +175,7 @@ function TTSModelSelection({ settings, endpoint, apiKey = null }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">TTS Model</Label>
+      <Label className="block mb-3">{t("provider-options.tts-model")}</Label>
       <Select
         key="tts-openai-compatible-model-loaded"
         name="TTSOpenAICompatibleModel"
@@ -181,11 +183,11 @@ function TTSModelSelection({ settings, endpoint, apiKey = null }) {
         defaultValue={savedModel || customModels[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t("provider-options.select-model")} />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectLabel>Available models</SelectLabel>
+            <SelectLabel>{t("provider-options.available-models")}</SelectLabel>
             {customModels.map((model) => (
               <SelectItem key={model.id} value={model.id}>
                 {model.id}

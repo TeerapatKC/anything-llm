@@ -270,7 +270,7 @@ function ConfigurationSection({
                 setApiKey(e.target.value);
                 setHasChanges(true);
               }}
-              placeholder="Your API key..."
+              placeholder={t("ui.your-api-key")}
               className="w-full px-3 py-2 bg-theme-bg-primary border border-theme-sidebar-border rounded-lg text-theme-text-primary text-sm placeholder:text-theme-text-secondary/50"
             />
           </div>

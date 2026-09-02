@@ -15,11 +15,9 @@ export default function DetailsSection({ config, onDisconnected }) {
       <div className="border border-zinc-700 light:border-slate-200 rounded-xl p-4 w-[700px]">
         <div className="flex flex-col gap-y-4 text-sm">
           <DetailRow
-            label={t("telegram.connected.workspace")}
-            value={config.default_workspace}
+            label={t("telegram.connected.linked-accounts")}
+            value={config.linked_user_count ?? 0}
           />
-          <DetailRow label="Thread" value={config.active_thread_name} />
-          <DetailRow label="Model" value={config.chat_model} />
           <DetailRow
             label={t("telegram.connected.bot-link")}
             value={
@@ -34,6 +32,9 @@ export default function DetailsSection({ config, onDisconnected }) {
             }
           />
         </div>
+        <p className="text-xs text-zinc-400 light:text-slate-600 mt-4">
+          {t("telegram.connected.per-user-note")}
+        </p>
       </div>
       <DisconnectButton onDisconnected={onDisconnected} />
     </div>

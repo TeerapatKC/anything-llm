@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty";
 import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import paths from "@/utils/paths";
 import { Link, useParams, useNavigate, useMatch } from "react-router-dom";
-import { GripVertical, Settings } from "lucide-react";
+import { GripVertical, Plus, Settings } from "lucide-react";
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -31,7 +32,41 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import WorkspaceMonogram from "@/components/Sidebar/WorkspaceMonogram";
 
-export default function ActiveWorkspaces() {
+/**
+ * The primary way to create a workspace. It used to be an icon-only `+` sharing
+ * the search row, where it read as a search affordance; as a full-width row
+ * under the "Workspaces" heading it sits with the list it adds to and has room
+ * to say what it does. Hidden while the sidebar is icon-collapsed - the header
+ * keeps a compact icon button for that state.
+ */
+function NewWorkspaceButton({ onClick }) {
+  const { t } = useTranslation();
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="group/new-ws mb-2 flex w-full items-center gap-3 rounded-lg border border-dashed border-sidebar-border px-3 py-2.5 text-left outline-none transition-colors group-data-[collapsible=icon]:hidden hover:border-sidebar-accent hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+    >
+      <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-foreground transition-colors group-hover/new-ws:bg-sidebar-primary group-hover/new-ws:text-sidebar-primary-foreground">
+        <Plus className="size-4" strokeWidth={2.5} />
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[15px] font-medium text-sidebar-foreground">
+          {t("sidebar.new-workspace")}
+        </span>
+        <span className="block truncate text-xs text-sidebar-foreground/60">
+          {t("sidebar.new-workspace-description")}
+        </span>
+      </span>
+    </button>
+  );
+}
+
+export default function ActiveWorkspaces({
+  canCreateWorkspace = false,
+  showNewWsModal,
+}) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { slug } = useParams();
   const [loading, setLoading] = useState(true);
@@ -54,7 +89,7 @@ export default function ActiveWorkspaces() {
   if (loading) {
     return (
       <SidebarMenu
-        aria-label="Workspaces"
+        aria-label={t("sidebar.workspaces")}
         className={cn(isCollapsed && "items-center gap-1.5")}
       >
         {Array.from({ length: 5 }).map((_, index) => (
@@ -110,7 +145,10 @@ export default function ActiveWorkspaces() {
 
   if (isCollapsed) {
     return (
-      <SidebarMenu aria-label="Workspaces" className="items-center gap-1.5">
+      <SidebarMenu
+        aria-label={t("sidebar.workspaces")}
+        className="items-center gap-1.5"
+      >
         {workspaces.map((workspace) => {
           const isActive =
             workspace.slug === slug || workspace.slug === virtualActiveSlug;
@@ -151,12 +189,17 @@ export default function ActiveWorkspaces() {
   if (workspaces.length === 0) {
     return (
       <SidebarGroup className="p-0">
-        <SidebarGroupLabel>Workspaces</SidebarGroupLabel>
+        <SidebarGroupLabel className="text-sm">
+          {t("sidebar.workspaces")}
+        </SidebarGroupLabel>
         <SidebarGroupContent>
+          {canCreateWorkspace && (
+            <NewWorkspaceButton onClick={showNewWsModal} />
+          )}
           <Empty className="border border-dashed border-sidebar-border px-3 py-4">
             <EmptyHeader>
               <EmptyDescription className="text-sidebar-foreground/60">
-                No workspaces yet.
+                {t("sidebar.no-workspaces")}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -167,13 +210,16 @@ export default function ActiveWorkspaces() {
 
   return (
     <SidebarGroup className="p-0">
-      <SidebarGroupLabel>Workspaces</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-sm">
+        {t("sidebar.workspaces")}
+      </SidebarGroupLabel>
       <SidebarGroupContent>
+        {canCreateWorkspace && <NewWorkspaceButton onClick={showNewWsModal} />}
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="workspaces">
             {(provided) => (
               <SidebarMenu
-                aria-label="Workspaces"
+                aria-label={t("sidebar.workspaces")}
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 // react-beautiful-dnd measures rows by their margin box and
@@ -219,12 +265,13 @@ export default function ActiveWorkspaces() {
                               the row never shifts as you reach for it. */}
                           <span
                             aria-hidden="true"
-                            className="pointer-events-none absolute left-1 top-1 z-10 flex size-6 items-center justify-center text-sidebar-foreground/50 opacity-0 transition-opacity group-hover/workspace:opacity-100"
+                            className="pointer-events-none absolute left-[7px] top-2 z-10 flex size-6 items-center justify-center text-sidebar-foreground/50 opacity-0 transition-opacity group-hover/workspace:opacity-100"
                           >
                             <GripVertical className="size-4" />
                           </span>
                           <SidebarMenuButton
                             isActive={isActive}
+                            className="h-10 text-[15px]"
                             render={
                               <Link
                                 to={paths.workspace.chat(workspace.slug)}
@@ -241,7 +288,7 @@ export default function ActiveWorkspaces() {
                               name={workspace.name}
                               isActive={isActive}
                               className={cn(
-                                "size-[18px] transition-opacity group-hover/workspace:opacity-0",
+                                "size-[22px] transition-opacity group-hover/workspace:opacity-0",
                                 isInactive && "opacity-50"
                               )}
                             />
@@ -286,7 +333,7 @@ export default function ActiveWorkspaces() {
                                 render={
                                   <SidebarMenuAction
                                     showOnHover={!isActive}
-                                    className="text-sidebar-foreground/60 peer-hover/menu-button:text-sidebar-foreground/60"
+                                    className="top-2.5! text-sidebar-foreground/60 peer-hover/menu-button:text-sidebar-foreground/60"
                                     onClick={(e) => {
                                       e.preventDefault();
                                       e.stopPropagation();
@@ -298,7 +345,7 @@ export default function ActiveWorkspaces() {
                                             )
                                       );
                                     }}
-                                    aria-label="General appearance settings"
+                                    aria-label={t("sidebar.general-appearance")}
                                   />
                                 }
                               >

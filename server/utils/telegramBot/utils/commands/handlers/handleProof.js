@@ -1,6 +1,8 @@
 const { Workspace } = require("../../../../../models/workspace");
 const { WorkspaceThread } = require("../../../../../models/workspaceThread");
 const { WorkspaceChats } = require("../../../../../models/workspaceChats");
+const { asMessageId } = require("../../index");
+const { translatorFor } = require("../../i18n");
 
 const SOURCES_PER_PAGE = 6;
 
@@ -38,16 +40,17 @@ function truncateText(text, maxLength = 30) {
 }
 
 /**
- * Get the last assistant message for the current workspace/thread.
+ * Get the last assistant message for the current user's workspace/thread.
  * @param {number} workspaceId
  * @param {number|null} threadId
+ * @param {number} userId
  * @returns {Promise<{sources: object[], text: string}|null>}
  */
-async function getLastAssistantMessage(workspaceId, threadId) {
+async function getLastAssistantMessage(workspaceId, threadId, userId) {
   const chat = await WorkspaceChats.get(
     {
       workspaceId,
-      user_id: null,
+      user_id: userId,
       thread_id: threadId || null,
       api_session_id: null,
       include: true,
@@ -75,7 +78,7 @@ async function getLastAssistantMessage(workspaceId, threadId) {
  * @param {number} page
  * @returns {{text: string, buttons: object[][]}}
  */
-function buildSourcesMenu(sources, page = 0) {
+function buildSourcesMenu(sources, page = 0, t) {
   const totalPages = Math.ceil(sources.length / SOURCES_PER_PAGE);
   const safePage = Math.max(0, Math.min(page, totalPages - 1));
   const startIdx = safePage * SOURCES_PER_PAGE;
@@ -96,19 +99,29 @@ function buildSourcesMenu(sources, page = 0) {
 
   const navRow = [];
   if (safePage > 0) {
-    navRow.push({ text: "← Prev", callback_data: `srcpg:${safePage - 1}` });
+    navRow.push({
+      text: t("common.prev"),
+      callback_data: `srcpg:${safePage - 1}`,
+    });
   }
   if (safePage < totalPages - 1) {
-    navRow.push({ text: "Next →", callback_data: `srcpg:${safePage + 1}` });
+    navRow.push({
+      text: t("common.next"),
+      callback_data: `srcpg:${safePage + 1}`,
+    });
   }
   if (navRow.length) buttons.push(navRow);
 
-  buttons.push([{ text: "Close", callback_data: "src:close" }]);
+  buttons.push([{ text: t("proof.close"), callback_data: "src:close" }]);
 
   const text =
     totalPages > 1
-      ? `📚 <b>Citations</b> (${safePage + 1}/${totalPages}, ${sources.length} total)\n\nSelect a source to view:`
-      : `📚 <b>Citations</b> (${sources.length} source${sources.length > 1 ? "s" : ""})\n\nSelect a source to view:`;
+      ? t("proof.header_paged", {
+          page: safePage + 1,
+          pages: totalPages,
+          count: sources.length,
+        })
+      : t("proof.header", { count: sources.length });
 
   return { text, buttons };
 }
@@ -121,28 +134,35 @@ function buildSourcesMenu(sources, page = 0) {
  * @param {number|null} messageId - If provided, edits existing message
  */
 async function showSourcesMenu(ctx, chatId, page = 0, messageId = null) {
-  const state = ctx.getState(chatId);
-  const workspace = await Workspace.get({ slug: state.workspaceSlug });
+  const editId = asMessageId(messageId);
+  const session = ctx.getState(chatId);
+  if (!session) return;
+  const t = translatorFor(session);
+
+  const workspace = session.workspaceSlug
+    ? await Workspace.get({ slug: session.workspaceSlug })
+    : null;
   if (!workspace) {
-    await ctx.bot.sendMessage(chatId, "No workspace configured.");
+    await ctx.bot.sendMessage(chatId, t("thread.no_workspace"));
     return;
   }
 
-  const thread = state.threadSlug
-    ? await WorkspaceThread.get({ slug: state.threadSlug })
+  const thread = session.threadSlug
+    ? await WorkspaceThread.get({ slug: session.threadSlug })
     : null;
 
   const lastMessage = await getLastAssistantMessage(
     workspace.id,
-    thread?.id || null
+    thread?.id || null,
+    session.user.id
   );
 
   if (!lastMessage) {
-    const text = "There are no citations for the previous reply.";
-    if (messageId) {
+    const text = t("proof.no_citations");
+    if (editId) {
       await ctx.bot.editMessageText(text, {
         chat_id: chatId,
-        message_id: messageId,
+        message_id: editId,
       });
     } else {
       await ctx.bot.sendMessage(chatId, text);
@@ -152,11 +172,11 @@ async function showSourcesMenu(ctx, chatId, page = 0, messageId = null) {
 
   const { sources } = lastMessage;
   if (!sources || sources.length === 0) {
-    const text = "The previous reply has no citations available.";
-    if (messageId) {
+    const text = t("proof.no_sources");
+    if (editId) {
       await ctx.bot.editMessageText(text, {
         chat_id: chatId,
-        message_id: messageId,
+        message_id: editId,
       });
     } else {
       await ctx.bot.sendMessage(chatId, text);
@@ -167,16 +187,16 @@ async function showSourcesMenu(ctx, chatId, page = 0, messageId = null) {
   // Store sources in state for callback handlers to access
   ctx.setState(chatId, { _proofSources: sources });
 
-  const { text, buttons } = buildSourcesMenu(sources, page);
+  const { text, buttons } = buildSourcesMenu(sources, page, t);
   const opts = {
     parse_mode: "HTML",
     reply_markup: { inline_keyboard: buttons },
   };
 
-  if (messageId) {
+  if (editId) {
     await ctx.bot.editMessageText(text, {
       chat_id: chatId,
-      message_id: messageId,
+      message_id: editId,
       ...opts,
     });
   } else {

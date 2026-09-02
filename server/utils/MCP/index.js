@@ -102,6 +102,14 @@ class MCPCompatibilityLayer extends MCPHypervisor {
                     aibitat.introspect(
                       `MCP server: ${name}:${tool.name} completed successfully`
                     );
+
+                    aibitat.addCitation?.({
+                      id: `mcp-${name}-${tool.name}-${Date.now()}`,
+                      title: `${name}: ${tool.name}`,
+                      text: `MCP tool "${tool.name}" on server "${name}"`,
+                      chunkSource: `mcp://${name}/${tool.name}`,
+                    });
+
                     return MCPCompatibilityLayer.returnMCPResult(result);
                   } catch (error) {
                     aibitat.handlerProps.log(

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
@@ -34,6 +35,7 @@ export default function ImageModelSelection({
   settings,
   endpointName = null,
 }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const needsBasePath = !!endpointName && !basePath;
@@ -84,12 +86,12 @@ export default function ImageModelSelection({
 
   if (models.length === 0) {
     return (
-      <ModelSelectionWrapper hint="No image models could be found for this provider - enter the model name manually.">
+      <ModelSelectionWrapper hint={t("ui.no-image-models")}>
         <input
           type="text"
           name="ImageGenerationModelPref"
           className={INPUT_CLASSES}
-          placeholder="Image model name"
+          placeholder={t("ui.image-model-name")}
           defaultValue={settings?.ImageGenerationModelPref || ""}
           required={true}
           autoComplete="off"
@@ -104,7 +106,7 @@ export default function ImageModelSelection({
     <ModelSelectionWrapper>
       <Select name="ImageGenerationModelPref" required={true}>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels).length > 0

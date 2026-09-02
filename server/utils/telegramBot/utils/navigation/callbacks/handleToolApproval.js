@@ -18,6 +18,8 @@ async function handleToolApproval({
   pendingToolApprovals,
   log,
 } = {}) {
+  const { translatorFor } = require("../../i18n");
+  const t = translatorFor(ctx.getState(chatId));
   const _log = log || ctx.log;
   _log(`Tool approval callback received: ${data}`);
 
@@ -26,7 +28,7 @@ async function handleToolApproval({
     if (parts.length !== 3) {
       _log(`Invalid callback data format: ${data}`);
       await ctx.bot.answerCallbackQuery(query.id, {
-        text: "Invalid request format.",
+        text: t("common.callback_error"),
       });
       return;
     }
@@ -38,7 +40,7 @@ async function handleToolApproval({
     if (!pending) {
       _log(`No pending approval found for requestId: ${requestId}`);
       await ctx.bot.answerCallbackQuery(query.id, {
-        text: "This approval request has expired.",
+        text: t("tool.expired"),
       });
       return;
     }
@@ -79,8 +81,8 @@ async function handleToolApproval({
 
     // Update the message to show the result
     const resultText = approved
-      ? `✅ <b>${skillName}</b> was approved.`
-      : `❌ <b>${skillName}</b> was denied.`;
+      ? t("tool.approved", { skill: skillName })
+      : t("tool.denied", { skill: skillName });
 
     await ctx.bot
       .editMessageText(resultText, {
@@ -91,12 +93,12 @@ async function handleToolApproval({
       .catch((err) => _log(`Failed to edit message: ${err.message}`));
 
     await ctx.bot.answerCallbackQuery(query.id, {
-      text: approved ? "Approved!" : "Denied.",
+      text: approved ? t("tool.approved_toast") : t("tool.denied_toast"),
     });
   } catch (error) {
     _log(`Error handling tool approval callback: ${error.message}`);
     await ctx.bot.answerCallbackQuery(query.id, {
-      text: "Something went wrong.",
+      text: t("common.callback_error"),
     });
   }
 }

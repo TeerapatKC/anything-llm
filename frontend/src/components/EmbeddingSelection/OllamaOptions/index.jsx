@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function OllamaEmbeddingOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -65,14 +67,16 @@ export default function OllamaEmbeddingOptions({ settings }) {
             <TooltipTrigger
               render={<div className="flex gap-x-1 items-center mb-3" />}
             >
-              <Label className="block">Max embedding chunk length</Label>
+              <Label className="block">
+                {t("provider-options.max-embedding-chunk")}
+              </Label>
               <Info
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
-              Maximum length of text chunks, in characters, for embedding.
+              {t("provider-options.max-embedding-chunk-help")}
             </TooltipContent>
           </Tooltip>
           <Input
@@ -154,8 +158,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
                 />
               </TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
-                Number of text chunks to embed in parallel. Higher values
-                improve speed but use more memory. Default is 1.
+                {t("help.ollama-options")}
               </TooltipContent>
             </Tooltip>
             <Input
@@ -170,8 +173,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
               autoComplete="off"
             />
             <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-              Increase this value to process multiple chunks simultaneously for
-              faster embedding.
+              {t("help.ollama-options-2")}
             </p>
           </div>
           <div>
@@ -179,7 +181,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
             <Input
               type="password"
               name="OllamaLLMAuthToken"
-              placeholder="Enter your Auth Token"
+              placeholder={t("ui.enter-auth-token")}
               defaultValue={settings?.OllamaLLMAuthToken ? "*".repeat(20) : ""}
               value={authTokenValue.value}
               onChange={authToken.onChange}
@@ -203,6 +205,7 @@ export default function OllamaEmbeddingOptions({ settings }) {
 }
 
 function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -243,8 +246,7 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
           <SelectContent />
         </Select>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-          Select the Ollama model for embeddings. Models will load after
-          entering a valid Ollama URL.
+          {t("help.ollama-options-3")}
         </p>
       </div>
     );
@@ -259,12 +261,14 @@ function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
         defaultValue={settings.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

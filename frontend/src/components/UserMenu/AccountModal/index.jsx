@@ -1,9 +1,8 @@
 import usePfp from "@/hooks/usePfp";
 import System from "@/models/system";
-import Appearance from "@/models/appearance";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
-import { Info, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -13,14 +12,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { useState } from "react";
 import { safeJsonParse } from "@/utils/request";
-import Toggle from "@/components/lib/Toggle";
 import {
   USERNAME_MIN_LENGTH,
   USERNAME_MAX_LENGTH,
@@ -177,6 +170,19 @@ export default function AccountModal({ user, hideModal }) {
                 />
               </div>
               <div>
+                <Label htmlFor="bio" className="block mb-2">
+                  Bio
+                </Label>
+                <Textarea
+                  name="bio"
+                  placeholder="Tell us about yourself..."
+                  defaultValue={user.bio}
+                  rows={3}
+                />
+              </div>
+              {/* Last: changing a password leaves this form for another
+                  dialog, so it does not belong between fields being edited. */}
+              <div>
                 <Label className="block mb-2">
                   {t("profile_settings.password")}
                 </Label>
@@ -190,23 +196,6 @@ export default function AccountModal({ user, hideModal }) {
                 <p className="mt-2 text-xs text-theme-text-secondary">
                   {t("profile_settings.password_description")}
                 </p>
-              </div>
-              <div>
-                <Label htmlFor="bio" className="block mb-2">
-                  Bio
-                </Label>
-                <Textarea
-                  name="bio"
-                  placeholder="Tell us about yourself..."
-                  defaultValue={user.bio}
-                  rows={3}
-                />
-              </div>
-              <div className="flex gap-x-8">
-                <div className="flex flex-col gap-y-3">
-                  <AutoSubmitPreference />
-                  <AutoSpeakPreference />
-                </div>
               </div>
             </div>
             <DialogFooter>
@@ -225,80 +214,5 @@ export default function AccountModal({ user, hideModal }) {
         onClose={() => setShowChangePassword(false)}
       />
     </>
-  );
-}
-
-function AutoSubmitPreference() {
-  const [autoSubmitSttInput, setAutoSubmitSttInput] = useState(true);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    const settings = Appearance.getSettings();
-    setAutoSubmitSttInput(settings.autoSubmitSttInput ?? true);
-  }, []);
-
-  const handleChange = (checked) => {
-    setAutoSubmitSttInput(checked);
-    Appearance.updateSettings({ autoSubmitSttInput: checked });
-  };
-
-  return (
-    <div>
-      <div className="flex items-center gap-x-1 mb-2">
-        <Label htmlFor="autoSubmit" className="block">
-          {t("customization.chat.auto_submit.title")}
-        </Label>
-        <Tooltip>
-          <TooltipTrigger render={<div className="cursor-pointer h-fit" />}>
-            <Info size={16} className="text-theme-text-primary" />
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-            {t("customization.chat.auto_submit.description")}
-          </TooltipContent>
-        </Tooltip>
-      </div>
-      <Toggle size="lg" enabled={autoSubmitSttInput} onChange={handleChange} />
-    </div>
-  );
-}
-
-function AutoSpeakPreference() {
-  const [autoPlayAssistantTtsResponse, setAutoPlayAssistantTtsResponse] =
-    useState(false);
-  const { t } = useTranslation();
-
-  useEffect(() => {
-    const settings = Appearance.getSettings();
-    setAutoPlayAssistantTtsResponse(
-      settings.autoPlayAssistantTtsResponse ?? false
-    );
-  }, []);
-
-  const handleChange = (checked) => {
-    setAutoPlayAssistantTtsResponse(checked);
-    Appearance.updateSettings({ autoPlayAssistantTtsResponse: checked });
-  };
-
-  return (
-    <div>
-      <div className="flex items-center gap-x-1 mb-2">
-        <Label htmlFor="autoSpeak" className="block">
-          {t("customization.chat.auto_speak.title")}
-        </Label>
-        <Tooltip>
-          <TooltipTrigger render={<div className="cursor-pointer h-fit" />}>
-            <Info size={16} className="text-theme-text-primary" />
-          </TooltipTrigger>
-          <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-            {t("customization.chat.auto_speak.description")}
-          </TooltipContent>
-        </Tooltip>
-      </div>
-      <Toggle
-        size="lg"
-        enabled={autoPlayAssistantTtsResponse}
-        onChange={handleChange}
-      />
-    </div>
   );
 }

@@ -4,6 +4,7 @@ const { WorkspaceChats } = require("../../../../../models/workspaceChats");
 const { convertToChatHistory } = require("../../../../helpers/chat/responses");
 const { sendBatchedMessages } = require("../../../utils");
 const { escapeHTML } = require("../../format");
+const { translatorFor } = require("../../i18n");
 
 const DEFAULT_HISTORY_COUNT = 10;
 const MAX_HISTORY_COUNT = 50;
@@ -15,10 +16,15 @@ const MAX_HISTORY_COUNT = 50;
  * @param {string} [messageText] - Full message text to parse count from
  */
 async function handleHistory(ctx, chatId, messageText = "") {
-  const state = ctx.getState(chatId);
-  const workspace = await Workspace.get({ slug: state.workspaceSlug });
+  const session = ctx.getState(chatId);
+  if (!session) return;
+  const t = translatorFor(session);
+
+  const workspace = session.workspaceSlug
+    ? await Workspace.get({ slug: session.workspaceSlug })
+    : null;
   if (!workspace) {
-    await ctx.bot.sendMessage(chatId, "No workspace configured.");
+    await ctx.bot.sendMessage(chatId, t("thread.no_workspace"));
     return;
   }
 
@@ -27,14 +33,14 @@ async function handleHistory(ctx, chatId, messageText = "") {
     ? Math.min(parseInt(match[1], 10), MAX_HISTORY_COUNT)
     : DEFAULT_HISTORY_COUNT;
 
-  const thread = state.threadSlug
-    ? await WorkspaceThread.get({ slug: state.threadSlug })
+  const thread = session.threadSlug
+    ? await WorkspaceThread.get({ slug: session.threadSlug })
     : null;
 
   const rawChats = await WorkspaceChats.where(
     {
       workspaceId: workspace.id,
-      user_id: null,
+      user_id: session.user.id,
       thread_id: thread?.id || null,
       api_session_id: null,
       include: true,
@@ -44,7 +50,7 @@ async function handleHistory(ctx, chatId, messageText = "") {
   );
 
   if (!rawChats.length) {
-    await ctx.bot.sendMessage(chatId, "No messages yet in this thread.");
+    await ctx.bot.sendMessage(chatId, t("history.empty"));
     return;
   }
 
@@ -54,9 +60,9 @@ async function handleHistory(ctx, chatId, messageText = "") {
   for (let i = 0; i < history.length; i++) {
     const entry = history[i];
     if (entry.role === "user") {
-      let block = `<b>You:</b> ${escapeHTML(entry.content || "")}`;
+      let block = `<b>${t("history.you")}</b> ${escapeHTML(entry.content || "")}`;
       if (i + 1 < history.length && history[i + 1].role === "assistant") {
-        block += `\n\n<b>AI:</b> ${escapeHTML(history[i + 1].content || "")}`;
+        block += `\n\n<b>${t("history.ai")}</b> ${escapeHTML(history[i + 1].content || "")}`;
         i++;
       }
       exchanges.push(block);

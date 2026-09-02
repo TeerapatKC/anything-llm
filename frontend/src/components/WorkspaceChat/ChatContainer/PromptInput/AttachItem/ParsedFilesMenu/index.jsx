@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { TriangleAlert, X } from "lucide-react";
@@ -26,6 +27,7 @@ export default function ParsedFilesMenu({
   workspaceSlug,
   threadSlug = null,
 }) {
+  const { t } = useTranslation();
   const { user } = useUser();
   const canEmbed = workspaceCan(WS.DOCUMENTS_UPLOAD, workspaceSlug, user);
   const initialContextWindowLimitExceeded =
@@ -132,9 +134,7 @@ export default function ParsedFilesMenu({
               size={16}
             />
             <div className="text-xs text-theme-text-primary">
-              Your context window is getting full. Some files may be truncated
-              or excluded from chat responses. We recommend embedding these
-              files directly into your workspace for better results.
+              {t("help.parsed-files-menu")}
             </div>
           </div>
           <button
@@ -196,6 +196,7 @@ export default function ParsedFilesMenu({
  * focusable for everyone else.
  */
 function TokenCount({ currentTokens, contextWindow, exceeded, explain }) {
+  const { t } = useTranslation();
   const body = (
     <div
       className={`flex items-center gap-x-1 ${explain ? "cursor-pointer" : ""}`}
@@ -215,9 +216,7 @@ function TokenCount({ currentTokens, contextWindow, exceeded, explain }) {
     <Tooltip>
       <TooltipTrigger render={body} />
       <TooltipContent side="top" className="max-w-[350px] text-xs">
-        You have exceeded the context window limit. Some files may be truncated
-        or excluded from chat responses. Responses may hallucinate or lack
-        relevant information.
+        {t("help.parsed-files-menu-2")}
       </TooltipContent>
     </Tooltip>
   );

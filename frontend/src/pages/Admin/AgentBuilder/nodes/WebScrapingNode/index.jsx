@@ -1,4 +1,5 @@
 import Toggle from "@/components/lib/Toggle";
+import { useTranslation } from "react-i18next";
 import VariableInput from "../../VariableInput";
 import { Label } from "@/components/ui/label";
 import {
@@ -14,10 +15,13 @@ export default function WebScrapingNode({
   onConfigChange,
   renderVariableSelect,
 }) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div>
-        <Label className="block mb-2">URL to Scrape</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.webScraping.url-to-scrape")}
+        </Label>
         <VariableInput
           value={config?.url || ""}
           onChange={(e) =>
@@ -26,12 +30,14 @@ export default function WebScrapingNode({
               url: e.target.value,
             })
           }
-          placeholder="https://example.com"
+          placeholder={t("agent-builder.website.url-placeholder")}
         />
       </div>
 
       <div>
-        <Label className="block mb-2">Capture Page Content As</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.webScraping.capture-as")}
+        </Label>
         <Select
           value={config.captureAs}
           onValueChange={(value) =>
@@ -39,13 +45,24 @@ export default function WebScrapingNode({
           }
         >
           <SelectTrigger>
-            <SelectValue placeholder="Select an option" />
+            <SelectValue
+              placeholder={t("agent-builder.common.select-option")}
+            />
           </SelectTrigger>
           <SelectContent>
             {[
-              { label: "Text content only", value: "text" },
-              { label: "Raw HTML", value: "html" },
-              { label: "CSS Query Selector", value: "querySelector" },
+              {
+                label: t("agent-builder.webScraping.capture-text"),
+                value: "text",
+              },
+              {
+                label: t("agent-builder.webScraping.capture-html"),
+                value: "html",
+              },
+              {
+                label: t("agent-builder.webScraping.capture-selector"),
+                value: "querySelector",
+              },
             ].map((captureAs) => (
               <SelectItem key={captureAs.value} value={captureAs.value}>
                 {captureAs.label}
@@ -57,16 +74,20 @@ export default function WebScrapingNode({
 
       {config.captureAs === "querySelector" && (
         <div>
-          <Label className="block mb-2">Query Selector</Label>
+          <Label className="block mb-2">
+            {t("agent-builder.webScraping.query-selector")}
+          </Label>
           <p className="text-xs text-theme-text-secondary mb-2">
-            Enter a valid CSS selector to scrape the content of the page.
+            {t("agent-builder.webScraping.query-selector-help")}
           </p>
           <VariableInput
             value={config.querySelector}
             onChange={(e) =>
               onConfigChange({ ...config, querySelector: e.target.value })
             }
-            placeholder=".article-content, #content, .main-content, etc."
+            placeholder={t(
+              "agent-builder.webScraping.query-selector-placeholder"
+            )}
           />
         </div>
       )}
@@ -74,15 +95,13 @@ export default function WebScrapingNode({
       <Toggle
         size="md"
         variant="horizontal"
-        label="Content Summarization"
+        label={t("agent-builder.webScraping.summarization")}
         hint={
           <p className="text-sm">
-            When enabled, long webpage content will be automatically summarized
-            to reduce token usage.
+            {t("agent-builder.webScraping.summarization-hint")}
             <br />
             <br />
-            Note: This may affect data quality and remove specific details from
-            the original content.
+            {t("agent-builder.webScraping.summarization-note")}
           </p>
         }
         enabled={config.enableSummarization ?? true}
@@ -91,11 +110,13 @@ export default function WebScrapingNode({
         }
       />
       <div>
-        <Label className="block mb-2">Result Variable</Label>
+        <Label className="block mb-2">
+          {t("agent-builder.common.result-variable")}
+        </Label>
         {renderVariableSelect(
           config.resultVariable,
           (value) => onConfigChange({ ...config, resultVariable: value }),
-          "Select or create variable",
+          t("agent-builder.common.select-or-create-variable"),
           true
         )}
       </div>

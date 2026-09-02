@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import Sidebar, { SidebarPageLayout } from "@/components/Sidebar";
@@ -37,6 +38,7 @@ export default function LiveDocumentSyncManager() {
 }
 
 function WatchedDocumentsContainer() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [queues, setQueues] = useState([]);
 
@@ -67,10 +69,10 @@ function WatchedDocumentsContainer() {
     <Table className="text-left rounded-lg mt-6 min-w-[640px]">
       <TableHeader>
         <TableRow>
-          <TableHead scope="col">Document Name</TableHead>
+          <TableHead scope="col">{t("ui.document-name")}</TableHead>
           <TableHead scope="col">Last Synced</TableHead>
-          <TableHead scope="col">Time until next refresh</TableHead>
-          <TableHead scope="col">Created On</TableHead>
+          <TableHead scope="col">{t("ui.time-until-refresh")}</TableHead>
+          <TableHead scope="col">{t("ui.created-on")}</TableHead>
           <TableHead scope="col"> </TableHead>
         </TableRow>
       </TableHeader>

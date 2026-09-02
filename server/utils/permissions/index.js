@@ -139,6 +139,7 @@ const PERMISSIONS = {
   INTEGRATIONS_TELEGRAM: "integrations.telegram",
   INTEGRATIONS_GOOGLE: "integrations.google",
   INTEGRATIONS_OUTLOOK: "integrations.outlook",
+  INTEGRATIONS_LINE: "integrations.line",
 };
 
 /**
@@ -720,6 +721,13 @@ const PERMISSION_CATALOG = [
     label: "Manage Outlook integration",
     description:
       "Connect and revoke the Microsoft account agents use for Outlook skills.",
+    category: "integrations",
+  },
+  {
+    key: PERMISSIONS.INTEGRATIONS_LINE,
+    label: "View LINE webhook integration",
+    description:
+      "View the LINE webhook URL and connection status for the bot that answers on the instance's behalf.",
     category: "integrations",
   },
 

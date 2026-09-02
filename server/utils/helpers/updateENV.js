@@ -982,6 +982,44 @@ const KEY_MAPPING = {
     checks: [],
   },
 
+  // SMTP / Outbound Email Settings
+  SMTPEnabled: {
+    envKey: "SMTP_ENABLED",
+    checks: [],
+  },
+  SMTPProvider: {
+    envKey: "SMTP_PROVIDER",
+    checks: [supportedSMTPProvider],
+  },
+  SMTPHost: {
+    envKey: "SMTP_HOST",
+    checks: [],
+  },
+  SMTPPort: {
+    envKey: "SMTP_PORT",
+    checks: [],
+  },
+  SMTPSecure: {
+    envKey: "SMTP_SECURE",
+    checks: [],
+  },
+  SMTPUsername: {
+    envKey: "SMTP_USERNAME",
+    checks: [],
+  },
+  SMTPPassword: {
+    envKey: "SMTP_PASSWORD",
+    checks: [],
+  },
+  SMTPFromEmail: {
+    envKey: "SMTP_FROM_EMAIL",
+    checks: [],
+  },
+  SMTPFromName: {
+    envKey: "SMTP_FROM_NAME",
+    checks: [],
+  },
+
   // Agent Skill Settings
   AgentSkillMaxToolCalls: {
     envKey: "AGENT_MAX_TOOL_CALLS",
@@ -1129,6 +1167,13 @@ function supportedLLM(input = "") {
     "anythingllm-router",
   ].includes(input);
   return validSelection ? null : `${input} is not a valid LLM provider.`;
+}
+
+function supportedSMTPProvider(input = "") {
+  const supported = ["google", "microsoft", "outlook", "custom"];
+  return supported.includes(input)
+    ? null
+    : `Invalid SMTP provider. Must be one of ${supported.join(", ")}.`;
 }
 
 function supportedTranscriptionProvider(input = "") {

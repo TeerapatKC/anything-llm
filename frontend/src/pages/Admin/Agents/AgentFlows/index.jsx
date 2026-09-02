@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from "react";
 import { ChevronRight } from "lucide-react";
 
@@ -7,10 +8,11 @@ export default function AgentFlowsList({
   handleClick,
   activeFlowIds = [],
 }) {
+  const { t } = useTranslation();
   if (flows.length === 0) {
     return (
       <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
-        <p>No agent flows found</p>
+        <p>{t("ui.no-agent-flows")}</p>
         <a
           href="https://docs.anythingllm.com/agent-flows/getting-started"
           target="_blank"

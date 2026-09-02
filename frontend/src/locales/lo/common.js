@@ -5,14 +5,49 @@ const TRANSLATIONS = {
       welcome: "ຍິນດີຕ້ອນຮັບ",
       getStarted: "ເລີ່ມຕົ້ນໃຊ້ງານ",
     },
+    llm: {
+      title: "ການຕັ້ງຄ່າ LLM",
+      description:
+        "AnythingLLM ສາມາດເຮັດວຽກຮ່ວມກັບຜູ້ໃຫ້ບໍລິການ LLM ໄດ້ຫຼາຍແຫ່ງ. ນີ້ຈະເປັນບໍລິການທີ່ຈະຈັດການການສົນທະນາ.",
+    },
     userSetup: {
       title: "ຕັ້ງຄ່າຜູ້ໃຊ້",
       description: "ຕັ້ງຄ່າຂໍ້ມູນຜູ້ໃຊ້ຂອງທ່ານ.",
+      howManyUsers: "ຈະມີຜູ້ໃຊ້ຈັກຄົນໃນລະບົບນີ້?",
+      justMe: "ແຕ່ຂ້ອຍຄົນດຽວ",
+      myTeam: "ທີມງານຂອງຂ້ອຍ",
+      instancePassword: "ລະຫັດຜ່ານລະບົບ",
+      setPassword: "ທ່ານຕ້ອງການຕັ້ງລະຫັດຜ່ານບໍ່?",
+      passwordReq: "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ.",
+      passwordWarn:
+        "ມັນສຳຄັນຫຼາຍທີ່ຕ້ອງບັນທຶກລະຫັດຜ່ານນີ້ໄວ້ ເພາະບໍ່ມີວິທີການກູ້ຄືນ.",
       adminUsername: "ຊື່ຜູ້ໃຊ້ຜູ້ດູແລ (Admin)",
       adminPassword: "ລະຫັດຜ່ານຜູ້ດູແລ (Admin)",
       adminPasswordReq: "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ.",
       teamHint:
         "ໂດຍເລີ່ມຕົ້ນ, ທ່ານຈະເປັນຜູ້ດູແລພຽງຄົນດຽວ. ເມື່ອຕັ້ງຄ່າສຳເລັດແລ້ວ ທ່ານສາມາດສ້າງ ແລະ ເຊີນຄົນອື່ນມາເປັນຜູ້ໃຊ້ ຫຼື ຜູ້ດູແລໄດ້. ຫ້າມເຮັດລະຫັດຜ່ານເສຍ ເພາະມີພຽງຜູ້ດູແລເທົ່ານັ້ນທີ່ສາມາດຕັ້ງລະຫັດຜ່ານໃໝ່ໄດ້.",
+    },
+    data: {
+      title: "ການຈັດການຂໍ້ມູນ ແລະ ຄວາມເປັນສ່ວນຕົວ",
+      description:
+        "ພວກເຮົາໃຫ້ຄວາມສຳຄັນກັບຄວາມໂປ່ງໃສ ແລະ ການຄວບຄຸມຂໍ້ມູນສ່ວນຕົວຂອງທ່ານ.",
+      settingsHint:
+        "ການຕັ້ງຄ່າເຫຼົ່ານີ້ສາມາດປ່ຽນແປງໄດ້ທຸກເວລາໃນສ່ວນການຕັ້ງຄ່າ.",
+    },
+    survey: {
+      title: "ຍິນດີຕ້ອນຮັບສູ່ AnythingLLM",
+      description:
+        "ຊ່ວຍພວກເຮົາປັບປຸງ AnythingLLM ໃຫ້ກົງກັບຄວາມຕ້ອງການຂອງທ່ານ. (ບໍ່ບັງຄັບ)",
+      email: "ອີເມວຂອງທ່ານແມ່ນຫຍັງ?",
+      useCase: "ທ່ານຈະໃຊ້ AnythingLLM ເພື່ອຫຍັງ?",
+      useCaseWork: "ສຳລັບວຽກ",
+      useCasePersonal: "ສຳລັບສ່ວນຕົວ",
+      useCaseOther: "ອື່ນໆ",
+      comment: "ທ່ານຮູ້ຈັກ AnythingLLM ໄດ້ແນວໃດ?",
+      commentPlaceholder:
+        "Reddit, Twitter, GitHub, YouTube, ແລະ ອື່ນໆ - ບອກໃຫ້ພວກເຮົາຮູ້ວ່າທ່ານຫາພວກເຮົາເຫັນໄດ້ແນວໃດ!",
+      skip: "ຂ້າມແບບສຳຫຼວດ",
+      thankYou: "ຂອບໃຈສຳລັບຄຳຄິດເຫັນຂອງທ່ານ!",
     },
   },
   common: {
@@ -23,6 +58,8 @@ const TRANSLATIONS = {
     previous: "ໜ້າກ່ອນໜ້າ",
     next: "ໜ້າຖັດໄປ",
     optional: "ບໍ່ບັງຄັບ",
+    yes: "ແມ່ນ",
+    no: "ບໍ່",
     on: "ເປີດ",
     none: "ບໍ່ມີ",
     stopped: "ຢຸດແລ້ວ",
@@ -35,8 +72,6 @@ const TRANSLATIONS = {
   home: {
     welcome: "ຍິນດີຕ້ອນຮັບ",
     chooseWorkspace: "ເລືອກພື້ນທີ່ເຮັດວຽກເພື່ອເລີ່ມການສົນທະນາ!",
-    noWorkspaces:
-      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "ຕອນນີ້ທ່ານຍັງບໍ່ໄດ້ຖືກກຳນົດໃຫ້ເຂົ້າຫາພື້ນທີ່ເຮັດວຽກໃດໆ.\nກະລຸນາຕິດຕໍ່ຜູ້ດູແລລະບົບຂອງທ່ານເພື່ອຂໍສິດເຂົ້າໃຊ້ງານ.",
     goToWorkspace: 'ໄປທີ່ "{{workspace}}"',
@@ -45,7 +80,6 @@ const TRANSLATIONS = {
     title: "ການຕັ້ງຄ່າລະບົບ",
     invites: "ການເຊື້ອເຊີນ",
     users: "ຜູ້ໃຊ້",
-    roles: "Roles & Permissions",
     workspaces: "ພື້ນທີ່ເຮັດວຽກ",
     "workspace-chats": "ປະຫວັດການສົນທະນາ",
     customization: "ການປັບແຕ່ງ",
@@ -60,6 +94,7 @@ const TRANSLATIONS = {
     "voice-speech": "ສຽງ & ການເວົ້າ",
     "vector-database": "ຖານຂໍ້ມູນເວກເຕີ",
     embeds: "ການຝັງແຊັດ (Chat Embed)",
+    security: "ຄວາມປອດໄພ",
     "event-logs": "ບັນທຶກເຫດການ (Event Logs)",
     "scheduled-jobs": "ວຽກທີ່ຕັ້ງເວລາໄວ້",
     privacy: "ຄວາມເປັນສ່ວນຕົວ & ຂໍ້ມູນ",
@@ -75,11 +110,10 @@ const TRANSLATIONS = {
     admin: "ຜູ້ດູແລ",
     tools: "ເຄື່ອງມື",
     "system-prompt-variables": "ຕົວປ່ຽນ System Prompt",
-    "slash-commands": "Slash Commands",
     "experimental-features": "ຟີເຈີທົດລອງ",
     contact: "ຕິດຕໍ່ຝ່າຍຊ່ວຍເຫຼືອ",
     "browser-extension": "ສ່ວນເສີມບຣາວເຊີ",
-    "mobile-app": "NexusAI ມືຖື",
+    "mobile-app": "AnythingLLM ມືຖື",
     channels: "ຊ່ອງທາງການຕິດຕໍ່",
     "available-channels": {
       telegram: "Telegram",
@@ -87,7 +121,7 @@ const TRANSLATIONS = {
     "image-generation": "ການສ້າງຮູບພາບ",
   },
   login: {
-    form: {
+    "multi-user": {
       welcome: "ຍິນດີຕ້ອນຮັບ",
       "placeholder-username": "ຊື່ຜູ້ໃຊ້",
       "placeholder-password": "ລະຫັດຜ່ານ",
@@ -100,6 +134,8 @@ const TRANSLATIONS = {
       "ປ້ອນຊື່ຜູ້ໃຊ້ ແລະ ລະຫັດຜ່ານຂອງທ່ານເພື່ອເຂົ້າໃຊ້ງານ {{appName}}.",
     "password-reset": {
       title: "ຕັ້ງລະຫັດຜ່ານໃໝ່",
+      description: "ກະລຸນາໃຫ້ຂໍ້ມູນທີ່ຈຳເປັນລຸ່ມນີ້ເພື່ອຕັ້ງລະຫັດຜ່ານໃໝ່.",
+      "recovery-codes": "ລະຫັດກູ້ຄືນ",
       "back-to-login": "ກັບໄປໜ້າເຂົ້າສູ່ລະບົບ",
     },
   },
@@ -137,7 +173,7 @@ const TRANSLATIONS = {
       add: "ເພີ່ມຂໍ້ຄວາມໃໝ່",
       save: "ບັນທຶກຂໍ້ຄວາມ",
       heading: "ອະທິບາຍໃຫ້ຂ້ອຍແນ່",
-      body: "ຂໍ້ດີຂອງ NexusAI ແມ່ນຫຍັງ",
+      body: "ຂໍ້ດີຂອງ AnythingLLM ແມ່ນຫຍັງ",
     },
     delete: {
       title: "ລຶບພື້ນທີ່ເຮັດວຽກ",
@@ -379,6 +415,8 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "ໃຫ້ເອເຈນເຮັດວຽກກັບ Gmail - ຄົ້ນຫາອີເມວ, ອ່ານຂໍ້ຄວາມ, ຂຽນສະບັບຮ່າງ ແລະ ສົ່ງອີເມວ. <a>ອ່ານຄູ່ມື</a>.",
+        multiUserWarning:
+          "ການເຊື່ອມຕໍ່ Gmail ບໍ່ສາມາດໃຊ້ໄດ້ໃນໂໝດຫຼາຍຜູ້ໃຊ້ເພື່ອຄວາມປອດໄພ.",
         configuration: "ການຕັ້ງຄ່າ Gmail",
         deploymentId: "Deployment ID",
         deploymentIdHelp:
@@ -491,6 +529,8 @@ const TRANSLATIONS = {
         title: "Google Calendar",
         description:
           "ໃຫ້ເອເຈນເຮັດວຽກກັບ Google Calendar - ເບິ່ງປະຕິທິນ, ເຫດການ, ສ້າງ ແລະ ອັບເດດເຫດການ. <a>ອ່ານຄູ່ມື</a>.",
+        multiUserWarning:
+          "ການເຊື່ອມຕໍ່ Google Calendar ບໍ່ສາມາດໃຊ້ໄດ້ໃນໂໝດຫຼາຍຜູ້ໃຊ້.",
         configuration: "ການຕັ້ງຄ່າ Google Calendar",
         deploymentId: "Deployment ID",
         deploymentIdHelp: "Deployment ID ຈາກ Google Apps Script ຂອງທ່ານ",
@@ -567,6 +607,7 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "ໃຫ້ເອເຈນເຮັດວຽກກັບ Microsoft Outlook - ຄົ້ນຫາອີເມວ, ອ່ານຂໍ້ຄວາມ, ສົ່ງອີເມວ ຜ່ານ Microsoft Graph API. <a>ອ່ານຄູ່ມື</a>.",
+        multiUserWarning: "ການເຊື່ອມຕໍ່ Outlook ບໍ່ສາມາດໃຊ້ໄດ້ໃນໂໝດຫຼາຍຜູ້ໃຊ້.",
         configuration: "ການຕັ້ງຄ່າ Outlook",
         authType: "ປະເພດບັນຊີ",
         authTypeHelp: "ເລືອກປະເພດບັນຊີ Microsoft ທີ່ຈະໃຊ້.",
@@ -681,7 +722,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "ການເລືອກທັກສະແບບອັດສະລິຍະ",
         description:
-          "ເປີດໃຊ້ເຄື່ອງມືແບບບໍ່ຈຳກັດ ແລະ ຫຼຸດການໃຊ້ token ໄດ້ເຖິງ 80% — NexusAI ຈະເລືອກທັກສະທີ່ເໝາະສົມໃຫ້ໂດຍອັດຕະໂນມັດ.",
+          "ເປີດໃຊ້ເຄື່ອງມືແບບບໍ່ຈຳກັດ ແລະ ຫຼຸດການໃຊ້ token ໄດ້ເຖິງ 80% — AnythingLLM ຈະເລືອກທັກສະທີ່ເໝາະສົມໃຫ້ໂດຍອັດຕະໂນມັດ.",
         "max-tools": {
           title: "ຈຳນວນເຄື່ອງມືສູງສຸດ",
           description: "ຈຳນວນເຄື່ອງມືສູງສຸດທີ່ຈະເລືອກໃນແຕ່ລະການສອບຖາມ.",
@@ -716,15 +757,15 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "ການຕັ້ງຄ່າ UI",
-      description: "ຕັ້ງຄ່າ UI ຂອງທ່ານສຳລັບ NexusAI.",
+      description: "ຕັ້ງຄ່າ UI ຂອງທ່ານສຳລັບ AnythingLLM.",
     },
     branding: {
       title: "ແບຣນດິງ & Whitelabeling",
-      description: "ປັບແຕ່ງແບຣນຂອງທ່ານເອງໃນ NexusAI.",
+      description: "ປັບແຕ່ງແບຣນຂອງທ່ານເອງໃນ AnythingLLM.",
     },
     chat: {
       title: "ການສົນທະນາ",
-      description: "ຕັ້ງຄ່າການສົນທະນາສຳລັບ NexusAI.",
+      description: "ຕັ້ງຄ່າການສົນທະນາສຳລັບ AnythingLLM.",
       auto_submit: {
         title: "ສົ່ງສຽງອັດຕະໂນມັດ",
         description: "ສົ່ງຂໍ້ມູນສຽງໂດຍອັດຕະໂນມັດຫຼັງຈາກທີ່ມິດໄປໄລຍະໜຶ່ງ",
@@ -759,7 +800,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "ພາສາທີ່ສະແດງ",
         description:
-          "ເລືອກພາສາທີ່ຈະໃຊ້ໃນ UI ຂອງ NexusAI (ເມື່ອມີພາສານັ້ນໃຫ້ເລືອກ).",
+          "ເລືອກພາສາທີ່ຈະໃຊ້ໃນ UI ຂອງ AnythingLLM (ເມື່ອມີພາສານັ້ນໃຫ້ເລືອກ).",
       },
       logo: {
         title: "ໂລໂກ້ແບຣນ",
@@ -802,7 +843,7 @@ const TRANSLATIONS = {
   api: {
     title: "API Keys",
     description:
-      "API keys ອະນຸຍາດໃຫ້ເຂົ້າເຖິງ ແລະ ຈັດການ NexusAI ຜ່ານການຂຽນໂປຣແກຣມ.",
+      "API keys ອະນຸຍາດໃຫ້ເຂົ້າເຖິງ ແລະ ຈັດການ AnythingLLM ຜ່ານການຂຽນໂປຣແກຣມ.",
     link: "ອ່ານຄູ່ມື API",
     generate: "ສ້າງ API Key ໃໝ່",
     empty: "ບໍ່ພົບ API keys",
@@ -816,7 +857,7 @@ const TRANSLATIONS = {
       close: "ປິດ",
       create: "ສ້າງ API Key",
       helper:
-        "ເມື່ອສ້າງແລ້ວ ສາມາດໃຊ້ API key ເພື່ອເຂົ້າເຖິງລະບົບ NexusAI ນີ້ໄດ້.",
+        "ເມື່ອສ້າງແລ້ວ ສາມາດໃຊ້ API key ເພື່ອເຂົ້າເຖິງລະບົບ AnythingLLM ນີ້ໄດ້.",
       name: {
         label: "ຊື່",
         placeholder: "ຕົວຢ່າງ: ການເຊື່ອມຕໍ່ລະບົບຈິງ",
@@ -840,7 +881,7 @@ const TRANSLATIONS = {
   llm: {
     title: "ການຕັ້ງຄ່າ LLM",
     description:
-      "ນີ້ແມ່ນຂໍ້ມູນ ແລະ ການຕັ້ງຄ່າສຳລັບຜູ້ໃຫ້ບໍລິການ LLM ແລະ embedding ທີ່ທ່ານເລືອກ. ມັນສຳຄັນຫຼາຍທີ່ຂໍ້ມູນເຫຼົ່ານີ້ຕ້ອງຖືກຕ້ອງ ບໍ່ດັ່ງນັ້ນ NexusAI ຈະເຮັດວຽກບໍ່ໄດ້.",
+      "ນີ້ແມ່ນຂໍ້ມູນ ແລະ ການຕັ້ງຄ່າສຳລັບຜູ້ໃຫ້ບໍລິການ LLM ແລະ embedding ທີ່ທ່ານເລືອກ. ມັນສຳຄັນຫຼາຍທີ່ຂໍ້ມູນເຫຼົ່ານີ້ຕ້ອງຖືກຕ້ອງ ບໍ່ດັ່ງນັ້ນ AnythingLLM ຈະເຮັດວຽກບໍ່ໄດ້.",
     provider: "ຜູ້ໃຫ້ບໍລິການ LLM",
     providers: {
       azure_openai: {
@@ -1012,8 +1053,16 @@ const TRANSLATIONS = {
       "model-router-label": "Model Router",
       "select-router": "ເລືອກ router",
       "select-description": "ເລືອກ router ທີ່ຈະໃຊ້ສຳລັບພື້ນທີ່ນີ້.",
+      "no-routers-chat":
+        "ບໍ່ມີ router. ສ້າງໄດ້ທີ່ Settings > AI Providers > Model Router.",
+      "rule-count": "({{count}} ກົດເກນ)",
+    },
+    metrics: {
+      "model-router-default": "Model Router",
     },
     chat: {
+      "select-router-error": "ກະລຸນາເລືອກ router",
+      "invalid-model": "ການເລືອກແບບຈຳລອງບໍ່ຖືກຕ້ອງ",
       "routed-to": "ສົ່ງໄປຫາ <route>{{model}}</route>",
       "routed-to-rule":
         "ສົ່ງໄປຫາ <route>{{model}}</route> ຜ່ານກົດເກນ <rule>{{ruleTitle}}</rule>",
@@ -1025,7 +1074,7 @@ const TRANSLATIONS = {
       "ນີ້ແມ່ນຂໍ້ມູນສຳລັບຜູ້ໃຫ້ບໍລິການແບບຈຳລອງຖອດຂໍ້ຄວາມ. ຂໍ້ມູນເຫຼົ່ານີ້ຕ້ອງຖືກຕ້ອງເພື່ອໃຫ້ສາມາດຖອດຂໍ້ຄວາມຈາກໄຟລ໌ສື່ ແລະ ສຽງໄດ້.",
     provider: "ຜູ້ໃຫ້ບໍລິການຖອດຂໍ້ຄວາມ",
     "warn-start":
-      "ການໃຊ້ແບບຈຳລອງ whisper ໃນເຄື່ອງທີ່ມີ RAM ຫຼື CPU ຈຳກັດ ອາດເຮັດໃຫ້ NexusAI ເຮັດວຽກຊ້າລົງ.",
+      "ການໃຊ້ແບບຈຳລອງ whisper ໃນເຄື່ອງທີ່ມີ RAM ຫຼື CPU ຈຳກັດ ອາດເຮັດໃຫ້ AnythingLLM ເຮັດວຽກຊ້າລົງ.",
     "warn-recommend":
       "ແນະນຳໃຫ້ມີ RAM ຢ່າງໜ້ອຍ 2GB ແລະ ອັບໂຫຼດໄຟລ໌ທີ່ມີຂະໜາດ <10Mb.",
     "warn-end": "ແບບຈຳລອງໃນຕົວຈະຖືກດາວໂຫຼດໂດຍອັດຕະໂນມັດເມື່ອໃຊ້ງານຄັ້ງທຳອິດ.",
@@ -1035,7 +1084,7 @@ const TRANSLATIONS = {
     "desc-start":
       "ເມື່ອໃຊ້ LLM ທີ່ບໍ່ຮອງຮັບ embedding engine ໃນຕົວ - ທ່ານອາດຈະຕ້ອງລະບຸຂໍ້ມູນສຳລັບການ embedding ຂໍ້ຄວາມເພີ່ມເຕີມ.",
     "desc-end":
-      "Embedding ແມ່ນຂະບວນການປ່ຽນຂໍ້ຄວາມໃຫ້ເປັນເວກເຕີ. ຂໍ້ມູນເຫຼົ່ານີ້ຈຳເປັນເພື່ອປ່ຽນໄຟລ໌ ແລະ prompt ໃຫ້ເປັນຮູບແບບທີ່ NexusAI ສາມາດປະມວນຜົນໄດ້.",
+      "Embedding ແມ່ນຂະບວນການປ່ຽນຂໍ້ຄວາມໃຫ້ເປັນເວກເຕີ. ຂໍ້ມູນເຫຼົ່ານີ້ຈຳເປັນເພື່ອປ່ຽນໄຟລ໌ ແລະ prompt ໃຫ້ເປັນຮູບແບບທີ່ AnythingLLM ສາມາດປະມວນຜົນໄດ້.",
     provider: {
       title: "ຜູ້ໃຫ້ບໍລິການ Embedding",
     },
@@ -1094,7 +1143,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "Telegram Bot",
     description:
-      "ເຊື່ອມຕໍ່ NexusAI ກັບ Telegram ເພື່ອໃຫ້ທ່ານສາມາດສົນທະນາກັບພື້ນທີ່ເຮັດວຽກໄດ້ຈາກທຸກອຸປະກອນ.",
+      "ເຊື່ອມຕໍ່ AnythingLLM ກັບ Telegram ເພື່ອໃຫ້ທ່ານສາມາດສົນທະນາກັບພື້ນທີ່ເຮັດວຽກໄດ້ຈາກທຸກອຸປະກອນ.",
     setup: {
       step1: {
         title: "ຂັ້ນຕອນທີ 1: ສ້າງ Telegram bot ຂອງທ່ານ",
@@ -1153,6 +1202,27 @@ const TRANSLATIONS = {
       unknown: "ບໍ່ຮູ້ຈັກ",
     },
   },
+  security: {
+    title: "ຄວາມປອດໄພ",
+    multiuser: {
+      title: "ໂໝດຫຼາຍຜູ້ໃຊ້ (Multi-User Mode)",
+      description: "ຕັ້ງຄ່າລະບົບຂອງທ່ານໃຫ້ຮອງຮັບທີມງານໂດຍການເປີດໂໝດຫຼາຍຜູ້ໃຊ້.",
+      enable: {
+        "is-enable": "ໂໝດຫຼາຍຜູ້ໃຊ້ຖືກເປີດແລ້ວ",
+        enable: "ເປີດໂໝດຫຼາຍຜູ້ໃຊ້",
+        description:
+          "ໂດຍເລີ່ມຕົ້ນ ທ່ານຈະເປັນຜູ້ດູແລພຽງຄົນດຽວ. ໃນຖານະຜູ້ດູແລ ທ່ານຕ້ອງສ້າງບັນຊີໃຫ້ຜູ້ໃຊ້ໃໝ່. ຫ້າມເຮັດລະຫັດຜ່ານເສຍ ເພາະມີພຽງຜູ້ດູແລເທົ່ານັ້ນທີ່ຕັ້ງລະຫັດໃໝ່ໄດ້.",
+        username: "ຊື່ຜູ້ໃຊ້ຜູ້ດູແລ (Admin)",
+        password: "ລະຫັດຜ່ານຜູ້ດູແລ (Admin)",
+      },
+    },
+    password: {
+      title: "ການປ້ອງກັນດ້ວຍລະຫັດຜ່ານ",
+      description:
+        "ປົກປ້ອງ AnythingLLM ຂອງທ່ານດ້ວຍລະຫັດຜ່ານ. ຖ້າທ່ານລືມ ຈະບໍ່ມີວິທີກູ້ຄືນ ດັ່ງນັ້ນກະລຸນາບັນທຶກໄວ້ໃຫ້ດີ.",
+      "password-label": "ລະຫັດຜ່ານລະບົບ",
+    },
+  },
   event: {
     title: "ບັນທຶກເຫດການ (Event Logs)",
     description:
@@ -1167,7 +1237,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "ຄວາມເປັນສ່ວນຕົວ & ການຈັດການຂໍ້ມູນ",
     description:
-      "ນີ້ແມ່ນການຕັ້ງຄ່າວິທີທີ່ຜູ້ໃຫ້ບໍລິການພາຍນອກ ແລະ NexusAI ຈັດການຂໍ້ມູນຂອງທ່ານ.",
+      "ນີ້ແມ່ນການຕັ້ງຄ່າວິທີທີ່ຜູ້ໃຫ້ບໍລິການພາຍນອກ ແລະ AnythingLLM ຈັດການຂໍ້ມູນຂອງທ່ານ.",
     anonymous: "ເປີດການສົ່ງຂໍ້ມູນການໃຊ້ງານແບບບໍ່ລະບຸຕົວຕົນ (Telemetry)",
   },
   connectors: {
@@ -1323,12 +1393,12 @@ const TRANSLATIONS = {
       fetching: "ກຳລັງດຶງຂໍ້ມູນ...",
       "fetch-website": "ດຶງຂໍ້ມູນເວັບໄຊ",
       "privacy-notice":
-        "ໄຟລ໌ເຫຼົ່ານີ້ຈະຖືກອັບໂຫຼດໄປທີ່ຕົວປະມວນຜົນໃນ NexusAI ນີ້. ຂໍ້ມູນຈະບໍ່ຖືກສົ່ງໃຫ້ບຸກຄົນພາຍນອກ.",
+        "ໄຟລ໌ເຫຼົ່ານີ້ຈະຖືກອັບໂຫຼດໄປທີ່ຕົວປະມວນຜົນໃນ AnythingLLM ນີ້. ຂໍ້ມູນຈະບໍ່ຖືກສົ່ງໃຫ້ບຸກຄົນພາຍນອກ.",
     },
     pinning: {
       what_pinning: "ການປັກໝຸດເອກະສານແມ່ນຫຍັງ?",
       pin_explained_block1:
-        "ເມື່ອທ່ານ <b>ປັກໝຸດ</b> ເອກະສານໃນ NexusAI ພວກເຮົາຈະໃສ່ເນື້ອຫາທັງໝົດຂອງເອກະສານເຂົ້າໃນ prompt ເພື່ອໃຫ້ LLM ເຂົ້າໃຈໄດ້ຢ່າງຄົບຖ້ວນ.",
+        "ເມື່ອທ່ານ <b>ປັກໝຸດ</b> ເອກະສານໃນ AnythingLLM ພວກເຮົາຈະໃສ່ເນື້ອຫາທັງໝົດຂອງເອກະສານເຂົ້າໃນ prompt ເພື່ອໃຫ້ LLM ເຂົ້າໃຈໄດ້ຢ່າງຄົບຖ້ວນ.",
       pin_explained_block2:
         "ສິ່ງນີ້ຈະເຮັດວຽກໄດ້ດີທີ່ສຸດກັບ <b>ແບບຈຳລອງທີ່ມີ context ຂະໜາດໃຫຍ່</b> ຫຼື ໄຟລ໌ນ້ອຍໆທີ່ສຳຄັນ.",
       pin_explained_block3:
@@ -1375,7 +1445,6 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "ກຳລັງປະມວນຜົນໄຟລ໌ແນບ. ກະລຸນາລໍຖ້າ...",
-    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "ສົ່ງຂໍ້ຄວາມ",
     attach_file: "ແນບໄຟລ໌ໃນແຊັດນີ້",
     text_size: "ປ່ຽນຂະໜາດຕົວອັກສອນ.",
@@ -1410,6 +1479,9 @@ const TRANSLATIONS = {
     see_more: "ເບິ່ງເພີ່ມເຕີມ",
     preset_reset_description: "ລ້າງປະຫວັດການແຊັດ ແລະ ເລີ່ມການສົນທະນາໃໝ່",
     add_new_preset: " ເພີ່ມ Preset ໃໝ່",
+    add_new: "ເພີ່ມໃໝ່",
+    edit: "ແກ້ໄຂ",
+    publish: "ເຜີຍແຜ່",
     stop_generating: "ຢຸດສ້າງຄຳຕອບ",
     command: "ຄຳສັ່ງ",
     your_command: "ຄຳສັ່ງຂອງທ່ານ",
@@ -1422,8 +1494,31 @@ const TRANSLATIONS = {
     large: "ໃຫຍ່",
     tools: "ເຄື່ອງມື",
     text_size_label: "ຂະໜາດຕົວອັກສອນ",
+    select_model: "ເລືອກແບບຈຳລອງ",
     slash_commands: "ຄຳສັ່ງ Slash",
+    agent_skills: "ທັກສະເອເຈນ",
+    manage_agent_skills: "ຈັດການທັກສະເອເຈນ",
+    app_integrations: "ການເຊື່ອມຕໍ່ແອັບ",
+    custom_skills: "ທັກສະທີ່ປັບແຕ່ງເອງ",
+    agent_flows: "Agent Flows",
+    sub_skills: "ທັກສະຍ່ອຍ",
+    no_tools_found: "ບໍ່ພົບເຄື່ອງມືທີ່ກົງກັນ",
+    loading_mcp_servers: "ກຳລັງໂຫຼດເຊີບເວີ MCP...",
     start_agent_session: "ເລີ່ມ Agent Session",
+    agent_skills_disabled_in_session:
+      "ບໍ່ສາມາດແກ້ໄຂທັກສະໄດ້ໃນຂະນະທີ່ເອເຈນກຳລັງເຮັດວຽກ. ໃຊ້ /exit ເພື່ອຈົບກ່ອນ.",
+    use_agent_session_to_use_tools:
+      "ທ່ານສາມາດໃຊ້ເຄື່ອງມືໃນແຊັດໄດ້ໂດຍການເລີ່ມຕົ້ນດ້ວຍ '@agent' ທາງໜ້າຄຳສັ່ງ.",
+    workspace_llm_manager: {
+      search: "ຄົ້ນຫາ",
+      loading_workspace_settings: "ກຳລັງໂຫຼດການຕັ້ງຄ່າ...",
+      available_models: "ແບບຈຳລອງທີ່ມີສຳລັບ {{provider}}",
+      available_models_description: "ເລືອກແບບຈຳລອງທີ່ຈະໃຊ້ໃນພື້ນທີ່ນີ້.",
+      save: "ໃຊ້ແບບຈຳລອງນີ້",
+      saving: "ກຳລັງຕັ້ງຄ່າແບບຈຳລອງຫຼັກ...",
+      missing_credentials: "ຜູ້ໃຫ້ບໍລິການນີ້ຍັງບໍ່ໄດ້ຕັ້ງຄ່າ!",
+      missing_credentials_description: "ຕັ້ງຄ່າດຽວນີ້",
+    },
     agent_invocation: {
       model_wants_to_call: "ແບບຈຳລອງຕ້ອງການເອີ້ນໃຊ້",
       approve: "ອະນຸມັດ",
@@ -1477,19 +1572,32 @@ const TRANSLATIONS = {
         edit_description: "ອັບເດດເນື້ອຫາຄວາມຈຳນີ້.",
         label: "ຄວາມຈຳ",
         placeholder:
-          "ເຊັ່ນ: ຜູ້ໃຊ້ຊື່ ສົມໄຊ, ຜູ້ໃຊ້ເຮັດວຽກກ່ຽວກັບ NexusAI, ແລະ ອື່ນໆ.",
+          "ເຊັ່ນ: ຜູ້ໃຊ້ຊື່ ສົມໄຊ, ຜູ້ໃຊ້ເຮັດວຽກກ່ຽວກັບ AnythingLLM, ແລະ ອື່ນໆ.",
         create: "ສ້າງ",
         save: "ບັນທຶກ",
         cancel: "ຍົກເລີກ",
       },
     },
     preset_img_description: "ຈາກຂໍ້ຄວາມ ໃຫ້ສ້າງຮູບພາບ",
+    generating_response: "ຜົນການຕອບ",
+    response_failed: "ສາมาถ ප්‍රතිສະໜອງ ຂໍ້ຄວາມ ໄດ້",
+    response_failed_reason: "ສາเหตุ: {{reason}}",
+    thought_in_progress: "ແບບนั้น ພາກັນຄິດ",
+    thoughts: "ຄວາມຄິດ",
+    leave_generating: {
+      title: "ຢຸດການສ້າງຕອບ?",
+      description:
+        "ເຈົ້າ ກຳ ລັງຈະອອກຈາກການສົນทະນານີ້, ດັ່ງນັ້ນມັນຈະຢຸດ ໂໝດ ໃຫ້ສຳເລັດ ແລະບໍ່ສາມາດຟື້ນຟູໄດ້।",
+      cancel: "ຍົກເລີດ",
+      confirm: "ຊື່ຕໍ່",
+    },
   },
   profile_settings: {
     edit_account: "ແກ້ໄຂບັນຊີ",
     profile_picture: "ຮູບໂປຣໄຟລ໌",
     remove_profile_picture: "ເອົາຮູບໂປຣໄຟລ໌ອອກ",
     username: "ຊື່ຜູ້ໃຊ້",
+    new_password: "ລະຫັດຜ່ານໃໝ່",
     password_description: "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ",
     cancel: "ຍົກເລີກ",
     update_account: "ອັບເດດບັນຊີ",
@@ -1515,6 +1623,7 @@ const TRANSLATIONS = {
       llmPreferences: "ການຕັ້ງຄ່າ LLM",
       chatSettings: "ການຕັ້ງຄ່າການສົນທະນາ",
       help: "ສະແດງວິທີໃຊ້ຄີລັດ",
+      showLLMSelector: "ສະແດງຕົວເລືອກ LLM ຂອງພື້ນທີ່",
     },
   },
   community_hub: {
@@ -1592,7 +1701,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "ຕ້ອງຢືນຢັນຕົວຕົນ",
           description:
-            "ທ່ານຕ້ອງເຊື່ອມຕໍ່ກັບ NexusAI Community Hub ກ່ອນຈະເຜີຍແຜ່ລາຍການໄດ້.",
+            "ທ່ານຕ້ອງເຊື່ອມຕໍ່ກັບ AnythingLLM Community Hub ກ່ອນຈະເຜີຍແຜ່ລາຍການໄດ້.",
           button: "ເຊື່ອມຕໍ່ກັບ Community Hub",
         },
       },

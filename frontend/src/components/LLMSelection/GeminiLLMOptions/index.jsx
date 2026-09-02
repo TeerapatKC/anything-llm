@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -70,8 +71,12 @@ export default function GeminiLLMOptions({ settings }) {
 }
 
 function GeminiModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedModel, setSelectedModel] = useState(
+    settings?.GeminiLLMModelPref || ""
+  );
 
   useEffect(() => {
     async function findCustomModels() {
@@ -92,10 +97,16 @@ function GeminiModelSelection({ apiKey, settings }) {
     findCustomModels();
   }, [apiKey]);
 
+  useEffect(() => {
+    setSelectedModel(settings?.GeminiLLMModelPref || "");
+  }, [settings?.GeminiLLMModelPref]);
+
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         {/*
           Keyed apart from the loaded select below. Base UI's `useControlled`
           decides once, on an instance's first render, whether it is controlled -
@@ -108,21 +119,13 @@ function GeminiModelSelection({ apiKey, settings }) {
           disabled={true}
         >
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
       </div>
     );
   }
-
-  const [selectedModel, setSelectedModel] = useState(
-    settings?.GeminiLLMModelPref || ""
-  );
-
-  useEffect(() => {
-    setSelectedModel(settings?.GeminiLLMModelPref || "");
-  }, [settings?.GeminiLLMModelPref]);
 
   const defaultFirstModel =
     groupedModels[
@@ -137,7 +140,9 @@ function GeminiModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         key="model-select-loaded"
         name="GeminiLLMModelPref"
@@ -146,7 +151,7 @@ function GeminiModelSelection({ apiKey, settings }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

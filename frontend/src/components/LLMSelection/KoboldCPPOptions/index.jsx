@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
@@ -16,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function KoboldCPPOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -52,7 +54,9 @@ export default function KoboldCPPOptions({ settings }) {
           basePath={basePath.value}
         />
         <div className="flex flex-col w-60">
-          <Label className="block mb-2">Model context window</Label>
+          <Label className="block mb-2">
+            {t("provider-options.model-context-window")}
+          </Label>
           <Input
             type="number"
             name="KoboldCPPTokenLimit"
@@ -147,6 +151,7 @@ export default function KoboldCPPOptions({ settings }) {
 }
 
 function KoboldCPPModelSelection({ settings, basePath = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -191,8 +196,7 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
           <SelectContent />
         </Select>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-          Select the KoboldCPP model you want to use. Models will load after
-          entering a valid KoboldCPP URL.
+          {t("help.kobold-cppoptions")}
         </p>
       </div>
     );
@@ -221,7 +225,7 @@ function KoboldCPPModelSelection({ settings, basePath = null }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.map((model) => (

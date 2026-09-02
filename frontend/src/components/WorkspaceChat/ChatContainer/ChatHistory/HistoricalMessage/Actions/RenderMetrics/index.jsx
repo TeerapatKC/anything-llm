@@ -35,6 +35,21 @@ function getAutoShowMetrics() {
 }
 
 /**
+ * Shorten a model identifier to the part that identifies it.
+ *
+ * A local model arrives as a file path - the directory says nothing the reader
+ * needs and the extension even less, while the length is enough to crowd out
+ * the buttons next to it. Hosted model ids have neither and pass through.
+ * @param {string} [model]
+ * @returns {string}
+ */
+function modelLabel(model) {
+  if (!model) return "";
+  const basename = String(model).split(/[\\/]/).pop();
+  return basename.replace(/\.(gguf|bin|safetensors|pt|onnx)$/i, "");
+}
+
+/**
  * Build the metrics string for a given metrics object
  * - Model name
  * - Duration and output TPS
@@ -44,7 +59,7 @@ function getAutoShowMetrics() {
  */
 function buildMetricsString(metrics = {}) {
   return [
-    metrics?.model ? metrics.model : "",
+    modelLabel(metrics?.model),
     `${formatDuration(metrics.duration)} (${formatTps(metrics.outputTps)} tok/s)`,
     metrics?.timestamp
       ? formatDateTimeAsMoment(metrics.timestamp, "MMM D, h:mm A")
@@ -110,6 +125,7 @@ export default function RenderMetrics({ metrics = {} }) {
     useContext(MetricsContext);
   if (!metrics?.duration || !metrics?.outputTps || isMobile) return null;
 
+  const metricsString = buildMetricsString(metrics);
   return (
     <Tooltip>
       <TooltipTrigger
@@ -117,18 +133,24 @@ export default function RenderMetrics({ metrics = {} }) {
           <button
             type="button"
             onClick={() => setShowMetricsAutomatically(toggleAutoShowMetrics())}
-            className={`border-none flex md:justify-end items-center gap-x-[8px] -ml-7 ${showMetricsAutomatically ? "opacity-100" : "opacity-0"} md:group-hover:opacity-100 transition-all duration-300`}
+            // min-w-0 is what lets the label truncate instead of pushing itself
+            // left over the action buttons when the model name is long.
+            className={`border-none flex md:justify-end items-center gap-x-[8px] min-w-0 max-w-full ${showMetricsAutomatically ? "opacity-100" : "opacity-0"} md:group-hover:opacity-100 transition-all duration-300`}
           />
         }
       >
-        <p className="cursor-pointer text-xs font-mono text-zinc-400 light:text-slate-500">
-          {buildMetricsString(metrics)}
+        <p className="cursor-pointer truncate text-xs font-mono text-zinc-400 light:text-slate-500">
+          {metricsString}
         </p>
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-        {showMetricsAutomatically
-          ? "Click to only show metrics when hovering"
-          : "Click to show metrics as soon as they are available"}
+        {/* Repeated here because the line itself may be truncated. */}
+        <span className="block font-mono break-words">{metricsString}</span>
+        <span className="mt-1 block">
+          {showMetricsAutomatically
+            ? "Click to only show metrics when hovering"
+            : "Click to show metrics as soon as they are available"}
+        </span>
       </TooltipContent>
     </Tooltip>
   );

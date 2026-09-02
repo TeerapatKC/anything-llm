@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function LMStudioEmbeddingOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -59,14 +61,16 @@ export default function LMStudioEmbeddingOptions({ settings }) {
             <TooltipTrigger
               render={<div className="flex gap-x-1 items-center mb-3" />}
             >
-              <Label className="block">Max embedding chunk length</Label>
+              <Label className="block">
+                {t("provider-options.max-embedding-chunk")}
+              </Label>
               <Info
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
               />
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
-              Maximum length of text chunks, in characters, for embedding.
+              {t("provider-options.max-embedding-chunk-help")}
             </TooltipContent>
           </Tooltip>
           <Input
@@ -150,7 +154,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
           </div>
           <div className="flex flex-col w-60">
             <div className="flex items-center mb-2 gap-x-1">
-              <Label>Authentication Token</Label>
+              <Label>{t("provider-options.auth-token")}</Label>
               <Tooltip>
                 <TooltipTrigger
                   render={
@@ -165,8 +169,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
                     Enter a <code>Bearer</code> Auth Token for interacting with
                     your LM Studio server.
                     <br /> <br />
-                    Useful if running LM Studio behind an authentication or
-                    proxy.
+                    {t("help.lmstudio-options")}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -191,6 +194,7 @@ export default function LMStudioEmbeddingOptions({ settings }) {
 }
 
 function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -222,7 +226,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
     return (
       <div className="flex flex-col w-60">
         <div className="flex items-center mb-2 gap-x-1">
-          <Label>Embedding Model</Label>
+          <Label>{t("provider-options.embedding-model")}</Label>
           {!loading && !!basePath && (
             <>
               <Tooltip>
@@ -236,8 +240,7 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
                 ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
-                    Could not reach LM Studio. Verify the URL is correct and the
-                    LMStudio server is running and accessible.
+                    {t("help.lmstudio-options-2")}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -271,12 +274,14 @@ function LMStudioModelSelection({ settings, basePath = null, apiKey = null }) {
         defaultValue={settings.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

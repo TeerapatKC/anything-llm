@@ -112,6 +112,9 @@ export default {
     superAdmin: () => {
       return `/settings/instance-owner`;
     },
+    smtp: () => {
+      return `/settings/smtp`;
+    },
     users: () => {
       return `/settings/users`;
     },
@@ -155,6 +158,12 @@ export default {
     agentSkills: () => {
       return "/settings/agents";
     },
+    agentFlow: () => {
+      return "/settings/agent-flows";
+    },
+    sqlConnector: () => {
+      return "/settings/sql-connector";
+    },
     chat: () => {
       return "/settings/chat";
     },
@@ -192,6 +201,9 @@ export default {
     },
     telegram: () => {
       return `/settings/external-connections/telegram`;
+    },
+    line: () => {
+      return `/settings/external-connections/line`;
     },
     scheduledJobs: () => {
       return `/settings/scheduled-jobs`;

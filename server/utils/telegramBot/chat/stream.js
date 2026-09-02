@@ -17,6 +17,9 @@ const { editMessage, sendFormattedMessage } = require("../utils");
 const { sendVoiceResponse } = require("../utils/media");
 const { safeJsonParse } = require("../../http");
 const { handleAgentResponse } = require("./agent");
+const { withLanguageDirective } = require("../utils/language");
+const { translator } = require("../utils/i18n");
+const { attachFeedbackButtons } = require("../utils/feedback");
 
 /**
  * Check if the history is agentic by checking if any user messages start with "@agent"
@@ -46,22 +49,26 @@ function historyIsAgentic(chatMode, chatHistory) {
  * @param {object} context - The context object.
  * @param {import("../commands").BotContext} context.ctx - The bot object.
  * @param {number} context.chatId - The chat ID.
+ * @param {import('@prisma/client').users} context.user - The account the Telegram chat is linked to.
  * @param {import('@prisma/client').workspaces} context.workspace - The workspace object.
  * @param {object|null} context.thread - The thread object.
  * @param {string} context.message - The message to send.
+ * @param {string|null} context.language - Language code the assistant must answer in, or null for auto.
  * @param {array} context.attachments - The attachments to send.
  * @param {boolean} context.voiceResponse - Whether to send the response as voice.
  */
 async function streamResponse({
   ctx = null,
   chatId = null,
+  user = null,
   workspace = null,
   thread = null,
   message = "",
+  language = null,
   attachments = [],
   voiceResponse = false,
 }) {
-  if (!ctx?.bot || !chatId || !workspace || !message)
+  if (!ctx?.bot || !chatId || !user || !workspace || !message)
     throw new Error("Invalid context or missing required parameters!");
 
   await ctx.bot.sendChatAction(chatId, "typing");
@@ -69,6 +76,7 @@ async function streamResponse({
   const chatMode = workspace.chatMode || "chat";
   const messageLimit = workspace?.openAiHistory || 20;
   const { rawHistory, chatHistory } = await recentChatHistory({
+    user,
     workspace,
     thread,
     messageLimit,
@@ -85,16 +93,18 @@ async function streamResponse({
     return await handleAgentResponse(
       ctx,
       chatId,
+      user,
       workspace,
       thread,
       message,
       voiceResponse,
-      attachments
+      attachments,
+      language
     );
   }
 
   const typingInterval = setInterval(() => {
-    ctx.bot.sendChatAction(chatId, "typing").catch(() => { });
+    ctx.bot.sendChatAction(chatId, "typing").catch(() => {});
   }, 4000);
 
   const { connector: LLMConnector } = await resolveProviderConnector({
@@ -135,7 +145,10 @@ async function streamResponse({
   const sources = [...pinnedSources, ...searchSources];
   const messages = await LLMConnector.compressMessages(
     {
-      systemPrompt: await chatPrompt(workspace),
+      systemPrompt: withLanguageDirective(
+        await chatPrompt(workspace, user, { prompt: message, rawHistory }),
+        language
+      ),
       userPrompt: message,
       contextTexts,
       chatHistory,
@@ -145,7 +158,7 @@ async function streamResponse({
   );
 
   try {
-    const { completeText, metrics } = await generateResponse({
+    const { completeText, metrics, answerMessageId } = await generateResponse({
       LLMConnector,
       messages,
       workspace,
@@ -154,6 +167,9 @@ async function streamResponse({
     });
 
     await persistAndDeliver({
+      language,
+      answerMessageId,
+      user,
       workspace,
       thread,
       message,
@@ -170,7 +186,7 @@ async function streamResponse({
     console.error("Error streaming response:", error);
     await ctx.bot.sendMessage(
       chatId,
-      "An error occurred while streaming the response."
+      translator(language)("chat.stream_error")
     );
   } finally {
     clearInterval(typingInterval);
@@ -221,14 +237,14 @@ async function buildSearchContext({
   const vectorSearchResults =
     embeddingsCount !== 0
       ? await VectorDb.performSimilaritySearch({
-        namespace: workspace.slug,
-        input: message,
-        LLMConnector,
-        similarityThreshold: workspace?.similarityThreshold,
-        topN: workspace?.topN,
-        filterIdentifiers: pinnedDocIdentifiers,
-        rerank: workspace?.vectorSearchMode === "rerank",
-      })
+          namespace: workspace.slug,
+          input: message,
+          LLMConnector,
+          similarityThreshold: workspace?.similarityThreshold,
+          topN: workspace?.topN,
+          filterIdentifiers: pinnedDocIdentifiers,
+          rerank: workspace?.vectorSearchMode === "rerank",
+        })
       : { contextTexts: [], sources: [], message: null };
 
   if (vectorSearchResults.message) {
@@ -267,13 +283,14 @@ async function generateResponse({
 }) {
   let completeText = "";
   let metrics = {};
+  let answerMessageId = null;
 
   if (LLMConnector.streamingEnabled() === true) {
     const stream = await LLMConnector.streamGetChatCompletion(messages, {
       temperature: workspace?.openAiTemp ?? LLMConnector.defaultTemp,
     });
 
-    const { responseHandler, flushEdit } = createStreamHandler({
+    const { responseHandler, flushEdit, lastMessageId } = createStreamHandler({
       ctx,
       chatId,
     });
@@ -283,6 +300,7 @@ async function generateResponse({
     });
 
     await flushEdit(true);
+    answerMessageId = lastMessageId();
     metrics = stream.metrics || {};
   } else {
     const { textResponse, metrics: performanceMetrics } =
@@ -292,17 +310,22 @@ async function generateResponse({
       });
     completeText = textResponse;
     metrics = performanceMetrics || {};
-    if (completeText?.length > 0)
-      await sendFormattedMessage(ctx.bot, chatId, completeText);
+    if (completeText?.length > 0) {
+      const sent = await sendFormattedMessage(ctx.bot, chatId, completeText);
+      answerMessageId = sent?.message_id || null;
+    }
   }
 
-  return { completeText, metrics };
+  return { completeText, metrics, answerMessageId };
 }
 
 /**
  * Save the completed chat to the database and optionally deliver a voice response.
  */
 async function persistAndDeliver({
+  language = null,
+  answerMessageId = null,
+  user,
   workspace,
   thread,
   message,
@@ -316,11 +339,11 @@ async function persistAndDeliver({
   chatId,
 }) {
   if (!completeText?.length) {
-    await ctx.bot.sendMessage(chatId, "No response generated.");
+    await ctx.bot.sendMessage(chatId, translator(language)("chat.no_response"));
     return;
   }
 
-  await WorkspaceChats.new({
+  const { chat } = await WorkspaceChats.new({
     workspaceId: workspace.id,
     prompt: message,
     response: {
@@ -330,8 +353,18 @@ async function persistAndDeliver({
       metrics,
       attachments,
     },
+    user,
     threadId: thread?.id || null,
   });
+
+  // Only now does the answer have a row to rate.
+  await attachFeedbackButtons(
+    ctx.bot,
+    chatId,
+    answerMessageId,
+    chat?.id,
+    language
+  );
 
   // Send voice as an additional attachment if requested
   if (voiceResponse) {
@@ -384,7 +417,7 @@ function createStreamHandler({ ctx, chatId }) {
       completeText.slice(msgOffset, msgOffset + MAX_MSG_LEN),
       ctx.log,
       { format: true }
-    ).catch(() => { });
+    ).catch(() => {});
     msgOffset += MAX_MSG_LEN;
     messageId = null;
     messagePending = null;
@@ -424,7 +457,7 @@ function createStreamHandler({ ctx, chatId }) {
         messageId,
         currentText() + CURSOR_CHAR,
         ctx.log
-      ).catch(() => { });
+      ).catch(() => {});
     } else if (!editTimer) {
       editTimer = setTimeout(() => {
         lastEditTime = Date.now();
@@ -434,11 +467,13 @@ function createStreamHandler({ ctx, chatId }) {
           messageId,
           currentText() + CURSOR_CHAR,
           ctx.log
-        ).catch(() => { });
+        ).catch(() => {});
         editTimer = null;
       }, STREAM_EDIT_INTERVAL);
     }
   }
+
+  const lastMessageId = () => messageId;
 
   const flushEdit = async (final = false) => {
     if (messagePending) await messagePending;
@@ -449,12 +484,12 @@ function createStreamHandler({ ctx, chatId }) {
     const display = final ? text : text + CURSOR_CHAR;
     await editMessage(ctx.bot, chatId, messageId, display, ctx.log, {
       format: final,
-    }).catch(() => { });
+    }).catch(() => {});
   };
 
   const responseHandler = {
-    on: () => { },
-    removeListener: () => { },
+    on: () => {},
+    removeListener: () => {},
     write: (data) => {
       const token = parseSSEChunk(data);
       if (!token) return;
@@ -465,7 +500,7 @@ function createStreamHandler({ ctx, chatId }) {
     },
   };
 
-  return { responseHandler, flushEdit };
+  return { responseHandler, flushEdit, lastMessageId };
 }
 
 module.exports = { streamResponse };

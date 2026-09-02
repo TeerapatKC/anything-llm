@@ -21,10 +21,7 @@ export default function DisconnectedView({
     e.preventDefault();
     if (!newToken.trim()) return;
     setReconnecting(true);
-    const res = await Telegram.connect(
-      newToken.trim(),
-      config.default_workspace
-    );
+    const res = await Telegram.connect(newToken.trim());
     setReconnecting(false);
     if (!res.success)
       return showToast(

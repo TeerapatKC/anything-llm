@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import PiperTTSClient from "@/utils/piperTTS";
@@ -17,11 +18,11 @@ import {
 } from "@/components/ui/select";
 
 export default function PiperTTSOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <>
       <p className="text-sm/60 font-base text-theme-text-primary mb-4">
-        All PiperTTS models will run in your browser locally. This can be
-        resource intensive on lower-end devices.
+        {t("help.piper-ttsoptions")}
       </p>
       <div className="flex gap-x-4 items-center">
         <PiperTTSModelSelection settings={settings} />
@@ -48,6 +49,7 @@ function voiceDisplayName(voice) {
 }
 
 function PiperTTSModelSelection({ settings }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [voices, setVoices] = useState([]);
   const [selectedVoice, setSelectedVoice] = useState(
@@ -79,10 +81,12 @@ function PiperTTSModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Voice Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.voice-model-selection")}
+        </Label>
         <Select name="TTSPiperTTSVoiceModel" value="" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -93,7 +97,9 @@ function PiperTTSModelSelection({ settings }) {
   return (
     <div className="flex flex-col w-fit">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Voice Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.voice-model-selection")}
+        </Label>
         <div className="flex items-center w-fit gap-x-4 mb-2">
           <Select
             name="TTSPiperTTSVoiceModel"
@@ -102,7 +108,7 @@ function PiperTTSModelSelection({ settings }) {
             value={selectedVoice}
           >
             <SelectTrigger className="border-none shrink-0 bg-theme-settings-input-bg border-gray-500 text-theme-text-primary text-sm rounded-lg w-full p-2.5">
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {voicesByLanguage(voices).map(([lang, voices]) => {
@@ -121,10 +127,7 @@ function PiperTTSModelSelection({ settings }) {
           </Select>
           <DemoVoiceSample voiceId={selectedVoice} />
         </div>
-        <p className="text-xs text-white/40">
-          The "✔" indicates this model is already stored locally and does not
-          need to be downloaded when run.
-        </p>
+        <p className="text-xs text-white/40">{t("help.piper-ttsoptions-2")}</p>
       </div>
       {!!voices.find((voice) => voice.is_stored) && (
         <button

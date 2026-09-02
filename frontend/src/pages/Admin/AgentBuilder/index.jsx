@@ -8,7 +8,7 @@ import AgentFlows from "@/models/agentFlows";
 import { useTheme } from "@/hooks/useTheme";
 import HeaderMenu from "./HeaderMenu";
 import paths from "@/utils/paths";
-import PublishEntityModal from "@/components/CommunityHub/PublishEntityModal";
+import i18next from "@/i18n";
 import { AvailableVariablesProvider } from "./useAvailableVariables";
 import {
   Select,
@@ -58,7 +58,6 @@ export default function AgentBuilder() {
   const [availableFlows, setAvailableFlows] = useState([]);
   const nameRef = useRef(null);
   const descriptionRef = useRef(null);
-  const [showPublishModal, setShowPublishModal] = useState(false);
 
   useEffect(() => {
     loadAvailableFlows();
@@ -255,7 +254,7 @@ export default function AgentBuilder() {
   const renderVariableSelect = (
     value,
     onChange,
-    placeholder = "Select variable"
+    placeholder = i18next.t("agent-builder.common.select-variable")
   ) => (
     <Select value={value || ""} onValueChange={onChange}>
       <SelectTrigger>
@@ -312,25 +311,6 @@ export default function AgentBuilder() {
     setBlocks(newBlocks);
   };
 
-  const handlePublishFlow = () => {
-    setShowPublishModal(true);
-  };
-
-  const flowInfoBlock = blocks.find(
-    (block) => block.type === BLOCK_TYPES.FLOW_INFO
-  );
-  const flowEntity = {
-    name: flowInfoBlock?.config?.name || "",
-    description: flowInfoBlock?.config?.description || "",
-    steps: blocks
-      .filter(
-        (block) =>
-          block.type !== BLOCK_TYPES.FINISH &&
-          block.type !== BLOCK_TYPES.FLOW_INFO
-      )
-      .map((block) => ({ type: block.type, config: block.config })),
-  };
-
   return (
     <AvailableVariablesProvider blocks={blocks}>
       <div
@@ -344,18 +324,11 @@ export default function AgentBuilder() {
         }}
         className="relative w-screen h-screen flex flex-col bg-theme-bg-primary overflow-clip"
       >
-        <PublishEntityModal
-          show={showPublishModal}
-          onClose={() => setShowPublishModal(false)}
-          entityType="agent-flow"
-          entity={flowEntity}
-        />
         <HeaderMenu
           agentName={agentName}
           availableFlows={availableFlows}
           onNewFlow={clearFlow}
           onSaveFlow={saveFlow}
-          onPublishFlow={handlePublishFlow}
         />
         <div className="flex-1 min-h-0 p-6 overflow-y-auto">
           <div

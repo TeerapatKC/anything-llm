@@ -1,5 +1,7 @@
 const { Workspace } = require("../../../../../models/workspace");
 const { getCustomModels } = require("../../../../helpers/customModels");
+const { workspaceForUser, canManageWorkspaceLLM } = require("../../access");
+const { translatorFor } = require("../../i18n");
 const { resolveWorkspaceProvider } = require("../../index");
 
 /**
@@ -16,10 +18,19 @@ async function handleModelSelect({ ctx, chatId, query, messageId, data } = {}) {
   const workspaceId = parseInt(parts[0], 10);
   const modelIdPrefix = parts.slice(1).join(":");
 
-  const workspace = await Workspace.get({ id: workspaceId });
+  const session = ctx.getState(chatId);
+  const t = translatorFor(session);
+  const workspace = await workspaceForUser(session.user, { id: workspaceId });
   if (!workspace) {
     await ctx.bot.answerCallbackQuery(query.id, {
-      text: "Workspace not found.",
+      text: t("workspaces.not_available"),
+    });
+    return;
+  }
+
+  if (!(await canManageWorkspaceLLM(session.user, workspace))) {
+    await ctx.bot.answerCallbackQuery(query.id, {
+      text: t("model.denied_toast"),
     });
     return;
   }
@@ -33,7 +44,7 @@ async function handleModelSelect({ ctx, chatId, query, messageId, data } = {}) {
 
   if (!selectedModel) {
     await ctx.bot.answerCallbackQuery(query.id, {
-      text: "Model not found.",
+      text: t("model.not_found"),
     });
     return;
   }
@@ -41,11 +52,16 @@ async function handleModelSelect({ ctx, chatId, query, messageId, data } = {}) {
   const modelId = selectedModel.id || selectedModel.name;
   await Workspace.update(workspace.id, { chatModel: modelId });
 
-  await ctx.bot.answerCallbackQuery(query.id, { text: "Model updated!" });
+  await ctx.bot.answerCallbackQuery(query.id, {
+    text: t("model.updated_toast"),
+  });
   await ctx.bot.deleteMessage(chatId, messageId);
   await ctx.bot.sendMessage(
     chatId,
-    `Model changed to "${selectedModel.name || modelId}" in "${workspace.name}".`
+    t("model.updated", {
+      model: selectedModel.name || modelId,
+      workspace: workspace.name,
+    })
   );
 }
 

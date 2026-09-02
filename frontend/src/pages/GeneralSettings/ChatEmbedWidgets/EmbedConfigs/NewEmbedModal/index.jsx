@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
 import { TagsInput } from "react-tag-input-component";
 import Embed from "@/models/embed";
@@ -40,6 +41,7 @@ export function enforceSubmissionSchema(form) {
 }
 
 export default function NewEmbedModal() {
+  const { t } = useTranslation();
   const [error, setError] = useState(null);
 
   const handleCreate = async (e) => {
@@ -66,40 +68,43 @@ export default function NewEmbedModal() {
           <PermittedDomains />
           <NumberInput
             name="max_chats_per_day"
-            title="Max chats per day"
-            hint="Limit the amount of chats this embedded chat can process in a 24 hour period. Zero is unlimited."
+            title={t("embeds.modal.max-chats-day")}
+            hint={t("embeds.modal.max-chats-day-hint")}
           />
           <NumberInput
             name="max_chats_per_session"
-            title="Max chats per session"
-            hint="Limit the amount of chats a session user can send with this embed in a 24 hour period. Zero is unlimited."
+            title={t("embeds.modal.max-chats-session")}
+            hint={t("embeds.modal.max-chats-session-hint")}
           />
           <NumberInput
             name="message_limit"
-            title="Message History Limit"
-            hint="The number of previous messages to include in the chat context. Default is 20."
+            title={t("embeds.modal.message-limit")}
+            hint={t("embeds.modal.message-limit-hint")}
             defaultValue={20}
           />
           <BooleanInput
             name="allow_model_override"
-            title="Enable dynamic model use"
-            hint="Allow setting of the preferred LLM model to override the workspace default."
+            title={t("embeds.modal.model-override")}
+            hint={t("embeds.modal.model-override-hint")}
           />
           <BooleanInput
             name="allow_temperature_override"
-            title="Enable dynamic LLM temperature"
-            hint="Allow setting of the LLM temperature to override the workspace default."
+            title={t("embeds.modal.temperature-override")}
+            hint={t("embeds.modal.temperature-override-hint")}
           />
           <BooleanInput
             name="allow_prompt_override"
-            title="Enable Prompt Override"
-            hint="Allow setting of the system prompt to override the workspace default."
+            title={t("embeds.modal.prompt-override")}
+            hint={t("embeds.modal.prompt-override-hint")}
           />
 
-          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          {error && (
+            <p className="text-red-400 text-sm">
+              {t("embeds.modal.error", { error })}
+            </p>
+          )}
           <p className="text-theme-text-primary/60 text-xs md:text-sm">
-            After creating an embed you will be provided a link that you can
-            publish on your website with a simple
+            {t("help.new-embed-modal")}
             <code className="light:bg-stone-300 bg-stone-900 text-theme-text-primary mx-1 px-1 rounded-sm">
               &lt;script&gt;
             </code>{" "}
@@ -120,6 +125,7 @@ export default function NewEmbedModal() {
 }
 
 export const WorkspaceSelection = ({ defaultValue = null }) => {
+  const { t } = useTranslation();
   const [workspaces, setWorkspaces] = useState([]);
   useEffect(() => {
     async function fetchWorkspaces() {
@@ -136,13 +142,12 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
           Workspace
         </Label>
         <p className="text-theme-text-secondary text-xs">
-          This is the workspace your chat window will be based on. All defaults
-          will be inherited from the workspace unless overridden by this config.
+          {t("help.new-embed-modal-2")}
         </p>
       </div>
       <Select name="workspace_id" required={true} defaultValue={defaultValue}>
         <SelectTrigger className="min-w-60 rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-theme-text-primary focus:ring-blue-500 focus:border-blue-500">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("ui.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {workspaces.map((workspace) => {
@@ -159,6 +164,7 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
 };
 
 export const ChatModeSelection = ({ defaultValue = null }) => {
+  const { t } = useTranslation();
   const [chatMode, setChatMode] = useState(defaultValue ?? "query");
 
   return (
@@ -168,11 +174,9 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
           Allowed chat method
         </Label>
         <p className="text-theme-text-secondary text-xs">
-          Set how your chatbot should operate. Query means it will only respond
-          if a document helps answer the query.
+          {t("help.new-embed-modal-3")}
           <br />
-          Chat opens the chat to even general questions and can answer totally
-          unrelated queries to your workspace.
+          {t("help.new-embed-modal-4")}
         </p>
       </div>
       <div className="mt-2 gap-y-3 flex flex-col">
@@ -234,6 +238,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
 };
 
 export const PermittedDomains = ({ defaultValue = [] }) => {
+  const { t } = useTranslation();
   const [domains, setDomains] = useState(defaultValue);
   const handleChange = (data) => {
     const validDomains = data
@@ -278,8 +283,7 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
           Restrict requests from domains
         </Label>
         <p className="text-theme-text-secondary text-xs">
-          This filter will block any requests that come from a domain other than
-          the list below.
+          {t("help.new-embed-modal-5")}
           <br />
           Leaving this empty means anyone can use your embed on any site.
         </p>

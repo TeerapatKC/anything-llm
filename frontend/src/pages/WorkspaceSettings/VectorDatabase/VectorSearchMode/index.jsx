@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import {
   Select,
@@ -24,6 +25,7 @@ const hint = {
 };
 
 export default function VectorSearchMode({ workspace, setHasChanges }) {
+  const { t } = useTranslation();
   const [selection, setSelection] = useState(
     workspace?.vectorSearchMode ?? "default"
   );
@@ -50,7 +52,7 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
         required={true}
       >
         <SelectTrigger className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none w-full p-2.5">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("ui.select-option")} />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="default">Default</SelectItem>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Input } from "@/components/ui/input";
@@ -11,11 +12,12 @@ import {
 } from "@/components/ui/select";
 
 export default function OpenRouterOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-center gap-9 mt-1.5">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="OpenRouterApiKey"
@@ -33,6 +35,7 @@ export default function OpenRouterOptions({ settings }) {
 }
 
 function OpenRouterEmbeddingModelSelection({ settings }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedModel, setSelectedModel] = useState(
@@ -63,10 +66,12 @@ function OpenRouterEmbeddingModelSelection({ settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Model Preference</Label>
+        <Label className="block mb-3">
+          {t("provider-options.model-preference")}
+        </Label>
         <Select name="EmbeddingModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -76,7 +81,9 @@ function OpenRouterEmbeddingModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Model Preference</Label>
+      <Label className="block mb-3">
+        {t("provider-options.model-preference")}
+      </Label>
       <Select
         name="EmbeddingModelPref"
         required={true}
@@ -84,7 +91,7 @@ function OpenRouterEmbeddingModelSelection({ settings }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t("provider-options.select-model")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

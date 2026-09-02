@@ -5,10 +5,14 @@
  */
 async function handleHelp(ctx, chatId) {
   const { BOT_COMMANDS } = require("../index");
-  const lines = BOT_COMMANDS.map((c) => `/${c.command} - ${c.description}`);
+  const { translatorFor } = require("../../i18n");
+  const t = translatorFor(ctx.getState(chatId));
+  const lines = BOT_COMMANDS.map(
+    (c) => `/${c.command} - ${t(`command.${c.command}`)}`
+  );
   await ctx.bot.sendMessage(
     chatId,
-    `Available commands:\n\n${lines.join("\n")}`
+    `${t("help.header")}\n\n${lines.join("\n")}`
   );
 }
 

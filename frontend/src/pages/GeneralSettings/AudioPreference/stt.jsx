@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React, { useEffect, useState, useRef } from "react";
 import PageHeader from "@/components/layout/PageHeader";
 import System from "@/models/system";
@@ -72,6 +73,7 @@ const PROVIDERS = [
 ];
 
 export default function SpeechToTextProvider({ settings }) {
+  const { t } = useTranslation();
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -185,7 +187,7 @@ export default function SpeechToTextProvider({ settings }) {
                 type="text"
                 name="stt-provider-search"
                 autoComplete="off"
-                placeholder="Search speech to text providers"
+                placeholder={t("ui.search-stt-providers")}
                 className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 ref={searchInputRef}

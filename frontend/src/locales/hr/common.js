@@ -5,14 +5,49 @@ const TRANSLATIONS = {
       welcome: "Dobrodošli",
       getStarted: "Započni",
     },
+    llm: {
+      title: "LLM postavka",
+      description:
+        "AnythingLLM može raditi s mnogim LLM pružateljima usluga. Ovo je usluga koja će upravljati razgovorom.",
+    },
     userSetup: {
       title: "Postavljanje korisnika",
       description: "Konfigurirajte svoje korisničke postavke.",
+      howManyUsers: "Koliko će korisnika koristiti ovu instancu?",
+      justMe: "Samo ja",
+      myTeam: "Moj timu",
+      instancePassword: "Lozinka instance",
+      setPassword: "Želite li postaviti lozinku?",
+      passwordReq: "Lozinka mora imati najmanje 8 znakova.",
+      passwordWarn:
+        "Važno je da spremite ovu lozinku jer ne postoji način za njezino oporavljanje.",
       adminUsername: "Korisničko ime administratorskog računa",
       adminPassword: "Lozinka administratorskog računa",
       adminPasswordReq: "Lozinka mora imati najmanje 8 znakova.",
       teamHint:
         "Prema zadanim postavkama, samo vi ćete biti administrator. Nakon završetka postavljanja moći ćete stvarati i pozivati druge korisnike ili administratore. Nemojte izgubiti svoju lozinku jer samo administratori mogu resetirati lozinke.",
+    },
+    data: {
+      title: "Rukovanje podacima i privatnost",
+      description:
+        "Predani smo transparentnosti i kontroli kada je riječ o vašim osobnim podacima.",
+      settingsHint:
+        "Ove postavke mogu se ponovno konfigurirati u bilo kojem trenutku u postavkama.",
+    },
+    survey: {
+      title: "Dobrodošli u AnythingLLM",
+      description:
+        "Pomozite nam da AnythingLLM izgradimo prema vašim potrebama. Neobavezno.",
+      email: "Koja je vaša e-mail adresa?",
+      useCase: "Za što ćete koristiti AnythingLLM?",
+      useCaseWork: "Za posao",
+      useCasePersonal: "Za osobnu upotrebu",
+      useCaseOther: "Ostalo",
+      comment: "Kako ste čuli za AnythingLLM?",
+      commentPlaceholder:
+        "Reddit, Twitter, GitHub, YouTube, itd. - Javite nam kako ste nas pronašli!",
+      skip: "Preskoči anketu",
+      thankYou: "Hvala vam na povratnim informacijama!",
     },
   },
   common: {
@@ -23,6 +58,8 @@ const TRANSLATIONS = {
     previous: "Prethodna stranica",
     next: "Sljedeća stranica",
     optional: "Neobavezno",
+    yes: "Da",
+    no: "Ne",
     on: "Uključeno",
     none: "Ništa",
     stopped: "Zaustavljeno",
@@ -35,8 +72,6 @@ const TRANSLATIONS = {
   home: {
     welcome: "Dobrodošli",
     chooseWorkspace: "Odaberite radni prostor za početak razgovora!",
-    noWorkspaces:
-      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Trenutno niste dodijeljeni nijednom radnom prostoru.\nMolimo kontaktirajte svog administratora za pristup radnom prostoru.",
     goToWorkspace: 'Idi na "{{workspace}}"',
@@ -45,7 +80,6 @@ const TRANSLATIONS = {
     title: "Postavke instance",
     invites: "Pozivnice",
     users: "Korisnici",
-    roles: "Roles & Permissions",
     workspaces: "Radni prostori",
     "workspace-chats": "Razgovori radnog prostora",
     customization: "Prilagodba",
@@ -60,6 +94,7 @@ const TRANSLATIONS = {
     "voice-speech": "Glas i govor",
     "vector-database": "Vektorska baza podataka",
     embeds: "Ugrađeni razgovor",
+    security: "Sigurnost",
     "event-logs": "Zapisnici događaja",
     "scheduled-jobs": "Zakazani zadaci",
     privacy: "Privatnost i podaci",
@@ -75,11 +110,10 @@ const TRANSLATIONS = {
     admin: "Administrator",
     tools: "Alati",
     "system-prompt-variables": "Varijable sistemskog upita",
-    "slash-commands": "Slash Commands",
     "experimental-features": "Eksperimentalne značajke",
     contact: "Kontaktirajte podršku",
     "browser-extension": "Ekstenzija za preglednik",
-    "mobile-app": "NexusAI mobilna aplikacija",
+    "mobile-app": "AnythingLLM mobilna aplikacija",
     channels: "Kanali",
     "available-channels": {
       telegram: "Telegram",
@@ -87,7 +121,7 @@ const TRANSLATIONS = {
     "image-generation": "Generiranje slika",
   },
   login: {
-    form: {
+    "multi-user": {
       welcome: "Dobrodošli",
       "placeholder-username": "Korisničko ime",
       "placeholder-password": "Lozinka",
@@ -100,6 +134,9 @@ const TRANSLATIONS = {
       "Unesite svoje korisničko ime i lozinku za pristup svojoj {{appName}} instanci.",
     "password-reset": {
       title: "Resetiranje lozinke",
+      description:
+        "Unesite potrebne podatke ispod za resetiranje svoje lozinke.",
+      "recovery-codes": "Kodovi za oporavak",
       "back-to-login": "Povratak na prijavu",
     },
   },
@@ -138,7 +175,7 @@ const TRANSLATIONS = {
       add: "Dodaj novu poruku",
       save: "Spremi poruke",
       heading: "Objasni mi",
-      body: "prednosti NexusAI-a",
+      body: "prednosti AnythingLLM-a",
     },
     delete: {
       title: "Izbriši radni prostor",
@@ -394,6 +431,8 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "Omogućite vašem agentu da radi s Gmailom - pretražuje e-mailove, čita niti razgovora, sastavlja nacrte, šalje e-mailove i upravlja vašom pristiglom poštom. <a>Pročitajte dokumentaciju</a>.",
+        multiUserWarning:
+          "Gmail integracija nije dostupna u načinu s više korisnika iz sigurnosnih razloga. Molimo isključite način s više korisnika za korištenje ove značajke.",
         configuration: "Gmail konfiguracija",
         deploymentId: "ID implementacije",
         deploymentIdHelp:
@@ -512,6 +551,8 @@ const TRANSLATIONS = {
         title: "Google kalendar",
         description:
           "Omogućite vašem agentu da radi s Google kalendarom - pregledava kalendare, dohvaća događaje, stvara i ažurira događaje te upravlja RSVP odgovorima. <a>Pročitajte dokumentaciju</a>.",
+        multiUserWarning:
+          "Integracija Google kalendara nije dostupna u načinu s više korisnika iz sigurnosnih razloga. Molimo isključite način s više korisnika za korištenje ove značajke.",
         configuration: "Konfiguracija Google kalendara",
         deploymentId: "ID implementacije",
         deploymentIdHelp:
@@ -593,6 +634,8 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "Omogućite vašem agentu da radi s Microsoft Outlookom - pretražuje e-mailove, čita niti razgovora, sastavlja nacrte, šalje e-mailove i upravlja vašom pristiglom poštom putem Microsoft Graph API-ja. <a>Pročitajte dokumentaciju</a>.",
+        multiUserWarning:
+          "Outlook integracija nije dostupna u načinu s više korisnika iz sigurnosnih razloga. Molimo isključite način s više korisnika za korištenje ove značajke.",
         configuration: "Outlook konfiguracija",
         authType: "Vrsta računa",
         authTypeHelp:
@@ -720,7 +763,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "Inteligentan odabir vještina",
         description:
-          "Omogućite neograničen broj alata i smanjite potrošnju tokena do 80% po upitu — NexusAI automatski odabire prave vještine za svaki upit.",
+          "Omogućite neograničen broj alata i smanjite potrošnju tokena do 80% po upitu — AnythingLLM automatski odabire prave vještine za svaki upit.",
         "max-tools": {
           title: "Maksimalan broj alata",
           description:
@@ -757,16 +800,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "Postavke sučelja",
-      description: "Postavite svoje postavke sučelja za NexusAI.",
+      description: "Postavite svoje postavke sučelja za AnythingLLM.",
     },
     branding: {
       title: "Brendiranje i whitelabeling",
       description:
-        "Bijeli žig (white-label) vaše NexusAI instance s prilagođenim brendiranjem.",
+        "Bijeli žig (white-label) vaše AnythingLLM instance s prilagođenim brendiranjem.",
     },
     chat: {
       title: "Razgovor",
-      description: "Postavite svoje postavke razgovora za NexusAI.",
+      description: "Postavite svoje postavke razgovora za AnythingLLM.",
       auto_submit: {
         title: "Automatsko slanje glasovnog unosa",
         description: "Automatski pošalji glasovni unos nakon razdoblja tišine",
@@ -804,7 +847,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Jezik prikaza",
         description:
-          "Odaberite preferirani jezik za prikaz NexusAI sučelja - kada su prijevodi dostupni.",
+          "Odaberite preferirani jezik za prikaz AnythingLLM sučelja - kada su prijevodi dostupni.",
       },
       logo: {
         title: "Logotip branda",
@@ -851,7 +894,7 @@ const TRANSLATIONS = {
   api: {
     title: "API ključevi",
     description:
-      "API ključevi omogućuju vlasniku programski pristup i upravljanje ovom NexusAI instancom.",
+      "API ključevi omogućuju vlasniku programski pristup i upravljanje ovom AnythingLLM instancom.",
     link: "Pročitajte API dokumentaciju",
     generate: "Generiraj novi API ključ",
     empty: "Nema pronađenih API ključeva",
@@ -865,7 +908,7 @@ const TRANSLATIONS = {
       close: "Zatvori",
       create: "Stvori API ključ",
       helper:
-        "Nakon stvaranja, API ključ se može koristiti za programski pristup i konfiguraciju ove NexusAI instance.",
+        "Nakon stvaranja, API ključ se može koristiti za programski pristup i konfiguraciju ove AnythingLLM instance.",
       name: {
         label: "Naziv",
         placeholder: "Produkcijska integracija",
@@ -890,7 +933,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM postavka",
     description:
-      "Ovo su vjerodajnice i postavke za vašeg preferiranog LLM pružatelja usluga razgovora i ugrađivanja (embedding). Važno je da su ovi ključevi ažurni i točni, jer inače NexusAI neće funkcionirati ispravno.",
+      "Ovo su vjerodajnice i postavke za vašeg preferiranog LLM pružatelja usluga razgovora i ugrađivanja (embedding). Važno je da su ovi ključevi ažurni i točni, jer inače AnythingLLM neće funkcionirati ispravno.",
     provider: "LLM pružatelj usluga",
     providers: {
       azure_openai: {
@@ -1069,8 +1112,16 @@ const TRANSLATIONS = {
       "select-router": "Odaberi usmjerivač",
       "select-description":
         "Odaberite koji usmjerivač koristiti za ovaj radni prostor.",
+      "no-routers-chat":
+        "Nema konfiguriranih usmjerivača. Stvorite jedan u Postavke > AI pružatelji usluga > Usmjerivač modela.",
+      "rule-count": "({{count}} pravila)",
+    },
+    metrics: {
+      "model-router-default": "Usmjerivač modela",
     },
     chat: {
+      "select-router-error": "Odaberi usmjerivač",
+      "invalid-model": "Nevažeći odabir modela",
       "routed-to": "Usmjereno na <route>{{model}}</route>",
       "routed-to-rule":
         "Usmjereno na <route>{{model}}</route> putem <rule>{{ruleTitle}}</rule>",
@@ -1082,7 +1133,7 @@ const TRANSLATIONS = {
       "Ovo su vjerodajnice i postavke za vašeg preferiranog pružatelja usluga modela transkripcije. Važno je da su ovi ključevi ažurni i točni, jer se u protivnom medijske datoteke i audio zapisi neće transkribirati.",
     provider: "Pružatelj usluga transkripcije",
     "warn-start":
-      "Korištenje lokalnog whisper modela na uređajima s ograničenom RAM memorijom ili procesorom može zaustaviti NexusAI prilikom obrade medijskih datoteka.",
+      "Korištenje lokalnog whisper modela na uređajima s ograničenom RAM memorijom ili procesorom može zaustaviti AnythingLLM prilikom obrade medijskih datoteka.",
     "warn-recommend":
       "Preporučujemo najmanje 2 GB RAM-a i datoteke za prijenos manje od 10 MB.",
     "warn-end":
@@ -1093,7 +1144,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Kada koristite LLM koji izvorno ne podržava mehanizam za ugrađivanje (embedding) - možda ćete morati dodatno navesti vjerodajnice za ugrađivanje teksta.",
     "desc-end":
-      "Ugrađivanje (embedding) je proces pretvaranja teksta u vektore. Ove vjerodajnice su potrebne za pretvaranje vaših datoteka i upita u format koji NexusAI može koristiti za obradu.",
+      "Ugrađivanje (embedding) je proces pretvaranja teksta u vektore. Ove vjerodajnice su potrebne za pretvaranje vaših datoteka i upita u format koji AnythingLLM može koristiti za obradu.",
     provider: {
       title: "Pružatelj usluga ugrađivanja",
     },
@@ -1119,7 +1170,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Vektorska baza podataka",
     description:
-      "Ovo su vjerodajnice i postavke za funkcioniranje vaše NexusAI instance. Važno je da su ovi ključevi ažurni i točni.",
+      "Ovo su vjerodajnice i postavke za funkcioniranje vaše AnythingLLM instance. Važno je da su ovi ključevi ažurni i točni.",
     provider: {
       title: "Pružatelj usluga vektorske baze podataka",
       description: "Za LanceDB nije potrebna nikakva konfiguracija.",
@@ -1153,7 +1204,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "Telegram bot",
     description:
-      "Povežite svoju NexusAI instancu s Telegramom da biste mogli razgovarati sa svojim radnim prostorima s bilo kojeg uređaja.",
+      "Povežite svoju AnythingLLM instancu s Telegramom da biste mogli razgovarati sa svojim radnim prostorima s bilo kojeg uređaja.",
     setup: {
       step1: {
         title: "Korak 1: Stvorite svoj Telegram bot",
@@ -1214,6 +1265,28 @@ const TRANSLATIONS = {
       unknown: "Nepoznato",
     },
   },
+  security: {
+    title: "Sigurnost",
+    multiuser: {
+      title: "Način s više korisnika",
+      description:
+        "Postavite svoju instancu za podršku vašem timu aktiviranjem načina s više korisnika.",
+      enable: {
+        "is-enable": "Način s više korisnika je omogućen",
+        enable: "Omogući način s više korisnika",
+        description:
+          "Prema zadanim postavkama, samo vi ćete biti administrator. Kao administrator morat ćete stvarati račune za sve nove korisnike ili administratore. Nemojte izgubiti svoju lozinku jer samo administrator može resetirati lozinke.",
+        username: "Korisničko ime administratorskog računa",
+        password: "Lozinka administratorskog računa",
+      },
+    },
+    password: {
+      title: "Zaštita lozinkom",
+      description:
+        "Zaštitite svoju AnythingLLM instancu lozinkom. Ako je zaboravite, ne postoji način oporavka, tako da svakako spremite ovu lozinku.",
+      "password-label": "Lozinka instance",
+    },
+  },
   event: {
     title: "Zapisnici događaja",
     description:
@@ -1228,7 +1301,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privatnost i rukovanje podacima",
     description:
-      "Ovo je vaša konfiguracija za način na koji povezani pružatelji usluga trećih strana i NexusAI rukuju vašim podacima.",
+      "Ovo je vaša konfiguracija za način na koji povezani pružatelji usluga trećih strana i AnythingLLM rukuju vašim podacima.",
     anonymous: "Anonimna telemetrija omogućena",
   },
   connectors: {
@@ -1400,22 +1473,22 @@ const TRANSLATIONS = {
       fetching: "Dohvaćanje...",
       "fetch-website": "Dohvati web stranicu",
       "privacy-notice":
-        "Ove datoteke bit će prenesene u procesor dokumenata koji radi na ovoj NexusAI instanci. Ove datoteke se ne šalju niti dijele s trećim stranama.",
+        "Ove datoteke bit će prenesene u procesor dokumenata koji radi na ovoj AnythingLLM instanci. Ove datoteke se ne šalju niti dijele s trećim stranama.",
     },
     pinning: {
       what_pinning: "Što je prikvačivanje dokumenata?",
       pin_explained_block1:
-        "Kada <b>prikvačite</b> dokument u NexusAI-u, ubacit ćemo cijeli sadržaj dokumenta u vaš prozor upita da bi ga vaš LLM potpuno razumio.",
+        "Kada <b>prikvačite</b> dokument u AnythingLLM-u, ubacit ćemo cijeli sadržaj dokumenta u vaš prozor upita da bi ga vaš LLM potpuno razumio.",
       pin_explained_block2:
         "Ovo najbolje funkcionira s <b>modelima velikog konteksta</b> ili malim datotekama koje su ključne za njegovu bazu znanja.",
       pin_explained_block3:
-        "Ako ne dobivate željene odgovore od NexusAI-a prema zadanim postavkama, prikvačivanje je odličan način za dobivanje kvalitetnijih odgovora jednim klikom.",
+        "Ako ne dobivate željene odgovore od AnythingLLM-a prema zadanim postavkama, prikvačivanje je odličan način za dobivanje kvalitetnijih odgovora jednim klikom.",
       accept: "U redu, razumijem",
     },
     watching: {
       what_watching: "Što radi praćenje dokumenta?",
       watch_explained_block1:
-        "Kada <b>pratite</b> dokument u NexusAI-u, <i>automatski</i> ćemo sinkronizirati sadržaj vašeg dokumenta iz njegovog izvornog izvora u redovitim intervalima. Ovo će automatski ažurirati sadržaj u svakom radnom prostoru u kojem se ova datoteka upravlja.",
+        "Kada <b>pratite</b> dokument u AnythingLLM-u, <i>automatski</i> ćemo sinkronizirati sadržaj vašeg dokumenta iz njegovog izvornog izvora u redovitim intervalima. Ovo će automatski ažurirati sadržaj u svakom radnom prostoru u kojem se ova datoteka upravlja.",
       watch_explained_block2:
         "Ova značajka trenutno podržava sadržaj temeljen na internetu i neće biti dostupna za ručno prenesene dokumente.",
       watch_explained_block3_start:
@@ -1453,7 +1526,6 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Privitci se obrađuju. Pričekajte...",
-    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Pošalji poruku",
     attach_file: "Priložite datoteku ovom razgovoru",
     text_size: "Promijeni veličinu teksta.",
@@ -1491,6 +1563,9 @@ const TRANSLATIONS = {
     preset_reset_description:
       "Obriši svoju povijest razgovora i započni novi razgovor",
     add_new_preset: " Dodaj novi predložak",
+    add_new: "Dodaj novo",
+    edit: "Uredi",
+    publish: "Objavi",
     stop_generating: "Zaustavi generiranje odgovora",
     command: "Naredba",
     your_command: "vasa-naredba",
@@ -1504,8 +1579,32 @@ const TRANSLATIONS = {
     large: "Velika",
     tools: "Alati",
     text_size_label: "Veličina teksta",
+    select_model: "Odaberi model",
     slash_commands: "Kose naredbe (slash commands)",
+    agent_skills: "Vještine agenta",
+    manage_agent_skills: "Upravljaj vještinama agenta",
+    app_integrations: "Integracije aplikacija",
+    custom_skills: "Prilagođene vještine",
+    agent_flows: "Tokovi agenta",
+    sub_skills: "Podvještine",
+    no_tools_found: "Nema pronađenih odgovarajućih alata",
+    loading_mcp_servers: "Učitavanje MCP poslužitelja...",
     start_agent_session: "Pokreni sesiju agenta",
+    agent_skills_disabled_in_session:
+      "Nije moguće mijenjati vještine tijekom aktivne sesije agenta. Koristite /exit da prvo zavšite sesiju.",
+    use_agent_session_to_use_tools:
+      "Alate možete koristiti u razgovoru pokretanjem sesije agenta s '@agent' na početku svog upita.",
+    workspace_llm_manager: {
+      search: "Pretraži",
+      loading_workspace_settings: "Učitavanje postavki radnog prostora...",
+      available_models: "Dostupni modeli za {{provider}}",
+      available_models_description:
+        "Odaberite model koji se koristi za ovaj radni prostor.",
+      save: "Koristi ovaj model",
+      saving: "Postavljanje modela kao zadanog za radni prostor...",
+      missing_credentials: "Ovom pružatelju usluga nedostaju vjerodajnice!",
+      missing_credentials_description: "Postavi sada",
+    },
     agent_invocation: {
       model_wants_to_call: "Model želi pozvati",
       approve: "Prihvati",
@@ -1559,19 +1658,32 @@ const TRANSLATIONS = {
         edit_description: "Ažurirajte sadržaj ove memorije.",
         label: "Memorija",
         placeholder:
-          "npr. Korisnikovo ime je Joe, korisnik radi na NexusAI-u, itd.",
+          "npr. Korisnikovo ime je Joe, korisnik radi na AnythingLLM-u, itd.",
         create: "Stvori",
         save: "Spremi",
         cancel: "Odustani",
       },
     },
     preset_img_description: "Generiraj sliku na temelju tekstualnog uputa.",
+    generating_response: "Generiranje odgovora",
+    response_failed: "Nije moguće odgovoriti na poruku.",
+    response_failed_reason: "Razlog: {{reason}}",
+    thought_in_progress: "Model razmišlja...",
+    thoughts: "Razmišljanja",
+    leave_generating: {
+      title: "Zaustaviti generiranje odgovora?",
+      description:
+        "O trenutno napuštate ovu razgovornu sesiju. To će zaustaviti generiranje odgovora i ne postoji mogućnost da se to vrati.",
+      cancel: "Otkazati",
+      confirm: "Nastavite",
+    },
   },
   profile_settings: {
     edit_account: "Uredi račun",
     profile_picture: "Profilna slika",
     remove_profile_picture: "Ukloni profilnu sliku",
     username: "Korisničko ime",
+    new_password: "Nova lozinka",
     password_description: "Lozinka mora imati najmanje 8 znakova",
     cancel: "Odustani",
     update_account: "Ažuriraj račun",
@@ -1597,6 +1709,7 @@ const TRANSLATIONS = {
       llmPreferences: "LLM postavke",
       chatSettings: "Postavke razgovora",
       help: "Prikaži pomoć za prečace na tipkovnici",
+      showLLMSelector: "Prikaži birač LLM-a za radni prostor",
     },
   },
   community_hub: {
@@ -1681,7 +1794,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Potrebna autentikacija",
           description:
-            "Morate se autentificirati putem NexusAI Community Hub-a prije objavljivanja stavki.",
+            "Morate se autentificirati putem AnythingLLM Community Hub-a prije objavljivanja stavki.",
           button: "Poveži se s Community Hub-om",
         },
       },

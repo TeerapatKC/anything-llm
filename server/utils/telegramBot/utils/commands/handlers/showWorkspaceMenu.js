@@ -1,4 +1,6 @@
-const { Workspace } = require("../../../../../models/workspace");
+const { chattableWorkspaces, canCreateWorkspace } = require("../../access");
+const { asMessageId } = require("../../index");
+const { translatorFor } = require("../../i18n");
 const WORKSPACES_PER_PAGE = 8;
 
 /**
@@ -10,23 +12,40 @@ const WORKSPACES_PER_PAGE = 8;
  */
 async function showWorkspaceMenu(ctx, chatId, page = 0, messageId = null) {
   const pageNum = typeof page === "number" && !isNaN(page) ? page : 0;
-  const workspaces = await Workspace.where({});
+  // This slot means "edit the message with this id" - anything that is not an
+  // id (a command invocation passing its own arguments through) sends instead.
+  const editId = asMessageId(messageId);
+  const session = ctx.getState(chatId);
+  if (!session) return;
+  const t = translatorFor(session);
+
+  // Only the workspaces this account may chat in - the same list the web app
+  // would show them, never every workspace on the instance.
+  const workspaces = await chattableWorkspaces(session.user);
   if (!workspaces.length) {
+    const mayCreate = await canCreateWorkspace(session.user);
     await ctx.bot.sendMessage(
       chatId,
-      "No workspaces found. Create one to get started!",
-      {
-        reply_markup: {
-          inline_keyboard: [
-            [{ text: "➕ Create Workspace", callback_data: "ws-create" }],
-          ],
-        },
-      }
+      mayCreate ? t("switch.none_can_create") : t("workspaces.none"),
+      mayCreate
+        ? {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: t("switch.create_button"),
+                    callback_data: "ws-create",
+                  },
+                ],
+              ],
+            },
+          }
+        : {}
     );
     return;
   }
 
-  const state = ctx.getState(chatId);
+  const state = session;
   const sortedWorkspaces = [...workspaces].sort((a, b) => {
     const aIsActive = a.slug === state.workspaceSlug;
     const bIsActive = b.slug === state.workspaceSlug;
@@ -47,7 +66,7 @@ async function showWorkspaceMenu(ctx, chatId, page = 0, messageId = null) {
     const isCurrent = ws.slug === state.workspaceSlug;
     return [
       {
-        text: isCurrent ? `🟢 ${ws.name} (active)` : ws.name,
+        text: isCurrent ? `🟢 ${ws.name} (${t("common.active")})` : ws.name,
         callback_data: `ws:${ws.id}`,
       },
     ];
@@ -55,25 +74,35 @@ async function showWorkspaceMenu(ctx, chatId, page = 0, messageId = null) {
 
   const navRow = [];
   if (safePage > 0) {
-    navRow.push({ text: "← Prev", callback_data: `wspg:${safePage - 1}` });
+    navRow.push({
+      text: t("common.prev"),
+      callback_data: `wspg:${safePage - 1}`,
+    });
   }
   if (safePage < totalPages - 1) {
-    navRow.push({ text: "Next →", callback_data: `wspg:${safePage + 1}` });
+    navRow.push({
+      text: t("common.next"),
+      callback_data: `wspg:${safePage + 1}`,
+    });
   }
   if (navRow.length) buttons.push(navRow);
 
   const text =
     totalPages > 1
-      ? `Select a workspace (${safePage + 1}/${totalPages}, ${sortedWorkspaces.length} total):`
-      : "Select a workspace:";
+      ? t("switch.select_paged", {
+          page: safePage + 1,
+          pages: totalPages,
+          count: sortedWorkspaces.length,
+        })
+      : t("switch.select");
   const opts = {
     reply_markup: { inline_keyboard: buttons },
   };
 
-  if (messageId) {
+  if (editId) {
     await ctx.bot.editMessageText(text, {
       chat_id: chatId,
-      message_id: messageId,
+      message_id: editId,
       ...opts,
     });
   } else {

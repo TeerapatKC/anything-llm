@@ -349,7 +349,7 @@ function ConfigurationSection({
               }}
             >
               <SelectTrigger className="w-full px-3 py-2 bg-theme-bg-primary border border-theme-sidebar-border rounded-lg text-theme-text-primary text-sm">
-                <SelectValue placeholder="Select an option" />
+                <SelectValue placeholder={t("ui.select-option")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="common">
@@ -440,7 +440,7 @@ function ConfigurationSection({
                 setClientSecret(e.target.value);
                 setHasChanges(true);
               }}
-              placeholder="Your client secret..."
+              placeholder={t("ui.your-client-secret")}
               className="w-full px-3 py-2 bg-theme-bg-primary border border-theme-sidebar-border rounded-lg text-theme-text-primary text-sm placeholder:text-theme-text-secondary/50"
             />
           </div>

@@ -26,7 +26,7 @@ export default function NativeTranscriptionOptions({ settings }) {
             onValueChange={setModel}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               {["Xenova/whisper-small", "Xenova/whisper-large"].map(

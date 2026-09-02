@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { SplitLayout } from "@/components/layout/SettingsLayout";
 import Admin from "@/models/admin";
 import { FullScreenLoader } from "@/components/Preloader";
@@ -15,6 +16,7 @@ import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
 
 export default function ExperimentalFeatures() {
+  const { t } = useTranslation();
   const [featureFlags, setFeatureFlags] = useState({});
   const [loading, setLoading] = useState(true);
   const [selectedFeature, setSelectedFeature] = useState(
@@ -58,7 +60,9 @@ export default function ExperimentalFeatures() {
         <div className="flex flex-col gap-y-[18px]">
           <div className="text-theme-text-primary flex items-center gap-x-2">
             <FlaskConical size={24} />
-            <p className="text-lg font-medium">Experimental Features</p>
+            <p className="text-lg font-medium">
+              {t("experimental-features.title")}
+            </p>
           </div>
           {/* Feature list */}
           <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl min-w-[360px] w-fit">
@@ -98,7 +102,9 @@ export default function ExperimentalFeatures() {
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-theme-text-secondary">
                   <FlaskConical size={40} />
-                  <p className="font-medium">Select an experimental feature</p>
+                  <p className="font-medium">
+                    {t("experimental-features.select-feature")}
+                  </p>
                 </div>
               )}
             </div>
@@ -124,6 +130,7 @@ function FeatureItem({
   handleClick = () => {},
   borderClass = "border-b border-theme-sidebar-border",
 }) {
+  const { t } = useTranslation();
   return (
     <div
       key={feature.key}
@@ -140,14 +147,16 @@ function FeatureItem({
         {feature.autoEnabled ? (
           <>
             <div className="text-sm text-theme-text-secondary font-medium">
-              On
+              {t("experimental-features.on")}
             </div>
             <div className="w-[14px]" />
           </>
         ) : (
           <>
             <div className="text-sm text-theme-text-secondary font-medium">
-              {isActive ? "On" : "Off"}
+              {isActive
+                ? t("experimental-features.on")
+                : t("experimental-features.off")}
             </div>
             <ChevronRight size={14} className="text-theme-text-secondary" />
           </>
@@ -169,6 +178,7 @@ function SelectedFeatureComponent({ feature, settings, refresh }) {
 }
 
 function FeatureVerification({ children }) {
+  const { t } = useTranslation();
   if (
     !window.localStorage.getItem("anythingllm_tos_experimental_feature_set")
   ) {
@@ -197,7 +207,7 @@ function FeatureVerification({ children }) {
               <div className="flex items-center gap-2">
                 <FlaskConical size={18} className="text-theme-text-primary" />
                 <DialogTitle className="text-sm font-semibold">
-                  Terms of use for experimental features
+                  {t("experimental-features.tos.title")}
                 </DialogTitle>
               </div>
             </DialogHeader>
@@ -205,60 +215,55 @@ function FeatureVerification({ children }) {
               <div className="space-y-4 flex-col">
                 <div className="w-full text-theme-text-primary text-md flex flex-col gap-y-4">
                   <p>
-                    Experimental features of NexusAI are features that we are
-                    piloting and are <b>opt-in</b>. We proactively will
-                    condition or warn you on any potential concerns should any
-                    exist prior to approval of any feature.
+                    <Trans
+                      i18nKey="experimental-features.tos.intro"
+                      components={{ b: <b /> }}
+                    />
                   </p>
 
                   <div>
-                    <p>
-                      Use of any feature on this page can result in, but not
-                      limited to, the following possibilities.
-                    </p>
+                    <p>{t("experimental-features.tos.risks-intro")}</p>
                     <ul className="list-disc ml-6 text-sm font-mono mt-2">
-                      <li>Loss of data.</li>
-                      <li>Change in quality of results.</li>
-                      <li>Increased storage.</li>
-                      <li>Increased resource consumption.</li>
-                      <li>
-                        Increased cost or use of any connected LLM or embedding
-                        provider.
-                      </li>
-                      <li>Potential bugs or issues using NexusAI.</li>
+                      <li>{t("experimental-features.tos.risk-data-loss")}</li>
+                      <li>{t("experimental-features.tos.risk-quality")}</li>
+                      <li>{t("experimental-features.tos.risk-storage")}</li>
+                      <li>{t("experimental-features.tos.risk-resources")}</li>
+                      <li>{t("experimental-features.tos.risk-cost")}</li>
+                      <li>{t("experimental-features.tos.risk-bugs")}</li>
                     </ul>
                   </div>
 
                   <div>
-                    <p>
-                      Use of an experimental feature also comes with the
-                      following list of non-exhaustive conditions.
-                    </p>
+                    <p>{t("experimental-features.tos.conditions-intro")}</p>
                     <ul className="list-disc ml-6 text-sm font-mono mt-2">
-                      <li>Feature may not exist in future updates.</li>
-                      <li>The feature being used is not currently stable.</li>
                       <li>
-                        The feature may not be available in future versions,
-                        configurations, or subscriptions of NexusAI.
+                        {t("experimental-features.tos.condition-removal")}
                       </li>
                       <li>
-                        Your privacy settings <b>will be honored</b> with use of
-                        any beta feature.
+                        {t("experimental-features.tos.condition-stability")}
                       </li>
-                      <li>These conditions may change in future updates.</li>
+                      <li>
+                        {t("experimental-features.tos.condition-availability")}
+                      </li>
+                      <li>
+                        <Trans
+                          i18nKey="experimental-features.tos.condition-privacy"
+                          components={{ b: <b /> }}
+                        />
+                      </li>
+                      <li>{t("experimental-features.tos.condition-change")}</li>
                     </ul>
                   </div>
 
                   <p>
-                    Access to any features requires approval of this modal. If
-                    you would like to read more you can refer to{" "}
+                    {t("experimental-features.tos.docs-prefix")}{" "}
                     <a
                       href="https://docs.anythingllm.com/beta-preview/overview"
                       className="underline text-blue-500"
                     >
                       docs.anythingllm.com
                     </a>{" "}
-                    or email{" "}
+                    {t("experimental-features.tos.docs-or-email")}{" "}
                     <a
                       href="mailto:team@mintplexlabs.com"
                       className="underline text-blue-500"
@@ -274,10 +279,10 @@ function FeatureVerification({ children }) {
                   type="button"
                   render={<a href={paths.home()} />}
                 >
-                  Reject &amp; close
+                  {t("experimental-features.tos.reject")}
                 </Button>
                 <Button variant="default" type="submit">
-                  I understand
+                  {t("experimental-features.tos.accept")}
                 </Button>
               </div>
             </form>

@@ -265,7 +265,7 @@ export default function GeneralVectorDatabase() {
                   type="text"
                   name="vdb-search"
                   autoComplete="off"
-                  placeholder="Search all vector database providers"
+                  placeholder={t("ui.search-vectordb-providers")}
                   className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
                   onChange={(e) => setSearchQuery(e.target.value)}
                   ref={searchInputRef}

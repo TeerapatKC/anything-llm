@@ -5,14 +5,50 @@ const TRANSLATIONS = {
       welcome: "Selamat Datang",
       getStarted: "Mulai",
     },
+    llm: {
+      title: "Preferensi LLM",
+      description:
+        "AnythingLLM dapat bekerja dengan banyak penyedia LLM. Ini akan menjadi layanan yang menangani obrolan.",
+    },
     userSetup: {
       title: "Pengaturan Pengguna",
       description: "Konfigurasikan pengaturan pengguna Anda.",
+      howManyUsers:
+        "Berapa banyak pengguna yang akan menggunakan instance ini?",
+      justMe: "Hanya saya",
+      myTeam: "Tim saya",
+      instancePassword: "Kata Sandi Instance",
+      setPassword: "Apakah Anda ingin mengatur kata sandi?",
+      passwordReq: "Kata sandi harus minimal 8 karakter.",
+      passwordWarn:
+        "Penting untuk menyimpan kata sandi ini karena tidak ada metode pemulihan.",
       adminUsername: "Nama pengguna akun admin",
       adminPassword: "Kata sandi akun admin",
       adminPasswordReq: "Kata sandi harus minimal 8 karakter.",
       teamHint:
         "Secara bawaan, Anda akan menjadi satu-satunya admin. Setelah onboarding selesai, Anda dapat membuat dan mengundang orang lain sebagai pengguna atau admin. Jangan kehilangan kata sandi Anda karena hanya admin yang dapat mereset kata sandi.",
+    },
+    data: {
+      title: "Penanganan Data & Privasi",
+      description:
+        "Kami berkomitmen pada transparansi dan kontrol terkait data pribadi Anda.",
+      settingsHint:
+        "Pengaturan ini dapat dikonfigurasi ulang kapan saja di pengaturan.",
+    },
+    survey: {
+      title: "Selamat Datang di AnythingLLM",
+      description:
+        "Bantu kami membuat AnythingLLM yang sesuai dengan kebutuhan Anda. Opsional.",
+      email: "Apa email Anda?",
+      useCase: "Untuk apa Anda akan menggunakan AnythingLLM?",
+      useCaseWork: "Untuk pekerjaan",
+      useCasePersonal: "Untuk penggunaan pribadi",
+      useCaseOther: "Lainnya",
+      comment: "Bagaimana Anda mengetahui AnythingLLM?",
+      commentPlaceholder:
+        "Reddit, Twitter, GitHub, YouTube, dll. - Beri tahu kami bagaimana Anda menemukan kami!",
+      skip: "Lewati Survei",
+      thankYou: "Terima kasih atas umpan balik Anda!",
     },
   },
   common: {
@@ -23,6 +59,8 @@ const TRANSLATIONS = {
     previous: "Halaman Sebelumnya",
     next: "Halaman Berikutnya",
     optional: "Opsional",
+    yes: "Ya",
+    no: "Tidak",
     on: "Aktif",
     none: "Tidak Ada",
     stopped: "Dihentikan",
@@ -35,8 +73,6 @@ const TRANSLATIONS = {
   home: {
     welcome: "Selamat Datang",
     chooseWorkspace: "Pilih ruang kerja untuk mulai mengobrol!",
-    noWorkspaces:
-      "You don't have any workspaces yet.\nCreate one to start chatting.",
     notAssigned:
       "Anda saat ini tidak ditugaskan ke ruang kerja mana pun.\nSilakan hubungi administrator Anda untuk meminta akses ke ruang kerja.",
     goToWorkspace: 'Buka "{{workspace}}"',
@@ -45,7 +81,6 @@ const TRANSLATIONS = {
     title: "Pengaturan Instance",
     invites: "Undangan",
     users: "Pengguna",
-    roles: "Roles & Permissions",
     workspaces: "Ruang Kerja",
     "workspace-chats": "Obrolan Ruang Kerja",
     customization: "Kustomisasi",
@@ -60,6 +95,7 @@ const TRANSLATIONS = {
     "voice-speech": "Suara & Ucapan",
     "vector-database": "Basis Data Vektor",
     embeds: "Chat Embed",
+    security: "Keamanan",
     "event-logs": "Log Peristiwa",
     "scheduled-jobs": "Pekerjaan Terjadwal",
     privacy: "Privasi & Data",
@@ -75,11 +111,10 @@ const TRANSLATIONS = {
     admin: "Admin",
     tools: "Alat",
     "system-prompt-variables": "Variabel System Prompt",
-    "slash-commands": "Slash Commands",
     "experimental-features": "Fitur Eksperimental",
     contact: "Hubungi Dukungan",
     "browser-extension": "Ekstensi Browser",
-    "mobile-app": "NexusAI Mobile",
+    "mobile-app": "AnythingLLM Mobile",
     channels: "Saluran",
     "available-channels": {
       telegram: "Telegram",
@@ -87,7 +122,7 @@ const TRANSLATIONS = {
     "image-generation": "Pembuatan Gambar",
   },
   login: {
-    form: {
+    "multi-user": {
       welcome: "Selamat Datang",
       "placeholder-username": "Nama Pengguna",
       "placeholder-password": "Kata Sandi",
@@ -100,6 +135,9 @@ const TRANSLATIONS = {
       "Masukkan nama pengguna dan kata sandi Anda untuk mengakses instance {{appName}} Anda.",
     "password-reset": {
       title: "Reset Kata Sandi",
+      description:
+        "Berikan informasi yang diperlukan di bawah untuk mereset kata sandi Anda.",
+      "recovery-codes": "Kode Pemulihan",
       "back-to-login": "Kembali ke Login",
     },
   },
@@ -137,7 +175,7 @@ const TRANSLATIONS = {
       add: "Tambah pesan baru",
       save: "Simpan Pesan",
       heading: "Jelaskan kepada saya",
-      body: "manfaat NexusAI",
+      body: "manfaat AnythingLLM",
     },
     delete: {
       title: "Hapus Ruang Kerja",
@@ -391,6 +429,8 @@ const TRANSLATIONS = {
         title: "GMail",
         description:
           "Aktifkan agen Anda untuk berinteraksi dengan Gmail - mencari email, membaca thread, menyusun draft, mengirim email, dan mengelola kotak masuk Anda. <a>Baca dokumentasi</a>.",
+        multiUserWarning:
+          "Integrasi Gmail tidak tersedia dalam mode multi-pengguna karena alasan keamanan. Silakan nonaktifkan mode multi-pengguna untuk menggunakan fitur ini.",
         configuration: "Konfigurasi Gmail",
         deploymentId: "ID Deployment",
         deploymentIdHelp:
@@ -508,6 +548,8 @@ const TRANSLATIONS = {
         title: "Google Calendar",
         description:
           "Aktifkan agen Anda untuk berinteraksi dengan Google Calendar - melihat kalender, mendapatkan acara, membuat dan memperbarui acara, dan mengelola RSVP. <a>Baca dokumentasi</a>.",
+        multiUserWarning:
+          "Integrasi Google Calendar tidak tersedia dalam mode multi-pengguna karena alasan keamanan. Silakan nonaktifkan mode multi-pengguna untuk menggunakan fitur ini.",
         configuration: "Konfigurasi Google Calendar",
         deploymentId: "ID Deployment",
         deploymentIdHelp:
@@ -590,6 +632,8 @@ const TRANSLATIONS = {
         title: "Outlook",
         description:
           "Aktifkan agen Anda untuk berinteraksi dengan Microsoft Outlook - mencari email, membaca thread, menyusun draft, mengirim email, dan mengelola kotak masuk melalui Microsoft Graph API. <a>Baca dokumentasi</a>.",
+        multiUserWarning:
+          "Integrasi Outlook tidak tersedia dalam mode multi-pengguna karena alasan keamanan. Silakan nonaktifkan mode multi-pengguna untuk menggunakan fitur ini.",
         configuration: "Konfigurasi Outlook",
         authType: "Tipe Akun",
         authTypeHelp:
@@ -712,7 +756,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "Pemilihan Keterampilan Cerdas",
         description:
-          "Aktifkan alat tanpa batas dan kurangi penggunaan token hingga 80% per kueri — NexusAI secara otomatis memilih keterampilan yang tepat untuk setiap prompt.",
+          "Aktifkan alat tanpa batas dan kurangi penggunaan token hingga 80% per kueri — AnythingLLM secara otomatis memilih keterampilan yang tepat untuk setiap prompt.",
         "max-tools": {
           title: "Alat Maksimal",
           description:
@@ -749,16 +793,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "Preferensi UI",
-      description: "Atur preferensi UI Anda untuk NexusAI.",
+      description: "Atur preferensi UI Anda untuk AnythingLLM.",
     },
     branding: {
       title: "Branding & Whitelabeling",
       description:
-        "White-label instance NexusAI Anda dengan branding kustom.",
+        "White-label instance AnythingLLM Anda dengan branding kustom.",
     },
     chat: {
       title: "Obrolan",
-      description: "Atur preferensi obrolan Anda untuk NexusAI.",
+      description: "Atur preferensi obrolan Anda untuk AnythingLLM.",
       auto_submit: {
         title: "Kirim Otomatis Input Suara",
         description:
@@ -796,7 +840,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Bahasa Tampilan",
         description:
-          "Pilih bahasa pilihan untuk merender UI NexusAI - saat terjemahan tersedia.",
+          "Pilih bahasa pilihan untuk merender UI AnythingLLM - saat terjemahan tersedia.",
       },
       logo: {
         title: "Logo Merek",
@@ -843,7 +887,7 @@ const TRANSLATIONS = {
   api: {
     title: "Kunci API",
     description:
-      "Kunci API memungkinkan pemegangnya untuk mengakses dan mengelola instance NexusAI ini secara terprogram.",
+      "Kunci API memungkinkan pemegangnya untuk mengakses dan mengelola instance AnythingLLM ini secara terprogram.",
     link: "Baca dokumentasi API",
     generate: "Hasilkan Kunci API Baru",
     empty: "Tidak ada kunci API ditemukan",
@@ -857,7 +901,7 @@ const TRANSLATIONS = {
       close: "Tutup",
       create: "Buat Kunci API",
       helper:
-        "Setelah dibuat, kunci API dapat digunakan untuk mengakses dan mengonfigurasi instance NexusAI ini secara terprogram.",
+        "Setelah dibuat, kunci API dapat digunakan untuk mengakses dan mengonfigurasi instance AnythingLLM ini secara terprogram.",
       name: {
         label: "Nama",
         placeholder: "Integrasi produksi",
@@ -882,7 +926,7 @@ const TRANSLATIONS = {
   llm: {
     title: "Preferensi LLM",
     description:
-      "Ini adalah kredensial dan pengaturan untuk penyedia obrolan & embedding LLM pilihan Anda. Penting bahwa kunci ini terkini dan benar, atau NexusAI tidak akan berfungsi dengan baik.",
+      "Ini adalah kredensial dan pengaturan untuk penyedia obrolan & embedding LLM pilihan Anda. Penting bahwa kunci ini terkini dan benar, atau AnythingLLM tidak akan berfungsi dengan baik.",
     provider: "Penyedia LLM",
     providers: {
       azure_openai: {
@@ -1062,8 +1106,16 @@ const TRANSLATIONS = {
       "select-router": "Pilih router",
       "select-description":
         "Pilih router mana yang akan digunakan untuk ruang kerja ini.",
+      "no-routers-chat":
+        "Tidak ada router yang dikonfigurasi. Buat satu di Pengaturan > Penyedia AI > Router Model.",
+      "rule-count": "({{count}} aturan)",
+    },
+    metrics: {
+      "model-router-default": "Router Model",
     },
     chat: {
+      "select-router-error": "Pilih router",
+      "invalid-model": "Pemilihan model tidak valid",
       "routed-to": "Dirutekan ke <route>{{model}}</route>",
       "routed-to-rule":
         "Dirutekan ke <route>{{model}}</route> melalui <rule>{{ruleTitle}}</rule>",
@@ -1075,7 +1127,7 @@ const TRANSLATIONS = {
       "Ini adalah kredensial dan pengaturan untuk penyedia model transkripsi pilihan Anda. Penting bahwa kunci ini terkini dan benar, atau berkas media dan audio tidak akan ditranskripsikan.",
     provider: "Penyedia Transkripsi",
     "warn-start":
-      "Menggunakan model whisper lokal pada mesin dengan RAM atau CPU terbatas dapat membuat NexusAI terhenti saat memproses berkas media.",
+      "Menggunakan model whisper lokal pada mesin dengan RAM atau CPU terbatas dapat membuat AnythingLLM terhenti saat memproses berkas media.",
     "warn-recommend":
       "Kami merekomendasikan setidaknya 2GB RAM dan mengunggah berkas <10Mb.",
     "warn-end":
@@ -1086,7 +1138,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Saat menggunakan LLM yang tidak secara bawaan mendukung mesin embedding - Anda mungkin perlu menentukan kredensial tambahan untuk embedding teks.",
     "desc-end":
-      "Embedding adalah proses mengubah teks menjadi vektor. Kredensial ini diperlukan untuk mengubah berkas dan prompt Anda menjadi format yang dapat diproses oleh NexusAI.",
+      "Embedding adalah proses mengubah teks menjadi vektor. Kredensial ini diperlukan untuk mengubah berkas dan prompt Anda menjadi format yang dapat diproses oleh AnythingLLM.",
     provider: {
       title: "Penyedia Embedding",
     },
@@ -1112,7 +1164,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Basis Data Vektor",
     description:
-      "Ini adalah kredensial dan pengaturan untuk bagaimana instance NexusAI Anda akan berfungsi. Penting bahwa kunci ini terkini dan benar.",
+      "Ini adalah kredensial dan pengaturan untuk bagaimana instance AnythingLLM Anda akan berfungsi. Penting bahwa kunci ini terkini dan benar.",
     provider: {
       title: "Penyedia Basis Data Vektor",
       description: "Tidak ada konfigurasi yang diperlukan untuk LanceDB.",
@@ -1146,7 +1198,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "Bot Telegram",
     description:
-      "Hubungkan instance NexusAI Anda ke Telegram sehingga Anda dapat mengobrol dengan ruang kerja Anda dari perangkat apa pun.",
+      "Hubungkan instance AnythingLLM Anda ke Telegram sehingga Anda dapat mengobrol dengan ruang kerja Anda dari perangkat apa pun.",
     setup: {
       step1: {
         title: "Langkah 1: Buat bot Telegram Anda",
@@ -1207,6 +1259,28 @@ const TRANSLATIONS = {
       unknown: "Tidak Diketahui",
     },
   },
+  security: {
+    title: "Keamanan",
+    multiuser: {
+      title: "Mode Multi-Pengguna",
+      description:
+        "Atur instance Anda untuk mendukung tim Anda dengan mengaktifkan Mode Multi-Pengguna.",
+      enable: {
+        "is-enable": "Mode Multi-Pengguna Diaktifkan",
+        enable: "Aktifkan Mode Multi-Pengguna",
+        description:
+          "Secara bawaan, Anda akan menjadi satu-satunya admin. Sebagai admin, Anda perlu membuat akun untuk semua pengguna atau admin baru. Jangan kehilangan kata sandi Anda karena hanya pengguna Admin yang dapat mereset kata sandi.",
+        username: "Nama pengguna akun admin",
+        password: "Kata sandi akun admin",
+      },
+    },
+    password: {
+      title: "Perlindungan Kata Sandi",
+      description:
+        "Lindungi instance AnythingLLM Anda dengan kata sandi. Jika Anda lupa, tidak ada metode pemulihan, jadi pastikan Anda menyimpan kata sandi ini.",
+      "password-label": "Kata Sandi Instance",
+    },
+  },
   event: {
     title: "Log Peristiwa",
     description:
@@ -1221,7 +1295,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privasi & Penanganan Data",
     description:
-      "Ini adalah konfigurasi Anda tentang bagaimana penyedia pihak ketiga yang terhubung dan NexusAI menangani data Anda.",
+      "Ini adalah konfigurasi Anda tentang bagaimana penyedia pihak ketiga yang terhubung dan AnythingLLM menangani data Anda.",
     anonymous: "Telemetri Anonim Diaktifkan",
   },
   connectors: {
@@ -1394,22 +1468,22 @@ const TRANSLATIONS = {
       fetching: "Mengambil...",
       "fetch-website": "Ambil situs web",
       "privacy-notice":
-        "Berkas ini akan diunggah ke pemroses dokumen yang berjalan di instance NexusAI ini. Berkas ini tidak dikirim atau dibagikan dengan pihak ketiga.",
+        "Berkas ini akan diunggah ke pemroses dokumen yang berjalan di instance AnythingLLM ini. Berkas ini tidak dikirim atau dibagikan dengan pihak ketiga.",
     },
     pinning: {
       what_pinning: "Apa itu pinning dokumen?",
       pin_explained_block1:
-        "Saat Anda <b>pin</b> dokumen di NexusAI, kami akan menyuntikkan seluruh konten dokumen ke dalam jendela prompt Anda agar LLM Anda dapat memahaminya sepenuhnya.",
+        "Saat Anda <b>pin</b> dokumen di AnythingLLM, kami akan menyuntikkan seluruh konten dokumen ke dalam jendela prompt Anda agar LLM Anda dapat memahaminya sepenuhnya.",
       pin_explained_block2:
         "Ini bekerja paling baik dengan <b>model konteks besar</b> atau berkas kecil yang penting untuk basis pengetahuannya.",
       pin_explained_block3:
-        "Jika Anda tidak mendapatkan jawaban yang Anda inginkan dari NexusAI secara bawaan, maka pinning adalah cara yang bagus untuk mendapatkan jawaban berkualitas lebih tinggi dalam satu klik.",
+        "Jika Anda tidak mendapatkan jawaban yang Anda inginkan dari AnythingLLM secara bawaan, maka pinning adalah cara yang bagus untuk mendapatkan jawaban berkualitas lebih tinggi dalam satu klik.",
       accept: "Oke, mengerti",
     },
     watching: {
       what_watching: "Apa fungsi memantau dokumen?",
       watch_explained_block1:
-        "Saat Anda <b>memantau</b> dokumen di NexusAI, kami akan <i>secara otomatis</i> menyinkronkan konten dokumen Anda dari sumber aslinya secara berkala. Ini akan secara otomatis memperbarui konten di setiap ruang kerja tempat berkas ini dikelola.",
+        "Saat Anda <b>memantau</b> dokumen di AnythingLLM, kami akan <i>secara otomatis</i> menyinkronkan konten dokumen Anda dari sumber aslinya secara berkala. Ini akan secara otomatis memperbarui konten di setiap ruang kerja tempat berkas ini dikelola.",
       watch_explained_block2:
         "Fitur ini saat ini mendukung konten berbasis online dan tidak akan tersedia untuk dokumen yang diunggah secara manual.",
       watch_explained_block3_start:
@@ -1447,7 +1521,6 @@ const TRANSLATIONS = {
   },
   chat_window: {
     attachments_processing: "Lampiran sedang diproses. Harap tunggu...",
-    agent_exit_hint: "Type /exit to exit agent execution loop early.",
     send_message: "Kirim pesan",
     attach_file: "Lampirkan berkas ke obrolan ini",
     text_size: "Ubah ukuran teks.",
@@ -1485,6 +1558,9 @@ const TRANSLATIONS = {
     preset_reset_description:
       "Bersihkan riwayat obrolan Anda dan mulai obrolan baru",
     add_new_preset: " Tambah Preset Baru",
+    add_new: "Tambah baru",
+    edit: "Edit",
+    publish: "Publikasikan",
     stop_generating: "Hentikan menghasilkan respons",
     command: "Perintah",
     your_command: "perintah-anda",
@@ -1498,8 +1574,32 @@ const TRANSLATIONS = {
     large: "Besar",
     tools: "Alat",
     text_size_label: "Ukuran Teks",
+    select_model: "Pilih Model",
     slash_commands: "Slash Commands",
+    agent_skills: "Keterampilan Agen",
+    manage_agent_skills: "Kelola Keterampilan Agen",
+    app_integrations: "Integrasi Aplikasi",
+    custom_skills: "Keterampilan Kustom",
+    agent_flows: "Alur Agen",
+    sub_skills: "Sub-keterampilan",
+    no_tools_found: "Tidak ada alat yang cocok ditemukan",
+    loading_mcp_servers: "Memuat server MCP...",
     start_agent_session: "Mulai Sesi Agen",
+    agent_skills_disabled_in_session:
+      "Tidak dapat mengubah keterampilan selama sesi agen aktif. Gunakan /exit untuk mengakhiri sesi terlebih dahulu.",
+    use_agent_session_to_use_tools:
+      "Anda dapat menggunakan alat dalam obrolan dengan memulai sesi agen dengan '@agent' di awal prompt Anda.",
+    workspace_llm_manager: {
+      search: "Cari",
+      loading_workspace_settings: "Memuat pengaturan ruang kerja...",
+      available_models: "Model Tersedia untuk {{provider}}",
+      available_models_description:
+        "Pilih model untuk digunakan pada ruang kerja ini.",
+      save: "Gunakan model ini",
+      saving: "Mengatur model sebagai bawaan ruang kerja...",
+      missing_credentials: "Penyedia ini tidak memiliki kredensial!",
+      missing_credentials_description: "Atur sekarang",
+    },
     agent_invocation: {
       model_wants_to_call: "Model ingin memanggil",
       approve: "Setujui",
@@ -1554,19 +1654,32 @@ const TRANSLATIONS = {
         edit_description: "Perbarui konten memori ini.",
         label: "Memori",
         placeholder:
-          "mis. Nama pengguna adalah Joe, Pengguna bekerja pada NexusAI, dll.",
+          "mis. Nama pengguna adalah Joe, Pengguna bekerja pada AnythingLLM, dll.",
         create: "Buat",
         save: "Simpan",
         cancel: "Batal",
       },
     },
     preset_img_description: "Hasilkan gambar berdasarkan teks yang diberikan.",
+    generating_response: "Menghasilkan respons",
+    response_failed: "Tidak dapat membalas pesan tersebut.",
+    response_failed_reason: "Alasan: {{reason}}",
+    thought_in_progress: "Model sedang berpikir...",
+    thoughts: "Pemikiran",
+    leave_generating: {
+      title: "Berhenti menghasilkan respons?",
+      description:
+        "Anda akan segera keluar dari obrolan ini, hal ini akan menghentikan model untuk menghasilkan respons dan tidak dapat dipulihkan.",
+      cancel: "Batalkan",
+      confirm: "Lanjutkan",
+    },
   },
   profile_settings: {
     edit_account: "Edit Akun",
     profile_picture: "Foto Profil",
     remove_profile_picture: "Hapus Foto Profil",
     username: "Nama Pengguna",
+    new_password: "Kata Sandi Baru",
     password_description: "Kata sandi harus minimal 8 karakter",
     cancel: "Batal",
     update_account: "Perbarui Akun",
@@ -1592,6 +1705,7 @@ const TRANSLATIONS = {
       llmPreferences: "Preferensi LLM",
       chatSettings: "Pengaturan Obrolan",
       help: "Tampilkan bantuan pintasan keyboard",
+      showLLMSelector: "Tampilkan Pemilih LLM Ruang Kerja",
     },
   },
   community_hub: {
@@ -1681,7 +1795,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Autentikasi Diperlukan",
           description:
-            "Anda perlu mengautentikasi dengan Community Hub NexusAI sebelum mempublikasikan item.",
+            "Anda perlu mengautentikasi dengan Community Hub AnythingLLM sebelum mempublikasikan item.",
           button: "Hubungkan ke Community Hub",
         },
       },

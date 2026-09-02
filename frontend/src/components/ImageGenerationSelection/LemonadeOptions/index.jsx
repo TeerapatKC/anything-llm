@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Info } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -16,6 +17,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function LemonadeImageOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -93,7 +95,8 @@ export default function LemonadeImageOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <Label className="block mb-3">
-            API Key <span className="text-white/40">(optional)</span>
+            {t("provider-options.api-key")}{" "}
+            <span className="text-white/40">(optional)</span>
           </Label>
           <Input
             type="password"

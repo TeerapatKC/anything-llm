@@ -1,15 +1,21 @@
 import PostgreSQLLogo from "./icons/postgresql.png";
+import { useTranslation } from "react-i18next";
 import MySQLLogo from "./icons/mysql.png";
 import MSSQLLogo from "./icons/mssql.png";
-import { Pencil, X } from "lucide-react";
+import { Pencil, Settings, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useModal } from "@/hooks/useModal";
 import EditSQLConnection from "./SQLConnectionModal";
+import ConnectionWorkspaceVisibility from "./ConnectionWorkspaceVisibility";
+import Toggle from "@/components/lib/Toggle";
+import { Button } from "@/components/ui/button";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export const DB_LOGOS = {
@@ -18,75 +24,107 @@ export const DB_LOGOS = {
   "sql-server": MSSQLLogo,
 };
 
+function ManageConnectionMenu({ onEdit, onDelete }) {
+  const { t } = useTranslation();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label={t("sql-connector.manage.aria-label")}
+          />
+        }
+      >
+        <Settings />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuItem onClick={onEdit}>
+          <Pencil />
+          {t("sql-connector.manage.edit")}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive" onClick={onDelete}>
+          <Trash2 />
+          {t("sql-connector.manage.delete")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+/**
+ * The detail panel for one selected SQL connection. Mirrors `FlowPanel`
+ * exactly - icon/name header with an on/off switch and a manage menu, a
+ * caption line, then which workspaces can use it.
+ */
 export default function DBConnection({
   connection,
   onRemove,
   onUpdate,
+  onToggleActive,
   setHasChanges,
   connections = [],
 }) {
-  const { database_id, engine } = connection;
+  const { t } = useTranslation();
+  const { database_id, engine, active } = connection;
+  const isActive = active !== false;
   const { isOpen, openModal, closeModal } = useModal();
   const [confirm, setConfirm] = useState(null);
+  const [toggling, setToggling] = useState(false);
 
   function removeConfirmation() {
     setConfirm({
-      title: `Delete ${database_id}?`,
-      description:
-        "It will be removed from the list of available SQL connections. This cannot be undone.",
-      confirmText: "Delete",
+      title: t("sql-connector.manage.delete-title", { name: database_id }),
+      description: t("sql-connector.manage.delete-description"),
+      confirmText: t("sql-connector.manage.delete-confirm"),
       variant: "destructive",
       onConfirm: () => onRemove(database_id),
     });
   }
 
+  async function handleToggleActive() {
+    setToggling(true);
+    await onToggleActive(database_id, !isActive);
+    setToggling(false);
+  }
+
   return (
-    <div className="flex gap-x-4 items-center">
-      <img
-        src={DB_LOGOS?.[engine] ?? null}
-        alt={`${engine} logo`}
-        className="w-10 h-10 rounded-md"
-      />
-      <div className="flex w-full items-center justify-between">
-        <div className="flex flex-col">
-          <div className="text-sm font-semibold text-theme-text-primary">
-            {database_id}
+    <>
+      <div className="p-2">
+        <div className="flex flex-col gap-y-[18px] max-w-[500px]">
+          <div className="flex w-full justify-between items-center">
+            <div className="flex items-center gap-x-2">
+              <img
+                src={DB_LOGOS?.[engine] ?? null}
+                alt={`${engine} logo`}
+                className="h-7 w-7 rounded"
+              />
+              <label
+                htmlFor="name"
+                className="text-theme-text-primary text-md font-bold"
+              >
+                {database_id}
+              </label>
+            </div>
+            <div className="flex items-center gap-x-2">
+              <Toggle
+                size="lg"
+                enabled={isActive}
+                disabled={toggling}
+                onChange={handleToggleActive}
+              />
+              <ManageConnectionMenu
+                onEdit={openModal}
+                onDelete={removeConfirmation}
+              />
+            </div>
           </div>
-          <div className="mt-1 text-xs text-description">{engine}</div>
-        </div>
-        <div className="flex gap-x-2">
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <button
-                  type="button"
-                  className="border-none text-theme-text-secondary hover:text-theme-text-primary transition-colors duration-200 p-1 rounded"
-                  onClick={openModal}
-                />
-              }
-            >
-              <Pencil size={18} />
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-[250px] text-xs">
-              Edit SQL connection
-            </TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <button
-                  type="button"
-                  onClick={removeConfirmation}
-                  className="border-none text-theme-text-secondary hover:text-red-500"
-                />
-              }
-            >
-              <X size={18} />
-            </TooltipTrigger>
-            <TooltipContent side="top" className="max-w-[250px] text-xs">
-              Delete SQL connection
-            </TooltipContent>
-          </Tooltip>
+          <p className="text-theme-text-primary/60 text-xs font-medium py-1.5">
+            {engine}
+          </p>
+          <ConnectionWorkspaceVisibility databaseId={database_id} />
         </div>
       </div>
       <EditSQLConnection
@@ -98,6 +136,6 @@ export default function DBConnection({
         connections={connections}
       />
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </div>
+    </>
   );
 }

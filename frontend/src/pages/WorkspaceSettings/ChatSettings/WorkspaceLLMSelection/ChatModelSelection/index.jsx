@@ -35,7 +35,7 @@ export default function ChatModelSelection({
         </div>
         <Select name="chatModel" required={true} disabled={true}>
           <SelectTrigger>
-            <SelectValue placeholder="-- waiting for models --" />
+            <SelectValue placeholder={t("ui.waiting-for-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -63,7 +63,7 @@ export default function ChatModelSelection({
         }}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t("ui.select-model")} />
         </SelectTrigger>
         <SelectContent>
           {defaultModels.length > 0 && (

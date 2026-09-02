@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { Label } from "@/components/ui/label";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function ElevenLabsOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.TTSElevenLabsKey);
   const [elevenLabsKey, setElevenLabsKey] = useState(
     settings?.TTSElevenLabsKey
@@ -21,7 +23,7 @@ export default function ElevenLabsOptions({ settings }) {
   return (
     <div className="flex gap-x-4">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">API Key</Label>
+        <Label className="block mb-3">{t("provider-options.api-key")}</Label>
         <Input
           type="password"
           name="TTSElevenLabsKey"
@@ -42,6 +44,7 @@ export default function ElevenLabsOptions({ settings }) {
 }
 
 function ElevenLabsModelSelection({ apiKey, settings }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -70,10 +73,12 @@ function ElevenLabsModelSelection({ apiKey, settings }) {
   if (loading) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="TTSElevenLabsVoiceModel" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -83,7 +88,9 @@ function ElevenLabsModelSelection({ apiKey, settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="TTSElevenLabsVoiceModel"
         required={true}
@@ -93,7 +100,7 @@ function ElevenLabsModelSelection({ apiKey, settings }) {
         }
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a voice" />
+          <SelectValue placeholder={t("ui.select-voice")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

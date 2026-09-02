@@ -1,6 +1,7 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useState } from "react";
-import { Check, Copy, TriangleAlert } from "lucide-react";
+import { Trans, useTranslation } from "react-i18next";
+import { Check, Copy, Mail, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,15 +15,22 @@ import {
  * Shows a password the server generated for a user. The plaintext only ever exists in
  * this response - it is hashed on the way into the database - so this dialog is the one
  * chance an admin has to copy it and hand it over.
- * @param {{open: boolean, username?: string, password: string|null, title?: string, onClose: () => void}} props
+ *
+ * `emailSent` is left `undefined` by callers (like a password reset) that never attempt
+ * to email it - the extra note below only makes sense right after user creation, where
+ * the server actually tried.
+ * @param {{open: boolean, username?: string, password: string|null, title?: string, emailSent?: boolean, recipientEmail?: string, onClose: () => void}} props
  */
 export default function GeneratedPasswordModal({
   open,
   username,
   password,
-  title = "Initial password",
+  title,
+  emailSent,
+  recipientEmail,
   onClose,
 }) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -37,19 +45,18 @@ export default function GeneratedPasswordModal({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent size="md">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{title ?? t("generated-password.title")}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-theme-text-secondary">
             {username ? (
-              <>
-                Give this password to{" "}
-                <b className="text-theme-text-primary">{username}</b>. They will
-                be required to set a password of their own the first time they
-                log in.
-              </>
+              <Trans
+                i18nKey="generated-password.give-to"
+                values={{ username }}
+                components={{ b: <b className="text-theme-text-primary" /> }}
+              />
             ) : (
-              "The user will be required to set a password of their own the next time they log in."
+              t("generated-password.generic")
             )}
           </p>
           <div className="flex items-center gap-x-2">
@@ -60,7 +67,7 @@ export default function GeneratedPasswordModal({
               type="button"
               variant="outline"
               onClick={handleCopy}
-              aria-label="Copy password"
+              aria-label={t("generated-password.copy-aria")}
             >
               {copied ? (
                 <Check className="h-4 w-4" />
@@ -72,14 +79,35 @@ export default function GeneratedPasswordModal({
           <Alert variant="warning">
             <TriangleAlert />
             <AlertDescription className="text-xs">
-              Copy it now - this password cannot be shown again. If it is lost,
-              reset the user's password to generate a new one.
+              {t("generated-password.warning")}
             </AlertDescription>
           </Alert>
+          {emailSent === true && (
+            <Alert className="border-green-500/40 bg-green-500/10 text-green-700 dark:text-green-400">
+              <Mail />
+              <AlertDescription className="text-xs !text-green-700/90 dark:!text-green-400/90">
+                <Trans
+                  i18nKey="generated-password.emailed-to"
+                  values={{
+                    email: recipientEmail || t("generated-password.the-user"),
+                  }}
+                  components={{ b: <b className="text-theme-text-primary" /> }}
+                />
+              </AlertDescription>
+            </Alert>
+          )}
+          {emailSent === false && (
+            <Alert>
+              <Mail />
+              <AlertDescription className="text-xs">
+                {t("generated-password.not-emailed")}
+              </AlertDescription>
+            </Alert>
+          )}
         </div>
         <DialogFooter>
           <Button variant="default" type="button" onClick={onClose}>
-            Done
+            {t("generated-password.done")}
           </Button>
         </DialogFooter>
       </DialogContent>

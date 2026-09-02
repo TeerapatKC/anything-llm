@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
@@ -23,6 +24,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 export default function OMLXOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -124,7 +126,9 @@ export default function OMLXOptions({ settings }) {
           <div className="w-full flex items-start gap-4">
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label className="block">Model context window</Label>
+                <Label className="block">
+                  {t("provider-options.model-context-window")}
+                </Label>
                 <Tooltip>
                   <TooltipTrigger
                     render={
@@ -136,13 +140,9 @@ export default function OMLXOptions({ settings }) {
                   ></TooltipTrigger>
                   <TooltipContent side="top" className="max-w-[250px] text-xs">
                     <p className="text-xs leading-[18px] font-base">
-                      Specify the maximum number of tokens that can be used for
-                      the model context window.
+                      {t("help.omlxoptions")}
                       <br /> <br />
-                      If you leave this field blank, the context window limit
-                      will be auto-detected from the model and applied to all
-                      chats. If auto-detection fails, a fallback context window
-                      limit of 16000 will be used.
+                      {t("help.omlxoptions-2")}
                       <br /> <br />
                       <b>Important:</b> Some models have very large context
                       windows using the full context window limit can
@@ -151,8 +151,7 @@ export default function OMLXOptions({ settings }) {
                       limit to 16,384 tokens if the model supports more than
                       that and no value is specified.
                       <br /> <br />
-                      If an invalid value is entered, NexusAI will handle this
-                      for you so that chats do not fail.
+                      {t("help.omlxoptions-3")}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -160,7 +159,7 @@ export default function OMLXOptions({ settings }) {
               <Input
                 type="number"
                 name="OMLXLLMTokenLimit"
-                placeholder="Automatically managed"
+                placeholder={t("provider-options.automatically-managed")}
                 min={1}
                 value={contextWindowLimit}
                 onChange={(e) =>
@@ -176,7 +175,7 @@ export default function OMLXOptions({ settings }) {
 
             <div className="flex flex-col w-60">
               <div className="flex items-center mb-2 gap-x-1">
-                <Label>Authentication Token</Label>
+                <Label>{t("provider-options.auth-token")}</Label>
                 <Tooltip>
                   <TooltipTrigger
                     render={
@@ -216,6 +215,7 @@ export default function OMLXOptions({ settings }) {
 }
 
 function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -260,8 +260,7 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
           <SelectContent />
         </Select>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary mt-2">
-          Select the OMLX model you want to use. Models will load after entering
-          a valid OMLX URL.
+          {t("help.omlxoptions-4")}
         </p>
       </div>
     );
@@ -276,12 +275,14 @@ function OMLXModelSelection({ settings, basePath = null, authToken = null }) {
         defaultValue={settings.OMLXLLMModelPref ?? customModels?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

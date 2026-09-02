@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import SuperAdmin from "@/models/superAdmin";
  * wildcard. Untick a box and the capability goes back to whoever their role says.
  */
 export default function ReservedPermissions() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -102,13 +104,7 @@ export default function ReservedPermissions() {
     <div className="mt-6 flex flex-col gap-y-5">
       <Alert className="px-3 py-2.5">
         <Lock />
-        <AlertDescription>
-          Anything you tick here belongs to you alone. It is removed from every
-          other role when permissions are resolved — including Admin, whose
-          wildcard would otherwise cover it — so those screens disappear for
-          them and the routes behind them refuse the request. Untick a box to
-          hand the capability back to whoever their role says.
-        </AlertDescription>
+        <AlertDescription>{t("help.reserved-permissions")}</AlertDescription>
       </Alert>
 
       {reservedParents.length > 0 && (
@@ -129,7 +125,7 @@ export default function ReservedPermissions() {
       <div className="overflow-hidden rounded-lg ring-1 ring-foreground/10">
         <div className="flex items-baseline justify-between border-b border-theme-sidebar-border bg-muted/50 px-4 py-3">
           <div className="flex items-center gap-x-2">
-            <Label>Reserved to the owner</Label>
+            <Label>{t("ui.reserved-to-owner")}</Label>
             {matchesPreset && (
               <Badge variant="outline" className="text-[10px]">
                 Default preset

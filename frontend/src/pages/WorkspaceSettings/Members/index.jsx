@@ -1,4 +1,5 @@
 import { useModal } from "@/hooks/useModal";
+import { useTranslation } from "react-i18next";
 import Admin from "@/models/admin";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,6 +22,7 @@ import { UserPlus } from "lucide-react";
 import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSettingsSectionHeader";
 
 export default function Members({ workspace }) {
+  const { t } = useTranslation();
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
@@ -64,8 +66,10 @@ export default function Members({ workspace }) {
     >
       <div className="flex w-full flex-col gap-y-4 px-1">
         <WorkspaceSettingsSectionHeader
-          title="Workspace members"
-          description={`Manage who can access "${workspace.name}" and assign their workspace roles.`}
+          title={t("workspace-members.title")}
+          description={t("workspace-members.description", {
+            workspace: workspace.name,
+          })}
           actions={
             <DialogTrigger
               render={
@@ -73,7 +77,7 @@ export default function Members({ workspace }) {
               }
             >
               <UserPlus className="mr-1.5 size-4" />
-              Manage users
+              {t("workspace-members.manage-users")}
             </DialogTrigger>
           }
         />
@@ -91,9 +95,15 @@ export default function Members({ workspace }) {
           <Table className="text-left">
             <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
               <TableRow>
-                <TableHead scope="col">Username</TableHead>
-                <TableHead scope="col">Workspace role</TableHead>
-                <TableHead scope="col">Date Added</TableHead>
+                <TableHead scope="col">
+                  {t("workspace-members.table.username")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("workspace-members.table.role")}
+                </TableHead>
+                <TableHead scope="col">
+                  {t("workspace-members.table.date-added")}
+                </TableHead>
                 <TableHead scope="col"> </TableHead>
               </TableRow>
             </TableHeader>
@@ -109,7 +119,9 @@ export default function Members({ workspace }) {
                   />
                 ))
               ) : (
-                <TableEmptyRow colSpan="4">No workspace members</TableEmptyRow>
+                <TableEmptyRow colSpan="4">
+                  {t("workspace-members.empty")}
+                </TableEmptyRow>
               )}
             </TableBody>
           </Table>

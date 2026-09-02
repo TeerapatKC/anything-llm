@@ -1,4 +1,5 @@
 const { escapeHTML } = require("../../format");
+const { translatorFor } = require("../../i18n");
 const {
   isWebSource,
   getSourceTitle,
@@ -51,11 +52,12 @@ async function handleSourceSelect({
 
   const sourceIdx = parseInt(data.slice(4), 10);
   const state = ctx.getState(chatId);
-  const sources = state._proofSources;
+  const t = translatorFor(state);
+  const sources = state?._proofSources;
 
   if (!sources || sourceIdx < 0 || sourceIdx >= sources.length) {
     await ctx.bot.answerCallbackQuery(query.id, {
-      text: "Source not found. Please try /proof again.",
+      text: t("proof.not_found"),
     });
     return;
   }
@@ -67,7 +69,7 @@ async function handleSourceSelect({
     const url = extractWebUrl(source);
     if (!url) {
       await ctx.bot.answerCallbackQuery(query.id, {
-        text: "Invalid web source URL.",
+        text: t("proof.invalid_url"),
       });
       return;
     }

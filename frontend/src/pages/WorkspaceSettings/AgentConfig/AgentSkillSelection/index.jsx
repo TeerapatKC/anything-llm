@@ -637,8 +637,7 @@ export default function AgentSkillSelection({
           )}
         </div>
         <p className="text-theme-text-primary/60 text-xs font-medium">
-          Choose which skills this workspace's agent can use. These apply to
-          this workspace only — other workspaces keep their own selection.
+          {t("help.agent-skill-selection")}
         </p>
       </div>
 
@@ -969,6 +968,7 @@ function SearchProviderPicker({
   availableProviders = [],
   onChange,
 }) {
+  const { t } = useTranslation();
   const instanceEngine = SEARCH_PROVIDERS.find(
     (p) => p.value === instanceProvider
   );
@@ -1000,7 +1000,7 @@ function SearchProviderPicker({
         <SelectTrigger className="w-fit min-w-[220px]">
           {/* Base UI renders the raw value unless given a formatter, and the
               inherit sentinel is not something to show a user. */}
-          <SelectValue placeholder="Select an engine">
+          <SelectValue placeholder={t("ui.select-engine")}>
             {(selected) => {
               const inherit = selected === INHERIT_SEARCH_PROVIDER || !selected;
               const engine = inherit
@@ -1065,8 +1065,7 @@ function SearchProviderPicker({
       )}
 
       <p className="text-theme-text-primary/40 text-xs">
-        Only engines an administrator has already set up are listed. API keys
-        are configured instance-wide under Agent Skills.
+        {t("help.agent-skill-selection-2")}
       </p>
     </div>
   );

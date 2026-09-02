@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -13,6 +14,7 @@ const PROVIDER_DIMENSIONS = {
 const DEFAULT_DIMENSIONS = ["512x512", "1024x1024"];
 
 export default function ImageDimensionSelection({ provider, settings }) {
+  const { t } = useTranslation();
   const dimensions = PROVIDER_DIMENSIONS[provider] || DEFAULT_DIMENSIONS;
   const defaultValue =
     settings?.ImageGenerationDimensions &&
@@ -25,7 +27,7 @@ export default function ImageDimensionSelection({ provider, settings }) {
       <Label className="block mb-3">Image Dimensions</Label>
       <Select name="ImageGenerationDimensions" defaultValue={defaultValue}>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {dimensions.map((dim) => (

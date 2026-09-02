@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Tooltip,
   TooltipContent,
@@ -20,6 +21,7 @@ import {
 } from "@/components/ui/select";
 
 export default function AwsBedrockLLMOptions({ settings }) {
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState(settings?.AwsBedrockLLMApiKey);
   const [apiKey, setApiKey] = useState(settings?.AwsBedrockLLMApiKey);
   const [region, setRegion] = useState(settings?.AwsBedrockLLMRegion);
@@ -71,7 +73,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
             onValueChange={setRegion}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a region" />
+              <SelectValue placeholder={t("ui.select-region")} />
             </SelectTrigger>
             <SelectContent>
               {AWS_REGIONS.map((region) => {
@@ -95,7 +97,9 @@ export default function AwsBedrockLLMOptions({ settings }) {
               region={region}
             />
             <div className="flex flex-col w-60">
-              <Label className="block mb-3">Model context window</Label>
+              <Label className="block mb-3">
+                {t("provider-options.model-context-window")}
+              </Label>
               <Input
                 type="number"
                 name="AwsBedrockLLMTokenLimit"
@@ -109,14 +113,15 @@ export default function AwsBedrockLLMOptions({ settings }) {
             </div>
             <div className="flex flex-col w-60">
               <div className="flex items-center gap-x-1 mb-3">
-                <Label className="block">Max Tokens</Label>
+                <Label className="block">
+                  {t("provider-options.max-tokens")}
+                </Label>
                 <Tooltip>
                   <TooltipTrigger render={<span className="cursor-pointer" />}>
                     <Info size={14} className="text-theme-text-secondary" />
                   </TooltipTrigger>
                   <TooltipContent side="top" className="max-w-64 text-xs">
-                    Maximum number of tokens the model can generate per
-                    response. Increase for longer outputs. Default is 4096.
+                    {t("help.aws-bedrock-llmoptions")}
                   </TooltipContent>
                 </Tooltip>
               </div>
@@ -139,6 +144,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
 }
 
 function BedrockModelSelection({ settings, apiKey, region }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -169,10 +175,12 @@ function BedrockModelSelection({ settings, apiKey, region }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="AwsBedrockLLMModel" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -182,7 +190,9 @@ function BedrockModelSelection({ settings, apiKey, region }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="AwsBedrockLLMModel"
         required={true}
@@ -192,7 +202,7 @@ function BedrockModelSelection({ settings, apiKey, region }) {
         }
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

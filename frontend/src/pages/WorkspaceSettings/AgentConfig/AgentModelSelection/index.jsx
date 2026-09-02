@@ -115,7 +115,7 @@ export default function AgentModelSelection({
         }}
       >
         <SelectTrigger>
-          <SelectValue placeholder="Select a model" />
+          <SelectValue placeholder={t("ui.select-model")} />
         </SelectTrigger>
         <SelectContent>
           {defaultModels.length > 0 && (

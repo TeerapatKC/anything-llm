@@ -2,11 +2,11 @@ const prisma = require("../utils/prisma");
 const { safeJsonParse } = require("../utils/http");
 
 const ExternalCommunicationConnector = {
-  supportedTypes: ["telegram"],
+  supportedTypes: ["telegram", "line"],
 
   /**
    * Get a connector by type.
-   * @param {'telegram'} type
+   * @param {'telegram'|'line'} type
    * @returns {Promise<{id: number, type: string, config: object, active: boolean}|null>}
    */
   get: async function (type) {

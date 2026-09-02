@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import { Info, TriangleAlert } from "lucide-react";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/select";
 
 export default function LiteLLMOptions({ settings }) {
+  const { t } = useTranslation();
   const [basePathValue, setBasePathValue] = useState(settings?.LiteLLMBasePath);
   const [basePath, setBasePath] = useState(settings?.LiteLLMBasePath);
   const [apiKeyValue, setApiKeyValue] = useState(settings?.LiteLLMAPIKey);
@@ -28,7 +30,7 @@ export default function LiteLLMOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Base URL</Label>
+          <Label className="block mb-3">{t("provider-options.base-url")}</Label>
           <Input
             type="url"
             name="LiteLLMBasePath"
@@ -55,10 +57,12 @@ export default function LiteLLMOptions({ settings }) {
                 size={16}
                 className="text-theme-text-secondary cursor-pointer"
               />
-              <Label className="block">Max embedding chunk length</Label>
+              <Label className="block">
+                {t("provider-options.max-embedding-chunk")}
+              </Label>
             </TooltipTrigger>
             <TooltipContent side="top" className="max-w-[250px] text-xs">
-              Maximum length of text chunks, in characters, for embedding.
+              {t("provider-options.max-embedding-chunk-help")}
             </TooltipContent>
           </Tooltip>
           <Input
@@ -77,7 +81,8 @@ export default function LiteLLMOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
             <Label className="flex items-center gap-x-2">
-              API Key <p className="text-xs! italic! font-thin!">optional</p>
+              {t("provider-options.api-key")}{" "}
+              <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
@@ -97,6 +102,7 @@ export default function LiteLLMOptions({ settings }) {
 }
 
 function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -122,7 +128,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   if (loading || customModels.length == 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Embedding Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.embedding-model-selection")}
+        </Label>
         <Select name="EmbeddingModelPref" disabled={true}>
           <SelectTrigger className="w-full">
             <SelectValue
@@ -142,7 +150,9 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
   return (
     <div className="flex flex-col w-60">
       <div className="flex items-center">
-        <Label className="block mb-3">Embedding Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.embedding-model-selection")}
+        </Label>
         <EmbeddingModelTooltip />
       </div>
       <Select
@@ -151,12 +161,14 @@ function LiteLLMModelSelection({ settings, basePath = null, apiKey = null }) {
         defaultValue={settings.EmbeddingModelPref ?? customModels?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {customModels.length > 0 && (
             <SelectGroup>
-              <SelectLabel>Your loaded models</SelectLabel>
+              <SelectLabel>
+                {t("provider-options.your-loaded-models")}
+              </SelectLabel>
               {customModels.map((model) => {
                 return (
                   <SelectItem key={model.id} value={model.id}>

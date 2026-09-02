@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import System from "@/models/system";
@@ -23,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function DockerModelRunnerOptions({ settings }) {
+  const { t } = useTranslation();
   const {
     autoDetecting: loading,
     basePath,
@@ -46,7 +48,7 @@ export default function DockerModelRunnerOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
             <div className="flex justify-between items-center gap-x-2">
-              <Label>Base URL</Label>
+              <Label>{t("provider-options.base-url")}</Label>
               {loading ? (
                 <Spinner size="sm" className="text-theme-text-secondary" />
               ) : (
@@ -108,7 +110,9 @@ export default function DockerModelRunnerOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label className="block">Model context window</Label>
+            <Label className="block">
+              {t("provider-options.model-context-window")}
+            </Label>
 
             <Tooltip>
               <TooltipTrigger
@@ -121,8 +125,7 @@ export default function DockerModelRunnerOptions({ settings }) {
               />
               <TooltipContent side="top" className="max-w-[250px] text-xs">
                 <p className="text-xs leading-[18px] font-base whitespace-normal text-left break-words">
-                  The maximum number of tokens that can be used for a model
-                  context window.
+                  {t("help.docker-model-runner-options")}
                   <br />
                   <br />
                   To set the context window limit for a model, you can use the{" "}
@@ -174,6 +177,7 @@ function DockerModelRunnerModelSelection({
   setSelectedModelId,
   basePath = null,
 }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [filteredModels, setFilteredModels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -354,7 +358,9 @@ function DockerModelRunnerModelSelection({
         <ModelTableLoadingSkeleton />
       ) : filteredModels.length === 0 ? (
         <div className="flex flex-col w-full gap-y-2 mt-4">
-          <p className="text-theme-text-secondary text-sm">No models found!</p>
+          <p className="text-theme-text-secondary text-sm">
+            {t("provider-options.no-models-found")}
+          </p>
         </div>
       ) : (
         Object.entries(groupedModels).map(([alias, models]) => (

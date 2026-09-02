@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogContent,
@@ -108,6 +109,7 @@ export default function SQLConnectionModal({
   existingConnection = null, // { database_id, engine } for edit mode
   connections = [], // List of all existing connections for duplicate detection
 }) {
+  const { t } = useTranslation();
   const isEditMode = !!existingConnection;
   const [engine, setEngine] = useState(DEFAULT_ENGINE);
   const [config, setConfig] = useState(DEFAULT_CONFIG);
@@ -147,6 +149,13 @@ export default function SQLConnectionModal({
   }
 
   function onFormChange(e) {
+    // React bubbles synthetic events through the component tree, not the DOM
+    // tree - so even though the Dialog portals this form's DOM node outside
+    // the page's big settings <form>, an onChange here still reaches that
+    // form's own onChange handler and flags the whole page "unsaved" on every
+    // keystroke, before "Save connection" below has done anything. Stop it
+    // here the same way handleUpdate already stops the submit event.
+    e.stopPropagation();
     const form = new FormData(e.target.form);
     setConfig({
       name: form.get("name").trim(),
@@ -261,8 +270,7 @@ export default function SQLConnectionModal({
     } catch (error) {
       console.error("Error validating connection:", error);
       showToast(
-        error?.message ||
-          "Failed to validate connection. Please check your connection details.",
+        error?.message || t("sql-connector.modal.validate-failed"),
         "error",
         { clear: true }
       );
@@ -280,7 +288,9 @@ export default function SQLConnectionModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-sm font-semibold">
-            {isEditMode ? "Edit SQL Connection" : "New SQL Connection"}
+            {isEditMode
+              ? t("sql-connector.modal.edit-title")
+              : t("sql-connector.modal.new-title")}
           </DialogTitle>
         </DialogHeader>
         <form
@@ -291,22 +301,22 @@ export default function SQLConnectionModal({
           <div className="space-y-6">
             <p className="text-sm text-theme-text-secondary">
               {isEditMode
-                ? "Update the connection information for your database below."
-                : "Add the connection information for your database below and it will be available for future SQL agent calls."}
+                ? t("sql-connector.modal.edit-description")
+                : t("sql-connector.modal.new-description")}
             </p>
             <div className="flex flex-col w-full">
               <div className="border border-red-800 bg-zinc-800 light:bg-red-200/50 p-4 rounded-lg flex items-center gap-x-2 text-sm text-red-400 light:text-red-500">
                 <OctagonAlert size={28} className="shrink-0" />
                 <p>
-                  <b>WARNING:</b> The SQL agent has been <i>instructed</i> to
-                  only perform non-modifying queries. This <b>does not</b>{" "}
-                  prevent a hallucination from still deleting data. Only connect
-                  with a user who has <b>READ_ONLY</b> permissions.
+                  <Trans
+                    i18nKey="sql-connector.modal.warning"
+                    components={{ b: <b />, i: <i /> }}
+                  />
                 </p>
               </div>
 
               <label className="block mb-2 text-sm font-medium text-theme-text-primary mt-4">
-                Select your SQL engine
+                {t("sql-connector.modal.select-engine")}
               </label>
               <div className="grid md:grid-cols-4 gap-4 grid-cols-2">
                 <DBEngine
@@ -328,11 +338,13 @@ export default function SQLConnectionModal({
             </div>
 
             <div className="flex flex-col w-full">
-              <Label className="block mb-2">Connection name</Label>
+              <Label className="block mb-2">
+                {t("sql-connector.modal.name")}
+              </Label>
               <Input
                 type="text"
                 name="name"
-                placeholder="a unique name to identify this SQL connection"
+                placeholder={t("sql-connector.modal.name-placeholder")}
                 required={true}
                 autoComplete="off"
                 spellCheck={false}
@@ -342,11 +354,13 @@ export default function SQLConnectionModal({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col">
-                <Label className="block mb-2">Database user</Label>
+                <Label className="block mb-2">
+                  {t("sql-connector.modal.username")}
+                </Label>
                 <Input
                   type="text"
                   name="username"
-                  placeholder="root"
+                  placeholder={t("sql-connector.modal.username-placeholder")}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -354,11 +368,13 @@ export default function SQLConnectionModal({
                 />
               </div>
               <div className="flex flex-col">
-                <Label className="block mb-2">Database user password</Label>
+                <Label className="block mb-2">
+                  {t("sql-connector.modal.password")}
+                </Label>
                 <Input
                   type="password"
                   name="password"
-                  placeholder="password123"
+                  placeholder={t("sql-connector.modal.password-placeholder")}
                   required={true}
                   autoComplete="new-password"
                   spellCheck={false}
@@ -369,11 +385,13 @@ export default function SQLConnectionModal({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <div className="sm:col-span-2">
-                <Label className="block mb-2">Server endpoint</Label>
+                <Label className="block mb-2">
+                  {t("sql-connector.modal.host")}
+                </Label>
                 <Input
                   type="text"
                   name="host"
-                  placeholder="the hostname or endpoint for your database"
+                  placeholder={t("sql-connector.modal.host-placeholder")}
                   required={true}
                   autoComplete="off"
                   spellCheck={false}
@@ -381,11 +399,13 @@ export default function SQLConnectionModal({
                 />
               </div>
               <div>
-                <Label className="block mb-2">Port</Label>
+                <Label className="block mb-2">
+                  {t("sql-connector.modal.port")}
+                </Label>
                 <Input
                   type="text"
                   name="port"
-                  placeholder="3306"
+                  placeholder={t("sql-connector.modal.port-placeholder")}
                   required={false}
                   autoComplete="off"
                   spellCheck={false}
@@ -395,11 +415,13 @@ export default function SQLConnectionModal({
             </div>
 
             <div className="flex flex-col">
-              <Label className="block mb-2">Database</Label>
+              <Label className="block mb-2">
+                {t("sql-connector.modal.database")}
+              </Label>
               <Input
                 type="text"
                 name="database"
-                placeholder="the database the agent will interact with"
+                placeholder={t("sql-connector.modal.database-placeholder")}
                 required={true}
                 autoComplete="off"
                 spellCheck={false}
@@ -409,11 +431,13 @@ export default function SQLConnectionModal({
 
             {engine === "postgresql" && (
               <div className="flex flex-col">
-                <Label className="block mb-2">Schema (optional)</Label>
+                <Label className="block mb-2">
+                  {t("sql-connector.modal.schema")}
+                </Label>
                 <Input
                   type="text"
                   name="schema"
-                  placeholder="public (default schema if not specified)"
+                  placeholder={t("sql-connector.modal.schema-placeholder")}
                   required={false}
                   autoComplete="off"
                   spellCheck={false}
@@ -427,7 +451,7 @@ export default function SQLConnectionModal({
                 name="encrypt"
                 value="true"
                 size="md"
-                label="Enable Encryption"
+                label={t("sql-connector.modal.encrypt")}
                 enabled={config.encrypt}
               />
             )}
@@ -437,7 +461,7 @@ export default function SQLConnectionModal({
                 name="ssl"
                 value="true"
                 size="md"
-                label="Use SSL"
+                label={t("sql-connector.modal.ssl")}
                 enabled={config.ssl}
               />
             )}
@@ -453,7 +477,7 @@ export default function SQLConnectionModal({
               <Button variant="outline" type="button" onClick={handleClose} />
             }
           >
-            Cancel
+            {t("sql-connector.modal.cancel")}
           </DialogClose>
           <Button
             variant="default"
@@ -461,7 +485,9 @@ export default function SQLConnectionModal({
             form="sql-connection-form"
             disabled={isValidating}
           >
-            {isValidating ? "Validating..." : "Save connection"}
+            {isValidating
+              ? t("sql-connector.modal.validating")
+              : t("sql-connector.modal.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

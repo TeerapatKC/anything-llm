@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import { SquarePen, Trash2 } from "lucide-react";
@@ -153,7 +154,7 @@ const ThreadList = forwardRef(({ children, ...props }, ref) => (
     aria-label="Threads"
     // pl-8 lines the thread rows up under the workspace label, which starts
     // after the row's p-2 + 18px monogram + gap-2.
-    className="mx-0 gap-0.5 border-l-0 px-0 pb-1 pl-8 pr-0"
+    className="mx-0 gap-0.5 border-l-0 px-0 pb-1 pl-9 pr-0"
     {...props}
   >
     {children}
@@ -162,11 +163,12 @@ const ThreadList = forwardRef(({ children, ...props }, ref) => (
 ThreadList.displayName = "ThreadList";
 
 function NewThreadButton({ workspace, isActive }) {
+  const { t } = useTranslation();
   return (
     <SidebarMenuSubItem>
       <SidebarMenuSubButton
         isActive={isActive}
-        className="text-sidebar-foreground/70"
+        className="h-9 text-sm text-sidebar-foreground/70"
         render={
           <Link
             to={paths.home()}
@@ -176,13 +178,14 @@ function NewThreadButton({ workspace, isActive }) {
         }
       >
         <SquarePen />
-        <span>New Thread</span>
+        <span>{t("ui.new-thread")}</span>
       </SidebarMenuSubButton>
     </SidebarMenuSubItem>
   );
 }
 
 function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
+  const { t } = useTranslation();
   if (!ctrlPressed || threads.filter((t) => t.deleted).length === 0)
     return null;
   return (
@@ -193,10 +196,10 @@ function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
       <button
         type="button"
         onClick={onDelete}
-        className="flex h-7 w-full min-w-0 items-center gap-2 rounded-md px-2 text-sm text-destructive outline-none ring-sidebar-ring hover:bg-destructive/10 focus-visible:ring-2"
+        className="flex h-9 w-full min-w-0 items-center gap-2 rounded-md px-2 text-sm text-destructive outline-none ring-sidebar-ring hover:bg-destructive/10 focus-visible:ring-2"
       >
         <Trash2 className="size-4 shrink-0" />
-        <span className="truncate">Delete Selected</span>
+        <span className="truncate">{t("ui.delete-selected")}</span>
       </button>
     </SidebarMenuSubItem>
   );

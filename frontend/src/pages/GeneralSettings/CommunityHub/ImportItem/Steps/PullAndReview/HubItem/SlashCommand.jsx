@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import CommunityHubImportItemSteps from "../..";
 import { useEffect, useState } from "react";
@@ -17,6 +18,7 @@ import {
 } from "@/components/ui/select";
 
 export default function SlashCommand({ item, setStep }) {
+  const { t } = useTranslation();
   // Slash commands belong to a workspace, so an import has to pick one - the same
   // shape as the system-prompt import above it.
   const [destinationWorkspaceSlug, setDestinationWorkspaceSlug] =
@@ -71,8 +73,7 @@ export default function SlashCommand({ item, setStep }) {
       </div>
       <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
         <p>
-          Slash commands are used to prefill information into a prompt while
-          chatting with a NexusAI workspace.
+          {t("help.slash-command")}
           <br />
           <br />
           The slash command will be available during chatting by simply invoking
@@ -98,14 +99,14 @@ export default function SlashCommand({ item, setStep }) {
         </div>
 
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Add to Workspace</Label>
+          <Label className="block mb-3">{t("ui.add-to-workspace")}</Label>
           <Select
             name="destinationWorkspaceSlug"
             required={true}
             onValueChange={setDestinationWorkspaceSlug}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("ui.select-option")} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

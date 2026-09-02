@@ -135,9 +135,9 @@ export function PermissionRoute({
  * Deliberately a role check rather than a permission check, mirroring the server: the
  * screens behind it (ownership transfer, instance reset) must never become reachable by
  * ticking a box on a custom role.
- * @param {{Component: React.ComponentType}} props
+ * @param {{Component: React.ComponentType, hideUserMenu?: boolean}} props
  */
-export function SuperAdminRoute({ Component }) {
+export function SuperAdminRoute({ Component, hideUserMenu = false }) {
   const { isAuthd, shouldRedirectToOnboarding, requiresPasswordChange } =
     useIsAuthenticated();
   if (isAuthd === null) return <FullScreenLoader />;
@@ -151,7 +151,11 @@ export function SuperAdminRoute({ Component }) {
   if (!isAuthd || !isSuperAdmin(userFromStorage()))
     return <Navigate to={paths.home()} />;
 
-  return (
+  return hideUserMenu ? (
+    <KeyboardShortcutWrapper>
+      <Component />
+    </KeyboardShortcutWrapper>
+  ) : (
     <KeyboardShortcutWrapper>
       <UserMenu>
         <Component />

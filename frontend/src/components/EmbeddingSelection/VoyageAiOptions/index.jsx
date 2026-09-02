@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,11 +11,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 export default function VoyageAiOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-center gap-[36px] mt-1.5">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">API Key</Label>
+          <Label className="block mb-3">{t("provider-options.api-key")}</Label>
           <Input
             type="password"
             name="VoyageAiApiKey"
@@ -26,18 +28,22 @@ export default function VoyageAiOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Model Preference</Label>
+          <Label className="block mb-3">
+            {t("provider-options.model-preference")}
+          </Label>
           <Select
             name="EmbeddingModelPref"
             required={true}
             defaultValue={settings?.EmbeddingModelPref}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select an option" />
+              <SelectValue placeholder={t("provider-options.select-option")} />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Available embedding models</SelectLabel>
+                <SelectLabel>
+                  {t("provider-options.available-embedding-models")}
+                </SelectLabel>
                 {[
                   "voyage-large-2-instruct",
                   "voyage-finance-2",

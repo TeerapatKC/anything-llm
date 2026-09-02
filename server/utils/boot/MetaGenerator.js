@@ -59,21 +59,21 @@ class MetaGenerator {
       {
         tag: "title",
         props: null,
-        content: "NexusAI | Your personal LLM trained on anything",
+        content: "NexusAI ",
       },
 
       {
         tag: "meta",
         props: {
           name: "title",
-          content: "NexusAI | Your personal LLM trained on anything",
+          content: "NexusAI ",
         },
       },
       {
         tag: "meta",
         props: {
           description: "title",
-          content: "NexusAI | Your personal LLM trained on anything",
+          content: "NexusAI ",
         },
       },
 
@@ -87,14 +87,14 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "og:title",
-          content: "NexusAI | Your personal LLM trained on anything",
+          content: "NexusAI ",
         },
       },
       {
         tag: "meta",
         props: {
           property: "og:description",
-          content: "NexusAI | Your personal LLM trained on anything",
+          content: "NexusAI ",
         },
       },
       {
@@ -118,14 +118,14 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "twitter:title",
-          content: "NexusAI | Your personal LLM trained on anything",
+          content: "NexusAI ",
         },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:description",
-          content: "NexusAI | Your personal LLM trained on anything",
+          content: "NexusAI ",
         },
       },
       {
@@ -227,7 +227,7 @@ class MetaGenerator {
             props: null,
             content:
               customTitle ??
-              "NexusAI | Your personal LLM trained on anything",
+              "NexusAI ",
           };
         }
         // Override meta title
@@ -238,7 +238,7 @@ class MetaGenerator {
               name: "title",
               content:
                 customTitle ??
-                "NexusAI | Your personal LLM trained on anything",
+                "NexusAI ",
             },
           };
         }
@@ -250,7 +250,7 @@ class MetaGenerator {
               property: "og:title",
               content:
                 customTitle ??
-                "NexusAI | Your personal LLM trained on anything",
+                "NexusAI ",
             },
           };
         }
@@ -262,7 +262,7 @@ class MetaGenerator {
               property: "twitter:title",
               content:
                 customTitle ??
-                "NexusAI | Your personal LLM trained on anything",
+                "NexusAI ",
             },
           };
         }

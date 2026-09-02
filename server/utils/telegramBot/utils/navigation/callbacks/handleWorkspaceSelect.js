@@ -1,4 +1,6 @@
 const { showThreadMenu } = require("../../commands/handlers/showThreadMenu");
+const { workspaceForUser } = require("../../access");
+const { translatorFor } = require("../../i18n");
 
 /**
  * Handle workspace selection - shows thread menu for selected workspace.
@@ -17,7 +19,19 @@ async function handleWorkspaceSelect({
   data,
 } = {}) {
   const workspaceId = parseInt(data.slice(3), 10);
-  await showThreadMenu(ctx, chatId, workspaceId, 0, messageId);
+  const session = ctx.getState(chatId);
+
+  // Callback data is attacker-controlled - a workspace id typed by hand must not
+  // open a workspace this account cannot chat in.
+  const workspace = await workspaceForUser(session.user, { id: workspaceId });
+  if (!workspace) {
+    await ctx.bot.answerCallbackQuery(query.id, {
+      text: translatorFor(session)("workspaces.not_available"),
+    });
+    return;
+  }
+
+  await showThreadMenu(ctx, chatId, workspace.id, 0, messageId);
   await ctx.bot.answerCallbackQuery(query.id);
 }
 

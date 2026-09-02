@@ -5,6 +5,7 @@
  *  - Eugen Mayer (KontextWork)
  */
 
+import { Trans, useTranslation } from "react-i18next";
 import { useState } from "react";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
@@ -19,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 export default function DrupalWikiOptions() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -140,17 +142,19 @@ export default function DrupalWikiOptions() {
                         className="max-w-[250px] text-xs"
                       >
                         <p className="text-sm font-light text-theme-text-primary">
-                          You need to provide an API token for authentication.
-                          See the Drupal Wiki&nbsp;
-                          <a
-                            href="https://help.drupal-wiki.com/node/605#2-Zugriffs-Token-generieren"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="underline"
-                          >
-                            manual
-                          </a>
-                          &nbsp;on how to generate an API-Token for your user.
+                          <Trans
+                            i18nKey="help.drupal-wiki-token"
+                            components={{
+                              a: (
+                                <a
+                                  href="https://help.drupal-wiki.com/node/605#2-Zugriffs-Token-generieren"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="underline"
+                                />
+                              ),
+                            }}
+                          />
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -177,8 +181,7 @@ export default function DrupalWikiOptions() {
             </Button>
             {loading && (
               <p className="text-xs text-theme-text-secondary">
-                Once complete, all pages will be available for embedding into
-                workspaces.
+                {t("help.drupal-wiki")}
               </p>
             )}
           </div>

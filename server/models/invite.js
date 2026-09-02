@@ -7,13 +7,18 @@ const Invite = {
     return uuidAPIKey.create().apiKey;
   },
 
-  create: async function ({ createdByUserId = 0, workspaceIds = [] }) {
+  create: async function ({
+    createdByUserId = 0,
+    workspaceIds = [],
+    email = null,
+  }) {
     try {
       const invite = await prisma.invites.create({
         data: {
           code: this.makeCode(),
           createdBy: createdByUserId,
           workspaceIds: JSON.stringify(workspaceIds),
+          email: email || null,
         },
       });
       return { invite, error: null };

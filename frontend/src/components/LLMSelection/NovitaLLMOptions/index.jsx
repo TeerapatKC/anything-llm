@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -40,6 +41,7 @@ export default function NovitaLLMOptions({ settings }) {
 }
 
 function AdvancedControls({ settings }) {
+  const { t } = useTranslation();
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
 
   return (
@@ -61,11 +63,13 @@ function AdvancedControls({ settings }) {
       </div>
       <div hidden={!showAdvancedControls}>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Stream Timeout (ms)</Label>
+          <Label className="block mb-3">
+            {t("provider-options.stream-timeout")}
+          </Label>
           <Input
             type="number"
             name="NovitaLLMTimeout"
-            placeholder="Timeout value between token responses to auto-timeout the stream"
+            placeholder={t("provider-options.stream-timeout-placeholder")}
             defaultValue={settings?.NovitaLLMTimeout ?? 3_000}
             autoComplete="off"
             onScroll={(e) => e.target.blur()}
@@ -82,6 +86,7 @@ function AdvancedControls({ settings }) {
 }
 
 function NovitaModelSelection({ settings }) {
+  const { t } = useTranslation();
   const [groupedModels, setGroupedModels] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -105,10 +110,12 @@ function NovitaModelSelection({ settings }) {
   if (loading || Object.keys(groupedModels).length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="NovitaLLMModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -131,7 +138,9 @@ function NovitaModelSelection({ settings }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="NovitaLLMModelPref"
         required={true}
@@ -139,7 +148,7 @@ function NovitaModelSelection({ settings }) {
         onValueChange={setSelectedModel}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {Object.keys(groupedModels)

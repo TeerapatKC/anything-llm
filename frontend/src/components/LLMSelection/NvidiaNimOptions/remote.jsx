@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import PreLoader from "@/components/Preloader";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 import System from "@/models/system";
@@ -77,6 +78,7 @@ export default function RemoteNvidiaNimOptions({ settings }) {
   );
 }
 function NvidiaNimModelSelection({ settings, basePath }) {
+  const { t } = useTranslation();
   const [models, setModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -97,10 +99,12 @@ function NvidiaNimModelSelection({ settings, basePath }) {
   if (loading || models.length === 0) {
     return (
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Chat Model Selection</Label>
+        <Label className="block mb-3">
+          {t("provider-options.chat-model-selection")}
+        </Label>
         <Select name="NvidiaNimLLMModelPref" disabled={true}>
           <SelectTrigger className="w-full">
-            <SelectValue placeholder="-- loading available models --" />
+            <SelectValue placeholder={t("provider-options.loading-models")} />
           </SelectTrigger>
           <SelectContent />
         </Select>
@@ -110,14 +114,16 @@ function NvidiaNimModelSelection({ settings, basePath }) {
 
   return (
     <div className="flex flex-col w-60">
-      <Label className="block mb-3">Chat Model Selection</Label>
+      <Label className="block mb-3">
+        {t("provider-options.chat-model-selection")}
+      </Label>
       <Select
         name="NvidiaNimLLMModelPref"
         required={true}
         defaultValue={settings?.NvidiaNimLLMModelPref ?? models?.[0]?.id}
       >
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select an option" />
+          <SelectValue placeholder={t("provider-options.select-option")} />
         </SelectTrigger>
         <SelectContent>
           {models.map((model) => (

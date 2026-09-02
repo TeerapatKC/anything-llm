@@ -82,19 +82,19 @@ export default function EditUserModal({
     <>
       <DialogHeader>
         <DialogTitle className="text-sm font-semibold">
-          Edit {user.username}
+          {t("admin-users.modal.edit-title", { username: user.username })}
         </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleUpdate}>
         <div className="space-y-4">
           <div>
             <Label htmlFor="username" className="block mb-2">
-              Username
+              {t("admin-users.modal.username")}
             </Label>
             <Input
               name="username"
               type="text"
-              placeholder="User's username"
+              placeholder={t("admin-users.modal.username-placeholder")}
               defaultValue={user.username}
               minLength={USERNAME_MIN_LENGTH}
               maxLength={USERNAME_MAX_LENGTH}
@@ -108,29 +108,28 @@ export default function EditUserModal({
           </div>
           <div>
             <Label htmlFor="email" className="block mb-2">
-              Email
+              {t("admin-users.modal.email")}
             </Label>
             <Input
               name="email"
               type="email"
-              placeholder="user@example.com"
+              placeholder={t("admin-users.modal.email-placeholder")}
               defaultValue={user.email ?? ""}
               maxLength={255}
               required={true}
               autoComplete="off"
             />
             <p className="mt-2 text-xs text-theme-text-secondary">
-              Passwords are not set here - use "Reset password" on the user list
-              to issue a new one.
+              {t("admin-users.modal.email-help-edit")}
             </p>
           </div>
           <div>
             <Label htmlFor="bio" className="block mb-2">
-              Bio
+              {t("admin-users.modal.bio")}
             </Label>
             <Textarea
               name="bio"
-              placeholder="User's bio"
+              placeholder={t("admin-users.modal.bio-placeholder")}
               defaultValue={user.bio}
               autoComplete="off"
               rows={3}
@@ -138,7 +137,7 @@ export default function EditUserModal({
           </div>
           <div>
             <Label htmlFor="role" className="block mb-2">
-              Role
+              {t("admin-users.modal.role")}
             </Label>
             <Select
               name="role"
@@ -147,7 +146,9 @@ export default function EditUserModal({
               onValueChange={setRole}
             >
               <SelectTrigger>
-                <SelectValue placeholder="Select a role">
+                <SelectValue
+                  placeholder={t("admin-users.modal.role-placeholder")}
+                >
                   {(value) =>
                     roleOptionLabel(
                       assignableRoles.find((entry) => entry.name === value)
@@ -180,14 +181,18 @@ export default function EditUserModal({
             limit={messageLimit.limit}
             updateState={setMessageLimit}
           />
-          {error && <p className="text-red-400 text-sm">Error: {error}</p>}
+          {error && (
+            <p className="text-red-400 text-sm">
+              {t("admin-users.modal.error", { error })}
+            </p>
+          )}
         </div>
         <DialogFooter>
           <DialogClose render={<Button variant="outline" type="button" />}>
-            Cancel
+            {t("admin-users.modal.cancel")}
           </DialogClose>
           <Button variant="default" type="submit">
-            Update user
+            {t("admin-users.modal.update")}
           </Button>
         </DialogFooter>
       </form>

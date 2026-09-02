@@ -6,6 +6,7 @@ import {
   Bot,
   Briefcase,
   FlaskConical,
+  Mail,
   PanelLeftIcon,
   PenLine,
   Settings,
@@ -69,10 +70,14 @@ export default function SettingsSidebar() {
             <div className="flex h-full w-full flex-col">
               <SidebarHeader className="gap-3 pt-4">
                 <div className="flex items-center justify-between gap-2">
-                  <Link to={paths.home()} aria-label="Home" className="min-w-0">
+                  <Link
+                    to={paths.home()}
+                    aria-label={t("sidebar.home")}
+                    className="min-w-0"
+                  >
                     <img
                       src={logo}
-                      alt="Logo"
+                      alt={t("sidebar.logo")}
                       className="rounded max-h-[24px] object-contain"
                     />
                   </Link>
@@ -80,12 +85,14 @@ export default function SettingsSidebar() {
                     type="button"
                     variant="ghost"
                     size="icon-sm"
-                    aria-label="Toggle sidebar"
+                    aria-label={t("sidebar.toggle-sidebar")}
                     onClick={() => setShowSidebar(false)}
                     className="shrink-0 text-theme-text-secondary hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   >
                     <PanelLeftIcon />
-                    <span className="sr-only">Toggle Sidebar</span>
+                    <span className="sr-only">
+                      {t("sidebar.toggle-sidebar")}
+                    </span>
                   </Button>
                 </div>
                 <div className="text-theme-text-secondary text-sm font-medium uppercase">
@@ -125,12 +132,12 @@ export default function SettingsSidebar() {
         <div className="flex h-7 items-center justify-between gap-2">
           <Link
             to={paths.home()}
-            aria-label="Home"
+            aria-label={t("sidebar.home")}
             className="flex min-w-0 items-center justify-start"
           >
             <img
               src={logo}
-              alt="Logo"
+              alt={t("sidebar.logo")}
               className="rounded max-h-[24px] object-contain"
             />
           </Link>
@@ -255,6 +262,15 @@ const SidebarOptions = ({ user = null, t }) => (
             ]}
           />
         )}
+        {isSuperAdmin(user) && (
+          <Option
+            btnText={t("settings.smtp")}
+            icon={<Mail className="h-5 w-5 shrink-0" />}
+            href={paths.settings.smtp()}
+            user={user}
+            permissions={[PERMISSIONS.SYSTEM_ADMIN]}
+          />
+        )}
         <Option
           btnText={t("settings.admin")}
           icon={<UserCog className="h-5 w-5 shrink-0" />}
@@ -304,9 +320,31 @@ const SidebarOptions = ({ user = null, t }) => (
         <Option
           btnText={t("settings.agent-skills")}
           icon={<Bot className="h-5 w-5 shrink-0" />}
-          href={paths.settings.agentSkills()}
           user={user}
-          permissions={[PERMISSIONS.AGENTS_MANAGE_SKILLS]}
+          childOptions={[
+            {
+              // Deliberately a role check rather than a permission check - the flow
+              // list is temporarily restricted to the instance owner regardless of
+              // who else holds the AGENTS_FLOWS permission.
+              hidden: !isSuperAdmin(user),
+              btnText: "Agent Flow",
+              href: paths.settings.agentFlow(),
+              permissions: [PERMISSIONS.AGENTS_FLOWS],
+            },
+            {
+              // Same treatment as Agent Flow above - the DB connections configured
+              // here are instance-wide credentials shared by every workspace.
+              hidden: !isSuperAdmin(user),
+              btnText: "SQL Connector",
+              href: paths.settings.sqlConnector(),
+              permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
+            },
+            {
+              btnText: "Setting",
+              href: paths.settings.agentSkills(),
+              permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
+            },
+          ]}
         />
         <Option
           btnText={t("settings.community-hub.title")}
@@ -356,6 +394,11 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.available-channels.telegram"),
               href: paths.settings.telegram(),
               permissions: [PERMISSIONS.INTEGRATIONS_TELEGRAM],
+            },
+            {
+              btnText: "LINE",
+              href: paths.settings.line(),
+              permissions: [PERMISSIONS.INTEGRATIONS_LINE],
             },
           ]}
         />

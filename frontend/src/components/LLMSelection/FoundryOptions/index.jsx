@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import System from "@/models/system";
 import strDistance from "js-levenshtein";
@@ -16,6 +17,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function FoundryOptions({ settings }) {
+  const { t } = useTranslation();
   const [basePath, setBasePath] = useState(settings?.FoundryBasePath);
   const [tokenLimit, setTokenLimit] = useState(
     settings?.FoundryModelTokenLimit || ""
@@ -48,7 +50,7 @@ export default function FoundryOptions({ settings }) {
       <div className="flex gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label>Base URL</Label>
+            <Label>{t("provider-options.base-url")}</Label>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -77,7 +79,7 @@ export default function FoundryOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center gap-1 mb-3">
-            <Label>Model context window</Label>
+            <Label>{t("provider-options.model-context-window")}</Label>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -88,16 +90,14 @@ export default function FoundryOptions({ settings }) {
                 }
               ></TooltipTrigger>
               <TooltipContent side="top" className="max-w-[350px] text-xs">
-                Override the context window limit. Leave empty to auto-detect
-                from the model, or lower it if large context windows slow your
-                machine down.
+                {t("help.foundry-options")}
               </TooltipContent>
             </Tooltip>
           </div>
           <Input
             type="number"
             name="FoundryModelTokenLimit"
-            placeholder="Automatically managed"
+            placeholder={t("provider-options.automatically-managed")}
             min={1}
             value={tokenLimit}
             onChange={handleTokenLimitChange}
@@ -121,6 +121,7 @@ function FoundryModelSelection({
   onModelSelected,
   basePath = null,
 }) {
+  const { t } = useTranslation();
   const [customModels, setCustomModels] = useState([]);
   const [filteredModels, setFilteredModels] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -217,7 +218,9 @@ function FoundryModelSelection({
         <ModelTableLoadingSkeleton />
       ) : filteredModels.length === 0 ? (
         <div className="flex flex-col w-full gap-y-2 mt-4">
-          <p className="text-theme-text-secondary text-sm">No models found!</p>
+          <p className="text-theme-text-secondary text-sm">
+            {t("provider-options.no-models-found")}
+          </p>
         </div>
       ) : (
         <>

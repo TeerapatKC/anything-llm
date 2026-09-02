@@ -128,13 +128,22 @@ const Workspace = {
       })
       .catch(() => null);
   },
-  updateChatFeedback: async function (chatId, slug, feedback) {
+  /**
+   * Rate an answer, and optionally say why.
+   * @param {number} chatId
+   * @param {string} slug
+   * @param {boolean|null} feedback
+   * @param {string|undefined} comment - Omit to leave any stored reason alone.
+   */
+  updateChatFeedback: async function (chatId, slug, feedback, comment) {
     const result = await fetch(
       `${API_BASE}/workspace/${slug}/chat-feedback/${chatId}`,
       {
         method: "POST",
         headers: baseHeaders(),
-        body: JSON.stringify({ feedback }),
+        body: JSON.stringify(
+          comment === undefined ? { feedback } : { feedback, comment }
+        ),
       }
     )
       .then((res) => res.ok)

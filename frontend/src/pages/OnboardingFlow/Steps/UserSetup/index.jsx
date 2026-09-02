@@ -157,7 +157,7 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
                   name="username"
                   type="text"
                   className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
-                  placeholder="Your admin username"
+                  placeholder={t("ui.admin-username-placeholder")}
                   minLength={USERNAME_MIN_LENGTH}
                   maxLength={USERNAME_MAX_LENGTH}
                   required={true}
@@ -196,7 +196,7 @@ const AdminAccount = ({ setFormValid, submitRef, navigate }) => {
                   name="password"
                   type="password"
                   className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm rounded-lg block w-full p-2.5 focus:outline-primary-button active:outline-primary-button placeholder:text-theme-text-secondary outline-none"
-                  placeholder="Your admin password"
+                  placeholder={t("ui.admin-password-placeholder")}
                   minLength={8}
                   required={true}
                   autoComplete="off"

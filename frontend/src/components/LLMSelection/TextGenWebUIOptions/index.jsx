@@ -1,10 +1,12 @@
+import { useTranslation } from "react-i18next";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 export default function TextGenWebUIOptions({ settings }) {
+  const { t } = useTranslation();
   return (
     <div className="flex gap-[36px] mt-1.5 flex-wrap">
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Base URL</Label>
+        <Label className="block mb-3">{t("provider-options.base-url")}</Label>
         <Input
           type="url"
           name="TextGenWebUIBasePath"
@@ -16,7 +18,9 @@ export default function TextGenWebUIOptions({ settings }) {
         />
       </div>
       <div className="flex flex-col w-60">
-        <Label className="block mb-3">Model context window</Label>
+        <Label className="block mb-3">
+          {t("provider-options.model-context-window")}
+        </Label>
         <Input
           type="number"
           name="TextGenWebUITokenLimit"

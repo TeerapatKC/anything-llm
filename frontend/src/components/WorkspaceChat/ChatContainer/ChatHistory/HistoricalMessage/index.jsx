@@ -1,5 +1,5 @@
 import React, { memo, useLayoutEffect, useRef, useState } from "react";
-import { CircleStop, Info, TriangleAlert } from "lucide-react";
+import { CircleStop, Info } from "lucide-react";
 import Actions from "./Actions";
 import renderMarkdown from "@/utils/chat/markdown";
 import Citations from "../Citation";
@@ -20,6 +20,7 @@ import { Link } from "react-router-dom";
 import { chatQueryRefusalResponse } from "@/utils/chat";
 import HistoricalOutputs from "./HistoricalOutputs";
 import HistoricalClarifyingQuestions from "./HistoricalClarifyingQuestions";
+import ErrorResponse from "../ErrorResponse";
 import { openImageLightbox } from "@/components/ImageLightbox";
 import {
   Tooltip,
@@ -82,21 +83,7 @@ const HistoricalMessage = ({
   if (completeDelete) return null;
 
   if (!!error) {
-    return (
-      <div key={uuid} className="flex justify-start w-full">
-        <div className="py-4 pl-0 pr-4 flex flex-col md:max-w-[80%]">
-          <div className="p-2 rounded-lg bg-red-50 text-red-500">
-            <span className="inline-block">
-              <TriangleAlert className="h-4 w-4 mb-1 inline-block" /> Could not
-              respond to message.
-            </span>
-            <p className="text-xs font-mono mt-2 border-l-2 border-red-300 pl-2 bg-red-200 p-2 rounded-sm">
-              {error}
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <ErrorResponse key={uuid} error={error} />;
   }
 
   if (role === "user") {
@@ -207,12 +194,7 @@ const HistoricalMessage = ({
           </div>
         )}
         {hasVisibleContent(message) && (
-          <div className="mt-1 flex items-center gap-x-0.5">
-            <TTSMessage
-              slug={workspace?.slug}
-              chatId={chatId}
-              message={message}
-            />
+          <div className="mt-1">
             <Actions
               message={message}
               feedbackScore={feedbackScore}
@@ -224,6 +206,13 @@ const HistoricalMessage = ({
               role={role}
               forkThread={forkThread}
               metrics={metrics}
+              leadingAction={
+                <TTSMessage
+                  slug={workspace?.slug}
+                  chatId={chatId}
+                  message={message}
+                />
+              }
             />
           </div>
         )}

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import System from "@/models/system";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/select";
 
 export default function NativeEmbeddingOptions({ settings }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [availableModels, setAvailableModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(
@@ -48,7 +50,9 @@ export default function NativeEmbeddingOptions({ settings }) {
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex flex-col mt-1.5">
         <div className="flex flex-col w-96">
-          <Label className="block mb-3">Model Preference</Label>
+          <Label className="block mb-3">
+            {t("provider-options.model-preference")}
+          </Label>
           <Select
             name="EmbeddingModelPref"
             required={true}
@@ -65,7 +69,9 @@ export default function NativeEmbeddingOptions({ settings }) {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Available embedding models</SelectLabel>
+                <SelectLabel>
+                  {t("provider-options.available-embedding-models")}
+                </SelectLabel>
                 {availableModels.map((model) => {
                   return (
                     <SelectItem key={model.id} value={model.id}>

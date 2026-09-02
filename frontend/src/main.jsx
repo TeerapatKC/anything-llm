@@ -214,6 +214,30 @@ const router = createBrowserRouter([
         },
       },
       {
+        // Deliberately a role check (SuperAdminRoute), not a permission check - the
+        // flow list is temporarily restricted to the instance owner regardless of
+        // who else holds the AGENTS_FLOWS permission. Mirrors the sidebar, which
+        // hides this link the same way.
+        path: "/settings/agent-flows",
+        lazy: async () => {
+          const { default: AdminAgents } = await import("@/pages/Admin/Agents");
+          return {
+            element: <SuperAdminRoute Component={AdminAgents} />,
+          };
+        },
+      },
+      {
+        // Same treatment as Agent Flow above - the DB connections configured here are
+        // instance-wide credentials, so this is a role check rather than a permission.
+        path: "/settings/sql-connector",
+        lazy: async () => {
+          const { default: AdminAgents } = await import("@/pages/Admin/Agents");
+          return {
+            element: <SuperAdminRoute Component={AdminAgents} />,
+          };
+        },
+      },
+      {
         path: "/settings/agents/builder",
         lazy: async () => {
           const { default: AgentBuilder } = await import(
@@ -221,11 +245,7 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <PermissionRoute
-                Component={AgentBuilder}
-                permissions={[PERMISSIONS.AGENTS_FLOWS]}
-                hideUserMenu={true}
-              />
+              <SuperAdminRoute Component={AgentBuilder} hideUserMenu={true} />
             ),
           };
         },
@@ -238,11 +258,7 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <PermissionRoute
-                Component={AgentBuilder}
-                permissions={[PERMISSIONS.AGENTS_FLOWS]}
-                hideUserMenu={true}
-              />
+              <SuperAdminRoute Component={AgentBuilder} hideUserMenu={true} />
             ),
           };
         },
@@ -521,6 +537,16 @@ const router = createBrowserRouter([
         },
       },
       {
+        // Role-gated like Agent Flow and Instance Owner above - SMTP credentials send
+        // mail as this deployment, so they stay with the instance owner rather than
+        // becoming grantable through a custom role.
+        path: "/settings/smtp",
+        lazy: async () => {
+          const { default: AdminSMTP } = await import("@/pages/Admin/SMTP");
+          return { element: <SuperAdminRoute Component={AdminSMTP} /> };
+        },
+      },
+      {
         path: "/settings/users",
         lazy: async () => {
           const { default: AdminUsers } = await import("@/pages/Admin/Users");
@@ -651,6 +677,22 @@ const router = createBrowserRouter([
               <PermissionRoute
                 Component={TelegramBotSettings}
                 permissions={[PERMISSIONS.INTEGRATIONS_TELEGRAM]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/settings/external-connections/line",
+        lazy: async () => {
+          const { default: LineBotSettings } = await import(
+            "@/pages/GeneralSettings/Connections/LineBot"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={LineBotSettings}
+                permissions={[PERMISSIONS.INTEGRATIONS_LINE]}
               />
             ),
           };

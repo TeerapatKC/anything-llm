@@ -1,6 +1,7 @@
 const { Workspace } = require("../../../../../models/workspace");
 const { WorkspaceThread } = require("../../../../../models/workspaceThread");
 const { WorkspaceChats } = require("../../../../../models/workspaceChats");
+const { translatorFor } = require("../../i18n");
 
 /**
  * /reset - Clears LLM chat history context.
@@ -8,25 +9,26 @@ const { WorkspaceChats } = require("../../../../../models/workspaceChats");
  * @param {number} chatId
  */
 async function handleReset(ctx, chatId) {
-  const state = ctx.getState(chatId);
-  const workspace = await Workspace.get({ slug: state.workspaceSlug });
+  const session = ctx.getState(chatId);
+  if (!session) return;
+
+  const workspace = session.workspaceSlug
+    ? await Workspace.get({ slug: session.workspaceSlug })
+    : null;
   if (!workspace) return;
 
-  const thread = state.threadSlug
-    ? await WorkspaceThread.get({ slug: state.threadSlug })
+  const thread = session.threadSlug
+    ? await WorkspaceThread.get({ slug: session.threadSlug })
     : null;
 
   await WorkspaceChats.markThreadHistoryInvalidV2({
     workspaceId: workspace.id,
-    user_id: null,
+    user_id: session.user.id,
     thread_id: thread?.id || null,
     api_session_id: null,
   });
 
-  await ctx.bot.sendMessage(
-    chatId,
-    "Chat history has been cleared for the LLM. Previous messages still appear above but won't be used as context."
-  );
+  await ctx.bot.sendMessage(chatId, translatorFor(session)("reset.done"));
 }
 
 module.exports = { handleReset };

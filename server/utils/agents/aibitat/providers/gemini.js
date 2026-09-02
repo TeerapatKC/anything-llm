@@ -20,6 +20,19 @@ class GeminiProvider extends Provider {
       baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
       apiKey: process.env.GEMINI_API_KEY,
       fetch: async (url, init) => {
+        // The OpenAI SDK pre-computes a `content-length` header from the
+        // request body, but on Node's undici fetch that value can end up
+        // mismatched with the body actually sent (observed on Node 22+ with
+        // this SDK version, worst on retries), which undici rejects outright
+        // with "invalid content-length header" before the request ever
+        // leaves the machine. Dropping it lets fetch compute the correct
+        // length itself from the real body bytes.
+        if (init?.headers) {
+          for (const key of Object.keys(init.headers)) {
+            if (key.toLowerCase() === "content-length")
+              delete init.headers[key];
+          }
+        }
         const res = await globalThis.fetch(url, init);
         if (!res.ok) {
           const cloned = res.clone();
@@ -230,6 +243,7 @@ class GeminiProvider extends Provider {
         // ignore
       }
     }
+    this.providerLog(`Gemini API error details: ${JSON.stringify(allProps)}`);
   }
 
   #formatFunctions(functions) {

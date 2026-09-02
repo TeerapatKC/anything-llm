@@ -16,7 +16,6 @@ export default function HeaderMenu({
   availableFlows = [],
   onNewFlow,
   onSaveFlow,
-  onPublishFlow,
 }) {
   const { flowId = null } = useParams();
   const [showDropdown, setShowDropdown] = useState(false);
@@ -29,14 +28,14 @@ export default function HeaderMenu({
       <div className="flex justify-between items-start max-w-[1700px] mx-auto">
         <div className="flex items-center gap-x-2">
           <button
-            onClick={() => navigate(paths.settings.agentSkills())}
+            onClick={() => navigate(paths.settings.agentFlow())}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-theme-settings-input-bg border border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
           >
             <ChevronLeft className="w-5 h-5 text-theme-text-primary" />
           </button>
           <div className="flex items-center bg-theme-settings-input-bg rounded-md border border-theme-sidebar-border pointer-events-auto">
             <button
-              onClick={() => navigate(paths.settings.agentSkills())}
+              onClick={() => navigate(paths.settings.agentFlow())}
               className="border-t-transparent! border-l-transparent! border-b-transparent! flex items-center gap-x-2 px-4 py-2 border-r border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
             >
               <img
@@ -101,12 +100,6 @@ export default function HeaderMenu({
             >
               <Plus className="w-4 h-4" />
               New Flow
-            </button>
-            <button
-              onClick={onPublishFlow}
-              className="px-3 py-2 rounded-lg text-sm font-medium flex items-center justify-center gap-2 border border-theme-sidebar-border bg-theme-bg-primary text-theme-text-primary hover:bg-theme-action-menu-bg transition-all duration-300"
-            >
-              Publish
             </button>
             <button
               onClick={onSaveFlow}

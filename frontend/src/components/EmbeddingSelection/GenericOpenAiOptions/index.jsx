@@ -1,3 +1,4 @@
+import { Trans, useTranslation } from "react-i18next";
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, Info } from "lucide-react";
 import {
@@ -10,12 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 export default function GenericOpenAiEmbeddingOptions({ settings }) {
+  const { t } = useTranslation();
   const [showAdvancedControls, setShowAdvancedControls] = useState(false);
   return (
     <div className="w-full flex flex-col gap-y-7">
       <div className="w-full flex items-center gap-[36px] mt-1.5 flex-wrap">
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Base URL</Label>
+          <Label className="block mb-3">{t("provider-options.base-url")}</Label>
           <Input
             type="url"
             name="EmbeddingBasePath"
@@ -27,7 +29,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
           />
         </div>
         <div className="flex flex-col w-60">
-          <Label className="block mb-3">Embedding Model</Label>
+          <Label className="block mb-3">
+            {t("provider-options.embedding-model")}
+          </Label>
           <Input
             type="text"
             name="EmbeddingModelPref"
@@ -40,7 +44,9 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         </div>
         <div className="flex flex-col w-60">
           <div className="flex items-center mb-3 gap-x-1">
-            <Label className="block">Max embedding chunk length</Label>
+            <Label className="block">
+              {t("provider-options.max-embedding-chunk")}
+            </Label>
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -51,7 +57,7 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                 }
               ></TooltipTrigger>
               <TooltipContent side="top" className="max-w-[250px] text-xs">
-                Maximum length of text chunks, in characters, for embedding.
+                {t("provider-options.max-embedding-chunk-help")}
               </TooltipContent>
             </Tooltip>
           </div>
@@ -71,7 +77,8 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
         <div className="flex flex-col w-60">
           <div className="flex flex-col gap-y-1 mb-4">
             <Label className="flex items-center gap-x-2">
-              API Key <p className="text-xs! italic! font-thin!">optional</p>
+              {t("provider-options.api-key")}{" "}
+              <p className="text-xs! italic! font-thin!">optional</p>
             </Label>
           </div>
           <Input
@@ -140,13 +147,10 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                 ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
-                    Text prepended to each chunk of content before embedding for
-                    storage. Some models require this to distinguish passages
-                    from queries (e.g. "passage: " or "search_document: ").
-                    <br />
-                    <br />
-                    NexusAI <b>does not</b> append anything to this text
-                    including the ":" character.
+                    <Trans
+                      i18nKey="help.generic-open-ai-options"
+                      components={{ b: <b />, br: <br /> }}
+                    />
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -175,13 +179,10 @@ export default function GenericOpenAiEmbeddingOptions({ settings }) {
                 ></TooltipTrigger>
                 <TooltipContent side="top" className="max-w-[250px] text-xs">
                   <p className="text-xs leading-[18px] font-base">
-                    Text prepended to the query text before embedding for
-                    search. Some models require this to distinguish queries from
-                    passages (e.g. "query: " or "search_query: ").
-                    <br />
-                    <br />
-                    NexusAI <b>does not</b> append anything to this text
-                    including the ":" character.
+                    <Trans
+                      i18nKey="help.generic-open-ai-options-2"
+                      components={{ b: <b />, br: <br /> }}
+                    />
                   </p>
                 </TooltipContent>
               </Tooltip>
