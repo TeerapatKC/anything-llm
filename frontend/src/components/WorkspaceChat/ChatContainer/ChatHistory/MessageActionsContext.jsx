@@ -15,6 +15,10 @@ const MessageActionsContext = createContext(null);
  * Provider that centralizes edit/delete event listeners for all messages.
  * Instead of each message registering its own window listener (O(n) listeners),
  * this provider registers just 2 listeners total and dispatches to messages via context.
+ *
+ * Messages are addressed by `messageKey`, not by `chatId`: a prompt has no chatId
+ * until its answer completes and the pair is written, so keying on chatId left every
+ * message of an in-flight or failed turn sharing the same `null` identity.
  */
 export function MessageActionsProvider({ children }) {
   const [editingMessage, setEditingMessage] = useState(null);
@@ -22,14 +26,14 @@ export function MessageActionsProvider({ children }) {
 
   useEffect(() => {
     function handleEditEvent(e) {
-      const { chatId, role } = e.detail;
-      if (!chatId || !role) return;
+      const { messageKey, role } = e.detail;
+      if (!messageKey || !role) return;
 
       setEditingMessage((prev) => {
-        if (prev?.chatId === chatId && prev?.role === role) {
+        if (prev?.messageKey === messageKey && prev?.role === role) {
           return null;
         }
-        return { chatId, role };
+        return { messageKey, role };
       });
     }
 
@@ -54,8 +58,12 @@ export function MessageActionsProvider({ children }) {
   }, []);
 
   const isEditing = useCallback(
-    (chatId, role) => {
-      return editingMessage?.chatId === chatId && editingMessage?.role === role;
+    (messageKey, role) => {
+      if (!messageKey) return false;
+      return (
+        editingMessage?.messageKey === messageKey &&
+        editingMessage?.role === role
+      );
     },
     [editingMessage]
   );

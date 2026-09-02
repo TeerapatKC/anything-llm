@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http:///api/"
+      "url": "/api"
     }
   ],
   "paths": {
@@ -17,15 +17,7 @@
           "Authentication"
         ],
         "description": "Verify the attached Authentication header contains a valid API token.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Valid auth token was found.",
@@ -64,15 +56,7 @@
           "Admin"
         ],
         "description": "Deprecated. Always returns true - authentication is always required, so there is no other mode to report. Kept so existing API clients keep working; do not use in new integrations.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -112,15 +96,7 @@
           "Admin"
         ],
         "description": "List all users in the instance.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -167,15 +143,7 @@
           "Admin"
         ],
         "description": "Create a new user with username and password.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "403": {
             "description": "Forbidden"
@@ -199,13 +167,6 @@
               "type": "string"
             },
             "description": "id of the user in the database."
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -229,13 +190,6 @@
               "type": "string"
             },
             "description": "id of the user in the database."
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -286,15 +240,7 @@
           "Admin"
         ],
         "description": "List all existing invitations to instance regardless of status.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -343,15 +289,7 @@
           "Admin"
         ],
         "description": "Create a new invite code for someone to use to register with instance.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -422,13 +360,6 @@
               "type": "string"
             },
             "description": "id of the invite in the database."
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -488,13 +419,6 @@
               "type": "string"
             },
             "description": "id of the workspace."
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -556,13 +480,6 @@
               "type": "string"
             },
             "description": "id of the workspace in the database."
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -633,13 +550,6 @@
               "type": "string"
             },
             "description": "slug of the workspace in the database"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -716,15 +626,7 @@
           "Admin"
         ],
         "description": "All chats in the system ordered by most recent.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -778,15 +680,7 @@
           "Admin"
         ],
         "description": "Update preferences for instance.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -840,15 +734,7 @@
           "Documents"
         ],
         "description": "Upload a new file to NexusAI to be parsed and prepared for embedding, with optional metadata.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -954,13 +840,6 @@
             },
             "description": "Target folder path (defaults to 'custom-documents' if not provided)",
             "example": "my-folder"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1069,15 +948,7 @@
           "Documents"
         ],
         "description": "Upload a valid URL for NexusAI to scrape and prepare for embedding. Optionally, specify a comma-separated list of workspace slugs to embed the document into post-upload.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1164,15 +1035,7 @@
           "Documents"
         ],
         "description": "Upload a file by specifying its raw text content and metadata values without having to upload a file.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1255,15 +1118,7 @@
           "Documents"
         ],
         "description": "List of all locally-stored documents in instance. Optionally, pass ?folder=name to fetch the contents of a single folder, paginated with offset and limit (limit=all returns every document in that folder).",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1327,13 +1182,6 @@
               "type": "string"
             },
             "description": "Name of the folder to retrieve documents from"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           },
           {
             "name": "offset",
@@ -1413,15 +1261,7 @@
           "Documents"
         ],
         "description": "Check available filetypes and MIMEs that can be uploaded.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1483,15 +1323,7 @@
           "Documents"
         ],
         "description": "Get the known available metadata schema for when doing a raw-text upload and the acceptable type of value for each key.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1547,13 +1379,6 @@
               "type": "string"
             },
             "description": "Unique document name to find (name in /documents)"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1613,15 +1438,7 @@
           "Documents"
         ],
         "description": "Create a new folder inside the documents storage directory.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1678,15 +1495,7 @@
           "Documents"
         ],
         "description": "Remove a folder and all its contents from the documents storage directory.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1746,15 +1555,7 @@
           "Documents"
         ],
         "description": "Move files within the documents storage directory.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1825,13 +1626,6 @@
               "type": "string"
             },
             "description": "The storage filename returned in the chat response outputs array (e.g., pdf-e9e14f28-d6b6-4f49-91a0-dd331517f567.pdf)"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -1899,15 +1693,7 @@
           "Workspaces"
         ],
         "description": "Create a new workspace",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1980,15 +1766,7 @@
           "Workspaces"
         ],
         "description": "List all current workspaces",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -2051,13 +1829,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to find"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2121,13 +1892,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to delete"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2173,13 +1937,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to find"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2260,13 +2017,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to find"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           },
           {
             "name": "apiSessionId",
@@ -2364,13 +2114,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to find"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2453,13 +2196,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to find"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2511,13 +2247,6 @@
             "name": "slug",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -2608,13 +2337,6 @@
             "name": "slug",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
             "schema": {
               "type": "string"
             }
@@ -2727,13 +2449,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace to search in"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -2799,6 +2514,7 @@
           "System Settings"
         ],
         "description": "Dump all settings to file storage",
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -2830,15 +2546,7 @@
           "System Settings"
         ],
         "description": "Get all current system settings that are defined.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -2886,15 +2594,7 @@
           "System Settings"
         ],
         "description": "Number of all vectors in connected vector database",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -2936,15 +2636,7 @@
           "System Settings"
         ],
         "description": "Update a system setting or preference.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -3002,13 +2694,6 @@
         ],
         "description": "Export all of the chats from the system in a known format. Output depends on the type sent. Will be send with the correct header for the output.",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "type",
             "in": "query",
@@ -3070,15 +2755,7 @@
           "System Settings"
         ],
         "description": "Permanently remove documents from the system.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "Documents removed successfully.",
@@ -3152,13 +2829,6 @@
               "type": "string"
             },
             "description": "Unique slug of workspace"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3243,13 +2913,6 @@
               "type": "string"
             },
             "description": "Unique slug of thread"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3332,13 +2995,6 @@
               "type": "string"
             },
             "description": "Unique slug of thread"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3393,13 +3049,6 @@
               "type": "string"
             },
             "description": "Unique slug of thread"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3479,13 +3128,6 @@
               "type": "string"
             },
             "description": "Unique slug of thread"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3584,13 +3226,6 @@
               "type": "string"
             },
             "description": "Unique slug of thread"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3691,15 +3326,7 @@
           "User Management"
         ],
         "description": "List all users",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -3761,13 +3388,6 @@
               "type": "string"
             },
             "description": "The ID of the user to issue a temporary auth token for"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -3815,15 +3435,7 @@
           "OpenAI Compatible Endpoints"
         ],
         "description": "Get all available \"models\" which are workspaces you can use for chatting.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -3879,15 +3491,7 @@
           "OpenAI Compatible Endpoints"
         ],
         "description": "Execute a chat with a workspace with OpenAI compatibility. Supports streaming as well. Model must be a workspace slug from /models.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -3957,13 +3561,6 @@
         ],
         "description": "Generate or edit an image using the system-configured image generation provider. Send a multipart/form-data request with a \"prompt\" field and an optional \"size\" field. To edit an existing image, attach one or more files as \"image_references\" — when present, the request is automatically routed to the provider image editing endpoint. Returns the image as a base64 PNG. If the provider does not support editing (e.g. Ollama), a notice is included and a new image is generated from the prompt only.",
         "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          },
           {
             "name": "prompt",
             "in": "formData",
@@ -4040,15 +3637,7 @@
           "OpenAI Compatible Endpoints"
         ],
         "description": "Get the embeddings of any arbitrary text string. This will use the embedder provider set in the system. Please ensure the token length of each string fits within the context of your embedder model.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -4095,15 +3684,7 @@
           "OpenAI Compatible Endpoints"
         ],
         "description": "List all the vector database collections connected to NexusAI. These are essentially workspaces but return their unique vector db identifier - this is the same as the workspace slug.",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -4155,15 +3736,7 @@
           "Embed"
         ],
         "description": "List all active embeds",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -4239,13 +3812,6 @@
               "type": "string"
             },
             "description": "UUID of the embed"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4325,13 +3891,6 @@
               "type": "string"
             },
             "description": "UUID of the session"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4385,15 +3944,7 @@
           "Embed"
         ],
         "description": "Create a new embed configuration",
-        "parameters": [
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -4489,13 +4040,6 @@
               "type": "string"
             },
             "description": "UUID of the embed to update"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {
@@ -4573,13 +4117,6 @@
               "type": "string"
             },
             "description": "UUID of the embed to delete"
-          },
-          {
-            "name": "Authorization",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
         "responses": {

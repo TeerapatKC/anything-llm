@@ -300,6 +300,13 @@ function convertToPromptHistory(history = []) {
       continue;
     }
 
+    // A record kept only to preserve the prompt - the run errored, was stopped,
+    // or lost its socket before the model said anything. There is no assistant
+    // turn to replay, and sending an empty one is rejected outright by several
+    // providers, so the pair sits out of the context window. It still renders in
+    // the transcript: convertToChatHistory deliberately keeps it.
+    if (!data.text.trim()) continue;
+
     // If the agent saved one or more clarifying-question surveys on this
     // record, append them to the assistant content so future LLM turns
     // (agent or normal chat) can recall what the user answered.

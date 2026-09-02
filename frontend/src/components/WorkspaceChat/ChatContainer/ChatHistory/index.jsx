@@ -1,4 +1,10 @@
-import { useMemo, useCallback, forwardRef } from "react";
+import {
+  useMemo,
+  useCallback,
+  forwardRef,
+  cloneElement,
+  isValidElement,
+} from "react";
 import HistoricalMessage from "./HistoricalMessage";
 import PromptReply from "./PromptReply";
 import StatusResponse from "./StatusResponse";
@@ -19,7 +25,11 @@ import { THREAD_FORK_EVENT } from "@/components/Sidebar/ActiveWorkspaces/ThreadC
 import Appearance from "@/models/appearance";
 import useTextSize from "@/hooks/useTextSize";
 import useAutoScroll from "@/hooks/useAutoScroll";
-import { ThoughtExpansionProvider } from "./ThoughtContainer";
+import {
+  ThoughtExpansionProvider,
+  THOUGHT_REGEX_OPEN,
+  THOUGHT_REGEX_CLOSE,
+} from "./ThoughtContainer";
 import { MessageActionsProvider } from "./MessageActionsContext";
 
 export default forwardRef(function (
@@ -44,12 +54,34 @@ export default forwardRef(function (
   const saveEditedMessage = useCallback(
     async ({
       editedMessage,
+      messageKey,
       chatId,
       role,
       attachments = [],
       saveOnly = false,
     }) => {
       if (!editedMessage) return;
+
+      // A turn whose answer failed or was stopped was never written, so it has no
+      // chatId and none of the database calls below apply to it. Editing the prompt
+      // there is purely local: trim the history back to it and replay. "Save only"
+      // has nothing to save against, so it always resubmits.
+      if (!chatId) {
+        const targetIdx = history.findIndex((msg) => msg.uuid === messageKey);
+        if (targetIdx < 0 || role !== "user") return;
+        const updatedHistory = history.slice(0, targetIdx + 1);
+        updatedHistory[targetIdx] = {
+          ...updatedHistory[targetIdx],
+          content: editedMessage,
+        };
+        sendCommand({
+          text: editedMessage,
+          autoSubmit: true,
+          history: updatedHistory,
+          attachments,
+        });
+        return;
+      }
 
       if (role === "user" && saveOnly) {
         const updatedHistory = [...history];
@@ -124,6 +156,14 @@ export default forwardRef(function (
     [workspace.slug, threadSlug, navigate]
   );
 
+  const lastMessageInfo = useMemo(() => getLastMessageInfo(history), [history]);
+
+  // A run is live while its agent socket is open or the last message is still
+  // streaming. Reasoning that never received its closing tag - the run died
+  // mid-thought - cannot tell "still thinking" from "stopped thinking" on its
+  // own, and would sit on "Thinking" forever beside the error that ended it.
+  const runIsLive = !!websocket || !!lastMessageInfo.isAnimating;
+
   const compiledHistory = useMemo(
     () =>
       buildMessages({
@@ -133,6 +173,7 @@ export default forwardRef(function (
         saveEditedMessage,
         forkThread,
         websocket,
+        runIsLive,
       }),
     [
       workspace,
@@ -141,9 +182,9 @@ export default forwardRef(function (
       saveEditedMessage,
       forkThread,
       websocket,
+      runIsLive,
     ]
   );
-  const lastMessageInfo = useMemo(() => getLastMessageInfo(history), [history]);
   const renderStatusResponse = useCallback(
     (item, index) => {
       // Anything after this group means the agent has moved on to its actual reply, so
@@ -153,13 +194,18 @@ export default forwardRef(function (
         <StatusResponse
           key={`status-group-${index}`}
           messages={item}
-          isThinking={!hasSubsequentMessages && lastMessageInfo.isAnimating}
+          isThinking={!hasSubsequentMessages && runIsLive}
           isComplete={hasSubsequentMessages}
-          isStopped={item.some((message) => message.stopped)}
+          // A trailing group whose run is over is commentary on work that has
+          // stopped, however it stopped.
+          isStopped={
+            item.some((message) => message.stopped) ||
+            (!hasSubsequentMessages && !runIsLive)
+          }
         />
       );
     },
-    [compiledHistory.length, lastMessageInfo]
+    [compiledHistory.length, runIsLive]
   );
 
   return (
@@ -200,6 +246,55 @@ export default forwardRef(function (
   );
 });
 
+/**
+ * The agent's step commentary and the model's reasoning are one "still working"
+ * state, and each draws the same disclosure row - so a turn carrying both showed
+ * two rows, identical apart from their icon, both labelled "Thinking".
+ *
+ * Only a trailing status group is ever on screen: StatusResponse hides itself the
+ * moment anything follows it. So the rule is - if the list ends with a status
+ * group, hand it to the nearest message above that is still showing an open
+ * reasoning chain, and drop the standalone group. This runs after the reduce
+ * rather than inside it because the two arrive in either order: live, the status
+ * group precedes the streaming reply; replayed from the database, it can follow
+ * the answer it belonged to.
+ *
+ * When nothing above is reasoning, the group is left exactly as it was - which is
+ * still one row.
+ *
+ * @param {Array} compiled - The compiled history, elements and status groups.
+ * @returns {Array} The same list with at most one activity row.
+ */
+export function foldActivityIntoOneRow(compiled) {
+  const lastIdx = compiled.length - 1;
+  const statusGroup = compiled[lastIdx];
+  if (!Array.isArray(statusGroup)) return compiled;
+
+  for (let i = lastIdx - 1; i >= 0; i--) {
+    const element = compiled[i];
+    if (!isValidElement(element)) continue;
+
+    // Reaching the prompt means this turn's answer is not reasoning.
+    if (element.props?.role === "user") break;
+
+    // Both states bail out before they reach the reasoning row, so folding into
+    // one would take the commentary down with it.
+    if (element.props?.pending || element.props?.error) continue;
+
+    const content = element.props?.reply ?? element.props?.message;
+    if (typeof content !== "string") continue;
+    if (!THOUGHT_REGEX_OPEN.test(content) || THOUGHT_REGEX_CLOSE.test(content))
+      continue;
+
+    const folded = [...compiled];
+    folded[i] = cloneElement(element, { statusMessages: statusGroup });
+    folded.splice(lastIdx, 1);
+    return folded;
+  }
+
+  return compiled;
+}
+
 const getLastMessageInfo = (history) => {
   const lastMessage = history?.[history.length - 1] || {};
   return {
@@ -230,8 +325,9 @@ function buildMessages({
   saveEditedMessage,
   forkThread,
   websocket,
+  runIsLive = true,
 }) {
-  return history.reduce((acc, props, index) => {
+  const compiled = history.reduce((acc, props, index) => {
     const isLastBotReply =
       index === history.length - 1 && props.role === "assistant";
 
@@ -315,6 +411,7 @@ function buildMessages({
           sources={props.sources}
           error={props.error}
           closed={props.closed}
+          runIsLive={runIsLive}
         />
       );
     } else {
@@ -338,9 +435,12 @@ function buildMessages({
           outputs={props.outputs}
           clarifyingQuestions={props.clarifyingQuestions}
           stopped={props.stopped}
+          runIsLive={runIsLive}
         />
       );
     }
     return acc;
   }, []);
+
+  return foldActivityIntoOneRow(compiled);
 }

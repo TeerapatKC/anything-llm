@@ -782,95 +782,45 @@ onboarding flow since its background is dark and is the same fill as the inputs.
 
   /**
  * ==============================================
- * Dot Falling
+ * Typing dots
  * ==============================================
+ *
+ * The beat between sending and the first token. Three dots inside an 18px box,
+ * the same slot the Thinking row gives its icon, so the two loading states line
+ * up on the same left edge and read as one family.
+ *
+ * `currentColor` rather than a literal: the row inherits the transcript's text
+ * colour, which is already theme-aware, so this needs no `light:` override and
+ * no `invert` filter.
  */
-  .dot-falling {
-    position: relative;
-    left: -9999px;
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: #eeeeee;
-    color: #5fa4fa;
-    box-shadow: 9999px 0 0 0 #eeeeee;
-    animation: dot-falling 1.5s infinite linear;
-    animation-delay: 0.1s;
+  .typing-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: currentColor;
+    opacity: 0.4;
+    animation: typing-dot 1.1s ease-in-out infinite;
   }
 
-  .dot-falling::before,
-  .dot-falling::after {
-    content: '';
-    display: inline-block;
-    position: absolute;
-    top: 0;
-  }
-
-  .dot-falling::before {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: #eeeeee;
-    color: #eeeeee;
-    animation: dot-falling-before 1.5s infinite linear;
-    animation-delay: 0s;
-  }
-
-  .dot-falling::after {
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    background-color: #eeeeee;
-    color: #eeeeee;
-    animation: dot-falling-after 1.5s infinite linear;
-    animation-delay: 0.2s;
-  }
-
-  @keyframes dot-falling {
-    0% {
-      box-shadow: 9999px -15px 0 0 rgba(152, 128, 255, 0);
-    }
-
-    25%,
-    50%,
-    75% {
-      box-shadow: 9999px 0 0 0 #eeeeee;
-    }
-
+  @keyframes typing-dot {
+    0%,
+    60%,
     100% {
-      box-shadow: 9999px 15px 0 0 rgba(152, 128, 255, 0);
+      transform: translateY(0);
+      opacity: 0.4;
+    }
+
+    30% {
+      transform: translateY(-3px);
+      opacity: 0.95;
     }
   }
 
-  @keyframes dot-falling-before {
-    0% {
-      box-shadow: 9984px -15px 0 0 rgba(152, 128, 255, 0);
-    }
-
-    25%,
-    50%,
-    75% {
-      box-shadow: 9984px 0 0 0 #eeeeee;
-    }
-
-    100% {
-      box-shadow: 9984px 15px 0 0 rgba(152, 128, 255, 0);
-    }
-  }
-
-  @keyframes dot-falling-after {
-    0% {
-      box-shadow: 10014px -15px 0 0 rgba(152, 128, 255, 0);
-    }
-
-    25%,
-    50%,
-    75% {
-      box-shadow: 10014px 0 0 0 #eeeeee;
-    }
-
-    100% {
-      box-shadow: 10014px 15px 0 0 rgba(152, 128, 255, 0);
+  /* Still three dots for someone who asked for less motion - just not moving. */
+  @media (prefers-reduced-motion: reduce) {
+    .typing-dot {
+      animation: none;
+      opacity: 0.55;
     }
   }
 
@@ -1023,52 +973,101 @@ onboarding flow since its background is dark and is the same fill as the inputs.
     itself stays muted; the gradient is what moves, painted through the glyphs via
     `background-clip: text`, so nothing shifts position and the line stays readable.
 
+    The tile is a fixed width, not a percentage of the element. A percentage tile is
+    sized by whatever it lands on, so the highlight would cross the short word
+    "Thinking" and a long status line in the same 1.9s - the same effect appearing to
+    run at two different speeds in one column. A fixed tile travels at one speed
+    everywhere, and lines of different lengths read as one system.
+
+    Most of the tile is flat base colour, so what passes through is a band with rest
+    on either side of it. Widen the highlight much past this and every glyph lifts at
+    once, which reads as the whole line pulsing rather than a light moving across it.
+
     `--shimmer-base` / `--shimmer-highlight` are set per theme below rather than baked
     in, because the effect has to read as "dim text, briefly lit" against both a dark
     and a light background.
   */
-  .text-shimmer {
-    --shimmer-base: rgb(255 255 255 / 0.35);
-    --shimmer-highlight: rgb(255 255 255 / 0.9);
+  .text-shimmer,
+  .shimmer-mask {
+    --shimmer-base: rgb(255 255 255 / 0.42);
+    --shimmer-highlight: rgb(255 255 255 / 0.95);
+    --shimmer-tile: 13rem;
     background-image: linear-gradient(
       100deg,
-      var(--shimmer-base) 30%,
+      var(--shimmer-base) 0%,
+      var(--shimmer-base) 38%,
       var(--shimmer-highlight) 50%,
-      var(--shimmer-base) 70%
+      var(--shimmer-base) 62%,
+      var(--shimmer-base) 100%
     );
-    background-size: 200% 100%;
-    background-repeat: no-repeat;
+    background-size: var(--shimmer-tile) 100%;
+    /*
+      Repeated, so every glyph is painted however wide the line runs - an uncovered
+      glyph gets no paint at all and vanishes, since the text colour is transparent.
+    */
+    background-repeat: repeat-x;
+    animation: text-shimmer 1.9s linear infinite;
+  }
+
+  .text-shimmer {
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    animation: text-shimmer 2.2s linear infinite;
   }
 
-  .light .text-shimmer {
-    --shimmer-base: rgb(15 23 42 / 0.4);
+  /*
+    The same sweep, clipped by a shape instead of by glyphs. `background-clip: text`
+    only knows about text, so an icon is masked instead: the element is a plain
+    rectangle of the moving gradient, and `--shimmer-mask` - a data-URI SVG the call
+    site supplies - decides which of its pixels survive. The mask reads the SVG's
+    alpha, so the glyph has to be painted (stroked or filled) rather than left as an
+    outline of `none`.
+  */
+  .shimmer-mask {
+    -webkit-mask-image: var(--shimmer-mask);
+    mask-image: var(--shimmer-mask);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+  }
+
+  .light .text-shimmer,
+  .light .shimmer-mask {
+    --shimmer-base: rgb(15 23 42 / 0.45);
     --shimmer-highlight: rgb(15 23 42 / 0.95);
   }
 
-  /* Someone who has asked for less motion still gets the dim text, just still. */
+  /* Someone who has asked for less motion still gets the dim mark, just still. */
   @media (prefers-reduced-motion: reduce) {
-    .text-shimmer {
+    .text-shimmer,
+    .shimmer-mask {
       animation: none;
       background-image: none;
+    }
+
+    .text-shimmer {
       color: var(--shimmer-base);
+    }
+
+    .shimmer-mask {
+      background-color: var(--shimmer-base);
     }
   }
 
   /*
-    The gradient is twice the width of the text and is not repeated, so it only fully
-    covers the element between 0% and 100% - stray outside that range and the uncovered
-    glyphs get no paint at all and vanish, since the text colour is transparent.
+    Exactly one tile per cycle, left to right with the reading direction. Travelling a
+    whole tile against `repeat-x` lands the next tile precisely where the last one
+    started, so the loop closes with no jump.
   */
   @keyframes text-shimmer {
     from {
-      background-position: 100% 0;
+      background-position: 0 0;
     }
     to {
-      background-position: 0% 0;
+      background-position: var(--shimmer-tile) 0;
     }
   }
 
@@ -1637,8 +1636,9 @@ does not extend the close button beyond the viewport. */
  * `content-visibility: auto` lets the browser lazily render only visible
  * messages; `contain-intrinsic-size` provides a placeholder height estimate
  * so the scrollbar stays stable.
- * Exclude :last-child because the pending reply uses a box-shadow positioning
- * trick (left: -9999px) for its dot-falling animation that containment clips.
+ * Exclude :last-child: it is the message currently streaming, so it is always
+ * on screen and its height changes on every chunk - exactly the case an
+ * intrinsic-size placeholder estimates worst.
  */
 #chat-history > div > *:not(:last-child) {
   content-visibility: auto;

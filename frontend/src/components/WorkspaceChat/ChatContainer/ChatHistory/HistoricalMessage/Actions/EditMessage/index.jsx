@@ -12,21 +12,36 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export function useEditMessage({ chatId, role }) {
+export function useEditMessage({ messageKey, role }) {
   const context = useMessageActionsContext();
-  const isEditing = context?.isEditing(chatId, role) ?? false;
+  const isEditing = context?.isEditing(messageKey, role) ?? false;
   return { isEditing };
 }
 
-export function EditMessageAction({ chatId = null, role, isEditing }) {
+/**
+ * @param {Object} props
+ * @param {string} props.messageKey - Stable identity for this message: its chatId once
+ *   the turn is saved, otherwise its client-side uuid.
+ * @param {string|null} props.chatId - Null until the turn has been written to the database.
+ */
+export function EditMessageAction({
+  messageKey = null,
+  chatId = null,
+  role,
+  isEditing,
+}) {
   const { t } = useTranslation();
   function handleEditClick() {
     window.dispatchEvent(
-      new CustomEvent(EDIT_EVENT, { detail: { chatId, role } })
+      new CustomEvent(EDIT_EVENT, { detail: { messageKey, chatId, role } })
     );
   }
 
-  if (!chatId || isEditing) return null;
+  // An unsaved assistant answer has nothing to edit into - there is no stored text
+  // to correct, and re-running it is what Retry is for. A prompt is editable either
+  // way: unsaved, editing it just replays the turn locally.
+  if (!messageKey || isEditing) return null;
+  if (!chatId && role !== "user") return null;
   return (
     <div
       className={`relative ${role === "user" && !isEditing ? "" : "opacity-100!"}`}
@@ -55,6 +70,7 @@ export function EditMessageAction({ chatId = null, role, isEditing }) {
 
 export function EditMessageForm({
   role,
+  messageKey,
   chatId,
   message,
   attachments = [],
@@ -63,33 +79,36 @@ export function EditMessageForm({
 }) {
   const formRef = useRef(null);
 
+  function closeEditor() {
+    window.dispatchEvent(
+      new CustomEvent(EDIT_EVENT, {
+        detail: { messageKey, chatId, role, attachments },
+      })
+    );
+  }
+
   function handleSubmit(e) {
     e.preventDefault();
     const editedMessage = formRef.current.value;
-    saveChanges({ editedMessage, chatId, role, attachments });
-    window.dispatchEvent(
-      new CustomEvent(EDIT_EVENT, { detail: { chatId, role, attachments } })
-    );
+    saveChanges({ editedMessage, messageKey, chatId, role, attachments });
+    closeEditor();
   }
 
   function handleSave() {
     const editedMessage = formRef.current.value;
     saveChanges({
       editedMessage,
+      messageKey,
       chatId,
       role,
       attachments,
       saveOnly: true,
     });
-    window.dispatchEvent(
-      new CustomEvent(EDIT_EVENT, { detail: { chatId, role, attachments } })
-    );
+    closeEditor();
   }
 
   function cancelEdits() {
-    window.dispatchEvent(
-      new CustomEvent(EDIT_EVENT, { detail: { chatId, role, attachments } })
-    );
+    closeEditor();
     return false;
   }
 

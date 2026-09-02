@@ -31,6 +31,7 @@ import { Textarea } from "@/components/ui/textarea";
 const Actions = ({
   message,
   feedbackScore,
+  messageKey,
   chatId,
   slug,
   isLastMessage,
@@ -73,6 +74,7 @@ const Actions = ({
           >
             <CopyMessage message={message} />
             <EditMessageAction
+              messageKey={messageKey}
               chatId={chatId}
               role={role}
               isEditing={isEditing}
@@ -243,9 +245,13 @@ function CopyMessage({ message }) {
   );
 }
 
+/**
+ * `chatId` is null when the answer never made it into the database - it failed, or it
+ * was stopped. Retry stays available there on purpose: a failed answer is the one a
+ * person is most likely to want re-run, and replaying it needs no stored row.
+ */
 function RegenerateMessage({ regenerateMessage, chatId }) {
   const { t } = useTranslation();
-  if (!chatId) return null;
   return (
     <div className="relative">
       <Tooltip>

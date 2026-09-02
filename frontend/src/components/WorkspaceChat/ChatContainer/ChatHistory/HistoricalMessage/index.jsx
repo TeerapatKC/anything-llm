@@ -42,6 +42,39 @@ function hasVisibleContent(message) {
   return true;
 }
 
+/**
+ * A completed thought chain takes itself off screen once the answer it preceded
+ * arrives (see ThoughtChainComponent), so an assistant message that is *only* a
+ * completed thought chain renders nothing at all - yet its wrapper still lays out
+ * `py-4`, 32px of blank space. An agent run emits one of these per step, so the
+ * gap between the prompt and the live status row grew by 32px on every tool call.
+ *
+ * @returns {boolean} true when the row would be empty and should not be rendered
+ */
+function assistantRendersNothing({
+  message,
+  stopped,
+  sources,
+  attachments,
+  outputs,
+  clarifyingQuestions,
+}) {
+  if (stopped) return false;
+  if (
+    sources?.length ||
+    attachments?.length ||
+    outputs?.length ||
+    clarifyingQuestions?.length
+  )
+    return false;
+  if (!message) return true;
+  if (hasVisibleContent(message)) return false;
+  // An unclosed chain is still being written, and that row is on screen.
+  return !(
+    message.match(THOUGHT_REGEX_OPEN) && !message.match(THOUGHT_REGEX_CLOSE)
+  );
+}
+
 const HistoricalMessage = ({
   uuid: uuidProp,
   message,
@@ -60,13 +93,19 @@ const HistoricalMessage = ({
   outputs = [],
   clarifyingQuestions = [],
   stopped = false,
+  statusMessages = [],
+  runIsLive = true,
 }) => {
   // Freeze uuid on first render. User messages arrive without a uuid and this value
   // is used as the wrapper div's `key` — a default param fallback would regenerate
   // on every render and remount the subtree, wiping TruncatableContent state.
   const [uuid] = useState(() => uuidProp ?? v4());
+  // Identity for the edit/delete actions. A turn only earns a chatId once its answer
+  // completes and the pair is saved, so before that - and forever, if the answer
+  // failed - the client-side uuid is the only handle the message has.
+  const messageKey = chatId ?? uuid;
   const { t } = useTranslation();
-  const { isEditing } = useEditMessage({ chatId, role });
+  const { isEditing } = useEditMessage({ messageKey, role });
   const { isDeleted, completeDelete, onEndAnimation } = useWatchDeleteMessage({
     chatId,
     role,
@@ -83,7 +122,30 @@ const HistoricalMessage = ({
   if (completeDelete) return null;
 
   if (!!error) {
-    return <ErrorResponse key={uuid} error={error} />;
+    return (
+      <div key={uuid} className="flex w-full flex-col group">
+        <ErrorResponse error={error} />
+        {/*
+          Without this the failed answer had no actions at all, so the one turn a
+          person actually wants to re-run was the only one they could not.
+        */}
+        <div className="px-4 md:pl-0">
+          <Actions
+            message={message}
+            feedbackScore={feedbackScore}
+            messageKey={messageKey}
+            chatId={chatId}
+            slug={workspace?.slug}
+            isLastMessage={isLastMessage}
+            regenerateMessage={regenerateMessage}
+            isEditing={isEditing}
+            role={role}
+            forkThread={forkThread}
+            metrics={metrics}
+          />
+        </div>
+      </div>
+    );
   }
 
   if (role === "user") {
@@ -92,6 +154,7 @@ const HistoricalMessage = ({
         <div key={uuid} className="flex justify-end w-full py-4 px-4">
           <EditMessageForm
             role={role}
+            messageKey={messageKey}
             chatId={chatId}
             message={message}
             attachments={attachments}
@@ -122,6 +185,7 @@ const HistoricalMessage = ({
           <Actions
             message={message}
             feedbackScore={feedbackScore}
+            messageKey={messageKey}
             chatId={chatId}
             slug={workspace?.slug}
             isLastMessage={isLastMessage}
@@ -136,6 +200,19 @@ const HistoricalMessage = ({
     );
   }
 
+  if (
+    !isEditing &&
+    assistantRendersNothing({
+      message,
+      stopped,
+      sources,
+      attachments,
+      outputs,
+      clarifyingQuestions,
+    })
+  )
+    return null;
+
   return (
     <div
       key={uuid}
@@ -146,6 +223,7 @@ const HistoricalMessage = ({
         {isEditing ? (
           <EditMessageForm
             role={role}
+            messageKey={messageKey}
             chatId={chatId}
             message={message}
             attachments={attachments}
@@ -161,6 +239,8 @@ const HistoricalMessage = ({
               messageId={uuid}
               allowAnimation={isLastMessage && !stopped}
               stopped={stopped}
+              statusMessages={statusMessages}
+              runIsLive={runIsLive}
             />
             {stopped && !message?.match(THOUGHT_REGEX_OPEN) && (
               <StoppedResponse />
@@ -198,6 +278,7 @@ const HistoricalMessage = ({
             <Actions
               message={message}
               feedbackScore={feedbackScore}
+              messageKey={messageKey}
               chatId={chatId}
               slug={workspace?.slug}
               isLastMessage={isLastMessage}
@@ -238,7 +319,12 @@ export default memo(
       JSON.stringify(prevProps.metrics) === JSON.stringify(nextProps.metrics) &&
       JSON.stringify(prevProps.sources) === JSON.stringify(nextProps.sources) &&
       JSON.stringify(prevProps.clarifyingQuestions) ===
-        JSON.stringify(nextProps.clarifyingQuestions)
+        JSON.stringify(nextProps.clarifyingQuestions) &&
+      // Folded-in agent commentary grows during a run; without this the row keeps
+      // rendering the first batch it was given.
+      prevProps.statusMessages?.length === nextProps.statusMessages?.length &&
+      // The row switches from "Thinking" to "Stopped" on this alone.
+      prevProps.runIsLive === nextProps.runIsLive
     );
   }
 );
@@ -326,7 +412,15 @@ function TruncatableContent({ children }) {
 }
 
 const RenderChatContent = memo(
-  ({ role, message, messageId, allowAnimation = false, stopped = false }) => {
+  ({
+    role,
+    message,
+    messageId,
+    allowAnimation = false,
+    stopped = false,
+    statusMessages = [],
+    runIsLive = true,
+  }) => {
     // If the message is not from the assistant, we can render it directly
     // as normal since the user cannot think (lol)
     if (role !== "assistant")
@@ -368,6 +462,8 @@ const RenderChatContent = memo(
             messageId={messageId}
             allowAnimation={allowAnimation}
             stopped={stopped}
+            statusMessages={statusMessages}
+            runIsLive={runIsLive}
           />
         )}
         {msgToRender.trim().length > 0 && (

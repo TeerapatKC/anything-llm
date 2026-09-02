@@ -324,37 +324,34 @@ async function streamChatWithWorkspace(
     });
   }
 
-  if (completeText?.length > 0) {
-    const { chat } = await WorkspaceChats.new({
-      workspaceId: workspace.id,
-      prompt: message,
-      response: {
-        text: completeText,
-        sources,
-        type: chatMode,
-        attachments,
-        metrics,
-      },
-      threadId: thread?.id || null,
-      user,
-    });
-
-    writeResponseChunk(response, {
-      uuid,
-      type: "finalizeResponseStream",
-      close: true,
-      error: false,
-      chatId: chat.id,
+  // Saved even when the model produced nothing. The run may have been stopped
+  // before the first token, or died mid-stream, or had its socket closed when
+  // the person navigated away - and the prompt is still worth keeping, because
+  // it is the thing they wrote. Previously an empty reply meant the whole turn
+  // was dropped and the prompt was gone on the way back to the thread.
+  //
+  // A reply-less record never re-enters the model's context: convertToPromptHistory
+  // skips it rather than replaying an empty assistant turn.
+  const { chat } = await WorkspaceChats.new({
+    workspaceId: workspace.id,
+    prompt: message,
+    response: {
+      text: completeText ?? "",
+      sources,
+      type: chatMode,
+      attachments,
       metrics,
-    });
-    return;
-  }
+    },
+    threadId: thread?.id || null,
+    user,
+  });
 
   writeResponseChunk(response, {
     uuid,
     type: "finalizeResponseStream",
     close: true,
     error: false,
+    chatId: chat?.id ?? null,
     metrics,
   });
   return;

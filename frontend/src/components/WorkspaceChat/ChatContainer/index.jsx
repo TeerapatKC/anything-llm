@@ -124,6 +124,11 @@ export default function ChatContainer({
     const prevChatHistory = [
       ...chatHistory,
       {
+        // A prompt has no chatId until its answer finishes and the pair is saved,
+        // so without this the message has no identity at all and the edit/retry
+        // actions have nothing to key on - which is exactly the state a failed
+        // turn is stuck in.
+        uuid: v4(),
         content: currentMessage,
         role: "user",
         attachments: parseAttachments(),
@@ -230,6 +235,7 @@ export default function ChatContainer({
       prevChatHistory = [
         ...chatHistory,
         {
+          uuid: v4(),
           content: text,
           role: "user",
           attachments,
@@ -256,19 +262,30 @@ export default function ChatContainer({
 
   const regenerateAssistantMessage = useCallback(
     (chatId) => {
-      const filteredHistory = chatHistoryRef2.current.slice(0, -1);
-      const lastUserMessage = filteredHistory.findLast(
-        (msg) => msg.role === "user"
-      );
+      const history = chatHistoryRef2.current;
+      // Rewind to the prompt itself, not just one message back. An answer is
+      // rarely a single entry - an agent turn leaves a trail of status lines,
+      // tool calls and reasoning behind it - and dropping only the last one
+      // left all of that on screen, so the retry appeared to append to the
+      // failed attempt rather than replace it.
+      const lastUserIdx = history.findLastIndex((msg) => msg.role === "user");
+      if (lastUserIdx < 0) return;
+
+      const lastUserMessage = history[lastUserIdx];
+      const filteredHistory = history.slice(0, lastUserIdx + 1);
+      const resend = () =>
+        sendCommandRef.current({
+          text: lastUserMessage.content,
+          autoSubmit: true,
+          history: filteredHistory,
+          attachments: lastUserMessage?.attachments,
+        });
+
+      // A failed or aborted answer was never persisted, so there is no row to
+      // delete - retrying it is purely a client-side replay.
+      if (!chatId) return resend();
       Workspace.deleteChats(workspace.slug, [chatId])
-        .then(() =>
-          sendCommandRef.current({
-            text: lastUserMessage.content,
-            autoSubmit: true,
-            history: filteredHistory,
-            attachments: lastUserMessage?.attachments,
-          })
-        )
+        .then(resend)
         .catch((e) => console.error(e));
     },
     [workspace.slug]

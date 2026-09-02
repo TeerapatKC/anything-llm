@@ -12,28 +12,43 @@ import {
 } from "../ThoughtContainer";
 import ErrorResponse from "../ErrorResponse";
 
-const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
+const PromptReply = ({
+  uuid,
+  reply,
+  pending,
+  error,
+  sources = [],
+  statusMessages = [],
+  runIsLive = true,
+}) => {
   const { t } = useTranslation();
   if (!reply && sources.length === 0 && !pending && !error) return null;
 
   if (pending) {
     return (
-      <div className="flex justify-start w-full">
-        <div className="py-4 pl-0 pr-4 flex flex-col md:max-w-[80%]">
+      // Same row geometry as the Thinking disclosure - full width, `py-2`, an
+      // 18px leading slot - so the two loading states occupy the same line and
+      // the same left edge instead of each sitting at its own inset.
+      <div className="flex w-full justify-start">
+        <div className="flex w-full items-center gap-x-2.5 py-2">
           {/*
-            The animation below is the only signal that a reply is coming, and
-            it is purely visual. The status region gives a screen reader user
-            the same information. It carries the text rather than wrapping the
+            The dots below are the only signal that a reply is coming, and they
+            are purely visual. The status region gives a screen reader user the
+            same information. It carries the text rather than wrapping the
             animation so that it announces once, on appearance, instead of on
             every repaint.
           */}
           <span className="sr-only" role="status">
             {t("chat_window.generating_response")}
           </span>
-          <div
-            className="mt-3 ml-1 dot-falling light:invert"
+          <span
+            className="flex size-[18px] shrink-0 items-center gap-[3px]"
             aria-hidden="true"
-          ></div>
+          >
+            <span className="typing-dot" />
+            <span className="typing-dot" style={{ animationDelay: "0.15s" }} />
+            <span className="typing-dot" style={{ animationDelay: "0.3s" }} />
+          </span>
         </div>
       </div>
     );
@@ -50,6 +65,8 @@ const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
           key={`${uuid}-prompt-reply-content`}
           message={reply}
           messageId={uuid}
+          statusMessages={statusMessages}
+          runIsLive={runIsLive}
         />
         <Citations sources={sources} />
       </div>
@@ -57,7 +74,12 @@ const PromptReply = ({ uuid, reply, pending, error, sources = [] }) => {
   );
 };
 
-function RenderAssistantChatContent({ message, messageId }) {
+function RenderAssistantChatContent({
+  message,
+  messageId,
+  statusMessages,
+  runIsLive,
+}) {
   const contentRef = useRef("");
   const thoughtChainRef = useRef(null);
 
@@ -89,6 +111,8 @@ function RenderAssistantChatContent({ message, messageId }) {
         content=""
         messageId={messageId}
         allowAnimation={true}
+        statusMessages={statusMessages}
+        runIsLive={runIsLive}
       />
     );
 

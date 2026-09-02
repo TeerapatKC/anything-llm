@@ -17,7 +17,12 @@ const chatHistory = {
         // the pending save so a completing in-flight response doesn't reappear.
         aibitat.onAbort(() => {
           aibitat._aborted = true;
+          this._revealPrompt(aibitat);
         });
+
+        // A run that throws never reaches `_store`, so without this its prompt
+        // stays behind `include: false` forever.
+        aibitat.onError(() => this._revealPrompt(aibitat));
 
         // pre-register a workspace chat ID to secure it in the DB
         aibitat.onMessage(async (message) => {
@@ -91,7 +96,7 @@ const chatHistory = {
               response: last.content,
               attachments,
             });
-          } catch { }
+          } catch {}
         });
       },
       _store: async function (
@@ -169,6 +174,57 @@ const chatHistory = {
         }
         options?.postSave();
         this._cleanup(aibitat);
+      },
+
+      /**
+       * Make the pre-registered prompt visible even though the run never produced
+       * a reply.
+       *
+       * The row is written the moment the prompt arrives, but with
+       * `include: false` - at that point it is only a placeholder holding an id
+       * for the reply to be upserted onto, and both the thread history and the
+       * LLM context query filter it out. A run that errors, is stopped, or loses
+       * its socket never reaches `_store`, so that placeholder stayed hidden and
+       * the prompt looked lost on the way back to the thread.
+       *
+       * The tracked id is deliberately left in place: if a reply does still land
+       * afterwards, `_store` upserts onto this same row and replaces what is
+       * written here.
+       *
+       * @param {import("../index").default} aibitat
+       */
+      _revealPrompt: async function (aibitat) {
+        const chatId = aibitat.trackedChatId;
+        if (!chatId || aibitat._promptRevealed) return;
+        aibitat._promptRevealed = true;
+
+        const invocation = aibitat.handlerProps?.invocation;
+        if (!invocation) return;
+
+        // Whatever the agent managed to say before it stopped, if anything.
+        const partialReply = [...(aibitat.chats ?? [])]
+          .reverse()
+          .find((chat) => chat.from !== "USER" && !!chat.content);
+
+        try {
+          await WorkspaceChats.upsert(chatId, {
+            workspaceId: Number(invocation.workspace_id),
+            response: {
+              text: partialReply?.content ?? "",
+              sources: aibitat._pendingCitations ?? [],
+              type: "chat",
+              attachments: [],
+              metrics: aibitat.providerInstance?.getCumulativeUsage?.() ?? {},
+            },
+            user: { id: invocation?.user_id || null },
+            threadId: invocation?.thread_id || null,
+            include: true,
+          });
+        } catch (error) {
+          console.error(
+            `[chat-history] could not reveal an unanswered prompt: ${error.message}`
+          );
+        }
       },
 
       _autoRenameThread: async function (aibitat, prompt) {

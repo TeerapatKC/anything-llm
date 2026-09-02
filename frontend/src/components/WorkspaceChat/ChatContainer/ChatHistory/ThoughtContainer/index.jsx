@@ -91,6 +91,9 @@ function contentIsNotEmpty(content = "") {
  * Component to render a thought chain.
  * @param {string} content - The content of the thought chain.
  * @param {string} messageId - The unique ID for this message (used to persist expansion state).
+ * @param {Array} statusMessages - The agent's step commentary for this same turn, if any.
+ *   The model's reasoning and the agent's commentary are one working state, so they share
+ *   a single disclosure - see the note where ChatHistory folds them together.
  * @returns {JSX.Element}
  */
 export const ThoughtChainComponent = forwardRef(
@@ -100,6 +103,8 @@ export const ThoughtChainComponent = forwardRef(
       messageId,
       allowAnimation = false,
       stopped = false,
+      statusMessages = [],
+      runIsLive = true,
     },
     ref
   ) => {
@@ -131,18 +136,32 @@ export const ThoughtChainComponent = forwardRef(
       },
     }));
 
-    const isThinking =
-      allowAnimation &&
-      content.match(THOUGHT_REGEX_OPEN) &&
+    const chainIsOpen =
+      !!content.match(THOUGHT_REGEX_OPEN) &&
       !content.match(THOUGHT_REGEX_CLOSE);
+
+    // A chain only ever closes itself, so one that never got its closing tag is
+    // either still being written or was cut off when the run died. `runIsLive`
+    // is the only thing that can tell those apart - without it an abandoned
+    // chain shimmers "Thinking" for good, right above the error that ended it.
+    const abandoned = chainIsOpen && !runIsLive;
+    const halted = stopped || abandoned;
+
+    const isThinking = allowAnimation && chainIsOpen && !abandoned;
     const isComplete =
       content.match(THOUGHT_REGEX_COMPLETE) ||
       content.match(THOUGHT_REGEX_CLOSE);
     const tagStrippedContent = content
       .replace(THOUGHT_REGEX_OPEN, "")
       .replace(THOUGHT_REGEX_CLOSE, "");
-    const canExpand = tagStrippedContent.trim().length > 0;
-    if (!content || !content.length || !hasReadableContent) return null;
+    const hasStatus = statusMessages.length > 0;
+    const canExpand = tagStrippedContent.trim().length > 0 || hasStatus;
+
+    // The parent hands the reasoning over by ref after mount, so `content` is empty
+    // on the first render. Folded status lines have to hold the row open across that
+    // gap, or the agent's commentary would flicker out and back.
+    if (!hasStatus && (!content || !content.length || !hasReadableContent))
+      return null;
 
     // Once the model has closed its thought and moved on to the answer, the reasoning
     // has served its purpose - the reply below it is what there is to read. Same rule the
@@ -161,12 +180,12 @@ export const ThoughtChainComponent = forwardRef(
             className={`flex w-full items-center gap-x-2.5 py-2 text-left ${canExpand ? "cursor-pointer" : "cursor-default"}`}
           >
             <span className="size-[18px] shrink-0 opacity-50">
-              {stopped ? (
+              {halted ? (
                 <CircleStop
                   className="size-[17px]"
                   aria-label="Response stopped"
                 />
-              ) : isThinking ? (
+              ) : isThinking || hasStatus ? (
                 <video
                   autoPlay
                   loop
@@ -189,10 +208,10 @@ export const ThoughtChainComponent = forwardRef(
 
             <span
               className={`min-w-0 flex-1 font-mono text-sm leading-[18px] ${
-                isThinking && !stopped ? "text-shimmer" : dimText
+                (isThinking || hasStatus) && !halted ? "text-shimmer" : dimText
               }`}
             >
-              {stopped ? "Stopped" : "Thinking"}
+              {halted ? "Stopped" : "Thinking"}
             </span>
 
             {canExpand && (
@@ -210,13 +229,31 @@ export const ThoughtChainComponent = forwardRef(
             >
               <div className="overflow-hidden">
                 <div
-                  className={`pb-2 pl-7 font-mono text-sm leading-5 [&_p]:m-0 ${dimText}`}
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(
-                      renderMarkdown(tagStrippedContent)
-                    ),
-                  }}
-                />
+                  className={`pb-2 pl-7 font-mono text-sm leading-5 ${dimText}`}
+                >
+                  {/*
+                    The agent's steps come first: they are what it did, and the
+                    reasoning below is what it was thinking while doing it.
+                  */}
+                  {statusMessages.map((status, index) => (
+                    <div
+                      key={`status-${status.uuid || index}`}
+                      className="mb-2"
+                    >
+                      {status.content}
+                    </div>
+                  ))}
+                  {tagStrippedContent.trim().length > 0 && (
+                    <div
+                      className="[&_p]:m-0"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(
+                          renderMarkdown(tagStrippedContent)
+                        ),
+                      }}
+                    />
+                  )}
+                </div>
               </div>
             </div>
           )}

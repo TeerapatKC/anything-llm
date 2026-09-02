@@ -35,7 +35,7 @@ async function asDocX({
     };
   }
 
-  const content = pageContent.join("");
+  const content = pageContent.join("\n\n");
   const data = {
     id: v4(),
     url: "file://" + fullFilePath,
