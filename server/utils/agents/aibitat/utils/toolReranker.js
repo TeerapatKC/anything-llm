@@ -19,6 +19,7 @@ class ToolReranker {
     ToolReranker.instance = this;
     this.tokenManager = new TokenManager();
     this.reranker = null;
+    this.toolGroups = null;
   }
 
   log(text, ...args) {
@@ -65,6 +66,39 @@ class ToolReranker {
       await this.reranker.initClient();
     }
     return this.reranker;
+  }
+
+  /**
+   * Build a map of tool name -> the set of sibling tool names that belong to the
+   * same multi-stage skill (e.g. sql-agent's list-databases/list-tables/
+   * get-table-schema/query, or filesystem-agent's read/write/list/etc children).
+   *
+   * Multi-stage skills are a pipeline: a "query"-type tool is frequently useless
+   * without the "discovery"-type tools that precede it (you can't sql-query a
+   * database you never listed). Semantic similarity to the user's prompt has no
+   * notion of that dependency, so reranking alone can drop the discovery tool
+   * while keeping the now-unusable query tool. Grouping lets rerank() pin whole
+   * skills back together instead of only the highest-scoring member.
+   * @returns {Map<string, Set<string>>}
+   */
+  #getToolGroups() {
+    if (this.toolGroups) return this.toolGroups;
+    const groups = new Map();
+    try {
+      const AgentPlugins = require("../plugins");
+      for (const key of Object.keys(AgentPlugins)) {
+        const entry = AgentPlugins[key];
+        if (!Array.isArray(entry?.plugin)) continue;
+        const names = entry.plugin.map((child) => child.name).filter(Boolean);
+        if (names.length < 2) continue;
+        const nameSet = new Set(names);
+        for (const name of names) groups.set(name, nameSet);
+      }
+    } catch (error) {
+      this.log(`Could not load tool groups for pinning: ${error.message}`);
+    }
+    this.toolGroups = groups;
+    return groups;
   }
 
   /**
@@ -164,23 +198,47 @@ class ToolReranker {
         score: doc.rerank_score,
       }));
 
-      const rerankedTools = rerankedIndices.map(
-        ({ index }) => documents[index].tool
+      // Reranking alone can split a multi-stage skill across the cut line - e.g.
+      // keep sql-query but drop sql-list-databases, leaving the agent a query
+      // tool it has no way to address. Pin whole groups back together so a
+      // skill that made the cut always travels with every stage it needs.
+      const toolGroups = this.#getToolGroups();
+      const toolByName = new Map(
+        documents.map((doc) => [doc.toolName, doc])
       );
-      const newTokenCount = rerankedIndices.reduce(
-        (acc, { index }) => acc + documents[index].tokens,
-        0
+      const selectedNames = new Set(
+        rerankedIndices.map(({ index }) => documents[index].toolName)
       );
+      const pinnedNames = [];
+      for (const name of Array.from(selectedNames)) {
+        const siblings = toolGroups.get(name);
+        if (!siblings) continue;
+        for (const sibling of siblings) {
+          if (selectedNames.has(sibling) || !toolByName.has(sibling)) continue;
+          selectedNames.add(sibling);
+          pinnedNames.push(sibling);
+        }
+      }
+
+      const rerankedTools = rerankedIndices
+        .map(({ index }) => documents[index].tool)
+        .concat(pinnedNames.map((name) => toolByName.get(name).tool));
+      const newTokenCount =
+        rerankedIndices.reduce((acc, { index }) => acc + documents[index].tokens, 0) +
+        pinnedNames.reduce((acc, name) => acc + toolByName.get(name).tokens, 0);
       const percentSaved = Math.round(
         ((originalTokenCount - newTokenCount) / originalTokenCount) * 100
       );
       this.log(`
-Identified top ${rerankedTools.length} of ${tools.length} tools in ${elapsedMs}ms
+Identified top ${rerankedIndices.length} of ${tools.length} tools in ${elapsedMs}ms${pinnedNames.length ? `, pinned ${pinnedNames.length} more to keep multi-stage skills intact` : ""}
 ${originalTokenCount.toLocaleString()} -> ${newTokenCount.toLocaleString()} tokens \x1b[0;93m(${percentSaved}% reduction)\x1b[0m`);
 
       let logText = "Selected tools:\n";
       rerankedIndices.forEach(({ index }, i) => {
         logText += `  ${i + 1}. ${documents[index].toolName}\n`;
+      });
+      pinnedNames.forEach((name, i) => {
+        logText += `  ${rerankedIndices.length + i + 1}. ${name} (pinned - sibling of a selected multi-stage skill)\n`;
       });
       this.log(logText);
       return rerankedTools;

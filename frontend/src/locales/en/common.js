@@ -1226,6 +1226,8 @@ const TRANSLATIONS = {
     connected: {
       status: "Connected",
       "status-disconnected": "Disconnected — token may be expired or invalid",
+      "smtp-warning":
+        "SMTP is not configured, so the verification code can't be emailed to anyone - nobody will be able to link their account. Set it up under Settings > SMTP.",
       "placeholder-token": "Paste new bot token...",
       reconnect: "Reconnect",
       workspace: "Workspace",
