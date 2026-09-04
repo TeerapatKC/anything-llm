@@ -14,52 +14,12 @@ function markdownToTelegram(
 ) {
   if (!text) return "";
 
-  let result = text;
+  let result = stripThinkBlocks(text);
+  if (!result) return "";
 
   // Use null char placeholders that won't be affected by other transformations
   const codeBlocks = [];
   const inlineCode = [];
-  const thinkBlocks = [];
-
-  // Handle <think> blocks - including partial tags from split messages
-  // Process complete blocks first, then handle partials
-
-  // First: complete <think>...</think> blocks
-  result = result.replace(/<think>([\s\S]*?)<\/think>/g, (_, content) => {
-    const placeholder = `\x00THINKBLOCK${thinkBlocks.length}\x00`;
-    const trimmed = content.trim();
-    const tag = trimmed.length > 200 ? "blockquote expandable" : "blockquote";
-    thinkBlocks.push(
-      `<${tag}>💭 <b>Thinking:</b>\n${escapeHTML(trimmed)}</blockquote>`
-    );
-    return placeholder;
-  });
-
-  // Second: unclosed <think> tag (split message part 1)
-  if (result.includes("<think>")) {
-    result = result.replace(/<think>([\s\S]*)$/, (_, content) => {
-      const placeholder = `\x00THINKBLOCK${thinkBlocks.length}\x00`;
-      const trimmed = content.trim();
-      const tag = trimmed.length > 200 ? "blockquote expandable" : "blockquote";
-      thinkBlocks.push(
-        `<${tag}>💭 <b>Thinking:</b>\n${escapeHTML(trimmed)}</blockquote>`
-      );
-      return placeholder;
-    });
-  }
-
-  // Third: closing </think> without open (split message part 2)
-  if (result.includes("</think>")) {
-    result = result.replace(/([\s\S]*?)<\/think>/g, (_, content) => {
-      const placeholder = `\x00THINKBLOCK${thinkBlocks.length}\x00`;
-      const trimmed = content.trim();
-      const tag = trimmed.length > 200 ? "blockquote expandable" : "blockquote";
-      thinkBlocks.push(
-        `<${tag}>💭 <b>Thinking continued:</b>\n${escapeHTML(trimmed)}</blockquote>`
-      );
-      return placeholder;
-    });
-  }
 
   // Extract fenced code blocks (```...```)
   result = result.replace(/```(\w*)\n?([\s\S]*?)```/g, (_, lang, code) => {
@@ -107,9 +67,6 @@ function markdownToTelegram(
   result = result.replace(/^[-*]\s+/gm, "• ");
 
   // Restore preserved blocks
-  thinkBlocks.forEach((block, i) => {
-    result = result.replace(`\x00THINKBLOCK${i}\x00`, block);
-  });
   codeBlocks.forEach((block, i) => {
     result = result.replace(`\x00CODEBLOCK${i}\x00`, block);
   });
@@ -121,6 +78,23 @@ function markdownToTelegram(
   // since if you try to update a message with an unclosed tag, the API will return an 400 error
   if (closeUnclosedTags) result = closeUnclosedHtmlTags(result);
   return result;
+}
+
+/**
+ * Strip <think>...</think> reasoning blocks from model output so they are
+ * never sent to Telegram. Handles a still-open <think> tag (mid-stream, before
+ * the closing tag has arrived yet) by dropping everything from the tag onward,
+ * and a dangling </think> with no opening tag (the tag landed in a previous
+ * streamed chunk) by dropping everything up to and including it.
+ * @param {string} text
+ * @returns {string}
+ */
+function stripThinkBlocks(text) {
+  if (!text) return "";
+  let result = text.replace(/<think>[\s\S]*?<\/think>/g, "");
+  if (result.includes("<think>")) result = result.replace(/<think>[\s\S]*$/, "");
+  if (result.includes("</think>")) result = result.replace(/[\s\S]*?<\/think>/g, "");
+  return result.trim();
 }
 
 /**
@@ -222,4 +196,5 @@ function convertTableToPreformatted(tableMarkdown) {
 module.exports = {
   escapeHTML,
   markdownToTelegram,
+  stripThinkBlocks,
 };
