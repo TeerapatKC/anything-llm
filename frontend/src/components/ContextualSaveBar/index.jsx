@@ -9,7 +9,7 @@ export default function ContextualSaveBar({
   if (!showing) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t shadow-lg flex items-center justify-end px-6 z-[999] transition-all">
+    <div className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t shadow-lg flex items-center justify-end px-6 z-40 transition-all">
       <div className="absolute ml-6 left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center gap-x-2">
         <TriangleAlert
           size={18}

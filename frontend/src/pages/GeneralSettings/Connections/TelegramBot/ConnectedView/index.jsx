@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import Telegram from "@/models/telegram";
 import ConnectedBotCard from "./ConnectedBotCard";
 import DetailsSection from "./DetailsSection";
@@ -10,6 +11,7 @@ export default function ConnectedView({
   onDisconnected,
   onReconnected,
 }) {
+  const { t } = useTranslation();
   const connected = config.connected;
   const [newToken, setNewToken] = useState("");
   const [linkedUsers, setLinkedUsers] = useState([]);
@@ -39,6 +41,11 @@ export default function ConnectedView({
   return (
     <div className="flex flex-col gap-y-8 mt-8">
       <ConnectedBotCard config={config} />
+      {!config.smtp_configured && (
+        <p className="text-xs text-amber-500 -mt-4 max-w-[700px]">
+          {t("telegram.connected.smtp-warning")}
+        </p>
+      )}
       <DetailsSection config={config} onDisconnected={onDisconnected} />
       <UsersSection linkedUsers={linkedUsers} fetchUsers={fetchUsers} />
     </div>

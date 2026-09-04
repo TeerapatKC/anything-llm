@@ -177,6 +177,30 @@ async function sendLinePairingEmail({ to, code, username }) {
   });
 }
 
+/**
+ * Sent when a signed-in web user mints a Telegram linking code, so they have the
+ * command in their inbox as well as on screen. Mirrors sendLinePairingEmail.
+ * @param {{to: string, code: string, username: string}} params
+ * @returns {Promise<{sent: boolean, reason: string|null}>}
+ */
+async function sendTelegramPairingEmail({ to, code, username }) {
+  const command = `/link ${username} ${code}`;
+  return sendSystemMail({
+    to,
+    subject: "Your NexusAI Telegram linking code",
+    text:
+      `Someone requested a Telegram linking code for the NexusAI account "${username}".\n\n` +
+      `Send this command to the bot in Telegram to link this account:\n\n` +
+      `${command}\n\n` +
+      `The command expires after 5 minutes. If you did not request this, you can ignore this email.`,
+    html:
+      `<p>Someone requested a Telegram linking code for the NexusAI account <b>${escapeHtml(username)}</b>.</p>` +
+      `<p>Send this command to the bot in Telegram to link this account:</p>` +
+      `<p style="font-size: 18px; font-weight: bold; letter-spacing: 1px;">${escapeHtml(command)}</p>` +
+      `<p>The command expires after 5 minutes. If you did not request this, you can ignore this email.</p>`,
+  });
+}
+
 module.exports = {
   SMTP_PROVIDER_PRESETS,
   resolvedConfig,
@@ -188,4 +212,5 @@ module.exports = {
   sendWelcomeEmail,
   sendInviteEmail,
   sendLinePairingEmail,
+  sendTelegramPairingEmail,
 };

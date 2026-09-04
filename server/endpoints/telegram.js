@@ -16,6 +16,10 @@ const {
   createPairingCode,
   revokeCodesForUser,
 } = require("../utils/telegramBot/utils/pairing");
+const {
+  sendTelegramPairingEmail,
+  isSendingEnabled: isSmtpSendingEnabled,
+} = require("../utils/smtp");
 
 function telegramEndpoints(app) {
   if (!app) return;
@@ -45,6 +49,9 @@ function telegramEndpoints(app) {
             linked_user_count: await TelegramUser.count(),
             voice_response_mode:
               connector.config.voice_response_mode || "text_only",
+            // The /link flow emails the code as a convenience copy, so the admin
+            // needs to see this before wondering why that half isn't arriving.
+            smtp_configured: isSmtpSendingEnabled(),
           },
         });
       } catch (e) {
@@ -322,7 +329,9 @@ function telegramEndpoints(app) {
 
   /**
    * Mint a short-lived linking code for the signed-in user. Being able to read
-   * this response is the proof of account ownership that /link relies on.
+   * this response is the proof of account ownership that /link relies on. Also
+   * emailed as a convenience copy, since the user asked for that alongside the
+   * on-screen command (matches the LINE flow).
    */
   app.post(
     "/telegram/pairing-code",
@@ -341,6 +350,17 @@ function telegramEndpoints(app) {
         }
 
         const { code, expiresAt, ttlMs } = createPairingCode(user);
+
+        if (user.email) {
+          const { sent, reason } = await sendTelegramPairingEmail({
+            to: user.email,
+            code,
+            username: user.username,
+          });
+          if (!sent)
+            console.error(`[Telegram] Failed to send pairing email: ${reason}`);
+        }
+
         return response.status(200).json({
           success: true,
           code,

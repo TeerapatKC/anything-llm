@@ -1646,6 +1646,8 @@ const TRANSLATIONS = {
       status: "接続されている",
       "status-disconnected":
         "通信エラー - トークンが無効または期限切れになっている可能性があります",
+      "smtp-warning":
+        "SMTPが設定されていないため、確認コードをメールで送信できません - アカウントをリンクできるユーザーがいなくなります。設定 > SMTP から設定してください。",
       "placeholder-token": "新しいボットのトークンを貼り付け...",
       reconnect: "再接続",
       workspace: "作業スペース",
