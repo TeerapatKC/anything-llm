@@ -6,6 +6,7 @@ import PromptInput, {
   PROMPT_INPUT_ID,
 } from "./PromptInput";
 import InactiveWorkspaceNotice from "./InactiveWorkspaceNotice";
+import NotAMemberNotice from "./NotAMemberNotice";
 import Workspace from "@/models/workspace";
 import handleChat, { ABORT_STREAM_EVENT } from "@/utils/chat";
 import { useNavigate } from "react-router-dom";
@@ -35,6 +36,8 @@ import { ChatSidebarProvider } from "./ChatSidebar";
 import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
 import ActiveGenerationGuard from "./ActiveGenerationGuard";
+import useUser from "@/hooks/useUser";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 
 export default function ChatContainer({
   workspace,
@@ -43,6 +46,7 @@ export default function ChatContainer({
 }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { user } = useUser();
   const [loadingResponse, setLoadingResponse] = useState(false);
   const [chatHistory, setChatHistory] = useState(knownHistory);
   const [socketId, setSocketId] = useState(null);
@@ -56,6 +60,11 @@ export default function ChatContainer({
 
   const isEmpty =
     chatHistory.length === 0 && !sessionStorage.getItem(PENDING_HOME_MESSAGE);
+
+  // Chatting is a membership permission, never granted to an operator by their
+  // instance role alone, so someone can be able to open and administer this
+  // workspace while the server would still refuse every message they sent.
+  const canChat = workspaceCan(WS.CHAT, workspace?.slug, user);
 
   /**
    * Keep chat history bottom-padding in sync with the prompt input's
@@ -518,6 +527,8 @@ export default function ChatContainer({
                     </h1>
                     {workspace?.active === false ? (
                       <InactiveWorkspaceNotice />
+                    ) : !canChat ? (
+                      <NotAMemberNotice />
                     ) : (
                       <PromptInput
                         workspace={workspace}
@@ -529,10 +540,12 @@ export default function ChatContainer({
                       />
                     )}
                   </div>
-                  <SuggestedMessages
-                    suggestedMessages={workspace?.suggestedMessages}
-                    sendCommand={sendCommand}
-                  />
+                  {canChat && (
+                    <SuggestedMessages
+                      suggestedMessages={workspace?.suggestedMessages}
+                      sendCommand={sendCommand}
+                    />
+                  )}
                 </div>
               </div>
             </DnDFileUploaderWrapper>
@@ -574,6 +587,8 @@ export default function ChatContainer({
                 </MetricsProvider>
                 {workspace?.active === false ? (
                   <InactiveWorkspaceNotice />
+                ) : !canChat ? (
+                  <NotAMemberNotice />
                 ) : (
                   <PromptInput
                     workspace={workspace}

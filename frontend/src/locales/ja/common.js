@@ -144,6 +144,8 @@ const TRANSLATIONS = {
       deactivated: "ワークスペースは非アクティブになりました。",
       "chat-disabled":
         "このワークスペースは非アクティブです。ここでチャットするには管理者がアクティブにする必要があります。",
+      "chat-not-a-member":
+        "このワークスペースを管理できますが、チャットはメンバーのみに限られています。ここで会話を始めるには、自分をメンバーとして追加してください。",
       failed: "ワークスペースのステータスを更新できませんでした。",
       "confirm-title": "このワークスペースを非アクティブにしますか？",
       "confirm-description":
@@ -2506,6 +2508,7 @@ const TRANSLATIONS = {
     table: {
       username: "ユーザー名",
       role: "ワークスペースのロール",
+      "system-role": "システムロール",
       "date-added": "追加日",
     },
     empty: "ワークスペースメンバーはいません",

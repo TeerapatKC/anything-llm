@@ -1,12 +1,12 @@
 import { useModal } from "@/hooks/useModal";
 import { useTranslation } from "react-i18next";
 import Admin from "@/models/admin";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
 import { Button } from "@/components/ui/button";
-import { WorkspaceRole } from "@/models/role";
+import Role, { WorkspaceRole } from "@/models/role";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import useUser from "@/hooks/useUser";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -28,6 +28,7 @@ export default function Members({ workspace }) {
   const [users, setUsers] = useState([]);
   const [members, setMembers] = useState([]);
   const [workspaceRoles, setWorkspaceRoles] = useState([]);
+  const [systemRoles, setSystemRoles] = useState([]);
   const [adminWorkspace, setAdminWorkspace] = useState(null);
 
   const canManageMembers = workspaceCan(
@@ -37,27 +38,44 @@ export default function Members({ workspace }) {
   );
   const { isOpen, openModal, closeModal } = useModal();
 
-  useEffect(() => {
-    async function fetchData() {
-      const [_users, { members: _members }, { roles }, adminWorkspaces] =
-        await Promise.all([
-          Admin.users(),
-          WorkspaceRole.members(workspace.slug),
-          WorkspaceRole.all(),
-          Admin.workspaces(),
-        ]);
-      setAdminWorkspace(
-        adminWorkspaces.find(
-          (adminWorkspace) => adminWorkspace.id === workspace.id
-        )
-      );
-      setMembers(_members || []);
-      setWorkspaceRoles(roles || []);
-      setUsers(_users);
-      setLoading(false);
-    }
-    fetchData();
+  const fetchData = useCallback(async () => {
+    const [
+      _users,
+      { members: _members },
+      { roles },
+      adminWorkspaces,
+      { roles: _systemRoles },
+    ] = await Promise.all([
+      Admin.users(),
+      WorkspaceRole.members(workspace.slug),
+      WorkspaceRole.all(),
+      Admin.workspaces(),
+      // Only to put a display name on each member's instance-wide role; the raw
+      // role identifier stands in if this is not readable by the viewer.
+      Role.all(),
+    ]);
+    setAdminWorkspace(
+      adminWorkspaces.find(
+        (adminWorkspace) => adminWorkspace.id === workspace.id
+      )
+    );
+    setMembers(_members || []);
+    setWorkspaceRoles(roles || []);
+    setSystemRoles(_systemRoles || []);
+    setUsers(_users);
+    setLoading(false);
   }, [workspace]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Refetching beats the page reload this used to do: the table is the only thing
+  // the save changed, and reloading threw away the rest of the settings screen.
+  async function handleMembersSaved() {
+    closeModal();
+    await fetchData();
+  }
 
   return (
     <Dialog
@@ -102,6 +120,9 @@ export default function Members({ workspace }) {
                   {t("workspace-members.table.role")}
                 </TableHead>
                 <TableHead scope="col">
+                  {t("workspace-members.table.system-role")}
+                </TableHead>
+                <TableHead scope="col">
                   {t("workspace-members.table.date-added")}
                 </TableHead>
                 <TableHead scope="col"> </TableHead>
@@ -115,11 +136,12 @@ export default function Members({ workspace }) {
                     member={member}
                     workspaceSlug={workspace.slug}
                     workspaceRoles={workspaceRoles}
+                    systemRoles={systemRoles}
                     canManage={canManageMembers}
                   />
                 ))
               ) : (
-                <TableEmptyRow colSpan="4">
+                <TableEmptyRow colSpan="5">
                   {t("workspace-members.empty")}
                 </TableEmptyRow>
               )}
@@ -128,7 +150,11 @@ export default function Members({ workspace }) {
         )}
       </div>
       <DialogContent size="lg">
-        <AddMemberModal users={users} workspace={adminWorkspace} />
+        <AddMemberModal
+          users={users}
+          workspace={adminWorkspace}
+          onSaved={handleMembersSaved}
+        />
       </DialogContent>
     </Dialog>
   );

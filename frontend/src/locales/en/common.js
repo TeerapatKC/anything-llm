@@ -161,6 +161,8 @@ const TRANSLATIONS = {
       deactivated: "Workspace is now inactive.",
       "chat-disabled":
         "This workspace is inactive. An admin must activate it before you can chat here.",
+      "chat-not-a-member":
+        "You can manage this workspace, but chatting in it is reserved for its members. Add yourself as a member to start a conversation here.",
       failed: "Failed to update workspace status.",
       "confirm-title": "Deactivate this workspace?",
       "confirm-description":
@@ -2501,6 +2503,7 @@ const TRANSLATIONS = {
     table: {
       username: "Username",
       role: "Workspace role",
+      "system-role": "System role",
       "date-added": "Date Added",
     },
     empty: "No workspace members",

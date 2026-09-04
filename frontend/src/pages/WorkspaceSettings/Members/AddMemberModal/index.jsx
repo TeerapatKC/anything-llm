@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, Users } from "lucide-react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
@@ -13,25 +13,37 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import useRoles from "@/hooks/useRoles";
-import { PERMISSIONS, roleNamesWith } from "@/utils/permissions";
-
-export default function AddMemberModal({ workspace, users = [] }) {
+/**
+ * Picks who belongs to a workspace.
+ *
+ * Every account is listed, operators included. They used to be filtered out on the
+ * grounds that they "already have access", but membership is not what grants an
+ * operator access to a workspace - it is what grants anyone the right to *chat* in
+ * one, which the server reserves for members no matter what instance role they hold.
+ * Hiding them meant an admin could neither join a workspace to talk in it nor be
+ * removed from one they had joined. The filter also read a role list that arrives
+ * asynchronously, so those rows rendered and then vanished a moment later.
+ */
+export default function AddMemberModal({ workspace, users = [], onSaved }) {
   const { t } = useTranslation();
-  const { roles } = useRoles();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUsers, setSelectedUsers] = useState(workspace?.userIds || []);
   const [saving, setSaving] = useState(false);
 
-  const allWorkspaceRoles = roleNamesWith(
-    roles,
-    PERMISSIONS.WORKSPACES_VIEW_ALL
+  // Re-seed from the workspace whenever the caller hands over a fresh copy, so a
+  // dialog that stays mounted between openings does not keep showing the membership
+  // as it stood when it first rendered.
+  useEffect(() => {
+    setSelectedUsers(workspace?.userIds || []);
+  }, [workspace?.userIds]);
+
+  // Sorted by name rather than left in insertion order so the list stays scannable -
+  // and sorted on the name alone so ticking a row never moves it.
+  const sortedUsers = useMemo(
+    () => [...users].sort((a, b) => a.username.localeCompare(b.username)),
+    [users]
   );
-  const availableUsers = useMemo(
-    () => users.filter((user) => !allWorkspaceRoles.includes(user.role)),
-    [users, allWorkspaceRoles]
-  );
-  const filteredUsers = availableUsers.filter((user) =>
+  const filteredUsers = sortedUsers.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.trim().toLowerCase())
   );
   const filteredUserIds = filteredUsers.map((user) => user.id);
@@ -54,7 +66,7 @@ export default function AddMemberModal({ workspace, users = [] }) {
     }
 
     showToast("Users updated successfully.", "success", { clear: true });
-    setTimeout(() => window.location.reload(), 700);
+    onSaved?.();
   };
 
   const handleUserSelect = (userId) => {
@@ -78,8 +90,10 @@ export default function AddMemberModal({ workspace, users = [] }) {
       <DialogHeader>
         <DialogTitle>Manage workspace users</DialogTitle>
         <DialogDescription>
-          Choose who can access {workspace?.name || "this workspace"}. Global
-          administrators already have access and are not listed here.
+          Choose who belongs to {workspace?.name || "this workspace"}. Only
+          members can hold a conversation here - administrators and managers can
+          already administer this workspace, but need a membership of their own
+          to chat in it.
         </DialogDescription>
       </DialogHeader>
 
