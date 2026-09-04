@@ -295,6 +295,32 @@ async function storeVectorResult(vectorData = [], filename = null) {
   return;
 }
 
+/**
+ * Re-keys a cached embedding after its document's storage path changed.
+ *
+ * The cache is keyed by a uuidv5 of the docpath, so moving or renaming a file
+ * would otherwise orphan its entry and make the next embed of a file whose
+ * content never changed cost money again.
+ * @param {string} fromPath - previous `folder/file.json`
+ * @param {string} toPath - new `folder/file.json`
+ * @returns {boolean} whether a cached entry was re-keyed
+ */
+function renameVectorCacheEntry(fromPath = null, toPath = null) {
+  if (!fromPath || !toPath || fromPath === toPath) return false;
+  const source = path.resolve(
+    vectorCachePath,
+    `${uuidv5(fromPath, uuidv5.URL)}.json`
+  );
+  if (!fs.existsSync(source)) return false;
+
+  const destination = path.resolve(
+    vectorCachePath,
+    `${uuidv5(toPath, uuidv5.URL)}.json`
+  );
+  fs.renameSync(source, destination);
+  return true;
+}
+
 // Purges a file from the documents/ folder.
 async function purgeSourceDocument(filename = null) {
   if (!filename) return;
@@ -943,6 +969,7 @@ function generatedImageAttachments(outputs = []) {
 module.exports = {
   findDocumentInDocuments,
   cachedVectorInformation,
+  renameVectorCacheEntry,
   purgeSourceDocument,
   purgeVectorCache,
   storeVectorResult,

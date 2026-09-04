@@ -125,13 +125,20 @@ const WorkspaceParsedFiles = {
       const sourceFile = path.join(directUploadsPath, path.basename(location));
       if (!fs.existsSync(sourceFile)) throw new Error("Source file not found");
 
-      // Move to custom-documents
-      const customDocsPath = path.join(documentsPath, "custom-documents");
-      if (!fs.existsSync(customDocsPath))
-        fs.mkdirSync(customDocsPath, { recursive: true });
+      // Promote into the uploader's own folder rather than the shared staging
+      // one - this is their chat attachment, and it stays theirs once it
+      // becomes a library document.
+      const { DocumentFolder } = require("./documentFolders");
+      const folderName =
+        (await DocumentFolder.privateFolderFor(
+          parsedFile.userId ? { id: parsedFile.userId } : null
+        )) ?? DocumentFolder.STAGING_FOLDER;
 
-      // Copy the file to custom-documents
-      const targetPath = path.join(customDocsPath, path.basename(location));
+      const folderPath = path.join(documentsPath, folderName);
+      if (!fs.existsSync(folderPath))
+        fs.mkdirSync(folderPath, { recursive: true });
+
+      const targetPath = path.join(folderPath, path.basename(location));
       fs.copyFileSync(sourceFile, targetPath);
       fs.unlinkSync(sourceFile);
 
@@ -141,7 +148,7 @@ const WorkspaceParsedFiles = {
         embedded = [],
       } = await Document.addDocuments(
         workspace,
-        [`custom-documents/${path.basename(location)}`],
+        [`${folderName}/${path.basename(location)}`],
         parsedFile.userId
       );
 

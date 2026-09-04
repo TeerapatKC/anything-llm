@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Bot,
   Brain,
   Package,
   Plug,
@@ -235,6 +236,12 @@ export default function AgentSkillSelection({
         : [];
 
       onNavigationChange?.([
+        {
+          key: "agent-skill-settings",
+          category: "Settings",
+          title: "Agent Skill Settings",
+          icon: SlidersHorizontal,
+        },
         ...toNavItems(
           "Default skills",
           getDefaultSkills(t),
@@ -249,12 +256,6 @@ export default function AgentSkillSelection({
           resolvedConfig.activeSkills
         ),
         ...advancedNavItems,
-        {
-          key: "agent-skill-settings",
-          category: "Settings",
-          title: "Agent Skill Settings",
-          icon: SlidersHorizontal,
-        },
       ]);
       setLoading(false);
     }
@@ -621,7 +622,19 @@ export default function AgentSkillSelection({
 
   // The navigation already lists every available skill and integration.
   // With nothing selected there is no separate overview to render here.
-  if (!focusSkillId) return null;
+  if (!focusSkillId) {
+    return (
+      <div className="flex h-full min-h-64 flex-col items-center justify-center px-6 text-center text-theme-text-secondary">
+        <span className="mb-3 flex size-12 items-center justify-center rounded-xl bg-muted/40">
+          <Bot size={24} />
+        </span>
+        <h2 className="font-medium text-theme-text-primary">
+          Select something to configure
+        </h2>
+        <p className="mt-1 max-w-sm text-sm">{t("help.agents")}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-y-6">

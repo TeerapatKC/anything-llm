@@ -80,6 +80,48 @@ const Document = {
     }
   },
 
+  /**
+   * Rewrites the folder segment of every embedded document's `docpath` after
+   * that folder was renamed on disk.
+   *
+   * Embedded documents keep their vectors (those are keyed by `docId`), but
+   * their file is still read back by `docpath` - pinning, live-sync and the
+   * picker's "which of these are already embedded" check all go through it -
+   * so a rename that skipped this would leave a workspace listing documents
+   * whose content no longer resolves.
+   *
+   * @param {string} fromFolder - folder name before the rename
+   * @param {string} toFolder - folder name after the rename
+   * @returns {Promise<number>} how many document records were rewritten
+   */
+  updateFolderPaths: async function (fromFolder = "", toFolder = "") {
+    if (!fromFolder || !toFolder || fromFolder === toFolder) return 0;
+    // docpaths are always stored "/"-separated, whatever the host OS.
+    const prefix = `${fromFolder}/`;
+    try {
+      const documents = await prisma.workspace_documents.findMany({
+        where: { docpath: { startsWith: prefix } },
+        select: { id: true, docpath: true },
+      });
+      if (documents.length === 0) return 0;
+
+      await prisma.$transaction(
+        documents.map((doc) =>
+          prisma.workspace_documents.update({
+            where: { id: doc.id },
+            data: {
+              docpath: `${toFolder}/${doc.docpath.slice(prefix.length)}`,
+            },
+          })
+        )
+      );
+      return documents.length;
+    } catch (error) {
+      console.error(error.message);
+      throw error;
+    }
+  },
+
   addDocuments: async function (workspace, additions = [], userId = null) {
     const VectorDb = getVectorDbClass();
     if (additions.length === 0) return { failed: [], embedded: [] };

@@ -1,12 +1,10 @@
-import { UploadCloud } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import showToast from "../../../../../utils/toast";
-import { useDropzone } from "react-dropzone";
 import FileUploadProgress from "./FileUploadProgress";
 import Workspace from "../../../../../models/workspace";
 import debounce from "lodash.debounce";
-import { getFilesFromUploadEvent } from "../../../../../utils/folderUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -31,10 +29,17 @@ function withProtocol(value = "") {
 }
 
 /**
+ * Everything about uploading that is not the drop target itself: the progress
+ * list for in-flight uploads, and link scraping.
+ *
+ * Files are chosen in the document panel above - it is the drop target and it
+ * owns the upload button - so this renders nothing but the link form until an
+ * upload is actually running.
+ *
  * @param {object} props
  * @param {ReturnType<import("../hooks/useUploadQueue").default>} props.queue
- * the upload queue shared with the picker's per-folder drop targets, so both
- * report progress in this one list.
+ * the upload queue shared with the picker's drop targets, so every upload -
+ * panel drop, folder-row drop or button pick - reports into this one list.
  * @param {() => Promise<void>} props.onUploadComplete called (coalesced) once a
  * burst of file uploads settles, so the picker can hydrate in place.
  * @param {() => Promise<void>} props.onLinkScraped called after a link scrape.
@@ -46,7 +51,7 @@ export default function UploadFile({
   onLinkScraped,
 }) {
   const { t } = useTranslation();
-  const { ready, files, setFiles, enqueueDrop } = queue;
+  const { ready, files, setFiles } = queue;
   const [fetchingUrl, setFetchingUrl] = useState(false);
 
   const handleSendLink = async (e) => {
@@ -76,62 +81,39 @@ export default function UploadFile({
   );
   useEffect(() => () => syncPicker.cancel(), [syncPicker]);
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: enqueueDrop,
-    disabled: !ready,
-    getFilesFromEvent: getFilesFromUploadEvent,
-  });
-
   return (
     <div className="w-full">
-      <div
-        className={`w-full border-dashed border-2 border-theme-modal-border light:border-[#686C6F] rounded-lg bg-theme-bg-primary transition-colors duration-300 p-3 ${
-          ready
-            ? " light:bg-[#E0F2FE] cursor-pointer hover:bg-theme-bg-secondary light:hover:bg-transparent"
-            : "cursor-not-allowed"
-        }`}
-        {...getRootProps()}
-      >
-        <input {...getInputProps()} />
-        {ready === false ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <UploadCloud className="w-8 h-8 text-white/80 light:invert" />
-            <div className="text-theme-text-primary/80 text-sm font-semibold py-1">
+      {ready === false && (
+        <div className="flex items-start gap-x-2 rounded-lg border border-theme-modal-border bg-theme-bg-primary p-3">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-theme-text-primary/80" />
+          <div>
+            <div className="text-theme-text-primary/80 text-sm font-semibold">
               {t("connectors.upload.processor-offline")}
             </div>
-            <div className="text-theme-text-primary/60 text-xs font-medium py-1 px-4 text-center">
+            <div className="text-theme-text-primary/60 text-xs font-medium">
               {t("connectors.upload.processor-offline-desc")}
             </div>
           </div>
-        ) : files.length === 0 ? (
-          <div className="flex flex-col items-center justify-center">
-            <UploadCloud className="w-8 h-8 text-white/80 light:invert" />
-            <div className="text-theme-text-primary/80 text-sm font-semibold py-1">
-              {t("connectors.upload.click-upload")}
-            </div>
-            <div className="text-theme-text-primary/60 text-xs font-medium py-1">
-              {t("connectors.upload.file-types")}
-            </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-2 overflow-auto max-h-[180px] p-1 overflow-y-scroll no-scroll">
-            {files.map((file) => (
-              <FileUploadProgress
-                key={file.uid}
-                file={file.file}
-                uuid={file.uid}
-                setFiles={setFiles}
-                slug={workspace.slug}
-                rejected={file?.rejected}
-                reason={file?.reason}
-                folderName={file?.folderName}
-                relativePath={file?.relativePath}
-                onSettled={syncPicker}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+      {files.length > 0 && (
+        <div className="grid grid-cols-2 gap-2 overflow-auto max-h-[180px] rounded-lg border border-theme-modal-border bg-theme-bg-primary p-2 overflow-y-scroll no-scroll">
+          {files.map((file) => (
+            <FileUploadProgress
+              key={file.uid}
+              file={file.file}
+              uuid={file.uid}
+              setFiles={setFiles}
+              slug={workspace.slug}
+              rejected={file?.rejected}
+              reason={file?.reason}
+              folderName={file?.folderName}
+              relativePath={file?.relativePath}
+              onSettled={syncPicker}
+            />
+          ))}
+        </div>
+      )}
       <div className="text-center/50 text-theme-text-primary text-xs font-medium w-full py-2">
         {t("connectors.upload.or-submit-link")}
       </div>

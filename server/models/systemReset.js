@@ -624,8 +624,12 @@ const SystemReset = {
 
       if (fs.existsSync(documentsPath)) {
         for (const entry of fs.readdirSync(documentsPath)) {
-          // `custom-documents` is recreated on demand, but removing the folder itself
-          // trips upload paths that assume it exists, so only its contents are cleared.
+          // `custom-documents` goes too, unlike everywhere else that protects
+          // it: every path that writes there (the collector, the upload API,
+          // promoting a chat attachment) mkdirs it first, and nothing that
+          // reads assumes it exists - viewLocalFiles drops it from the picker
+          // ordering when absent. A factory reset leaving an empty folder
+          // behind would just be a leftover.
           const target = path.resolve(documentsPath, entry);
           fs.rmSync(target, { recursive: true, force: true });
           filesRemoved++;

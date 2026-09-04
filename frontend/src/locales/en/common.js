@@ -1444,6 +1444,22 @@ const TRANSLATIONS = {
     directory: {
       "my-documents": "My Documents",
       "new-folder": "New Folder",
+      visibility: {
+        label: "Who can see this folder",
+        private: "Only me",
+        "private-description":
+          "Nobody else sees this folder or the files in it.",
+        workspace: "This workspace",
+        "workspace-description":
+          "Everyone who is a member of this workspace can see it.",
+        shared: "Everyone",
+        "shared-description":
+          "Anyone with access to the document library can see it.",
+      },
+      "default-folder": "Shared uploads",
+      "my-folder": "My uploads",
+      "rename-folder": "Rename Folder",
+      "change-visibility": "Change Visibility",
       "total-documents_one": "{{count}} document",
       "total-documents_other": "{{count}} documents",
       "search-results_one": "{{count}} result",
@@ -1451,8 +1467,11 @@ const TRANSLATIONS = {
       "search-document": "Search for document",
       "no-documents": "No Documents",
       "move-workspace": "Move to Workspace",
+      "delete-confirmation-files":
+        "Are you sure you want to delete these files?\nThis will remove them from the system and from any existing workspaces automatically.\nThis action is not reversible.",
       "delete-confirmation":
         "Are you sure you want to delete these files and folders?\nThis will remove the files from the system and remove them from any existing workspaces automatically.\nThis action is not reversible.",
+      "removing-message-files": "Removing {{count}} documents. Please wait.",
       "removing-message":
         "Removing {{count}} documents and {{folderCount}} folders. Please wait.",
       "move-success": "Successfully moved {{count}} documents.",
@@ -1467,6 +1486,9 @@ const TRANSLATIONS = {
       "processor-offline-desc":
         "We can't upload your files right now because the document processor is offline. Please try again later.",
       "click-upload": "Click to upload or drag and drop",
+      "upload-files": "Upload",
+      "upload-into": "Upload into {{folder}}",
+      "drop-here": "Drop onto a folder to upload there, or here for {{folder}}",
       "file-types":
         "supports text files, csv's, spreadsheets, audio files, and more!",
       "or-submit-link": "or submit a link",

@@ -1421,6 +1421,19 @@ const TRANSLATIONS = {
     directory: {
       "my-documents": "เอกสารของฉัน",
       "new-folder": "โฟลเดอร์ใหม่",
+      visibility: {
+        label: "ใครเห็นโฟลเดอร์นี้ได้",
+        private: "เฉพาะฉัน",
+        "private-description": "คนอื่นจะไม่เห็นโฟลเดอร์นี้และไฟล์ข้างในเลย",
+        workspace: "workspace นี้",
+        "workspace-description": "สมาชิกทุกคนใน workspace นี้เห็นได้",
+        shared: "ทุกคน",
+        "shared-description": "ทุกคนที่เข้าถึงคลังเอกสารได้จะเห็นโฟลเดอร์นี้",
+      },
+      "default-folder": "ไฟล์อัปโหลดส่วนกลาง",
+      "my-folder": "ไฟล์อัปโหลดของฉัน",
+      "rename-folder": "เปลี่ยนชื่อโฟลเดอร์",
+      "change-visibility": "เปลี่ยนสิทธิ์การมองเห็น",
       "total-documents_one": "{{count}} เอกสาร",
       "total-documents_other": "{{count}} เอกสาร",
       "search-results_one": "{{count}} ผลลัพธ์",
@@ -1428,8 +1441,12 @@ const TRANSLATIONS = {
       "search-document": "ค้นหาเอกสาร",
       "no-documents": "ไม่มีเอกสาร",
       "move-workspace": "ย้ายไปยังพื้นที่ทำงาน",
+      "delete-confirmation-files":
+        "คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์เหล่านี้?\nไฟล์จะถูกลบออกจากระบบและจาก workspace ทั้งหมดโดยอัตโนมัติ\nการกระทำนี้ย้อนกลับไม่ได้",
       "delete-confirmation":
         "คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์และโฟลเดอร์เหล่านี้?\nการดำเนินการนี้จะลบไฟล์ออกจากระบบและลบออกจากพื้นที่ทำงานที่มีอยู่ทั้งหมดโดยอัตโนมัติ\nการดำเนินการนี้ไม่สามารถย้อนกลับได้",
+      "removing-message-files":
+        "กำลังลบเอกสาร {{count}} รายการ โปรดรอสักครู่",
       "removing-message":
         "กำลังลบเอกสาร {{count}} รายการและโฟลเดอร์ {{folderCount}} รายการ โปรดรอสักครู่",
       "move-success": "ย้ายเอกสาร {{count}} รายการสำเร็จแล้ว",
@@ -1444,6 +1461,10 @@ const TRANSLATIONS = {
       "processor-offline-desc":
         "เราไม่สามารถอัปโหลดไฟล์ของคุณได้ในขณะนี้ เนื่องจากตัวประมวลผลเอกสารออฟไลน์อยู่ โปรดลองใหม่ภายหลัง",
       "click-upload": "คลิกเพื่ออัปโหลดหรือลากไฟล์มาวาง",
+      "upload-files": "อัปโหลด",
+      "upload-into": "อัปโหลดเข้า {{folder}}",
+      "drop-here":
+        "วางบนโฟลเดอร์เพื่ออัปโหลดเข้าโฟลเดอร์นั้น หรือวางตรงนี้เพื่อเข้า {{folder}}",
       "file-types":
         "รองรับไฟล์ข้อความ ไฟล์ csv สเปรดชีต ไฟล์เสียง และอื่น ๆ อีกมากมาย!",
       "or-submit-link": "หรือส่งลิงก์",

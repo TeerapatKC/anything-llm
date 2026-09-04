@@ -81,14 +81,23 @@ const System = {
    * @param {number} offset
    * @param {number|"all"} limit - "all" opts out of paging entirely; the
    * server otherwise clamps this to its own maximum page size.
+   * @param {string|null} workspaceSlug - the workspace the picker is open in.
+   * Folders scoped to a workspace are only listed for the one named here, so
+   * omitting it narrows the result to the caller's own and shared folders.
    */
-  localFiles: async function (folderName = null, offset = 0, limit = 100) {
+  localFiles: async function (
+    folderName = null,
+    offset = 0,
+    limit = 100,
+    workspaceSlug = null
+  ) {
     const params = new URLSearchParams();
     if (folderName) {
       params.set("folder", folderName);
       params.set("offset", String(offset));
       params.set("limit", String(limit));
     }
+    if (workspaceSlug) params.set("workspace", workspaceSlug);
     const qs = params.toString();
     const url = `${API_BASE}/system/local-files${qs ? `?${qs}` : ""}`;
     return await fetch(url, { headers: baseHeaders() })
@@ -99,9 +108,11 @@ const System = {
       .then((res) => (folderName ? res : res.localFiles))
       .catch(() => null);
   },
-  searchLocalFiles: async function (query = "") {
+  searchLocalFiles: async function (query = "", workspaceSlug = null) {
+    const params = new URLSearchParams({ q: query });
+    if (workspaceSlug) params.set("workspace", workspaceSlug);
     return await fetch(
-      `${API_BASE}/system/local-files/search?q=${encodeURIComponent(query)}`,
+      `${API_BASE}/system/local-files/search?${params.toString()}`,
       { headers: baseHeaders() }
     )
       .then((res) => {
@@ -280,16 +291,22 @@ const System = {
         return false;
       });
   },
+  /**
+   * @param {string} name - folder to remove
+   * @returns {Promise<{success: boolean, message: string|null}>} the server
+   * refuses protected and missing folders, and says which - callers should
+   * show `message` rather than assume the folder is gone.
+   */
   deleteFolder: async (name) => {
     return await fetch(`${API_BASE}/system/remove-folder`, {
       method: "DELETE",
       headers: baseHeaders(),
       body: JSON.stringify({ name }),
     })
-      .then((res) => res.ok)
+      .then((res) => res.json())
       .catch((e) => {
         console.error(e);
-        return false;
+        return { success: false, message: e.message };
       });
   },
   uploadPfp: async function (formData) {

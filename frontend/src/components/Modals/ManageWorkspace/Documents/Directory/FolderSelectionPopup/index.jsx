@@ -1,4 +1,4 @@
-import { middleTruncate } from "@/utils/directories";
+import { folderDisplayName, middleTruncate } from "@/utils/directories";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -23,7 +23,7 @@ export default function FolderSelectionPopup({ folders, onSelect }) {
           onClick={() => onSelect(folder)}
           className="text-xs whitespace-nowrap"
         >
-          {middleTruncate(folder.name, 25)}
+          {middleTruncate(folderDisplayName(folder.name), 25)}
         </DropdownMenuItem>
       ))}
     </DropdownMenuContent>

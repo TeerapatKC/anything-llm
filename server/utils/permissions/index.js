@@ -111,6 +111,10 @@ const PERMISSIONS = {
 
   // Instance document library (the shared file store, not a workspace's embeddings)
   DOCUMENTS_MANAGE: "documents.manage",
+  // Deliberately NOT a child of DOCUMENTS_MANAGE: a parent implies its children, so
+  // hanging it there would hand every librarian the whole instance's folders back -
+  // exactly the over-broad visibility folder ownership exists to remove.
+  DOCUMENTS_VIEW_ALL: "documents.view_all",
   DOCUMENTS_VIEW: "documents.view",
   DOCUMENTS_UPLOAD: "documents.upload",
   DOCUMENTS_ORGANIZE: "documents.organize",
@@ -590,6 +594,13 @@ const PERMISSION_CATALOG = [
     parent: PERMISSIONS.DOCUMENTS_MANAGE,
   },
   {
+    key: PERMISSIONS.DOCUMENTS_VIEW_ALL,
+    label: "Browse every folder in the library",
+    description:
+      "See private folders and folders belonging to workspaces they are not a member of. Without this, the library shows only their own folders, their workspaces' folders, and folders shared with everyone.",
+    category: "library",
+  },
+  {
     key: PERMISSIONS.DOCUMENTS_UPLOAD,
     label: "Upload to the document library",
     description: "Add new files and links to the shared document store.",
@@ -1012,6 +1023,40 @@ const WORKSPACE_PERMISSION_KEYS = PERMISSION_CATALOG.filter(
 ).map((permission) => permission.key);
 
 /**
+ * The workspace permissions that are *using* a workspace rather than running it:
+ * holding a conversation in it and owning the threads that conversation lives in.
+ *
+ * Instance operators (`system.admin`, `workspaces.manage_all`) are granted every
+ * other workspace permission everywhere, because administering a workspace they
+ * are not a member of is the whole point of those roles. These are deliberately
+ * excluded from that grant. Chatting is not administration: it writes into the
+ * workspace's own history, and the reply is drawn from documents embedded there,
+ * so an operator who could chat anywhere could read any workspace's documents
+ * through the model's answers no matter how the document library is scoped.
+ *
+ * An operator who genuinely needs to chat in a workspace can add themselves as a
+ * member, which is a deliberate act that leaves a `workspace_users` row behind.
+ *
+ * Listed as a closed set rather than derived from `parent`, so adding a new
+ * permission under chat or threads is a decision someone has to make here.
+ */
+const WORKSPACE_USAGE_PERMISSION_KEYS = [
+  WORKSPACE_PERMISSIONS.CHAT,
+  WORKSPACE_PERMISSIONS.CHAT_AGENTS,
+  WORKSPACE_PERMISSIONS.CHAT_ATTACH_FILES,
+  WORKSPACE_PERMISSIONS.CHAT_SLASH_COMMANDS,
+  WORKSPACE_PERMISSIONS.THREADS_MANAGE,
+  WORKSPACE_PERMISSIONS.THREADS_CREATE,
+  WORKSPACE_PERMISSIONS.THREADS_RENAME,
+  WORKSPACE_PERMISSIONS.THREADS_DELETE,
+];
+
+/** What an instance operator holds in every workspace, member or not. */
+const WORKSPACE_OPERATOR_PERMISSION_KEYS = WORKSPACE_PERMISSION_KEYS.filter(
+  (key) => !WORKSPACE_USAGE_PERMISSION_KEYS.includes(key)
+);
+
+/**
  * Direct children of each coarse permission, derived from the `parent` field so the
  * catalog stays the single source of truth.
  * @type {Map<string, string[]>}
@@ -1134,6 +1179,9 @@ const SYSTEM_ROLES = [
       PERMISSIONS.WORKSPACES_VIEW_ALL,
       PERMISSIONS.WORKSPACES_MANAGE_ALL,
       PERMISSIONS.DOCUMENTS_MANAGE,
+      // The manager role already runs every workspace, so seeing every folder is
+      // consistent with what it can reach anyway.
+      PERMISSIONS.DOCUMENTS_VIEW_ALL,
       PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_APPEARANCE,
       PERMISSIONS.SYSTEM_BROWSER_EXTENSION,
@@ -1425,6 +1473,8 @@ module.exports = {
   ALL_PERMISSION_KEYS,
   SYSTEM_PERMISSION_KEYS,
   WORKSPACE_PERMISSION_KEYS,
+  WORKSPACE_USAGE_PERMISSION_KEYS,
+  WORKSPACE_OPERATOR_PERMISSION_KEYS,
   SYSTEM_ROLES,
   WORKSPACE_ROLES,
   FALLBACK_ROLE,

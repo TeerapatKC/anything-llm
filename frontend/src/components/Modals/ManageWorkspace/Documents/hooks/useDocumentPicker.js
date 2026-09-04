@@ -361,7 +361,7 @@ export default function useDocumentPicker({ slug }) {
    */
   const refresh = useCallback(async () => {
     const [listing, currentWorkspace] = await Promise.all([
-      System.localFiles(),
+      System.localFiles(null, 0, 100, slug),
       Workspace.bySlug(slug),
     ]);
 
@@ -387,29 +387,32 @@ export default function useDocumentPicker({ slug }) {
   }, [slug]);
 
   /** Fetch (or append) a page of files for a folder. Idempotent per status. */
-  const loadFolder = useCallback(async ({ name, append = false } = {}) => {
-    const entry = stateRef.current.contents[name] ?? UNLOADED;
-    if (entry.status === "loading") return;
-    if (entry.status === "loaded" && !append) return;
+  const loadFolder = useCallback(
+    async ({ name, append = false } = {}) => {
+      const entry = stateRef.current.contents[name] ?? UNLOADED;
+      if (entry.status === "loading") return;
+      if (entry.status === "loaded" && !append) return;
 
-    dispatch({ type: "folder-loading", name });
-    const offset = append ? entry.items.length : 0;
-    const result = await System.localFiles(name, offset, PAGE_SIZE);
-    if (!result) return dispatch({ type: "folder-failed", name });
+      dispatch({ type: "folder-loading", name });
+      const offset = append ? entry.items.length : 0;
+      const result = await System.localFiles(name, offset, PAGE_SIZE, slug);
+      if (!result) return dispatch({ type: "folder-failed", name });
 
-    const embedded = stateRef.current.workspaceDocpaths;
-    const items = (result.documents ?? []).filter(
-      (file) => !embedded.has(`${name}/${file.name}`)
-    );
-    dispatch({
-      type: "folder-loaded",
-      name,
-      items,
-      append,
-      hasMore: result.hasMore ?? false,
-      totalCount: result.totalCount ?? items.length,
-    });
-  }, []);
+      const embedded = stateRef.current.workspaceDocpaths;
+      const items = (result.documents ?? []).filter(
+        (file) => !embedded.has(`${name}/${file.name}`)
+      );
+      dispatch({
+        type: "folder-loaded",
+        name,
+        items,
+        append,
+        hasMore: result.hasMore ?? false,
+        totalCount: result.totalCount ?? items.length,
+      });
+    },
+    [slug]
+  );
 
   // Initial hydrate.
   useEffect(() => {
@@ -544,7 +547,12 @@ export default function useDocumentPicker({ slug }) {
       if (selectedFolders.has(folder.name)) {
         // Need every file, not just the page currently on screen.
         if (entry.status !== "loaded" || entry.hasMore) {
-          const result = await System.localFiles(folder.name, 0, NO_LIMIT);
+          const result = await System.localFiles(
+            folder.name,
+            0,
+            NO_LIMIT,
+            slug
+          );
           items = (result?.documents ?? []).filter(
             (file) => !workspaceDocpaths.has(`${folder.name}/${file.name}`)
           );
@@ -564,7 +572,7 @@ export default function useDocumentPicker({ slug }) {
       }
     }
     return resolved;
-  }, []);
+  }, [slug]);
 
   /** Folder names selected wholesale (used by delete, which removes folders). */
   const selectedFolderNames = useMemo(
@@ -603,26 +611,29 @@ export default function useDocumentPicker({ slug }) {
   // results of one issued after it, and clearing the box must not be undone
   // by a response that was already in flight.
   const searchSeq = useRef(0);
-  const search = useCallback(async (term) => {
-    const query = term?.trim();
-    const seq = ++searchSeq.current;
-    if (!query) return dispatch({ type: "search-clear" });
+  const search = useCallback(
+    async (term) => {
+      const query = term?.trim();
+      const seq = ++searchSeq.current;
+      if (!query) return dispatch({ type: "search-clear" });
 
-    dispatch({ type: "search-start" });
-    const results = await System.searchLocalFiles(query);
-    if (seq !== searchSeq.current) return;
+      dispatch({ type: "search-start" });
+      const results = await System.searchLocalFiles(query, slug);
+      if (seq !== searchSeq.current) return;
 
-    const embedded = stateRef.current.workspaceDocpaths;
-    dispatch({
-      type: "search-results",
-      results: (results ?? []).map((folder) => ({
-        ...folder,
-        items: (folder.items ?? []).filter(
-          (file) => !embedded.has(`${folder.name}/${file.name}`)
-        ),
-      })),
-    });
-  }, []);
+      const embedded = stateRef.current.workspaceDocpaths;
+      dispatch({
+        type: "search-results",
+        results: (results ?? []).map((folder) => ({
+          ...folder,
+          items: (folder.items ?? []).filter(
+            (file) => !embedded.has(`${folder.name}/${file.name}`)
+          ),
+        })),
+      });
+    },
+    [slug]
+  );
 
   /**
    * Reconcile the picker after an upload finishes. Refreshes shells in place,
@@ -651,7 +662,9 @@ export default function useDocumentPicker({ slug }) {
     if (changed.length === 0) return;
 
     const pages = await Promise.all(
-      changed.map((folder) => System.localFiles(folder.name, 0, PAGE_SIZE))
+      changed.map((folder) =>
+        System.localFiles(folder.name, 0, PAGE_SIZE, slug)
+      )
     );
 
     const freshIds = [];
@@ -675,7 +688,7 @@ export default function useDocumentPicker({ slug }) {
     });
 
     dispatch({ type: "select-files", ids: freshIds });
-  }, [refresh]);
+  }, [refresh, slug]);
 
   return {
     ...state,

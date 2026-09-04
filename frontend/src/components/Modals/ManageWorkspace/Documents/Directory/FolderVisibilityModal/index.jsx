@@ -1,12 +1,10 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import React, { useState } from "react";
-import { FolderPlus } from "lucide-react";
+import { Share2 } from "lucide-react";
 import Document from "@/models/document";
-// Shared with the change-visibility modal so the two controls never drift.
-import { VISIBILITY_OPTIONS } from "../FolderVisibilityModal";
+import { folderDisplayName } from "@/utils/directories";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogClose,
@@ -16,39 +14,64 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+/** Same order and copy as the create modal, so the two read as one control. */
+export const VISIBILITY_OPTIONS = [
+  {
+    value: "private",
+    labelKey: "connectors.directory.visibility.private",
+    descriptionKey: "connectors.directory.visibility.private-description",
+  },
+  {
+    value: "workspace",
+    labelKey: "connectors.directory.visibility.workspace",
+    descriptionKey: "connectors.directory.visibility.workspace-description",
+  },
+  {
+    value: "shared",
+    labelKey: "connectors.directory.visibility.shared",
+    descriptionKey: "connectors.directory.visibility.shared-description",
+  },
+];
+
 /**
+ * Changes who can see one folder.
+ *
+ * The server refuses this for anyone but the folder's owner, so a failure here
+ * is shown as-is rather than translated - "only the owner can change this" is
+ * the useful answer, and inventing a generic message would hide it.
+ *
  * @param {object} props
- * @param {string|null} props.workspaceSlug - the workspace the picker is open
- * in, which "workspace" visibility scopes the new folder to
+ * @param {{name: string, visibility: string}} props.folder
+ * @param {string|null} props.workspaceSlug - what "workspace" scopes to
+ * @param {() => void} props.closeModal
+ * @param {(name: string) => void} props.onChanged
  */
-export default function NewFolderModal({
-  closeModal,
-  onCreated,
+export default function FolderVisibilityModal({
+  folder,
   workspaceSlug = null,
+  closeModal,
+  onChanged,
 }) {
   const { t } = useTranslation();
   const [error, setError] = useState(null);
-  const [folderName, setFolderName] = useState("");
-  // Private by default: a folder whose visibility the user did not think
-  // about should be the one that shares least.
-  const [visibility, setVisibility] = useState("private");
-  const [creating, setCreating] = useState(false);
+  const [visibility, setVisibility] = useState(folder.visibility ?? "shared");
+  const [saving, setSaving] = useState(false);
 
-  const handleCreate = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     setError(null);
-    const name = folderName.trim();
-    if (!name || creating) return;
+    if (saving) return;
+    if (visibility === folder.visibility) return closeModal();
 
-    setCreating(true);
-    const { success, message } = await Document.createFolder(
-      name,
+    setSaving(true);
+    const { success, message } = await Document.setFolderVisibility(
+      folder.name,
       visibility,
       workspaceSlug
     );
-    setCreating(false);
-    if (!success) return setError(message || "Failed to create folder");
-    onCreated(name);
+    setSaving(false);
+    if (!success) return setError(message || "Failed to update visibility");
+    onChanged(folder.name);
   };
 
   return (
@@ -56,29 +79,20 @@ export default function NewFolderModal({
       <DialogContent>
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <FolderPlus className="h-5 w-5 text-theme-text-primary" />
-            <DialogTitle>{t("ui.create-new-folder")}</DialogTitle>
+            <Share2 className="h-5 w-5 text-theme-text-primary" />
+            <DialogTitle>
+              {t("connectors.directory.change-visibility")}
+            </DialogTitle>
           </div>
         </DialogHeader>
-        <form onSubmit={handleCreate}>
+        <form onSubmit={handleSave}>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="folderName" className="block mb-2">
-                Folder Name
-              </Label>
-              <Input
-                name="folderName"
-                type="text"
-                placeholder={t("ui.enter-folder-name")}
-                required={true}
-                autoComplete="off"
-                value={folderName}
-                onChange={(e) => setFolderName(e.target.value)}
-              />
-            </div>
-            <div>
               <Label className="block mb-2">
-                {t("connectors.directory.visibility.label")}
+                {t("connectors.directory.visibility.label")} &mdash;{" "}
+                <span className="font-normal text-theme-text-secondary">
+                  {folderDisplayName(folder.name)}
+                </span>
               </Label>
               <div className="flex flex-col gap-y-2">
                 {VISIBILITY_OPTIONS.map((option) => (
@@ -112,8 +126,8 @@ export default function NewFolderModal({
             <DialogClose render={<Button variant="ghost" type="button" />}>
               Cancel
             </DialogClose>
-            <Button type="submit" variant="default" disabled={creating}>
-              {creating ? "Creating..." : "Create Folder"}
+            <Button type="submit" variant="default" disabled={saving}>
+              {saving ? "Saving..." : "Save"}
             </Button>
           </DialogFooter>
         </form>

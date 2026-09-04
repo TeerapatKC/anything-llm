@@ -1039,11 +1039,30 @@ const TRANSLATIONS = {
     directory: {
       "my-documents": "マイドキュメント",
       "new-folder": "新しいフォルダー",
+      visibility: {
+        label: "このフォルダーを見られる人",
+        private: "自分のみ",
+        "private-description":
+          "他のユーザーにはこのフォルダーもその中のファイルも表示されません。",
+        workspace: "このワークスペース",
+        "workspace-description":
+          "このワークスペースのメンバー全員が閲覧できます。",
+        shared: "全員",
+        "shared-description":
+          "ドキュメントライブラリにアクセスできる全員が閲覧できます。",
+      },
+      "default-folder": "共有アップロード",
+      "my-folder": "自分のアップロード",
+      "rename-folder": "フォルダー名を変更",
+      "change-visibility": "公開範囲を変更",
       "search-document": "ドキュメントを検索",
       "no-documents": "ドキュメントがありません",
       "move-workspace": "ワークスペースへ移動",
+      "delete-confirmation-files":
+        "これらのファイルを削除してもよろしいですか？\nシステムおよび既存のワークスペースから自動的に削除されます。\nこの操作は元に戻せません。",
       "delete-confirmation":
         "これらのファイルやフォルダーを削除してもよろしいですか？\nシステムから削除され、既存のワークスペースからも自動的に削除されます。\nこの操作は元に戻せません。",
+      "removing-message-files": "{{count}} 件のドキュメントを削除中です。お待ちください。",
       "removing-message":
         "{{count}}件のドキュメントと{{folderCount}}件のフォルダーを削除中です。しばらくお待ちください。",
       "move-success": "{{count}}件のドキュメントを移動しました。",
@@ -1063,6 +1082,10 @@ const TRANSLATIONS = {
         "ドキュメント処理機能がオフラインのため、ファイルをアップロードできません。後でもう一度お試しください。",
       "click-upload":
         "クリックしてアップロード、またはドラッグ＆ドロップしてください",
+      "upload-files": "アップロード",
+      "upload-into": "{{folder}} にアップロード",
+      "drop-here":
+        "フォルダーにドロップするとそこへ、ここにドロップすると {{folder}} へアップロードします",
       "file-types":
         "テキストファイル、CSV、スプレッドシート、音声ファイルなどに対応しています！",
       "or-submit-link": "またはリンクを入力",

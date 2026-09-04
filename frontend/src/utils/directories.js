@@ -1,3 +1,5 @@
+import i18next from "@/i18n";
+import { userFromStorage } from "@/utils/request";
 import moment from "moment";
 
 export function formatDate(dateString) {
@@ -44,4 +46,42 @@ export function middleTruncate(str, n) {
   } else {
     return str.length > n ? str.substr(0, n - 8) + "..." + str.slice(-4) : str;
   }
+}
+
+/**
+ * The folder every upload without an explicit destination lands in. Its name
+ * is hardcoded across the server, the collector and the picker (and the server
+ * refuses to rename or remove it), so it is relabelled for display only -
+ * never in a value sent back to the API.
+ */
+export const DEFAULT_DOCUMENTS_FOLDER = "custom-documents";
+
+/**
+ * A user's own uploads folder is named after their id so renaming the account
+ * cannot orphan it - which makes it unreadable on screen. Matches the server's
+ * `DocumentFolder.privateFolderName`.
+ */
+const PRIVATE_FOLDER_PATTERN = /^user-(\d+)$/;
+
+/**
+ * The label to show a user for a folder. Only the two folders the system names
+ * itself differ from their stored name - every other folder was named by a
+ * person already.
+ * @param {string} name - the folder's real name, as stored
+ * @returns {string}
+ */
+export function folderDisplayName(name = "") {
+  if (name === DEFAULT_DOCUMENTS_FOLDER)
+    return i18next.t("connectors.directory.default-folder");
+
+  const owned = PRIVATE_FOLDER_PATTERN.exec(name);
+  if (owned) {
+    // Someone else's private folder is filtered out server-side, so reaching
+    // here for another id means an operator holding documents.view_all - show
+    // them the real name rather than claiming it is theirs.
+    const user = userFromStorage();
+    if (user?.id && String(user.id) === owned[1])
+      return i18next.t("connectors.directory.my-folder");
+  }
+  return name;
 }

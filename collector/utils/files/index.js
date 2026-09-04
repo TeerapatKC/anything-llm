@@ -146,7 +146,13 @@ function writeToServerDocuments({
     // relative location string that can be passed into the /update-embeddings api
     // that will work since we know the location exists and since we only allow
     // 1-level deep folders this will always work. This still works for integrations like GitHub and YouTube.
-    location: destinationFilePath.split("/").slice(-2).join("/"),
+    //
+    // Split on both separators: on Windows destinationFilePath is backslashed,
+    // so splitting on "/" alone found nothing to cut and handed back the whole
+    // absolute path. Everything downstream treats this as `folder/file.json`
+    // relative to the documents directory, so an absolute path made every move
+    // and re-embed of a fresh upload fail there.
+    location: destinationFilePath.split(/[/\\]/).slice(-2).join("/"),
     isDirectUpload: options.parseOnly || false,
   };
 }

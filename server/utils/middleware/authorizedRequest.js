@@ -131,6 +131,42 @@ function anyWorkspacePermissionValid(allowedPermissions = []) {
 }
 
 /**
+ * Gate a route on an instance permission OR a workspace permission held in at
+ * least one workspace.
+ *
+ * The document library needs this: browsing it is instance work by its URL, but
+ * a workspace manager with no instance role has every right to see their own
+ * workspace's folders. Gating on the instance permission alone let them open
+ * the picker and then answered 401 to everything it asked for. What they can
+ * actually see is decided after this by the folder visibility filter, so the
+ * looser gate does not widen anyone's view.
+ *
+ * @param {string[]} instancePermissions
+ * @param {string[]} workspacePermissions
+ * @returns {function}
+ */
+function instanceOrAnyWorkspacePermissionValid(
+  instancePermissions = [],
+  workspacePermissions = []
+) {
+  const instance = normalizePermissions(instancePermissions);
+  const workspace = normalizePermissions(workspacePermissions);
+  return async (request, response, next) => {
+    const user =
+      response.locals?.user ?? (await userFromSession(request, response));
+
+    if (await Role.userCanAny(user, instance)) return next();
+
+    const { WorkspaceRole } = require("../../models/workspaceRole");
+    for (const permission of workspace) {
+      if (await WorkspaceRole.userCanInAnyWorkspace(user, permission))
+        return next();
+    }
+    return response.sendStatus(401).end();
+  };
+}
+
+/**
  * Gate a route on being the instance owner.
  *
  * Deliberately *not* a permission check. Ownership transfer and instance reset are the
@@ -168,6 +204,7 @@ module.exports = {
   userPermissionValid,
   workspacePermissionValid,
   anyWorkspacePermissionValid,
+  instanceOrAnyWorkspacePermissionValid,
   superAdminOnly,
   workspaceFromRequest,
   requestUserCan,

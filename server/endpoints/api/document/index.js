@@ -15,6 +15,7 @@ const { CollectorApi } = require("../../../utils/collectorApi");
 const fs = require("fs");
 const path = require("path");
 const { Document } = require("../../../models/documents");
+const { DocumentFolder } = require("../../../models/documentFolders");
 const { purgeFolder } = require("../../../utils/files/purgeDocument");
 const createFilesLib = require("../../../utils/agents/aibitat/plugins/create-files/lib");
 const documentsPath =
@@ -150,6 +151,14 @@ function apiDocumentEndpoints(app) {
             .json({ success: false, error: reason, documents })
             .end();
         }
+
+        // No folder was named, so drain the staging folder into the folder
+        // owned by whoever minted this key. A key with no creator has no owner
+        // to attribute to and its uploads stay in the shared staging folder.
+        const destination = await DocumentFolder.privateFolderFor(
+          response.locals?.apiKeyOwner
+        );
+        if (!!destination) moveProcessedDocsToFolder(documents, destination);
 
         Collector.log(
           `Document ${originalname} uploaded processed and successfully. It is now available in documents.`
@@ -626,7 +635,23 @@ function apiDocumentEndpoints(app) {
     */
     try {
       const { folder, offset, limit } = queryParams(request);
+      // Scoped to whoever minted the key. A key with no creator has no owner,
+      // so it sees only shared folders.
+      const hidden = await DocumentFolder.hiddenFoldersFor(
+        response.locals?.apiKeyOwner
+      );
+
       if (folder) {
+        if (hidden.has(folder))
+          return response.status(404).json({
+            folder,
+            documents: [],
+            totalCount: 0,
+            hasMore: false,
+            code: 404,
+            error: `Folder "${folder}" does not exist.`,
+          });
+
         // Additive opt-in. Pagination is passed through as-is:
         // getDocumentsByFolder clamps the window and understands `limit=all`.
         const result = await getDocumentsByFolder(folder, { offset, limit });
@@ -637,6 +662,9 @@ function apiDocumentEndpoints(app) {
         // instances, but silently returning empty `items` arrays to existing
         // integrations would be worse. New callers should use ?folder=.
         const localFiles = await viewLocalFiles();
+        localFiles.items = localFiles.items.filter(
+          (item) => !hidden.has(item.name)
+        );
         response.status(200).json({ localFiles });
       }
     } catch (e) {
@@ -709,6 +737,18 @@ function apiDocumentEndpoints(app) {
       try {
         const { folderName } = request.params;
         const { offset, limit = "all" } = queryParams(request);
+        const hidden = await DocumentFolder.hiddenFoldersFor(
+          response.locals?.apiKeyOwner
+        );
+        if (hidden.has(folderName))
+          return response.status(404).json({
+            folder: folderName,
+            documents: [],
+            totalCount: 0,
+            hasMore: false,
+            error: `Folder "${folderName}" does not exist.`,
+          });
+
         // Defaults to every document: this endpoint has never paginated and
         // silently truncating to a page would break existing consumers.
         // offset/limit are opt-in for callers that do want to page.
@@ -935,7 +975,7 @@ function apiDocumentEndpoints(app) {
       }
       */
       try {
-        const { name } = reqBody(request);
+        const { name, visibility = null } = reqBody(request);
         const storagePath = path.join(documentsPath, normalizePath(name));
         if (!isWithin(path.resolve(documentsPath), path.resolve(storagePath)))
           throw new Error("Invalid path name");
@@ -949,6 +989,22 @@ function apiDocumentEndpoints(app) {
         }
 
         fs.mkdirSync(storagePath, { recursive: true });
+
+        // API-created folders default to shared, unlike the picker's private
+        // default: a key is an integration, and silently hiding what it makes
+        // from everyone but the key's minter would break existing consumers.
+        const { error } = await DocumentFolder.create({
+          name: normalizePath(name),
+          ownerId: response.locals?.apiKeyOwner?.id ?? null,
+          visibility: DocumentFolder.VALID_VISIBILITIES.includes(visibility)
+            ? visibility
+            : DocumentFolder.VISIBILITY.SHARED,
+        });
+        if (error) {
+          fs.rmSync(storagePath, { recursive: true, force: true });
+          throw new Error(error);
+        }
+
         response.status(200).json({ success: true, message: null });
       } catch (e) {
         console.error(e);
@@ -1005,7 +1061,12 @@ function apiDocumentEndpoints(app) {
       */
       try {
         const { name } = reqBody(request);
-        await purgeFolder(name);
+        const { success, message } = await purgeFolder(
+          name,
+          response.locals?.apiKeyOwner ?? null
+        );
+        if (!success)
+          return response.status(400).json({ success: false, message });
         response
           .status(200)
           .json({ success: true, message: "Folder removed successfully" });

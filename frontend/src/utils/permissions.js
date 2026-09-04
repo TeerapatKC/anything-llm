@@ -185,8 +185,26 @@ export function storeWorkspacePermissions(byWorkspaceId = {}) {
 }
 
 /**
+ * Using a workspace, as opposed to running it: holding a conversation and owning
+ * the threads it lives in. Mirrors `WORKSPACE_USAGE_PERMISSION_KEYS` on the
+ * server - an instance operator is granted every *other* workspace permission
+ * everywhere, but these only ever come from an actual membership.
+ */
+export const WORKSPACE_USAGE_PERMISSIONS = [
+  WORKSPACE_PERMISSIONS.CHAT,
+  WORKSPACE_PERMISSIONS.CHAT_AGENTS,
+  WORKSPACE_PERMISSIONS.CHAT_ATTACH_FILES,
+  WORKSPACE_PERMISSIONS.CHAT_SLASH_COMMANDS,
+  WORKSPACE_PERMISSIONS.THREADS_MANAGE,
+  WORKSPACE_PERMISSIONS.THREADS_CREATE,
+  WORKSPACE_PERMISSIONS.THREADS_RENAME,
+  WORKSPACE_PERMISSIONS.THREADS_DELETE,
+];
+
+/**
  * Whether the user holds a workspace permission *in one specific workspace*. Instance
- * operators pass everywhere, mirroring the server.
+ * operators pass everywhere except for the usage permissions, mirroring the server -
+ * rendering a chat box the server will refuse is worse than not rendering it.
  * @param {string|string[]} permissions - all of these must be held
  * @param {number|string|null} workspaceId
  * @param {Object|null} [user] - omit to read the cached session user
@@ -197,7 +215,13 @@ export function workspaceCan(permissions, workspaceId, user) {
   const currentUser = user === undefined ? userFromStorage() : user;
 
   if (!currentUser) return false;
-  if (userCanAny([PERMISSIONS.WORKSPACES_MANAGE_ALL], currentUser)) return true;
+  if (
+    !required.some((permission) =>
+      WORKSPACE_USAGE_PERMISSIONS.includes(permission)
+    ) &&
+    userCanAny([PERMISSIONS.WORKSPACES_MANAGE_ALL], currentUser)
+  )
+    return true;
   if (!workspaceId) return false;
 
   const byWorkspace = safeJsonParse(

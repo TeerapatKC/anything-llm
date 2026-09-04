@@ -2,6 +2,8 @@ const prisma = require("../utils/prisma");
 const {
   PERMISSIONS,
   WORKSPACE_PERMISSION_KEYS,
+  WORKSPACE_OPERATOR_PERMISSION_KEYS,
+  WORKSPACE_USAGE_PERMISSION_KEYS,
   WORKSPACE_ROLES,
   FALLBACK_WORKSPACE_ROLE,
   expandPermissions,
@@ -225,26 +227,37 @@ const WorkspaceRole = {
     if (!user?.id || !workspaceId) return [];
 
     const { Role } = require("./role");
-    if (
-      await Role.userCanAny(user, [
-        PERMISSIONS.SYSTEM_ADMIN,
-        PERMISSIONS.WORKSPACES_MANAGE_ALL,
-      ])
-    )
-      return [...WORKSPACE_PERMISSION_KEYS];
+    const isOperator = await Role.userCanAny(user, [
+      PERMISSIONS.SYSTEM_ADMIN,
+      PERMISSIONS.WORKSPACES_MANAGE_ALL,
+    ]);
 
     try {
       const membership = await prisma.workspace_users.findFirst({
         where: { user_id: Number(user.id), workspace_id: Number(workspaceId) },
         select: { workspace_role_id: true },
       });
-      if (!membership) return [];
 
-      const cache = await this._loadCache();
-      // A membership with no role predates workspace roles (or its role was deleted);
-      // treat it as the default role rather than locking the member out.
-      const roleId = membership.workspace_role_id ?? cache.defaultId;
-      return [...(cache.byId.get(roleId) ?? [])];
+      let fromMembership = [];
+      if (membership) {
+        const cache = await this._loadCache();
+        // A membership with no role predates workspace roles (or its role was deleted);
+        // treat it as the default role rather than locking the member out.
+        const roleId = membership.workspace_role_id ?? cache.defaultId;
+        fromMembership = [...(cache.byId.get(roleId) ?? [])];
+      }
+
+      // An operator administers every workspace, but only *uses* the ones they
+      // joined - see WORKSPACE_USAGE_PERMISSION_KEYS. Unioned rather than
+      // returned outright so an operator who is also a member keeps both.
+      if (isOperator)
+        return [
+          ...new Set([
+            ...WORKSPACE_OPERATOR_PERMISSION_KEYS,
+            ...fromMembership,
+          ]),
+        ];
+      return fromMembership;
     } catch (error) {
       console.error(error.message);
       return [];
@@ -289,11 +302,15 @@ const WorkspaceRole = {
     if (!user?.id) return false;
 
     const { Role } = require("./role");
+    // Same split as permissionsForUserInWorkspace: an operator holds the admin
+    // permissions everywhere, but a usage permission still has to come from a
+    // membership, so those fall through to the lookup below.
     if (
-      await Role.userCanAny(user, [
+      !WORKSPACE_USAGE_PERMISSION_KEYS.includes(permission) &&
+      (await Role.userCanAny(user, [
         PERMISSIONS.SYSTEM_ADMIN,
         PERMISSIONS.WORKSPACES_MANAGE_ALL,
-      ])
+      ]))
     )
       return true;
 

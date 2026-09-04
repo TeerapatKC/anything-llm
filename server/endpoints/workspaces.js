@@ -2,6 +2,7 @@ const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const { moveProcessedDocsToFolder } = require("../utils/files");
 const { Workspace } = require("../models/workspace");
 const { Document } = require("../models/documents");
+const { DocumentFolder } = require("../models/documentFolders");
 const { DocumentVectors } = require("../models/vectors");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const { getVectorDbClass, stripThinkingFromText } = require("../utils/helpers");
@@ -155,9 +156,15 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        // When the upload is part of a folder upload, move the processed
-        // documents from their default location into the target folder.
-        if (!!folderName) moveProcessedDocsToFolder(documents, folderName);
+        // The collector always writes into custom-documents - it cannot be told
+        // where to put a file - so every upload is moved out of that staging
+        // area here. Without a named folder that means the uploader's own
+        // private folder, which is what keeps an untargeted upload from
+        // landing somewhere the whole instance can see.
+        const destination =
+          folderName ||
+          (await DocumentFolder.privateFolderFor(response.locals?.user));
+        if (!!destination) moveProcessedDocsToFolder(documents, destination);
 
         Collector.log(
           `Document ${originalname} uploaded processed and successfully. It is now available in documents.`
@@ -202,11 +209,22 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        const { success, reason } = await Collector.processLink(link);
+        const {
+          success,
+          reason,
+          documents = [],
+        } = await Collector.processLink(link);
         if (!success) {
           response.status(500).json({ success: false, error: reason }).end();
           return;
         }
+
+        // A scraped link lands in the same staging folder an upload does, so
+        // it has to be drained the same way or it stays instance-visible.
+        const destination = await DocumentFolder.privateFolderFor(
+          response.locals?.user
+        );
+        if (!!destination) moveProcessedDocsToFolder(documents, destination);
 
         Collector.log(
           `Link ${link} uploaded processed and successfully. It is now available in documents.`

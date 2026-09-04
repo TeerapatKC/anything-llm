@@ -39,6 +39,29 @@ model workspace_documents {
   document_sync_queues document_sync_queues?
 }
 
+/// Ownership and visibility for a folder in the document library. The folder itself
+/// lives on disk (`storage/documents/<name>`); this row is what decides who may see
+/// it. A folder with no row is treated as `shared`, which is what every folder that
+/// predates this table becomes.
+model document_folders {
+  id            Int         @id @default(autoincrement())
+  /// Matches the on-disk folder name, so a rename has to update it too.
+  name          String      @unique
+  /// NULL for folders the system owns (custom-documents) or whose owner was deleted.
+  ownerId       Int?
+  /// The workspace the folder was created from, which `workspace` visibility scopes to.
+  workspaceId   Int?
+  /// "private" (owner only) | "workspace" (that workspace's members) | "shared" (everyone)
+  visibility    String      @default("shared")
+  createdAt     DateTime    @default(now())
+  lastUpdatedAt DateTime    @default(now())
+  owner         users?      @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  workspace     workspaces? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  @@index([ownerId])
+  @@index([workspaceId])
+}
+
 model invites {
   id            Int      @id @default(autoincrement())
   code          String   @unique
@@ -83,6 +106,7 @@ model users {
   memoryEnabled                Boolean?                      @map("memory_enabled")
   memoryAutoExtraction         Boolean?                      @map("memory_auto_extraction")
   workspace_chats              workspace_chats[]
+  document_folders             document_folders[]
   workspace_users              workspace_users[]
   embed_configs                embed_configs[]
   embed_chats                  embed_chats[]
@@ -241,6 +265,7 @@ model workspaces {
   slash_command_presets        slash_command_presets[]
   telegram_users               telegram_users[]
   line_users                   line_users[]
+  document_folders             document_folders[]
 }
 
 model workspace_threads {
@@ -273,16 +298,16 @@ model workspace_suggested_messages {
 }
 
 model workspace_chats {
-  id             Int      @id @default(autoincrement())
-  workspaceId    Int
-  prompt         String
-  response       String
-  include        Boolean  @default(true)
-  user_id        Int?
-  thread_id      Int? // No relation to prevent whole table migration
-  api_session_id String? // String identifier for only the dev API to partition chats in any mode.
-  createdAt      DateTime @default(now())
-  lastUpdatedAt  DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  workspaceId     Int
+  prompt          String
+  response        String
+  include         Boolean  @default(true)
+  user_id         Int?
+  thread_id       Int? // No relation to prevent whole table migration
+  api_session_id  String? // String identifier for only the dev API to partition chats in any mode.
+  createdAt       DateTime @default(now())
+  lastUpdatedAt   DateTime @default(now())
   feedbackScore   Boolean?
   // Why the rating was given. Only ever set alongside feedbackScore, and
   // cleared with it - a reason with no rating has nothing to explain.
@@ -378,15 +403,15 @@ model event_logs {
 }
 
 model slash_command_presets {
-  id          Int    @id @default(autoincrement())
-  command     String
-  prompt      String
-  description String
+  id            Int         @id @default(autoincrement())
+  command       String
+  prompt        String
+  description   String
   // NULL means the command is a built-in default, usable from every workspace. A
   // workspace id means it was defined inside that workspace and is only usable there.
   // A workspace command shadows a built-in of the same name - see
   // SlashCommandPresets.forWorkspace.
-  workspaceId Int?
+  workspaceId   Int?
   // Who created it. Kept for attribution only; it has no bearing on who can see or
   // run the command, which is decided entirely by workspaceId.
   userId        Int?
@@ -612,28 +637,28 @@ model model_routers {
 }
 
 model model_router_rules {
-  id               Int           @id @default(autoincrement())
-  router_id        Int
-  enabled          Boolean       @default(true)
-  priority         Int
-  type             String        @default("calculated")
-  title            String
-  description      String?
+  id              Int           @id @default(autoincrement())
+  router_id       Int
+  enabled         Boolean       @default(true)
+  priority        Int
+  type            String        @default("calculated")
+  title           String
+  description     String?
   // For `calculated` rules: the boolean operator joining `conditions` — "AND"
   // (all must match) or "OR" (any must match). Null for `llm` rules.
-  condition_logic  String?
+  condition_logic String?
   // For `calculated` rules: JSON-stringified array of condition objects, each
   // shaped as { property: string, comparator: string, value: string } where
   // `property` ∈ VALID_PROPERTIES and `comparator` ∈ VALID_COMPARATORS (see
   // server/models/modelRouterRule.js). `value` is always stored as a string;
   // numeric comparators parse it at evaluation time. Null for `llm` rules.
-  conditions       String?
-  route_provider   String
-  route_model      String
-  created_by       Int?
-  createdAt        DateTime      @default(now())
-  lastUpdatedAt    DateTime      @default(now())
-  router           model_routers @relation(fields: [router_id], references: [id], onDelete: Cascade)
+  conditions      String?
+  route_provider  String
+  route_model     String
+  created_by      Int?
+  createdAt       DateTime      @default(now())
+  lastUpdatedAt   DateTime      @default(now())
+  router          model_routers @relation(fields: [router_id], references: [id], onDelete: Cascade)
 
   @@unique([router_id, title])
   @@index([router_id])

@@ -10,6 +10,7 @@ const {
   getDocumentsByDocPaths,
 } = require("../utils/files");
 const { purgeDocument, purgeFolder } = require("../utils/files/purgeDocument");
+const { DocumentFolder } = require("../models/documentFolders");
 const { getVectorDbClass } = require("../utils/helpers");
 const { updateENV, dumpENV } = require("../utils/helpers/updateENV");
 const {
@@ -47,9 +48,11 @@ const { getCustomModels } = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   userPermissionValid,
+  instanceOrAnyWorkspacePermissionValid,
 } = require("../utils/middleware/authorizedRequest");
 const {
   PERMISSIONS,
+  WORKSPACE_PERMISSIONS,
   SETTINGS_ROUTE_PERMISSIONS,
   permissionForEnvKey,
 } = require("../utils/permissions");
@@ -73,6 +76,20 @@ const {
   hasAnyUser,
   createInitialAdmin,
 } = require("../utils/boot/bootstrapAdmin");
+
+/**
+ * Resolve the workspace the document picker is open in. Only ever used to
+ * *narrow* what a caller sees, so a slug that does not resolve simply means no
+ * workspace context rather than an error - and the visibility check still has
+ * to agree the caller may see that workspace's folders.
+ * @param {string|null} slug
+ * @returns {Promise<number|null>}
+ */
+async function workspaceIdFromSlug(slug = null) {
+  if (!slug) return null;
+  const workspace = await Workspace.get({ slug: String(slug) });
+  return workspace?.id ?? null;
+}
 
 function systemEndpoints(app) {
   if (!app) return;
@@ -380,28 +397,68 @@ function systemEndpoints(app) {
     async (request, response) => {
       try {
         const { name } = reqBody(request);
-        await purgeFolder(name);
-        response.sendStatus(200).end();
+        const { success, message } = await purgeFolder(
+          name,
+          response.locals?.user ?? null
+        );
+        // A protected or missing folder used to come back as a 200 with
+        // nothing removed, which is indistinguishable from a real delete.
+        if (!success)
+          return response.status(400).json({ success: false, message });
+        response.status(200).json({ success: true, message: null });
       } catch (e) {
         console.error(e.message, e);
-        response.sendStatus(500).end();
+        response
+          .status(500)
+          .json({ success: false, message: "Failed to remove folder." });
       }
     }
   );
 
   app.get(
     "/system/local-files",
-    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [
+      validatedRequest,
+      instanceOrAnyWorkspacePermissionValid(
+        [PERMISSIONS.DOCUMENTS_MANAGE, PERMISSIONS.DOCUMENTS_VIEW],
+        [WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW]
+      ),
+    ],
     async (request, response) => {
       try {
-        const { folder, offset, limit } = queryParams(request);
+        const { folder, offset, limit, workspace } = queryParams(request);
+        // The library is one directory on disk; which of its folders this
+        // caller may see is decided here, because the fs helpers below have no
+        // user to ask. The picker always lives inside a workspace and names it,
+        // which is what scopes workspace-visibility folders to that one.
+        const hidden = await DocumentFolder.hiddenFoldersFor(
+          response.locals?.user,
+          { workspaceId: await workspaceIdFromSlug(workspace) }
+        );
+
         if (folder) {
+          // A hidden folder answers exactly as a missing one would - a 403
+          // would confirm that someone else has a folder by that name.
+          if (hidden.has(folder))
+            return response.status(404).json({
+              folder,
+              documents: [],
+              totalCount: 0,
+              hasMore: false,
+              code: 404,
+              error: `Folder "${folder}" does not exist.`,
+            });
+
           // Passed through as-is: getDocumentsByFolder clamps the window and
           // understands `limit=all`.
           const result = await getDocumentsByFolder(folder, { offset, limit });
           response.status(result.code).json(result);
         } else {
           const localFiles = listFolders();
+          localFiles.items = await DocumentFolder.decorate(
+            localFiles.items.filter((item) => !hidden.has(item.name)),
+            response.locals?.user
+          );
           response.status(200).json({ localFiles });
         }
       } catch (e) {
@@ -413,11 +470,26 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/local-files/search",
-    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [
+      validatedRequest,
+      instanceOrAnyWorkspacePermissionValid(
+        [PERMISSIONS.DOCUMENTS_MANAGE, PERMISSIONS.DOCUMENTS_VIEW],
+        [WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW]
+      ),
+    ],
     async (request, response) => {
       try {
-        const { q } = queryParams(request);
-        const results = await searchDocuments(q);
+        const { q, workspace } = queryParams(request);
+        // Search walks the whole library, so its hits need the same filter the
+        // listing gets - otherwise a private folder's contents are one query
+        // away from anyone with library access.
+        const hidden = await DocumentFolder.hiddenFoldersFor(
+          response.locals?.user,
+          { workspaceId: await workspaceIdFromSlug(workspace) }
+        );
+        const results = (await searchDocuments(q)).filter(
+          (folder) => !hidden.has(folder.name)
+        );
         response.status(200).json({ results });
       } catch (e) {
         console.error(e.message, e);
@@ -428,7 +500,13 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/local-files/by-docpaths",
-    [validatedRequest, userPermissionValid([PERMISSIONS.DOCUMENTS_MANAGE])],
+    [
+      validatedRequest,
+      instanceOrAnyWorkspacePermissionValid(
+        [PERMISSIONS.DOCUMENTS_MANAGE, PERMISSIONS.DOCUMENTS_VIEW],
+        [WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW]
+      ),
+    ],
     async (request, response) => {
       try {
         const { docpaths = [] } = reqBody(request);

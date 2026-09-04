@@ -1,8 +1,15 @@
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import FileRow from "../FileRow";
-import { ChevronDown, Folder, FolderOpen } from "lucide-react";
-import { middleTruncate } from "@/utils/directories";
+import {
+  ChevronDown,
+  Folder,
+  FolderOpen,
+  Lock,
+  Upload,
+  Users,
+} from "lucide-react";
+import { folderDisplayName, middleTruncate } from "@/utils/directories";
 import { useTranslation } from "react-i18next";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -29,6 +36,13 @@ import { Button } from "@/components/ui/button";
  * @param {boolean} props.acceptsDrops whether files can be dropped onto this
  * row right now (false while the document processor is offline)
  * @param {(folderName: string, event: React.DragEvent) => void} props.onDropFiles
+ * @param {(folderName: string) => void} props.onUploadClick opens a file picker
+ * that uploads into this folder
+ * @param {(folderName: string|null) => void} props.onDragTargetChange reports
+ * this row becoming (or ceasing to be) the folder a drag would land in, so the
+ * panel can name the destination while the drag is in flight
+ * @param {(event: React.MouseEvent, folderName: string) => void} props.onContextMenu
+ * opens the picker's context menu with this folder as its subject
  */
 export default function FolderRow({
   item,
@@ -47,11 +61,16 @@ export default function FolderRow({
   onLoadMore,
   acceptsDrops = false,
   onDropFiles,
+  onUploadClick,
+  onDragTargetChange,
+  onContextMenu,
 }) {
   const { t } = useTranslation();
   const [isDropTarget, setIsDropTarget] = useState(false);
   const selected = selectionState === "all";
   const partial = selectionState === "some";
+  // Every value sent to the server stays item.name - this is display only.
+  const label = folderDisplayName(item.name);
 
   // Only react to drags carrying files - dragging text or a link over the
   // picker should not light every folder up.
@@ -64,7 +83,10 @@ export default function FolderRow({
     event.preventDefault();
     event.stopPropagation();
     event.dataTransfer.dropEffect = "copy";
-    if (!isDropTarget) setIsDropTarget(true);
+    if (!isDropTarget) {
+      setIsDropTarget(true);
+      onDragTargetChange?.(item.name);
+    }
   };
 
   const handleDragLeave = (event) => {
@@ -72,10 +94,12 @@ export default function FolderRow({
     // leave that lands somewhere still inside this row.
     if (event.currentTarget.contains(event.relatedTarget)) return;
     setIsDropTarget(false);
+    onDragTargetChange?.(null);
   };
 
   const handleDrop = (event) => {
     setIsDropTarget(false);
+    onDragTargetChange?.(null);
     if (!acceptsDrops || !dragHasFiles(event)) return;
     // preventDefault stops the browser from navigating to the dropped file;
     // stopPropagation keeps the drop from also being handled as an untargeted
@@ -96,6 +120,12 @@ export default function FolderRow({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        // Stops the picker's own handler from also firing and opening the menu
+        // with no folder attached.
+        onContextMenu={(event) => {
+          event.stopPropagation();
+          onContextMenu(event, item.name);
+        }}
         className={`grid grid-cols-12 py-2 pl-3.5 pr-8 hover:bg-theme-file-picker-hover cursor-pointer file-row ${
           selected || partial ? "selected light:text-white text-white!" : ""
         } ${
@@ -128,9 +158,15 @@ export default function FolderRow({
           ) : (
             <Folder className="shrink-0 h-3.5 w-3.5 mr-[3px]" />
           )}
-          <p className="whitespace-nowrap overflow-show max-w-[400px]">
-            {middleTruncate(item.name, 35)}
+          {/* The title carries the folder's real on-disk name, which is what
+              the relabelled default folder is actually called. */}
+          <p
+            className="whitespace-nowrap overflow-show max-w-[400px]"
+            title={item.name}
+          >
+            {middleTruncate(label, 35)}
           </p>
+          <VisibilityBadge visibility={item.visibility} />
           {displayCount > 0 && (
             <span
               className={`text-theme-text-secondary text-[10px] font-medium ml-1.5 shrink-0 ${
@@ -144,8 +180,31 @@ export default function FolderRow({
             <Spinner size="xs" className="ml-1 shrink-0" />
           )}
         </div>
-        <p className="col-span-2 pl-3.5" />
-        <p className="col-span-2 pl-2" />
+        {/* Uploading is per-folder so the destination is never in question -
+            this button and a drop onto this row put files in the same place.
+            Always rendered rather than revealed on hover: it is the only
+            pointer-driven way to upload, so it has to be findable. */}
+        <div className="col-span-6 flex items-center justify-end">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={!acceptsDrops}
+            aria-label={t("connectors.upload.upload-into", {
+              folder: label,
+            })}
+            title={t("connectors.upload.upload-into", { folder: label })}
+            onClick={(event) => {
+              // The row click expands the folder; uploading should not.
+              event.stopPropagation();
+              onUploadClick(item.name);
+            }}
+            className="h-6 gap-x-1.5 px-2 text-xs text-theme-text-secondary hover:text-theme-text-primary"
+          >
+            <Upload className="h-3.5 w-3.5" />
+            {t("connectors.upload.upload-files")}
+          </Button>
+        </div>
       </TableRow>
       {expanded && loading && files.length === 0 && (
         <TableRow className="text-theme-text-secondary py-2 pl-8 pr-8">
@@ -185,5 +244,26 @@ export default function FolderRow({
         </TableRow>
       )}
     </>
+  );
+}
+
+/**
+ * Marks how far a folder reaches. `shared` gets no badge on purpose: it is the
+ * level a folder with no ownership row falls back to, so badging it would put a
+ * mark on every folder that predates visibility and imply a choice was made.
+ */
+function VisibilityBadge({ visibility }) {
+  const { t } = useTranslation();
+  if (visibility !== "private" && visibility !== "workspace") return null;
+
+  const Icon = visibility === "private" ? Lock : Users;
+  return (
+    <span
+      title={t(`connectors.directory.visibility.${visibility}`)}
+      className="flex shrink-0 items-center gap-x-1 rounded-full bg-theme-bg-primary px-1.5 py-0.5 text-[10px] font-medium text-theme-text-secondary"
+    >
+      <Icon className="h-2.5 w-2.5" />
+      {t(`connectors.directory.visibility.${visibility}`)}
+    </span>
   );
 }
