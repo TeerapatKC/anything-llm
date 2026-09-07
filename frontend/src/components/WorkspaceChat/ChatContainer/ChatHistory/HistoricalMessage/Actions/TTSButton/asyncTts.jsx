@@ -88,7 +88,7 @@ export default function AsyncTTSMessage({ slug, chatId }) {
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-[250px] text-xs">
           {speaking
-            ? t("pause_tts_speech_message")
+            ? t("chat_window.pause_tts_speech_message")
             : t("chat_window.tts_speak_message")}
         </TooltipContent>
       </Tooltip>

@@ -1517,6 +1517,7 @@ const TRANSLATIONS = {
     stt_transcription_failed: "การถอดเสียงล้มเหลว: {{error}}",
     send: "ส่งข้อความพรอมต์ไปยังพื้นที่ทำงาน",
     tts_speak_message: "อ่านออกเสียงข้อความ",
+    pause_tts_speech_message: "หยุดอ่านออกเสียงชั่วคราว",
     copy: "คัดลอก",
     regenerate: "สร้างใหม่",
     regenerate_response: "สร้างคำตอบใหม่",

@@ -1172,7 +1172,7 @@ function supportedLLM(input = "") {
     "minimax",
     "cerebras",
     "omlx",
-    "anythingllm-router",
+    "nexusai-router",
   ].includes(input);
   return validSelection ? null : `${input} is not a valid LLM provider.`;
 }
@@ -1267,7 +1267,7 @@ function requiresForceMode(_, forceModeEnabled = false) {
 }
 
 async function validDockerizedUrl(input = "") {
-  if (process.env.ANYTHING_LLM_RUNTIME !== "docker") return null;
+  if (process.env.NEXUS_AI_RUNTIME !== "docker") return null;
 
   try {
     const { isPortInUse, getLocalHosts } = require("./portAvailabilityChecker");
@@ -1538,7 +1538,7 @@ function dumpENV() {
     "GENERIC_OPEN_AI_CUSTOM_HEADERS",
 
     // Specify Chromium args for collector
-    "ANYTHINGLLM_CHROMIUM_ARGS",
+    "NEXUSAI_CHROMIUM_ARGS",
 
     // Allow setting a custom response timeout for Ollama
     "OLLAMA_RESPONSE_TIMEOUT",
@@ -1560,8 +1560,8 @@ function dumpENV() {
     "AGENT_AUTO_APPROVED_SKILLS",
 
     // Allow setting a custom fetch timeouts for providers
-    "ANYTHINGLLM_FETCH_TIMEOUT",
-    "ANYTHINGLLM_MAX_RETRIES",
+    "NEXUSAI_FETCH_TIMEOUT",
+    "NEXUSAI_MAX_RETRIES",
 
     // Deny-by-default for embed widgets that have no allowlist configured
     "EMBED_REQUIRE_ALLOWLIST",

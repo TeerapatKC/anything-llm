@@ -4,7 +4,7 @@ import SettingsLayout from "@/components/layout/SettingsLayout";
 import { SpinnerBlock } from "@/components/ui/spinner";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import AzureOpenAiLogo from "@/media/llmprovider/azure.png";
 import GeminiAiLogo from "@/media/llmprovider/gemini.png";
@@ -52,7 +52,7 @@ const EMBEDDERS = [
   {
     name: "NexusAI Embedder",
     value: "native",
-    logo: AnythingLLMIcon,
+    logo: NexusAIIcon,
     options: (settings) => <NativeEmbeddingOptions settings={settings} />,
     description: "Use the built-in embedding provider for NexusAI. Zero setup!",
   },

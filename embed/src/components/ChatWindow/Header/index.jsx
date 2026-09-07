@@ -1,4 +1,4 @@
-import AnythingLLMIcon from "@/assets/anything-llm-icon.svg";
+import NexusAIIcon from "@/assets/anything-llm-icon.svg";
 import ChatService from "@/models/chatService";
 import {
   ArrowCounterClockwise,
@@ -48,13 +48,13 @@ export default function ChatWindowHeader({
     <div
       style={{ borderBottom: "1px solid #E9E9E9" }}
       className="allm-flex allm-items-center allm-relative allm-rounded-t-2xl"
-      id="anything-llm-header"
+      id="nexus-ai-header"
     >
       <div className="allm-flex allm-justify-center allm-items-center allm-w-full allm-h-[76px]">
         <img
           style={{ maxWidth: 48, maxHeight: 48 }}
-          src={iconUrl ?? AnythingLLMIcon}
-          alt={iconUrl ? "Brand" : "AnythingLLM Logo"}
+          src={iconUrl ?? NexusAIIcon}
+          alt={iconUrl ? "Brand" : "NexusAI Logo"}
         />
       </div>
       <div className="allm-absolute allm-right-0 allm-flex allm-gap-x-1 allm-items-center allm-px-[22px]">

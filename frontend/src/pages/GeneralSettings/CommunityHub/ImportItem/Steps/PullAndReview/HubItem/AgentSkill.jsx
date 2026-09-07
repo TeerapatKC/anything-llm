@@ -74,7 +74,7 @@ export default function AgentSkill({ item, settings, setStep }) {
             </p>
           )}
           <a
-            href="https://docs.anythingllm.com/community-hub/faq#verification"
+            href="https://docs.nexusai.com/community-hub/faq#verification"
             target="_blank"
             className="text-xs font-mono text-blue-500 hover:underline"
             rel="noreferrer"

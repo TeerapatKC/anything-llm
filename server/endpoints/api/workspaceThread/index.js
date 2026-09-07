@@ -369,7 +369,7 @@ function apiWorkspaceThreadEndpoints(app) {
                 id: 'chat-uuid',
                 type: "abort | textResponse",
                 textResponse: "Response to your query",
-                sources: [{title: "anythingllm.txt", chunk: "This is a context chunk used in the answer of the prompt by the LLM."}],
+                sources: [{title: "nexusai.txt", chunk: "This is a context chunk used in the answer of the prompt by the LLM."}],
                 close: true,
                 error: "null | text string of the failure mode."
               }
@@ -513,7 +513,7 @@ function apiWorkspaceThreadEndpoints(app) {
                },
                {
                  name: "this is a document.pdf",
-                 mime: "application/anythingllm-document",
+                 mime: "application/nexusai-document",
                  contentString: "data:application/pdf;base64,iVBORw0KGgoAAAANSUhEUgAA..."
                }
               ],
@@ -551,7 +551,7 @@ function apiWorkspaceThreadEndpoints(app) {
                   id: 'uuid-123',
                   type: "abort | textResponseChunk",
                   textResponse: "final chunk of LLM output!",
-                  sources: [{title: "anythingllm.txt", chunk: "This is a context chunk used in the answer of the prompt by the LLM. This will only return in the final chunk."}],
+                  sources: [{title: "nexusai.txt", chunk: "This is a context chunk used in the answer of the prompt by the LLM. This will only return in the final chunk."}],
                   close: true,
                   error: "null | text string of the failure mode."
                 }

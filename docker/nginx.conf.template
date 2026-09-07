@@ -1,4 +1,4 @@
-# Frontend container for the split (frontend/backend) AnythingLLM deployment.
+# Frontend container for the split (frontend/backend) NexusAI deployment.
 # ${BACKEND_HOST}/${BACKEND_PORT} are substituted on container boot by the nginx
 # entrypoint from the environment (defaults: backend:3001).
 

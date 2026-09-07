@@ -1,24 +1,24 @@
 export const API_BASE = import.meta.env.VITE_API_BASE || "/api";
-export const AUTH_USER = "anythingllm_user";
-export const AUTH_TOKEN = "anythingllm_authToken";
-export const AUTH_TIMESTAMP = "anythingllm_authTimestamp";
+export const AUTH_USER = "nexusai_user";
+export const AUTH_TOKEN = "nexusai_authToken";
+export const AUTH_TIMESTAMP = "nexusai_authTimestamp";
 // Permissions live outside the cached user object on purpose - many code paths
 // rewrite that object, and losing this field silently locks a user out of everything.
-export const AUTH_PERMISSIONS = "anythingllm_permissions";
+export const AUTH_PERMISSIONS = "nexusai_permissions";
 // The human-readable label of the role a user holds (e.g. "Content Editor") - cached
 // separately from AUTH_USER for the same reason as AUTH_PERMISSIONS, and because
 // user.role only ever stores the role's identifier, not something fit to display.
-export const AUTH_ROLE_LABEL = "anythingllm_roleLabel";
+export const AUTH_ROLE_LABEL = "nexusai_roleLabel";
 // What the user may do inside each workspace, keyed by workspace id. Workspace
 // permissions are per-workspace, so they cannot live in the flat permission list.
-export const AUTH_WORKSPACE_PERMISSIONS = "anythingllm_workspacePermissions";
-export const SEEN_DOC_PIN_ALERT = "anythingllm_pinned_document_alert";
-export const SEEN_WATCH_ALERT = "anythingllm_watched_document_alert";
-export const LAST_VISITED_WORKSPACE = "anythingllm_last_visited_workspace";
-export const USER_PROMPT_INPUT_MAP = "anythingllm_user_prompt_input_map";
-export const PENDING_HOME_MESSAGE = "anythingllm_pending_home_message";
+export const AUTH_WORKSPACE_PERMISSIONS = "nexusai_workspacePermissions";
+export const SEEN_DOC_PIN_ALERT = "nexusai_pinned_document_alert";
+export const SEEN_WATCH_ALERT = "nexusai_watched_document_alert";
+export const LAST_VISITED_WORKSPACE = "nexusai_last_visited_workspace";
+export const USER_PROMPT_INPUT_MAP = "nexusai_user_prompt_input_map";
+export const PENDING_HOME_MESSAGE = "nexusai_pending_home_message";
 
-export const APPEARANCE_SETTINGS = "anythingllm_appearance_settings";
+export const APPEARANCE_SETTINGS = "nexusai_appearance_settings";
 
 export const OLLAMA_COMMON_URLS = [
   "http://127.0.0.1:11434",

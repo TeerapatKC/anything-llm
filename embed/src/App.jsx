@@ -36,7 +36,7 @@ export default function App() {
     <I18nextProvider i18n={i18next}>
       <Head />
       <div
-        id="anything-llm-embed-chat-container"
+        id="nexus-ai-embed-chat-container"
         className={`allm-fixed allm-inset-0 allm-z-50 ${isChatOpen ? "allm-block" : "allm-hidden"}`}
       >
         <div
@@ -46,7 +46,7 @@ export default function App() {
             height: "100%",
           }}
           className={`allm-h-full allm-w-full allm-bg-white allm-fixed allm-bottom-0 allm-right-0 allm-mb-4 allm-md:mr-4 allm-rounded-2xl allm-border allm-border-gray-300 allm-shadow-[0_4px_14px_rgba(0,0,0,0.25)] allm-flex allm-flex-col ${positionClasses[position]}`}
-          id="anything-llm-chat"
+          id="nexus-ai-chat"
         >
           {isChatOpen && (
             <ChatWindow
@@ -59,7 +59,7 @@ export default function App() {
       </div>
       {!isChatOpen && (
         <div
-          id="anything-llm-embed-chat-button-container"
+          id="nexus-ai-embed-chat-button-container"
           className={`allm-fixed allm-bottom-0 ${positionClasses[position]} allm-mb-4 allm-z-50`}
         >
           <OpenButton

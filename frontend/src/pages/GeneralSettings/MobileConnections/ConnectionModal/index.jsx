@@ -38,7 +38,7 @@ export default function MobileConnectModal({ isOpen, onClose }) {
               {t("help.connection-modal-2")}
             </p>
             <Link
-              to="https://play.google.com/store/apps/details?id=com.anythingllm"
+              to="https://play.google.com/store/apps/details?id=com.nexusai"
               target="_blank"
             >
               <img

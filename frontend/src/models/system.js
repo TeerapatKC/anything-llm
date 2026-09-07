@@ -10,11 +10,11 @@ export const CUSTOM_APP_NAME_UPDATED_EVENT = "custom-app-name-updated";
 
 const System = {
   cacheKeys: {
-    footerIcons: "anythingllm_footer_links",
-    supportEmail: "anythingllm_support_email",
-    customAppName: "anythingllm_custom_app_name",
-    canViewChatHistory: "anythingllm_can_view_chat_history",
-    deploymentVersion: "anythingllm_deployment_version",
+    footerIcons: "nexusai_footer_links",
+    supportEmail: "nexusai_support_email",
+    customAppName: "nexusai_custom_app_name",
+    canViewChatHistory: "nexusai_can_view_chat_history",
+    deploymentVersion: "nexusai_deployment_version",
   },
   ping: async function () {
     return await fetch(`${API_BASE}/ping`)

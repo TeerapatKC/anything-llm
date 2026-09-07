@@ -35,9 +35,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: "src/main.jsx",
-      name: "EmbeddedAnythingLLM",
+      name: "EmbeddedNexusAI",
       formats: ["umd"],
-      fileName: (_format) => `anythingllm-chat-widget.js`
+      fileName: (_format) => `nexusai-chat-widget.js`
     },
     rollupOptions: {
       external: [

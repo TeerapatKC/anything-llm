@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import DeepgramLogo from "@/media/ttsproviders/deepgram.png";
-import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
 import LemonadeLogo from "@/media/llmprovider/lemonade.png";
 import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
 import GroqLogo from "@/media/llmprovider/groq.png";
@@ -30,7 +30,7 @@ const PROVIDERS = [
   {
     name: "System native",
     value: "native",
-    logo: AnythingLLMIcon,
+    logo: NexusAIIcon,
     options: (settings) => <BrowserNative settings={settings} />,
     description: "Uses your browser's built in STT service if supported.",
   },

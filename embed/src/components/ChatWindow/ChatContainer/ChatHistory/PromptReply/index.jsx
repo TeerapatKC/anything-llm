@@ -2,7 +2,7 @@ import { forwardRef, memo, useState } from "react";
 import { Warning, CircleNotch, CaretDown } from "@phosphor-icons/react";
 import renderMarkdown from "@/utils/chat/markdown";
 import { embedderSettings } from "@/main";
-import AnythingLLMIcon from "@/assets/anything-llm-icon.svg";
+import NexusAIIcon from "@/assets/anything-llm-icon.svg";
 import { formatDate } from "@/utils/date";
 
 const ThinkingIndicator = ({ hasThought }) => {
@@ -50,7 +50,7 @@ const ThoughtBubble = ({ thought }) => {
 const PromptReply = forwardRef(
   ({ uuid, reply, pending, error, sources = [], sentAt }, ref) => {
     if (!reply && sources.length === 0 && !pending && !error) return null;
-    if (error) console.error(`ANYTHING_LLM_CHAT_WIDGET_ERROR: ${error}`);
+    if (error) console.error(`NEXUS_AI_CHAT_WIDGET_ERROR: ${error}`);
 
     // Extract content between think tags if they exist
     const thinkMatches = reply?.match(/<think>([\s\S]*?)<\/think>/g) || [];
@@ -89,7 +89,7 @@ const PromptReply = forwardRef(
           </div>
           <div className="allm-flex allm-items-start allm-w-full allm-h-fit allm-justify-start">
             <img
-              src={embedderSettings.settings.assistantIcon || AnythingLLMIcon}
+              src={embedderSettings.settings.assistantIcon || NexusAIIcon}
               alt="Anything LLM Icon"
               className="allm-w-9 allm-h-9 allm-flex-shrink-0 allm-ml-2"
             />
@@ -119,7 +119,7 @@ const PromptReply = forwardRef(
           </div>
           <div className="allm-flex allm-items-start allm-w-full allm-h-fit allm-justify-start">
             <img
-              src={embedderSettings.settings.assistantIcon || AnythingLLMIcon}
+              src={embedderSettings.settings.assistantIcon || NexusAIIcon}
               alt="Anything LLM Icon"
               className="allm-w-9 allm-h-9 allm-flex-shrink-0 allm-ml-2"
             />
@@ -149,7 +149,7 @@ const PromptReply = forwardRef(
           className="allm-flex allm-items-start allm-w-full allm-h-fit allm-justify-start"
         >
           <img
-            src={embedderSettings.settings.assistantIcon || AnythingLLMIcon}
+            src={embedderSettings.settings.assistantIcon || NexusAIIcon}
             alt="Anything LLM Icon"
             className="allm-w-9 allm-h-9 allm-flex-shrink-0 allm-ml-2"
           />

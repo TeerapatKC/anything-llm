@@ -91,7 +91,7 @@ export default function GithubOptions() {
                 <Input
                   type="url"
                   name="repo"
-                  placeholder="https://github.com/Mintplex-Labs/anything-llm"
+                  placeholder="https://github.com/Mintplex-Labs/nexus-ai"
                   required={true}
                   autoComplete="off"
                   onChange={(e) => setRepo(e.target.value)}

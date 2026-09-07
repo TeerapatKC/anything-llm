@@ -747,14 +747,14 @@
                     "error": null,
                     "documents": [
                       {
-                        "location": "custom-documents/anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                        "name": "anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                        "url": "file://Users/tim/Documents/anything-llm/collector/hotdir/anythingllm.txt",
-                        "title": "anythingllm.txt",
+                        "location": "custom-documents/nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                        "name": "nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                        "url": "file://Users/tim/Documents/nexus-ai/collector/hotdir/nexusai.txt",
+                        "title": "nexusai.txt",
                         "docAuthor": "Unknown",
                         "description": "Unknown",
                         "docSource": "a text file uploaded by the user.",
-                        "chunkSource": "anythingllm.txt",
+                        "chunkSource": "nexusai.txt",
                         "published": "1/16/2024, 3:07:00 PM",
                         "wordCount": 93,
                         "token_count_estimate": 115
@@ -854,14 +854,14 @@
                     "error": null,
                     "documents": [
                       {
-                        "location": "custom-documents/anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                        "name": "anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                        "url": "file://Users/tim/Documents/anything-llm/collector/hotdir/anythingllm.txt",
-                        "title": "anythingllm.txt",
+                        "location": "custom-documents/nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                        "name": "nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                        "url": "file://Users/tim/Documents/nexus-ai/collector/hotdir/nexusai.txt",
+                        "title": "nexusai.txt",
                         "docAuthor": "Unknown",
                         "description": "Unknown",
                         "docSource": "a text file uploaded by the user.",
-                        "chunkSource": "anythingllm.txt",
+                        "chunkSource": "nexusai.txt",
                         "published": "1/16/2024, 3:07:00 PM",
                         "wordCount": 93,
                         "token_count_estimate": 115
@@ -967,7 +967,7 @@
                         "docAuthor": "no author found",
                         "description": "No description found.",
                         "docSource": "URL link uploaded by the user.",
-                        "chunkSource": "https:anythingllm.com.html",
+                        "chunkSource": "https:nexusai.com.html",
                         "published": "1/16/2024, 3:46:33 PM",
                         "wordCount": 252,
                         "pageContent": "NexusAI is the best....",
@@ -1010,7 +1010,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "link": "https://anythingllm.com",
+                  "link": "https://nexusai.com",
                   "addToWorkspaces": "workspace1,workspace2",
                   "scraperHeaders": {
                     "Authorization": "Bearer token123",
@@ -2182,7 +2182,7 @@
                   "custom-documents/my-pdf.pdf-hash.json"
                 ],
                 "deletes": [
-                  "custom-documents/anythingllm.txt-hash.json"
+                  "custom-documents/nexusai.txt-hash.json"
                 ]
               }
             }
@@ -2274,7 +2274,7 @@
                     "textResponse": "Response to your query",
                     "sources": [
                       {
-                        "title": "anythingllm.txt",
+                        "title": "nexusai.txt",
                         "chunk": "This is a context chunk used in the answer of the prompt by the LLM,"
                       }
                     ],
@@ -2308,7 +2308,7 @@
           }
         },
         "requestBody": {
-          "description": "Send a prompt to the workspace and the type of conversation (automatic, query or chat).<br/><b>Query:</b> Will not use LLM unless there are relevant sources from vectorDB & does not recall chat history.<br/><b>Automatic:</b> Will use tool-calling if the provider supports native tool calling without needing to invoke @agent.<br/><b>Chat:</b> Uses LLM general knowledge w/custom embeddings to produce output, uses rolling chat history.<br/><b>Attachments:</b> Can include images and documents.<br/><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document attachments:</b> must have the mime type <code>application/anythingllm-document</code> - otherwise it will be passed to the LLM as an image and may fail to process. This uses the built-in document processor to first parse the document to text before injecting it into the context window.",
+          "description": "Send a prompt to the workspace and the type of conversation (automatic, query or chat).<br/><b>Query:</b> Will not use LLM unless there are relevant sources from vectorDB & does not recall chat history.<br/><b>Automatic:</b> Will use tool-calling if the provider supports native tool calling without needing to invoke @agent.<br/><b>Chat:</b> Uses LLM general knowledge w/custom embeddings to produce output, uses rolling chat history.<br/><b>Attachments:</b> Can include images and documents.<br/><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document attachments:</b> must have the mime type <code>application/nexusai-document</code> - otherwise it will be passed to the LLM as an image and may fail to process. This uses the built-in document processor to first parse the document to text before injecting it into the context window.",
           "required": true,
           "content": {
             "application/json": {
@@ -2324,7 +2324,7 @@
                   },
                   {
                     "name": "this is a document.pdf",
-                    "mime": "application/anythingllm-document",
+                    "mime": "application/nexusai-document",
                     "contentString": "data:application/pdf;base64,iVBORw0KGgoAAAANSUhEUgAA..."
                   }
                 ],
@@ -2383,7 +2383,7 @@
                       "textResponse": "final chunk of LLM output!",
                       "sources": [
                         {
-                          "title": "anythingllm.txt",
+                          "title": "nexusai.txt",
                           "chunk": "This is a context chunk used in the answer of the prompt by the LLM. This will only return in the final chunk."
                         }
                       ],
@@ -2416,7 +2416,7 @@
           }
         },
         "requestBody": {
-          "description": "Send a prompt to the workspace and the type of conversation (automatic, query or chat).<br/><b>Query:</b> Will not use LLM unless there are relevant sources from vectorDB & does not recall chat history.<br/><b>Automatic:</b> Will use tool-calling if the provider supports native tool calling without needing to invoke @agent.<br/><b>Chat:</b> Uses LLM general knowledge w/custom embeddings to produce output, uses rolling chat history.<br/><b>Attachments:</b> Can include images and documents.<br/><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document attachments:</b> must have the mime type <code>application/anythingllm-document</code> - otherwise it will be passed to the LLM as an image and may fail to process. This uses the built-in document processor to first parse the document to text before injecting it into the context window.",
+          "description": "Send a prompt to the workspace and the type of conversation (automatic, query or chat).<br/><b>Query:</b> Will not use LLM unless there are relevant sources from vectorDB & does not recall chat history.<br/><b>Automatic:</b> Will use tool-calling if the provider supports native tool calling without needing to invoke @agent.<br/><b>Chat:</b> Uses LLM general knowledge w/custom embeddings to produce output, uses rolling chat history.<br/><b>Attachments:</b> Can include images and documents.<br/><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document attachments:</b> must have the mime type <code>application/nexusai-document</code> - otherwise it will be passed to the LLM as an image and may fail to process. This uses the built-in document processor to first parse the document to text before injecting it into the context window.",
           "required": true,
           "content": {
             "application/json": {
@@ -2432,7 +2432,7 @@
                   },
                   {
                     "name": "this is a document.pdf",
-                    "mime": "application/anythingllm-document",
+                    "mime": "application/nexusai-document",
                     "contentString": "data:application/pdf;base64,iVBORw0KGgoAAAANSUhEUgAA..."
                   }
                 ],
@@ -2723,7 +2723,7 @@
                   "example": [
                     {
                       "role": "user",
-                      "content": "What is AnythinglLM?"
+                      "content": "What is NexusAI?"
                     },
                     {
                       "role": "assistant",
@@ -3152,7 +3152,7 @@
                     "textResponse": "Response to your query",
                     "sources": [
                       {
-                        "title": "anythingllm.txt",
+                        "title": "nexusai.txt",
                         "chunk": "This is a context chunk used in the answer of the prompt by the LLM."
                       }
                     ],
@@ -3269,7 +3269,7 @@
                       "textResponse": "final chunk of LLM output!",
                       "sources": [
                         {
-                          "title": "anythingllm.txt",
+                          "title": "nexusai.txt",
                           "chunk": "This is a context chunk used in the answer of the prompt by the LLM. This will only return in the final chunk."
                         }
                       ],
@@ -3318,7 +3318,7 @@
                   },
                   {
                     "name": "this is a document.pdf",
-                    "mime": "application/anythingllm-document",
+                    "mime": "application/nexusai-document",
                     "contentString": "data:application/pdf;base64,iVBORw0KGgoAAAANSUhEUgAA..."
                   }
                 ],

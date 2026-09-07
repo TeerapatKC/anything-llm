@@ -719,7 +719,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "知的なスキル選択",
         description:
-          "クエリごとに、無制限のツールを使用し、トークン使用量を最大80%削減できます。AnythingLLMは、各プロンプトに対して最適なスキルを自動的に選択します。",
+          "クエリごとに、無制限のツールを使用し、トークン使用量を最大80%削減できます。NexusAIは、各プロンプトに対して最適なスキルを自動的に選択します。",
         "max-tools": {
           title: "マックスツールズ",
           description:
@@ -767,7 +767,7 @@ const TRANSLATIONS = {
   api: {
     title: "APIキー",
     description:
-      "APIキーにより、プログラム経由でこのAnythingLLMインスタンスにアクセスおよび管理できます。",
+      "APIキーにより、プログラム経由でこのNexusAIインスタンスにアクセスおよび管理できます。",
     link: "APIドキュメントを読む",
     generate: "新しいAPIキーを生成",
     empty: "APIキーが見つかりません",
@@ -781,7 +781,7 @@ const TRANSLATIONS = {
       close: "閉じる",
       create: "APIキーを作成",
       helper:
-        "作成したAPIキーは、このAnythingLLMインスタンスにプログラムからアクセスして設定するために使用できます。",
+        "作成したAPIキーは、このNexusAIインスタンスにプログラムからアクセスして設定するために使用できます。",
       name: {
         label: "名前",
         placeholder: "本番環境の統合",
@@ -805,7 +805,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLMの設定",
     description:
-      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、AnythingLLMは正しく動作しません。",
+      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、NexusAIは正しく動作しません。",
     provider: "LLMプロバイダー",
     providers: {
       azure_openai: {
@@ -828,7 +828,7 @@ const TRANSLATIONS = {
       "これは、お好みの文字起こしモデルプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、メディアファイルや音声が正しく文字起こしされません。",
     provider: "文字起こしプロバイダー",
     "warn-start":
-      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にAnythingLLMが停止する可能性があります。",
+      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にNexusAIが停止する可能性があります。",
     "warn-recommend":
       "少なくとも2GBのRAMが推奨され、ファイルサイズは10Mb未満であることをお勧めします。",
     "warn-end": "組み込みモデルは初回使用時に自動的にダウンロードされます。",
@@ -838,7 +838,7 @@ const TRANSLATIONS = {
     "desc-start":
       "LLMがネイティブに埋め込みエンジンをサポートしていない場合、テキストの埋め込み用に追加の認証情報を指定する必要がある場合があります。",
     "desc-end":
-      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをAnythingLLMが処理できるフォーマットに変換するために必要です。",
+      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをNexusAIが処理できるフォーマットに変換するために必要です。",
     provider: {
       title: "埋め込みプロバイダー",
     },
@@ -862,7 +862,7 @@ const TRANSLATIONS = {
   vector: {
     title: "ベクターデータベース設定",
     description:
-      "これは、AnythingLLMインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
+      "これは、NexusAIインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
     provider: {
       title: "ベクターデータベースプロバイダー",
       description: "LanceDBの場合、特に設定は必要ありません。",
@@ -907,7 +907,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "プライバシーとデータ処理",
     description:
-      "これは、接続されているサードパーティプロバイダーとAnythingLLMがデータをどのように処理するかの設定です。",
+      "これは、接続されているサードパーティプロバイダーとNexusAIがデータをどのように処理するかの設定です。",
     anonymous: "匿名テレメトリが有効",
     personalization: {
       label: "パーソナライズと記憶を有効にする",
@@ -1095,12 +1095,12 @@ const TRANSLATIONS = {
       fetching: "取得中...",
       "fetch-website": "ウェブサイトを取得",
       "privacy-notice":
-        "これらのファイルは、このAnythingLLMインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
+        "これらのファイルは、このNexusAIインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
     },
     pinning: {
       what_pinning: "ドキュメントのピン留めとは？",
       pin_explained_block1:
-        "AnythingLLMでドキュメントを<b>ピン留め</b>すると、その内容全体がプロンプトウィンドウに挿入され、LLMがしっかり理解できるようになります。",
+        "NexusAIでドキュメントを<b>ピン留め</b>すると、その内容全体がプロンプトウィンドウに挿入され、LLMがしっかり理解できるようになります。",
       pin_explained_block2:
         "<b>大きなコンテキストを持つモデル</b>や、重要な小さなファイルで特に効果的です。",
       pin_explained_block3:
@@ -1110,7 +1110,7 @@ const TRANSLATIONS = {
     watching: {
       what_watching: "ドキュメントのウォッチとは？",
       watch_explained_block1:
-        "AnythingLLMでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
+        "NexusAIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
       watch_explained_block2:
         "この機能は現在オンラインベースのコンテンツのみ対応しており、手動アップロードしたドキュメントには利用できません。",
       watch_explained_block3_start: "ウォッチしているドキュメントの管理は",
@@ -1169,6 +1169,7 @@ const TRANSLATIONS = {
     response_streaming:
       "次のメッセージを送信する前に、現在の返答が完了するまでお待ちください。",
     tts_speak_message: "TTS Speak メッセージ",
+    pause_tts_speech_message: "TTS音声を一時停止",
     copy: "以下に翻訳を示します。",
     regenerate: "再生",
     regenerate_response: "申し訳ありませんが、その質問にはお答えできません。",
@@ -1275,7 +1276,7 @@ const TRANSLATIONS = {
         edit_description: "この記憶の内容を更新してください。",
         label: "記憶",
         placeholder:
-          "例：ユーザー名がジョー、ユーザーが使用しているツールがAnythingLLMなど。",
+          "例：ユーザー名がジョー、ユーザーが使用しているツールがNexusAIなど。",
         create: "作成する",
         save: "保存",
         cancel: "キャンセル",
@@ -1377,7 +1378,7 @@ const TRANSLATIONS = {
     branding: {
       title: "ブランディングとホワイトレーベル化",
       description:
-        "AnythingLLMインスタンスを、独自のブランドでカスタマイズしてください。",
+        "NexusAIインスタンスを、独自のブランドでカスタマイズしてください。",
     },
     chat: {
       title: "チャット",
@@ -1419,7 +1420,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "表示言語",
         description:
-          "AnythingLLMのUIを特定の言語で表示するためのオプションを選択してください。翻訳が利用可能な場合にのみ有効です。",
+          "NexusAIのUIを特定の言語で表示するためのオプションを選択してください。翻訳が利用可能な場合にのみ有効です。",
       },
       logo: {
         title: "ブランドロゴ",
@@ -1562,7 +1563,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "本人確認が必要です。",
           description:
-            "アイテムを公開する前に、AnythingLLMコミュニティハブで認証する必要があります。",
+            "アイテムを公開する前に、NexusAIコミュニティハブで認証する必要があります。",
           button: "コミュニティハブへの接続",
         },
       },

@@ -180,13 +180,13 @@ function SelectedFeatureComponent({ feature, settings, refresh }) {
 function FeatureVerification({ children }) {
   const { t } = useTranslation();
   if (
-    !window.localStorage.getItem("anythingllm_tos_experimental_feature_set")
+    !window.localStorage.getItem("nexusai_tos_experimental_feature_set")
   ) {
     function acceptTos(e) {
       e.preventDefault();
 
       window.localStorage.setItem(
-        "anythingllm_tos_experimental_feature_set",
+        "nexusai_tos_experimental_feature_set",
         "accepted"
       );
       showToast(
@@ -258,10 +258,10 @@ function FeatureVerification({ children }) {
                   <p>
                     {t("experimental-features.tos.docs-prefix")}{" "}
                     <a
-                      href="https://docs.anythingllm.com/beta-preview/overview"
+                      href="https://docs.nexusai.com/beta-preview/overview"
                       className="underline text-blue-500"
                     >
-                      docs.anythingllm.com
+                      docs.nexusai.com
                     </a>{" "}
                     {t("experimental-features.tos.docs-or-email")}{" "}
                     <a

@@ -24,7 +24,7 @@ export default function OpenButton({ settings, isOpen, toggleOpen }) {
   return (
     <button
       style={{ backgroundColor: settings.buttonColor }}
-      id="anything-llm-embed-chat-button"
+      id="nexus-ai-embed-chat-button"
       onClick={toggleOpen}
       className={`hover:allm-cursor-pointer allm-border-none allm-flex allm-items-center allm-justify-center allm-p-4 allm-rounded-full allm-text-white allm-text-2xl hover:allm-opacity-95`}
       aria-label="Toggle Menu"

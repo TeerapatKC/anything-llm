@@ -1547,6 +1547,7 @@ const TRANSLATIONS = {
     stt_transcription_failed: "Transcription failed: {{error}}",
     send: "Send prompt message to workspace",
     tts_speak_message: "TTS Speak message",
+    pause_tts_speech_message: "Pause TTS speech",
     copy: "Copy",
     regenerate: "Regenerate",
     regenerate_response: "Regenerate response",

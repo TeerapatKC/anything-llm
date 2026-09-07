@@ -94,14 +94,14 @@ function apiDocumentEndpoints(app) {
               error: null,
               documents: [
                 {
-                  "location": "custom-documents/anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                  "name": "anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                  "url": "file:///Users/tim/Documents/anything-llm/collector/hotdir/anythingllm.txt",
-                  "title": "anythingllm.txt",
+                  "location": "custom-documents/nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                  "name": "nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                  "url": "file:///Users/tim/Documents/nexus-ai/collector/hotdir/nexusai.txt",
+                  "title": "nexusai.txt",
                   "docAuthor": "Unknown",
                   "description": "Unknown",
                   "docSource": "a text file uploaded by the user.",
-                  "chunkSource": "anythingllm.txt",
+                  "chunkSource": "nexusai.txt",
                   "published": "1/16/2024, 3:07:00 PM",
                   "wordCount": 93,
                   "token_count_estimate": 115,
@@ -232,14 +232,14 @@ function apiDocumentEndpoints(app) {
                 success: true,
                 error: null,
                 documents: [{
-                  "location": "custom-documents/anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                  "name": "anythingllm.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
-                  "url": "file:///Users/tim/Documents/anything-llm/collector/hotdir/anythingllm.txt",
-                  "title": "anythingllm.txt",
+                  "location": "custom-documents/nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                  "name": "nexusai.txt-6e8be64c-c162-4b43-9997-b068c0071e8b.json",
+                  "url": "file:///Users/tim/Documents/nexus-ai/collector/hotdir/nexusai.txt",
+                  "title": "nexusai.txt",
                   "docAuthor": "Unknown",
                   "description": "Unknown",
                   "docSource": "a text file uploaded by the user.",
-                  "chunkSource": "anythingllm.txt",
+                  "chunkSource": "nexusai.txt",
                   "published": "1/16/2024, 3:07:00 PM",
                   "wordCount": 93,
                   "token_count_estimate": 115
@@ -345,7 +345,7 @@ function apiDocumentEndpoints(app) {
             schema: {
               type: 'object',
               example: {
-                "link": "https://anythingllm.com",
+                "link": "https://nexusai.com",
                 "addToWorkspaces": "workspace1,workspace2",
                 "scraperHeaders": {
                   "Authorization": "Bearer token123",
@@ -378,7 +378,7 @@ function apiDocumentEndpoints(app) {
                   "docAuthor": "no author found",
                   "description": "No description found.",
                   "docSource": "URL link uploaded by the user.",
-                  "chunkSource": "https:anythingllm.com.html",
+                  "chunkSource": "https:nexusai.com.html",
                   "published": "1/16/2024, 3:46:33 PM",
                   "wordCount": 252,
                   "pageContent": "NexusAI is the best....",

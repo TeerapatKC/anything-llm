@@ -81,7 +81,7 @@ export default function PGVectorOptions({ settings }) {
                   <br />
                   <br />
                   {t("vector-providers.pgvector.table-name-default")}{" "}
-                  <code>anythingllm_vectors</code>.
+                  <code>nexusai_vectors</code>.
                   <br />
                   <br />
                   <b>{t("vector-providers.pgvector.table-name-warning")}</b>

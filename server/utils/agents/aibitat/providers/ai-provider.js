@@ -124,7 +124,7 @@ class Provider {
   providerTag = null;
 
   /**
-   * The AnythingLLM provider slug this instance was built for (eg: "openai",
+   * The NexusAI provider slug this instance was built for (eg: "openai",
    * "anthropic") - set by AIbitat when the provider is instantiated. Unlike
    * `providerTag` or `constructor.name`, this matches the slugs used for
    * model pricing lookups. Null when the origin of the instance is unknown.
@@ -257,7 +257,7 @@ class Provider {
           configuration: {
             baseURL: "https://openrouter.ai/api/v1",
             defaultHeaders: {
-              "HTTP-Referer": "https://anythingllm.com",
+              "HTTP-Referer": "https://nexusai.com",
               "X-Title": "NexusAI",
             },
           },
@@ -436,7 +436,7 @@ class Provider {
           ...config,
         });
       // OSS Model Runners
-      // case "anythingllm_ollama":
+      // case "nexusai_ollama":
       //   return new ChatOllama({
       //     baseUrl: process.env.PLACEHOLDER,
       //     ...config,
