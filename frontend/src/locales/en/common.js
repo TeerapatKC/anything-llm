@@ -1690,6 +1690,7 @@ const TRANSLATIONS = {
     profile_updated: "Profile updated.",
     failed_update_user: "Failed to update user: {{error}}",
     account: "Account",
+    settings: "Settings",
     support: "Support",
     signout: "Sign out",
     speech: {

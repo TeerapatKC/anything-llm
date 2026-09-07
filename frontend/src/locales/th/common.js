@@ -1649,6 +1649,7 @@ const TRANSLATIONS = {
     profile_updated: "อัปเดตโปรไฟล์แล้ว",
     failed_update_user: "อัปเดตผู้ใช้ไม่สำเร็จ: {{error}}",
     account: "บัญชี",
+    settings: "การตั้งค่า",
     support: "ฝ่ายสนับสนุน",
     signout: "ออกจากระบบ",
     speech: {

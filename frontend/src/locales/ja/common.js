@@ -1312,6 +1312,7 @@ const TRANSLATIONS = {
     profile_updated: "プロフィールを更新しました。",
     failed_update_user: "ユーザーの更新に失敗：{{error}}",
     account: "アカウント",
+    settings: "設定",
     support: "サポート",
     signout: "ログアウト",
     speech: {
