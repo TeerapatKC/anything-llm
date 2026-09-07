@@ -1,17 +1,22 @@
 /**
  * Strips `<tool_call>…</tool_call>` markup out of streamed assistant text.
  *
- * Foundry Local emits a tool call *twice*: once properly, as OpenAI
- * `delta.tool_calls`, and again as raw markup inside `delta.content`:
+ * Some OpenAI-compatible backends (Foundry Local, and various self-hosted
+ * llama.cpp/vLLM servers exposed through the Generic OpenAI provider) echo a
+ * tool call *twice*: once properly, as OpenAI `delta.tool_calls`, and again as
+ * raw markup inside `delta.content` - or, when the backend's own tool-calling
+ * routing misfires, only as the raw markup with no native `tool_calls` delta
+ * at all:
  *
  *   <tool_call>
  *   {"name": "web-scraping", "arguments": {"url": "https://anythingllm.com"}}
  *   </tool_call>
  *
- * The native copy is what actually invokes the tool, so the text copy is pure
- * noise — but it reaches the chat window verbatim. Filtering has to survive the
- * tags being split across chunks (`<tool` / `_call>`), so this holds back any
- * trailing text that could still turn out to be the start of an opening tag.
+ * The native copy (when present) is what actually invokes the tool, so the
+ * text copy is pure noise - but it reaches the chat window verbatim. Filtering
+ * has to survive the tags being split across chunks (`<tool` / `_call>`), so
+ * this holds back any trailing text that could still turn out to be the start
+ * of an opening tag.
  */
 class ToolCallTextFilter {
   static OPEN = "<tool_call>";

@@ -8,7 +8,7 @@ const {
   parseFoundryBasePath,
   FoundryLLM,
 } = require("../../../AiProviders/foundry/index.js");
-const ToolCallTextFilter = require("../../../AiProviders/foundry/toolCallFilter.js");
+const ToolCallTextFilter = require("./helpers/toolCallTextFilter.js");
 
 /**
  * The agent provider for Microsoft Foundry Local.
@@ -227,8 +227,8 @@ class FoundryProvider extends InheritMultiple([Provider, UnTooled]) {
       }
 
       // Same markup echo as the streaming path, minus the chunk boundaries.
-      if (typeof result?.result === "string")
-        result.result = ToolCallTextFilter.clean(result.result);
+      if (typeof result?.textResponse === "string")
+        result.textResponse = ToolCallTextFilter.clean(result.textResponse);
       return result;
     } catch (error) {
       console.error(error.message, error);

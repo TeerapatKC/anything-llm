@@ -439,6 +439,10 @@ function createStreamHandler({ ctx, chatId }) {
    */
   function startNewMessageIfNeeded() {
     if (messageId !== null || messagePending) return false;
+    // Still inside a <think> block - stripThinkBlocks makes currentText() empty.
+    // Telegram's own "typing..." indicator already covers this; don't post a
+    // message that's just the cursor character.
+    if (!currentText()) return true;
     messagePending = ctx.bot
       .sendMessage(chatId, currentText() + CURSOR_CHAR)
       .then((sent) => {

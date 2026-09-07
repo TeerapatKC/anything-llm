@@ -10,7 +10,7 @@ const {
 } = require("../../helpers/chat/LLMPerformanceMonitor");
 
 const { OpenAI: OpenAIApi } = require("openai");
-const ToolCallTextFilter = require("./toolCallFilter.js");
+const ToolCallTextFilter = require("../../agents/aibitat/providers/helpers/toolCallTextFilter.js");
 
 class FoundryLLM {
   /**

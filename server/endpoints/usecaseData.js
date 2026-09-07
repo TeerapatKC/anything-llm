@@ -11,10 +11,14 @@ async function withClient(connectionString, fn) {
   }
 }
 
-const REPAIR_DB =
-  "postgres://postgres:Pa55w0rd@127.0.0.1:5433/repair_maintenance_db";
-const SOLAR_DB = "postgres://postgres:Pa55w0rd@127.0.0.1:5433/solar_plant_db";
-const LOG_DB = "postgres://postgres:Pa55w0rd@127.0.0.1:5433/log_monitoring_db";
+// 127.0.0.1 inside a container is the container itself, not the host running
+// Postgres - set USECASE_DB_HOST=host.docker.internal in docker/.env when
+// running under Docker (the compose file already maps that hostname to the
+// host gateway via extra_hosts).
+const USECASE_DB_HOST = process.env.USECASE_DB_HOST || "127.0.0.1";
+const REPAIR_DB = `postgres://postgres:Pa55w0rd@${USECASE_DB_HOST}:5433/repair_maintenance_db`;
+const SOLAR_DB = `postgres://postgres:Pa55w0rd@${USECASE_DB_HOST}:5433/solar_plant_db`;
+const LOG_DB = `postgres://postgres:Pa55w0rd@${USECASE_DB_HOST}:5433/log_monitoring_db`;
 
 /**
  * Small read-only aggregation endpoints backed by the demo use-case databases.

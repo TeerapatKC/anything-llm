@@ -76,7 +76,13 @@ async function handleAgentResponse(
       responsePending = null;
     }
 
-    // Send initial message if none exists yet
+    // Send initial message if none exists yet. Still inside a <think> block -
+    // stripThinkBlocks makes currentResponseText() empty - Telegram's own
+    // "typing..." indicator already covers this; don't post a message that's
+    // just the cursor character.
+    if (responseMsgId === null && !responsePending && !currentResponseText())
+      return;
+
     if (responseMsgId === null && !responsePending) {
       responsePending = ctx.bot
         .sendMessage(chatId, currentResponseText() + CURSOR_CHAR)
