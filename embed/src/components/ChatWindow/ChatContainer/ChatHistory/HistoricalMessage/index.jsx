@@ -4,7 +4,7 @@ import renderMarkdown from "@/utils/chat/markdown";
 import DOMPurify from "@/utils/chat/purify";
 import { embedderSettings } from "@/main";
 import { v4 } from "uuid";
-import NexusAIIcon from "@/assets/anything-llm-icon.svg";
+import NexusAIIcon from "@/assets/nexus-ai-icon.png";
 import { formatDate } from "@/utils/date";
 
 const ThoughtBubble = ({ thought }) => {

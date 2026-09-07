@@ -4,7 +4,7 @@ import SettingsLayout from "@/components/layout/SettingsLayout";
 import { SpinnerBlock } from "@/components/ui/spinner";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import AzureOpenAiLogo from "@/media/llmprovider/azure.png";
 import GeminiAiLogo from "@/media/llmprovider/gemini.png";

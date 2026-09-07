@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import AgentLLMItem from "./AgentLLMItem";
 import { ALL_LLM_PROVIDERS } from "@/pages/GeneralSettings/LLMPreference";
 import { ChevronsUpDown, Gauge, Search, X } from "lucide-react";

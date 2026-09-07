@@ -4,7 +4,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import { SpinnerBlock } from "@/components/ui/spinner";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import OllamaLogo from "@/media/llmprovider/ollama.png";
 import LemonadeLogo from "@/media/llmprovider/lemonade.png";

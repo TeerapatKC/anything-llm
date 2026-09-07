@@ -314,7 +314,7 @@ class CreateFilesManager {
     const assetsPath = path.join(__dirname, "assets");
     const filename = forDarkBackground
       ? "nexus-ai-re-bg-light.png"
-      : "anything-llm-invert.png";
+      : "nexus-ai-invert.png";
     try {
       if (format === "dataUri") {
         const base64 = fsSync.readFileSync(

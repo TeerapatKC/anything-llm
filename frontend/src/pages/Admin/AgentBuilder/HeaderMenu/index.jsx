@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronLeft, ChevronUp, Plus } from "lucide-react";
-import AnythingInfinityLogo from "@/media/logo/anything-llm-infinity.png";
+import AnythingInfinityLogo from "@/media/logo/nexus-ai-infinity.png";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import paths from "@/utils/paths";

@@ -603,9 +603,9 @@ sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicons(id,url,icon_type) VALUES(
 sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicons(id,url,icon_type) VALUES(2,'https://github.com/',1);"
 sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicons(id,url,icon_type) VALUES(3,'https://docs.nexusai.com/',1);"
 
-sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicon_bitmaps(id,icon_id,last_updated,image_data,width,height) VALUES(1,1,$(date +%s),readfile('$FAV_DIR/anythingllm.png'),16,16);"
+sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicon_bitmaps(id,icon_id,last_updated,image_data,width,height) VALUES(1,1,$(date +%s),readfile('$FAV_DIR/nexusai.png'),16,16);"
 sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicon_bitmaps(id,icon_id,last_updated,image_data,width,height) VALUES(2,2,$(date +%s),readfile('$FAV_DIR/github.png'),16,16);"
-sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicon_bitmaps(id,icon_id,last_updated,image_data,width,height) VALUES(3,3,$(date +%s),readfile('$FAV_DIR/anythingllm.png'),16,16);"
+sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO favicon_bitmaps(id,icon_id,last_updated,image_data,width,height) VALUES(3,3,$(date +%s),readfile('$FAV_DIR/nexusai.png'),16,16);"
 
 sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO icon_mapping(id,page_url,icon_id) VALUES(1,'https://nexusai.com/',1);"
 sqlite3 "$FAVICON_DB" "INSERT OR REPLACE INTO icon_mapping(id,page_url,icon_id) VALUES(2,'https://nexusai.com',1);"
