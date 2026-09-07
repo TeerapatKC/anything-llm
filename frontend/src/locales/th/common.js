@@ -125,12 +125,15 @@ const TRANSLATIONS = {
     placeholder: "พื้นที่ทำงานของฉัน",
   },
   "workspaces—settings": {
+    title: "การตั้งค่าพื้นที่ทำงาน",
     general: "การตั้งค่าทั่วไป",
     chat: "การตั้งค่าการสนทนา",
     vector: "ฐานข้อมูลเวกเตอร์",
     members: "สมาชิก",
+    roles: "บทบาท",
     agent: "การกำหนดค่าเอเจนต์",
     "upload-documents": "อัปโหลดเอกสาร",
+    "slash-commands": "คำสั่งสแลช",
   },
   general: {
     vector: {

@@ -126,7 +126,7 @@ export default function WorkspaceRow({
               }
             >
               <Settings />
-              Workspace settings
+              {t("workspaces—settings.title")}
             </DropdownMenuItem>
             {!deletionProtected && (
               <>

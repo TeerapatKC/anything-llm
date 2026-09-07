@@ -216,7 +216,7 @@ export default function UserButton() {
               render={<Link to={paths.settings.landing()} />}
             >
               <Wrench size={16} />
-              Settings
+              {t("profile_settings.settings")}
             </DropdownMenuItem>
           )}
           {!!supportEmail && (

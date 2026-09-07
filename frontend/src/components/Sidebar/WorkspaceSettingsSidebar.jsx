@@ -64,7 +64,7 @@ export default function WorkspaceSettingsSidebar({ workspace }) {
       visible: workspaceCan(WS.MEMBERS_MANAGE, slug, user),
     },
     {
-      title: "Roles",
+      title: t("workspaces—settings.roles"),
       icon: ShieldCheck,
       to: paths.workspace.settings.roles(slug),
       visible: workspaceCan(WS.ROLES_MANAGE, slug, user),
@@ -81,7 +81,7 @@ export default function WorkspaceSettingsSidebar({ workspace }) {
       visible: workspaceCan(WS.DOCUMENTS_UPLOAD, slug, user),
     },
     {
-      title: "Slash Commands",
+      title: t("workspaces—settings.slash-commands"),
       icon: SlashSquare,
       to: paths.workspace.settings.slashCommands(slug),
       visible: workspaceCan(WS.SETTINGS_MANAGE, slug, user),
@@ -123,7 +123,7 @@ export default function WorkspaceSettingsSidebar({ workspace }) {
 
       <SidebarContent className="px-2 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
         <SidebarGroup className="p-0">
-          <SidebarGroupLabel>Workspace settings</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("workspaces—settings.title")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
               {items.map((item) => (
