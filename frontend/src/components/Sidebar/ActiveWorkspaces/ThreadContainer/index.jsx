@@ -148,7 +148,11 @@ export default function ThreadContainer({
   return (
     <ThreadList ref={containerRef}>
       {canCreateThread && (
-        <NewThreadButton workspace={workspace} isActive={newThreadIsActive} />
+        <NewThreadButton
+          workspace={workspace}
+          isActive={newThreadIsActive}
+          defaultThreadHasChats={defaultThreadHasChats}
+        />
       )}
       {defaultThreadHasChats && (
         <ThreadItem
@@ -196,8 +200,21 @@ const ThreadList = forwardRef(({ children, ...props }, ref) => (
 ));
 ThreadList.displayName = "ThreadList";
 
-function NewThreadButton({ workspace, isActive }) {
+function NewThreadButton({ workspace, isActive, defaultThreadHasChats }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  // The plain workspace URL only renders a blank draft when the default
+  // thread has no history yet - once it does, that URL is already taken by
+  // the "default" item above, so a Link here would just no-op. In that case
+  // a real thread has to be created up front to land somewhere blank.
+  async function handleClick(e) {
+    if (!defaultThreadHasChats) return;
+    e.preventDefault();
+    const { thread } = await Workspace.threads.new(workspace.slug);
+    if (thread) navigate(paths.workspace.thread(workspace.slug, thread.slug));
+  }
+
   return (
     <SidebarMenuSubItem>
       <SidebarMenuSubButton
@@ -205,7 +222,8 @@ function NewThreadButton({ workspace, isActive }) {
         className="h-9 text-sm text-sidebar-foreground/70"
         render={
           <Link
-            to={paths.home()}
+            to={paths.workspace.chat(workspace.slug)}
+            onClick={handleClick}
             aria-label={`Start a new thread in ${workspace.name}`}
             aria-current={isActive ? "page" : ""}
           />

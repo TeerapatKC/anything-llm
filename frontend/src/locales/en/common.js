@@ -126,12 +126,15 @@ const TRANSLATIONS = {
     placeholder: "My Workspace",
   },
   "workspaces—settings": {
+    title: "Workspace settings",
     general: "General Settings",
     chat: "Chat Settings",
     vector: "Vector Database",
     members: "Members",
+    roles: "Roles",
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
+    "slash-commands": "Slash Commands",
   },
   general: {
     vector: {

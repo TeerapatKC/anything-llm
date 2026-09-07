@@ -109,12 +109,15 @@ const TRANSLATIONS = {
     placeholder: "マイワークスペース",
   },
   "workspaces—settings": {
+    title: "ワークスペース設定",
     general: "一般設定",
     chat: "チャット設定",
     vector: "ベクターデータベース",
     members: "メンバー",
+    roles: "ロール",
     agent: "エージェント構成",
     "upload-documents": "ドキュメントをアップロード",
+    "slash-commands": "スラッシュコマンド",
   },
   general: {
     vector: {

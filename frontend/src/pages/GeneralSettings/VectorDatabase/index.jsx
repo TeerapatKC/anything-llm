@@ -229,17 +229,17 @@ export default function GeneralVectorDatabase() {
                   variant="ghost"
                   className="w-full max-w-[640px] h-[64px] justify-between gap-0 p-[14px] rounded-lg border-2 border-transparent bg-theme-settings-input-bg hover:bg-theme-settings-input-bg hover:border-primary-button aria-expanded:bg-theme-settings-input-bg transition-all duration-300"
                 >
-                  <div className="flex gap-x-4 items-center">
+                  <div className="flex gap-x-4 items-center flex-1 min-w-0">
                     <img
                       src={selectedVDBObject.logo}
                       alt={`${selectedVDBObject.name} logo`}
-                      className="w-10 h-10 rounded-md"
+                      className="w-10 h-10 rounded-md shrink-0"
                     />
-                    <div className="flex flex-col text-left">
-                      <div className="text-sm font-semibold text-theme-text-primary">
+                    <div className="flex flex-col text-left min-w-0">
+                      <div className="text-sm font-semibold text-theme-text-primary truncate">
                         {selectedVDBObject.name}
                       </div>
-                      <div className="mt-1 text-xs text-description font-normal">
+                      <div className="mt-1 text-xs text-description font-normal truncate">
                         {selectedVDBObject.description}
                       </div>
                     </div>
