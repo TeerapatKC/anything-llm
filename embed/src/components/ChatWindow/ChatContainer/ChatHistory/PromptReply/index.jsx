@@ -2,7 +2,7 @@ import { forwardRef, memo, useState } from "react";
 import { Warning, CircleNotch, CaretDown } from "@phosphor-icons/react";
 import renderMarkdown from "@/utils/chat/markdown";
 import { embedderSettings } from "@/main";
-import NexusAIIcon from "@/assets/anything-llm-icon.svg";
+import NexusAIIcon from "@/assets/nexus-ai-icon.png";
 import { formatDate } from "@/utils/date";
 
 const ThinkingIndicator = ({ hasThought }) => {

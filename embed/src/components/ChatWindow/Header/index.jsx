@@ -1,4 +1,4 @@
-import NexusAIIcon from "@/assets/anything-llm-icon.svg";
+import NexusAIIcon from "@/assets/nexus-ai-icon.png";
 import ChatService from "@/models/chatService";
 import {
   ArrowCounterClockwise,

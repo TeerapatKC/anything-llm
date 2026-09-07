@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { PROVIDER_PRIVACY_MAP } from "./constants";
 import { SquareArrowOutUpRight } from "lucide-react";
-import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import { Link } from "react-router-dom";
 import { titleCase, sentenceCase } from "text-case";
 

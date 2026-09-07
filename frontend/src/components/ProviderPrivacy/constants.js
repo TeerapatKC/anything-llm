@@ -1,4 +1,4 @@
-import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
 import AzureOpenAiLogo from "@/media/llmprovider/azure.png";

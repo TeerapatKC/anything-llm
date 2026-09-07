@@ -13,7 +13,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
-import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import ElevenLabsIcon from "@/media/ttsproviders/elevenlabs.png";
 import PiperTTSIcon from "@/media/ttsproviders/piper.png";
 import GenericOpenAiLogo from "@/media/ttsproviders/generic-openai.png";

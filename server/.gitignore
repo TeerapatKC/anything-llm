@@ -4,7 +4,7 @@
 server/.env
 storage/assets/*
 !storage/assets/nexus-ai-re-bg-light.png
-!storage/assets/anything-llm-invert.png
+!storage/assets/nexus-ai-re-bg-dark.png
 storage/documents/*
 storage/comkey/*
 storage/tmp/*

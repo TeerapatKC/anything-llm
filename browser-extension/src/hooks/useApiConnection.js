@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import NexusAILogo from "@/media/anything-llm.png";
+import NexusAILogo from "@/media/nexus-ai.png";
 import BrowserExtension from "@/models/browserExtension";
 
 /**
