@@ -14,8 +14,8 @@ const CommunityHub = {
   apiBase:
     process.env.COMMUNITY_HUB_API_BASE ||
     (process.env.NODE_ENV === "development"
-      ? "http://127.0.0.1:5001/anythingllm-hub/us-central1/external/v1"
-      : "https://hub.external.anythingllm.com/v1"),
+      ? "http://127.0.0.1:5001/nexusai-hub/us-central1/external/v1"
+      : "https://hub.external.nexusai.com/v1"),
   supportedStaticItemTypes: ["system-prompt", "agent-flow", "slash-command"],
 
   /**

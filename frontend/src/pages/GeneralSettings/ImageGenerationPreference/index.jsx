@@ -4,7 +4,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import { SpinnerBlock } from "@/components/ui/spinner";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
 import OpenAiLogo from "@/media/llmprovider/openai.png";
 import OllamaLogo from "@/media/llmprovider/ollama.png";
 import LemonadeLogo from "@/media/llmprovider/lemonade.png";
@@ -169,7 +169,7 @@ export default function ImageGenerationPreference() {
                 >
                   <div className="flex gap-x-4 items-center">
                     <img
-                      src={selectedProviderObject?.logo || AnythingLLMIcon}
+                      src={selectedProviderObject?.logo || NexusAIIcon}
                       alt={`${selectedProviderObject?.name} logo`}
                       className="w-10 h-10 rounded-md"
                     />

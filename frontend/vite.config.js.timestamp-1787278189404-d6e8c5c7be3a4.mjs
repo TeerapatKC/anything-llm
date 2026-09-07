@@ -1,18 +1,18 @@
 // vite.config.js
-import { defineConfig } from "file:///D:/work/nexus-ai/anything-llm/frontend/node_modules/vite/dist/node/index.js";
+import { defineConfig } from "file:///D:/work/nexus-ai/nexus-ai/frontend/node_modules/vite/dist/node/index.js";
 import { fileURLToPath, URL } from "url";
 
 // postcss.config.js
-import tailwindcss from "file:///D:/work/nexus-ai/anything-llm/frontend/node_modules/@tailwindcss/postcss/dist/index.mjs";
+import tailwindcss from "file:///D:/work/nexus-ai/nexus-ai/frontend/node_modules/@tailwindcss/postcss/dist/index.mjs";
 var postcss_config_default = {
   plugins: [tailwindcss()]
 };
 
 // vite.config.js
-import react from "file:///D:/work/nexus-ai/anything-llm/frontend/node_modules/@vitejs/plugin-react/dist/index.mjs";
+import react from "file:///D:/work/nexus-ai/nexus-ai/frontend/node_modules/@vitejs/plugin-react/dist/index.mjs";
 import dns from "dns";
-import { visualizer } from "file:///D:/work/nexus-ai/anything-llm/frontend/node_modules/rollup-plugin-visualizer/dist/plugin/index.js";
-var __vite_injected_original_import_meta_url = "file:///D:/work/nexus-ai/anything-llm/frontend/vite.config.js";
+import { visualizer } from "file:///D:/work/nexus-ai/nexus-ai/frontend/node_modules/rollup-plugin-visualizer/dist/plugin/index.js";
+var __vite_injected_original_import_meta_url = "file:///D:/work/nexus-ai/nexus-ai/frontend/vite.config.js";
 dns.setDefaultResultOrder("verbatim");
 var vite_config_default = defineConfig({
   assetsInclude: [

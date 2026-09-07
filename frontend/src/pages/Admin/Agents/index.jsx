@@ -327,8 +327,8 @@ export default function AdminAgents() {
           ...server,
           config: {
             ...server.config,
-            anythingllm: {
-              ...server.config?.anythingllm,
+            nexusai: {
+              ...server.config?.nexusai,
               suppressedTools,
             },
           },
@@ -342,8 +342,8 @@ export default function AdminAgents() {
         ...prev,
         config: {
           ...prev.config,
-          anythingllm: {
-            ...prev.config?.anythingllm,
+          nexusai: {
+            ...prev.config?.nexusai,
             suppressedTools,
           },
         },

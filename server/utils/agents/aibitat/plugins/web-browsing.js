@@ -761,7 +761,7 @@ const webBrowsing = {
               headers: {
                 "X-API-KEY": process.env.AGENT_SERPLY_API_KEY,
                 "Content-Type": "application/json",
-                "User-Agent": "anything-llm",
+                "User-Agent": "nexus-ai",
                 "X-Proxy-Location": proxy_location,
                 "X-User-Agent": device_type,
               },
@@ -837,7 +837,7 @@ const webBrowsing = {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                "User-Agent": "anything-llm",
+                "User-Agent": "nexus-ai",
               },
             })
               .then((res) => {

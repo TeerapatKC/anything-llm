@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { THREAD_RENAME_EVENT, THREAD_FORK_EVENT } from "./constants";
+import useUser from "@/hooks/useUser";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 
 export { THREAD_RENAME_EVENT, THREAD_FORK_EVENT };
 
@@ -26,6 +28,16 @@ export default function ThreadContainer({
   const [defaultThreadHasChats, setDefaultThreadHasChats] = useState(false);
   const [loading, setLoading] = useState(true);
   const { containerRef, ctrlPressed } = useHoverMetaKey(setThreads, !loading);
+  const { user } = useUser();
+
+  // The server gates thread creation on THREADS_MANAGE, a membership-only permission -
+  // an operator who administers this workspace without belonging to it would only get
+  // a 401 from the button.
+  const canCreateThread = workspaceCan(
+    WS.THREADS_MANAGE,
+    workspace?.slug,
+    user
+  );
 
   useEffect(() => {
     const chatHandler = (event) => {
@@ -135,7 +147,9 @@ export default function ThreadContainer({
 
   return (
     <ThreadList ref={containerRef}>
-      <NewThreadButton workspace={workspace} isActive={newThreadIsActive} />
+      {canCreateThread && (
+        <NewThreadButton workspace={workspace} isActive={newThreadIsActive} />
+      )}
       {defaultThreadHasChats && (
         <ThreadItem
           isActive={defaultThreadIsActive}

@@ -44,23 +44,32 @@ export const REFETCH_WORKSPACES_EVENT = "refetchWorkspaces";
 function NewWorkspaceButton({ onClick }) {
   const { t } = useTranslation();
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group/new-ws mb-2 flex w-full items-center gap-3 rounded-lg border border-dashed border-sidebar-border px-3 py-2.5 text-left outline-none transition-colors group-data-[collapsible=icon]:hidden hover:border-sidebar-accent hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"
-    >
-      <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-foreground transition-colors group-hover/new-ws:bg-sidebar-primary group-hover/new-ws:text-sidebar-primary-foreground">
-        <Plus className="size-4" strokeWidth={2.5} />
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block truncate text-[15px] font-medium text-sidebar-foreground">
-          {t("sidebar.new-workspace")}
-        </span>
-        <span className="block truncate text-xs text-sidebar-foreground/60">
-          {t("sidebar.new-workspace-description")}
-        </span>
-      </span>
-    </button>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <button
+            type="button"
+            onClick={onClick}
+            className="group/new-ws mb-2 flex w-full items-center gap-3 rounded-lg border border-dashed border-sidebar-border px-3 py-2.5 text-left outline-none transition-colors group-data-[collapsible=icon]:hidden hover:border-sidebar-accent hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-md bg-sidebar-accent text-sidebar-foreground transition-colors group-hover/new-ws:bg-sidebar-primary group-hover/new-ws:text-sidebar-primary-foreground">
+              <Plus className="size-4" strokeWidth={2.5} />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-[15px] font-medium text-sidebar-foreground">
+                {t("sidebar.new-workspace")}
+              </span>
+              <span className="block truncate text-xs text-sidebar-foreground/60">
+                {t("sidebar.new-workspace-description")}
+              </span>
+            </span>
+          </button>
+        }
+      />
+      <TooltipContent side="right" className="max-w-[250px] text-xs">
+        {t("sidebar.new-workspace-description")}
+      </TooltipContent>
+    </Tooltip>
   );
 }
 

@@ -3,7 +3,7 @@ import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 
 /** Fired when a newer service worker has been installed and is ready. */
-export const SERVICE_WORKER_UPDATE_EVENT = "anythingllm_sw_update_available";
+export const SERVICE_WORKER_UPDATE_EVENT = "nexusai_sw_update_available";
 
 const PUSH_PUBKEY_URL = `${API_BASE}/web-push/pubkey`;
 const PUSH_USER_SUBSCRIBE_URL = `${API_BASE}/web-push/subscribe`;

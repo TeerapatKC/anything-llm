@@ -24,22 +24,37 @@ import ChatSettingsMenu from "@/components/WorkspaceChat/ChatContainer/ChatSetti
 import { ChatSidebarProvider } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import { clearPromptInputDraft } from "@/hooks/usePromptInputStorage";
 import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar";
-import { userIsChatOnly } from "@/utils/permissions";
+import {
+  userIsChatOnly,
+  workspaceCan,
+  WORKSPACE_PERMISSIONS as WS,
+} from "@/utils/permissions";
+import NotAMemberNotice from "@/components/WorkspaceChat/ChatContainer/NotAMemberNotice";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NewWorkspaceModal from "@/components/Modals/NewWorkspace";
 
+/**
+ * The workspace Home opens its draft thread in. An instance operator can reach every
+ * workspace but may only chat in the ones they are a member of, so a workspace they
+ * can chat in is preferred over one they merely administer - landing on the latter
+ * would greet them with a notice instead of an input.
+ */
 async function getTargetWorkspace() {
   const lastVisited = safeJsonParse(
     localStorage.getItem(LAST_VISITED_WORKSPACE)
   );
   if (lastVisited?.slug) {
     const workspace = await Workspace.bySlug(lastVisited.slug);
-    if (workspace) return workspace;
+    if (workspace && workspaceCan(WS.CHAT, workspace.slug)) return workspace;
   }
 
   const workspaces = await Workspace.all();
-  return workspaces.length > 0 ? workspaces[0] : null;
+  if (workspaces.length === 0) return null;
+  return (
+    workspaces.find((workspace) => workspaceCan(WS.CHAT, workspace.slug)) ??
+    workspaces[0]
+  );
 }
 
 export default function Home() {
@@ -157,9 +172,14 @@ export default function Home() {
 
 function HomeContent({ workspace, threadSlug, setThreadSlug }) {
   const { t } = useTranslation();
+  const { user } = useUser();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const { files, parseAttachments } = useContext(DndUploaderContext);
+
+  // Home writes into a workspace, so it inherits that workspace's chat permission -
+  // which an instance operator only holds where they are an actual member.
+  const canChat = workspaceCan(WS.CHAT, workspace?.slug, user);
 
   useEffect(() => {
     if (!threadSlug) {
@@ -255,21 +275,27 @@ function HomeContent({ workspace, threadSlug, setThreadSlug }) {
                   <h1 className="text-theme-text-primary text-xl md:text-2xl mb-11 text-center">
                     {t("main-page.greeting")}
                   </h1>
-                  <PromptInput
-                    workspace={workspace}
-                    submit={handleSubmit}
-                    isStreaming={loading}
-                    sendCommand={sendCommand}
-                    attachments={files}
-                    centered={true}
-                    workspaceSlug={workspace?.slug}
-                    threadSlug={threadSlug}
-                  />
+                  {canChat ? (
+                    <PromptInput
+                      workspace={workspace}
+                      submit={handleSubmit}
+                      isStreaming={loading}
+                      sendCommand={sendCommand}
+                      attachments={files}
+                      centered={true}
+                      workspaceSlug={workspace?.slug}
+                      threadSlug={threadSlug}
+                    />
+                  ) : (
+                    <NotAMemberNotice />
+                  )}
                 </div>
-                <SuggestedMessages
-                  suggestedMessages={workspace?.suggestedMessages}
-                  sendCommand={sendCommand}
-                />
+                {canChat && (
+                  <SuggestedMessages
+                    suggestedMessages={workspace?.suggestedMessages}
+                    sendCommand={sendCommand}
+                  />
+                )}
               </div>
             </div>
           </DnDFileUploaderWrapper>

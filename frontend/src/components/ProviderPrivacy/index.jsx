@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { PROVIDER_PRIVACY_MAP } from "./constants";
 import { SquareArrowOutUpRight } from "lucide-react";
-import AnythingLLMIcon from "@/media/logo/anything-llm-icon.png";
+import NexusAIIcon from "@/media/logo/anything-llm-icon.png";
 import { Link } from "react-router-dom";
 import { titleCase, sentenceCase } from "text-case";
 
@@ -15,7 +15,7 @@ function defaultProvider(providerString) {
       description: [
         "No provider has been chosen yet. You can pick one under Settings once setup is finished.",
       ],
-      logo: AnythingLLMIcon,
+      logo: NexusAIIcon,
     };
 
   return {
@@ -23,7 +23,7 @@ function defaultProvider(providerString) {
     description: [
       `"${providerString}" has no known data handling policy defined in NexusAI.`,
     ],
-    logo: AnythingLLMIcon,
+    logo: NexusAIIcon,
   };
 }
 

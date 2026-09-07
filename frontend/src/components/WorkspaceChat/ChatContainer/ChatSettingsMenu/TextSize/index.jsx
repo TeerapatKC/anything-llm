@@ -19,12 +19,12 @@ function getTextSizes(t) {
 export default function TextSizeRow() {
   const { t } = useTranslation();
   const [selectedSize, setSelectedSize] = useState(
-    window.localStorage.getItem("anythingllm_text_size") || "normal"
+    window.localStorage.getItem("nexusai_text_size") || "normal"
   );
 
   function handleTextSizeChange(size) {
     setSelectedSize(size);
-    window.localStorage.setItem("anythingllm_text_size", size);
+    window.localStorage.setItem("nexusai_text_size", size);
     window.dispatchEvent(new CustomEvent("textSizeChange", { detail: size }));
   }
 

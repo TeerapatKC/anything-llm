@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 
 // Providers that can't be routing targets
-const EXCLUDED_PROVIDERS = ["anythingllm-router"];
+const EXCLUDED_PROVIDERS = ["nexusai-router"];
 
 export default function LLMProviderModelPicker({
   providerFieldName = "fallback_provider",

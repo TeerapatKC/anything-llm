@@ -145,7 +145,7 @@ function TelemetryLogs({ settings }) {
                 b: <b />,
                 a: (
                   <a
-                    href="https://github.com/search?q=repo%3AMintplex-Labs%2Fanything-llm%20.sendTelemetry(&type=code"
+                    href="https://github.com/search?q=repo%3AMintplex-Labs%2Fnexus-ai%20.sendTelemetry(&type=code"
                     className="underline text-blue-400"
                     target="_blank"
                     rel="noreferrer"

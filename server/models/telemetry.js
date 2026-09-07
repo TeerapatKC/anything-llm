@@ -53,7 +53,7 @@ const Telemetry = {
   },
 
   runtime: function () {
-    if (process.env.ANYTHING_LLM_RUNTIME === "docker") return "docker";
+    if (process.env.NEXUS_AI_RUNTIME === "docker") return "docker";
     if (process.env.NODE_ENV === "production") return "production";
     return "other";
   },

@@ -9,19 +9,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { WorkspaceRole } from "@/models/role";
+import { Badge } from "@/components/ui/badge";
 import showToast from "@/utils/toast";
 
 /**
- * One member of a workspace. The role shown here is their *workspace* role - what they
- * may do inside this workspace - not the instance-wide role on their account.
+ * One member of a workspace, showing both roles they hold: the editable *workspace*
+ * role deciding what they may do in here, and their read-only instance-wide role.
+ * The two are independent - an instance admin is still assigned the default workspace
+ * role on joining - so showing only the first made the pairing look like a mistake.
  */
 export default function WorkspaceMemberRow({
   member,
   workspaceSlug,
   workspaceRoles = [],
+  systemRoles = [],
   canManage = false,
 }) {
   const { t } = useTranslation();
+  const systemRole =
+    systemRoles.find((role) => role.name === member.systemRole) ?? null;
   const memberRoleId =
     member.workspaceRole?.id ??
     member.workspace_role_id ??
@@ -96,6 +102,11 @@ export default function WorkspaceMemberRow({
           member.workspaceRole?.displayName ??
           "—")
         )}
+      </TableCell>
+      <TableCell>
+        <Badge variant="secondary">
+          {systemRole?.displayName ?? member.systemRole ?? "—"}
+        </Badge>
       </TableCell>
       <TableCell>{member.createdAt}</TableCell>
     </TableRow>

@@ -161,6 +161,8 @@ const TRANSLATIONS = {
       deactivated: "Workspace is now inactive.",
       "chat-disabled":
         "This workspace is inactive. An admin must activate it before you can chat here.",
+      "chat-not-a-member":
+        "You can manage this workspace, but chatting in it is reserved for its members. Add yourself as a member to start a conversation here.",
       failed: "Failed to update workspace status.",
       "confirm-title": "Deactivate this workspace?",
       "confirm-description":
@@ -1545,6 +1547,7 @@ const TRANSLATIONS = {
     stt_transcription_failed: "Transcription failed: {{error}}",
     send: "Send prompt message to workspace",
     tts_speak_message: "TTS Speak message",
+    pause_tts_speech_message: "Pause TTS speech",
     copy: "Copy",
     regenerate: "Regenerate",
     regenerate_response: "Regenerate response",
@@ -2501,6 +2504,7 @@ const TRANSLATIONS = {
     table: {
       username: "Username",
       role: "Workspace role",
+      "system-role": "System role",
       "date-added": "Date Added",
     },
     empty: "No workspace members",
