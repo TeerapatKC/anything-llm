@@ -1,5 +1,5 @@
 import { ChevronDown, ChevronLeft, ChevronUp, Plus } from "lucide-react";
-import AnythingInfinityLogo from "@/media/logo/nexus-ai-infinity.png";
+import NexusInfinityLogo from "@/media/logo/nexus-ai-infinity.png";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import paths from "@/utils/paths";
@@ -39,7 +39,7 @@ export default function HeaderMenu({
               className="border-t-transparent! border-l-transparent! border-b-transparent! flex items-center gap-x-2 px-4 py-2 border-r border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
             >
               <img
-                src={AnythingInfinityLogo}
+                src={NexusInfinityLogo}
                 alt="logo"
                 className="w-[20px] light:invert"
               />

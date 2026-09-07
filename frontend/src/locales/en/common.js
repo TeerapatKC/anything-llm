@@ -105,7 +105,7 @@ const TRANSLATIONS = {
       reset: "Reset",
     },
     "sign-in":
-      "Enter your username and password to access your {{appName}} instance.",
+      "Enter your username and password to access.",
     "password-reset": {
       title: "Password Reset",
       "admin-reset-description":
