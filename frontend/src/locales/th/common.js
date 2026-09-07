@@ -86,7 +86,6 @@ const TRANSLATIONS = {
     contact: "ติดต่อฝ่ายสนับสนุน",
     "browser-extension": "ส่วนขยายเบราว์เซอร์",
     smtp: "SMTP",
-    "mobile-app": "NexusAI Mobile",
     channels: "ช่องทาง",
     "available-channels": {
       telegram: "Telegram",

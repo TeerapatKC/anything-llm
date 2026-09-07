@@ -70,7 +70,6 @@ const TRANSLATIONS = {
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
     chat: "チャット",
-    "mobile-app": "NexusAI モバイル版",
     "community-hub": {
       title: "地域交流拠点",
       trending: "人気のあるものを探す",

@@ -443,11 +443,6 @@ const SidebarOptions = ({ user = null, t }) => (
               href: paths.settings.browserExtension(),
               permissions: [PERMISSIONS.SYSTEM_BROWSER_EXTENSION],
             },
-            {
-              btnText: t("settings.mobile-app"),
-              href: paths.settings.mobile(),
-              permissions: [PERMISSIONS.SYSTEM_MOBILE],
-            },
           ]}
         />
         <HoldToReveal key="exp_features">
@@ -467,9 +462,7 @@ const SidebarOptions = ({ user = null, t }) => (
 function HoldToReveal({ children, holdForMs = 3_000 }) {
   let timeout = null;
   const [showing, setShowing] = useState(
-    window.localStorage.getItem(
-      "nexusai_experimental_feature_preview_unlocked"
-    )
+    window.localStorage.getItem("nexusai_experimental_feature_preview_unlocked")
   );
 
   useEffect(() => {

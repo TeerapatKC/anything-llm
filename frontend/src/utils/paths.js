@@ -190,14 +190,8 @@ export default {
     browserExtension: () => {
       return `/settings/browser-extension`;
     },
-    mobile: () => {
-      return `/settings/mobile-connections`;
-    },
     experimental: () => {
       return `/settings/beta-features`;
-    },
-    mobileConnections: () => {
-      return `/settings/mobile-connections`;
     },
     telegram: () => {
       return `/settings/external-connections/telegram`;
@@ -260,9 +254,6 @@ export default {
 
   // TODO: Migrate all docs.nexusai.com links to the new docs.
   documentation: {
-    mobileIntroduction: () => {
-      return "https://docs.nexusai.com/mobile/overview";
-    },
     contextWindows: () => {
       return "https://docs.nexusai.com/chatting-with-documents/introduction#you-exceed-the-context-window---what-now";
     },

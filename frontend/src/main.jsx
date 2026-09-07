@@ -655,22 +655,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/mobile-connections",
-        lazy: async () => {
-          const { default: MobileConnections } = await import(
-            "@/pages/GeneralSettings/MobileConnections"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={MobileConnections}
-                permissions={[PERMISSIONS.SYSTEM_MOBILE]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/settings/external-connections/telegram",
         lazy: async () => {
           const { default: TelegramBotSettings } = await import(
