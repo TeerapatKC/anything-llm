@@ -184,6 +184,7 @@ const WORKSPACE_PERMISSIONS = {
 
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
+  SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",
@@ -967,6 +968,17 @@ const PERMISSION_CATALOG = [
     label: "Build workspace agent flows",
     description:
       "Create, edit and delete agent flows that belong to this workspace. Flows built here are usable only inside it.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    // Same reasoning as agent flows: supplying database credentials is a wider
+    // capability than editing this workspace's settings, so it is ticked on its own
+    // rather than riding on SETTINGS_MANAGE.
+    key: WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+    label: "Manage workspace SQL connections",
+    description:
+      "Add, edit and remove SQL database connections that belong to this workspace. Connections made here are usable only inside it.",
     category: "workspace_admin",
     scope: SCOPES.WORKSPACE,
   },

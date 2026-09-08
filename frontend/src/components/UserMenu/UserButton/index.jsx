@@ -191,7 +191,7 @@ export default function UserButton() {
           </DropdownMenuItem>
           <SpeechSubmenu />
           <PreferenceSubmenu
-            icon={<Palette size={16} />}
+            icon={<Palette size={16} className="light:text-slate-800" />}
             label={t("profile_settings.theme")}
             value={theme}
             onValueChange={setTheme}

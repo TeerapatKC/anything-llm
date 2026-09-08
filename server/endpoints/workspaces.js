@@ -483,12 +483,16 @@ function workspaceEndpoints(app) {
         const { AgentFlows } = require("../utils/agentFlows");
         const MCPCompatibilityLayer = require("../utils/MCP");
         const { SystemSettings } = require("../models/systemSettings");
+        const {
+          sqlConnectionsAvailableTo,
+          toPublic: sqlConnectionToPublic,
+        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
 
         const config = await resolveConfigForWorkspace(workspace);
         const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
         const [instanceRuntime, skillCredentials] = await Promise.all([
           instanceRuntimeConfig(),
-          skillCredentialStatus(),
+          skillCredentialStatus(workspace.id),
         ]);
 
         response.status(200).json({
@@ -531,6 +535,21 @@ function workspaceEndpoints(app) {
                 name: flow.name || flow.uuid,
                 scope: flow.scope,
               })),
+            // Global connections plus the ones this workspace owns. Deliberately
+            // shaped by `toPublic`, which withholds the connection string (and the
+            // credentials inside it) for anything the workspace does not own.
+            sqlConnections: (
+              await sqlConnectionsAvailableTo(workspace.id)
+            ).map((conn) => {
+              const summary = sqlConnectionToPublic(conn, workspace.id);
+              return {
+                id: summary.database_id,
+                name: summary.database_id,
+                engine: summary.engine,
+                scope: summary.scope,
+                active: summary.active,
+              };
+            }),
             mcpServers: mcpServers.map((id) => {
               const name = id.replace(/^@@mcp_/, "");
               return { id: name, name };
@@ -1572,6 +1591,198 @@ function workspaceEndpoints(app) {
   );
 
   // Parsed Files in separate endpoint just to keep the workspace endpoints clean
+  /**
+   * SQL connections a workspace owns.
+   *
+   * Mirrors the agent-flow routes above. Global connections an admin shared in are
+   * usable by this workspace's agent but are never editable here, and their
+   * `connectionString` - which carries a database username and password in plain text -
+   * is never sent to a workspace screen at all.
+   */
+
+  /**
+   * Resolve a connection this workspace owns, or answer 404. Same reasoning as the
+   * flow guard: a wrong owner is indistinguishable from "does not exist", so a
+   * workspace manager cannot probe for connections configured elsewhere.
+   */
+  async function ownedConnectionOr404(databaseId, workspace, response) {
+    const {
+      sqlConnectionsOwnedByWorkspace,
+    } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
+    const owned = await sqlConnectionsOwnedByWorkspace(workspace.id);
+    const connection = owned.find((conn) => conn.database_id === databaseId);
+    if (!connection) {
+      response
+        .status(404)
+        .json({ success: false, error: "Connection not found" });
+      return null;
+    }
+    return connection;
+  }
+
+  /** Persist a set of `mergeConnections` actions against the instance-wide setting. */
+  async function applyConnectionUpdates(updates = []) {
+    const { SystemSettings } = require("../models/systemSettings");
+    return SystemSettings.updateSettings({
+      agent_sql_connections: JSON.stringify(updates),
+    });
+  }
+
+  app.get(
+    "/workspace/:slug/sql-connections",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SQL_CONNECTORS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (_request, response) => {
+      try {
+        const {
+          sqlConnectionsAvailableTo,
+          toPublic,
+        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
+        const workspace = response.locals.workspace;
+        const connections = (
+          await sqlConnectionsAvailableTo(workspace.id)
+        ).map((conn) => toPublic(conn, workspace.id));
+        response.status(200).json({ success: true, connections });
+      } catch (error) {
+        console.error("Error listing workspace SQL connections:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/sql-connections",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SQL_CONNECTORS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const { database_id, engine, connectionString, schema } =
+          reqBody(request);
+        if (!database_id || !engine || !connectionString)
+          return response.status(400).json({
+            success: false,
+            error: "A name, engine and connection string are required",
+          });
+
+        // `workspaceId` comes from the resolved workspace, never the payload.
+        await applyConnectionUpdates([
+          {
+            action: "add",
+            database_id: String(database_id),
+            engine: String(engine),
+            connectionString: String(connectionString),
+            ...(schema ? { schema: String(schema) } : {}),
+            workspaceId: workspace.id,
+          },
+        ]);
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error creating workspace SQL connection:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/sql-connections/:databaseId",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SQL_CONNECTORS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const { databaseId } = request.params;
+        if (!(await ownedConnectionOr404(databaseId, workspace, response)))
+          return;
+
+        const { database_id, engine, connectionString, schema } =
+          reqBody(request);
+        if (!database_id || !engine || !connectionString)
+          return response.status(400).json({
+            success: false,
+            error: "A name, engine and connection string are required",
+          });
+
+        // mergeConnections keeps the stored owner on an update, so this cannot move
+        // the connection out of this workspace.
+        await applyConnectionUpdates([
+          {
+            action: "update",
+            originalDatabaseId: databaseId,
+            database_id: String(database_id),
+            engine: String(engine),
+            connectionString: String(connectionString),
+            ...(schema ? { schema: String(schema) } : {}),
+          },
+        ]);
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error updating workspace SQL connection:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/sql-connections/:databaseId/toggle",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SQL_CONNECTORS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const { databaseId } = request.params;
+        if (!(await ownedConnectionOr404(databaseId, workspace, response)))
+          return;
+
+        const { active } = reqBody(request);
+        await applyConnectionUpdates([
+          { action: "toggle", database_id: databaseId, active: !!active },
+        ]);
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error toggling workspace SQL connection:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/sql-connections/:databaseId",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SQL_CONNECTORS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const { databaseId } = request.params;
+        if (!(await ownedConnectionOr404(databaseId, workspace, response)))
+          return;
+
+        await applyConnectionUpdates([
+          { action: "remove", database_id: databaseId },
+        ]);
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error deleting workspace SQL connection:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
   workspaceParsedFilesEndpoints(app);
 }
 

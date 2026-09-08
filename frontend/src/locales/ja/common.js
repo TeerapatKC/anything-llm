@@ -102,7 +102,8 @@ const TRANSLATIONS = {
     },
     "community-hub": {
       title: "コミュニティハブ",
-      "trending-description": "Nexus AI コミュニティで共有し、共同作業を行います。",
+      "trending-description":
+        "Nexus AI コミュニティで共有し、共同作業を行います。",
       "import-title": "コミュニティアイテムをインポート",
       "import-description":
         "Nexus AI コミュニティハブからプロンプト、スキル、コマンドなどをインポートして、このインスタンスを拡張します。",
@@ -177,7 +178,6 @@ const TRANSLATIONS = {
     agent: "エージェント構成",
     "upload-documents": "ドキュメントをアップロード",
     "slash-commands": "スラッシュコマンド",
-    "agent-flows": "エージェントフロー",
   },
   general: {
     vector: {
@@ -1127,7 +1127,8 @@ const TRANSLATIONS = {
         "これらのファイルを削除してもよろしいですか？\nシステムおよび既存のワークスペースから自動的に削除されます。\nこの操作は元に戻せません。",
       "delete-confirmation":
         "これらのファイルやフォルダーを削除してもよろしいですか？\nシステムから削除され、既存のワークスペースからも自動的に削除されます。\nこの操作は元に戻せません。",
-      "removing-message-files": "{{count}} 件のドキュメントを削除中です。お待ちください。",
+      "removing-message-files":
+        "{{count}} 件のドキュメントを削除中です。お待ちください。",
       "removing-message":
         "{{count}}件のドキュメントと{{folderCount}}件のフォルダーを削除中です。しばらくお待ちください。",
       "move-success": "{{count}}件のドキュメントを移動しました。",
@@ -1221,7 +1222,8 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
-    agent_exit_hint: "エージェントの実行ループを途中で終了するには /exit と入力してください。",
+    agent_exit_hint:
+      "エージェントの実行ループを途中で終了するには /exit と入力してください。",
     generating_response: "応答を生成中",
     thought_in_progress: "モデルが思考中...",
     thoughts: "思考",
@@ -2519,6 +2521,10 @@ const TRANSLATIONS = {
     "connector-off-description":
       "左側で有効にすると、データベース接続の追加と管理ができます。",
     "toggle-failed": "接続の更新に失敗しました。",
+    saved: "データベース接続を保存しました。",
+    "save-failed": "データベース接続の保存に失敗しました。",
+    "connector-updated": "SQL コネクタを更新しました。",
+    "connector-update-failed": "SQL コネクタの更新に失敗しました。",
     manage: {
       "aria-label": "接続を管理",
       edit: "接続を編集",
@@ -2655,6 +2661,13 @@ const TRANSLATIONS = {
     "general-appearance": "全般の外観設定",
   },
   "agent-panel": {
+    "sql-connections": "SQL接続",
+    "sql-connections-description":
+      "ここで追加した接続はこのワークスペースに属し、そのエージェントだけが利用できます。",
+    "new-sql-connection": "新しい接続",
+    "no-sql-connections": "このワークスペースのSQL接続はまだありません。",
+    "sql-connections-shared":
+      "管理者が共有した接続が{{count}}件あります。認証情報はインスタンス全体で管理されます。",
     "agent-flow": "エージェントフロー",
     "flows-description": "このインスタンスに設定されたフローを一覧表示します。",
     "skills-title": "エージェントのスキルと設定",
@@ -2700,7 +2713,9 @@ const TRANSLATIONS = {
     "toggle-failed": "フローの有効状態を変更できませんでした。",
     "no-description": "説明はありません",
     "workspace-owned": "ワークスペース",
-    "workspace-owned-hint": "このフローは特定のワークスペースに属しており、そこでのみ利用できます。",
+    shared: "共有",
+    "workspace-owned-hint":
+      "このフローは特定のワークスペースに属しており、そこでのみ利用できます。",
     visibility: {
       title: "ワークスペースへの公開範囲",
       description: "このフローを使用できるワークスペースを選択します。",

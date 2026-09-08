@@ -62,7 +62,6 @@ const router = createBrowserRouter([
                   WORKSPACE_PERMISSIONS.MEMBERS_MANAGE,
                   WORKSPACE_PERMISSIONS.ROLES_MANAGE,
                   WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
-                  WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
                   WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
                 ]}
               />

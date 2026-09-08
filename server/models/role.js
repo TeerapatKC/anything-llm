@@ -27,6 +27,9 @@ const {
 const Role = {
   nameRegex: new RegExp(/^[a-z][a-z0-9_-]*$/),
 
+  /** @type {Promise<boolean>|null} */
+  _seedPromise: null,
+
   /**
    * Resolved permission sets keyed by role name. Cleared on any write so a permission
    * tick takes effect on the next request instead of after a restart.
@@ -111,9 +114,24 @@ const Role = {
    * Mirrors the code-defined permission catalog into the database and creates any
    * missing system roles. Safe to run on every boot - it never overwrites the
    * permissions an operator has ticked for an existing role.
-   * @returns {Promise<void>}
+   * @returns {Promise<boolean>} whether seeding completed successfully
    */
   seed: async function () {
+    // The HTTP listener can receive the first onboarding request while boot-time
+    // initialization is still running. Share one seed operation between boot and that
+    // request so two callers cannot race to create the same built-in role.
+    if (this._seedPromise) return this._seedPromise;
+
+    this._seedPromise = this._seed();
+    try {
+      return await this._seedPromise;
+    } finally {
+      this._seedPromise = null;
+    }
+  },
+
+  /** @returns {Promise<boolean>} */
+  _seed: async function () {
     try {
       for (const permission of PERMISSION_CATALOG) {
         await prisma.permissions.upsert({
@@ -177,8 +195,10 @@ const Role = {
       }
 
       this.flushCache();
+      return true;
     } catch (error) {
       console.error("FAILED TO SEED ROLES AND PERMISSIONS.", error.message);
+      return false;
     }
   },
 

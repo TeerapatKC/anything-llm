@@ -1168,6 +1168,7 @@ function mergeConnections(existingConnections = [], updates = []) {
       engine,
       schema,
       active,
+      workspaceId,
     } = update;
 
     switch (action) {
@@ -1209,8 +1210,12 @@ function mergeConnections(existingConnections = [], updates = []) {
 
         // Editing a connection's details never changes whether it's turned on -
         // that's a separate action (the toggle endpoint) from editing credentials.
-        const previousActive =
-          connectionsMap.get(originalDatabaseId)?.active ?? true;
+        const previous = connectionsMap.get(originalDatabaseId);
+        const previousActive = previous?.active ?? true;
+        // Ownership is whatever is already on disk. Taking it from the payload would
+        // let an edit re-home another workspace's connection - or hand a workspace one
+        // to the global pool - so the stored value always wins.
+        const previousOwner = previous?.workspaceId ?? null;
 
         // Remove old and add updated connection
         connectionsMap.delete(originalDatabaseId);
@@ -1219,6 +1224,7 @@ function mergeConnections(existingConnections = [], updates = []) {
           database_id: newId,
           connectionString,
           active: previousActive,
+          ...(previousOwner !== null ? { workspaceId: previousOwner } : {}),
           ...(schema && { schema }),
         });
         break;
@@ -1241,6 +1247,7 @@ function mergeConnections(existingConnections = [], updates = []) {
           database_id: slugifiedId,
           connectionString,
           active: true,
+          ...(workspaceId ? { workspaceId: Number(workspaceId) } : {}),
           ...(schema && { schema }),
         });
         break;

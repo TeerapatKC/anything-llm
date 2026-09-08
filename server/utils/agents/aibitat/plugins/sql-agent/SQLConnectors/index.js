@@ -55,6 +55,89 @@ async function listSQLConnections() {
 }
 
 /**
+ * Coerce a stored owner into a workspace id or null, so a malformed value can never
+ * make a connection look like it belongs to a workspace that does not exist.
+ * @param {any} workspaceId
+ * @returns {number|null}
+ */
+function normalizeWorkspaceId(workspaceId) {
+  const id = Number(workspaceId);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
+/**
+ * The workspace that owns a connection, or null when it is instance-wide.
+ * @param {SQLConnection} connection
+ * @returns {number|null}
+ */
+function connectionOwner(connection) {
+  return normalizeWorkspaceId(connection?.workspaceId);
+}
+
+/**
+ * Connection summary safe to hand to a workspace screen.
+ *
+ * `connectionString` carries a username and password in plain text, so it is only
+ * included for a connection the workspace owns - the one whose credentials somebody
+ * there typed in. A global connection an admin shared in is usable by the agent but
+ * its secret never reaches a workspace manager.
+ * @param {SQLConnection} connection
+ * @param {number|null} workspaceId - the workspace asking
+ * @returns {object}
+ */
+function toPublic(connection, workspaceId = null) {
+  const owner = connectionOwner(connection);
+  const owned = owner !== null && owner === normalizeWorkspaceId(workspaceId);
+  return {
+    database_id: connection.database_id,
+    engine: connection.engine,
+    active: connection.active !== false,
+    workspaceId: owner,
+    scope: owner === null ? "global" : "workspace",
+    ...(connection.schema ? { schema: connection.schema } : {}),
+    ...(owned ? { connectionString: connection.connectionString } : {}),
+  };
+}
+
+/**
+ * Connections with no owner - the instance-wide pool an admin manages.
+ * @returns {Promise<[SQLConnection]>}
+ */
+async function globalSQLConnections() {
+  return (await listSQLConnections()).filter(
+    (conn) => connectionOwner(conn) === null
+  );
+}
+
+/**
+ * Connections created inside one workspace. Visible nowhere else.
+ * @param {number|null} workspaceId
+ * @returns {Promise<[SQLConnection]>}
+ */
+async function sqlConnectionsOwnedByWorkspace(workspaceId = null) {
+  const id = normalizeWorkspaceId(workspaceId);
+  if (id === null) return [];
+  return (await listSQLConnections()).filter(
+    (conn) => connectionOwner(conn) === id
+  );
+}
+
+/**
+ * Every connection a workspace is allowed to reference: the global pool plus its own.
+ * This is ownership only - whether a given global connection is switched on for this
+ * workspace is a separate question answered by `listSQLConnectionsForWorkspace`.
+ * @param {number|null} workspaceId
+ * @returns {Promise<[SQLConnection]>}
+ */
+async function sqlConnectionsAvailableTo(workspaceId = null) {
+  const id = normalizeWorkspaceId(workspaceId);
+  return (await listSQLConnections()).filter((conn) => {
+    const owner = connectionOwner(conn);
+    return owner === null || owner === id;
+  });
+}
+
+/**
  * Every connection visible to a given workspace. Mirrors how agent flows and MCP
  * servers are scoped: a workspace whose `activeSqlConnections` was never set (or
  * was explicitly cleared back to "inherit") sees every configured connection,
@@ -72,7 +155,15 @@ async function listSQLConnectionsForWorkspace(workspace = null) {
   const all = (await listSQLConnections()).filter(
     (conn) => conn.active !== false
   );
-  if (!workspace) return all;
+  if (!workspace) return all.filter((conn) => connectionOwner(conn) === null);
+
+  // Ownership first: a connection another workspace created is not this one's to see,
+  // whatever `activeSqlConnections` happens to say. Stale config or a crafted id must
+  // not be able to hand an agent someone else's database credentials.
+  const scoped = all.filter((conn) => {
+    const owner = connectionOwner(conn);
+    return owner === null || owner === normalizeWorkspaceId(workspace.id);
+  });
 
   // Required lazily - workspaceSkills pulls in a fair amount of the agent
   // config machinery that this module otherwise has no reason to load.
@@ -80,9 +171,13 @@ async function listSQLConnectionsForWorkspace(workspace = null) {
     resolveConfigForWorkspace,
   } = require("../../../../workspaceSkills");
   const config = await resolveConfigForWorkspace(workspace);
-  if (!Array.isArray(config.activeSqlConnections)) return all;
-  return all.filter((conn) =>
-    config.activeSqlConnections.includes(conn.database_id)
+  if (!Array.isArray(config.activeSqlConnections)) return scoped;
+  return scoped.filter(
+    (conn) =>
+      // A workspace's own connection is always available to it; the allow-list only
+      // governs which of the shared, instance-wide ones it opted into.
+      connectionOwner(conn) !== null ||
+      config.activeSqlConnections.includes(conn.database_id)
   );
 }
 
@@ -126,4 +221,10 @@ module.exports = {
   listSQLConnectionsForWorkspace,
   getSQLConnectionForWorkspace,
   validateConnection,
+  normalizeWorkspaceId,
+  connectionOwner,
+  toPublic,
+  globalSQLConnections,
+  sqlConnectionsOwnedByWorkspace,
+  sqlConnectionsAvailableTo,
 };

@@ -6,15 +6,15 @@ import Admin from "@/models/admin";
 import System from "@/models/system";
 import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
-import { userCan, PERMISSIONS, SUPER_ADMIN_ROLE } from "@/utils/permissions";
+import { userCan, PERMISSIONS } from "@/utils/permissions";
 import { userFromStorage } from "@/utils/request";
 import {
   Bot,
   ChevronLeft,
   ChevronRight,
   Database,
-  Hammer,
   Package,
+  Plus,
   Plug,
   SlidersHorizontal,
   Workflow,
@@ -91,8 +91,9 @@ export default function AdminAgents() {
   // OAuth grant shared by everyone), so only a system administrator may configure them.
   const currentUser = userFromStorage();
   const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
-  // #TEMPORARILY_HIDDEN: Advanced agent menus are visible only to super admins.
-  const isSuperAdmin = currentUser?.role === SUPER_ADMIN_ROLE;
+  // The page itself already requires `agents.manage_skills`, so the only section
+  // needing a gate of its own is agent flows, which has its own permission.
+  const canManageFlows = userCan(PERMISSIONS.AGENTS_FLOWS, currentUser);
   const filterSkillsByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
     if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;
@@ -179,6 +180,28 @@ export default function AdminAgents() {
       setHasChanges(true);
       return updatedSkills;
     });
+  };
+
+  const toggleSQLConnectorSkill = async (skillName) => {
+    const updatedSkills = agentSkills.includes(skillName)
+      ? agentSkills.filter((name) => name !== skillName)
+      : [...agentSkills, skillName];
+    const { success, error } = await Admin.updateSystemPreferences({
+      default_agent_skills: updatedSkills.join(","),
+    });
+
+    if (!success) {
+      showToast(error || t("sql-connector.connector-update-failed"), "error", {
+        clear: true,
+      });
+      return false;
+    }
+
+    setAgentSkills(updatedSkills);
+    showToast(t("sql-connector.connector-updated"), "success", {
+      clear: true,
+    });
+    return true;
   };
 
   const toggleFlow = (flowId) => {
@@ -368,31 +391,8 @@ export default function AdminAgents() {
 
   if (isSqlConnectorRoute) {
     return (
-      <SkillLayout
-        hasChanges={hasChanges}
-        handleCancel={() => setHasChanges(false)}
-        handleSubmit={handleSubmit}
-      >
-        <form
-          onSubmit={handleSubmit}
-          onChange={(e) => {
-            if (IGNORE_CHANGE_SETTINGS.includes(e.target.name)) return;
-            setHasChanges(true);
-          }}
-          ref={formEl}
-          className="thin-scrollbar flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-4 pt-20 min-[1100px]:overflow-hidden min-[1100px]:p-6"
-        >
-          <input
-            name="system::default_agent_skills"
-            type="hidden"
-            value={agentSkills.join(",")}
-          />
-          <input
-            name="system::disabled_agent_skills"
-            type="hidden"
-            value={disabledAgentSkills.join(",")}
-          />
-
+      <SkillLayout showSaveBar={false}>
+        <div className="thin-scrollbar flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto p-4 pt-20 min-[1100px]:overflow-hidden min-[1100px]:p-6">
           <header className="flex flex-none items-start gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
               <Database size={21} />
@@ -407,20 +407,12 @@ export default function AdminAgents() {
             </div>
           </header>
 
-          {isSuperAdmin ? (
-            <AgentSQLConnectorSelection
-              skill="sql-agent"
-              toggleSkill={toggleAgentSkill}
-              enabled={agentSkills.includes("sql-agent")}
-              setHasChanges={setHasChanges}
-              hasChanges={hasChanges}
-            />
-          ) : (
-            <p className="text-sm text-theme-text-secondary">
-              {t("sql-connector.restricted")}
-            </p>
-          )}
-        </form>
+          <AgentSQLConnectorSelection
+            skill="sql-agent"
+            toggleSkill={toggleSQLConnectorSkill}
+            enabled={agentSkills.includes("sql-agent")}
+          />
+        </div>
       </SkillLayout>
     );
   }
@@ -579,7 +571,7 @@ export default function AdminAgents() {
 
                 <div className="space-y-4 p-3">
                   {isAgentFlowRoute ? (
-                    isSuperAdmin ? (
+                    canManageFlows ? (
                       <>
                         <div className="flex items-center justify-between gap-x-2 text-theme-text-primary">
                           <div className="flex min-w-0 items-center gap-x-2">
@@ -592,7 +584,7 @@ export default function AdminAgents() {
                             to={paths.agents.builder()}
                             className="flex shrink-0 items-center gap-x-1 text-sm text-cta-button hover:underline"
                           >
-                            <Hammer size={16} />
+                            <Plus size={16} />
                             {agentFlows.length === 0
                               ? t("agent-panel.create-flow")
                               : t("agent-panel.open-builder")}
@@ -633,57 +625,52 @@ export default function AdminAgents() {
                         activeSkills={agentSkills}
                       />
 
-                      {isSuperAdmin && (
+                      {Object.keys(appIntegrationSkills).length > 0 && (
                         <>
-                          {Object.keys(appIntegrationSkills).length > 0 && (
-                            <>
-                              <div className="mt-6 flex items-center gap-x-2 text-theme-text-primary">
-                                <Package size={22} />
-                                <p className="text-base font-medium">
-                                  {t("agent-panel.app-integrations")}
-                                </p>
-                              </div>
-                              <SkillList
-                                skills={appIntegrationSkills}
-                                selectedSkill={selectedSkill}
-                                handleClick={handleSkillClick}
-                                activeSkills={agentSkills}
-                              />
-                            </>
-                          )}
-
-                          <div className="flex items-center gap-x-2 text-theme-text-primary">
-                            <Plug size={22} />
+                          <div className="mt-6 flex items-center gap-x-2 text-theme-text-primary">
+                            <Package size={22} />
                             <p className="text-base font-medium">
-                              {t("agent-panel.custom-skills")}
+                              {t("agent-panel.app-integrations")}
                             </p>
                           </div>
-                          <ImportedSkillList
-                            skills={importedSkills}
+                          <SkillList
+                            skills={appIntegrationSkills}
                             selectedSkill={selectedSkill}
                             handleClick={handleSkillClick}
+                            activeSkills={agentSkills}
                           />
-
-                          <MCPServerHeader
-                            setMcpServers={setMcpServers}
-                            setSelectedMcpServer={setSelectedMcpServer}
-                          >
-                            {({ loadingMcpServers }) => (
-                              <MCPServersList
-                                isLoading={loadingMcpServers}
-                                servers={mcpServers}
-                                selectedServer={selectedMcpServer}
-                                handleClick={handleMCPClick}
-                              />
-                            )}
-                          </MCPServerHeader>
                         </>
                       )}
+
+                      <div className="flex items-center gap-x-2 text-theme-text-primary">
+                        <Plug size={22} />
+                        <p className="text-base font-medium">
+                          {t("agent-panel.custom-skills")}
+                        </p>
+                      </div>
+                      <ImportedSkillList
+                        skills={importedSkills}
+                        selectedSkill={selectedSkill}
+                        handleClick={handleSkillClick}
+                      />
+
+                      <MCPServerHeader
+                        setMcpServers={setMcpServers}
+                        setSelectedMcpServer={setSelectedMcpServer}
+                      >
+                        {({ loadingMcpServers }) => (
+                          <MCPServersList
+                            isLoading={loadingMcpServers}
+                            servers={mcpServers}
+                            selectedServer={selectedMcpServer}
+                            handleClick={handleMCPClick}
+                          />
+                        )}
+                      </MCPServerHeader>
                     </>
                   )}
                 </div>
               </div>
-
             </>
           )}
         </form>
@@ -760,7 +747,7 @@ export default function AdminAgents() {
             <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
               <div className="space-y-4">
                 {isAgentFlowRoute ? (
-                  isSuperAdmin ? (
+                  canManageFlows ? (
                     <>
                       <div className="text-theme-text-primary flex items-center justify-between gap-x-2">
                         <div className="flex items-center gap-x-2">
@@ -769,27 +756,17 @@ export default function AdminAgents() {
                             {t("agent-panel.agent-flows")}
                           </p>
                         </div>
-                        {agentFlows.length === 0 ? (
-                          <Link
-                            to={paths.agents.builder()}
-                            className="text-cta-button flex items-center gap-x-1 hover:underline"
-                          >
-                            <Hammer size={16} />
-                            <p className="text-sm">
-                              {t("agent-panel.create-flow")}
-                            </p>
-                          </Link>
-                        ) : (
-                          <Link
-                            to={paths.agents.builder()}
-                            className="text-theme-text-secondary hover:text-cta-button flex items-center gap-x-1"
-                          >
-                            <Hammer size={16} />
-                            <p className="text-sm">
-                              {t("agent-panel.open-builder")}
-                            </p>
-                          </Link>
-                        )}
+                        <Link
+                          to={paths.agents.builder()}
+                          className="flex items-center gap-x-1 text-cta-button hover:underline"
+                        >
+                          <Plus size={16} />
+                          <p className="text-sm">
+                            {agentFlows.length === 0
+                              ? t("agent-panel.create-flow")
+                              : t("agent-panel.open-builder")}
+                          </p>
+                        </Link>
                       </div>
                       <AgentFlowsList
                         flows={agentFlows}
@@ -826,54 +803,50 @@ export default function AdminAgents() {
                       activeSkills={agentSkills}
                     />
 
-                    {isSuperAdmin && (
+                    {Object.keys(appIntegrationSkills).length > 0 && (
                       <>
-                        {Object.keys(appIntegrationSkills).length > 0 && (
-                          <>
-                            <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
-                              <Package size={24} />
-                              <p className="text-lg font-medium">
-                                {t("agent-panel.app-integrations")}
-                              </p>
-                            </div>
-                            <SkillList
-                              skills={appIntegrationSkills}
-                              selectedSkill={selectedSkill}
-                              handleClick={handleSkillClick}
-                              activeSkills={agentSkills}
-                            />
-                          </>
-                        )}
-
-                        <div className="text-theme-text-primary flex items-center gap-x-2 mt-4">
-                          <Plug size={24} />
+                        <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
+                          <Package size={24} />
                           <p className="text-lg font-medium">
-                            {t("agent-panel.custom-skills")}
+                            {t("agent-panel.app-integrations")}
                           </p>
                         </div>
-                        <ImportedSkillList
-                          skills={importedSkills}
+                        <SkillList
+                          skills={appIntegrationSkills}
                           selectedSkill={selectedSkill}
                           handleClick={handleSkillClick}
+                          activeSkills={agentSkills}
                         />
-
-                        <MCPServerHeader
-                          setMcpServers={setMcpServers}
-                          setSelectedMcpServer={setSelectedMcpServer}
-                        >
-                          {({ loadingMcpServers }) => {
-                            return (
-                              <MCPServersList
-                                isLoading={loadingMcpServers}
-                                servers={mcpServers}
-                                selectedServer={selectedMcpServer}
-                                handleClick={handleMCPClick}
-                              />
-                            );
-                          }}
-                        </MCPServerHeader>
                       </>
                     )}
+
+                    <div className="text-theme-text-primary flex items-center gap-x-2 mt-4">
+                      <Plug size={24} />
+                      <p className="text-lg font-medium">
+                        {t("agent-panel.custom-skills")}
+                      </p>
+                    </div>
+                    <ImportedSkillList
+                      skills={importedSkills}
+                      selectedSkill={selectedSkill}
+                      handleClick={handleSkillClick}
+                    />
+
+                    <MCPServerHeader
+                      setMcpServers={setMcpServers}
+                      setSelectedMcpServer={setSelectedMcpServer}
+                    >
+                      {({ loadingMcpServers }) => {
+                        return (
+                          <MCPServersList
+                            isLoading={loadingMcpServers}
+                            servers={mcpServers}
+                            selectedServer={selectedMcpServer}
+                            handleClick={handleMCPClick}
+                          />
+                        );
+                      }}
+                    </MCPServerHeader>
                   </>
                 )}
               </div>
@@ -972,15 +945,23 @@ export default function AdminAgents() {
   );
 }
 
-function SkillLayout({ children, hasChanges, handleSubmit, handleCancel }) {
+function SkillLayout({
+  children,
+  hasChanges,
+  handleSubmit,
+  handleCancel,
+  showSaveBar = true,
+}) {
   return (
     <SplitLayout id="workspace-agent-settings-container">
       {children}
-      <ContextualSaveBar
-        showing={hasChanges}
-        onSave={handleSubmit}
-        onCancel={handleCancel}
-      />
+      {showSaveBar && (
+        <ContextualSaveBar
+          showing={hasChanges}
+          onSave={handleSubmit}
+          onCancel={handleCancel}
+        />
+      )}
     </SplitLayout>
   );
 }

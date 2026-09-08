@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Spinner } from "@/components/ui/spinner";
 import DBConnection from "./DBConnection";
@@ -20,15 +20,13 @@ export default function AgentSQLConnectorSelection({
   skill,
   toggleSkill,
   enabled = false,
-  setHasChanges,
-  hasChanges = false,
 }) {
   const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
   const [connections, setConnections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState(null);
-  const prevHasChanges = useRef(hasChanges);
+  const [connectionVersion, setConnectionVersion] = useState(0);
 
   const liveConnections = connections.filter(
     (conn) => conn.action !== "remove"
@@ -37,97 +35,79 @@ export default function AgentSQLConnectorSelection({
     (conn) => conn.database_id === selectedId
   );
 
-  // Load connections on mount
-  useEffect(() => {
+  const fetchConnections = useCallback(async (preferredId = null) => {
     setLoading(true);
-    Admin.systemPreferencesByFields(["agent_sql_connections"])
-      .then((res) => {
-        const list = res?.settings?.agent_sql_connections ?? [];
-        setConnections(list);
-        setSelectedId((prev) => prev ?? list[0]?.database_id ?? null);
-      })
-      .catch(() => setConnections([]))
-      .finally(() => setLoading(false));
+    try {
+      const res = await Admin.systemPreferencesByFields([
+        "agent_sql_connections",
+      ]);
+      const list = res?.settings?.agent_sql_connections ?? [];
+      setConnections(list);
+      setSelectedId((current) => {
+        const requested = preferredId ?? current;
+        return list.some((item) => item.database_id === requested)
+          ? requested
+          : (list[0]?.database_id ?? null);
+      });
+    } catch {
+      setConnections([]);
+      setSelectedId(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  // Refresh connections from backend when save completes (hasChanges: true -> false)
-  // This ensures we get clean data without stale action properties
   useEffect(() => {
-    if (prevHasChanges.current === true && hasChanges === false) {
-      Admin.systemPreferencesByFields(["agent_sql_connections"])
-        .then((res) =>
-          setConnections(res?.settings?.agent_sql_connections ?? [])
-        )
-        .catch(() => {});
-    }
-    prevHasChanges.current = hasChanges;
-  }, [hasChanges]);
+    fetchConnections();
+  }, [fetchConnections]);
 
-  /**
-   * Marks a connection for removal by adding action: "remove".
-   * The connection stays in the array (for undo capability) until saved.
-   * @param {string} databaseId - The database_id of the connection to remove
-   */
-  function handleRemoveConnection(databaseId) {
-    setHasChanges(true);
-    setConnections((prev) =>
-      prev.map((conn) => {
-        if (conn.database_id === databaseId)
-          return { ...conn, action: "remove" };
-        return conn;
-      })
-    );
-    setSelectedId((prev) => {
-      if (prev !== databaseId) return prev;
-      const remaining = liveConnections.filter(
-        (conn) => conn.database_id !== databaseId
-      );
-      return remaining[0]?.database_id ?? null;
+  async function persistConnection(update, preferredId = null) {
+    const { success, error } = await Admin.updateSystemPreferences({
+      agent_sql_connections: JSON.stringify([update]),
     });
+    if (!success) {
+      showToast(error || t("sql-connector.save-failed"), "error", {
+        clear: true,
+      });
+      return false;
+    }
+    await fetchConnections(preferredId);
+    // Remount the detail panel after every credential write so workspace visibility
+    // is fetched immediately from the backend as part of the completed save.
+    setConnectionVersion((version) => version + 1);
+    showToast(t("sql-connector.saved"), "success", { clear: true });
+    return true;
   }
 
   /**
-   * Updates an existing connection by replacing it in the local state.
-   * This removes the old connection (by originalDatabaseId) and adds the updated version.
-   *
-   * Note: The old connection is removed from local state immediately, but the backend
-   * handles the actual update logic when saved. See mergeConnections in server/models/systemSettings.js
+   * Removes a connection immediately and refreshes the persisted list.
+   * @param {string} databaseId - The database_id of the connection to remove
+   */
+  async function handleRemoveConnection(databaseId) {
+    return persistConnection({ database_id: databaseId, action: "remove" });
+  }
+
+  /**
+   * Updates an existing connection immediately.
    *
    * @param {Object} updatedConnection - The updated connection data
    * @param {string} updatedConnection.originalDatabaseId - The original database_id before the update
    * @param {string} updatedConnection.database_id - The new database_id
    * @param {string} updatedConnection.action - Should be "update"
    */
-  function handleUpdateConnection(updatedConnection) {
-    setHasChanges(true);
-    setConnections((prev) =>
-      prev.map((conn) =>
-        conn.database_id === updatedConnection.originalDatabaseId
-          ? updatedConnection
-          : conn
-      )
-    );
-    setSelectedId((prev) =>
-      prev === updatedConnection.originalDatabaseId
-        ? updatedConnection.database_id
-        : prev
-    );
+  async function handleUpdateConnection(updatedConnection) {
+    return persistConnection(updatedConnection, updatedConnection.database_id);
   }
   /**
-   * Adds a new connection to the local state with action: "add".
-   * The backend will validate and deduplicate when saved.
+   * Adds a new connection immediately.
    * @param {Object} newConnection - The new connection data with action: "add"
    */
-  function handleAddConnection(newConnection) {
-    setHasChanges(true);
-    setConnections((prev) => [...prev, newConnection]);
-    setSelectedId(newConnection.database_id);
+  async function handleAddConnection(newConnection) {
+    return persistConnection(newConnection, newConnection.database_id);
   }
 
   /**
-   * Turns a connection on/off. Takes effect immediately (its own endpoint,
-   * separate from the batched "Save changes" flow the rest of this form uses)
-   * so switching a database off doesn't require a page-wide save.
+   * Turns a connection on/off immediately through its dedicated endpoint.
    * @param {string} databaseId
    * @param {boolean} nextActive
    */
@@ -198,12 +178,6 @@ export default function AgentSQLConnectorSelection({
                 />
               </div>
 
-              <input
-                name="system::agent_sql_connections"
-                type="hidden"
-                value={JSON.stringify(connections)}
-              />
-
               {!enabled ? (
                 <p className="text-sm text-theme-text-secondary">
                   {t("sql-connector.enable-first")}
@@ -228,12 +202,11 @@ export default function AgentSQLConnectorSelection({
           <div className="thin-scrollbar min-h-64 overflow-x-visible rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10 min-[1100px]:min-h-0 min-[1100px]:flex-1 min-[1100px]:overflow-y-auto min-[1100px]:p-5">
             {enabled && selectedConnection ? (
               <DBConnection
-                key={selectedConnection.database_id}
+                key={`${selectedConnection.database_id}:${connectionVersion}`}
                 connection={selectedConnection}
                 onRemove={handleRemoveConnection}
                 onUpdate={handleUpdateConnection}
                 onToggleActive={handleToggleActive}
-                setHasChanges={setHasChanges}
                 connections={connections}
               />
             ) : (
@@ -259,7 +232,6 @@ export default function AgentSQLConnectorSelection({
       <NewSQLConnection
         isOpen={isOpen}
         closeModal={closeModal}
-        setHasChanges={setHasChanges}
         onSubmit={handleAddConnection}
         connections={connections}
       />

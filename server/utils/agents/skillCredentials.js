@@ -52,12 +52,14 @@ function configuredSearchProviders() {
  * sql-agent has nothing to query without one.
  * @returns {Promise<boolean>}
  */
-async function hasSQLConnections() {
-  const { safeJsonParse } = require("../http");
-  const connections = safeJsonParse(
-    (await SystemSettings.get({ label: "agent_sql_connections" }))?.value,
-    []
-  );
+async function hasSQLConnections(workspaceId = null) {
+  const {
+    sqlConnectionsAvailableTo,
+  } = require("./aibitat/plugins/sql-agent/SQLConnectors");
+  // Workspace-aware: a workspace that has supplied its own connection can use the
+  // sql-agent even on an instance where no global connection was ever configured,
+  // and a connection owned by some other workspace must not make it look ready.
+  const connections = await sqlConnectionsAvailableTo(workspaceId);
   return Array.isArray(connections) && connections.length > 0;
 }
 
@@ -71,7 +73,7 @@ async function hasSQLConnections() {
  * unconfigured instead of failing the whole request.
  * @returns {Promise<Record<string, {configured: boolean, hint: string}>>}
  */
-async function skillCredentialStatus() {
+async function skillCredentialStatus(workspaceId = null) {
   const safely = async (fn) => {
     try {
       return !!(await fn());
@@ -90,7 +92,7 @@ async function skillCredentialStatus() {
     safely(() =>
       require("./aibitat/plugins/outlook/lib").OutlookBridge.isToolAvailable()
     ),
-    safely(() => hasSQLConnections()),
+    safely(() => hasSQLConnections(workspaceId)),
   ]);
 
   return {

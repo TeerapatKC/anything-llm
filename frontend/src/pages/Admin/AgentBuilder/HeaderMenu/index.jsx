@@ -23,8 +23,10 @@ export default function HeaderMenu({
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  // Workspace flows are managed from the Agent Configuration screen, so that is where
+  // leaving the builder returns to - there is no separate flows tab.
   const exitPath = slug
-    ? paths.workspace.settings.agentFlows(slug)
+    ? paths.workspace.settings.agentConfig(slug)
     : paths.settings.agentFlow();
   const editPath = (uuid) =>
     slug

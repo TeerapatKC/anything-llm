@@ -110,7 +110,8 @@ const TRANSLATIONS = {
     },
     "community-hub": {
       title: "Community Hub",
-      "trending-description": "Share and collaborate with the Nexus AI community.",
+      "trending-description":
+        "Share and collaborate with the Nexus AI community.",
       "import-title": "Import a Community Item",
       "import-description":
         "Import items from the Nexus AI Community Hub to enhance your instance with community-created prompts, skills, and commands.",
@@ -163,8 +164,7 @@ const TRANSLATIONS = {
       "forgot-pass": "Forgot password",
       reset: "Reset",
     },
-    "sign-in":
-      "Enter your username and password to access.",
+    "sign-in": "Enter your username and password to access.",
     "password-reset": {
       title: "Password Reset",
       "admin-reset-description":
@@ -194,7 +194,6 @@ const TRANSLATIONS = {
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
     "slash-commands": "Slash Commands",
-    "agent-flows": "Agent Flows",
   },
   general: {
     vector: {
@@ -2505,6 +2504,10 @@ const TRANSLATIONS = {
     "connector-off-description":
       "Enable it on the left to add and manage database connections.",
     "toggle-failed": "Failed to update connection.",
+    saved: "Database connection saved.",
+    "save-failed": "Failed to save database connection.",
+    "connector-updated": "SQL Connector updated.",
+    "connector-update-failed": "Failed to update SQL Connector.",
     manage: {
       "aria-label": "Manage connection",
       edit: "Edit connection",
@@ -2638,6 +2641,13 @@ const TRANSLATIONS = {
     "general-appearance": "General appearance settings",
   },
   "agent-panel": {
+    "sql-connections": "SQL connections",
+    "sql-connections-description":
+      "Connections added here belong to this workspace and are usable only by its agent.",
+    "new-sql-connection": "New connection",
+    "no-sql-connections": "No SQL connections for this workspace yet.",
+    "sql-connections-shared":
+      "{{count}} connection(s) shared with this workspace by an administrator. Switch them on from the list; their credentials stay instance-wide.",
     "agent-flow": "Agent Flow",
     "flows-description": "Browse the flows configured for this instance.",
     "skills-title": "Agent skills & settings",
@@ -2647,8 +2657,7 @@ const TRANSLATIONS = {
     "toggle-tool-failed": "Failed to toggle tool.",
     "skills-integrations": "Skills & Integrations",
     "choose-capability": "Choose a capability to configure.",
-    "flows-restricted":
-      "Agent Flows are restricted to the instance owner.",
+    "flows-restricted": "Agent Flows are restricted to the instance owner.",
     "app-integrations": "App Integrations",
     "select-mobile": "Select an Agent Skill, Agent Flow, or MCP Server",
     "page-skills-title": "Agent Skills",
@@ -2682,7 +2691,9 @@ const TRANSLATIONS = {
     "toggle-failed": "Failed to toggle flow.",
     "no-description": "No description provided",
     "workspace-owned": "Workspace",
-    "workspace-owned-hint": "This flow belongs to a workspace and is available only there.",
+    shared: "Shared",
+    "workspace-owned-hint":
+      "This flow belongs to a workspace and is available only there.",
     visibility: {
       title: "Visible to workspaces",
       description: "Choose which workspaces' agents can use this flow.",

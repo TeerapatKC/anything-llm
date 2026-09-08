@@ -86,9 +86,6 @@ export default {
       slashCommands: (slug) => {
         return `/workspace/${slug}/settings/slash-commands`;
       },
-      agentFlows: (slug) => {
-        return `/workspace/${slug}/settings/agent-flows`;
-      },
     },
     thread: (wsSlug, threadSlug) => {
       return `/workspace/${wsSlug}/t/${threadSlug}`;

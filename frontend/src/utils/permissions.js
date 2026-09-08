@@ -146,6 +146,7 @@ export const WORKSPACE_PERMISSIONS = {
 
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
+  SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",

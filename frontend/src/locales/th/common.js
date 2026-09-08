@@ -192,7 +192,6 @@ const TRANSLATIONS = {
     agent: "การกำหนดค่าเอเจนต์",
     "upload-documents": "อัปโหลดเอกสาร",
     "slash-commands": "คำสั่งสแลช",
-    "agent-flows": "โฟลว์เอเจนต์",
   },
   general: {
     vector: {
@@ -1511,8 +1510,7 @@ const TRANSLATIONS = {
         "คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์เหล่านี้?\nไฟล์จะถูกลบออกจากระบบและจาก workspace ทั้งหมดโดยอัตโนมัติ\nการกระทำนี้ย้อนกลับไม่ได้",
       "delete-confirmation":
         "คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์และโฟลเดอร์เหล่านี้?\nการดำเนินการนี้จะลบไฟล์ออกจากระบบและลบออกจากพื้นที่ทำงานที่มีอยู่ทั้งหมดโดยอัตโนมัติ\nการดำเนินการนี้ไม่สามารถย้อนกลับได้",
-      "removing-message-files":
-        "กำลังลบเอกสาร {{count}} รายการ โปรดรอสักครู่",
+      "removing-message-files": "กำลังลบเอกสาร {{count}} รายการ โปรดรอสักครู่",
       "removing-message":
         "กำลังลบเอกสาร {{count}} รายการและโฟลเดอร์ {{folderCount}} รายการ โปรดรอสักครู่",
       "move-success": "ย้ายเอกสาร {{count}} รายการสำเร็จแล้ว",
@@ -2446,8 +2444,7 @@ const TRANSLATIONS = {
   },
   "sql-connector": {
     title: "ตัวเชื่อมต่อ SQL",
-    "page-description":
-      "จัดการการเชื่อมต่อฐานข้อมูลที่เอเจนต์สามารถใช้งานได้",
+    "page-description": "จัดการการเชื่อมต่อฐานข้อมูลที่เอเจนต์สามารถใช้งานได้",
     restricted: "SQL Connector จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
     "list-description":
       "ดูรายการการเชื่อมต่อฐานข้อมูลที่กำหนดค่าไว้สำหรับอินสแตนซ์นี้",
@@ -2468,6 +2465,10 @@ const TRANSLATIONS = {
     "connector-off-description":
       "เปิดใช้งานทางด้านซ้ายเพื่อเพิ่มและจัดการการเชื่อมต่อฐานข้อมูล",
     "toggle-failed": "อัปเดตการเชื่อมต่อไม่สำเร็จ",
+    saved: "บันทึกการเชื่อมต่อฐานข้อมูลแล้ว",
+    "save-failed": "บันทึกการเชื่อมต่อฐานข้อมูลไม่สำเร็จ",
+    "connector-updated": "อัปเดตตัวเชื่อมต่อ SQL แล้ว",
+    "connector-update-failed": "อัปเดตตัวเชื่อมต่อ SQL ไม่สำเร็จ",
     manage: {
       "aria-label": "จัดการการเชื่อมต่อ",
       edit: "แก้ไขการเชื่อมต่อ",
@@ -2602,6 +2603,13 @@ const TRANSLATIONS = {
     "general-appearance": "การตั้งค่ารูปลักษณ์ทั่วไป",
   },
   "agent-panel": {
+    "sql-connections": "การเชื่อมต่อ SQL",
+    "sql-connections-description":
+      "การเชื่อมต่อที่เพิ่มที่นี่เป็นของเวิร์กสเปซนี้เท่านั้น",
+    "new-sql-connection": "เพิ่มการเชื่อมต่อ",
+    "no-sql-connections": "ยังไม่มีการเชื่อมต่อ SQL สำหรับเวิร์กสเปซนี้",
+    "sql-connections-shared":
+      "มีการเชื่อมต่อ {{count}} รายการที่แอดมินแชร์มาให้",
     "agent-flow": "Agent Flow",
     "flows-description": "ดูรายการ flow ที่กำหนดค่าไว้สำหรับอินสแตนซ์นี้",
     "skills-title": "ทักษะและการตั้งค่าเอเจนต์",
@@ -2611,15 +2619,12 @@ const TRANSLATIONS = {
     "toggle-tool-failed": "ไม่สามารถเปลี่ยนสถานะเครื่องมือได้",
     "skills-integrations": "ทักษะและการเชื่อมต่อ",
     "choose-capability": "เลือกความสามารถที่ต้องการกำหนดค่า",
-    "flows-restricted":
-      "Agent Flow จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
+    "flows-restricted": "Agent Flow จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
     "app-integrations": "การเชื่อมต่อกับแอป",
     "select-mobile": "เลือกทักษะเอเจนต์, Agent Flow หรือเซิร์ฟเวอร์ MCP",
     "page-skills-title": "ทักษะเอเจนต์",
-    "page-skills-description":
-      "เลือกและกำหนดค่าความสามารถที่เอเจนต์ใช้งานได้",
-    "page-flow-description":
-      "สร้างและจัดการ Flow อัตโนมัติที่เอเจนต์ใช้งานได้",
+    "page-skills-description": "เลือกและกำหนดค่าความสามารถที่เอเจนต์ใช้งานได้",
+    "page-flow-description": "สร้างและจัดการ Flow อัตโนมัติที่เอเจนต์ใช้งานได้",
     "select-configure": "เลือกรายการที่ต้องการกำหนดค่า",
     on: "เปิด",
     off: "ปิด",
@@ -2646,7 +2651,9 @@ const TRANSLATIONS = {
     "toggle-failed": "ไม่สามารถเปลี่ยนสถานะ Flow ได้",
     "no-description": "ไม่มีคำอธิบาย",
     "workspace-owned": "เวิร์กสเปซ",
-    "workspace-owned-hint": "โฟลว์นี้เป็นของเวิร์กสเปซใดเวิร์กสเปซหนึ่ง และใช้ได้เฉพาะที่นั่น",
+    shared: "แชร์",
+    "workspace-owned-hint":
+      "โฟลว์นี้เป็นของเวิร์กสเปซใดเวิร์กสเปซหนึ่ง และใช้ได้เฉพาะที่นั่น",
     visibility: {
       title: "พื้นที่ทำงานที่มองเห็นได้",
       description: "เลือกพื้นที่ทำงานที่อนุญาตให้เอเจนต์ใช้ Flow นี้",

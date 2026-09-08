@@ -10,7 +10,7 @@ import ChatModeSelection from "./ChatModeSelection";
 import WorkspaceLLMSelection from "./WorkspaceLLMSelection";
 import ChatQueryRefusalResponse from "./ChatQueryRefusalResponse";
 import { Button } from "@/components/ui/button";
-import { isSuperAdmin } from "@/utils/permissions";
+import { workspaceCan, WORKSPACE_PERMISSIONS } from "@/utils/permissions";
 
 export default function ChatSettings({ workspace }) {
   const [settings, setSettings] = useState({});
@@ -63,8 +63,7 @@ export default function ChatSettings({ workspace }) {
             </Button>
           </div>
         )}
-        {/* #TEMPORARILY_HIDDEN: Per-workspace LLM choice is limited to super admins. */}
-        {isSuperAdmin() && (
+        {workspaceCan(WORKSPACE_PERMISSIONS.SETTINGS_LLM, workspace?.slug) && (
           <WorkspaceLLMSelection
             settings={settings}
             workspace={workspace}
