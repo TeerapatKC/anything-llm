@@ -21,7 +21,6 @@ import Toggle from "@/components/lib/Toggle";
 import {
   getDefaultSkills,
   getConfigurableSkills,
-  getAppIntegrationSkills,
 } from "@/pages/Admin/Agents/skills.jsx";
 import { getSubSkillsFor } from "./subSkills";
 import { SEARCH_PROVIDERS } from "@/pages/Admin/Agents/WebSearchSelection";
@@ -43,7 +42,6 @@ import {
   Bot,
   Brain,
   Database,
-  Plug,
   Server,
   Settings,
   SlidersHorizontal,
@@ -239,18 +237,6 @@ export default function AgentSkillSelection({
         items.length > 0 ? items : [emptyNavItem(category, text)];
 
       const advancedNavItems = [
-        // Integrations whose credential an administrator has not supplied are
-        // filtered out by `canShow`, so an all-unconfigured instance lands on
-        // the empty state rather than on unusable toggles.
-        ...withEmptyState(
-          toNavItems(
-            "App integrations",
-            getAppIntegrationSkills(t),
-            resolvedConfig.activeSkills
-          ),
-          "App integrations",
-          "No integrations connected on this instance."
-        ),
         ...withEmptyState(
           (skills?.catalog?.mcpServers ?? []).map((item) => ({
             key: `mcp:${item.id}`,
@@ -584,26 +570,18 @@ export default function AgentSkillSelection({
     );
 
   const allConfigurableSkills = getConfigurableSkills(t, availability);
-  const allAppIntegrationSkills = getAppIntegrationSkills(t);
 
   const defaultSkills = getDefaultSkills(t);
   const configurableSkills = usableSkills(allConfigurableSkills);
-  const appIntegrationSkills = usableSkills(allAppIntegrationSkills);
-  const hiddenSkillCount =
-    countHidden(allConfigurableSkills) + countHidden(allAppIntegrationSkills);
+  const hiddenSkillCount = countHidden(allConfigurableSkills);
 
   const focusedSkill =
-    defaultSkills[focusSkillId] ??
-    configurableSkills[focusSkillId] ??
-    appIntegrationSkills[focusSkillId] ??
-    null;
+    defaultSkills[focusSkillId] ?? configurableSkills[focusSkillId] ?? null;
   const focusedSkillCategory = defaultSkills[focusSkillId]
     ? "Default skill"
     : configurableSkills[focusSkillId]
       ? "Configurable skill"
-      : appIntegrationSkills[focusSkillId]
-        ? "App integration"
-        : null;
+      : null;
 
   if (focusedSkill) {
     const activeField =
@@ -1209,17 +1187,6 @@ export default function AgentSkillSelection({
       />
 
       <>
-        <SkillGroup
-          title="App integrations"
-          Icon={Plug}
-          skills={appIntegrationSkills}
-          activeIds={config.activeSkills}
-          onToggle={(id, enabled) => toggleInList("activeSkills", id, enabled)}
-          t={t}
-          disabledSubSkills={config.disabledSubSkills}
-          onToggleSubSkill={toggleSubSkill}
-        />
-
         <EntityGroup
           title="MCP servers"
           Icon={Server}

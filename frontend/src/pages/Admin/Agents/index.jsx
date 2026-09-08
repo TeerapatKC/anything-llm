@@ -13,7 +13,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Database,
-  Package,
   Plus,
   SlidersHorizontal,
   Workflow,
@@ -21,11 +20,7 @@ import {
 import ContextualSaveBar from "@/components/ContextualSaveBar";
 import { castToType } from "@/utils/types";
 import { FullScreenLoader } from "@/components/Preloader";
-import {
-  getDefaultSkills,
-  getConfigurableSkills,
-  getAppIntegrationSkills,
-} from "./skills.jsx";
+import { getDefaultSkills, getConfigurableSkills } from "./skills.jsx";
 import { DefaultBadge } from "./Badges/default";
 import AgentFlowsList from "./AgentFlows";
 import FlowPanel from "./AgentFlows/FlowPanel";
@@ -81,10 +76,8 @@ export default function AdminAgents() {
     fileSystemAgentAvailable,
     createFilesAgentAvailable,
   });
-  const allAppIntegrationSkills = getAppIntegrationSkills(t);
-
-  // Skills marked `adminOnly` hold instance-wide third-party credentials (a single
-  // OAuth grant shared by everyone), so only a system administrator may configure them.
+  // Skills marked `adminOnly` change behaviour for the whole instance, so only a
+  // system administrator may configure them.
   const currentUser = userFromStorage();
   const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
   // The page itself already requires `agents.manage_skills`, so the only section
@@ -102,9 +95,6 @@ export default function AdminAgents() {
       // Flow) - kept in the shared catalog (skills.jsx) so the per-workspace skill
       // picker can still show it, just left out of this list.
       .filter(([key]) => key !== "sql-agent")
-  );
-  const appIntegrationSkills = Object.fromEntries(
-    Object.entries(allAppIntegrationSkills).filter(filterSkillsByMode)
   );
 
   // Alert user if they try to leave the page with unsaved changes
@@ -275,8 +265,6 @@ export default function AdminAgents() {
     SelectedSkillComponent = ServerPanel;
   } else if (configurableSkills[selectedSkill]) {
     SelectedSkillComponent = configurableSkills[selectedSkill]?.component;
-  } else if (appIntegrationSkills[selectedSkill]) {
-    SelectedSkillComponent = appIntegrationSkills[selectedSkill]?.component;
   } else {
     SelectedSkillComponent = defaultSkills[selectedSkill]?.component;
   }
@@ -500,18 +488,6 @@ export default function AdminAgents() {
                     hasChanges={hasChanges}
                     {...configurableSkills[selectedSkill]}
                   />
-                ) : appIntegrationSkills?.[selectedSkill] ? (
-                  <SelectedSkillComponent
-                    skill={appIntegrationSkills[selectedSkill]?.skill}
-                    settings={settings}
-                    toggleSkill={toggleAgentSkill}
-                    enabled={agentSkills.includes(
-                      appIntegrationSkills[selectedSkill]?.skill
-                    )}
-                    setHasChanges={setHasChanges}
-                    hasChanges={hasChanges}
-                    {...appIntegrationSkills[selectedSkill]}
-                  />
                 ) : null}
               </div>
             </>
@@ -608,23 +584,6 @@ export default function AdminAgents() {
                         handleClick={handleDefaultSkillClick}
                         activeSkills={agentSkills}
                       />
-
-                      {Object.keys(appIntegrationSkills).length > 0 && (
-                        <>
-                          <div className="mt-6 flex items-center gap-x-2 text-theme-text-primary">
-                            <Package size={22} />
-                            <p className="text-base font-medium">
-                              {t("agent-panel.app-integrations")}
-                            </p>
-                          </div>
-                          <SkillList
-                            skills={appIntegrationSkills}
-                            selectedSkill={selectedSkill}
-                            handleClick={handleSkillClick}
-                            activeSkills={agentSkills}
-                          />
-                        </>
-                      )}
 
                       <MCPServerHeader
                         setMcpServers={setMcpServers}
@@ -775,23 +734,6 @@ export default function AdminAgents() {
                       activeSkills={agentSkills}
                     />
 
-                    {Object.keys(appIntegrationSkills).length > 0 && (
-                      <>
-                        <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
-                          <Package size={24} />
-                          <p className="text-lg font-medium">
-                            {t("agent-panel.app-integrations")}
-                          </p>
-                        </div>
-                        <SkillList
-                          skills={appIntegrationSkills}
-                          selectedSkill={selectedSkill}
-                          handleClick={handleSkillClick}
-                          activeSkills={agentSkills}
-                        />
-                      </>
-                    )}
-
                     <MCPServerHeader
                       setMcpServers={setMcpServers}
                       setSelectedMcpServer={setSelectedMcpServer}
@@ -863,20 +805,7 @@ export default function AdminAgents() {
                           hasChanges={hasChanges}
                           {...configurableSkills[selectedSkill]}
                         />
-                      ) : (
-                        // The selected skill is an app integration skill
-                        <SelectedSkillComponent
-                          skill={appIntegrationSkills[selectedSkill]?.skill}
-                          settings={settings}
-                          toggleSkill={toggleAgentSkill}
-                          enabled={agentSkills.includes(
-                            appIntegrationSkills[selectedSkill]?.skill
-                          )}
-                          setHasChanges={setHasChanges}
-                          hasChanges={hasChanges}
-                          {...appIntegrationSkills[selectedSkill]}
-                        />
-                      )}
+                      ) : null}
                     </>
                   )}
                 </>

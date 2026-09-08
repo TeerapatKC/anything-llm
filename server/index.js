@@ -38,12 +38,6 @@ const { webPushEndpoints } = require("./endpoints/webPush");
 const { telegramEndpoints } = require("./endpoints/telegram");
 const { lineEndpoints } = require("./endpoints/line");
 const { scheduledJobEndpoints } = require("./endpoints/scheduledJobs");
-const {
-  outlookAgentEndpoints,
-} = require("./endpoints/utils/outlookAgentUtils");
-const {
-  googleAgentSkillEndpoints,
-} = require("./endpoints/utils/googleAgentSkillEndpoints");
 const { memoryEndpoints } = require("./endpoints/memory");
 const { roleEndpoints } = require("./endpoints/roles");
 const { superAdminEndpoints } = require("./endpoints/superAdmin");
@@ -114,8 +108,6 @@ webPushEndpoints(apiRouter);
 telegramEndpoints(apiRouter);
 lineEndpoints(apiRouter);
 scheduledJobEndpoints(apiRouter);
-outlookAgentEndpoints(apiRouter);
-googleAgentSkillEndpoints(apiRouter);
 memoryEndpoints(apiRouter);
 roleEndpoints(apiRouter);
 superAdminEndpoints(apiRouter);

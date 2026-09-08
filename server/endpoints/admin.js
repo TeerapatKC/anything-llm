@@ -574,12 +574,6 @@ function adminEndpoints(app) {
             case "disabled_create_files_skills":
               requestedSettings[label] = safeJsonParse(setting?.value, []);
               break;
-            case "disabled_gmail_skills":
-              requestedSettings[label] = safeJsonParse(setting?.value, []);
-              break;
-            case "disabled_outlook_skills":
-              requestedSettings[label] = safeJsonParse(setting?.value, []);
-              break;
             case "custom_app_name":
               requestedSettings[label] = setting?.value || null;
               break;

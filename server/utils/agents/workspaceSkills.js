@@ -52,8 +52,6 @@ const DEFAULT_SKILLS = [
 const SUB_SKILL_PARENTS = {
   "filesystem-agent": "disabled_filesystem_skills",
   "create-files-agent": "disabled_create_files_skills",
-  "gmail-agent": "disabled_gmail_skills",
-  "outlook-agent": "disabled_outlook_skills",
 };
 
 /**

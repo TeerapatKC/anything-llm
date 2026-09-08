@@ -23,16 +23,6 @@ const SKILL_FILTER_CONFIG = {
       require("./aibitat/plugins/create-files/lib").isToolAvailable(),
     disabledSettingKey: "disabled_create_files_skills",
   },
-  "gmail-agent": {
-    getAvailability: async () =>
-      require("./aibitat/plugins/gmail/lib").GmailBridge.isToolAvailable(),
-    disabledSettingKey: "disabled_gmail_skills",
-  },
-  "outlook-agent": {
-    getAvailability: async () =>
-      require("./aibitat/plugins/outlook/lib").OutlookBridge.isToolAvailable(),
-    disabledSettingKey: "disabled_outlook_skills",
-  },
 };
 
 const USER_AGENT = {

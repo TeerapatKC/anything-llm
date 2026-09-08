@@ -68,9 +68,8 @@ async function hasSQLConnections(workspaceId = null) {
  * already configured it. Skills absent from the returned map need no
  * credential and are always offerable.
  *
- * Every lookup is wrapped so a single misconfigured integration (an OAuth
- * bridge that throws while reading its stored config, say) reports itself as
- * unconfigured instead of failing the whole request.
+ * The lookup is wrapped so a skill whose check throws while reading its stored
+ * config reports itself as unconfigured instead of failing the whole request.
  * @returns {Promise<Record<string, {configured: boolean, hint: string}>>}
  */
 async function skillCredentialStatus(workspaceId = null) {
@@ -82,18 +81,7 @@ async function skillCredentialStatus(workspaceId = null) {
     }
   };
 
-  const [gmail, googleCalendar, outlook, sql] = await Promise.all([
-    safely(() =>
-      require("./aibitat/plugins/gmail/lib").GmailBridge.isToolAvailable()
-    ),
-    safely(() =>
-      require("./aibitat/plugins/google-calendar/lib").GoogleCalendarBridge.isToolAvailable()
-    ),
-    safely(() =>
-      require("./aibitat/plugins/outlook/lib").OutlookBridge.isToolAvailable()
-    ),
-    safely(() => hasSQLConnections(workspaceId)),
-  ]);
+  const sql = await safely(() => hasSQLConnections(workspaceId));
 
   return {
     "web-browsing": {
@@ -105,18 +93,6 @@ async function skillCredentialStatus(workspaceId = null) {
     "sql-agent": {
       configured: sql,
       hint: "No SQL connections have been added for this instance.",
-    },
-    "gmail-agent": {
-      configured: gmail,
-      hint: "Gmail is not connected for this instance.",
-    },
-    "google-calendar-agent": {
-      configured: googleCalendar,
-      hint: "Google Calendar is not connected for this instance.",
-    },
-    "outlook-agent": {
-      configured: outlook,
-      hint: "Outlook is not connected for this instance.",
     },
   };
 }

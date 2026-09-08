@@ -134,8 +134,6 @@ const PERMISSIONS = {
 
   // Outbound integrations that act on the instance's behalf
   INTEGRATIONS_TELEGRAM: "integrations.telegram",
-  INTEGRATIONS_GOOGLE: "integrations.google",
-  INTEGRATIONS_OUTLOOK: "integrations.outlook",
   INTEGRATIONS_LINE: "integrations.line",
 };
 
@@ -677,20 +675,6 @@ const PERMISSION_CATALOG = [
     label: "Manage the Telegram bot",
     description:
       "Connect, configure and disconnect the Telegram bot that answers on the instance's behalf.",
-    category: "integrations",
-  },
-  {
-    key: PERMISSIONS.INTEGRATIONS_GOOGLE,
-    label: "Manage Google integration",
-    description:
-      "Connect and revoke the Google account agents use for Gmail and Drive skills.",
-    category: "integrations",
-  },
-  {
-    key: PERMISSIONS.INTEGRATIONS_OUTLOOK,
-    label: "Manage Outlook integration",
-    description:
-      "Connect and revoke the Microsoft account agents use for Outlook skills.",
     category: "integrations",
   },
   {
@@ -1349,8 +1333,6 @@ const SETTING_PERMISSIONS = {
   disabled_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_filesystem_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_create_files_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
-  disabled_gmail_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
-  disabled_outlook_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_search_provider: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_sql_connections: PERMISSIONS.AGENTS_MANAGE_SKILLS,
 };

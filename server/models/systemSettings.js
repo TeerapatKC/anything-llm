@@ -49,12 +49,6 @@ const SystemSettings = {
     "disabled_agent_skills",
     "disabled_filesystem_skills",
     "disabled_create_files_skills",
-    "disabled_gmail_skills",
-    "gmail_agent_config",
-    "disabled_google_calendar_skills",
-    "google_calendar_agent_config",
-    "disabled_outlook_skills",
-    "outlook_agent_config",
     "agent_clarifying_questions_enabled",
     "agent_clarifying_questions_max_per_turn",
     "custom_app_name",
@@ -75,12 +69,6 @@ const SystemSettings = {
     "disabled_agent_skills",
     "disabled_filesystem_skills",
     "disabled_create_files_skills",
-    "disabled_gmail_skills",
-    "gmail_agent_config",
-    "disabled_google_calendar_skills",
-    "google_calendar_agent_config",
-    "disabled_outlook_skills",
-    "outlook_agent_config",
     "agent_sql_connections",
     "agent_clarifying_questions_enabled",
     "agent_clarifying_questions_max_per_turn",
@@ -233,138 +221,6 @@ const SystemSettings = {
       } catch {
         console.error(`Could not validate disabled create files skills.`);
         return JSON.stringify([]);
-      }
-    },
-    disabled_gmail_skills: (updates) => {
-      try {
-        const skills = updates.split(",").filter((skill) => !!skill);
-        return JSON.stringify(skills);
-      } catch {
-        console.error(`Could not validate disabled gmail skills.`);
-        return JSON.stringify([]);
-      }
-    },
-    gmail_agent_config: async (update) => {
-      const GmailBridge = require("../utils/agents/aibitat/plugins/gmail/lib");
-      try {
-        if (!update) return JSON.stringify({});
-
-        const newConfig =
-          typeof update === "string" ? safeJsonParse(update, {}) : update;
-        const existingConfig = safeJsonParse(
-          (await SystemSettings.get({ label: "gmail_agent_config" }))?.value,
-          {}
-        );
-
-        const mergedConfig = { ...existingConfig };
-
-        mergeStringField(mergedConfig, newConfig, "deploymentId");
-        mergeStringField(
-          mergedConfig,
-          newConfig,
-          "apiKey",
-          (v) => !v.match(/^\*+$/)
-        );
-
-        return JSON.stringify(mergedConfig);
-      } catch (e) {
-        console.error(`Could not validate gmail agent config:`, e.message);
-        return JSON.stringify({});
-      } finally {
-        GmailBridge.reset();
-      }
-    },
-    disabled_google_calendar_skills: (updates) => {
-      try {
-        const skills = updates.split(",").filter((skill) => !!skill);
-        return JSON.stringify(skills);
-      } catch {
-        console.error(`Could not validate disabled google calendar skills.`);
-        return JSON.stringify([]);
-      }
-    },
-    google_calendar_agent_config: async (update) => {
-      const GoogleCalendarBridge = require("../utils/agents/aibitat/plugins/google-calendar/lib");
-      try {
-        if (!update) return JSON.stringify({});
-
-        const newConfig =
-          typeof update === "string" ? safeJsonParse(update, {}) : update;
-        const existingConfig = safeJsonParse(
-          (await SystemSettings.get({ label: "google_calendar_agent_config" }))
-            ?.value,
-          {}
-        );
-
-        const mergedConfig = { ...existingConfig };
-
-        mergeStringField(mergedConfig, newConfig, "deploymentId");
-        mergeStringField(
-          mergedConfig,
-          newConfig,
-          "apiKey",
-          (v) => !v.match(/^\*+$/)
-        );
-
-        return JSON.stringify(mergedConfig);
-      } catch (e) {
-        console.error(
-          `Could not validate google calendar agent config:`,
-          e.message
-        );
-        return JSON.stringify({});
-      } finally {
-        GoogleCalendarBridge.reset();
-      }
-    },
-    disabled_outlook_skills: (updates) => {
-      try {
-        const skills = updates.split(",").filter((skill) => !!skill);
-        return JSON.stringify(skills);
-      } catch {
-        console.error(`Could not validate disabled outlook skills.`);
-        return JSON.stringify([]);
-      }
-    },
-    outlook_agent_config: async (update) => {
-      const OutlookBridge = require("../utils/agents/aibitat/plugins/outlook/lib");
-      try {
-        if (!update) return JSON.stringify({});
-
-        const newConfig =
-          typeof update === "string" ? safeJsonParse(update, {}) : update;
-        const existingConfig = safeJsonParse(
-          (await SystemSettings.get({ label: "outlook_agent_config" }))?.value,
-          {}
-        );
-
-        const mergedConfig = { ...existingConfig };
-
-        mergeStringField(mergedConfig, newConfig, "clientId");
-        mergeStringField(mergedConfig, newConfig, "tenantId");
-        mergeStringField(
-          mergedConfig,
-          newConfig,
-          "clientSecret",
-          (v) => !v.match(/^\*+$/)
-        );
-
-        if (newConfig.accessToken !== undefined) {
-          mergedConfig.accessToken = newConfig.accessToken;
-        }
-        if (newConfig.refreshToken !== undefined) {
-          mergedConfig.refreshToken = newConfig.refreshToken;
-        }
-        if (newConfig.tokenExpiry !== undefined) {
-          mergedConfig.tokenExpiry = newConfig.tokenExpiry;
-        }
-
-        return JSON.stringify(mergedConfig);
-      } catch (e) {
-        console.error(`Could not validate outlook agent config:`, e.message);
-        return JSON.stringify({});
-      } finally {
-        OutlookBridge.reset();
       }
     },
     agent_sql_connections: async (updates) => {
