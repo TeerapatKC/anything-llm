@@ -518,7 +518,6 @@ function adminEndpoints(app) {
           "max_embed_chunk_size",
           "agent_sql_connections",
           "imported_agent_skills",
-          "feature_flags",
           "meta_page_title",
           "meta_page_favicon",
         ];
@@ -591,10 +590,6 @@ function adminEndpoints(app) {
               break;
             case "custom_app_name":
               requestedSettings[label] = setting?.value || null;
-              break;
-            case "feature_flags":
-              requestedSettings[label] =
-                (await SystemSettings.getFeatureFlags()) || {};
               break;
             case "meta_page_title":
               requestedSettings[label] =

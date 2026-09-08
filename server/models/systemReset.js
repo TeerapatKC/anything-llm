@@ -47,7 +47,7 @@ const RESET_SCOPES = [
     key: "documents",
     label: "Document library",
     description:
-      "The shared document store, its cached vectors and any pending sync jobs. Embeddings already inside a workspace are removed with it.",
+      "The shared document store and its cached vectors. Embeddings already inside a workspace are removed with it.",
     implies: [],
   },
   {
@@ -106,8 +106,6 @@ const PRESERVED_SETTINGS = [
  * the first time round, so this list does not have to encode the dependency graph.
  */
 const FACTORY_WIPE_TABLES = [
-  "document_sync_executions",
-  "document_sync_queues",
   "workspace_parsed_files",
   "workspace_agent_invocations",
   "workspace_chats",
@@ -219,7 +217,6 @@ const SystemReset = {
           prisma.workspace_documents.count()
         ),
         cachedVectors: await count(() => prisma.document_vectors.count()),
-        pendingSyncs: await count(() => prisma.document_sync_queues.count()),
       },
       users: {
         users: await count(() =>
@@ -570,7 +567,6 @@ const SystemReset = {
       select: { id: true, slug: true },
     });
 
-    await prisma.document_sync_queues.deleteMany({});
     await prisma.document_vectors.deleteMany({});
     await prisma.workspace_documents.deleteMany({});
     const { count } = await prisma.workspaces.deleteMany({});
@@ -602,10 +598,6 @@ const SystemReset = {
    * left behind would reappear in the library the next time it is listed.
    */
   _reset_documents: async function () {
-    // Sync queues cascade from the documents they watch, so they are cleared first -
-    // otherwise they would be gone before the count could report them.
-    const { count: pendingSyncs } =
-      await prisma.document_sync_queues.deleteMany({});
     const { count: cachedVectors } = await prisma.document_vectors.deleteMany(
       {}
     );
@@ -640,7 +632,7 @@ const SystemReset = {
       console.error("Could not clear the document store.", error.message);
     }
 
-    return { embeddedDocuments, cachedVectors, pendingSyncs, filesRemoved };
+    return { embeddedDocuments, cachedVectors, filesRemoved };
   },
 
   /**

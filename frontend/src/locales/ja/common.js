@@ -63,7 +63,6 @@ const TRANSLATIONS = {
     tools: "ツール",
     "system-prompt-variables": "システムプロンプト変数",
     "slash-commands": "スラッシュコマンド",
-    "experimental-features": "実験的機能",
     contact: "サポートに連絡",
     "browser-extension": "ブラウザ拡張",
     smtp: "SMTP",
@@ -1169,17 +1168,6 @@ const TRANSLATIONS = {
         "<b>大きなコンテキストを持つモデル</b>や、重要な小さなファイルで特に効果的です。",
       pin_explained_block3:
         "デフォルトのままでは満足できる回答が得られない場合、ピン留めを活用するとより高品質な回答が得られます。",
-      accept: "わかりました",
-    },
-    watching: {
-      what_watching: "ドキュメントのウォッチとは？",
-      watch_explained_block1:
-        "Nexus AIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
-      watch_explained_block2:
-        "この機能は現在オンラインベースのコンテンツのみ対応しており、手動アップロードしたドキュメントには利用できません。",
-      watch_explained_block3_start: "ウォッチしているドキュメントの管理は",
-      watch_explained_block3_link: "ファイルマネージャー",
-      watch_explained_block3_end: "管理画面から行えます。",
       accept: "わかりました",
     },
     obsidian: {
@@ -2577,42 +2565,6 @@ const TRANSLATIONS = {
       validating: "検証中...",
       "validate-failed":
         "接続の検証に失敗しました。接続情報を確認してください。",
-    },
-  },
-  "experimental-features": {
-    title: "実験的機能",
-    "select-feature": "実験的機能を選択してください",
-    on: "オン",
-    off: "オフ",
-    tos: {
-      title: "実験的機能の利用規約",
-      intro:
-        "Nexus AI の実験的機能は試験運用中の機能であり、<b>オプトイン</b>制です。懸念事項がある場合は、機能を承認する前に事前に条件を提示または警告します。",
-      "risks-intro":
-        "このページの機能を使用すると、以下のような事態が発生する可能性があります（これらに限られません）。",
-      "risk-data-loss": "データの損失。",
-      "risk-quality": "結果の品質の変化。",
-      "risk-storage": "ストレージ使用量の増加。",
-      "risk-resources": "リソース消費量の増加。",
-      "risk-cost":
-        "接続中の LLM や埋め込みプロバイダーのコストまたは使用量の増加。",
-      "risk-bugs": "Nexus AI 使用時の不具合や問題の発生。",
-      "conditions-intro":
-        "実験的機能の使用には、以下のような条件も伴います（これらに限られません）。",
-      "condition-removal":
-        "機能が今後のアップデートで存在しなくなる場合があります。",
-      "condition-stability": "使用中の機能は現時点で安定していません。",
-      "condition-availability":
-        "この機能は、今後のバージョン、構成、またはサブスクリプションの Nexus AI では利用できない場合があります。",
-      "condition-privacy":
-        "ベータ機能の使用時も、プライバシー設定は<b>尊重されます</b>。",
-      "condition-change":
-        "これらの条件は今後のアップデートで変更される場合があります。",
-      "docs-prefix":
-        "機能を利用するにはこのダイアログの承認が必要です。詳しくは次をご覧ください:",
-      "docs-or-email": "またはメール:",
-      reject: "拒否して閉じる",
-      accept: "理解しました",
     },
   },
   "admin-workspaces": {

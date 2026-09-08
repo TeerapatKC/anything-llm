@@ -1,20 +1,17 @@
-const ImportedPlugin = require("../../utils/agents/imported");
-const { reqBody } = require("../../utils/http");
+const ImportedPlugin = require("../utils/agents/imported");
+const { reqBody } = require("../utils/http");
 const {
   userPermissionValid,
-} = require("../../utils/middleware/authorizedRequest");
-const { PERMISSIONS } = require("../../utils/permissions");
-const { validatedRequest } = require("../../utils/middleware/validatedRequest");
+} = require("../utils/middleware/authorizedRequest");
+const { PERMISSIONS } = require("../utils/permissions");
+const { validatedRequest } = require("../utils/middleware/validatedRequest");
 
 function importedAgentPluginEndpoints(app) {
   if (!app) return;
 
   app.post(
-    "/experimental/agent-plugins/:hubId/toggle",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
-    ],
+    "/agent-plugins/:hubId/toggle",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
     (request, response) => {
       try {
         const { hubId } = request.params;
@@ -31,11 +28,8 @@ function importedAgentPluginEndpoints(app) {
   );
 
   app.post(
-    "/experimental/agent-plugins/:hubId/config",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
-    ],
+    "/agent-plugins/:hubId/config",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
     (request, response) => {
       try {
         const { hubId } = request.params;
@@ -53,11 +47,8 @@ function importedAgentPluginEndpoints(app) {
   );
 
   app.delete(
-    "/experimental/agent-plugins/:hubId",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_EXPERIMENTAL]),
-    ],
+    "/agent-plugins/:hubId",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
     async (request, response) => {
       try {
         const { hubId } = request.params;

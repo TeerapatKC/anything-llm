@@ -3,14 +3,11 @@ import { baseHeaders } from "@/utils/request";
 
 const AgentPlugins = {
   toggleFeature: async function (hubId, active = false) {
-    return await fetch(
-      `${API_BASE}/experimental/agent-plugins/${hubId}/toggle`,
-      {
-        method: "POST",
-        headers: baseHeaders(),
-        body: JSON.stringify({ active }),
-      }
-    )
+    return await fetch(`${API_BASE}/agent-plugins/${hubId}/toggle`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ active }),
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Could not update agent plugin status.");
         return true;
@@ -21,14 +18,11 @@ const AgentPlugins = {
       });
   },
   updatePluginConfig: async function (hubId, updates = {}) {
-    return await fetch(
-      `${API_BASE}/experimental/agent-plugins/${hubId}/config`,
-      {
-        method: "POST",
-        headers: baseHeaders(),
-        body: JSON.stringify({ updates }),
-      }
-    )
+    return await fetch(`${API_BASE}/agent-plugins/${hubId}/config`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ updates }),
+    })
       .then((res) => {
         if (!res.ok) throw new Error("Could not update agent plugin config.");
         return true;
@@ -39,7 +33,7 @@ const AgentPlugins = {
       });
   },
   deletePlugin: async function (hubId) {
-    return await fetch(`${API_BASE}/experimental/agent-plugins/${hubId}`, {
+    return await fetch(`${API_BASE}/agent-plugins/${hubId}`, {
       method: "DELETE",
       headers: baseHeaders(),
     })

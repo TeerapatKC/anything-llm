@@ -30,7 +30,7 @@ const {
   agentSkillWhitelistEndpoints,
 } = require("./endpoints/agentSkillWhitelist");
 const { agentFileServerEndpoints } = require("./endpoints/agentFileServer");
-const { experimentalEndpoints } = require("./endpoints/experimental");
+const { importedAgentPluginEndpoints } = require("./endpoints/agentPlugins");
 const { browserExtensionEndpoints } = require("./endpoints/browserExtension");
 const { communityHubEndpoints } = require("./endpoints/communityHub");
 const { agentFlowEndpoints } = require("./endpoints/agentFlows");
@@ -108,7 +108,7 @@ documentEndpoints(apiRouter);
 agentWebsocket(apiRouter);
 agentSkillWhitelistEndpoints(apiRouter);
 agentFileServerEndpoints(apiRouter);
-experimentalEndpoints(apiRouter);
+importedAgentPluginEndpoints(apiRouter);
 developerEndpoints(app, apiRouter);
 communityHubEndpoints(apiRouter);
 agentFlowEndpoints(apiRouter);

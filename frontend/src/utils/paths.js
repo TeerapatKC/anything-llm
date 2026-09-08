@@ -194,9 +194,6 @@ export default {
     browserExtension: () => {
       return `/settings/browser-extension`;
     },
-    experimental: () => {
-      return `/settings/beta-features`;
-    },
     telegram: () => {
       return `/settings/external-connections/telegram`;
     },
@@ -250,12 +247,6 @@ export default {
     profile: function (username) {
       if (username) return `${this.website()}/u/${username}`;
       return `${this.website()}/me`;
-    },
-  },
-
-  experimental: {
-    liveDocumentSync: {
-      manage: () => `/settings/beta-features/live-document-sync/manage`,
     },
   },
 };

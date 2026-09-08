@@ -399,22 +399,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/beta-features",
-        lazy: async () => {
-          const { default: ExperimentalFeatures } = await import(
-            "@/pages/Admin/ExperimentalFeatures"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={ExperimentalFeatures}
-                permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/settings/api-keys",
         lazy: async () => {
           const { default: GeneralApiKeys } = await import(
@@ -624,23 +608,6 @@ const router = createBrowserRouter([
       {
         path: "/onboarding/:step",
         element: <OnboardingFlow />,
-      },
-      // Experimental feature pages
-      {
-        path: "/settings/beta-features/live-document-sync/manage",
-        lazy: async () => {
-          const { default: LiveDocumentSyncManage } = await import(
-            "@/pages/Admin/ExperimentalFeatures/Features/LiveSync/manage"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={LiveDocumentSyncManage}
-                permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
-              />
-            ),
-          };
-        },
       },
       {
         path: "/settings/community-hub/trending",

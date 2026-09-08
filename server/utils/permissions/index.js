@@ -76,8 +76,6 @@ const PERMISSIONS = {
   SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
   SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
 
-  SYSTEM_EXPERIMENTAL: "system.experimental",
-
   // People
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
@@ -409,13 +407,6 @@ const PERMISSION_CATALOG = [
     description: "Push items from this instance out to the community hub.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-  },
-  {
-    key: PERMISSIONS.SYSTEM_EXPERIMENTAL,
-    label: "Manage experimental features",
-    description:
-      "Toggle experimental features such as live document sync and imported agent plugins.",
-    category: "system",
   },
 
   {
@@ -1209,7 +1200,6 @@ const SYSTEM_ROLES = [
       PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_APPEARANCE,
       PERMISSIONS.SYSTEM_BROWSER_EXTENSION,
-      PERMISSIONS.SYSTEM_EXPERIMENTAL,
     ],
     singleton: false,
     immutable: false,

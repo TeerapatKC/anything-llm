@@ -43,8 +43,6 @@ export const PERMISSIONS = {
   SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
   SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
 
-  SYSTEM_EXPERIMENTAL: "system.experimental",
-
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
   USERS_CREATE: "users.create",

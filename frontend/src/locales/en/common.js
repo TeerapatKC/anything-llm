@@ -83,7 +83,6 @@ const TRANSLATIONS = {
     tools: "Tools",
     "system-prompt-variables": "System Prompt Variables",
     "slash-commands": "Slash Commands",
-    "experimental-features": "Experimental Features",
     contact: "Contact Support",
     "browser-extension": "Browser Extension",
     smtp: "SMTP",
@@ -1574,18 +1573,6 @@ const TRANSLATIONS = {
         "If you are not getting the answers you desire from Nexus AI by default then pinning is a great way to get higher quality answers in a click.",
       accept: "Okay, got it",
     },
-    watching: {
-      what_watching: "What does watching a document do?",
-      watch_explained_block1:
-        "When you <b>watch</b> a document in Nexus AI we will <i>automatically</i> sync your document content from it's original source on regular intervals. This will automatically update the content in every workspace where this file is managed.",
-      watch_explained_block2:
-        "This feature currently supports online-based content and will not be available for manually uploaded documents.",
-      watch_explained_block3_start:
-        "You can manage what documents are watched from the ",
-      watch_explained_block3_link: "File manager",
-      watch_explained_block3_end: " admin view.",
-      accept: "Okay, got it",
-    },
   },
   chat_window: {
     attachments_processing: "Attachments are processing. Please wait...",
@@ -2560,40 +2547,6 @@ const TRANSLATIONS = {
       validating: "Validating...",
       "validate-failed":
         "Failed to validate connection. Please check your connection details.",
-    },
-  },
-  "experimental-features": {
-    title: "Experimental Features",
-    "select-feature": "Select an experimental feature",
-    on: "On",
-    off: "Off",
-    tos: {
-      title: "Terms of use for experimental features",
-      intro:
-        "Experimental features of Nexus AI are features that we are piloting and are <b>opt-in</b>. We proactively will condition or warn you on any potential concerns should any exist prior to approval of any feature.",
-      "risks-intro":
-        "Use of any feature on this page can result in, but not limited to, the following possibilities.",
-      "risk-data-loss": "Loss of data.",
-      "risk-quality": "Change in quality of results.",
-      "risk-storage": "Increased storage.",
-      "risk-resources": "Increased resource consumption.",
-      "risk-cost":
-        "Increased cost or use of any connected LLM or embedding provider.",
-      "risk-bugs": "Potential bugs or issues using Nexus AI.",
-      "conditions-intro":
-        "Use of an experimental feature also comes with the following list of non-exhaustive conditions.",
-      "condition-removal": "Feature may not exist in future updates.",
-      "condition-stability": "The feature being used is not currently stable.",
-      "condition-availability":
-        "The feature may not be available in future versions, configurations, or subscriptions of Nexus AI.",
-      "condition-privacy":
-        "Your privacy settings <b>will be honored</b> with use of any beta feature.",
-      "condition-change": "These conditions may change in future updates.",
-      "docs-prefix":
-        "Access to any features requires approval of this modal. If you would like to read more you can refer to",
-      "docs-or-email": "or email",
-      reject: "Reject & close",
-      accept: "I understand",
     },
   },
   "admin-workspaces": {

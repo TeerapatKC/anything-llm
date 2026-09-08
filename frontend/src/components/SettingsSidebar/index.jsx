@@ -5,7 +5,6 @@ import useLogo from "@/hooks/useLogo";
 import {
   Bot,
   Briefcase,
-  FlaskConical,
   Mail,
   PanelLeftIcon,
   PenLine,
@@ -18,7 +17,6 @@ import useUser from "@/hooks/useUser";
 import Footer from "../Footer";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import showToast from "@/utils/toast";
 import System, { SUPPORT_EMAIL_UPDATED_EVENT } from "@/models/system";
 import Option from "./MenuOption";
 import { CanViewChatHistoryProvider } from "../CanViewChatHistory";
@@ -442,66 +440,10 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
-        <HoldToReveal key="exp_features">
-          <Option
-            btnText={t("settings.experimental-features")}
-            icon={<FlaskConical className="h-5 w-5 shrink-0" />}
-            href={paths.settings.experimental()}
-            user={user}
-            permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
-          />
-        </HoldToReveal>
       </>
     )}
   </CanViewChatHistoryProvider>
 );
-
-function HoldToReveal({ children, holdForMs = 3_000 }) {
-  let timeout = null;
-  const [showing, setShowing] = useState(
-    window.localStorage.getItem("nexusai_experimental_feature_preview_unlocked")
-  );
-
-  useEffect(() => {
-    const onPress = (e) => {
-      if (!["Control", "Meta"].includes(e.key) || timeout !== null) return;
-      timeout = setTimeout(() => {
-        setShowing(true);
-        // Setting toastId prevents hook spam from holding control too many times or the event not detaching
-        showToast("Experimental feature previews unlocked!");
-        window.localStorage.setItem(
-          "nexusai_experimental_feature_preview_unlocked",
-          "enabled"
-        );
-        window.removeEventListener("keypress", onPress);
-        window.removeEventListener("keyup", onRelease);
-        clearTimeout(timeout);
-      }, holdForMs);
-    };
-    const onRelease = (e) => {
-      if (!["Control", "Meta"].includes(e.key)) return;
-      if (showing) {
-        window.removeEventListener("keypress", onPress);
-        window.removeEventListener("keyup", onRelease);
-        clearTimeout(timeout);
-        return;
-      }
-      clearTimeout(timeout);
-    };
-
-    if (!showing) {
-      window.addEventListener("keydown", onPress);
-      window.addEventListener("keyup", onRelease);
-    }
-    return () => {
-      window.removeEventListener("keydown", onPress);
-      window.removeEventListener("keyup", onRelease);
-    };
-  }, []);
-
-  if (!showing) return null;
-  return children;
-}
 
 function AppVersion() {
   const { version, isLoading } = useAppVersion();

@@ -13,7 +13,6 @@ export const AUTH_ROLE_LABEL = "nexusai_roleLabel";
 // permissions are per-workspace, so they cannot live in the flat permission list.
 export const AUTH_WORKSPACE_PERMISSIONS = "nexusai_workspacePermissions";
 export const SEEN_DOC_PIN_ALERT = "nexusai_pinned_document_alert";
-export const SEEN_WATCH_ALERT = "nexusai_watched_document_alert";
 export const LAST_VISITED_WORKSPACE = "nexusai_last_visited_workspace";
 export const USER_PROMPT_INPUT_MAP = "nexusai_user_prompt_input_map";
 export const PENDING_HOME_MESSAGE = "nexusai_pending_home_message";

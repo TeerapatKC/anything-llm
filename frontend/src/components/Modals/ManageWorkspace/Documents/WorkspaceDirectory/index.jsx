@@ -9,10 +9,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Eye, Pin, CheckCircle2, XCircle, Clock, X } from "lucide-react";
-import { SEEN_DOC_PIN_ALERT, SEEN_WATCH_ALERT } from "@/utils/constants";
-import paths from "@/utils/paths";
-import { Link } from "react-router-dom";
+import { Pin, CheckCircle2, XCircle, Clock, X } from "lucide-react";
+import { SEEN_DOC_PIN_ALERT } from "@/utils/constants";
 import Workspace from "@/models/workspace";
 import { useTranslation } from "react-i18next";
 import { middleTruncate } from "@/utils/directories";
@@ -283,7 +281,6 @@ function WorkspaceDirectory({
         )}
       </div>
       <PinAlert />
-      <DocumentWatchAlert />
     </>
   );
 }
@@ -340,68 +337,6 @@ const PinAlert = memo(() => {
         <DialogFooter>
           <Button variant="default" onClick={dismissAlert}>
             {t("connectors.pinning.accept")}
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-});
-
-const DocumentWatchAlert = memo(() => {
-  const { t } = useTranslation();
-  const [showAlert, setShowAlert] = useState(false);
-  function dismissAlert() {
-    setShowAlert(false);
-    window.localStorage.setItem(SEEN_WATCH_ALERT, "1");
-    window.removeEventListener(handlePinEvent);
-  }
-
-  function handlePinEvent() {
-    if (!!window?.localStorage?.getItem(SEEN_WATCH_ALERT)) return;
-    setShowAlert(true);
-  }
-
-  useEffect(() => {
-    if (!window || !!window?.localStorage?.getItem(SEEN_WATCH_ALERT)) return;
-    window?.addEventListener("watch_document_for_changes", handlePinEvent);
-  }, []);
-
-  return (
-    <Dialog open={showAlert} onOpenChange={(open) => !open && dismissAlert()}>
-      <DialogContent>
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <Eye className="text-theme-text-primary w-5 h-5" />
-            <DialogTitle className="text-sm font-semibold">
-              {t("connectors.watching.what_watching")}
-            </DialogTitle>
-          </div>
-        </DialogHeader>
-        <div className="space-y-2 flex-col">
-          <div className="w-full text-theme-text-primary text-md flex flex-col gap-y-2">
-            <p>
-              <span
-                dangerouslySetInnerHTML={{
-                  __html: t("connectors.watching.watch_explained_block1"),
-                }}
-              />
-            </p>
-            <p>{t("connectors.watching.watch_explained_block2")}</p>
-            <p>
-              {t("connectors.watching.watch_explained_block3_start")}
-              <Link
-                to={paths.experimental.liveDocumentSync.manage()}
-                className="text-blue-600 underline"
-              >
-                {t("connectors.watching.watch_explained_block3_link")}
-              </Link>
-              {t("connectors.watching.watch_explained_block3_end")}
-            </p>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button variant="default" onClick={dismissAlert}>
-            {t("connectors.watching.accept")}
           </Button>
         </DialogFooter>
       </DialogContent>

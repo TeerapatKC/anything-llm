@@ -711,7 +711,6 @@ function apiDocumentEndpoints(app) {
                   type: "file",
                   cached: false,
                   pinnedWorkspaces: [],
-                  watched: false,
                   more: "data",
                 },
                 {
@@ -719,7 +718,6 @@ function apiDocumentEndpoints(app) {
                   type: "file",
                   cached: false,
                   pinnedWorkspaces: [],
-                  watched: false,
                   more: "data",
                 },
               ]

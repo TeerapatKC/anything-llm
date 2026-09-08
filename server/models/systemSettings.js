@@ -60,7 +60,6 @@ const SystemSettings = {
     "agent_clarifying_questions_enabled",
     "agent_clarifying_questions_max_per_turn",
     "custom_app_name",
-    "feature_flags",
     "meta_page_title",
     "meta_page_favicon",
     "memory_enabled",
@@ -94,9 +93,6 @@ const SystemSettings = {
     // Meta page customization
     "meta_page_title",
     "meta_page_favicon",
-
-    // beta feature flags
-    "experimental_live_file_sync",
 
     // Hub settings
     "hub_api_key",
@@ -410,12 +406,6 @@ const SystemSettings = {
       const n = Number(update);
       if (!Number.isFinite(n) || n < 1) return 3;
       return Math.min(Math.floor(n), 10);
-    },
-    experimental_live_file_sync: (update) => {
-      if (typeof update === "boolean")
-        return update === true ? "enabled" : "disabled";
-      if (!["enabled", "disabled"].includes(update)) return "disabled";
-      return String(update);
     },
     meta_page_title: (newTitle) => {
       try {
@@ -1098,14 +1088,6 @@ const SystemSettings = {
 
     return connections;
   },
-  getFeatureFlags: async function () {
-    return {
-      experimental_live_file_sync:
-        (await SystemSettings.get({ label: "experimental_live_file_sync" }))
-          ?.value === "enabled",
-    };
-  },
-
   /**
    * Get user configured Community Hub Settings
    * Connection key is used to authenticate with the Community Hub API

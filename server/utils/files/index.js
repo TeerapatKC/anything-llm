@@ -3,7 +3,6 @@ const path = require("path");
 const { spawn } = require("child_process");
 const { v5: uuidv5, v4: uuidv4 } = require("uuid");
 const { Document } = require("../../models/documents");
-const { DocumentSyncQueue } = require("../../models/documentSyncQueue");
 const documentsPath =
   process.env.NODE_ENV === "development"
     ? path.resolve(__dirname, `../../storage/documents`)
@@ -74,7 +73,6 @@ function listFolders() {
  */
 async function viewLocalFiles() {
   if (!fs.existsSync(documentsPath)) fs.mkdirSync(documentsPath);
-  const liveSyncAvailable = await DocumentSyncQueue.enabled();
   const directory = {
     name: "documents",
     type: "folder",
@@ -103,7 +101,6 @@ async function viewLocalFiles() {
         filePromises.push(
           fileToPickerData({
             pathToFile: path.join(folderPath, subfile),
-            liveSyncAvailable,
             cachefilename,
           })
         );
@@ -114,17 +111,12 @@ async function viewLocalFiles() {
         .then((results) => results.filter((i) => hasRequiredMetadata(i))); // Remove invalid file structures
       subdocs.items.push(...results);
 
-      // Grab the pinned workspaces and watched documents for this folder's documents
-      // at the time of the query so we don't have to re-query the database for each file
+      // Grab the pinned workspaces for this folder's documents at the time of the
+      // query so we don't have to re-query the database for each file
       const pinnedWorkspacesByDocument =
         await getPinnedWorkspacesByDocument(filenames);
-      const watchedDocumentsFilenames =
-        await getWatchedDocumentFilenames(filenames);
-      for (const item of subdocs.items) {
+      for (const item of subdocs.items)
         item.pinnedWorkspaces = pinnedWorkspacesByDocument[item.name] || [];
-        item.watched =
-          watchedDocumentsFilenames.hasOwnProperty(item.name) || false;
-      }
 
       directory.items.push(subdocs);
     }
@@ -217,13 +209,11 @@ async function getDocumentsByFolder(folderName = "", pagination = {}) {
   const totalCount = allJsonFiles.length;
   const paginatedFiles = allJsonFiles.slice(offset, offset + limit);
 
-  const liveSyncAvailable = await DocumentSyncQueue.enabled();
   const documents = (
     await Promise.all(
       paginatedFiles.map((file) =>
         fileToPickerData({
           pathToFile: path.join(folderPath, file),
-          liveSyncAvailable,
           cachefilename: `${folderName}/${file}`,
         })
       )
@@ -236,15 +226,8 @@ async function getDocumentsByFolder(folderName = "", pagination = {}) {
 
   const pinnedWorkspacesByDocument =
     await getPinnedWorkspacesByDocument(filenames);
-  const watchedDocumentsFilenames =
-    await getWatchedDocumentFilenames(filenames);
-  for (let doc of documents) {
+  for (let doc of documents)
     doc.pinnedWorkspaces = pinnedWorkspacesByDocument[doc.name] || [];
-    doc.watched = Object.prototype.hasOwnProperty.call(
-      watchedDocumentsFilenames,
-      doc.name
-    );
-  }
 
   return {
     folder: folderName,
@@ -475,31 +458,6 @@ async function getPinnedWorkspacesByDocument(filenames = []) {
 }
 
 /**
- * Get a record of filenames and their corresponding workspaceIds that have watched a document
- * that will be used to determine if a document should be displayed in the watched documents sidebar
- * @param {string[]} filenames - array of filenames to check for watched workspaces
- * @returns {Promise<Record<string, string[]>>} - a record of filenames and their corresponding workspaceIds
- */
-async function getWatchedDocumentFilenames(filenames = []) {
-  return (
-    await Document.where(
-      {
-        docpath: { in: Object.keys(filenames) },
-        watched: true,
-      },
-      null,
-      null,
-      null,
-      { workspaceId: true, docpath: true }
-    )
-  ).reduce((result, { workspaceId, docpath }) => {
-    const filename = filenames[docpath];
-    result[filename] = workspaceId;
-    return result;
-  }, {});
-}
-
-/**
  * Resolves picker metadata for a specific set of storage paths - used to
  * render a workspace's already-embedded documents without walking the whole
  * documents directory.
@@ -513,7 +471,6 @@ async function getWatchedDocumentFilenames(filenames = []) {
  */
 async function getDocumentsByDocPaths(docpaths = []) {
   if (!docpaths.length) return [];
-  const liveSyncAvailable = await DocumentSyncQueue.enabled();
   const results = [];
   const filenames = {};
 
@@ -525,7 +482,6 @@ async function getDocumentsByDocPaths(docpaths = []) {
     try {
       const data = await fileToPickerData({
         pathToFile: fullPath,
-        liveSyncAvailable,
         cachefilename: docpath,
       });
       if (data && hasRequiredMetadata(data)) {
@@ -539,12 +495,8 @@ async function getDocumentsByDocPaths(docpaths = []) {
 
   const pinnedWorkspacesByDocument =
     await getPinnedWorkspacesByDocument(filenames);
-  const watchedDocumentsFilenames =
-    await getWatchedDocumentFilenames(filenames);
-  for (const item of results) {
+  for (const item of results)
     item.pinnedWorkspaces = pinnedWorkspacesByDocument[item.name] || [];
-    item.watched = watchedDocumentsFilenames.hasOwnProperty(item.name) || false;
-  }
 
   return results;
 }
@@ -679,7 +631,6 @@ async function searchDocuments(searchTerm = "") {
     byFolder.get(folder).push(absPath);
   }
 
-  const liveSyncAvailable = await DocumentSyncQueue.enabled();
   const results = [];
   for (const [folder, paths] of byFolder) {
     const filenames = {};
@@ -688,7 +639,6 @@ async function searchDocuments(searchTerm = "") {
         paths.map((absPath) =>
           fileToPickerData({
             pathToFile: absPath,
-            liveSyncAvailable,
             cachefilename: `${folder}/${path.basename(absPath)}`,
           })
         )
@@ -699,15 +649,8 @@ async function searchDocuments(searchTerm = "") {
     for (const doc of items) filenames[`${folder}/${doc.name}`] = doc.name;
     const pinnedWorkspacesByDocument =
       await getPinnedWorkspacesByDocument(filenames);
-    const watchedDocumentsFilenames =
-      await getWatchedDocumentFilenames(filenames);
-    for (const doc of items) {
+    for (const doc of items)
       doc.pinnedWorkspaces = pinnedWorkspacesByDocument[doc.name] || [];
-      doc.watched = Object.prototype.hasOwnProperty.call(
-        watchedDocumentsFilenames,
-        doc.name
-      );
-    }
 
     results.push({ name: folder, type: "folder", items });
   }
@@ -796,14 +739,9 @@ const FILE_READ_SIZE_THRESHOLD = 150 * (1024 * 1024);
 /**
  * Converts a file to picker data
  * @param {string} pathToFile - The path to the file to convert
- * @param {boolean} liveSyncAvailable - Whether live sync is available
- * @returns {Promise<{name: string, type: string, [string]: any, cached: boolean, canWatch: boolean}>} - The picker data
+ * @returns {Promise<{name: string, type: string, [string]: any, cached: boolean}>} - The picker data
  */
-async function fileToPickerData({
-  pathToFile,
-  liveSyncAvailable = false,
-  cachefilename = null,
-}) {
+async function fileToPickerData({ pathToFile, cachefilename = null }) {
   let metadata = {};
   const filename = path.basename(pathToFile);
   const fileStats = fs.statSync(pathToFile);
@@ -825,11 +763,7 @@ async function fileToPickerData({
       type: "file",
       ...metadata,
       cached: cachedStatus,
-      canWatch: liveSyncAvailable
-        ? DocumentSyncQueue.canWatch(metadata)
-        : false,
       // pinnedWorkspaces: [], // This is the list of workspaceIds that have pinned this document
-      // watched: false, // boolean to indicate if this document is watched in ANY workspace
     };
   }
 
@@ -875,7 +809,6 @@ async function fileToPickerData({
     type: "file",
     ...metadata,
     cached: cachedStatus,
-    canWatch: liveSyncAvailable ? DocumentSyncQueue.canWatch(metadata) : false,
   };
 }
 
