@@ -205,7 +205,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXUS_AI_RUNTIME=docker
-ENV DEPLOYMENT_VERSION=1.16.0
+ENV DEPLOYMENT_VERSION=1.16.1
 
 HEALTHCHECK --interval=1m --timeout=10s --start-period=1m \
   CMD /bin/bash /usr/local/bin/docker-healthcheck.sh || exit 1
