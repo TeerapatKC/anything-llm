@@ -1,5 +1,5 @@
-import { useRef } from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Admin from "@/models/admin";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
@@ -19,6 +19,7 @@ export default function WorkspaceRow({
   users: _users,
   deletionProtected = false,
 }) {
+  const { t } = useTranslation();
   const rowRef = useRef(null);
   const [confirm, setConfirm] = useState(null);
   // `active` was added after these rows existed, so a workspace that predates the

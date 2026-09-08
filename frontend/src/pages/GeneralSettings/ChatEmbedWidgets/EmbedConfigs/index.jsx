@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Code } from "lucide-react";
 import EmbedRow from "./EmbedRow";
 import NewEmbedModal from "./NewEmbedModal";
@@ -11,8 +10,10 @@ import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
+  TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 
@@ -30,20 +31,6 @@ export default function EmbedConfigsView() {
     }
     fetchUsers();
   }, []);
-
-  if (loading) {
-    return (
-      <Skeleton
-        height="80vh"
-        width="100%"
-        highlightColor="var(--theme-bg-primary)"
-        baseColor="var(--theme-bg-secondary)"
-        count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
-        containerClassName="flex w-full"
-      />
-    );
-  }
 
   return (
     <div className="flex flex-col w-full p-4">
@@ -64,7 +51,13 @@ export default function EmbedConfigsView() {
             onOpenChange={(open) => (open ? openModal() : closeModal())}
           >
             <DialogTrigger
-              render={<Button size="lg" className="text-theme-bg-chat" />}
+              render={
+                <Button
+                  size="lg"
+                  className="text-theme-bg-chat"
+                  disabled={loading}
+                />
+              }
             >
               <Code className="h-4 w-4" /> {t("embeddable.create")}
             </DialogTrigger>
@@ -88,9 +81,15 @@ export default function EmbedConfigsView() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {embeds.map((embed) => (
-              <EmbedRow key={embed.id} embed={embed} />
-            ))}
+            {loading ? (
+              <TableLoadingRow colSpan={5} />
+            ) : embeds.length === 0 ? (
+              <TableEmptyRow colSpan={5}>
+                {t("embeddable.empty", "No embeddable widgets created yet")}
+              </TableEmptyRow>
+            ) : (
+              embeds.map((embed) => <EmbedRow key={embed.id} embed={embed} />)
+            )}
           </TableBody>
         </Table>
       </div>

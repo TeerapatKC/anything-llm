@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import Embed from "@/models/embed";
@@ -18,8 +17,10 @@ import {
 import {
   Table,
   TableBody,
+  TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 
@@ -106,20 +107,6 @@ export default function EmbedChatsView() {
     setChats((prevChats) => prevChats.filter((chat) => chat.id !== chatId));
   };
 
-  if (loading) {
-    return (
-      <Skeleton
-        height="80vh"
-        width="100%"
-        highlightColor="var(--theme-bg-primary)"
-        baseColor="var(--theme-bg-secondary)"
-        count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
-        containerClassName="flex w-full"
-      />
-    );
-  }
-
   return (
     <div className="flex flex-col w-full p-4 overflow-none">
       <div className="w-full flex flex-col gap-y-1">
@@ -128,7 +115,15 @@ export default function EmbedChatsView() {
             {t("embed-chats.title")}
           </p>
           <DropdownMenu>
-            <DropdownMenuTrigger render={<Button type="button" size="lg" />}>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  size="lg"
+                  disabled={loading || chats.length === 0}
+                />
+              }
+            >
               <Download />
               {t("embed-chats.export")}
               <ChevronDown className="transition-transform group-aria-expanded/button:rotate-180" />
@@ -166,12 +161,24 @@ export default function EmbedChatsView() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {chats.map((chat) => (
-              <ChatRow key={chat.id} chat={chat} onDelete={handleDeleteChat} />
-            ))}
+            {loading ? (
+              <TableLoadingRow colSpan={6} />
+            ) : chats.length === 0 ? (
+              <TableEmptyRow colSpan={6}>
+                {t("embed-chats.empty", "No chat logs found")}
+              </TableEmptyRow>
+            ) : (
+              chats.map((chat) => (
+                <ChatRow
+                  key={chat.id}
+                  chat={chat}
+                  onDelete={handleDeleteChat}
+                />
+              ))
+            )}
           </TableBody>
         </Table>
-        {(offset > 0 || canNext) && (
+        {!loading && (offset > 0 || canNext) && (
           <div className="flex items-center justify-end gap-2 mt-4 pb-6">
             <button
               onClick={handlePrevious}

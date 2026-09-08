@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
-import { Skeleton } from "@/components/ui/skeleton";
 import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import showToast from "@/utils/toast";
@@ -13,8 +12,10 @@ import { CanViewChatHistory } from "@/components/CanViewChatHistory";
 import {
   Table,
   TableBody,
+  TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -102,6 +103,7 @@ export default function WorkspaceChats() {
 
   useEffect(() => {
     async function fetchChats() {
+      setLoading(true);
       const { chats: _chats = [], hasPages = false } = await System.chats(
         offset,
         feedback === "all" ? null : feedback
@@ -124,7 +126,14 @@ export default function WorkspaceChats() {
           <div className="mt-3 mb-4 flex w-full flex-wrap justify-end gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger
-                render={<Button type="button" size="lg" variant="outline" />}
+                render={
+                  <Button
+                    type="button"
+                    size="lg"
+                    variant="outline"
+                    disabled={loading}
+                  />
+                }
               >
                 <ListFilter />
                 {t(`recorded.feedback.filter_${feedback}`)}
@@ -147,7 +156,15 @@ export default function WorkspaceChats() {
               </DropdownMenuContent>
             </DropdownMenu>
             <DropdownMenu>
-              <DropdownMenuTrigger render={<Button type="button" size="lg" />}>
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    type="button"
+                    size="lg"
+                    disabled={loading || chats.length === 0}
+                  />
+                }
+              >
                 <Download />
                 {t("recorded.export")}
                 <ChevronDown className="transition-transform group-aria-expanded/button:rotate-180" />
@@ -168,6 +185,7 @@ export default function WorkspaceChats() {
                 type="button"
                 size="lg"
                 variant="destructive"
+                disabled={loading}
                 onClick={handleClearAllChats}
               >
                 <Trash2 />
@@ -214,20 +232,6 @@ function ChatsContainer({
     setChats((prevChats) => prevChats.filter((chat) => chat.id !== chatId));
   };
 
-  if (loading) {
-    return (
-      <Skeleton
-        height="80vh"
-        width="100%"
-        highlightColor="var(--theme-bg-primary)"
-        baseColor="var(--theme-bg-secondary)"
-        count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
-        containerClassName="flex w-full"
-      />
-    );
-  }
-
   return (
     <>
       <Table>
@@ -244,34 +248,43 @@ function ChatsContainer({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {!!chats &&
+          {loading ? (
+            <TableLoadingRow colSpan={8} />
+          ) : !chats || chats.length === 0 ? (
+            <TableEmptyRow colSpan={8}>
+              {t("recorded.empty", "No chat logs found")}
+            </TableEmptyRow>
+          ) : (
             chats.map((chat) => (
               <ChatRow key={chat.id} chat={chat} onDelete={handleDeleteChat} />
-            ))}
+            ))
+          )}
         </TableBody>
       </Table>
-      <div className="mt-6 flex w-full items-center justify-between">
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          onClick={handlePrevious}
-          className="disabled:invisible"
-          disabled={offset === 0}
-        >
-          Previous Page
-        </Button>
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          onClick={handleNext}
-          className="disabled:invisible"
-          disabled={!canNext}
-        >
-          Next Page
-        </Button>
-      </div>
+      {!loading && (
+        <div className="mt-6 flex w-full items-center justify-between">
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            onClick={handlePrevious}
+            className="disabled:invisible"
+            disabled={offset === 0}
+          >
+            Previous Page
+          </Button>
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            onClick={handleNext}
+            className="disabled:invisible"
+            disabled={!canNext}
+          >
+            Next Page
+          </Button>
+        </div>
+      )}
     </>
   );
 }

@@ -4,7 +4,6 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import useQuery from "@/hooks/useQuery";
 import System from "@/models/system";
 import { useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import LogRow from "./LogRow";
 import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import {
   TableHeader,
   TableRow,
   TableEmptyRow,
+  TableLoadingRow,
 } from "@/components/ui/table";
 
 export default function AdminLogs() {
@@ -29,6 +29,7 @@ export default function AdminLogs() {
 
   useEffect(() => {
     async function fetchLogs() {
+      setLoading(true);
       const { logs: _logs, hasPages = false } = await System.eventLogs(offset);
       setLogs(_logs);
       setCanNext(hasPages);
@@ -75,6 +76,7 @@ export default function AdminLogs() {
             type="button"
             size="lg"
             variant="destructive"
+            disabled={loading || logs.length === 0}
             onClick={handleResetLogs}
           >
             {t("event.clear")}
@@ -105,19 +107,6 @@ function LogsContainer({
   handlePrevious,
 }) {
   const { t } = useTranslation();
-  if (loading) {
-    return (
-      <Skeleton
-        height="80vh"
-        width="100%"
-        highlightColor="var(--theme-bg-primary)"
-        baseColor="var(--theme-bg-secondary)"
-        count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
-        containerClassName="flex w-full"
-      />
-    );
-  }
 
   return (
     <>
@@ -133,35 +122,39 @@ function LogsContainer({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {logs.length === 0 ? (
+          {loading ? (
+            <TableLoadingRow colSpan={4} />
+          ) : logs.length === 0 ? (
             <TableEmptyRow colSpan={4}>{t("ui.no-event-logs")}</TableEmptyRow>
           ) : (
             logs.map((log) => <LogRow key={log.id} log={log} />)
           )}
         </TableBody>
       </Table>
-      <div className="flex w-full justify-between items-center mt-6">
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          onClick={handlePrevious}
-          className="disabled:invisible"
-          disabled={offset === 0}
-        >
-          {t("common.previous")}
-        </Button>
-        <Button
-          type="button"
-          size="lg"
-          variant="outline"
-          onClick={handleNext}
-          className="disabled:invisible"
-          disabled={!canNext}
-        >
-          {t("common.next")}
-        </Button>
-      </div>
+      {!loading && (
+        <div className="flex w-full justify-between items-center mt-6">
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            onClick={handlePrevious}
+            className="disabled:invisible"
+            disabled={offset === 0}
+          >
+            {t("common.previous")}
+          </Button>
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            onClick={handleNext}
+            className="disabled:invisible"
+            disabled={!canNext}
+          >
+            {t("common.next")}
+          </Button>
+        </div>
+      )}
     </>
   );
 }

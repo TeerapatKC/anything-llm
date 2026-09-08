@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
-import { Skeleton } from "@/components/ui/skeleton";
 import { UserPlus } from "lucide-react";
 import Admin from "@/models/admin";
 import UserRow from "./UserRow";
@@ -20,8 +19,10 @@ import GeneratedPasswordModal from "@/components/Modals/GeneratedPassword";
 import {
   Table,
   TableBody,
+  TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 
@@ -70,7 +71,15 @@ export default function AdminUsers() {
         onOpenChange={(open) => (open ? openModal() : closeModal())}
       >
         <div className="w-full justify-end flex">
-          <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
+          <DialogTrigger
+            render={
+              <Button
+                size="lg"
+                className="mt-3 mb-4"
+                disabled={loading || loadingRoles}
+              />
+            }
+          >
             <UserPlus className="h-4 w-4" /> {t("admin-users.add-user")}
           </DialogTrigger>
         </div>
@@ -79,38 +88,34 @@ export default function AdminUsers() {
         </DialogContent>
       </Dialog>
       <div className="overflow-x-auto">
-        {loading || loadingRoles ? (
-          <Skeleton
-            height="80vh"
-            width="100%"
-            highlightColor="var(--theme-bg-primary)"
-            baseColor="var(--theme-bg-secondary)"
-            count={1}
-            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-8"
-            containerClassName="flex w-full"
-          />
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead scope="col">
-                  {t("admin-users.table.username")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("admin-users.table.email")}
-                </TableHead>
-                <TableHead scope="col">{t("admin-users.table.role")}</TableHead>
-                <TableHead scope="col">
-                  {t("admin-users.table.status")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("admin-users.table.date-added")}
-                </TableHead>
-                <TableHead scope="col"> </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {users.map((user) => (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead scope="col">
+                {t("admin-users.table.username")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("admin-users.table.email")}
+              </TableHead>
+              <TableHead scope="col">{t("admin-users.table.role")}</TableHead>
+              <TableHead scope="col">
+                {t("admin-users.table.status")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("admin-users.table.date-added")}
+              </TableHead>
+              <TableHead scope="col"> </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading || loadingRoles ? (
+              <TableLoadingRow colSpan={6} />
+            ) : users.length === 0 ? (
+              <TableEmptyRow colSpan={6}>
+                {t("admin-users.empty", "No users found")}
+              </TableEmptyRow>
+            ) : (
+              users.map((user) => (
                 <UserRow
                   key={user.id}
                   currUser={currUser}
@@ -119,10 +124,10 @@ export default function AdminUsers() {
                   permissionLabels={permissionLabels}
                   fetchUsers={fetchUsers}
                 />
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
       <GeneratedPasswordModal
         open={!!createdUser}

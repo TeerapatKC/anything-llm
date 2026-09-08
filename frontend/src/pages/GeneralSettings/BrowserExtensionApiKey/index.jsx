@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CirclePlus } from "lucide-react";
 import BrowserExtensionApiKey from "@/models/browserExtensionApiKey";
 import BrowserExtensionApiKeyRow from "./BrowserExtensionApiKeyRow";
@@ -17,6 +16,7 @@ import {
   TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 
@@ -56,7 +56,11 @@ export default function BrowserExtensionApiKeys() {
           open={isOpen}
           onOpenChange={(open) => (open ? openModal() : closeModal())}
         >
-          <DialogTrigger render={<Button size="lg" className="mt-3 mb-4" />}>
+          <DialogTrigger
+            render={
+              <Button size="lg" className="mt-3 mb-4" disabled={loading} />
+            }
+          >
             <CirclePlus className="h-4 w-4" />
             Generate New API Key
           </DialogTrigger>
@@ -66,59 +70,49 @@ export default function BrowserExtensionApiKeys() {
         </Dialog>
       </div>
       <div className="overflow-x-auto mt-6">
-        {loading ? (
-          <Skeleton
-            height="80vh"
-            width="100%"
-            highlightColor="var(--theme-bg-primary)"
-            baseColor="var(--theme-bg-secondary)"
-            count={1}
-            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
-            containerClassName="flex w-full"
-          />
-        ) : error ? (
-          <div className="text-red-500 mt-6">
-            {t("browser-extension-keys.error", { error })}
-          </div>
-        ) : (
-          <Table className="text-left min-w-[640px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead scope="col">
-                  {t("browser-extension-keys.table.connection-string")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("browser-extension-keys.table.created-by")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("browser-extension-keys.table.created-at")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("browser-extension-keys.table.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {apiKeys.length === 0 ? (
-                <TableEmptyRow
-                  colSpan="4"
-                  description={t("browser-extension-keys.empty-description")}
-                >
-                  {t("browser-extension-keys.empty")}
-                </TableEmptyRow>
-              ) : (
-                apiKeys.map((apiKey) => (
-                  <BrowserExtensionApiKeyRow
-                    key={apiKey.id}
-                    apiKey={apiKey}
-                    removeApiKey={removeApiKey}
-                    connectionString={`${fullApiUrl()}|${apiKey.key}`}
-                  />
-                ))
-              )}
-            </TableBody>
-          </Table>
-        )}
+        <Table className="text-left min-w-[640px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead scope="col">
+                {t("browser-extension-keys.table.connection-string")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("browser-extension-keys.table.created-by")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("browser-extension-keys.table.created-at")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("browser-extension-keys.table.actions")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableLoadingRow colSpan={4} />
+            ) : error ? (
+              <TableEmptyRow colSpan={4}>
+                {t("browser-extension-keys.error", { error })}
+              </TableEmptyRow>
+            ) : apiKeys.length === 0 ? (
+              <TableEmptyRow
+                colSpan={4}
+                description={t("browser-extension-keys.empty-description")}
+              >
+                {t("browser-extension-keys.empty")}
+              </TableEmptyRow>
+            ) : (
+              apiKeys.map((apiKey) => (
+                <BrowserExtensionApiKeyRow
+                  key={apiKey.id}
+                  apiKey={apiKey}
+                  removeApiKey={removeApiKey}
+                  connectionString={`${fullApiUrl()}|${apiKey.key}`}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </SettingsLayout>
   );
