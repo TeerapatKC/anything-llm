@@ -102,7 +102,7 @@ export default function ApiCallNode({
               placeholder={t("agent-builder.common.select-option")}
             />
           </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
+          <SelectContent>
             {["GET", "POST", "DELETE", "PUT", "PATCH"].map((method) => (
               <SelectItem key={method} value={method}>
                 {method}
@@ -174,7 +174,7 @@ export default function ApiCallNode({
                   placeholder={t("agent-builder.common.select-option")}
                 />
               </SelectTrigger>
-              <SelectContent alignItemWithTrigger={false}>
+              <SelectContent>
                 <SelectItem value="json">
                   {t("agent-builder.apiCall.json")}
                 </SelectItem>

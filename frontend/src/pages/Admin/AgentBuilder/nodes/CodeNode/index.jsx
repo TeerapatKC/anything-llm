@@ -28,7 +28,7 @@ export default function CodeNode({
               placeholder={t("agent-builder.common.select-option")}
             />
           </SelectTrigger>
-          <SelectContent alignItemWithTrigger={false}>
+          <SelectContent>
             <SelectItem value="javascript">
               {t("agent-builder.code.javascript")}
             </SelectItem>

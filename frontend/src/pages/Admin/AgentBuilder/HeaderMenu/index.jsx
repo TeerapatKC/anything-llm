@@ -24,7 +24,7 @@ export default function HeaderMenu({
     availableFlows.filter((flow) => flow.uuid !== flowId).length > 0;
 
   return (
-    <div className="absolute top-4 left-4 right-4">
+    <div className="absolute top-[56px] left-4 right-4">
       <div className="flex justify-between items-start max-w-[1700px] mx-auto">
         <div className="flex items-center gap-x-2">
           <button

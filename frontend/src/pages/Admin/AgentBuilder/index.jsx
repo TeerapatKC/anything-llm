@@ -257,23 +257,16 @@ export default function AgentBuilder() {
     placeholder = i18next.t("agent-builder.common.select-variable")
   ) => (
     <Select value={value || ""} onValueChange={onChange}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent alignItemWithTrigger={false}>
-        {getAvailableVariables().length > 0 ? (
-          getAvailableVariables().map((v) => (
-            <SelectItem key={v.name} value={v.name}>
-              {v.name}
-            </SelectItem>
-          ))
-        ) : (
-          // SelectItem rejects an empty value outright; this row is
-          // disabled so its value can never be submitted.
-          <SelectItem disabled value="__no_variables">
-            {i18next.t("agent-builder.common.no-variables")}
+      <SelectContent>
+        null
+        {getAvailableVariables().map((v) => (
+          <SelectItem key={v.name} value={v.name}>
+            {v.name}
           </SelectItem>
-        )}
+        ))}
       </SelectContent>
     </Select>
   );

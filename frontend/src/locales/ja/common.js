@@ -1312,7 +1312,6 @@ const TRANSLATIONS = {
     profile_updated: "プロフィールを更新しました。",
     failed_update_user: "ユーザーの更新に失敗：{{error}}",
     account: "アカウント",
-    settings: "設定",
     support: "サポート",
     signout: "ログアウト",
     speech: {
@@ -2293,7 +2292,6 @@ const TRANSLATIONS = {
       "select-or-create-variable": "変数を選択または作成",
       "insert-variable": "変数を挿入",
       "select-variable": "変数を選択",
-      "no-variables": "まだ変数が定義されていません",
       "select-option": "オプションを選択",
       "store-result-in": "結果の保存先",
       "result-variable": "結果変数",
