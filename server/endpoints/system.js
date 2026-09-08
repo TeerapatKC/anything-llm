@@ -43,7 +43,6 @@ const {
   LOGO_FILENAME,
   isDefaultFilename,
 } = require("../utils/files/logo");
-const { Telemetry } = require("../models/telemetry");
 const { getCustomModels } = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
@@ -275,7 +274,6 @@ function systemEndpoints(app) {
         return;
       }
 
-      await Telemetry.sendTelemetry("login_event", {}, existingUser?.id);
       await EventLogs.logEvent(
         "login_event",
         {
@@ -324,7 +322,6 @@ function systemEndpoints(app) {
         });
       }
 
-      await Telemetry.sendTelemetry("login_event", {}, token.user.id);
       await EventLogs.logEvent(
         "login_event",
         {
@@ -1610,7 +1607,9 @@ function systemEndpoints(app) {
           })
         );
 
-        return response.status(200).json({ success: true, workspaces: results });
+        return response
+          .status(200)
+          .json({ success: true, workspaces: results });
       } catch (error) {
         console.error("Error listing SQL connection workspaces:", error);
         response.status(500).json({ success: false, error: error.message });
@@ -1655,7 +1654,10 @@ function systemEndpoints(app) {
             : config.activeSqlConnections.filter((id) => id !== databaseId);
 
           await Workspace.update(workspace.id, {
-            agentSkillConfig: JSON.stringify({ ...config, activeSqlConnections }),
+            agentSkillConfig: JSON.stringify({
+              ...config,
+              activeSqlConnections,
+            }),
           });
         }
 

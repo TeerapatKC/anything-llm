@@ -25,7 +25,6 @@ class PPIOLLM {
       baseURL: this.basePath,
       apiKey: process.env.PPIO_API_KEY ?? null,
       defaultHeaders: {
-        "HTTP-Referer": "https://nexusai.com",
         "X-API-Source": "nexusai",
       },
     });

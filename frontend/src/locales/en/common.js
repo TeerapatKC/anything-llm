@@ -1027,7 +1027,6 @@ const TRANSLATIONS = {
     title: "Privacy & Data-Handling",
     description:
       "This is your configuration for how connected third party providers and Nexus AI handle your data.",
-    anonymous: "Anonymous Telemetry Enabled",
     personalization: {
       label: "Personalization & Memories Enabled",
       auto_label: "Automatic Memory Extraction Enabled",
@@ -2411,8 +2410,6 @@ const TRANSLATIONS = {
       "You need to provide an API token for authentication. See the Drupal Wiki <a>manual</a> on how to generate an API-Token for your user.",
     "lmstudio-context-window":
       "Override the context window limit. Leave empty to auto-detect from the model (defaults to 4096 if detection fails).",
-    "telemetry-note":
-      "All events do not record IP-address and contain <b>no identifying</b> content, settings, chats, or other non-usage based information. To see the list of event tags collected you can look on <a>GitHub here</a>.",
     "finish-node":
       "This is the end of your agent flow. All steps above will be executed in sequence.",
     "agent-skill-settings":
@@ -2482,7 +2479,7 @@ const TRANSLATIONS = {
     "connection-modal":
       "Nexus AI for mobile allows you to connect to your workspace's chats, threads, tools, and documents for you to use on the go.",
     "privacy-and-data":
-      "As an open-source project we respect your right to privacy. We are dedicated to building the best solution for integrating AI and documents privately and securely. If you do decide to turn off telemetry all we ask is to consider sending us feedback and thoughts",
+      "As an open-source project we respect your right to privacy. We are dedicated to building the best solution for integrating AI and documents privately and securely.",
     "existing-user-form":
       "Sign in with your existing account to add it to the invite's workspaces. Your role does not change.",
     invite:

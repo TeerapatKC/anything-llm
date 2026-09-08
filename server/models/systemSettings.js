@@ -18,21 +18,6 @@ function isNullOrNaN(value) {
   return isNaN(value);
 }
 
-/**
- * Merges a string field from source to target if it passes validation.
- * @param {Object} target - The target object to merge into
- * @param {Object} source - The source object to read from
- * @param {string} fieldName - The field name to merge
- * @param {Function|null} validator - Optional validator function that returns false to reject the value
- */
-function mergeStringField(target, source, fieldName, validator = null) {
-  const value = source[fieldName];
-  if (value && typeof value === "string" && value.trim()) {
-    if (validator && !validator(value)) return;
-    target[fieldName] = value.trim();
-  }
-}
-
 const SystemSettings = {
   /** A default system prompt that is used when no other system prompt is set or available to the function caller. */
   saneDefaultSystemPrompt:
@@ -59,7 +44,6 @@ const SystemSettings = {
   ],
   supportedFields: [
     "logo_filename",
-    "telemetry_id",
     "support_email",
 
     "text_splitter_chunk_size",
@@ -298,7 +282,6 @@ const SystemSettings = {
       StorageDir: process.env.STORAGE_DIR,
       MemoryEnabled: await this.memoriesEnabled(),
       MemoryAutoExtraction: await this.memoryAutoExtractionSetting(),
-      DisableTelemetry: process.env.DISABLE_TELEMETRY || "false",
 
       // --------------------------------------------------------
       // Embedder Provider Selection Settings & Configs
@@ -616,8 +599,6 @@ const SystemSettings = {
   markOnboardingComplete: async function () {
     try {
       await this._updateSettings({ onboarding_complete: true });
-      const { Telemetry } = require("./telemetry");
-      await Telemetry.sendTelemetry("onboarding_complete");
       return true;
     } catch (error) {
       console.error(error.message);

@@ -1,4 +1,3 @@
-const { Telemetry } = require("../../models/telemetry");
 const { resetAllVectorStores } = require("../vectorStore/resetAllVectorStores");
 
 const KEY_MAPPING = {
@@ -571,16 +570,6 @@ const KEY_MAPPING = {
     envKey: "JWT_SECRET",
     checks: [requiresForceMode],
   },
-  DisableTelemetry: {
-    envKey: "DISABLE_TELEMETRY",
-    checks: [],
-    preUpdate: [
-      (_, __, nextValue) => {
-        if (nextValue === "true") Telemetry.sendTelemetry("telemetry_disabled");
-      },
-    ],
-  },
-
   // Agent Integration ENVs
   AgentSerpApiKey: {
     envKey: "AGENT_SERPAPI_API_KEY",

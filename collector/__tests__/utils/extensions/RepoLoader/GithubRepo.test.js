@@ -100,14 +100,14 @@ describe("GitHubRepoLoader apiBase resolution", () => {
   test("a public github.com url still resolves to the public api root", async () => {
     mockGithubApi();
     const loader = new GitHubRepoLoader({
-      repo: "https://github.com/Mintplex-Labs/nexus-ai",
+      repo: "https://github.com/octocat/Hello-World",
     });
     await loader.init();
 
     expect(loader.ready).toBe(true);
     expect(loader.apiBase).toBe("https://api.github.com");
-    expect(loader.author).toBe("Mintplex-Labs");
-    expect(loader.project).toBe("nexus-ai");
+    expect(loader.author).toBe("octocat");
+    expect(loader.project).toBe("Hello-World");
   });
 
   test("the www. alias of github.com is not mistaken for an enterprise host", async () => {

@@ -7,7 +7,6 @@ const {
 const { PERMISSIONS } = require("../utils/permissions");
 const { reqBody, safeJsonParse } = require("../utils/http");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
-const { Telemetry } = require("../models/telemetry");
 
 // BackgroundService is a singleton, so `new BackgroundService()` anywhere in
 // the codebase returns the same instance that `server/index.js` booted. We
@@ -202,7 +201,6 @@ function scheduledJobEndpoints(app) {
         }
 
         backgroundService.addScheduledJob(job);
-        Telemetry.sendTelemetry("scheduled_job_created").catch(() => {});
         return response.status(201).json({ job, error: null });
       } catch (e) {
         console.error(e.message, e);

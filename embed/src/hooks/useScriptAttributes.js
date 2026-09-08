@@ -18,9 +18,6 @@ const DEFAULT_SETTINGS = {
   buttonColor: "#262626", // must be hex color code
   userBgColor: "#2C2F35", // user text bubble color
   assistantBgColor: "#2563eb", // assistant text bubble color
-  noSponsor: null, // Shows sponsor in footer of chat
-  sponsorText: "Powered by Nexus AI", // default sponsor text
-  sponsorLink: "https://nexusai.com", // default sponsor link
   position: "bottom-right", // position of chat button/window
   assistantName: "Nexus AI Chat Assistant", // default assistant name
   assistantIcon: null, // default assistant icon

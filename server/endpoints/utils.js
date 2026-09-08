@@ -131,7 +131,6 @@ async function getDiskStorage() {
  * so that we can prioritize the correct model and types for future updates
  * as well as build features in NexusAI directly for a specific model or capabilities.
  *
- * Disable with  {@link https://github.com/Mintplex-Labs/nexus-ai?tab=readme-ov-file#telemetry--privacy|Disable Telemetry}
  * @returns {string} The model tag.
  */
 function getModelTag() {

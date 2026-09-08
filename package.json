@@ -4,16 +4,6 @@
   "description": "The best solution for turning private documents into a chat bot using off-the-shelf tools and commercially viable AI technologies.",
   "main": "index.js",
   "type": "module",
-  "author": "Timothy Carambat (Mintplex Labs)",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mintplex-labs/nexus-ai.git"
-  },
-  "bugs": {
-    "url": "https://github.com/mintplex-labs/nexus-ai/issues"
-  },
-  "homepage": "https://github.com/mintplex-labs/nexus-ai#readme",
   "engines": {
     "node": ">=20"
   },

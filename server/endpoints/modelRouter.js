@@ -1,6 +1,5 @@
 const { ModelRouter } = require("../models/modelRouter");
 const { ModelRouterRule } = require("../models/modelRouterRule");
-const { Telemetry } = require("../models/telemetry");
 const { ModelRouterService } = require("../utils/router");
 const { reqBody, userFromSession } = require("../utils/http");
 const {
@@ -14,10 +13,7 @@ function modelRouterEndpoints(app) {
 
   app.get(
     "/model-routers",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (_request, response) => {
       try {
         const routers = await ModelRouter.getAllWithCounts();
@@ -31,10 +27,7 @@ function modelRouterEndpoints(app) {
 
   app.get(
     "/model-routers/:id",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -57,10 +50,7 @@ function modelRouterEndpoints(app) {
 
   app.post(
     "/model-routers/new",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -71,7 +61,6 @@ function modelRouterEndpoints(app) {
         );
 
         if (error) return response.status(400).json({ router, error });
-        await Telemetry.sendTelemetry("model_router_created");
         return response.status(200).json({ router });
       } catch (e) {
         console.error(e);
@@ -82,10 +71,7 @@ function modelRouterEndpoints(app) {
 
   app.put(
     "/model-routers/:id",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -103,10 +89,7 @@ function modelRouterEndpoints(app) {
 
   app.delete(
     "/model-routers/:id",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -126,10 +109,7 @@ function modelRouterEndpoints(app) {
 
   app.post(
     "/model-routers/:id/rules/new",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -143,7 +123,6 @@ function modelRouterEndpoints(app) {
         );
         if (error) return response.status(400).json({ rule, error });
 
-        await Telemetry.sendTelemetry("model_router_rule_created");
         ModelRouterService.invalidateRouter(routerId);
         return response.status(200).json({ rule });
       } catch (e) {
@@ -155,10 +134,7 @@ function modelRouterEndpoints(app) {
 
   app.put(
     "/model-routers/:id/rules/reorder",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id } = request.params;
@@ -182,10 +158,7 @@ function modelRouterEndpoints(app) {
 
   app.put(
     "/model-routers/:id/rules/:ruleId",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id, ruleId } = request.params;
@@ -206,10 +179,7 @@ function modelRouterEndpoints(app) {
 
   app.delete(
     "/model-routers/:id/rules/:ruleId",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
         const { id, ruleId } = request.params;

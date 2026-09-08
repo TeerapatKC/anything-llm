@@ -63,9 +63,7 @@ async function sendMail({ to, subject, text, html }) {
   const cfg = resolvedConfig();
   const transport = createTransport();
   return transport.sendMail({
-    from: cfg.fromName
-      ? `"${cfg.fromName}" <${cfg.fromEmail}>`
-      : cfg.fromEmail,
+    from: cfg.fromName ? `"${cfg.fromName}" <${cfg.fromEmail}>` : cfg.fromEmail,
     to,
     subject,
     text,
@@ -123,18 +121,16 @@ async function sendWelcomeEmail({ to, username, password, loginUrl = "" }) {
     to,
     subject: "Your NexusAI account",
     text:
-      `An account has been created for you on NexusAI.\n\n` +
+      `An account has been created for you on Nexus AI.\n\n` +
       `Username: ${username}\nTemporary password: ${password}\n\n` +
       `You will be asked to set a new password the first time you sign in.` +
       (loginUrl ? `\n\nSign in: ${loginUrl}` : ""),
     html:
-      `<p>An account has been created for you on NexusAI.</p>` +
+      `<p>An account has been created for you on Nexus AI.</p>` +
       `<p><b>Username:</b> ${escapeHtml(username)}<br/>` +
       `<b>Temporary password:</b> ${escapeHtml(password)}</p>` +
       `<p>You will be asked to set a new password the first time you sign in.</p>` +
-      (loginUrl
-        ? `<p><a href="${escapeHtml(loginUrl)}">Sign in</a></p>`
-        : ""),
+      (loginUrl ? `<p><a href="${escapeHtml(loginUrl)}">Sign in</a></p>` : ""),
   });
 }
 
@@ -146,9 +142,9 @@ async function sendInviteEmail({ to, inviteUrl }) {
   return sendSystemMail({
     to,
     subject: "You're invited to NexusAI",
-    text: `You have been invited to join NexusAI.\n\nAccept your invite: ${inviteUrl}`,
+    text: `You have been invited to join Nexus AI.\n\nAccept your invite: ${inviteUrl}`,
     html:
-      `<p>You have been invited to join NexusAI.</p>` +
+      `<p>You have been invited to join Nexus AI.</p>` +
       `<p><a href="${escapeHtml(inviteUrl)}">Accept your invite</a></p>`,
   });
 }

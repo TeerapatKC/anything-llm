@@ -294,8 +294,8 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_SETTINGS_PRIVACY,
-    label: "Configure privacy & telemetry",
-    description: "Data handling preferences and anonymous telemetry.",
+    label: "Configure privacy",
+    description: "Data handling and personalization preferences.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
@@ -1085,7 +1085,7 @@ function expandPermissions(permissionKeys = []) {
 }
 
 /**
- * The instance-wide roles that ship with NexusAI. Seeded on boot, cannot be deleted
+ * The instance-wide roles that ship with Nexus AI. Seeded on boot, cannot be deleted
  * or renamed, and their permission sets reproduce the behavior of the legacy hardcoded
  * admin/manager/default roles so upgrading an existing instance changes nothing.
  *
@@ -1174,7 +1174,7 @@ const SYSTEM_ROLES = [
 }));
 
 /**
- * The reusable workspace roles that ship with NexusAI. One of these is assigned to
+ * The reusable workspace roles that ship with Nexus AI. One of these is assigned to
  * each `workspace_users` row, so the same account can hold different powers in
  * different workspaces.
  */
@@ -1326,8 +1326,6 @@ const SETTING_PERMISSIONS = {
   text_splitter_chunk_size: PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
   text_splitter_chunk_overlap: PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
   max_embed_chunk_size: PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
-
-  telemetry_id: PERMISSIONS.SYSTEM_SETTINGS_PRIVACY,
 
   default_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,

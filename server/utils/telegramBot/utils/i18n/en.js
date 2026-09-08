@@ -19,7 +19,7 @@ module.exports = {
   "link.already_linked":
     'This chat is already linked to "{{username}}". Use /unlink first if you want to connect a different account.',
   "link.usage":
-    "Usage: <code>/link your-username 123456</code>\n\nGet the code from your account settings in NexusAI.",
+    "Usage: <code>/link your-username 123456</code>\n\nGet the code from your account settings in Nexus AI.",
   "link.rate_limited":
     "Too many failed attempts. Try again in {{minutes}} minute(s).",
   "link.invalid":

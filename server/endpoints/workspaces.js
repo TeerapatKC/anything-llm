@@ -8,7 +8,6 @@ const { WorkspaceChats } = require("../models/workspaceChats");
 const { getVectorDbClass, stripThinkingFromText } = require("../utils/helpers");
 const { handleFileUpload } = require("../utils/files/multer");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
-const { Telemetry } = require("../models/telemetry");
 const {
   userPermissionValid,
   workspacePermissionValid,
@@ -34,7 +33,6 @@ const { VALID_COMMANDS } = require("../utils/chats");
 
 const truncate = require("truncate");
 const { purgeDocument } = require("../utils/files/purgeDocument");
-const { getModelTag } = require("./utils");
 const { searchWorkspaceAndThreads } = require("../utils/helpers/search");
 const { workspaceParsedFilesEndpoints } = require("./workspacesParsedFiles");
 const {
@@ -53,17 +51,6 @@ function workspaceEndpoints(app) {
         const user = await userFromSession(request, response);
         const { name = null } = reqBody(request);
         const { workspace, message } = await Workspace.new(name, user?.id);
-        await Telemetry.sendTelemetry(
-          "workspace_created",
-          {
-            LLMSelection: process.env.LLM_PROVIDER || "openai",
-            Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-            VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-            TTSSelection: process.env.TTS_PROVIDER || "native",
-            LLMModel: getModelTag(),
-          },
-          user?.id
-        );
 
         await EventLogs.logEvent(
           "workspace_created",
@@ -169,7 +156,6 @@ function workspaceEndpoints(app) {
         Collector.log(
           `Document ${originalname} uploaded processed and successfully. It is now available in documents.`
         );
-        await Telemetry.sendTelemetry("document_uploaded");
         await EventLogs.logEvent(
           "document_uploaded",
           {
@@ -229,7 +215,6 @@ function workspaceEndpoints(app) {
         Collector.log(
           `Link ${link} uploaded processed and successfully. It is now available in documents.`
         );
-        await Telemetry.sendTelemetry("link_uploaded");
         await EventLogs.logEvent(
           "link_uploaded",
           { link },
@@ -529,18 +514,18 @@ function workspaceEndpoints(app) {
             // Global connections plus the ones this workspace owns. Deliberately
             // shaped by `toPublic`, which withholds the connection string (and the
             // credentials inside it) for anything the workspace does not own.
-            sqlConnections: (
-              await sqlConnectionsAvailableTo(workspace.id)
-            ).map((conn) => {
-              const summary = sqlConnectionToPublic(conn, workspace.id);
-              return {
-                id: summary.database_id,
-                name: summary.database_id,
-                engine: summary.engine,
-                scope: summary.scope,
-                active: summary.active,
-              };
-            }),
+            sqlConnections: (await sqlConnectionsAvailableTo(workspace.id)).map(
+              (conn) => {
+                const summary = sqlConnectionToPublic(conn, workspace.id);
+                return {
+                  id: summary.database_id,
+                  name: summary.database_id,
+                  engine: summary.engine,
+                  scope: summary.scope,
+                  active: summary.active,
+                };
+              }
+            ),
             mcpServers: mcpServers.map((id) => {
               const name = id.replace(/^@@mcp_/, "");
               return { id: name, name };
@@ -983,7 +968,6 @@ function workspaceEndpoints(app) {
         Collector.log(
           `Document ${originalname} uploaded processed and successfully. It is now available in documents.`
         );
-        await Telemetry.sendTelemetry("document_uploaded");
         await EventLogs.logEvent(
           "document_uploaded",
           {
@@ -1419,9 +1403,7 @@ function workspaceEndpoints(app) {
     async (_request, response) => {
       try {
         const { AgentFlows } = require("../utils/agentFlows");
-        const flows = AgentFlows.ownedByWorkspace(
-          response.locals.workspace.id
-        );
+        const flows = AgentFlows.ownedByWorkspace(response.locals.workspace.id);
         response.status(200).json({ success: true, flows });
       } catch (error) {
         console.error("Error listing workspace agent flows:", error);
@@ -1633,9 +1615,9 @@ function workspaceEndpoints(app) {
           toPublic,
         } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
         const workspace = response.locals.workspace;
-        const connections = (
-          await sqlConnectionsAvailableTo(workspace.id)
-        ).map((conn) => toPublic(conn, workspace.id));
+        const connections = (await sqlConnectionsAvailableTo(workspace.id)).map(
+          (conn) => toPublic(conn, workspace.id)
+        );
         response.status(200).json({ success: true, connections });
       } catch (error) {
         console.error("Error listing workspace SQL connections:", error);

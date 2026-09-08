@@ -169,7 +169,6 @@ describe("factory reset", () => {
     process.env.LLM_PROVIDER = "openai";
     process.env.VECTOR_DB = "lancedb";
     process.env.OPEN_AI_KEY = "sk-test";
-    process.env.DISABLE_TELEMETRY = "true";
 
     const { results } = await SystemReset.factoryReset({ actor: OWNER });
 
@@ -180,11 +179,7 @@ describe("factory reset", () => {
     expect(process.env.LLM_PROVIDER).toBeUndefined();
     expect(process.env.VECTOR_DB).toBeUndefined();
     expect(process.env.OPEN_AI_KEY).toBeUndefined();
-    // Telemetry is a deployment policy rather than instance content.
-    expect(process.env.DISABLE_TELEMETRY).toBe("true");
     expect(results.providerSettings).toBe(4);
-
-    delete process.env.DISABLE_TELEMETRY;
   });
 
   it("rewrites the env file without disturbing comments or unmanaged keys", async () => {

@@ -42,17 +42,8 @@ export default {
       return "/onboarding/user-setup";
     },
   },
-  github: () => {
-    return "https://github.com/Mintplex-Labs/nexus-ai";
-  },
   discord: () => {
     return "https://discord.com/invite/6UyHPeGZAC";
-  },
-  mailToMintplex: () => {
-    return "mailto:team@mintplexlabs.com";
-  },
-  hosting: () => {
-    return "https://my.mintplexlabs.com/aio-checkout?product=nexusai";
   },
   workspace: {
     chat: (slug, options = {}) => {

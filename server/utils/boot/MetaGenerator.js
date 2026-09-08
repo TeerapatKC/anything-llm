@@ -81,10 +81,6 @@ class MetaGenerator {
       { tag: "meta", props: { property: "og:type", content: "website" } },
       {
         tag: "meta",
-        props: { property: "og:url", content: "https://nexusai.com" },
-      },
-      {
-        tag: "meta",
         props: {
           property: "og:title",
           content: "Nexus AI",
@@ -109,10 +105,6 @@ class MetaGenerator {
       {
         tag: "meta",
         props: { property: "twitter:card", content: "summary_large_image" },
-      },
-      {
-        tag: "meta",
-        props: { property: "twitter:url", content: "https://nexusai.com" },
       },
       {
         tag: "meta",

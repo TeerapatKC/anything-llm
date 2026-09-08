@@ -89,7 +89,6 @@ const RESET_SCOPE_KEYS = RESET_SCOPES.map((scope) => scope.key);
 const PRESERVED_SETTINGS = [
   "multi_user_mode",
   "reserved_permissions",
-  "telemetry_id",
   "agent_sql_connections",
   "text_splitter_chunk_size",
   "text_splitter_chunk_overlap",
@@ -145,7 +144,7 @@ const FACTORY_WIPE_TABLES = [
 
 /**
  * Environment variables a factory reset leaves alone even though `updateENV` manages
- * them. Everything else it manages - every provider credential, the LLM and vector
+ * them. Everything it manages - every provider credential, the LLM and vector
  * database selection, and the JWT secret - is cleared, because leaving any of them behind
  * would have the next boot decide the instance had already been set up.
  *
@@ -153,7 +152,7 @@ const FACTORY_WIPE_TABLES = [
  * `SIG_KEY`, `SIG_SALT`, the port settings, the password policy and any hand-written keys
  * are not in its map, so they survive untouched.
  */
-const PRESERVED_ENV_KEYS = ["DISABLE_TELEMETRY"];
+const PRESERVED_ENV_KEYS = [];
 
 const SystemReset = {
   SCOPES: RESET_SCOPES,
