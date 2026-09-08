@@ -1690,6 +1690,7 @@ const TRANSLATIONS = {
     profile_updated: "Profile updated.",
     failed_update_user: "Failed to update user: {{error}}",
     account: "Account",
+    settings: "Settings",
     support: "Support",
     signout: "Sign out",
     speech: {
@@ -2289,6 +2290,7 @@ const TRANSLATIONS = {
       "select-or-create-variable": "Select or create variable",
       "insert-variable": "Insert variable",
       "select-variable": "Select variable",
+      "no-variables": "No variables defined yet",
       "select-option": "Select an option",
       "store-result-in": "Store Result In",
       "result-variable": "Result Variable",

@@ -42,7 +42,7 @@ export default function WebsiteNode({
               placeholder={t("agent-builder.common.select-option")}
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false}>
             <SelectItem value="read">
               {t("agent-builder.website.read-content")}
             </SelectItem>

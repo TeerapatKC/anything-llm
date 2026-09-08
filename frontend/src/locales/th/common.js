@@ -1649,6 +1649,7 @@ const TRANSLATIONS = {
     profile_updated: "อัปเดตโปรไฟล์แล้ว",
     failed_update_user: "อัปเดตผู้ใช้ไม่สำเร็จ: {{error}}",
     account: "บัญชี",
+    settings: "การตั้งค่า",
     support: "ฝ่ายสนับสนุน",
     signout: "ออกจากระบบ",
     speech: {
@@ -2242,6 +2243,7 @@ const TRANSLATIONS = {
       "select-or-create-variable": "เลือกหรือสร้างตัวแปร",
       "insert-variable": "แทรกตัวแปร",
       "select-variable": "เลือกตัวแปร",
+      "no-variables": "ยังไม่มีตัวแปรที่กำหนดไว้",
       "select-option": "เลือกตัวเลือก",
       "store-result-in": "เก็บผลลัพธ์ไว้ใน",
       "result-variable": "ตัวแปรผลลัพธ์",

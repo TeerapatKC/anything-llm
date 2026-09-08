@@ -30,7 +30,7 @@ export default function FileNode({
               placeholder={t("agent-builder.common.select-option")}
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false}>
             <SelectItem value="read">{t("agent-builder.file.read")}</SelectItem>
             <SelectItem value="write">
               {t("agent-builder.file.write")}

@@ -49,7 +49,7 @@ export default function WebScrapingNode({
               placeholder={t("agent-builder.common.select-option")}
             />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false}>
             {[
               {
                 label: t("agent-builder.webScraping.capture-text"),
