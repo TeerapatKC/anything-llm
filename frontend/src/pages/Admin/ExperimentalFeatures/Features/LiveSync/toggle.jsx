@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import System from "@/models/system";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import { SquareArrowOutUpRight } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Toggle from "@/components/lib/Toggle";
@@ -55,17 +54,6 @@ export default function LiveSyncToggle({ enabled = false, onToggle }) {
       </div>
       <div className="mt-8">
         <ul className="space-y-2">
-          <li>
-            <a
-              href="https://docs.nexusai.com/beta-preview/active-features/live-document-sync"
-              target="_blank"
-              className="text-sm text-blue-400 light:text-blue-500 hover:underline flex items-center gap-x-1"
-              rel="noreferrer"
-            >
-              <SquareArrowOutUpRight size={14} />
-              <span>{t("ui.feature-docs-warnings")}</span>
-            </a>
-          </li>
           <li>
             <Link
               to={paths.experimental.liveDocumentSync.manage()}

@@ -3,7 +3,6 @@ import NexusInfinityLogo from "@/media/logo/nexus-ai-infinity.png";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import paths from "@/utils/paths";
-import { Link } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -117,12 +116,6 @@ export default function HeaderMenu({
               {t("agent-builder.header.save")}
             </button>
           </div>
-          <Link
-            to="https://docs.nexusai.com/agent-flows/overview"
-            className="text-theme-text-secondary text-sm hover:underline hover:text-cta-button flex items-center gap-x-1 w-fit float-right"
-          >
-            {t("agent-builder.header.view-documentation")}
-          </Link>
         </div>
       </div>
     </div>

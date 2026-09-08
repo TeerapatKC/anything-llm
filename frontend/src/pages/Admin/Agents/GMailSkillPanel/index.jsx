@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import Toggle, { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { Spinner } from "@/components/ui/spinner";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import debounce from "lodash.debounce";
 import {
   ChevronDown,
@@ -25,8 +25,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Link } from "react-router-dom";
-import paths from "@/utils/paths";
 import { Label } from "@/components/ui/label";
 
 export default function GMailSkillPanel({
@@ -120,18 +118,7 @@ export default function GMailSkillPanel({
         </div>
 
         <p className="text-theme-text-secondary/60 text-xs font-medium">
-          <Trans
-            i18nKey="agent.skill.gmail.description"
-            components={{
-              a: (
-                <Link
-                  className="text-sky-400 hover:text-sky-500 text-xs font-medium underline"
-                  to={paths.docs("/agent/usage/gmail-agent")}
-                  target="_blank"
-                />
-              ),
-            }}
-          />
+          {t("agent.skill.gmail.description")}
         </p>
 
         {enabled && (

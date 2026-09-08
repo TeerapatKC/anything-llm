@@ -12,18 +12,6 @@ export default function ImportedSkillList({
     return (
       <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
         <p>{t("ui.no-imported-skills")}</p>
-        <p>
-          Learn about agent skills in the{" "}
-          <a
-            href="https://docs.nexusai.com/agent/custom/developer-guide"
-            target="_blank"
-            className="text-theme-text-secondary underline hover:text-cta-button"
-            rel="noreferrer"
-          >
-            Nexus AI Agent Docs
-          </a>
-          .
-        </p>
       </div>
     );
 

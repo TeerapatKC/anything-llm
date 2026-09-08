@@ -397,7 +397,7 @@ const TRANSLATIONS = {
         readActions: "การกระทำแบบอ่าน",
         writeActions: "การกระทำแบบเขียน",
         warning:
-          "การเข้าถึงระบบไฟล์อาจเป็นอันตรายได้ เนื่องจากสามารถแก้ไขหรือลบไฟล์ได้ โปรดศึกษา<a>เอกสารประกอบ</a>ก่อนเปิดใช้งาน",
+          "การเข้าถึงระบบไฟล์อาจเป็นอันตรายได้ เนื่องจากสามารถแก้ไขหรือลบไฟล์ได้",
         skills: {
           "read-text-file": {
             title: "อ่านไฟล์",
@@ -476,7 +476,7 @@ const TRANSLATIONS = {
       gmail: {
         title: "GMail",
         description:
-          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Gmail ได้ - ค้นหาอีเมล อ่านเธรด ร่างข้อความ ส่งอีเมล และจัดการกล่องจดหมายของคุณ <a>อ่านเอกสารประกอบ</a>",
+          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Gmail ได้ - ค้นหาอีเมล อ่านเธรด ร่างข้อความ ส่งอีเมล และจัดการกล่องจดหมายของคุณ",
         configuration: "การกำหนดค่า Gmail",
         deploymentId: "Deployment ID",
         deploymentIdHelp: "Deployment ID จากเว็บแอป Google Apps Script ของคุณ",
@@ -589,7 +589,7 @@ const TRANSLATIONS = {
       googleCalendar: {
         title: "Google Calendar",
         description:
-          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Google Calendar ได้ - ดูปฏิทิน ดูกิจกรรม สร้างและอัปเดตกิจกรรม และจัดการการตอบรับ <a>อ่านเอกสารประกอบ</a>",
+          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Google Calendar ได้ - ดูปฏิทิน ดูกิจกรรม สร้างและอัปเดตกิจกรรม และจัดการการตอบรับ",
         configuration: "การกำหนดค่า Google Calendar",
         deploymentId: "Deployment ID",
         deploymentIdHelp: "Deployment ID จากเว็บแอป Google Apps Script ของคุณ",
@@ -669,7 +669,7 @@ const TRANSLATIONS = {
       outlook: {
         title: "Outlook",
         description:
-          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Microsoft Outlook ได้ - ค้นหาอีเมล อ่านเธรด ร่างข้อความ ส่งอีเมล และจัดการกล่องจดหมายผ่าน Microsoft Graph API <a>อ่านเอกสารประกอบ</a>",
+          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Microsoft Outlook ได้ - ค้นหาอีเมล อ่านเธรด ร่างข้อความ ส่งอีเมล และจัดการกล่องจดหมายผ่าน Microsoft Graph API",
         configuration: "การกำหนดค่า Outlook",
         authType: "ประเภทบัญชี",
         authTypeHelp:

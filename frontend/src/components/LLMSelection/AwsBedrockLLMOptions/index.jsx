@@ -4,7 +4,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Info, SquareArrowOutUpRight } from "lucide-react";
+import { Info } from "lucide-react";
 import { AWS_REGIONS } from "./regions";
 import { useState, useEffect } from "react";
 import System from "@/models/system";
@@ -45,16 +45,6 @@ export default function AwsBedrockLLMOptions({ settings }) {
             <Info size={40} />
             <p className="text-base">
               Connect to AWS Bedrock using the OpenAI-compatible Mantle API.
-              <br />
-              <a
-                href="https://docs.nexusai.com/setup/llm-configuration/cloud/aws-bedrock"
-                target="_blank"
-                className="underline flex gap-x-1 items-center"
-                rel="noreferrer"
-              >
-                Read more on how to use AWS Bedrock in Nexus AI
-                <SquareArrowOutUpRight size={14} />
-              </a>
             </p>
           </div>
         </div>

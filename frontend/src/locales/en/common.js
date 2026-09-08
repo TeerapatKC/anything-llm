@@ -401,7 +401,7 @@ const TRANSLATIONS = {
         readActions: "Read Actions",
         writeActions: "Write Actions",
         warning:
-          "Filesystem access can be dangerous as it can modify or delete files. Please consult the <a>documentation</a> before enabling.",
+          "Filesystem access can be dangerous as it can modify or delete files.",
         skills: {
           "read-text-file": {
             title: "Read File",
@@ -483,7 +483,7 @@ const TRANSLATIONS = {
       gmail: {
         title: "GMail",
         description:
-          "Enable your agent to interact with Gmail - search emails, read threads, compose drafts, send emails, and manage your inbox. <a>Read the documentation</a>.",
+          "Enable your agent to interact with Gmail - search emails, read threads, compose drafts, send emails, and manage your inbox.",
         configuration: "Gmail Configuration",
         deploymentId: "Deployment ID",
         deploymentIdHelp:
@@ -597,7 +597,7 @@ const TRANSLATIONS = {
       googleCalendar: {
         title: "Google Calendar",
         description:
-          "Enable your agent to interact with Google Calendar - view calendars, get events, create and update events, and manage RSVPs. <a>Read the documentation</a>.",
+          "Enable your agent to interact with Google Calendar - view calendars, get events, create and update events, and manage RSVPs.",
         configuration: "Google Calendar Configuration",
         deploymentId: "Deployment ID",
         deploymentIdHelp:
@@ -677,7 +677,7 @@ const TRANSLATIONS = {
       outlook: {
         title: "Outlook",
         description:
-          "Enable your agent to interact with Microsoft Outlook - search emails, read threads, compose drafts, send emails, and manage your inbox via Microsoft Graph API. <a>Read the documentation</a>.",
+          "Enable your agent to interact with Microsoft Outlook - search emails, read threads, compose drafts, send emails, and manage your inbox via Microsoft Graph API.",
         configuration: "Outlook Configuration",
         authType: "Account Type",
         authTypeHelp:

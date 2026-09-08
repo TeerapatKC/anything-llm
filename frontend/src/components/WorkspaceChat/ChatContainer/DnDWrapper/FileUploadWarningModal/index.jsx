@@ -10,8 +10,6 @@ import { Spinner } from "@/components/ui/spinner";
 import pluralize from "pluralize";
 import { numberWithCommas } from "@/utils/numbers";
 import useUser from "@/hooks/useUser";
-import { Link } from "react-router-dom";
-import Paths from "@/utils/paths";
 import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 
@@ -66,14 +64,7 @@ export default function FileUploadWarningModal({
             {numberWithCommas(maxTokens)} available tokens. We recommend keeping
             usage below {(Workspace.maxContextWindowLimit * 100).toFixed(0)}% to
             ensure the best chat experience. Adding {fileCount} more{" "}
-            {pluralize("file", fileCount)} would exceed this limit.{" "}
-            <Link
-              target="_blank"
-              to={Paths.documentation.contextWindows()}
-              className="text-theme-text-secondary text-sm underline"
-            >
-              Learn more about context windows &rarr;
-            </Link>
+            {pluralize("file", fileCount)} would exceed this limit.
           </p>
           <p className="text-theme-text-primary text-sm">
             Choose how you would like to proceed with these uploads.

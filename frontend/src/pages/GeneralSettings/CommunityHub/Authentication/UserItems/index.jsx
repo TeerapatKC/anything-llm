@@ -1,4 +1,3 @@
-import paths from "@/utils/paths";
 import { Empty, EmptyDescription, EmptyHeader } from "@/components/ui/empty";
 import HubItemCard from "../../Trending/HubItems/HubItemCard";
 import { useUserItems } from "../useUserItems";
@@ -22,14 +21,6 @@ export default function UserItems({ connectionKey }) {
           <p className="text-lg leading-6 font-bold text-theme-text-primary">
             Created by me
           </p>
-          <a
-            href={paths.communityHub.noPrivateItems()}
-            target="_blank"
-            rel="noreferrer"
-            className="text-primary-button hover:text-primary-button/80 text-sm"
-          >
-            Why can't I see my private items?
-          </a>
         </div>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary">
           Items you have created and shared publicly on the Nexus AI Community

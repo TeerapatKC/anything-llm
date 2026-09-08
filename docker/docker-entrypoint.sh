@@ -9,9 +9,6 @@ if [ -z "$STORAGE_DIR" ]; then
     echo "the application will not have a persistent storage location."
     echo "It can also result in weird errors in various parts of the application."
     echo ""
-    echo "Please run the container with the official docker command at"
-    echo "https://docs.nexusai.com/installation-docker/quickstart"
-    echo ""
     echo "⚠️  ⚠️  ⚠️  WARNING: STORAGE_DIR environment variable is not set! ⚠️  ⚠️  ⚠️"
     echo "================================================================"
 fi

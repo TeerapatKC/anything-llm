@@ -48,12 +48,6 @@ export default {
   discord: () => {
     return "https://discord.com/invite/6UyHPeGZAC";
   },
-  docs: (path = "") => {
-    return `https://docs.nexusai.com${path}`;
-  },
-  chatModes: () => {
-    return "https://docs.nexusai.com/features/chat-modes";
-  },
   mailToMintplex: () => {
     return "mailto:team@mintplexlabs.com";
   },
@@ -259,16 +253,6 @@ export default {
     profile: function (username) {
       if (username) return `${this.website()}/u/${username}`;
       return `${this.website()}/me`;
-    },
-    noPrivateItems: () => {
-      return "https://docs.nexusai.com/community-hub/faq#no-private-items";
-    },
-  },
-
-  // TODO: Migrate all docs.nexusai.com links to the new docs.
-  documentation: {
-    contextWindows: () => {
-      return "https://docs.nexusai.com/chatting-with-documents/introduction#you-exceed-the-context-window---what-now";
     },
   },
 

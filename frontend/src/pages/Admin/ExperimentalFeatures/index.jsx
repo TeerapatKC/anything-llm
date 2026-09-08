@@ -179,9 +179,7 @@ function SelectedFeatureComponent({ feature, settings, refresh }) {
 
 function FeatureVerification({ children }) {
   const { t } = useTranslation();
-  if (
-    !window.localStorage.getItem("nexusai_tos_experimental_feature_set")
-  ) {
+  if (!window.localStorage.getItem("nexusai_tos_experimental_feature_set")) {
     function acceptTos(e) {
       e.preventDefault();
 
@@ -256,14 +254,6 @@ function FeatureVerification({ children }) {
                   </div>
 
                   <p>
-                    {t("experimental-features.tos.docs-prefix")}{" "}
-                    <a
-                      href="https://docs.nexusai.com/beta-preview/overview"
-                      className="underline text-blue-500"
-                    >
-                      docs.nexusai.com
-                    </a>{" "}
-                    {t("experimental-features.tos.docs-or-email")}{" "}
                     <a
                       href="mailto:team@mintplexlabs.com"
                       className="underline text-blue-500"

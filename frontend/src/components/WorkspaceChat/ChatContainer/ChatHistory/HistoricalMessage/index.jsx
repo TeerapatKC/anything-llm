@@ -1,5 +1,5 @@
 import React, { memo, useLayoutEffect, useRef, useState } from "react";
-import { CircleStop, Info } from "lucide-react";
+import { CircleStop } from "lucide-react";
 import Actions from "./Actions";
 import renderMarkdown from "@/utils/chat/markdown";
 import Citations from "../Citation";
@@ -8,25 +8,17 @@ import DOMPurify from "@/utils/chat/purify";
 import { EditMessageForm, useEditMessage } from "./Actions/EditMessage";
 import { useWatchDeleteMessage } from "./Actions/DeleteMessage";
 import TTSMessage from "./Actions/TTSButton";
+import { useTranslation } from "react-i18next";
 import {
   THOUGHT_REGEX_CLOSE,
   THOUGHT_REGEX_COMPLETE,
   THOUGHT_REGEX_OPEN,
   ThoughtChainComponent,
 } from "../ThoughtContainer";
-import paths from "@/utils/paths";
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { chatQueryRefusalResponse } from "@/utils/chat";
 import HistoricalOutputs from "./HistoricalOutputs";
 import HistoricalClarifyingQuestions from "./HistoricalClarifyingQuestions";
 import ErrorResponse from "../ErrorResponse";
 import { openImageLightbox } from "@/components/ImageLightbox";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 function hasVisibleContent(message) {
   if (!message) return false;
@@ -104,7 +96,6 @@ const HistoricalMessage = ({
   // completes and the pair is saved, so before that - and forever, if the answer
   // failed - the client-side uuid is the only handle the message has.
   const messageKey = chatId ?? uuid;
-  const { t } = useTranslation();
   const { isEditing } = useEditMessage({ messageKey, role });
   const { isDeleted, completeDelete, onEndAnimation } = useWatchDeleteMessage({
     chatId,
@@ -115,9 +106,6 @@ const HistoricalMessage = ({
     element.style.height = "auto";
     element.style.height = element.scrollHeight + "px";
   };
-
-  const isRefusalMessage =
-    role === "assistant" && message === chatQueryRefusalResponse(workspace);
 
   if (completeDelete) return null;
 
@@ -244,30 +232,6 @@ const HistoricalMessage = ({
             />
             {stopped && !message?.match(THOUGHT_REGEX_OPEN) && (
               <StoppedResponse />
-            )}
-            {isRefusalMessage && (
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Link
-                      className="no-underline! group flex! w-fit"
-                      to={paths.chatModes()}
-                      target="_blank"
-                    />
-                  }
-                >
-                  <div className="flex flex-row items-center gap-x-1 group-hover:opacity-100 opacity-60 w-fit">
-                    <Info className="text-theme-text-secondary" />
-                    <p className="m-0! p-0! text-theme-text-secondary no-underline! text-xs cursor-pointer">
-                      {t("chat.refusal.tooltip-title")}
-                    </p>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  className="max-w-[250px] text-xs"
-                >{`${t("chat.refusal.tooltip-description")}`}</TooltipContent>
-              </Tooltip>
             )}
             <ChatAttachments attachments={attachments} />
             <HistoricalOutputs outputs={outputs} />

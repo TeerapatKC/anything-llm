@@ -380,7 +380,7 @@ const TRANSLATIONS = {
         readActions: "行動",
         writeActions: "行動",
         warning:
-          "ファイルシステムへのアクセスは危険であり、ファイルの内容を変更または削除する可能性があります。設定する前に、必ず<a>のドキュメント</a>を参照してください。",
+          "ファイルシステムへのアクセスは危険であり、ファイルの内容を変更または削除する可能性があります。",
         skills: {
           "read-text-file": {
             title: "ファイルを開く",
@@ -461,7 +461,7 @@ const TRANSLATIONS = {
       gmail: {
         title: "Gmail 接続",
         description:
-          "エージェントがGmailと連携できるようにする：メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を可能にします。詳細については、<a>ドキュメントを参照</a>。",
+          "エージェントがGmailと連携できるようにする：メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を可能にします。",
         configuration: "Gmail の設定",
         deploymentId: "デプロイメントID",
         deploymentIdHelp:
@@ -574,7 +574,7 @@ const TRANSLATIONS = {
       outlook: {
         title: "Outlook 連携機能",
         description:
-          "エージェントがMicrosoft Outlookと連携できるようにする - Microsoft Graph APIを使用して、メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を行う。詳細については、ドキュメントを参照してください。",
+          "エージェントがMicrosoft Outlookと連携できるようにする - Microsoft Graph APIを使用して、メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を行う。",
         configuration: "Outlook の設定",
         authType: "アカウントの種類",
         authTypeHelp:
@@ -668,7 +668,7 @@ const TRANSLATIONS = {
       googleCalendar: {
         title: "Google カレンダー 連携機能",
         description:
-          "エージェントがGoogleカレンダーと連携できるようにする - カレンダーの表示、イベントの取得、イベントの作成と更新、およびRSVPの管理を可能にする。詳細については、ドキュメントを参照してください。",
+          "エージェントがGoogleカレンダーと連携できるようにする - カレンダーの表示、イベントの取得、イベントの作成と更新、およびRSVPの管理を可能にする。",
         configuration: "Google カレンダーの設定",
         deploymentId: "デプロイメントID",
         deploymentIdHelp:
