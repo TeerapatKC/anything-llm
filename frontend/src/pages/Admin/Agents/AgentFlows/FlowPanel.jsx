@@ -4,7 +4,7 @@ import showToast from "@/utils/toast";
 import { Building2, Pencil, Settings, Trash2, Workflow } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
-import Toggle from "@/components/lib/Toggle";
+import Toggle, { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -91,7 +91,7 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
   return (
     <>
       <div className="p-2">
-        <div className="flex flex-col gap-y-[18px] max-w-[500px]">
+        <div className="flex w-full flex-col gap-y-[18px] min-[1100px]:max-w-[500px]">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center gap-x-2">
               <Workflow size={24} className="text-theme-text-primary" />
@@ -110,7 +110,15 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
           <p className="whitespace-pre-wrap text-theme-text-primary/60 text-xs font-medium py-1.5">
             {flow.description || t("agent-flow.no-description")}
           </p>
-          <FlowWorkspaceVisibility flowUuid={flow.uuid} />
+          {/* A workspace-owned flow already belongs to exactly one workspace, so there
+              is no sharing decision to offer - the server rejects it too. */}
+          {flow.scope === "workspace" ? (
+            <p className="text-theme-text-secondary text-xs py-1.5">
+              {t("agent-flow.workspace-owned-hint")}
+            </p>
+          ) : (
+            <FlowWorkspaceVisibility flowUuid={flow.uuid} />
+          )}
         </div>
       </div>
     </>
@@ -229,13 +237,16 @@ function FlowWorkspaceVisibility({ flowUuid }) {
               key={ws.id}
               className="rounded-lg bg-muted/10 ring-1 ring-foreground/10 p-3"
             >
-              <Toggle
-                size="md"
-                variant="horizontal"
-                label={ws.name}
-                enabled={selectedIds.has(ws.id)}
-                onChange={(checked) => toggleWorkspace(ws.id, checked)}
-              />
+              <label className="flex min-h-8 w-full cursor-pointer items-center justify-between gap-4">
+                <span className="min-w-0 text-left text-sm font-medium text-foreground">
+                  {ws.name}
+                </span>
+                <SimpleToggleSwitch
+                  size="md"
+                  enabled={selectedIds.has(ws.id)}
+                  onChange={(checked) => toggleWorkspace(ws.id, checked)}
+                />
+              </label>
             </div>
           ))}
         </div>

@@ -177,6 +177,7 @@ const TRANSLATIONS = {
     agent: "エージェント構成",
     "upload-documents": "ドキュメントをアップロード",
     "slash-commands": "スラッシュコマンド",
+    "agent-flows": "エージェントフロー",
   },
   general: {
     vector: {
@@ -2698,6 +2699,8 @@ const TRANSLATIONS = {
     "delete-failed": "フローを削除できませんでした。",
     "toggle-failed": "フローの有効状態を変更できませんでした。",
     "no-description": "説明はありません",
+    "workspace-owned": "ワークスペース",
+    "workspace-owned-hint": "このフローは特定のワークスペースに属しており、そこでのみ利用できます。",
     visibility: {
       title: "ワークスペースへの公開範囲",
       description: "このフローを使用できるワークスペースを選択します。",

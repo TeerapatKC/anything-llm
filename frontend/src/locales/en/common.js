@@ -194,6 +194,7 @@ const TRANSLATIONS = {
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
     "slash-commands": "Slash Commands",
+    "agent-flows": "Agent Flows",
   },
   general: {
     vector: {
@@ -2680,6 +2681,8 @@ const TRANSLATIONS = {
     "delete-failed": "Failed to delete flow.",
     "toggle-failed": "Failed to toggle flow.",
     "no-description": "No description provided",
+    "workspace-owned": "Workspace",
+    "workspace-owned-hint": "This flow belongs to a workspace and is available only there.",
     visibility: {
       title: "Visible to workspaces",
       description: "Choose which workspaces' agents can use this flow.",

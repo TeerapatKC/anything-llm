@@ -184,6 +184,97 @@ const AgentFlows = {
       return { success: false, error: error.message };
     }
   },
+
+  /**
+   * Flows owned by a single workspace.
+   *
+   * A separate namespace rather than an extra argument on the calls above, because these
+   * hit workspace-scoped routes gated on a workspace permission - a workspace manager can
+   * reach these without holding the instance-wide `agents.flows` permission, and cannot
+   * touch a global flow through them.
+   */
+  workspace: {
+    /**
+     * @param {string} slug - workspace slug
+     * @returns {Promise<{success: boolean, error: string | null, flows: Array<{name: string, uuid: string, description: string, active: boolean, scope: string}>}>}
+     */
+    listFlows: async (slug) => {
+      return await fetch(`${API_BASE}/workspace/${slug}/agent-flows`, {
+        method: "GET",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, flows: [] }));
+    },
+
+    /**
+     * @param {string} slug - workspace slug
+     * @param {string} uuid - flow uuid
+     * @returns {Promise<{success: boolean, error: string | null, flow: object | null}>}
+     */
+    getFlow: async (slug, uuid) => {
+      return await fetch(`${API_BASE}/workspace/${slug}/agent-flows/${uuid}`, {
+        method: "GET",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, flow: null }));
+    },
+
+    /**
+     * Create a flow owned by this workspace, or update one it already owns.
+     * @param {string} slug - workspace slug
+     * @param {string} name - display name
+     * @param {object} config - flow configuration
+     * @param {string|null} uuid - omit to create
+     * @returns {Promise<{success: boolean, error: string | null, uuid: string | null}>}
+     */
+    saveFlow: async (slug, name, config, uuid = null) => {
+      const url = uuid
+        ? `${API_BASE}/workspace/${slug}/agent-flows/${uuid}`
+        : `${API_BASE}/workspace/${slug}/agent-flows`;
+      return await fetch(url, {
+        method: "POST",
+        headers: { ...baseHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify({ name, config }),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, uuid: null }));
+    },
+
+    /**
+     * @param {string} slug - workspace slug
+     * @param {string} uuid - flow uuid
+     * @returns {Promise<{success: boolean, error: string | null}>}
+     */
+    deleteFlow: async (slug, uuid) => {
+      return await fetch(`${API_BASE}/workspace/${slug}/agent-flows/${uuid}`, {
+        method: "DELETE",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    /**
+     * @param {string} slug - workspace slug
+     * @param {string} uuid - flow uuid
+     * @param {boolean} active - new active state
+     * @returns {Promise<{success: boolean, error: string | null}>}
+     */
+    toggleFlow: async (slug, uuid, active) => {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/agent-flows/${uuid}/toggle`,
+        {
+          method: "POST",
+          headers: { ...baseHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ active }),
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+  },
 };
 
 export default AgentFlows;

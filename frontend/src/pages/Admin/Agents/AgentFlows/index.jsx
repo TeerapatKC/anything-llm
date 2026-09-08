@@ -26,7 +26,7 @@ export default function AgentFlowsList({
   }
 
   return (
-    <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl w-full md:min-w-[360px]">
+    <div className="min-w-0 w-full rounded-xl bg-theme-bg-secondary text-theme-text-primary">
       {flows.map((flow, index) => (
         <div
           key={flow.uuid}
@@ -43,8 +43,17 @@ export default function AgentFlowsList({
           }`}
           onClick={() => handleClick?.(flow)}
         >
-          <div className="text-sm font-light">{flow.name}</div>
-          <div className="flex items-center gap-x-2">
+          <div className="flex min-w-0 flex-1 items-center gap-x-2">
+            <span className="truncate text-sm font-light">{flow.name}</span>
+            {flow.scope === "workspace" && (
+              // Built inside a workspace. Listed here so an operator can audit it, but
+              // it belongs to that workspace and cannot be shared with others.
+              <span className="shrink-0 rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-theme-text-secondary">
+                {t("agent-flow.workspace-owned")}
+              </span>
+            )}
+          </div>
+          <div className="flex shrink-0 items-center gap-x-2">
             <div className="text-sm text-theme-text-secondary font-medium">
               {activeFlowIds.includes(flow.uuid)
                 ? t("agent-flow.on")

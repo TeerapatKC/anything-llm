@@ -423,7 +423,7 @@ class EphemeralAgentHandler extends AgentHandler {
     this.#funcsToLoad = [
       ...(await agentSkillsFromSystemSettings(this.#workspace, skillConfig)),
       ...importedPluginsForConfig(skillConfig),
-      ...flowPluginsForConfig(skillConfig),
+      ...flowPluginsForConfig(skillConfig, this.#workspace),
       ...(await mcpServersForConfig(skillConfig)),
     ];
   }

@@ -18,10 +18,19 @@ export default function HeaderMenu({
   onNewFlow,
   onSaveFlow,
 }) {
-  const { flowId = null } = useParams();
+  // Same slug-presence check the builder makes - keeps "back" and the flow switcher
+  // inside the workspace when that is where the builder was opened from.
+  const { flowId = null, slug = null } = useParams();
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const exitPath = slug
+    ? paths.workspace.settings.agentFlows(slug)
+    : paths.settings.agentFlow();
+  const editPath = (uuid) =>
+    slug
+      ? paths.workspace.agents.editFlow(slug, uuid)
+      : paths.agents.editAgent(uuid);
   const hasOtherFlows =
     availableFlows.filter((flow) => flow.uuid !== flowId).length > 0;
 
@@ -30,14 +39,14 @@ export default function HeaderMenu({
       <div className="flex justify-between items-start max-w-[1700px] mx-auto">
         <div className="flex items-center gap-x-2">
           <button
-            onClick={() => navigate(paths.settings.agentFlow())}
+            onClick={() => navigate(exitPath)}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-theme-settings-input-bg border border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
           >
             <ChevronLeft className="w-5 h-5 text-theme-text-primary" />
           </button>
           <div className="flex items-center bg-theme-settings-input-bg rounded-md border border-theme-sidebar-border pointer-events-auto">
             <button
-              onClick={() => navigate(paths.settings.agentFlow())}
+              onClick={() => navigate(exitPath)}
               className="border-t-transparent! border-l-transparent! border-b-transparent! flex items-center gap-x-2 px-4 py-2 border-r border-theme-sidebar-border hover:bg-theme-action-menu-bg transition-colors duration-300"
             >
               <img
@@ -80,9 +89,7 @@ export default function HeaderMenu({
                   .map((flow, index) => (
                     <DropdownMenuItem
                       key={flow?.uuid || `flow-${index}`}
-                      onClick={() =>
-                        navigate(paths.agents.editAgent(flow.uuid))
-                      }
+                      onClick={() => navigate(editPath(flow.uuid))}
                     >
                       <span className="block truncate">
                         {flow?.name || t("agent-builder.header.untitled-flow")}

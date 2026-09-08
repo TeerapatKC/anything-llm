@@ -45,7 +45,24 @@ const DEFAULT_BLOCKS = [
 ];
 
 export default function AgentBuilder() {
-  const { flowId } = useParams();
+  // `slug` is only present on the workspace-scoped routes. Its presence is what decides
+  // whether this builder reads and writes the instance-wide flows or the ones owned by a
+  // single workspace - the screen itself is identical either way.
+  const { flowId, slug = null } = useParams();
+  const flowsApi = slug
+    ? {
+        list: () => AgentFlows.workspace.listFlows(slug),
+        get: (uuid) => AgentFlows.workspace.getFlow(slug, uuid),
+        save: (name, config, uuid) =>
+          AgentFlows.workspace.saveFlow(slug, name, config, uuid),
+        builderPath: () => paths.workspace.agents.builder(slug),
+      }
+    : {
+        list: () => AgentFlows.listFlows(),
+        get: (uuid) => AgentFlows.getFlow(uuid),
+        save: (name, config, uuid) => AgentFlows.saveFlow(name, config, uuid),
+        builderPath: () => paths.agents.builder(),
+      };
   const { theme } = useTheme();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -79,7 +96,7 @@ export default function AgentBuilder() {
 
   const loadAvailableFlows = async () => {
     try {
-      const { success, error, flows } = await AgentFlows.listFlows();
+      const { success, error, flows } = await flowsApi.list();
       if (!success) throw new Error(error);
       setAvailableFlows(flows);
     } catch (error) {
@@ -92,7 +109,7 @@ export default function AgentBuilder() {
 
   const loadFlow = async (uuid) => {
     try {
-      const { success, error, flow } = await AgentFlows.getFlow(uuid);
+      const { success, error, flow } = await flowsApi.get(uuid);
       if (!success) throw new Error(error);
 
       // Convert steps to blocks with IDs, ensuring finish block is at the end
@@ -222,7 +239,7 @@ export default function AgentBuilder() {
     };
 
     try {
-      const { success, error, flow } = await AgentFlows.saveFlow(
+      const { success, error, flow } = await flowsApi.save(
         name,
         flowConfig,
         currentFlowUuid
@@ -302,7 +319,7 @@ export default function AgentBuilder() {
   };
 
   const clearFlow = () => {
-    if (!!flowId) navigate(paths.agents.builder());
+    if (!!flowId) navigate(flowsApi.builderPath());
     setAgentName("");
     setAgentDescription("");
     setCurrentFlowUuid(null);

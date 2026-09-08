@@ -151,9 +151,9 @@ export default function AgentSQLConnectorSelection({
 
   return (
     <>
-      <div className="flex min-h-0 flex-1 gap-6">
+      <div className="flex w-full flex-col gap-4 min-[1100px]:min-h-0 min-[1100px]:flex-1 min-[1100px]:flex-row min-[1100px]:gap-6">
         {/* Connections list */}
-        <div className="flex min-h-0 w-[400px] shrink-0 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+        <div className="flex w-full flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 min-[1100px]:min-h-0 min-[1100px]:w-[400px] min-[1100px]:shrink-0">
           <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
             <h2 className="text-base font-semibold text-theme-text-primary">
               {t("sql-connector.title")}
@@ -163,7 +163,7 @@ export default function AgentSQLConnectorSelection({
             </p>
           </div>
 
-          <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
+          <div className="thin-scrollbar p-3 min-[1100px]:min-h-0 min-[1100px]:flex-1 min-[1100px]:overflow-y-auto">
             <div className="space-y-4">
               <div className="text-theme-text-primary flex items-center justify-between gap-x-2">
                 <div className="flex items-center gap-x-2">
@@ -224,8 +224,8 @@ export default function AgentSQLConnectorSelection({
         </div>
 
         {/* Selected connection detail */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-visible rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary">
+        <div className="flex w-full flex-col min-[1100px]:min-w-0 min-[1100px]:flex-1">
+          <div className="thin-scrollbar min-h-64 overflow-x-visible rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10 min-[1100px]:min-h-0 min-[1100px]:flex-1 min-[1100px]:overflow-y-auto min-[1100px]:p-5">
             {enabled && selectedConnection ? (
               <DBConnection
                 key={selectedConnection.database_id}

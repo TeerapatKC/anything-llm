@@ -11,6 +11,9 @@ jest.mock("../../../utils/agents/imported", () => ({
 jest.mock("../../../utils/agentFlows", () => ({
   AgentFlows: {
     activeFlowPlugins: jest.fn().mockReturnValue([]),
+    activeFlowPluginsForWorkspace: jest.fn().mockReturnValue([]),
+    globalFlows: jest.fn().mockReturnValue([]),
+    listFlowsForWorkspace: jest.fn().mockReturnValue([]),
   },
 }));
 

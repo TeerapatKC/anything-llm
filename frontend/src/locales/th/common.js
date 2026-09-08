@@ -192,6 +192,7 @@ const TRANSLATIONS = {
     agent: "การกำหนดค่าเอเจนต์",
     "upload-documents": "อัปโหลดเอกสาร",
     "slash-commands": "คำสั่งสแลช",
+    "agent-flows": "โฟลว์เอเจนต์",
   },
   general: {
     vector: {
@@ -2644,6 +2645,8 @@ const TRANSLATIONS = {
     "delete-failed": "ลบ Flow ไม่สำเร็จ",
     "toggle-failed": "ไม่สามารถเปลี่ยนสถานะ Flow ได้",
     "no-description": "ไม่มีคำอธิบาย",
+    "workspace-owned": "เวิร์กสเปซ",
+    "workspace-owned-hint": "โฟลว์นี้เป็นของเวิร์กสเปซใดเวิร์กสเปซหนึ่ง และใช้ได้เฉพาะที่นั่น",
     visibility: {
       title: "พื้นที่ทำงานที่มองเห็นได้",
       description: "เลือกพื้นที่ทำงานที่อนุญาตให้เอเจนต์ใช้ Flow นี้",

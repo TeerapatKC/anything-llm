@@ -62,8 +62,45 @@ const router = createBrowserRouter([
                   WORKSPACE_PERMISSIONS.MEMBERS_MANAGE,
                   WORKSPACE_PERMISSIONS.ROLES_MANAGE,
                   WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
+                  WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
                   WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
                 ]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        // The flow builder scoped to a workspace. Same screen as the instance-wide
+        // builder below, but gated on a workspace permission instead of super-admin so a
+        // workspace manager can reach it, and everything it saves is owned by the
+        // workspace in the URL.
+        path: "/workspace/:slug/agents/builder",
+        lazy: async () => {
+          const { default: AgentBuilder } = await import(
+            "@/pages/Admin/AgentBuilder"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={AgentBuilder}
+                permissions={[WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/workspace/:slug/agents/builder/:flowId",
+        lazy: async () => {
+          const { default: AgentBuilder } = await import(
+            "@/pages/Admin/AgentBuilder"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={AgentBuilder}
+                permissions={[WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE]}
               />
             ),
           };

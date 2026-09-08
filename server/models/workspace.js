@@ -411,6 +411,18 @@ const Workspace = {
 
   delete: async function (clause = {}) {
     try {
+      // Agent flows this workspace owns are files on disk, so they get none of the
+      // `onDelete: Cascade` its database rows do. Remove them first - otherwise they
+      // linger and a future workspace issued the same id would inherit them.
+      const workspace = await prisma.workspaces.findFirst({
+        where: clause,
+        select: { id: true },
+      });
+      if (workspace) {
+        const { AgentFlows } = require("../utils/agentFlows");
+        AgentFlows.deleteFlowsForWorkspace(workspace.id);
+      }
+
       await prisma.workspaces.delete({
         where: clause,
       });

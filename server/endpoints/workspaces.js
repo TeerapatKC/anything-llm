@@ -522,9 +522,15 @@ function workspaceEndpoints(app) {
                 id: plugin.hubId,
                 name: plugin.name || plugin.hubId,
               })),
-            flows: Object.entries(AgentFlows.getAllFlows())
-              .filter(([_, flow]) => flow.active !== false)
-              .map(([uuid, flow]) => ({ id: uuid, name: flow.name || uuid })),
+            // Global flows plus the ones this workspace owns - never another
+            // workspace's, which would otherwise be offered as a toggle here.
+            flows: AgentFlows.listFlowsForWorkspace(workspace.id)
+              .filter((flow) => flow.active)
+              .map((flow) => ({
+                id: flow.uuid,
+                name: flow.name || flow.uuid,
+                scope: flow.scope,
+              })),
             mcpServers: mcpServers.map((id) => {
               const name = id.replace(/^@@mcp_/, "");
               return { id: name, name };
@@ -1362,6 +1368,205 @@ function workspaceEndpoints(app) {
       } catch (error) {
         console.error("Error deleting workspace slash command:", error);
         response.status(500).json({ message: "Internal server error" });
+      }
+    }
+  );
+
+  /**
+   * Agent flows a workspace owns.
+   *
+   * These are separate from the instance-wide flows at /agent-flows/*: a flow created
+   * here belongs to this workspace, is usable nowhere else, and is not offered to the
+   * admin "visible to workspaces" sharing UI. Global flows are deliberately not
+   * editable through these routes - a workspace manager may build their own, not
+   * rewrite an instance-wide one that other workspaces depend on.
+   */
+
+  /**
+   * Resolve a flow that this workspace is allowed to edit, or answer 404.
+   *
+   * 404 rather than 403 on a wrong owner is intentional: a workspace manager should not
+   * be able to probe uuids to learn which flows exist elsewhere on the instance.
+   * @returns {{name: string, uuid: string, config: object}|null}
+   */
+  function ownedFlowOr404(uuid, workspace, response) {
+    const { AgentFlows } = require("../utils/agentFlows");
+    const flow = AgentFlows.loadFlow(uuid);
+    if (!flow || AgentFlows.flowOwner(uuid) !== workspace.id) {
+      response.status(404).json({ success: false, error: "Flow not found" });
+      return null;
+    }
+    return flow;
+  }
+
+  app.get(
+    "/workspace/:slug/agent-flows",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.AGENT_FLOWS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (_request, response) => {
+      try {
+        const { AgentFlows } = require("../utils/agentFlows");
+        const flows = AgentFlows.ownedByWorkspace(
+          response.locals.workspace.id
+        );
+        response.status(200).json({ success: true, flows });
+      } catch (error) {
+        console.error("Error listing workspace agent flows:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/agent-flows/:uuid",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.AGENT_FLOWS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const flow = ownedFlowOr404(
+          request.params.uuid,
+          response.locals.workspace,
+          response
+        );
+        if (!flow) return;
+        response.status(200).json({ success: true, flow });
+      } catch (error) {
+        console.error("Error loading workspace agent flow:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/agent-flows",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.AGENT_FLOWS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const { AgentFlows } = require("../utils/agentFlows");
+        const workspace = response.locals.workspace;
+        const { name, config } = reqBody(request);
+        if (!name || !config?.steps)
+          return response
+            .status(400)
+            .json({ success: false, error: "A name and steps are required" });
+
+        // Ownership comes from the resolved workspace, never from the payload.
+        const result = AgentFlows.saveFlow(String(name), config, null, {
+          workspaceId: workspace.id,
+        });
+        if (!result?.success)
+          return response.status(500).json({
+            success: false,
+            error: result?.error ?? "Failed to save flow",
+          });
+        // Envelope matches POST /agent-flows/save so the shared builder reads both the
+        // same way.
+        response.status(200).json({ success: true, flow: result });
+      } catch (error) {
+        console.error("Error creating workspace agent flow:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/agent-flows/:uuid",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.AGENT_FLOWS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const { AgentFlows } = require("../utils/agentFlows");
+        const { uuid } = request.params;
+        if (!ownedFlowOr404(uuid, response.locals.workspace, response)) return;
+
+        const { name, config } = reqBody(request);
+        if (!name || !config?.steps)
+          return response
+            .status(400)
+            .json({ success: false, error: "A name and steps are required" });
+
+        const result = AgentFlows.saveFlow(String(name), config, uuid);
+        if (!result?.success)
+          return response.status(500).json({
+            success: false,
+            error: result?.error ?? "Failed to save flow",
+          });
+        response.status(200).json({ success: true, flow: result });
+      } catch (error) {
+        console.error("Error updating workspace agent flow:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/agent-flows/:uuid/toggle",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.AGENT_FLOWS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const { AgentFlows } = require("../utils/agentFlows");
+        const { uuid } = request.params;
+        const flow = ownedFlowOr404(uuid, response.locals.workspace, response);
+        if (!flow) return;
+
+        const { active } = reqBody(request);
+        const result = AgentFlows.saveFlow(
+          flow.name,
+          { ...flow.config, active: Boolean(active) },
+          uuid
+        );
+        if (!result?.success)
+          return response.status(500).json({
+            success: false,
+            error: result?.error ?? "Failed to toggle flow",
+          });
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error toggling workspace agent flow:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/agent-flows/:uuid",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.AGENT_FLOWS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const { AgentFlows } = require("../utils/agentFlows");
+        const { uuid } = request.params;
+        if (!ownedFlowOr404(uuid, response.locals.workspace, response)) return;
+
+        const { success, error } = AgentFlows.deleteFlow(uuid);
+        if (!success)
+          return response
+            .status(500)
+            .json({ success: false, error: error ?? "Failed to delete flow" });
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error deleting workspace agent flow:", error);
+        response.status(500).json({ success: false, error: error.message });
       }
     }
   );

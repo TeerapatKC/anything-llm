@@ -83,7 +83,7 @@ const WORKSPACE_AGENT = {
         ...(await agentSkillsFromSystemSettings(workspace, skillConfig)),
         ...clarifyingQuestionsSkills,
         ...importedPluginsForConfig(skillConfig),
-        ...flowPluginsForConfig(skillConfig),
+        ...flowPluginsForConfig(skillConfig, workspace),
         ...(await mcpServersForConfig(skillConfig)),
       ],
     };
@@ -194,13 +194,16 @@ function importedPluginsForConfig(config) {
 }
 
 /**
- * Agent flows enabled for this workspace, intersected with the flows that are
- * active instance-wide.
+ * Agent flows enabled for this workspace, intersected with the flows the workspace is
+ * actually allowed to load: the global pool plus the ones it owns. Passing the workspace
+ * is what keeps another workspace's flow out even if its uuid is still sitting in this
+ * workspace's saved `activeFlows`.
  * @param {object} config - resolved workspace skill config
+ * @param {object|null} workspace - the workspace the agent is running in
  * @returns {string[]}
  */
-function flowPluginsForConfig(config) {
-  const available = AgentFlows.activeFlowPlugins();
+function flowPluginsForConfig(config, workspace = null) {
+  const available = AgentFlows.activeFlowPluginsForWorkspace(workspace?.id);
   if (!Array.isArray(config?.activeFlows)) return available;
   return available.filter((id) =>
     config.activeFlows.includes(id.replace(/^@@flow_/, ""))

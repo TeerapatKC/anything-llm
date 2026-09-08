@@ -183,6 +183,7 @@ const WORKSPACE_PERMISSIONS = {
   SETTINGS_APPEARANCE: "workspace.settings.appearance",
 
   AGENTS_MANAGE: "workspace.agents.manage",
+  AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",
@@ -955,6 +956,17 @@ const PERMISSION_CATALOG = [
     key: WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
     label: "Manage workspace agent skills",
     description: "Choose which agent skills are enabled inside this workspace.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    // Deliberately not a child of SETTINGS_MANAGE: building a flow is authoring
+    // automation that calls tools and external APIs, which is a wider capability than
+    // editing this workspace's settings and should be ticked on its own.
+    key: WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
+    label: "Build workspace agent flows",
+    description:
+      "Create, edit and delete agent flows that belong to this workspace. Flows built here are usable only inside it.",
     category: "workspace_admin",
     scope: SCOPES.WORKSPACE,
   },

@@ -180,6 +180,15 @@ function agentFlowEndpoints(app) {
             .status(404)
             .json({ success: false, error: "Flow not found" });
 
+        // A workspace-owned flow belongs to exactly one workspace by definition, so
+        // there is no sharing decision to make for it.
+        if (AgentFlows.flowOwner(uuid) !== null)
+          return response.status(400).json({
+            success: false,
+            error:
+              "This flow belongs to a workspace and cannot be shared with others.",
+          });
+
         const workspaces = await Workspace.where({});
         const results = await Promise.all(
           workspaces.map(async (workspace) => {
@@ -223,6 +232,14 @@ function agentFlowEndpoints(app) {
           return response
             .status(400)
             .json({ success: false, error: "workspaceIds must be an array" });
+
+        // See the GET above - an owned flow has no sharing decision to make.
+        if (AgentFlows.flowOwner(uuid) !== null)
+          return response.status(400).json({
+            success: false,
+            error:
+              "This flow belongs to a workspace and cannot be shared with others.",
+          });
 
         const desired = new Set(workspaceIds.map((id) => Number(id)));
         const workspaces = await Workspace.where({});
