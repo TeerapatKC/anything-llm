@@ -135,10 +135,8 @@ export default function TextToSpeechProvider({ settings }) {
     <form onSubmit={handleSubmit} className="flex w-full">
       <div className="flex flex-col w-full px-1 py-16 md:px-6 md:py-6">
         <PageHeader
-          title={"Text-to-speech Preference"}
-          description={
-            "Here you can specify what kind of text-to-speech providers you would want to use in your NexusAI experience. By default, we use the browser's built in support for these services, but you may want to use others."
-          }
+          title={t("settings-page.audio.tts-title")}
+          description={t("settings-page.audio.tts-description")}
         />
         <div className="w-full justify-end flex">
           {hasChanges && (

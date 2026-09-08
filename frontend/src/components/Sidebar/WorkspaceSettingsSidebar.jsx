@@ -8,6 +8,7 @@ import {
   SlashSquare,
   Upload,
   User,
+  Workflow,
   Wrench,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -15,10 +16,7 @@ import useLogo from "@/hooks/useLogo";
 import useUser from "@/hooks/useUser";
 import Footer from "@/components/Footer";
 import paths from "@/utils/paths";
-import {
-  WORKSPACE_PERMISSIONS as WS,
-  workspaceCan,
-} from "@/utils/permissions";
+import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import {
   Sidebar as SidebarPrimitive,
   SidebarContent,
@@ -86,6 +84,12 @@ export default function WorkspaceSettingsSidebar({ workspace }) {
       to: paths.workspace.settings.slashCommands(slug),
       visible: workspaceCan(WS.SETTINGS_MANAGE, slug, user),
     },
+    {
+      title: t("workspaces—settings.agent-flows"),
+      icon: Workflow,
+      to: paths.workspace.settings.agentFlows(slug),
+      visible: workspaceCan(WS.AGENT_FLOWS_MANAGE, slug, user),
+    },
   ];
 
   return (
@@ -123,7 +127,9 @@ export default function WorkspaceSettingsSidebar({ workspace }) {
 
       <SidebarContent className="px-2 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:px-0">
         <SidebarGroup className="p-0">
-          <SidebarGroupLabel>{t("workspaces—settings.title")}</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            {t("workspaces—settings.title")}
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1 group-data-[collapsible=icon]:items-center">
               {items.map((item) => (

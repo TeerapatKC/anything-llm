@@ -64,13 +64,13 @@ export default function CustomSiteSettings() {
         <Input
           name="meta_page_title"
           type="text"
-          placeholder="NexusAI "
+          placeholder="Nexus AI"
           autoComplete="off"
           onChange={(e) => {
             setHasChanges(true);
             setSettings((prev) => ({ ...prev, title: e.target.value }));
           }}
-          value={settings.title ?? "NexusAI "}
+          value={settings.title ?? "Nexus AI "}
         />
       </div>
 
@@ -83,8 +83,8 @@ export default function CustomSiteSettings() {
         </p>
         <div className="flex items-center gap-x-2">
           <img
-            src={settings.faviconUrl ?? "/favicon.png"}
-            onError={(e) => (e.target.src = "/favicon.png")}
+            src={settings.faviconUrl ?? "/favicon.svg"}
+            onError={(e) => (e.target.src = "/favicon.svg")}
             className="h-8 w-8 rounded-lg border border-theme-sidebar-border object-contain shrink-0"
             alt="Site favicon"
           />

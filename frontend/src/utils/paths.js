@@ -92,9 +92,22 @@ export default {
       slashCommands: (slug) => {
         return `/workspace/${slug}/settings/slash-commands`;
       },
+      agentFlows: (slug) => {
+        return `/workspace/${slug}/settings/agent-flows`;
+      },
     },
     thread: (wsSlug, threadSlug) => {
       return `/workspace/${wsSlug}/t/${threadSlug}`;
+    },
+    // The flow builder scoped to one workspace. Same screen as the instance-wide builder
+    // at `agents.builder()`, but everything it saves belongs to this workspace.
+    agents: {
+      builder: (slug) => {
+        return `/workspace/${slug}/agents/builder`;
+      },
+      editFlow: (slug, uuid) => {
+        return `/workspace/${slug}/agents/builder/${uuid}`;
+      },
     },
   },
   apiDocs: () => {
@@ -190,14 +203,8 @@ export default {
     browserExtension: () => {
       return `/settings/browser-extension`;
     },
-    mobile: () => {
-      return `/settings/mobile-connections`;
-    },
     experimental: () => {
       return `/settings/beta-features`;
-    },
-    mobileConnections: () => {
-      return `/settings/mobile-connections`;
     },
     telegram: () => {
       return `/settings/external-connections/telegram`;
@@ -260,9 +267,6 @@ export default {
 
   // TODO: Migrate all docs.nexusai.com links to the new docs.
   documentation: {
-    mobileIntroduction: () => {
-      return "https://docs.nexusai.com/mobile/overview";
-    },
     contextWindows: () => {
       return "https://docs.nexusai.com/chatting-with-documents/introduction#you-exceed-the-context-window---what-now";
     },

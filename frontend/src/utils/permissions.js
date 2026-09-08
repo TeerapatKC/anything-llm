@@ -145,6 +145,7 @@ export const WORKSPACE_PERMISSIONS = {
   SETTINGS_APPEARANCE: "workspace.settings.appearance",
 
   AGENTS_MANAGE: "workspace.agents.manage",
+  AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",

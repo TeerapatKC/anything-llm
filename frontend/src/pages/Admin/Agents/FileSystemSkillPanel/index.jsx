@@ -158,7 +158,7 @@ export default function FileSystemSkillPanel({
 
   return (
     <div className="p-2">
-      <div className="flex flex-col gap-y-[18px] max-w-[500px]">
+      <div className="flex w-full flex-col gap-y-[18px] min-[1100px]:max-w-[500px]">
         <div className="flex w-full justify-between items-center">
           <div className="flex items-center gap-x-2">
             {icon &&

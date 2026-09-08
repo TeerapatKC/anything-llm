@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { BLOCK_TYPES, BLOCK_INFO } from "../BlockList";
+import { useTranslation } from "react-i18next";
 
 /**
  * Check if the last configurable block has direct output disabled or undefined
@@ -30,6 +31,7 @@ export default function AddBlockMenu({
   setShowBlockMenu,
   addBlock,
 }) {
+  const { t } = useTranslation();
   if (checkIfCanAddBlock(blocks) === false) return null;
   return (
     <div className="mx-auto mt-4 w-[280px] pb-4">
@@ -38,7 +40,7 @@ export default function AddBlockMenu({
           render={<Button variant="outline" size="lg" className="w-full" />}
         >
           <Plus />
-          Add Block
+          {t("agent-builder.common.add-block")}
           <ChevronDown className="transition-transform duration-300 group-aria-expanded/button:rotate-180" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
@@ -56,9 +58,9 @@ export default function AddBlockMenu({
                     {info.icon}
                   </div>
                   <div className="flex-1 text-left">
-                    <div className="text-sm font-medium">{info.label}</div>
+                    <div className="text-sm font-medium">{t(info.label)}</div>
                     <div className="text-xs text-muted-foreground">
-                      {info.description}
+                      {t(info.description)}
                     </div>
                   </div>
                 </DropdownMenuItem>

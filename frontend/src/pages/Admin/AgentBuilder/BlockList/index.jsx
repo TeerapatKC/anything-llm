@@ -41,28 +41,31 @@ const BLOCK_TYPES = {
 
 const BLOCK_INFO = {
   [BLOCK_TYPES.FLOW_INFO]: {
-    label: "Flow Information",
+    label: "agent-builder.blockList.flow-information",
     icon: <Info className="w-5 h-5 text-theme-text-primary" />,
-    description: "Basic flow information",
+    description: "agent-builder.blockList.flow-information-description",
     defaultConfig: {
       name: "",
       description: "",
     },
-    getSummary: (config) => config.name || "Untitled Flow",
+    getSummary: (config, t) =>
+      config.name || t("agent-builder.blockList.untitled-flow"),
   },
   [BLOCK_TYPES.START]: {
-    label: "Flow Variables",
+    label: "agent-builder.blockList.flow-variables",
     icon: <Braces className="w-5 h-5 text-theme-text-primary" />,
-    description: "Configure agent variables and settings",
-    getSummary: (config) => {
+    description: "agent-builder.blockList.flow-variables-description",
+    getSummary: (config, t) => {
       const varCount = config.variables?.filter((v) => v.name)?.length || 0;
-      return `${varCount} variable${varCount !== 1 ? "s" : ""} defined`;
+      return t("agent-builder.blockList.variables-defined", {
+        count: varCount,
+      });
     },
   },
   [BLOCK_TYPES.API_CALL]: {
-    label: "API Call",
+    label: "agent-builder.blockList.api-call",
     icon: <Globe className="w-5 h-5 text-theme-text-primary" />,
-    description: "Make an HTTP request",
+    description: "agent-builder.blockList.api-call-description",
     defaultConfig: {
       url: "",
       method: "GET",
@@ -73,8 +76,8 @@ const BLOCK_INFO = {
       responseVariable: "",
       directOutput: false,
     },
-    getSummary: (config) =>
-      `${config.method || "GET"} ${config.url || "(no URL)"}`,
+    getSummary: (config, t) =>
+      `${config.method || "GET"} ${config.url || t("agent-builder.blockList.no-url")}`,
   },
   // TODO: Implement website, file, and code blocks
   /* [BLOCK_TYPES.WEBSITE]: {
@@ -117,20 +120,21 @@ const BLOCK_INFO = {
   },
   */
   [BLOCK_TYPES.LLM_INSTRUCTION]: {
-    label: "LLM Instruction",
+    label: "agent-builder.blockList.llm-instruction",
     icon: <Brain className="w-5 h-5 text-theme-text-primary" />,
-    description: "Process data using LLM instructions",
+    description: "agent-builder.blockList.llm-instruction-description",
     defaultConfig: {
       instruction: "",
       resultVariable: "",
       directOutput: false,
     },
-    getSummary: (config) => config.instruction || "No instruction",
+    getSummary: (config, t) =>
+      config.instruction || t("agent-builder.blockList.no-instruction"),
   },
   [BLOCK_TYPES.WEB_SCRAPING]: {
-    label: "Web Scraping",
+    label: "agent-builder.blockList.web-scraping",
     icon: <AppWindow className="w-5 h-5 text-theme-text-primary" />,
-    description: "Scrape content from a webpage",
+    description: "agent-builder.blockList.web-scraping-description",
     defaultConfig: {
       url: "",
       captureAs: "text",
@@ -138,13 +142,14 @@ const BLOCK_INFO = {
       resultVariable: "",
       directOutput: false,
     },
-    getSummary: (config) => config.url || "No URL specified",
+    getSummary: (config, t) =>
+      config.url || t("agent-builder.blockList.no-url"),
   },
   [BLOCK_TYPES.FINISH]: {
-    label: "Flow Complete",
+    label: "agent-builder.blockList.flow-complete",
     icon: <Flag className="w-4 h-4" />,
-    description: "End of agent flow",
-    getSummary: () => "Flow will end here",
+    description: "agent-builder.blockList.flow-complete-description",
+    getSummary: (_config, t) => t("agent-builder.blockList.flow-will-end"),
     defaultConfig: {},
     renderConfig: () => null,
   },
@@ -249,11 +254,11 @@ export default function BlockList({
                 </div>
                 <div className="flex-1 text-left min-w-0 max-w-[115px]">
                   <span className="text-sm font-medium text-theme-text-primary block">
-                    {BLOCK_INFO[block.type].label}
+                    {t(BLOCK_INFO[block.type].label)}
                   </span>
                   {!block.isExpanded && (
                     <p className="text-xs text-theme-text-secondary truncate">
-                      {BLOCK_INFO[block.type].getSummary(block.config)}
+                      {BLOCK_INFO[block.type].getSummary(block.config, t)}
                     </p>
                   )}
                 </div>
@@ -282,7 +287,7 @@ export default function BlockList({
                             side="bottom"
                             className="max-w-[250px] text-xs"
                           >
-                            Move block up
+                            {t("agent-builder.blockList.move-up")}
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -305,7 +310,7 @@ export default function BlockList({
                             side="bottom"
                             className="max-w-[250px] text-xs"
                           >
-                            Move block down
+                            {t("agent-builder.blockList.move-down")}
                           </TooltipContent>
                         </Tooltip>
                       )}
@@ -327,7 +332,7 @@ export default function BlockList({
                           side="bottom"
                           className="max-w-[250px] text-xs"
                         >
-                          Delete block
+                          {t("agent-builder.blockList.delete-block")}
                         </TooltipContent>
                       </Tooltip>
                     </div>

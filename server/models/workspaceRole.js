@@ -1,6 +1,7 @@
 const prisma = require("../utils/prisma");
 const {
   PERMISSIONS,
+  WORKSPACE_PERMISSIONS,
   WORKSPACE_PERMISSION_KEYS,
   WORKSPACE_OPERATOR_PERMISSION_KEYS,
   WORKSPACE_USAGE_PERMISSION_KEYS,
@@ -124,6 +125,74 @@ const WorkspaceRole = {
       await this.backfillMemberships();
     } catch (error) {
       console.error("FAILED TO SEED WORKSPACE ROLES.", error.message);
+    }
+  },
+
+  /**
+   * Grant one permission to an existing built-in role, exactly once per instance.
+   *
+   * `seed()` only calls `_setPermissions` when it *creates* a role, so a permission added
+   * to a `WORKSPACE_ROLES` definition after an instance has already booted never reaches
+   * the role rows that are already there. This closes that gap for a newly introduced key.
+   * Called from the boot sequence rather than from `seed()` so seeding stays a pure
+   * "create what is missing" step.
+   *
+   * It cannot be a SQL migration: the `permissions` row this needs to reference does not
+   * exist until `Role.seed()` writes the catalog at boot, which happens after migrations.
+   *
+   * The `system_settings` marker makes it strictly one-time, so an operator who
+   * deliberately unticks the permission afterwards does not get it forced back on at the
+   * next restart.
+   *
+   * @param {string} roleName - built-in workspace role to grant to
+   * @param {string} permissionKey - permission catalog key
+   * @param {string} marker - system_settings label recording that this ran
+   * @returns {Promise<boolean>} whether the grant was applied on this run
+   */
+  grantOnce: async function (roleName, permissionKey, marker) {
+    try {
+      const { SystemSettings } = require("./systemSettings");
+      const alreadyRan = await SystemSettings.get({ label: marker });
+      if (alreadyRan) return false;
+
+      const role = await prisma.workspace_roles.findFirst({
+        where: { name: roleName, workspace_id: null },
+        select: { id: true },
+      });
+      const permission = await prisma.permissions.findFirst({
+        where: { key: permissionKey },
+        select: { id: true },
+      });
+
+      // Nothing to grant to yet - leave the marker unset so a later boot retries once
+      // the role and catalog row both exist.
+      if (!role || !permission) return false;
+
+      await prisma.workspace_role_permissions.upsert({
+        where: {
+          workspace_role_id_permission_id: {
+            workspace_role_id: role.id,
+            permission_id: permission.id,
+          },
+        },
+        create: {
+          workspace_role_id: role.id,
+          permission_id: permission.id,
+        },
+        update: {},
+      });
+      await SystemSettings._updateSettings({ [marker]: "true" });
+      this.flushCache();
+      console.log(
+        `[WorkspaceRole] Granted "${permissionKey}" to the built-in "${roleName}" role.`
+      );
+      return true;
+    } catch (error) {
+      console.error(
+        `FAILED TO BACKFILL "${permissionKey}" ONTO "${roleName}".`,
+        error.message
+      );
+      return false;
     }
   },
 

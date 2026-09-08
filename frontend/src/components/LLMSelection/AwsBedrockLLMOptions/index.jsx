@@ -52,7 +52,7 @@ export default function AwsBedrockLLMOptions({ settings }) {
                 className="underline flex gap-x-1 items-center"
                 rel="noreferrer"
               >
-                Read more on how to use AWS Bedrock in NexusAI
+                Read more on how to use AWS Bedrock in Nexus AI
                 <SquareArrowOutUpRight size={14} />
               </a>
             </p>

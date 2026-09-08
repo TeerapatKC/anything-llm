@@ -95,7 +95,7 @@ export default function LoginForm() {
             </h3>
           </div> */}
           <p className="text-zinc-400 light:text-zinc-600 text-sm text-center">
-            {t("login.sign-in", { appName: customAppName || "NexusAI" })}
+            {t("login.sign-in", { appName: customAppName || "Nexus AI" })}
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import { useEffect, useState, Fragment } from "react";
@@ -11,6 +11,7 @@ import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
 
 export default function DefaultSystemPrompt() {
+  const { t } = useTranslation();
   const [systemPromptForm, setSystemPromptForm] = useState({
     value: "",
     default: "",
@@ -111,10 +112,8 @@ export default function DefaultSystemPrompt() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Default System Prompt"}
-        description={
-          "This is the default system prompt that will be used for new workspaces."
-        }
+        title={t("settings-page.default-system-prompt.title")}
+        description={t("settings-page.default-system-prompt.description")}
       />
       <div>
         {systemPromptForm.isLoading ? (

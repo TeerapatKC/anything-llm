@@ -156,7 +156,7 @@ function TelemetryLogs({ settings }) {
           </p>
           <p className="text-theme-text-secondary text-xs rounded-lg w-96">
             {t("help.privacy-and-data")}
-            so that we can continue to improve NexusAI for you.{" "}
+            so that we can continue to improve Nexus AI for you.{" "}
             <a
               href="mailto:team@mintplexlabs.com"
               className="underline text-blue-400"

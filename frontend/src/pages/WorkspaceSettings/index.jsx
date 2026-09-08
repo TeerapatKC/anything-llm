@@ -13,6 +13,7 @@ import WorkspaceAgentConfiguration from "./AgentConfig";
 import WorkspaceRoles from "./Roles";
 import WorkspaceDocuments from "./Documents";
 import WorkspaceSlashCommands from "./SlashCommands";
+import WorkspaceAgentFlows from "./AgentFlows";
 import System from "@/models/system";
 
 const TABS = {
@@ -24,6 +25,7 @@ const TABS = {
   "agent-config": WorkspaceAgentConfiguration,
   documents: WorkspaceDocuments,
   "slash-commands": WorkspaceSlashCommands,
+  "agent-flows": WorkspaceAgentFlows,
 };
 
 export default function WorkspaceSettings() {

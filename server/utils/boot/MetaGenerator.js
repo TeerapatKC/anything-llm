@@ -27,8 +27,8 @@ class MetaGenerator {
   #customConfig = null;
 
   #defaultManifest = {
-    name: "NexusAI",
-    short_name: "NexusAI",
+    name: "Nexus AI",
+    short_name: "Nexus AI",
     display: "standalone",
     orientation: "portrait",
     start_url: "/",
@@ -53,27 +53,27 @@ class MetaGenerator {
     return [
       {
         tag: "link",
-        props: { type: "image/svg+xml", href: "/favicon.png" },
+        props: { type: "image/svg+xml", href: "/favicon.svg" },
         content: null,
       },
       {
         tag: "title",
         props: null,
-        content: "NexusAI ",
+        content: "Nexus AI",
       },
 
       {
         tag: "meta",
         props: {
           name: "title",
-          content: "NexusAI ",
+          content: "Nexus AI",
         },
       },
       {
         tag: "meta",
         props: {
           description: "title",
-          content: "NexusAI ",
+          content: "Nexus AI",
         },
       },
 
@@ -81,20 +81,20 @@ class MetaGenerator {
       { tag: "meta", props: { property: "og:type", content: "website" } },
       {
         tag: "meta",
-        props: { property: "og:url", content: "https://NexusAI.com" },
+        props: { property: "og:url", content: "https://nexusai.com" },
       },
       {
         tag: "meta",
         props: {
           property: "og:title",
-          content: "NexusAI ",
+          content: "Nexus AI",
         },
       },
       {
         tag: "meta",
         props: {
           property: "og:description",
-          content: "NexusAI ",
+          content: "Nexus AI",
         },
       },
       {
@@ -112,20 +112,20 @@ class MetaGenerator {
       },
       {
         tag: "meta",
-        props: { property: "twitter:url", content: "https://NexusAI.com" },
+        props: { property: "twitter:url", content: "https://nexusai.com" },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:title",
-          content: "NexusAI ",
+          content: "Nexus AI",
         },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:description",
-          content: "NexusAI ",
+          content: "Nexus AI",
         },
       },
       {
@@ -136,7 +136,10 @@ class MetaGenerator {
         },
       },
 
-      { tag: "link", props: { rel: "icon", href: "/favicon.png" } },
+      {
+        tag: "link",
+        props: { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+      },
       { tag: "link", props: { rel: "apple-touch-icon", href: "/favicon.png" } },
 
       // PWA specific tags
@@ -186,12 +189,12 @@ class MetaGenerator {
   }
 
   #validUrl(faviconUrl = null) {
-    if (faviconUrl === null) return "/favicon.png";
+    if (faviconUrl === null) return "/favicon.svg";
     try {
       const url = new URL(faviconUrl);
       return url.toString();
     } catch {
-      return "/favicon.png";
+      return "/favicon.svg";
     }
   }
 
@@ -227,7 +230,7 @@ class MetaGenerator {
             props: null,
             content:
               customTitle ??
-              "NexusAI ",
+              "Nexus AI",
           };
         }
         // Override meta title
@@ -238,7 +241,7 @@ class MetaGenerator {
               name: "title",
               content:
                 customTitle ??
-                "NexusAI ",
+                "Nexus AI",
             },
           };
         }
@@ -250,7 +253,7 @@ class MetaGenerator {
               property: "og:title",
               content:
                 customTitle ??
-                "NexusAI ",
+                "Nexus AI",
             },
           };
         }
@@ -262,7 +265,7 @@ class MetaGenerator {
               property: "twitter:title",
               content:
                 customTitle ??
-                "NexusAI ",
+                "Nexus AI",
             },
           };
         }
@@ -328,7 +331,7 @@ class MetaGenerator {
       const { SystemSettings } = require("../../models/systemSettings");
       const manifestName = await SystemSettings.getValueOrFallback(
         { label: "meta_page_title" },
-        "NexusAI"
+        "Nexus AI"
       );
       const faviconURL = await SystemSettings.getValueOrFallback(
         { label: "meta_page_favicon" },

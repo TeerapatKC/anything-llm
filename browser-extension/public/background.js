@@ -1,3 +1,6 @@
+const t = (key, substitutions) =>
+  chrome.i18n.getMessage(key, substitutions) || key;
+
 const ContextMenuModel = {
   async create(workspaces) {
     await chrome.contextMenus.removeAll();
@@ -5,25 +8,25 @@ const ContextMenuModel = {
     if (workspaces && workspaces.length > 0) {
       chrome.contextMenus.create({
         id: "saveToNexusAI",
-        title: "Save selected to NexusAI",
+        title: t("context_save_selection"),
         contexts: ["selection"],
       });
 
       chrome.contextMenus.create({
         id: "embedToWorkspace",
-        title: "Embed selected content to workspace",
+        title: t("context_embed_selection"),
         contexts: ["selection"],
       });
 
       chrome.contextMenus.create({
         id: "saveEntirePageToNexusAI",
-        title: "Save entire page to NexusAI",
+        title: t("context_save_page"),
         contexts: ["page"],
       });
 
       chrome.contextMenus.create({
         id: "embedEntirePageToWorkspace",
-        title: "Embed entire page to workspace",
+        title: t("context_embed_page"),
         contexts: ["page"],
       });
 
@@ -44,12 +47,12 @@ const ContextMenuModel = {
     } else {
       chrome.contextMenus.create({
         id: "saveToNexusAI",
-        title: "Save selected to NexusAI",
+        title: t("context_save_selection"),
         contexts: ["selection"],
       });
       chrome.contextMenus.create({
         id: "saveEntirePageToNexusAI",
-        title: "Save entire page to NexusAI",
+        title: t("context_save_page"),
         contexts: ["page"],
       });
     }
@@ -76,7 +79,7 @@ const ExtensionModel = {
       headers: { Authorization: `Bearer ${apiKey}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Response not ok.')
+        if (!res.ok) throw new Error("Response not ok.");
         return res.json();
       })
       .catch(() => null);
@@ -103,7 +106,7 @@ const ExtensionModel = {
       headers: { Authorization: `Bearer ${apiKey}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Response not ok.')
+        if (!res.ok) throw new Error("Response not ok.");
         return res.json();
       })
       .catch(() => null);
@@ -120,10 +123,7 @@ const ExtensionModel = {
     ]);
     if (!apiBase || !apiKey) return;
 
-    this.showNotification(
-      'loading',
-      "Uploading entire page into available documents. Please wait."
-    );
+    this.showNotification("loading", t("upload_selection_loading"));
     const response = await fetch(
       `${apiBase}/browser-extension/upload-content`,
       {
@@ -139,7 +139,7 @@ const ExtensionModel = {
       }
     );
 
-    this.handleResponse(response, "save content");
+    this.handleResponse(response, "action_save_content");
   },
 
   async embedToWorkspace(workspaceId, selectedText, pageTitle, pageUrl) {
@@ -149,10 +149,7 @@ const ExtensionModel = {
     ]);
     if (!apiBase || !apiKey) return;
 
-    this.showNotification(
-      'loading',
-      "Uploading selected text into workspace. Please wait."
-    );
+    this.showNotification("loading", t("embed_selection_loading"));
     const response = await fetch(`${apiBase}/browser-extension/embed-content`, {
       method: "POST",
       headers: {
@@ -166,7 +163,7 @@ const ExtensionModel = {
       }),
     });
 
-    this.handleResponse(response, "embed content");
+    this.handleResponse(response, "action_embed_content");
   },
 
   async saveEntirePageToNexusAI(pageContent, pageTitle, pageUrl) {
@@ -176,10 +173,7 @@ const ExtensionModel = {
     ]);
     if (!apiBase || !apiKey) return;
 
-    this.showNotification(
-      'loading',
-      "Uploading entire page text into available documents. Please wait."
-    );
+    this.showNotification("loading", t("upload_page_loading"));
     const response = await fetch(
       `${apiBase}/browser-extension/upload-content`,
       {
@@ -195,7 +189,7 @@ const ExtensionModel = {
       }
     );
 
-    this.handleResponse(response, "save entire page");
+    this.handleResponse(response, "action_save_page");
   },
 
   async embedEntirePageToWorkspace(
@@ -210,10 +204,7 @@ const ExtensionModel = {
     ]);
     if (!apiBase || !apiKey) return;
 
-    this.showNotification(
-      'loading',
-      "Embedding entire page into workspace. Please wait."
-    );
+    this.showNotification("loading", t("embed_page_loading"));
     const response = await fetch(`${apiBase}/browser-extension/embed-content`, {
       method: "POST",
       headers: {
@@ -227,56 +218,50 @@ const ExtensionModel = {
       }),
     });
 
-    this.handleResponse(response, "embed entire page");
+    this.handleResponse(response, "action_embed_page");
   },
 
   async handleResponse(response, action) {
     if (response.status === 401 || response.status === 403) {
       await chrome.storage.sync.remove(["apiBase", "apiKey"]);
       await ContextMenuModel.remove();
-      this.showNotification(
-        'error',
-        "Authentication failed. Please reconnect the extension."
-      );
+      this.showNotification("error", t("authentication_failed"));
     } else if (!response.ok) {
       await this.checkApiKeyValidity();
-      this.showNotification("error", `Failed to ${action}. Please try again.`);
+      this.showNotification("error", t("action_failed", t(action)));
     } else {
-      this.showNotification(
-        "success",
-        "Successfully saved content to NexusAI."
-      );
+      this.showNotification("success", t("save_success"));
     }
   },
 
   /**
    * Shows badge notification on extension icon
-   * @param {"success"|"error"|"loading"} type 
-   * @param {string} message 
+   * @param {"success"|"error"|"loading"} type
+   * @param {string} message
    */
   showNotification(type, message) {
     const NOTIFICATION_MAP = {
       success: {
-        title: "Success",
+        title: t("status_success"),
         icon: "✅",
       },
       error: {
-        title: "Error",
+        title: t("status_error"),
         icon: "❌",
       },
       loading: {
-        title: "Loading",
+        title: t("status_loading"),
         icon: "⏳",
-      }
-    }
+      },
+    };
     if (!NOTIFICATION_MAP.hasOwnProperty(type)) return;
     const { icon, title } = NOTIFICATION_MAP[type];
-    chrome.action.setBadgeText({ text: icon })
+    chrome.action.setBadgeText({ text: icon });
     chrome.action.setTitle({ title: `${title}: ${message}` });
 
     setTimeout(() => {
       chrome.action.setBadgeText({ text: "" });
-      chrome.action.setTitle({ title: "NexusAI Extension" });
+      chrome.action.setTitle({ title: t("extension_title") });
     }, 5000);
   },
 };
@@ -287,7 +272,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
-  if (message.action === "connectionUpdated") return ExtensionModel.checkApiKeyValidity();
+  if (message.action === "connectionUpdated")
+    return ExtensionModel.checkApiKeyValidity();
 
   if (message.action === "newApiKey") {
     const [apiBase, apiKey] = message.connectionString.split("|");
@@ -337,10 +323,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       .catch((error) => {
         console.error("Error getting page content:", error);
-        ExtensionModel.showNotification(
-          "error",
-          "Failed to get page content. Please try again."
-        );
+        ExtensionModel.showNotification("error", t("page_content_failed"));
       });
     return;
   }
@@ -358,10 +341,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
       })
       .catch((error) => {
         console.error("Error getting page content:", error);
-        ExtensionModel.showNotification(
-          "error",
-          "Failed to get page content. Please try again."
-        );
+        ExtensionModel.showNotification("error", t("page_content_failed"));
       });
     return;
   }

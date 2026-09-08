@@ -17,8 +17,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTranslation } from "react-i18next";
 
 export default function SystemPromptVariables() {
+  const { t } = useTranslation();
   const [variables, setVariables] = useState([]);
   const [loading, setLoading] = useState(true);
   const { isOpen, openModal, closeModal } = useModal();
@@ -43,10 +45,8 @@ export default function SystemPromptVariables() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"System Prompt Variables"}
-        description={
-          "System prompt variables are used to store configuration values that can be referenced in your system prompt to enable dynamic content in your prompts."
-        }
+        title={t("settings-page.system-prompt-variables.title")}
+        description={t("settings-page.system-prompt-variables.description")}
       />
 
       <div className="w-full justify-end flex">

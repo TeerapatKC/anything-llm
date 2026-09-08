@@ -4,7 +4,7 @@ import showToast from "@/utils/toast";
 import { Building2, Pencil, Settings, Trash2, Workflow } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import paths from "@/utils/paths";
-import Toggle from "@/components/lib/Toggle";
+import Toggle, { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,24 +14,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { useTranslation } from "react-i18next";
 
 function ManageFlowMenu({ flow, onDelete }) {
   const [confirm, setConfirm] = useState(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   async function deleteFlow() {
     setConfirm({
-      title: "Delete this flow?",
-      description: "This action cannot be undone.",
-      confirmText: "Delete flow",
+      title: t("agent-flow.delete-title"),
+      description: t("agent-flow.delete-description"),
+      confirmText: t("agent-flow.delete-confirm"),
       variant: "destructive",
       onConfirm: async () => {
         const { success, error } = await AgentFlows.deleteFlow(flow.uuid);
         if (success) {
-          showToast("Flow deleted successfully.", "success");
+          showToast(t("agent-flow.deleted"), "success");
           onDelete(flow.uuid);
         } else {
-          showToast(error || "Failed to delete flow.", "error");
+          showToast(error || t("agent-flow.delete-failed"), "error");
         }
       },
     });
@@ -42,7 +44,11 @@ function ManageFlowMenu({ flow, onDelete }) {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="ghost" size="icon-sm" aria-label="Manage flow" />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={t("agent-flow.manage")}
+            />
           }
         >
           <Settings />
@@ -52,12 +58,12 @@ function ManageFlowMenu({ flow, onDelete }) {
             onClick={() => navigate(paths.agents.editAgent(flow.uuid))}
           >
             <Pencil />
-            Edit flow
+            {t("agent-flow.edit")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant="destructive" onClick={deleteFlow}>
             <Trash2 />
-            Delete flow
+            {t("agent-flow.delete")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -67,6 +73,7 @@ function ManageFlowMenu({ flow, onDelete }) {
 }
 
 export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
+  const { t } = useTranslation();
   const handleToggle = async () => {
     try {
       const { success, error } = await AgentFlows.toggleFlow(
@@ -77,14 +84,14 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
       toggleFlow(flow.uuid);
     } catch (error) {
       console.error("Failed to toggle flow:", error);
-      showToast("Failed to toggle flow", "error", { clear: true });
+      showToast(t("agent-flow.toggle-failed"), "error", { clear: true });
     }
   };
 
   return (
     <>
       <div className="p-2">
-        <div className="flex flex-col gap-y-[18px] max-w-[500px]">
+        <div className="flex w-full flex-col gap-y-[18px] min-[1100px]:max-w-[500px]">
           <div className="flex w-full justify-between items-center">
             <div className="flex items-center gap-x-2">
               <Workflow size={24} className="text-theme-text-primary" />
@@ -101,9 +108,17 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
             </div>
           </div>
           <p className="whitespace-pre-wrap text-theme-text-primary/60 text-xs font-medium py-1.5">
-            {flow.description || "No description provided"}
+            {flow.description || t("agent-flow.no-description")}
           </p>
-          <FlowWorkspaceVisibility flowUuid={flow.uuid} />
+          {/* A workspace-owned flow already belongs to exactly one workspace, so there
+              is no sharing decision to offer - the server rejects it too. */}
+          {flow.scope === "workspace" ? (
+            <p className="text-theme-text-secondary text-xs py-1.5">
+              {t("agent-flow.workspace-owned-hint")}
+            </p>
+          ) : (
+            <FlowWorkspaceVisibility flowUuid={flow.uuid} />
+          )}
         </div>
       </div>
     </>
@@ -117,6 +132,7 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
  * this is just a flow-centric view over the same data.
  */
 function FlowWorkspaceVisibility({ flowUuid }) {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [workspaces, setWorkspaces] = useState([]);
@@ -165,13 +181,15 @@ function FlowWorkspaceVisibility({ flowUuid }) {
       Array.from(selectedIds)
     );
     if (success) {
-      showToast("Workspace visibility updated.", "success", { clear: true });
+      showToast(t("agent-flow.visibility.updated"), "success", {
+        clear: true,
+      });
       setWorkspaces((prev) =>
         prev.map((w) => ({ ...w, enabled: selectedIds.has(w.id) }))
       );
       setHasChanges(false);
     } else {
-      showToast(error || "Failed to update workspace visibility.", "error", {
+      showToast(error || t("agent-flow.visibility.failed"), "error", {
         clear: true,
       });
     }
@@ -184,10 +202,10 @@ function FlowWorkspaceVisibility({ flowUuid }) {
         <Building2 size={17} className="text-theme-text-secondary" />
         <div className="min-w-0 flex-1">
           <h3 className="text-sm font-semibold text-theme-text-primary">
-            Visible to workspaces
+            {t("agent-flow.visibility.title")}
           </h3>
           <p className="mt-0.5 text-xs text-theme-text-secondary">
-            Choose which workspaces&apos; agents can use this flow.
+            {t("agent-flow.visibility.description")}
           </p>
         </div>
         {workspaces.length > 0 && (
@@ -197,18 +215,20 @@ function FlowWorkspaceVisibility({ flowUuid }) {
             size="sm"
             onClick={toggleSelectAll}
           >
-            {allSelected ? "Clear all" : "Select all"}
+            {allSelected
+              ? t("agent-flow.visibility.clear-all")
+              : t("agent-flow.visibility.select-all")}
           </Button>
         )}
       </div>
 
       {loading ? (
         <p className="px-4 py-3 text-xs text-theme-text-secondary">
-          Loading workspaces...
+          {t("agent-flow.visibility.loading")}
         </p>
       ) : workspaces.length === 0 ? (
         <p className="px-4 py-3 text-xs text-theme-text-primary/40">
-          No workspaces on this instance yet.
+          {t("agent-flow.visibility.empty")}
         </p>
       ) : (
         <div className="thin-scrollbar flex max-h-[320px] flex-col gap-y-2 overflow-y-auto p-3">
@@ -217,13 +237,16 @@ function FlowWorkspaceVisibility({ flowUuid }) {
               key={ws.id}
               className="rounded-lg bg-muted/10 ring-1 ring-foreground/10 p-3"
             >
-              <Toggle
-                size="md"
-                variant="horizontal"
-                label={ws.name}
-                enabled={selectedIds.has(ws.id)}
-                onChange={(checked) => toggleWorkspace(ws.id, checked)}
-              />
+              <label className="flex min-h-8 w-full cursor-pointer items-center justify-between gap-4">
+                <span className="min-w-0 text-left text-sm font-medium text-foreground">
+                  {ws.name}
+                </span>
+                <SimpleToggleSwitch
+                  size="md"
+                  enabled={selectedIds.has(ws.id)}
+                  onChange={(checked) => toggleWorkspace(ws.id, checked)}
+                />
+              </label>
             </div>
           ))}
         </div>
@@ -232,7 +255,9 @@ function FlowWorkspaceVisibility({ flowUuid }) {
       {hasChanges && (
         <div className="flex items-center gap-x-2 border-t border-theme-sidebar-border p-3">
           <Button type="button" size="sm" onClick={handleSave}>
-            {saving ? "Saving..." : "Save visibility"}
+            {saving
+              ? t("agent-flow.visibility.saving")
+              : t("agent-flow.visibility.save")}
           </Button>
         </div>
       )}

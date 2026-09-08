@@ -45,7 +45,7 @@ https://github.com/Mintplex-Labs/nexusai-embed/blob/main/README.md
   data-base-api-url="${serverHost}/api/embed"
   src="${scriptHost}/embed/nexusai-chat-widget.min.js">
 </script>
-<!-- NexusAI (https://nexusai.com) -->
+<!-- Nexus AI (https://nexusai.com) -->
 `;
 }
 

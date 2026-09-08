@@ -8,7 +8,7 @@ import AgentFlows from "@/models/agentFlows";
 import { useTheme } from "@/hooks/useTheme";
 import HeaderMenu from "./HeaderMenu";
 import paths from "@/utils/paths";
-import i18next from "@/i18n";
+import { useTranslation } from "react-i18next";
 import { AvailableVariablesProvider } from "./useAvailableVariables";
 import {
   Select,
@@ -45,9 +45,27 @@ const DEFAULT_BLOCKS = [
 ];
 
 export default function AgentBuilder() {
-  const { flowId } = useParams();
+  // `slug` is only present on the workspace-scoped routes. Its presence is what decides
+  // whether this builder reads and writes the instance-wide flows or the ones owned by a
+  // single workspace - the screen itself is identical either way.
+  const { flowId, slug = null } = useParams();
+  const flowsApi = slug
+    ? {
+        list: () => AgentFlows.workspace.listFlows(slug),
+        get: (uuid) => AgentFlows.workspace.getFlow(slug, uuid),
+        save: (name, config, uuid) =>
+          AgentFlows.workspace.saveFlow(slug, name, config, uuid),
+        builderPath: () => paths.workspace.agents.builder(slug),
+      }
+    : {
+        list: () => AgentFlows.listFlows(),
+        get: (uuid) => AgentFlows.getFlow(uuid),
+        save: (name, config, uuid) => AgentFlows.saveFlow(name, config, uuid),
+        builderPath: () => paths.agents.builder(),
+      };
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [agentName, setAgentName] = useState("");
   const [_, setAgentDescription] = useState("");
   const [currentFlowUuid, setCurrentFlowUuid] = useState(null);
@@ -78,18 +96,20 @@ export default function AgentBuilder() {
 
   const loadAvailableFlows = async () => {
     try {
-      const { success, error, flows } = await AgentFlows.listFlows();
+      const { success, error, flows } = await flowsApi.list();
       if (!success) throw new Error(error);
       setAvailableFlows(flows);
     } catch (error) {
       console.error(error);
-      showToast("Failed to load available flows", "error", { clear: true });
+      showToast(t("agent-builder.messages.load-flows-failed"), "error", {
+        clear: true,
+      });
     }
   };
 
   const loadFlow = async (uuid) => {
     try {
-      const { success, error, flow } = await AgentFlows.getFlow(uuid);
+      const { success, error, flow } = await flowsApi.get(uuid);
       if (!success) throw new Error(error);
 
       // Convert steps to blocks with IDs, ensuring finish block is at the end
@@ -128,7 +148,9 @@ export default function AgentBuilder() {
       setBlocks(flowBlocks);
     } catch (error) {
       console.error(error);
-      showToast("Failed to load flow", "error", { clear: true });
+      showToast(t("agent-builder.messages.load-flow-failed"), "error", {
+        clear: true,
+      });
     }
   };
 
@@ -191,7 +213,7 @@ export default function AgentBuilder() {
         descriptionRef.current?.focus();
       }
       showToast(
-        "Please provide both a name and description for your flow",
+        t("agent-builder.messages.name-description-required"),
         "error",
         {
           clear: true,
@@ -217,7 +239,7 @@ export default function AgentBuilder() {
     };
 
     try {
-      const { success, error, flow } = await AgentFlows.saveFlow(
+      const { success, error, flow } = await flowsApi.save(
         name,
         flowConfig,
         currentFlowUuid
@@ -225,13 +247,15 @@ export default function AgentBuilder() {
       if (!success) throw new Error(error);
 
       setCurrentFlowUuid(flow.uuid);
-      showToast("Agent flow saved successfully!", "success", { clear: true });
+      showToast(t("agent-builder.messages.saved"), "success", { clear: true });
       await loadAvailableFlows();
     } catch (error) {
       console.error("Save error details:", error);
-      showToast(`Failed to save agent flow. ${error.message}`, "error", {
-        clear: true,
-      });
+      showToast(
+        t("agent-builder.messages.save-failed", { error: error.message }),
+        "error",
+        { clear: true }
+      );
     }
   };
 
@@ -254,14 +278,13 @@ export default function AgentBuilder() {
   const renderVariableSelect = (
     value,
     onChange,
-    placeholder = i18next.t("agent-builder.common.select-variable")
+    placeholder = t("agent-builder.common.select-variable")
   ) => (
     <Select value={value || ""} onValueChange={onChange}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        null
         {getAvailableVariables().map((v) => (
           <SelectItem key={v.name} value={v.name}>
             {v.name}
@@ -296,7 +319,7 @@ export default function AgentBuilder() {
   };
 
   const clearFlow = () => {
-    if (!!flowId) navigate(paths.agents.builder());
+    if (!!flowId) navigate(flowsApi.builderPath());
     setAgentName("");
     setAgentDescription("");
     setCurrentFlowUuid(null);

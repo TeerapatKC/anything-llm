@@ -12,7 +12,7 @@ self.addEventListener('push', function (event) {
   if (!payload) return;
 
   // options: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification#options
-  self.registration.showNotification(payload.title || 'NexusAI', {
+  self.registration.showNotification(payload.title || 'Nexus AI', {
     ...payload,
     icon: '/favicon.png',
   });

@@ -4,6 +4,7 @@ import { isMobile } from "react-device-detect";
 import CommunityHubImportItemSteps, {
   CommunityHubImportItemLayout,
 } from "./Steps";
+import { useTranslation } from "react-i18next";
 
 function SideBarSelection({ setStep, currentStep }) {
   const currentIndex = Object.keys(CommunityHubImportItemSteps).indexOf(
@@ -69,6 +70,7 @@ function SideBarSelection({ setStep, currentStep }) {
 }
 
 export default function CommunityHubImportItemFlow() {
+  const { t } = useTranslation();
   const [step, setStep] = useState("itemId");
 
   const StepPage = CommunityHubImportItemSteps.hasOwnProperty(step)
@@ -80,10 +82,8 @@ export default function CommunityHubImportItemFlow() {
       {(settings, setSettings, setStep) => (
         <div className="flex flex-col w-full px-1 md:px-6 2xl:pr-[86px] md:py-6 py-16">
           <PageHeader
-            title={"Import a Community Item"}
-            description={
-              "Import items from the NexusAI Community Hub to enhance your instance with community-created prompts, skills, and commands."
-            }
+            title={t("settings-page.community-hub.import-title")}
+            description={t("settings-page.community-hub.import-description")}
           />
           <div className="flex-1 flex flex-col 2xl:flex-row h-full">
             <div className="flex flex-col gap-y-[18px] mt-10 w-full 2xl:w-[360px] 2xl:shrink-0">

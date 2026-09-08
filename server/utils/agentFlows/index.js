@@ -93,19 +93,32 @@ class AgentFlows {
 
   /**
    * Save a flow configuration
+   *
+   * Ownership is decided here and never taken from the caller's `config`: on an update the
+   * `workspaceId` already on disk always wins, so editing a flow - from the admin screen or
+   * from inside a workspace - can never move it to another owner. `workspaceId` is only read
+   * from `opts` when the flow is being created.
+   *
    * @param {string} name - The name of the flow
    * @param {Object} config - The flow configuration
    * @param {string|null} uuid - Optional UUID for the flow
+   * @param {{workspaceId?: number|null}} opts - Owner to stamp on a newly created flow.
+   *  Omit (or pass null) for a global, admin-created flow.
    * @returns {Object} Result of the save operation
    */
-  static saveFlow(name, config, uuid = null) {
+  static saveFlow(name, config, uuid = null, { workspaceId = null } = {}) {
     try {
       AgentFlows.createOrCheckFlowsDir();
 
+      const isUpdate = !!uuid;
       if (!uuid) uuid = uuidv4();
       const normalizedUuid = normalizePath(`${uuid}.json`);
       const filePath = path.join(AgentFlows.flowsDir, normalizedUuid);
       if (!isWithin(AgentFlows.flowsDir, filePath)) return null;
+
+      const owner = isUpdate
+        ? AgentFlows.flowOwner(uuid)
+        : AgentFlows.normalizeWorkspaceId(workspaceId);
 
       // Prevent saving flows with unsupported blocks or importing
       // flows with unsupported blocks (eg: file writing or code execution on Desktop importing to Docker)
@@ -120,7 +133,10 @@ class AgentFlows {
           "This flow includes unsupported blocks. They may not be supported by your version of NexusAI or are not available on this platform."
         );
 
-      fs.writeFileSync(filePath, JSON.stringify({ ...config, name }, null, 2));
+      fs.writeFileSync(
+        filePath,
+        JSON.stringify({ ...config, name, workspaceId: owner }, null, 2)
+      );
       return { success: true, uuid };
     } catch (error) {
       console.error("Failed to save flow:", error);
@@ -129,22 +145,96 @@ class AgentFlows {
   }
 
   /**
-   * List all available flows
+   * Coerce a stored/supplied owner into either a workspace id or null. Anything that is
+   * not a positive integer is treated as "global", so a malformed file can never make a
+   * flow look owned by a workspace that does not exist.
+   * @param {any} workspaceId
+   * @returns {number|null}
+   */
+  static normalizeWorkspaceId(workspaceId) {
+    const id = Number(workspaceId);
+    return Number.isInteger(id) && id > 0 ? id : null;
+  }
+
+  /**
+   * The workspace that owns a flow, or null when the flow is global.
+   * Returns null for a flow that does not exist - callers guard on existence separately.
+   * @param {string} uuid
+   * @returns {number|null}
+   */
+  static flowOwner(uuid) {
+    const flow = AgentFlows.loadFlow(uuid);
+    if (!flow) return null;
+    return AgentFlows.normalizeWorkspaceId(flow.config?.workspaceId);
+  }
+
+  /**
+   * Public summary of a flow, shaped like SlashCommandPresets.toPublic so both
+   * scoped features describe themselves the same way to the UI.
+   * @param {string} uuid
+   * @param {Object} flow - raw flow config as stored on disk
+   * @returns {{name: string, uuid: string, description: string, active: boolean, workspaceId: number|null, scope: "global"|"workspace"}}
+   */
+  static toPublic(uuid, flow) {
+    const workspaceId = AgentFlows.normalizeWorkspaceId(flow?.workspaceId);
+    return {
+      name: flow?.name,
+      uuid,
+      description: flow?.description,
+      active: flow?.active !== false,
+      workspaceId,
+      scope: workspaceId === null ? "global" : "workspace",
+    };
+  }
+
+  /**
+   * List every flow on the instance, whatever its owner. This is the admin view - it is
+   * deliberately unfiltered so an operator can audit what workspaces have built.
    * @returns {Array} Array of flow summaries
    */
   static listFlows() {
     try {
       const flows = AgentFlows.getAllFlows();
-      return Object.entries(flows).map(([uuid, flow]) => ({
-        name: flow.name,
-        uuid,
-        description: flow.description,
-        active: flow.active !== false,
-      }));
+      return Object.entries(flows).map(([uuid, flow]) =>
+        AgentFlows.toPublic(uuid, flow)
+      );
     } catch (error) {
       console.error("Failed to list flows:", error);
       return [];
     }
+  }
+
+  /**
+   * Flows with no owner - the ones an admin manages and may share into workspaces.
+   * @returns {Array} Array of flow summaries
+   */
+  static globalFlows() {
+    return AgentFlows.listFlows().filter((flow) => flow.workspaceId === null);
+  }
+
+  /**
+   * Flows built inside one workspace. These are visible nowhere else and are never
+   * offered to the "visible to workspaces" sharing UI.
+   * @param {number|null} workspaceId
+   * @returns {Array} Array of flow summaries
+   */
+  static ownedByWorkspace(workspaceId = null) {
+    const id = AgentFlows.normalizeWorkspaceId(workspaceId);
+    if (id === null) return [];
+    return AgentFlows.listFlows().filter((flow) => flow.workspaceId === id);
+  }
+
+  /**
+   * Every flow a workspace is allowed to reference: the global pool plus its own.
+   * This is the set the workspace's agent-skill catalog and runtime may draw from.
+   * @param {number|null} workspaceId
+   * @returns {Array} Array of flow summaries
+   */
+  static listFlowsForWorkspace(workspaceId = null) {
+    const id = AgentFlows.normalizeWorkspaceId(workspaceId);
+    return AgentFlows.listFlows().filter(
+      (flow) => flow.workspaceId === null || flow.workspaceId === id
+    );
   }
 
   /**
@@ -168,6 +258,23 @@ class AgentFlows {
   }
 
   /**
+   * Delete every flow owned by a workspace. Flows are files, so they get none of the
+   * `onDelete: Cascade` a Prisma row would - without this a deleted workspace would leave
+   * its flows on disk, and a later workspace reusing the id would inherit them.
+   * @param {number|null} workspaceId
+   * @returns {number} How many flows were removed
+   */
+  static deleteFlowsForWorkspace(workspaceId = null) {
+    const owned = AgentFlows.ownedByWorkspace(workspaceId);
+    let removed = 0;
+    for (const flow of owned) {
+      const { success } = AgentFlows.deleteFlow(flow.uuid);
+      if (success) removed++;
+    }
+    return removed;
+  }
+
+  /**
    * Execute a flow by UUID
    * @param {string} uuid - The UUID of the flow to execute
    * @param {Object} variables - Initial variables for the flow
@@ -182,7 +289,11 @@ class AgentFlows {
   }
 
   /**
-   * Get all active flows as plugins that can be loaded into the agent
+   * Get all active flows as plugins that can be loaded into the agent.
+   *
+   * Instance-wide and therefore owner-blind - only safe where no workspace is in play.
+   * Anything resolving flows for a specific workspace must use
+   * `activeFlowPluginsForWorkspace` instead, or one workspace's flow would leak into another.
    * @returns {string[]} Array of flow names in @@flow_{uuid} format
    */
   static activeFlowPlugins() {
@@ -190,6 +301,19 @@ class AgentFlows {
     return Object.entries(flows)
       .filter(([_, flow]) => flow.active !== false)
       .map(([uuid]) => `@@flow_${uuid}`);
+  }
+
+  /**
+   * Active flows a given workspace may load: the global pool plus its own. A flow owned
+   * by a different workspace is excluded even if its uuid is sitting in this workspace's
+   * `activeFlows` - stale config or a crafted id must not be able to load it.
+   * @param {number|null} workspaceId
+   * @returns {string[]} Array of flow names in @@flow_{uuid} format
+   */
+  static activeFlowPluginsForWorkspace(workspaceId = null) {
+    return AgentFlows.listFlowsForWorkspace(workspaceId)
+      .filter((flow) => flow.active)
+      .map((flow) => `@@flow_${flow.uuid}`);
   }
 
   /**

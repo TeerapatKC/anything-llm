@@ -85,7 +85,7 @@ export default function AgentSkill({ item, settings, setStep }) {
       </div>
       <div className="flex flex-col gap-y-[25px] text-white/80 light:text-theme-text-secondary text-sm">
         <p>
-          Agent skills unlock new capabilities for your NexusAI workspace via{" "}
+          Agent skills unlock new capabilities for your Nexus AI workspace via{" "}
           <code className="font-mono bg-zinc-900 light:bg-slate-200 px-1 py-0.5 rounded-md text-sm">
             @agent
           </code>{" "}

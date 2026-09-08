@@ -78,7 +78,7 @@ export default function CustomAppName() {
           name="customAppName"
           type="text"
           className="max-w-xs"
-          placeholder="NexusAI"
+          placeholder="Nexus AI"
           required={true}
           autoComplete="off"
           onChange={handleChange}

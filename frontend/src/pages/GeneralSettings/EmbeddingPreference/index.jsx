@@ -50,11 +50,11 @@ import { useTranslation } from "react-i18next";
 
 const EMBEDDERS = [
   {
-    name: "NexusAI Embedder",
+    name: "Nexus AI Embedder",
     value: "native",
     logo: NexusAIIcon,
     options: (settings) => <NativeEmbeddingOptions settings={settings} />,
-    description: "Use the built-in embedding provider for NexusAI. Zero setup!",
+    description: "Use the built-in embedding provider for Nexus AI. Zero setup!",
   },
   {
     name: "OpenAI",

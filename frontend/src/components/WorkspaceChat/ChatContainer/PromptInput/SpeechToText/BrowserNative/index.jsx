@@ -61,7 +61,7 @@ export default function BrowserNativeSTT({
     } catch {
       closeLevelStream();
       alert(
-        "NexusAI does not have access to microphone. Please enable for this site to use this feature."
+        "Nexus AI does not have access to microphone. Please enable for this site to use this feature."
       );
     }
   }

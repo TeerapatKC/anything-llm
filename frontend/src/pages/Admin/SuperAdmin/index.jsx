@@ -9,6 +9,7 @@ import SuperAdmin from "@/models/superAdmin";
 import TransferOwnership from "./TransferOwnership";
 import ReservedPermissions from "./ReservedPermissions";
 import ResetInstance from "./ResetInstance";
+import { useTranslation } from "react-i18next";
 
 /**
  * The owner-only console.
@@ -18,6 +19,7 @@ import ResetInstance from "./ResetInstance";
  * their role grants - including other administrators.
  */
 export default function AdminSuperAdmin() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [state, setState] = useState(null);
 
@@ -33,10 +35,8 @@ export default function AdminSuperAdmin() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Instance Owner"}
-        description={
-          "You hold the super admin role for this deployment. It cannot be deleted, suspended or handed out — it moves only through the transfer below. The operations on this page are irreversible and available to nobody else."
-        }
+        title={t("settings-page.instance-owner.title")}
+        description={t("settings-page.instance-owner.description")}
       />
 
       {loading ? (

@@ -250,9 +250,12 @@ async function instanceDefaultConfig() {
     activeImportedSkills: ImportedPlugin.activeImportedPlugins().map((id) =>
       id.replace(/^@@/, "")
     ),
-    activeFlows: AgentFlows.activeFlowPlugins().map((id) =>
-      id.replace(/^@@flow_/, "")
-    ),
+    // Only the global pool: this is the instance-wide default handed to *any*
+    // unconfigured workspace, so a flow owned by one workspace must never seed it.
+    // A workspace's own flows are added to its config when it enables them.
+    activeFlows: AgentFlows.globalFlows()
+      .filter((flow) => flow.active)
+      .map((flow) => flow.uuid),
     // Same idea for sql-agent's connections: every one currently configured and
     // turned on, so an unconfigured workspace can query all of them exactly as
     // it could before per-connection visibility existed. A connection an admin
