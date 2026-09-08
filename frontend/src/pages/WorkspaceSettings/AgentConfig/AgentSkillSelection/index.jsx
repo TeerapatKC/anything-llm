@@ -43,7 +43,6 @@ import {
   Bot,
   Brain,
   Database,
-  Package,
   Plug,
   Server,
   Settings,
@@ -251,19 +250,6 @@ export default function AgentSkillSelection({
           ),
           "App integrations",
           "No integrations connected on this instance."
-        ),
-        ...withEmptyState(
-          (skills?.catalog?.importedSkills ?? []).map((item) => ({
-            key: `imported:${item.id}`,
-            category: "Custom skills",
-            title: item.name,
-            icon: Package,
-            status: resolvedConfig.activeImportedSkills?.includes(item.id)
-              ? "On"
-              : "Off",
-          })),
-          "Custom skills",
-          "No custom skills installed on this instance."
         ),
         ...withEmptyState(
           (skills?.catalog?.mcpServers ?? []).map((item) => ({
@@ -744,11 +730,9 @@ export default function AgentSkillSelection({
       ? catalog?.flows
       : focusedEntityType === "sql"
         ? catalog?.sqlConnections
-        : focusedEntityType === "imported"
-          ? catalog?.importedSkills
-          : focusedEntityType === "mcp"
-            ? catalog?.mcpServers
-            : null;
+        : focusedEntityType === "mcp"
+          ? catalog?.mcpServers
+          : null;
   const focusedEntity = focusedEntityCatalog?.find(
     (item) => String(item.id) === focusedEntityId
   );
@@ -965,35 +949,28 @@ export default function AgentSkillSelection({
 
   if (focusedEntity) {
     const entityConfig =
-      focusedEntityType === "imported"
+      focusedEntityType === "flow"
         ? {
-            label: "Custom skill",
-            Icon: Package,
-            field: "activeImportedSkills",
-            activeIds: config.activeImportedSkills ?? [],
+            label: "Agent flow",
+            Icon: Workflow,
+            field: "activeFlows",
+            activeIds: config.activeFlows ?? [],
           }
-        : focusedEntityType === "flow"
+        : focusedEntityType === "sql"
           ? {
-              label: "Agent flow",
-              Icon: Workflow,
-              field: "activeFlows",
-              activeIds: config.activeFlows ?? [],
+              label: "SQL connection",
+              Icon: Database,
+              field: "activeSqlConnections",
+              activeIds: config.activeSqlConnections ?? [],
             }
-          : focusedEntityType === "sql"
-            ? {
-                label: "SQL connection",
-                Icon: Database,
-                field: "activeSqlConnections",
-                activeIds: config.activeSqlConnections ?? [],
-              }
-            : {
-                label: "MCP server",
-                Icon: Server,
-                field: "activeMcpServers",
-                activeIds:
-                  config.activeMcpServers ??
-                  (catalog?.mcpServers ?? []).map((server) => server.id),
-              };
+          : {
+              label: "MCP server",
+              Icon: Server,
+              field: "activeMcpServers",
+              activeIds:
+                config.activeMcpServers ??
+                (catalog?.mcpServers ?? []).map((server) => server.id),
+            };
     const EntityIcon = entityConfig.Icon;
     // Only a flow this workspace owns can be opened in the builder. An admin-provided
     // flow is instance-wide - other workspaces run the same definition - so it stays
@@ -1241,17 +1218,6 @@ export default function AgentSkillSelection({
           t={t}
           disabledSubSkills={config.disabledSubSkills}
           onToggleSubSkill={toggleSubSkill}
-        />
-
-        <EntityGroup
-          title="Imported skills"
-          Icon={Package}
-          emptyText="No active imported skills on this instance."
-          items={catalog?.importedSkills ?? []}
-          activeIds={config.activeImportedSkills}
-          onToggle={(id, enabled) =>
-            toggleInList("activeImportedSkills", id, enabled)
-          }
         />
 
         <EntityGroup

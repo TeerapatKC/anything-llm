@@ -252,7 +252,6 @@ const ScheduledJob = {
    */
   availableTools: async function () {
     const AgentPlugins = require("../utils/agents/aibitat/plugins");
-    const ImportedPlugin = require("../utils/agents/imported");
     const { AgentFlows } = require("../utils/agentFlows");
     const MCPCompatibilityLayer = require("../utils/MCP");
     const {
@@ -426,22 +425,6 @@ const ScheduledJob = {
           requiresSetup: outlookNeedsSetup,
         })),
         requiresSetup: outlookNeedsSetup,
-      });
-    }
-
-    // Custom/imported skills category
-    const importedPlugins = ImportedPlugin.listImportedPlugins();
-    if (importedPlugins.length > 0) {
-      const customSkillItems = importedPlugins.map((plugin) => ({
-        id: `@@${plugin.hubId}`,
-        name: plugin.name || plugin.hubId,
-        description: plugin.description || null,
-      }));
-
-      categories.push({
-        category: "custom-skills",
-        name: "Custom Skills",
-        items: customSkillItems,
       });
     }
 

@@ -1,7 +1,6 @@
 import { API_BASE, AUTH_TIMESTAMP, fullApiUrl } from "@/utils/constants";
 import { baseHeaders, safeJsonParse } from "@/utils/request";
 import DataConnector from "./dataConnector";
-import AgentPlugins from "./agentPlugins";
 import SystemPromptVariable from "./systemPromptVariable";
 
 export const SUPPORT_EMAIL_UPDATED_EVENT = "support-email-updated";
@@ -963,7 +962,6 @@ const System = {
       .catch((e) => ({ text: null, error: e.message }));
   },
 
-  agentPlugins: AgentPlugins,
   promptVariables: SystemPromptVariable,
 };
 

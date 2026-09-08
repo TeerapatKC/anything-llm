@@ -1519,9 +1519,6 @@ function dumpENV() {
     "SIMPLE_SSO_ENABLED",
     "SIMPLE_SSO_NO_LOGIN",
     "SIMPLE_SSO_NO_LOGIN_REDIRECT",
-    // Community Hub
-    "COMMUNITY_HUB_BUNDLE_DOWNLOADS_ENABLED",
-    "COMMUNITY_HUB_API_BASE",
 
     // Nvidia NIM Keys that are automatically managed
     "NVIDIA_NIM_LLM_MODEL_TOKEN_LIMIT",

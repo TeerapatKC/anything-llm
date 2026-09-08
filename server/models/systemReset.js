@@ -90,7 +90,6 @@ const PRESERVED_SETTINGS = [
   "multi_user_mode",
   "reserved_permissions",
   "telemetry_id",
-  "hub_api_key",
   "agent_sql_connections",
   "text_splitter_chunk_size",
   "text_splitter_chunk_overlap",

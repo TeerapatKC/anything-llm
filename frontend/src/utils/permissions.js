@@ -38,11 +38,6 @@ export const PERMISSIONS = {
   SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
 
-  SYSTEM_COMMUNITY_HUB: "system.community_hub",
-  SYSTEM_COMMUNITY_HUB_BROWSE: "system.community_hub.browse",
-  SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
-  SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
-
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
   USERS_CREATE: "users.create",

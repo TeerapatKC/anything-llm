@@ -69,16 +69,10 @@ const TRANSLATIONS = {
     "agent-skills": "Agent Skills",
     "agent-flow": "Agent Flow",
     "sql-connector": "SQL Connector",
-    "agent-skills-settings": "Settings",
+    "agent-skills-settings": "Agent Skills Settings",
     "default-system-prompt": "Default System Prompt",
     "instance-owner": "Instance Owner",
     "model-router": "Model Router",
-    "community-hub": {
-      title: "Community Hub",
-      trending: "Explore Trending",
-      "your-account": "Your Account",
-      "import-item": "Import Item",
-    },
     admin: "Admin",
     tools: "Tools",
     "system-prompt-variables": "System Prompt Variables",
@@ -106,14 +100,6 @@ const TRANSLATIONS = {
       title: "Browser Extension API Keys",
       description:
         "Manage API keys for browser extensions connecting to your Nexus AI instance.",
-    },
-    "community-hub": {
-      title: "Community Hub",
-      "trending-description":
-        "Share and collaborate with the Nexus AI community.",
-      "import-title": "Import a Community Item",
-      "import-description":
-        "Import items from the Nexus AI Community Hub to enhance your instance with community-created prompts, skills, and commands.",
     },
     workspaces: {
       title: "Instance Workspaces",
@@ -1828,95 +1814,6 @@ const TRANSLATIONS = {
       help: "Show keyboard shortcuts help",
     },
   },
-  community_hub: {
-    publish: {
-      system_prompt: {
-        success_title: "Success!",
-        success_description:
-          "Your System Prompt has been published to the Community Hub!",
-        success_thank_you: "Thank you for sharing to the Community!",
-        view_on_hub: "View on Community Hub",
-        modal_title: "Publish System Prompt",
-        name_label: "Name",
-        name_description: "This is the display name of your system prompt.",
-        name_placeholder: "My System Prompt",
-        description_label: "Description",
-        description_description:
-          "This is the description of your system prompt. Use this to describe the purpose of your system prompt.",
-        tags_label: "Tags",
-        tags_description:
-          "Tags are used to label your system prompt for easier searching. You can add multiple tags. Max 5 tags. Max 20 characters per tag.",
-        tags_placeholder: "Type and press Enter to add tags",
-        visibility_label: "Visibility",
-        public_description: "Public system prompts are visible to everyone.",
-        private_description: "Private system prompts are only visible to you.",
-        publish_button: "Publish to Community Hub",
-        submitting: "Publishing...",
-        prompt_label: "Prompt",
-        prompt_description:
-          "This is the actual system prompt that will be used to guide the LLM.",
-        prompt_placeholder: "Enter your system prompt here...",
-      },
-      agent_flow: {
-        success_title: "Success!",
-        success_description:
-          "Your Agent Flow has been published to the Community Hub!",
-        success_thank_you: "Thank you for sharing to the Community!",
-        view_on_hub: "View on Community Hub",
-        modal_title: "Publish Agent Flow",
-        name_label: "Name",
-        name_description: "This is the display name of your agent flow.",
-        name_placeholder: "My Agent Flow",
-        description_label: "Description",
-        description_description:
-          "This is the description of your agent flow. Use this to describe the purpose of your agent flow.",
-        tags_label: "Tags",
-        tags_description:
-          "Tags are used to label your agent flow for easier searching. You can add multiple tags. Max 5 tags. Max 20 characters per tag.",
-        tags_placeholder: "Type and press Enter to add tags",
-        visibility_label: "Visibility",
-        submitting: "Publishing...",
-        submit: "Publish to Community Hub",
-        privacy_note:
-          "Agent flows are always uploaded as private to protect any sensitive data. You can change the visibility in the Community Hub after publishing. Please verify your flow does not contain any sensitive or private information before publishing.",
-      },
-      slash_command: {
-        success_title: "Success!",
-        success_description:
-          "Your Slash Command has been published to the Community Hub!",
-        success_thank_you: "Thank you for sharing to the Community!",
-        view_on_hub: "View on Community Hub",
-        modal_title: "Publish Slash Command",
-        name_label: "Name",
-        name_description: "This is the display name of your slash command.",
-        name_placeholder: "My Slash Command",
-        description_label: "Description",
-        description_description:
-          "This is the description of your slash command. Use this to describe the purpose of your slash command.",
-        tags_label: "Tags",
-        tags_description:
-          "Tags are used to label your slash command for easier searching. You can add multiple tags. Max 5 tags. Max 20 characters per tag.",
-        tags_placeholder: "Type and press Enter to add tags",
-        visibility_label: "Visibility",
-        public_description: "Public slash commands are visible to everyone.",
-        private_description: "Private slash commands are only visible to you.",
-        publish_button: "Publish to Community Hub",
-        submitting: "Publishing...",
-        prompt_label: "Prompt",
-        prompt_description:
-          "This is the prompt that will be used when the slash command is triggered.",
-        prompt_placeholder: "Enter your prompt here...",
-      },
-      generic: {
-        unauthenticated: {
-          title: "Authentication Required",
-          description:
-            "You need to authenticate with the Nexus AI Community Hub before publishing items.",
-          button: "Connect to Community Hub",
-        },
-      },
-    },
-  },
   scheduledJobs: {
     title: "Scheduled Jobs",
     enableNotifications: "Enable browser notifications for job results",
@@ -2624,7 +2521,6 @@ const TRANSLATIONS = {
     "skill-settings": "Agent Skill Settings",
     configure: "Configure",
     "agent-flows": "Agent Flows",
-    "custom-skills": "Custom Skills",
     back: "Back",
     "create-flow": "Create Flow",
     "open-builder": "Open Builder",
@@ -2708,20 +2604,6 @@ const TRANSLATIONS = {
       error: "Error: {{error}}",
     },
   },
-  "hub-import": {
-    title: "Import an item from the community hub",
-    "intro-1":
-      "The community hub is a place where you can find, share, and import agent-skills, system prompts, slash commands, and more!",
-    "intro-2":
-      "These items are created by the Nexus AI team and community, and are a great way to get started with Nexus AI as well as extend Nexus AI in a way that is customized to your needs.",
-    "intro-3":
-      "There are both <b>private</b> and <b>public</b> items in the community hub. Private items are only visible to you, while public items are visible to everyone.",
-    warning:
-      "If you are pulling in a private item, make sure it is <b>shared with a team</b> you belong to, and you have added a <a>Connection Key.</a>",
-    "item-id": "Community Hub Item Import ID",
-    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
-    "enter-item-id": "Please enter an item ID",
-  },
   ui: {
     "select-option": "Select an option",
     "select-model": "Select a model",
@@ -2778,8 +2660,6 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "Confirm it is you",
     "what-to-clear": "What to clear",
     "choose-an-account": "Choose an account",
-    "hub-account-title": "Your Nexus AI Community Hub Account",
-    "hub-api-key-placeholder": "Enter your Nexus AI Hub API key",
     "add-to-workspace": "Add to Workspace",
     "apply-to-workspace": "Apply to Workspace",
     "max-vector-text-length": "maximum length of vectorized text",

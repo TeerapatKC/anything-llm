@@ -1,6 +1,5 @@
 const AIbitat = require("./aibitat");
 const AgentPlugins = require("./aibitat/plugins");
-const ImportedPlugin = require("./imported");
 const MCPCompatibilityLayer = require("../MCP");
 const { AgentFlows } = require("../agentFlows");
 const { httpSocket } = require("./aibitat/plugins/http-socket.js");
@@ -14,7 +13,6 @@ const {
   USER_AGENT,
   WORKSPACE_AGENT,
   agentSkillsFromSystemSettings,
-  importedPluginsForConfig,
   flowPluginsForConfig,
   mcpServersForConfig,
 } = require("./defaults");
@@ -360,27 +358,6 @@ class EphemeralAgentHandler extends AgentHandler {
         continue;
       }
 
-      // Load imported plugin. This is marked by `@@` in the array of functions to load.
-      // and is the @@hubID of the plugin.
-      if (name.startsWith("@@")) {
-        const hubId = name.replace("@@", "");
-        const valid = ImportedPlugin.validateImportedPluginHandler(hubId);
-        if (!valid) {
-          this.log(
-            `Imported plugin by hubId ${hubId} not found in plugin directory. Skipping inclusion to agent cluster.`
-          );
-          continue;
-        }
-
-        const plugin = ImportedPlugin.loadPluginByHubId(hubId);
-        const callOpts = plugin.parseCallOptions();
-        this.aibitat.use(plugin.plugin(callOpts));
-        this.log(
-          `Attached ${plugin.name} (${hubId}) imported plugin to Agent cluster`
-        );
-        continue;
-      }
-
       // Load single-stage plugin.
       if (!AgentPlugins.hasOwnProperty(name)) {
         this.log(
@@ -422,7 +399,6 @@ class EphemeralAgentHandler extends AgentHandler {
     const skillConfig = await resolveConfigForWorkspace(this.#workspace);
     this.#funcsToLoad = [
       ...(await agentSkillsFromSystemSettings(this.#workspace, skillConfig)),
-      ...importedPluginsForConfig(skillConfig),
       ...flowPluginsForConfig(skillConfig, this.#workspace),
       ...(await mcpServersForConfig(skillConfig)),
     ];

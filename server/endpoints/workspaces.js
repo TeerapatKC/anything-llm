@@ -479,7 +479,6 @@ function workspaceEndpoints(app) {
           skillCredentialStatus,
           configuredSearchProviders,
         } = require("../utils/agents/skillCredentials");
-        const ImportedPlugin = require("../utils/agents/imported");
         const { AgentFlows } = require("../utils/agentFlows");
         const MCPCompatibilityLayer = require("../utils/MCP");
         const { SystemSettings } = require("../models/systemSettings");
@@ -518,14 +517,6 @@ function workspaceEndpoints(app) {
           // none) - the only engines a workspace may pick between.
           availableSearchProviders: configuredSearchProviders(),
           catalog: {
-            // `name` is not guaranteed on either config, so fall back to the id
-            // rather than rendering a blank row in the UI.
-            importedSkills: ImportedPlugin.listImportedPlugins()
-              .filter((plugin) => plugin.active)
-              .map((plugin) => ({
-                id: plugin.hubId,
-                name: plugin.name || plugin.hubId,
-              })),
             // Global flows plus the ones this workspace owns - never another
             // workspace's, which would otherwise be offered as a toggle here.
             flows: AgentFlows.listFlowsForWorkspace(workspace.id)

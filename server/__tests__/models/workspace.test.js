@@ -78,7 +78,6 @@ describeValidation("agentSkillConfig", () => {
       activeDefaultSkills: [],
       activeSkills: ["web-browsing"], // non-strings dropped
       disabledSubSkills: {},
-      activeImportedSkills: [],
       activeFlows: [],
       activeMcpServers: [],
       searchProvider: null,

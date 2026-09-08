@@ -56,7 +56,7 @@ const TRANSLATIONS = {
     "agent-skills": "エージェントスキル",
     "agent-flow": "エージェントフロー",
     "sql-connector": "SQLコネクタ",
-    "agent-skills-settings": "設定",
+    "agent-skills-settings": "エージェントスキル設定",
     "default-system-prompt": "デフォルトシステムプロンプト",
     "instance-owner": "インスタンス所有者",
     admin: "管理者",
@@ -69,12 +69,6 @@ const TRANSLATIONS = {
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
     chat: "チャット",
-    "community-hub": {
-      title: "地域交流拠点",
-      trending: "人気のあるものを探す",
-      "your-account": "あなたのアカウント",
-      "import-item": "輸入品",
-    },
     channels: "チャンネル",
     "available-channels": {
       telegram: "テレグラム",
@@ -98,14 +92,6 @@ const TRANSLATIONS = {
       title: "ブラウザ拡張機能の API キー",
       description:
         "Nexus AI インスタンスに接続するブラウザ拡張機能の API キーを管理します。",
-    },
-    "community-hub": {
-      title: "コミュニティハブ",
-      "trending-description":
-        "Nexus AI コミュニティで共有し、共同作業を行います。",
-      "import-title": "コミュニティアイテムをインポート",
-      "import-description":
-        "Nexus AI コミュニティハブからプロンプト、スキル、コマンドなどをインポートして、このインスタンスを拡張します。",
     },
     workspaces: {
       title: "インスタンスのワークスペース",
@@ -1568,104 +1554,6 @@ const TRANSLATIONS = {
       help: "キーボードショートカットのヘルプを表示する",
     },
   },
-  community_hub: {
-    publish: {
-      system_prompt: {
-        success_title: "成功！",
-        success_description:
-          "システムプロンプトがコミュニティハブに公開されました。",
-        success_thank_you: "コミュニティへの共有ありがとうございます。",
-        view_on_hub: "コミュニティハブでの表示",
-        modal_title: "出版システムに関するプロンプト",
-        name_label: "名前",
-        name_description: "これは、システムのプロンプトの名前です。",
-        name_placeholder: "私のシステムプロンプト",
-        description_label: "説明",
-        description_description:
-          "これは、システムプロンプトの説明です。システムプロンプトの目的を説明するために使用してください。",
-        tags_label: "タグ",
-        tags_description:
-          "タグは、システムプロンプトを簡単に検索できるようにラベル付けするために使用されます。複数のタグを追加できます。最大5つのタグ。各タグは最大20文字です。",
-        tags_placeholder:
-          "タグを追加するには、タイプしてEnterキーを押してください。",
-        visibility_label: "視界",
-        public_description:
-          "一般のシステムからのメッセージは、すべての人に表示されます。",
-        private_description:
-          "プライベートなシステムからのメッセージは、あなただけが見ることができます。",
-        publish_button: "コミュニティハブに公開する",
-        submitting: "出版...",
-        prompt_label: "プロンプト",
-        prompt_description:
-          "これは、大規模言語モデル（LLM）を誘導するために使用される実際のシステムプロンプトです。",
-        prompt_placeholder: "ここにシステムプロンプトを入力してください...",
-      },
-      agent_flow: {
-        success_title: "成功！",
-        success_description:
-          "あなたのエージェントフローがコミュニティハブに公開されました。",
-        success_thank_you: "コミュニティへの共有ありがとうございます。",
-        view_on_hub: "コミュニティハブで確認",
-        modal_title: "出版代理店フロー",
-        name_label:
-          "山田太郎\n\n\n氏名\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n<|im",
-        name_description: "これは、あなたのエージェントフローの名前です。",
-        name_placeholder: "私のエージェントフロー",
-        description_label: "説明",
-        description_description:
-          "これは、あなたのエージェントフローの説明です。この説明文を使って、あなたのエージェントフローの目的を記述してください。",
-        tags_label: "タグ",
-        tags_description:
-          "タグは、ワークフローをより簡単に検索するために使用されます。複数のタグを追加できます。最大5つのタグ。各タグは最大20文字です。",
-        tags_placeholder:
-          "タグを追加するには、タイプしてEnterキーを押してください。",
-        visibility_label: "視界",
-        submitting: "出版...",
-        submit: "コミュニティハブに公開する",
-        privacy_note:
-          "機密性の高いデータ保護のため、ワークフローは常にプライベートでアップロードされます。公開後、コミュニティハブで可視性を変更できます。公開前に、ワークフローに機密情報や個人情報が含まれていないことを確認してください。",
-      },
-      generic: {
-        unauthenticated: {
-          title: "本人確認が必要です。",
-          description:
-            "アイテムを公開する前に、Nexus AIコミュニティハブで認証する必要があります。",
-          button: "コミュニティハブへの接続",
-        },
-      },
-      slash_command: {
-        success_title: "成功！",
-        success_description:
-          "スラッシュコマンドがコミュニティハブに公開されました。",
-        success_thank_you: "コミュニティへの共有ありがとうございます。",
-        view_on_hub: "コミュニティハブでの表示",
-        modal_title: "スラッシュコマンドを公開する",
-        name_label: "名前",
-        name_description: "これは、スラッシュコマンドの名前です。",
-        name_placeholder: "私のスラッシュコマンド",
-        description_label: "説明",
-        description_description:
-          "これは、スラッシュコマンドの説明です。スラッシュコマンドの目的を記述するために使用してください。",
-        tags_label: "タグ",
-        tags_description:
-          "スラッシュコマンドをより簡単に検索できるように、タグを使用してコマンドを分類します。複数のタグを追加できます。最大5つのタグ。各タグは最大20文字です。",
-        tags_placeholder:
-          "タグを追加するには、タイプしてEnterキーを押してください。",
-        visibility_label: "視界",
-        public_description:
-          "一般のユーザーが利用できるコマンドは、すべての人に公開されています。",
-        private_description:
-          "私だけが利用できるプライベートなスラッシュコマンドのみが表示されます。",
-        publish_button: "コミュニティハブに公開する",
-        submitting: "出版...",
-        prompt_label:
-          "どのような状況で、どのような目的で、どのような方法で、どのような結果を期待していますか？",
-        prompt_description:
-          "これは、スラッシュコマンドが実行されたときに使用されるプロンプトです。",
-        prompt_placeholder: "ここに指示を入力してください...",
-      },
-    },
-  },
   home: {
     welcome: "ようこそ",
     chooseWorkspace: "ワークスペースを選択してチャットを開始してください！",
@@ -2645,7 +2533,6 @@ const TRANSLATIONS = {
     "skill-settings": "エージェントスキル設定",
     configure: "設定",
     "agent-flows": "エージェントフロー",
-    "custom-skills": "カスタムスキル",
     back: "戻る",
     "create-flow": "フローを作成",
     "open-builder": "ビルダーを開く",
@@ -2728,20 +2615,6 @@ const TRANSLATIONS = {
       error: "エラー: {{error}}",
     },
   },
-  "hub-import": {
-    title: "コミュニティハブからアイテムをインポート",
-    "intro-1":
-      "コミュニティハブでは、エージェントスキル、システムプロンプト、スラッシュコマンドなどを探して共有・インポートできます。",
-    "intro-2":
-      "これらのアイテムは Nexus AI チームとコミュニティによって作成されており、Nexus AI を使い始めるのにも、ニーズに合わせて拡張するのにも最適です。",
-    "intro-3":
-      "コミュニティハブには<b>非公開</b>アイテムと<b>公開</b>アイテムがあります。非公開アイテムはあなたにのみ表示され、公開アイテムは全員に表示されます。",
-    warning:
-      "非公開アイテムを取り込む場合は、そのアイテムが所属する<b>チームに共有されている</b>こと、および<a>接続キー</a>を追加済みであることを確認してください。",
-    "item-id": "コミュニティハブのアイテムインポート ID",
-    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
-    "enter-item-id": "アイテム ID を入力してください",
-  },
   ui: {
     "select-option": "オプションを選択",
     "select-model": "モデルを選択",
@@ -2799,8 +2672,6 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "本人であることを確認",
     "what-to-clear": "消去する対象",
     "choose-an-account": "アカウントを選択",
-    "hub-account-title": "Nexus AI コミュニティハブのアカウント",
-    "hub-api-key-placeholder": "Nexus AI Hub の API キーを入力してください",
     "add-to-workspace": "ワークスペースに追加",
     "apply-to-workspace": "ワークスペースに適用",
     "max-vector-text-length": "ベクトル化するテキストの最大長",

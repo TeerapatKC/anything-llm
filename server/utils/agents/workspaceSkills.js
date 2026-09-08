@@ -1,7 +1,6 @@
 const { SystemSettings } = require("../../models/systemSettings");
 const { safeJsonParse } = require("../http");
 const AgentPlugins = require("./aibitat/plugins");
-const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const {
   listSQLConnections,
@@ -11,8 +10,8 @@ const {
  * Per-workspace agent skill configuration.
  *
  * Historically every agent skill toggle lived in `system_settings` (built-in
- * skills) or in the `active` flag of a plugin/flow file on disk (imported
- * skills, flows) and applied to every workspace at once. This module keeps that
+ * skills) or in the `active` flag of a flow file on disk and applied to every
+ * workspace at once. This module keeps that
  * instance-wide config as the *default*, but lets each workspace own an
  * independent copy stored as JSON on `workspaces.agentSkillConfig`.
  *
@@ -28,7 +27,6 @@ const {
  *   activeDefaultSkills: string[],              // built-in default-on skills kept enabled
  *   activeSkills: string[],                     // configurable built-in skills enabled
  *   disabledSubSkills: { [parent]: string[] },  // per-parent disabled child skills
- *   activeImportedSkills: string[],             // imported plugin hubIds
  *   activeFlows: string[],                      // agent flow uuids
  *   activeSqlConnections: string[],              // sql-agent connection database_ids
  *   activeMcpServers: string[],                 // MCP server names
@@ -95,7 +93,6 @@ const EMPTY_CONFIG = {
   activeDefaultSkills: [],
   activeSkills: [],
   disabledSubSkills: {},
-  activeImportedSkills: [],
   activeFlows: [],
   activeSqlConnections: [],
   activeMcpServers: [],
@@ -164,7 +161,6 @@ function normalizeConfig(config = null) {
     "activeDefaultSkills",
     "activeSkills",
     "disabledSubSkills",
-    "activeImportedSkills",
     "activeFlows",
     "activeSqlConnections",
     "activeMcpServers",
@@ -192,7 +188,6 @@ function normalizeConfig(config = null) {
     activeDefaultSkills: stringArray(parsed.activeDefaultSkills),
     activeSkills: stringArray(parsed.activeSkills),
     disabledSubSkills,
-    activeImportedSkills: stringArray(parsed.activeImportedSkills),
     activeFlows: stringArray(parsed.activeFlows),
     activeSqlConnections: stringArray(parsed.activeSqlConnections),
     activeMcpServers: stringArray(parsed.activeMcpServers),
@@ -244,12 +239,9 @@ async function instanceDefaultConfig() {
     ),
     activeSkills,
     disabledSubSkills,
-    // Imported skills and flows carry their own `active` flag on disk; MCP
-    // servers are active whenever they boot. Mirror that as the default so an
-    // unconfigured workspace keeps today's behaviour.
-    activeImportedSkills: ImportedPlugin.activeImportedPlugins().map((id) =>
-      id.replace(/^@@/, "")
-    ),
+    // Flows carry their own `active` flag on disk; MCP servers are active
+    // whenever they boot. Mirror that as the default so an unconfigured
+    // workspace keeps today's behaviour.
     // Only the global pool: this is the instance-wide default handed to *any*
     // unconfigured workspace, so a flow owned by one workspace must never seed it.
     // A workspace's own flows are added to its config when it enables them.

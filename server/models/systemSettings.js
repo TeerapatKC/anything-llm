@@ -37,7 +37,7 @@ const SystemSettings = {
   /** A default system prompt that is used when no other system prompt is set or available to the function caller. */
   saneDefaultSystemPrompt:
     "Given the following conversation, relevant context, and a follow up question, reply with an answer to the current question the user is asking. The current date and time is {datetime}. Return only your response to the question given the above information following the users instructions as needed.",
-  protectedFields: ["hub_api_key", "onboarding_complete"],
+  protectedFields: ["onboarding_complete"],
   publicFields: [
     "footer_data",
     "support_email",
@@ -56,7 +56,6 @@ const SystemSettings = {
     "google_calendar_agent_config",
     "disabled_outlook_skills",
     "outlook_agent_config",
-    "imported_agent_skills",
     "agent_clarifying_questions_enabled",
     "agent_clarifying_questions_max_per_turn",
     "custom_app_name",
@@ -95,7 +94,6 @@ const SystemSettings = {
     "meta_page_favicon",
 
     // Hub settings
-    "hub_api_key",
 
     // Memory/Personalization
     "memory_enabled",
@@ -427,10 +425,6 @@ const SystemSettings = {
       } finally {
         new MetaGenerator().clearConfig();
       }
-    },
-    hub_api_key: (apiKey) => {
-      if (!apiKey) return null;
-      return String(apiKey);
     },
     default_system_prompt: (prompt) => {
       if (typeof prompt !== "string" || !prompt) return null;
@@ -1088,22 +1082,6 @@ const SystemSettings = {
 
     return connections;
   },
-  /**
-   * Get user configured Community Hub Settings
-   * Connection key is used to authenticate with the Community Hub API
-   * for your account.
-   * @returns {Promise<{connectionKey: string}>}
-   */
-  hubSettings: async function () {
-    try {
-      const hubKey = await this.get({ label: "hub_api_key" });
-      return { connectionKey: hubKey?.value || null };
-    } catch (error) {
-      console.error(error.message);
-      return { connectionKey: null };
-    }
-  },
-
   simpleSSO: {
     /**
      * Gets the no login redirect URL. If the conditions below are not met, this will return null.

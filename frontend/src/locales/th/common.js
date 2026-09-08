@@ -68,16 +68,10 @@ const TRANSLATIONS = {
     "agent-skills": "ทักษะของเอเจนต์",
     "agent-flow": "Agent Flow",
     "sql-connector": "ตัวเชื่อมต่อ SQL",
-    "agent-skills-settings": "การตั้งค่า",
+    "agent-skills-settings": "การตั้งค่าทักษะของเอเจนต์",
     "default-system-prompt": "System Prompt เริ่มต้น",
     "instance-owner": "เจ้าของอินสแตนซ์",
     "model-router": "ตัวจัดเส้นทางโมเดล",
-    "community-hub": {
-      title: "ศูนย์รวมชุมชน",
-      trending: "สำรวจรายการยอดนิยม",
-      "your-account": "บัญชีของคุณ",
-      "import-item": "นำเข้ารายการ",
-    },
     admin: "ผู้ดูแลระบบ",
     tools: "เครื่องมือ",
     "system-prompt-variables": "ตัวแปรของ System Prompt",
@@ -105,13 +99,6 @@ const TRANSLATIONS = {
       title: "คีย์ API สำหรับส่วนขยายเบราว์เซอร์",
       description:
         "จัดการคีย์ API สำหรับส่วนขยายเบราว์เซอร์ที่เชื่อมต่อกับอินสแตนซ์ Nexus AI ของคุณ",
-    },
-    "community-hub": {
-      title: "ศูนย์รวมชุมชน",
-      "trending-description": "แบ่งปันและทำงานร่วมกับชุมชน Nexus AI",
-      "import-title": "นำเข้ารายการจากชุมชน",
-      "import-description":
-        "นำเข้ารายการจากศูนย์รวมชุมชน Nexus AI เพื่อเพิ่มพรอมต์ ทักษะ และคำสั่งที่สร้างโดยชุมชนให้กับอินสแตนซ์ของคุณ",
     },
     workspaces: {
       title: "พื้นที่ทำงานของอินสแตนซ์",
@@ -1793,96 +1780,6 @@ const TRANSLATIONS = {
       help: "แสดงความช่วยเหลือเกี่ยวกับปุ่มลัด",
     },
   },
-  community_hub: {
-    publish: {
-      system_prompt: {
-        success_title: "สำเร็จ!",
-        success_description:
-          "System Prompt ของคุณถูกเผยแพร่ไปยังศูนย์รวมชุมชนแล้ว!",
-        success_thank_you: "ขอบคุณที่แบ่งปันสู่ชุมชน!",
-        view_on_hub: "ดูในศูนย์รวมชุมชน",
-        modal_title: "เผยแพร่ System Prompt",
-        name_label: "ชื่อ",
-        name_description: "นี่คือชื่อที่แสดงของ system prompt ของคุณ",
-        name_placeholder: "System Prompt ของฉัน",
-        description_label: "คำอธิบาย",
-        description_description:
-          "นี่คือคำอธิบายของ system prompt ของคุณ ใช้เพื่ออธิบายวัตถุประสงค์ของ system prompt",
-        tags_label: "แท็ก",
-        tags_description:
-          "แท็กใช้สำหรับกำกับ system prompt ของคุณเพื่อให้ค้นหาได้ง่ายขึ้น คุณสามารถเพิ่มได้หลายแท็ก สูงสุด 5 แท็ก แท็กละไม่เกิน 20 ตัวอักษร",
-        tags_placeholder: "พิมพ์แล้วกด Enter เพื่อเพิ่มแท็ก",
-        visibility_label: "การมองเห็น",
-        public_description: "System prompt สาธารณะจะมองเห็นได้โดยทุกคน",
-        private_description:
-          "System prompt ส่วนตัวจะมองเห็นได้เฉพาะคุณเท่านั้น",
-        publish_button: "เผยแพร่ไปยังศูนย์รวมชุมชน",
-        submitting: "กำลังเผยแพร่...",
-        prompt_label: "พรอมต์",
-        prompt_description:
-          "นี่คือ system prompt จริงที่จะใช้ในการกำกับการทำงานของ LLM",
-        prompt_placeholder: "ป้อน system prompt ของคุณที่นี่...",
-      },
-      agent_flow: {
-        success_title: "สำเร็จ!",
-        success_description:
-          "Agent Flow ของคุณถูกเผยแพร่ไปยังศูนย์รวมชุมชนแล้ว!",
-        success_thank_you: "ขอบคุณที่แบ่งปันสู่ชุมชน!",
-        view_on_hub: "ดูในศูนย์รวมชุมชน",
-        modal_title: "เผยแพร่ Agent Flow",
-        name_label: "ชื่อ",
-        name_description: "นี่คือชื่อที่แสดงของ agent flow ของคุณ",
-        name_placeholder: "Agent Flow ของฉัน",
-        description_label: "คำอธิบาย",
-        description_description:
-          "นี่คือคำอธิบายของ agent flow ของคุณ ใช้เพื่ออธิบายวัตถุประสงค์ของ agent flow",
-        tags_label: "แท็ก",
-        tags_description:
-          "แท็กใช้สำหรับกำกับ agent flow ของคุณเพื่อให้ค้นหาได้ง่ายขึ้น คุณสามารถเพิ่มได้หลายแท็ก สูงสุด 5 แท็ก แท็กละไม่เกิน 20 ตัวอักษร",
-        tags_placeholder: "พิมพ์แล้วกด Enter เพื่อเพิ่มแท็ก",
-        visibility_label: "การมองเห็น",
-        submitting: "กำลังเผยแพร่...",
-        submit: "เผยแพร่ไปยังศูนย์รวมชุมชน",
-        privacy_note:
-          "Agent flow จะถูกอัปโหลดเป็นแบบส่วนตัวเสมอเพื่อปกป้องข้อมูลที่ละเอียดอ่อน คุณสามารถเปลี่ยนการมองเห็นได้ในศูนย์รวมชุมชนหลังจากเผยแพร่แล้ว โปรดตรวจสอบว่า flow ของคุณไม่มีข้อมูลที่ละเอียดอ่อนหรือเป็นส่วนตัวก่อนเผยแพร่",
-      },
-      slash_command: {
-        success_title: "สำเร็จ!",
-        success_description:
-          "คำสั่งสแลชของคุณถูกเผยแพร่ไปยังศูนย์รวมชุมชนแล้ว!",
-        success_thank_you: "ขอบคุณที่แบ่งปันสู่ชุมชน!",
-        view_on_hub: "ดูในศูนย์รวมชุมชน",
-        modal_title: "เผยแพร่คำสั่งสแลช",
-        name_label: "ชื่อ",
-        name_description: "นี่คือชื่อที่แสดงของคำสั่งสแลชของคุณ",
-        name_placeholder: "คำสั่งสแลชของฉัน",
-        description_label: "คำอธิบาย",
-        description_description:
-          "นี่คือคำอธิบายของคำสั่งสแลชของคุณ ใช้เพื่ออธิบายวัตถุประสงค์ของคำสั่งสแลช",
-        tags_label: "แท็ก",
-        tags_description:
-          "แท็กใช้สำหรับกำกับคำสั่งสแลชของคุณเพื่อให้ค้นหาได้ง่ายขึ้น คุณสามารถเพิ่มได้หลายแท็ก สูงสุด 5 แท็ก แท็กละไม่เกิน 20 ตัวอักษร",
-        tags_placeholder: "พิมพ์แล้วกด Enter เพื่อเพิ่มแท็ก",
-        visibility_label: "การมองเห็น",
-        public_description: "คำสั่งสแลชสาธารณะจะมองเห็นได้โดยทุกคน",
-        private_description: "คำสั่งสแลชส่วนตัวจะมองเห็นได้เฉพาะคุณเท่านั้น",
-        publish_button: "เผยแพร่ไปยังศูนย์รวมชุมชน",
-        submitting: "กำลังเผยแพร่...",
-        prompt_label: "พรอมต์",
-        prompt_description:
-          "นี่คือพรอมต์ที่จะใช้เมื่อมีการเรียกใช้คำสั่งสแลชนี้",
-        prompt_placeholder: "ป้อนพรอมต์ของคุณที่นี่...",
-      },
-      generic: {
-        unauthenticated: {
-          title: "ต้องยืนยันตัวตน",
-          description:
-            "คุณต้องยืนยันตัวตนกับศูนย์รวมชุมชนของ Nexus AI ก่อนเผยแพร่รายการ",
-          button: "เชื่อมต่อกับศูนย์รวมชุมชน",
-        },
-      },
-    },
-  },
   scheduledJobs: {
     title: "งานตามกำหนดเวลา",
     enableNotifications: "เปิดการแจ้งเตือนในเบราว์เซอร์สำหรับผลลัพธ์ของงาน",
@@ -2584,7 +2481,6 @@ const TRANSLATIONS = {
     "skill-settings": "การตั้งค่าทักษะเอเจนต์",
     configure: "กำหนดค่า",
     "agent-flows": "Agent Flows",
-    "custom-skills": "ทักษะที่กำหนดเอง",
     back: "กลับ",
     "create-flow": "สร้าง Flow",
     "open-builder": "เปิดตัวสร้าง",
@@ -2666,20 +2562,6 @@ const TRANSLATIONS = {
       error: "ข้อผิดพลาด: {{error}}",
     },
   },
-  "hub-import": {
-    title: "นำเข้ารายการจากศูนย์รวมชุมชน",
-    "intro-1":
-      "ศูนย์รวมชุมชนคือที่ที่คุณสามารถค้นหา แบ่งปัน และนำเข้าทักษะของเอเจนต์ system prompt คำสั่งสแลช และอื่น ๆ อีกมากมาย!",
-    "intro-2":
-      "รายการเหล่านี้สร้างขึ้นโดยทีมงาน Nexus AI และชุมชน เป็นวิธีที่ยอดเยี่ยมในการเริ่มต้นใช้งาน Nexus AI และขยายความสามารถของ Nexus AI ให้ตรงกับความต้องการของคุณ",
-    "intro-3":
-      "ในศูนย์รวมชุมชนมีทั้งรายการแบบ<b>ส่วนตัว</b>และ<b>สาธารณะ</b> รายการส่วนตัวจะมองเห็นได้เฉพาะคุณ ส่วนรายการสาธารณะจะมองเห็นได้โดยทุกคน",
-    warning:
-      "หากคุณกำลังดึงรายการส่วนตัวเข้ามา โปรดตรวจสอบว่ารายการนั้น<b>ถูกแชร์กับทีม</b>ที่คุณสังกัดอยู่ และคุณได้เพิ่ม<a>คีย์การเชื่อมต่อ</a>แล้ว",
-    "item-id": "รหัสนำเข้ารายการจากศูนย์รวมชุมชน",
-    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
-    "enter-item-id": "โปรดป้อนรหัสรายการ",
-  },
   ui: {
     "select-option": "เลือกตัวเลือก",
     "select-model": "เลือกโมเดล",
@@ -2736,8 +2618,6 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "ยืนยันว่าเป็นคุณ",
     "what-to-clear": "สิ่งที่จะล้าง",
     "choose-an-account": "เลือกบัญชี",
-    "hub-account-title": "บัญชีศูนย์รวมชุมชน Nexus AI ของคุณ",
-    "hub-api-key-placeholder": "ป้อนคีย์ API ของ Nexus AI Hub ของคุณ",
     "add-to-workspace": "เพิ่มเข้าพื้นที่ทำงาน",
     "apply-to-workspace": "นำไปใช้กับพื้นที่ทำงาน",
     "max-vector-text-length": "ความยาวสูงสุดของข้อความที่แปลงเป็นเวกเตอร์",

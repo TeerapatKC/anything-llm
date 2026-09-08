@@ -71,11 +71,6 @@ const PERMISSIONS = {
   SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
 
-  SYSTEM_COMMUNITY_HUB: "system.community_hub",
-  SYSTEM_COMMUNITY_HUB_BROWSE: "system.community_hub.browse",
-  SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
-  SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
-
   // People
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
@@ -378,35 +373,6 @@ const PERMISSION_CATALOG = [
     label: "Manage mobile devices",
     description: "Approve, rename and revoke paired mobile/desktop devices.",
     category: "system",
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-    label: "Manage community hub",
-    description:
-      "Everything to do with the community hub. Tick the parts below for narrower access.",
-    category: "system",
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB_BROWSE,
-    label: "Browse the community hub",
-    description:
-      "Search the hub and manage the hub connection key, without importing anything.",
-    category: "system",
-    parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB_IMPORT,
-    label: "Import from the community hub",
-    description: "Pull hub items (skills, prompts, flows) into this instance.",
-    category: "system",
-    parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB_PUBLISH,
-    label: "Publish to the community hub",
-    description: "Push items from this instance out to the community hub.",
-    category: "system",
-    parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
   },
 
   {
@@ -1386,7 +1352,6 @@ const SETTING_PERMISSIONS = {
   disabled_create_files_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_gmail_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_outlook_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
-  imported_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_search_provider: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_sql_connections: PERMISSIONS.AGENTS_MANAGE_SKILLS,
 };

@@ -405,7 +405,7 @@ describe("the permission list handed to the browser", () => {
     await ReservedPermissions.set([]);
     const held = await Role.permissionsForUser(ADMIN);
 
-    expect(held).toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB);
+    expect(held).toContain(PERMISSIONS.AGENTS_FLOWS);
     expect(held).toContain(PERMISSIONS.SYSTEM_SETTINGS_LLM);
     expect(held).toContain(PERMISSIONS.INTEGRATIONS_TELEGRAM);
     expect(held).toContain(PERMISSIONS.AGENTS_SCHEDULED_JOBS);
@@ -413,15 +413,15 @@ describe("the permission list handed to the browser", () => {
 
   it("omits a reserved permission so the menu behind it cannot render", async () => {
     await ReservedPermissions.set([
-      PERMISSIONS.SYSTEM_COMMUNITY_HUB,
+      PERMISSIONS.AGENTS_FLOWS,
       PERMISSIONS.INTEGRATIONS_TELEGRAM,
       PERMISSIONS.AGENTS_SCHEDULED_JOBS,
     ]);
     const held = await Role.permissionsForUser(ADMIN);
 
-    expect(held).not.toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB);
-    // Reserving the hub takes its children with it, which is what the menu entries use.
-    expect(held).not.toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB_BROWSE);
+    expect(held).not.toContain(PERMISSIONS.AGENTS_FLOWS);
+    // Reserving the parent takes its children with it, which is what the menu entries use.
+    expect(held).not.toContain(PERMISSIONS.AGENTS_FLOWS_VIEW);
     expect(held).not.toContain(PERMISSIONS.INTEGRATIONS_TELEGRAM);
     expect(held).not.toContain(PERMISSIONS.AGENTS_SCHEDULED_JOBS);
 
@@ -431,7 +431,7 @@ describe("the permission list handed to the browser", () => {
 
     // And the owner is unaffected.
     const ownerHolds = await Role.permissionsForUser(OWNER);
-    expect(ownerHolds).toContain(PERMISSIONS.SYSTEM_COMMUNITY_HUB);
+    expect(ownerHolds).toContain(PERMISSIONS.AGENTS_FLOWS);
     expect(ownerHolds).toContain(PERMISSIONS.INTEGRATIONS_TELEGRAM);
   });
 });

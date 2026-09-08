@@ -15,7 +15,6 @@ import {
   Database,
   Package,
   Plus,
-  Plug,
   SlidersHorizontal,
   Workflow,
 } from "lucide-react";
@@ -28,8 +27,6 @@ import {
   getAppIntegrationSkills,
 } from "./skills.jsx";
 import { DefaultBadge } from "./Badges/default";
-import ImportedSkillList from "./Imported/SkillList";
-import ImportedSkillConfig from "./Imported/ImportedSkillConfig";
 import AgentFlowsList from "./AgentFlows";
 import FlowPanel from "./AgentFlows/FlowPanel";
 import { MCPServersList, MCPServerHeader } from "./MCPServers";
@@ -64,7 +61,6 @@ export default function AdminAgents() {
   const [showSkillModal, setShowSkillModal] = useState(false);
 
   const [agentSkills, setAgentSkills] = useState([]);
-  const [importedSkills, setImportedSkills] = useState([]);
   const [disabledAgentSkills, setDisabledAgentSkills] = useState([]);
 
   const [agentFlows, setAgentFlows] = useState([]);
@@ -138,7 +134,6 @@ export default function AdminAgents() {
         Admin.systemPreferencesByFields([
           "disabled_agent_skills",
           "default_agent_skills",
-          "imported_agent_skills",
           "active_agent_flows",
         ]),
         AgentFlows.listFlows(),
@@ -152,7 +147,6 @@ export default function AdminAgents() {
       setDisabledAgentSkills(
         _preferences.settings?.disabled_agent_skills ?? []
       );
-      setImportedSkills(_preferences.settings?.imported_agent_skills ?? []);
       setActiveFlowIds(flows.filter((f) => f.active).map((f) => f.uuid));
       setAgentFlows(flows);
       setFileSystemAgentAvailable(fsAgentAvailable);
@@ -254,14 +248,12 @@ export default function AdminAgents() {
       const _preferences = await Admin.systemPreferencesByFields([
         "disabled_agent_skills",
         "default_agent_skills",
-        "imported_agent_skills",
       ]);
       setSettings({ ..._settings, preferences: _preferences.settings } ?? {});
       setAgentSkills(_preferences.settings?.default_agent_skills ?? []);
       setDisabledAgentSkills(
         _preferences.settings?.disabled_agent_skills ?? []
       );
-      setImportedSkills(_preferences.settings?.imported_agent_skills ?? []);
       showToast(t("agent-panel.preferences-saved"), "success", {
         clear: true,
       });
@@ -281,8 +273,6 @@ export default function AdminAgents() {
     SelectedSkillComponent = FlowPanel;
   } else if (selectedMcpServer) {
     SelectedSkillComponent = ServerPanel;
-  } else if (selectedSkill?.imported) {
-    SelectedSkillComponent = ImportedSkillConfig;
   } else if (configurableSkills[selectedSkill]) {
     SelectedSkillComponent = configurableSkills[selectedSkill]?.component;
   } else if (appIntegrationSkills[selectedSkill]) {
@@ -485,12 +475,6 @@ export default function AdminAgents() {
                     enabled={activeFlowIds.includes(selectedFlow.uuid)}
                     onDelete={handleFlowDelete}
                   />
-                ) : selectedSkill?.imported ? (
-                  <ImportedSkillConfig
-                    key={selectedSkill.hubId}
-                    selectedSkill={selectedSkill}
-                    setImportedSkills={setImportedSkills}
-                  />
                 ) : defaultSkills?.[selectedSkill] ? (
                   <SelectedSkillComponent
                     skill={defaultSkills[selectedSkill]?.skill}
@@ -642,18 +626,6 @@ export default function AdminAgents() {
                         </>
                       )}
 
-                      <div className="flex items-center gap-x-2 text-theme-text-primary">
-                        <Plug size={22} />
-                        <p className="text-base font-medium">
-                          {t("agent-panel.custom-skills")}
-                        </p>
-                      </div>
-                      <ImportedSkillList
-                        skills={importedSkills}
-                        selectedSkill={selectedSkill}
-                        handleClick={handleSkillClick}
-                      />
-
                       <MCPServerHeader
                         setMcpServers={setMcpServers}
                         setSelectedMcpServer={setSelectedMcpServer}
@@ -688,7 +660,7 @@ export default function AdminAgents() {
         onSubmit={handleSubmit}
         onChange={(e) => {
           if (IGNORE_CHANGE_SETTINGS.includes(e.target.name)) return;
-          if (!selectedSkill?.imported && !selectedFlow) setHasChanges(true);
+          if (!selectedFlow) setHasChanges(true);
         }}
         ref={formEl}
         className="flex min-h-0 flex-1 flex-col gap-5 p-6"
@@ -820,18 +792,6 @@ export default function AdminAgents() {
                       </>
                     )}
 
-                    <div className="text-theme-text-primary flex items-center gap-x-2 mt-4">
-                      <Plug size={24} />
-                      <p className="text-lg font-medium">
-                        {t("agent-panel.custom-skills")}
-                      </p>
-                    </div>
-                    <ImportedSkillList
-                      skills={importedSkills}
-                      selectedSkill={selectedSkill}
-                      handleClick={handleSkillClick}
-                    />
-
                     <MCPServerHeader
                       setMcpServers={setMcpServers}
                       setSelectedMcpServer={setSelectedMcpServer}
@@ -873,12 +833,6 @@ export default function AdminAgents() {
                       toggleFlow={toggleFlow}
                       enabled={activeFlowIds.includes(selectedFlow.uuid)}
                       onDelete={handleFlowDelete}
-                    />
-                  ) : selectedSkill.imported ? (
-                    <ImportedSkillConfig
-                      key={selectedSkill.hubId}
-                      selectedSkill={selectedSkill}
-                      setImportedSkills={setImportedSkills}
                     />
                   ) : (
                     <>

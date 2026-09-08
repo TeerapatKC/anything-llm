@@ -35,7 +35,6 @@ const {
   generateInitialPassword,
 } = require("../utils/PasswordRecovery/generatePassword");
 const { PasswordResetToken } = require("../models/passwordRecovery");
-const ImportedPlugin = require("../utils/agents/imported");
 const {
   simpleSSOLoginDisabledMiddleware,
 } = require("../utils/middleware/simpleSSOEnabled");
@@ -517,7 +516,6 @@ function adminEndpoints(app) {
         const noRecord = [
           "max_embed_chunk_size",
           "agent_sql_connections",
-          "imported_agent_skills",
           "meta_page_title",
           "meta_page_favicon",
         ];
@@ -584,9 +582,6 @@ function adminEndpoints(app) {
               break;
             case "disabled_outlook_skills":
               requestedSettings[label] = safeJsonParse(setting?.value, []);
-              break;
-            case "imported_agent_skills":
-              requestedSettings[label] = ImportedPlugin.listImportedPlugins();
               break;
             case "custom_app_name":
               requestedSettings[label] = setting?.value || null;

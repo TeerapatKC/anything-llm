@@ -9,7 +9,6 @@ import {
   PanelLeftIcon,
   PenLine,
   Settings,
-  Store,
   Unplug,
   UserCog,
 } from "lucide-react";
@@ -318,6 +317,11 @@ const SidebarOptions = ({ user = null, t }) => (
           user={user}
           childOptions={[
             {
+              btnText: t("settings.agent-skills-settings"),
+              href: paths.settings.agentSkills(),
+              permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
+            },
+            {
               // Deliberately a role check rather than a permission check - the flow
               // list is temporarily restricted to the instance owner regardless of
               // who else holds the AGENTS_FLOWS permission.
@@ -333,33 +337,6 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.sql-connector"),
               href: paths.settings.sqlConnector(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
-            },
-            {
-              btnText: t("settings.agent-skills-settings"),
-              href: paths.settings.agentSkills(),
-              permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
-            },
-          ]}
-        />
-        <Option
-          btnText={t("settings.community-hub.title")}
-          icon={<Store className="h-5 w-5 shrink-0" />}
-          user={user}
-          childOptions={[
-            {
-              btnText: t("settings.community-hub.trending"),
-              href: paths.communityHub.trending(),
-              permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
-            },
-            {
-              btnText: t("settings.community-hub.your-account"),
-              href: paths.communityHub.authentication(),
-              permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
-            },
-            {
-              btnText: t("settings.community-hub.import-item"),
-              href: paths.communityHub.importItem(),
-              permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
             },
           ]}
         />

@@ -610,54 +610,6 @@ const router = createBrowserRouter([
         element: <OnboardingFlow />,
       },
       {
-        path: "/settings/community-hub/trending",
-        lazy: async () => {
-          const { default: CommunityHubTrending } = await import(
-            "@/pages/GeneralSettings/CommunityHub/Trending"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={CommunityHubTrending}
-                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
-              />
-            ),
-          };
-        },
-      },
-      {
-        path: "/settings/community-hub/authentication",
-        lazy: async () => {
-          const { default: CommunityHubAuthentication } = await import(
-            "@/pages/GeneralSettings/CommunityHub/Authentication"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={CommunityHubAuthentication}
-                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
-              />
-            ),
-          };
-        },
-      },
-      {
-        path: "/settings/community-hub/import-item",
-        lazy: async () => {
-          const { default: CommunityHubImportItem } = await import(
-            "@/pages/GeneralSettings/CommunityHub/ImportItem"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={CommunityHubImportItem}
-                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/settings/external-connections/telegram",
         lazy: async () => {
           const { default: TelegramBotSettings } = await import(
