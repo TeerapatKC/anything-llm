@@ -8,6 +8,7 @@ const { toValidNumber } = require("../../../http/index.js");
 const { getNexusAIUserAgent } = require("../../../../endpoints/utils");
 const { GenericOpenAiLLM } = require("../../../AiProviders/genericOpenAi");
 const { attachmentToContentBlock } = require("../../../helpers/attachments");
+const ToolCallTextFilter = require("./helpers/toolCallTextFilter.js");
 
 /**
  * The agent provider for the Generic OpenAI provider.
@@ -71,6 +72,33 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
     return true;
   }
 
+  /**
+   * Generic OpenAI backends are whatever self-hosted server the user points
+   * them at (llama.cpp, vLLM, LM Studio, etc.) - some of these echo a tool
+   * call into `delta.content` as raw `<tool_call>…</tool_call>` markup on top
+   * of (or instead of, when their own tool-calling routing misfires) emitting
+   * it natively. Wrap the event handler to strip that markup from text chunks
+   * before it reaches the chat window, leaving every other event untouched.
+   * @param {function|null} eventHandler
+   * @returns {function|null}
+   */
+  #filterToolCallMarkup(eventHandler) {
+    if (!eventHandler) return eventHandler;
+    const filter = new ToolCallTextFilter();
+
+    return (event, payload) => {
+      if (
+        event !== "reportStreamEvent" ||
+        payload?.type !== "textResponseChunk"
+      )
+        return eventHandler(event, payload);
+
+      const content = filter.push(payload.content ?? "");
+      if (!content) return;
+      return eventHandler(event, { ...payload, content });
+    };
+  }
+
   async #handleFunctionCallChat({ messages = [] }) {
     return await this.client.chat.completions
       .create({
@@ -126,7 +154,7 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
         this.model,
         messages,
         functions,
-        eventHandler,
+        this.#filterToolCallMarkup(eventHandler),
         { provider: this }
       );
     } catch (error) {
@@ -173,6 +201,9 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
         return this.complete([...messages, result.retryWithError], functions);
       }
 
+      // Same markup echo as the streaming path, minus the chunk boundaries.
+      if (typeof result?.textResponse === "string")
+        result.textResponse = ToolCallTextFilter.clean(result.textResponse);
       return result;
     } catch (error) {
       if (error instanceof OpenAI.AuthenticationError) throw error;

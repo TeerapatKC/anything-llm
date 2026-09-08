@@ -15,6 +15,7 @@ const {
   CURSOR_CHAR,
 } = require("../constants");
 const { editMessage, sendFormattedMessage } = require("../utils");
+const { stripThinkBlocks } = require("../utils/format");
 const { sendVoiceResponse } = require("../utils/media");
 const { safeJsonParse } = require("../../http");
 const { handleAgentResponse } = require("./agent");
@@ -409,7 +410,7 @@ function createStreamHandler({ ctx, chatId }) {
   let editTimer = null;
   let msgOffset = 0;
 
-  const currentText = () => completeText.slice(msgOffset);
+  const currentText = () => stripThinkBlocks(completeText.slice(msgOffset));
 
   /**
    * Finalize the current message and reset state when accumulated text
@@ -423,7 +424,7 @@ function createStreamHandler({ ctx, chatId }) {
       ctx.bot,
       chatId,
       messageId,
-      completeText.slice(msgOffset, msgOffset + MAX_MSG_LEN),
+      stripThinkBlocks(completeText.slice(msgOffset, msgOffset + MAX_MSG_LEN)),
       ctx.log,
       { format: true }
     ).catch(() => {});
@@ -438,6 +439,10 @@ function createStreamHandler({ ctx, chatId }) {
    */
   function startNewMessageIfNeeded() {
     if (messageId !== null || messagePending) return false;
+    // Still inside a <think> block - stripThinkBlocks makes currentText() empty.
+    // Telegram's own "typing..." indicator already covers this; don't post a
+    // message that's just the cursor character.
+    if (!currentText()) return true;
     messagePending = ctx.bot
       .sendMessage(chatId, currentText() + CURSOR_CHAR)
       .then((sent) => {

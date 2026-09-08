@@ -50,6 +50,7 @@ const { memoryEndpoints } = require("./endpoints/memory");
 const { roleEndpoints } = require("./endpoints/roles");
 const { superAdminEndpoints } = require("./endpoints/superAdmin");
 const { smtpEndpoints } = require("./endpoints/smtp");
+const { usecaseDataEndpoints } = require("./endpoints/usecaseData");
 const { httpLogger } = require("./middleware/httpLogger");
 const app = express();
 const apiRouter = express.Router();
@@ -123,6 +124,7 @@ memoryEndpoints(apiRouter);
 roleEndpoints(apiRouter);
 superAdminEndpoints(apiRouter);
 smtpEndpoints(apiRouter);
+usecaseDataEndpoints(apiRouter);
 // Externally facing embedder endpoints
 embeddedEndpoints(apiRouter);
 

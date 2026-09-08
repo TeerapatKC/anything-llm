@@ -5,20 +5,14 @@ const { translator } = require("../utils/i18n");
 const { attachFeedbackButtons } = require("../utils/feedback");
 const { WorkspaceChats } = require("../../../models/workspaceChats");
 const { safeJsonParse } = require("../../http");
-const {
-  editMessage,
-  sendFormattedMessage,
-  upsertMessage,
-} = require("../utils");
-const { escapeHTML } = require("../utils/format");
+const { editMessage, sendFormattedMessage } = require("../utils");
+const { stripThinkBlocks } = require("../utils/format");
 const { sendVoiceResponse } = require("../utils/media");
 const {
   STREAM_EDIT_INTERVAL,
   MAX_MSG_LEN,
   CURSOR_CHAR,
 } = require("../constants");
-
-const THOUGHT_FLUSH_INTERVAL_MS = 1500;
 
 /**
  * Run the agent pipeline for @agent messages and send the result to Telegram.
@@ -47,11 +41,8 @@ async function handleAgentResponse(
   let finalResponse = "";
   let metrics = {};
   const sources = [];
-  const thoughts = [];
   const charts = [];
   const _files = [];
-  let thoughtMsgId = null;
-  let lastThoughtText = "";
 
   // Streaming response state (similar to stream.js createStreamHandler)
   let streamingText = "";
@@ -61,7 +52,8 @@ async function handleAgentResponse(
   let editTimer = null;
   let msgOffset = 0;
 
-  const currentResponseText = () => streamingText.slice(msgOffset);
+  const currentResponseText = () =>
+    stripThinkBlocks(streamingText.slice(msgOffset));
   const handleStreamChunk = (chunk) => {
     streamingText += chunk;
 
@@ -73,7 +65,9 @@ async function handleAgentResponse(
         ctx.bot,
         chatId,
         responseMsgId,
-        streamingText.slice(msgOffset, msgOffset + MAX_MSG_LEN),
+        stripThinkBlocks(
+          streamingText.slice(msgOffset, msgOffset + MAX_MSG_LEN)
+        ),
         ctx.log,
         { format: true }
       ).catch(() => {});
@@ -82,7 +76,13 @@ async function handleAgentResponse(
       responsePending = null;
     }
 
-    // Send initial message if none exists yet
+    // Send initial message if none exists yet. Still inside a <think> block -
+    // stripThinkBlocks makes currentResponseText() empty - Telegram's own
+    // "typing..." indicator already covers this; don't post a message that's
+    // just the cursor character.
+    if (responseMsgId === null && !responsePending && !currentResponseText())
+      return;
+
     if (responseMsgId === null && !responsePending) {
       responsePending = ctx.bot
         .sendMessage(chatId, currentResponseText() + CURSOR_CHAR)
@@ -132,7 +132,9 @@ async function handleAgentResponse(
 
       switch (parsed.type) {
         case "statusResponse":
-          if (parsed.content) thoughts.push(parsed.content);
+          // Agent tool-call progress updates ("Executing flow: ...", etc.) are
+          // intentionally not surfaced in Telegram - Telegram only shows the
+          // final answer, never intermediate "AI thinking" status text.
           return;
         case "rechartVisualize":
           if (parsed.content) charts.push(parsed.content);
@@ -168,72 +170,6 @@ async function handleAgentResponse(
     close() {},
   };
 
-  // Periodically flush thoughts as a single live-updating message
-  let flushing = false;
-  let thoughtFlushTimeout = null;
-
-  const formatThoughtsAsBlockquote = (thoughtList, done = false) => {
-    const header = done
-      ? "✓ <b>Agent completed:</b>"
-      : "🤔 <b>Agent is thinking:</b>";
-    const icon = done ? "✓" : "⏳";
-    const maxThoughtLen = 100;
-    const content = thoughtList
-      .map((t) => {
-        const escaped = escapeHTML(t);
-        const truncated =
-          escaped.length > maxThoughtLen
-            ? escaped.slice(0, maxThoughtLen) + "..."
-            : escaped;
-        return `${icon} ${truncated}`;
-      })
-      .join("\n");
-    const fullContent = `${header}\n${content}`;
-    const tag =
-      fullContent.length > 200 ? "blockquote expandable" : "blockquote";
-    return `<${tag}>${fullContent}</${tag.split(" ")[0]}>`;
-  };
-
-  const flushThoughts = async () => {
-    if (flushing || thoughts.length === 0) {
-      thoughtFlushTimeout = setTimeout(
-        flushThoughts,
-        THOUGHT_FLUSH_INTERVAL_MS
-      );
-      return;
-    }
-    const text = formatThoughtsAsBlockquote(thoughts, false);
-    if (text === lastThoughtText) {
-      thoughtFlushTimeout = setTimeout(
-        flushThoughts,
-        THOUGHT_FLUSH_INTERVAL_MS
-      );
-      return;
-    }
-    lastThoughtText = text;
-    flushing = true;
-    try {
-      thoughtMsgId = await upsertMessage(
-        ctx.bot,
-        chatId,
-        thoughtMsgId,
-        text,
-        ctx.log,
-        { html: true, disableLinkPreview: true }
-      );
-    } catch (err) {
-      ctx.log?.error?.("Failed to update thought message:", err);
-    } finally {
-      flushing = false;
-      thoughtFlushTimeout = setTimeout(
-        flushThoughts,
-        THOUGHT_FLUSH_INTERVAL_MS
-      );
-    }
-  };
-
-  thoughtFlushTimeout = setTimeout(flushThoughts, THOUGHT_FLUSH_INTERVAL_MS);
-
   const typingInterval = setInterval(() => {
     ctx.bot.sendChatAction(chatId, "typing").catch(() => {});
   }, 4000);
@@ -263,15 +199,6 @@ async function handleAgentResponse(
 
     // Extract pending outputs from aibitat for persistence
     const outputs = agentHandler?.aibitat?._pendingOutputs ?? [];
-
-    // Final thought update, mark as completed
-    if (thoughtMsgId && thoughts.length > 0) {
-      const doneText = formatThoughtsAsBlockquote(thoughts, true);
-      await editMessage(ctx.bot, chatId, thoughtMsgId, doneText, ctx.log, {
-        html: true,
-        disableLinkPreview: true,
-      });
-    }
 
     // Send charts as locally rendered images
     for (const chart of charts) {
@@ -358,7 +285,6 @@ async function handleAgentResponse(
     }
   } finally {
     clearInterval(typingInterval);
-    clearTimeout(thoughtFlushTimeout);
     clearTimeout(editTimer);
   }
 }
