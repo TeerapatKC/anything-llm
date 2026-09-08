@@ -14,10 +14,8 @@ export default function BuiltInSlashCommands() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Built-in Slash Commands"}
-        description={
-          "Commands defined here are available in every workspace. To add a command for one workspace only, use that workspace's settings."
-        }
+        title={t("settings-page.slash-commands.title")}
+        description={t("settings-page.slash-commands.description")}
       />
 
       <div className="mt-6">

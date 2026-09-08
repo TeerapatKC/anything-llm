@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "NexusAI Developer API",
-    "description": "API endpoints that enable programmatic reading, writing, and updating of your NexusAI instance. UI supplied by Swagger.io."
+    "title": "Nexus AI Developer API",
+    "description": "API endpoints that enable programmatic reading, writing, and updating of your Nexus AI instance. UI supplied by Swagger.io."
   },
   "servers": [
     {

@@ -48,10 +48,8 @@ export default function BrowserExtensionApiKeys() {
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Browser Extension API Keys"}
-        description={
-          "Manage API keys for browser extensions connecting to your NexusAI instance."
-        }
+        title={t("settings-page.browser-extension.title")}
+        description={t("settings-page.browser-extension.description")}
       />
       <div className="w-full justify-end flex">
         <Dialog

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/table";
 
 export default function LiveDocumentSyncManager() {
+  const { t } = useTranslation();
   return (
     <SidebarPageLayout className="bg-theme-bg-container light:bg-theme-bg-container">
       <Sidebar />
@@ -23,10 +24,8 @@ export default function LiveDocumentSyncManager() {
       >
         <div className="flex flex-col w-full px-1 py-16 md:px-6 md:py-6">
           <PageHeader
-            title={"Watched documents"}
-            description={
-              "These are all the documents that are currently being watched in your instance. The content of these documents will be periodically synced."
-            }
+            title={t("settings-page.watched-documents.title")}
+            description={t("settings-page.watched-documents.description")}
           />
           <div className="overflow-x-auto">
             <WatchedDocumentsContainer />

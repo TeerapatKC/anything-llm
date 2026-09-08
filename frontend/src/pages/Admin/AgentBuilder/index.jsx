@@ -8,7 +8,7 @@ import AgentFlows from "@/models/agentFlows";
 import { useTheme } from "@/hooks/useTheme";
 import HeaderMenu from "./HeaderMenu";
 import paths from "@/utils/paths";
-import i18next from "@/i18n";
+import { useTranslation } from "react-i18next";
 import { AvailableVariablesProvider } from "./useAvailableVariables";
 import {
   Select,
@@ -48,6 +48,7 @@ export default function AgentBuilder() {
   const { flowId } = useParams();
   const { theme } = useTheme();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [agentName, setAgentName] = useState("");
   const [_, setAgentDescription] = useState("");
   const [currentFlowUuid, setCurrentFlowUuid] = useState(null);
@@ -83,7 +84,9 @@ export default function AgentBuilder() {
       setAvailableFlows(flows);
     } catch (error) {
       console.error(error);
-      showToast("Failed to load available flows", "error", { clear: true });
+      showToast(t("agent-builder.messages.load-flows-failed"), "error", {
+        clear: true,
+      });
     }
   };
 
@@ -128,7 +131,9 @@ export default function AgentBuilder() {
       setBlocks(flowBlocks);
     } catch (error) {
       console.error(error);
-      showToast("Failed to load flow", "error", { clear: true });
+      showToast(t("agent-builder.messages.load-flow-failed"), "error", {
+        clear: true,
+      });
     }
   };
 
@@ -191,7 +196,7 @@ export default function AgentBuilder() {
         descriptionRef.current?.focus();
       }
       showToast(
-        "Please provide both a name and description for your flow",
+        t("agent-builder.messages.name-description-required"),
         "error",
         {
           clear: true,
@@ -225,13 +230,15 @@ export default function AgentBuilder() {
       if (!success) throw new Error(error);
 
       setCurrentFlowUuid(flow.uuid);
-      showToast("Agent flow saved successfully!", "success", { clear: true });
+      showToast(t("agent-builder.messages.saved"), "success", { clear: true });
       await loadAvailableFlows();
     } catch (error) {
       console.error("Save error details:", error);
-      showToast(`Failed to save agent flow. ${error.message}`, "error", {
-        clear: true,
-      });
+      showToast(
+        t("agent-builder.messages.save-failed", { error: error.message }),
+        "error",
+        { clear: true }
+      );
     }
   };
 
@@ -254,14 +261,13 @@ export default function AgentBuilder() {
   const renderVariableSelect = (
     value,
     onChange,
-    placeholder = i18next.t("agent-builder.common.select-variable")
+    placeholder = t("agent-builder.common.select-variable")
   ) => (
     <Select value={value || ""} onValueChange={onChange}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        null
         {getAvailableVariables().map((v) => (
           <SelectItem key={v.name} value={v.name}>
             {v.name}

@@ -20,15 +20,14 @@ import {
 } from "@/components/ui/table";
 
 export default function AdminWorkspaces() {
+  const { t } = useTranslation();
   const { isOpen, openModal, closeModal } = useModal();
 
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Instance Workspaces"}
-        description={
-          "These are all the workspaces that exist on this instance. Removing a workspace will delete all of its associated chats and settings."
-        }
+        title={t("settings-page.workspaces.title")}
+        description={t("settings-page.workspaces.description")}
       />
       <div className="w-full justify-end flex">
         <Dialog

@@ -32,7 +32,7 @@ export default function UserItems({ connectionKey }) {
           </a>
         </div>
         <p className="text-xs/60 leading-[18px] font-base text-theme-text-primary">
-          Items you have created and shared publicly on the NexusAI Community
+          Items you have created and shared publicly on the Nexus AI Community
           Hub.
         </p>
         <div className="flex flex-col gap-4 mt-4">

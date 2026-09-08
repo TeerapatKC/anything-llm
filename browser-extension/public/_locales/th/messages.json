@@ -1,0 +1,77 @@
+{
+  "app_name": { "message": "ส่วนขยายเบราว์เซอร์ Nexus AI" },
+  "app_description": {
+    "message": "รวบรวมเนื้อหาจากเว็บผ่านเบราว์เซอร์และบันทึกลงในพื้นที่ทำงาน Nexus AI ของคุณได้โดยตรง"
+  },
+  "document_title": { "message": "เครื่องมือบันทึกเอกสาร Nexus AI" },
+  "logo_alt": { "message": "โลโก้ Nexus AI" },
+  "intro": {
+    "message": "คลิกขวาบนหน้าเว็บเพื่อส่งข้อความที่เลือกหรือทั้งหน้าไปยัง Nexus AI"
+  },
+  "connection_string_label": { "message": "สตริงการเชื่อมต่อ Nexus AI" },
+  "connection_string_placeholder": { "message": "วางสตริงการเชื่อมต่อที่นี่" },
+  "connect": { "message": "เชื่อมต่อ" },
+  "connected": { "message": "เชื่อมต่อกับ Nexus AI แล้ว" },
+  "disconnect": { "message": "ยกเลิกการเชื่อมต่อ" },
+  "disconnect_success": {
+    "message": "ยกเลิกการเชื่อมต่อกับ Nexus AI สำเร็จแล้ว"
+  },
+  "invalid_connection_string": {
+    "message": "รูปแบบสตริงการเชื่อมต่อไม่ถูกต้อง"
+  },
+  "offline": { "message": "ขณะนี้ Nexus AI ออฟไลน์ โปรดลองใหม่ภายหลัง" },
+  "invalid_api_key": { "message": "เชื่อมต่อไม่สำเร็จ: คีย์ API ไม่ถูกต้อง" },
+  "connect_success": { "message": "เชื่อมต่อกับ Nexus AI สำเร็จแล้ว" },
+  "connection_error": {
+    "message": "เกิดข้อผิดพลาดระหว่างเชื่อมต่อ: $error$",
+    "placeholders": { "error": { "content": "$1" } }
+  },
+  "no_connection": { "message": "ไม่พบข้อมูลการเชื่อมต่อ" },
+  "disconnect_server_failed": {
+    "message": "ไม่สามารถยกเลิกการเชื่อมต่อจากเซิร์ฟเวอร์ได้"
+  },
+  "disconnection_error": {
+    "message": "เกิดข้อผิดพลาดระหว่างยกเลิกการเชื่อมต่อ: $error$",
+    "placeholders": { "error": { "content": "$1" } }
+  },
+  "generic_error": { "message": "เกิดข้อผิดพลาด โปรดลองใหม่ภายหลัง" },
+  "context_save_selection": {
+    "message": "บันทึกข้อความที่เลือกไปยัง Nexus AI"
+  },
+  "context_embed_selection": {
+    "message": "ฝังเนื้อหาที่เลือกลงในพื้นที่ทำงาน"
+  },
+  "context_save_page": { "message": "บันทึกทั้งหน้าไปยัง Nexus AI" },
+  "context_embed_page": { "message": "ฝังทั้งหน้าลงในพื้นที่ทำงาน" },
+  "upload_selection_loading": {
+    "message": "กำลังอัปโหลดข้อความที่เลือกไปยังเอกสาร โปรดรอสักครู่"
+  },
+  "embed_selection_loading": {
+    "message": "กำลังฝังข้อความที่เลือกลงในพื้นที่ทำงาน โปรดรอสักครู่"
+  },
+  "upload_page_loading": {
+    "message": "กำลังอัปโหลดทั้งหน้าไปยังเอกสาร โปรดรอสักครู่"
+  },
+  "embed_page_loading": {
+    "message": "กำลังฝังทั้งหน้าลงในพื้นที่ทำงาน โปรดรอสักครู่"
+  },
+  "action_save_content": { "message": "บันทึกเนื้อหา" },
+  "action_embed_content": { "message": "ฝังเนื้อหา" },
+  "action_save_page": { "message": "บันทึกทั้งหน้า" },
+  "action_embed_page": { "message": "ฝังทั้งหน้า" },
+  "authentication_failed": {
+    "message": "การยืนยันตัวตนล้มเหลว โปรดเชื่อมต่อส่วนขยายอีกครั้ง"
+  },
+  "action_failed": {
+    "message": "ไม่สามารถ$action$ได้ โปรดลองใหม่อีกครั้ง",
+    "placeholders": { "action": { "content": "$1" } }
+  },
+  "save_success": { "message": "บันทึกเนื้อหาไปยัง Nexus AI สำเร็จแล้ว" },
+  "status_success": { "message": "สำเร็จ" },
+  "status_error": { "message": "ข้อผิดพลาด" },
+  "status_loading": { "message": "กำลังดำเนินการ" },
+  "extension_title": { "message": "ส่วนขยาย Nexus AI" },
+  "page_content_failed": {
+    "message": "ไม่สามารถดึงเนื้อหาของหน้าได้ โปรดลองใหม่อีกครั้ง"
+  }
+}

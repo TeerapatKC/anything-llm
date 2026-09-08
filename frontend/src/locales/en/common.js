@@ -93,6 +93,66 @@ const TRANSLATIONS = {
       line: "LINE",
     },
   },
+  "settings-page": {
+    "sidebar-description": "Displays the settings sidebar.",
+    audio: {
+      "stt-title": "Speech-to-text Preference",
+      "stt-description":
+        "Choose the speech-to-text provider used in your Nexus AI experience. The browser's built-in service is used by default when supported.",
+      "tts-title": "Text-to-speech Preference",
+      "tts-description":
+        "Choose the text-to-speech provider used in your Nexus AI experience. The browser's built-in service is used by default when supported.",
+    },
+    "browser-extension": {
+      title: "Browser Extension API Keys",
+      description:
+        "Manage API keys for browser extensions connecting to your Nexus AI instance.",
+    },
+    "community-hub": {
+      title: "Community Hub",
+      "trending-description": "Share and collaborate with the Nexus AI community.",
+      "import-title": "Import a Community Item",
+      "import-description":
+        "Import items from the Nexus AI Community Hub to enhance your instance with community-created prompts, skills, and commands.",
+    },
+    workspaces: {
+      title: "Instance Workspaces",
+      description:
+        "These are all the workspaces that exist on this instance. Removing a workspace will delete all of its associated chats and settings.",
+    },
+    roles: {
+      title: "Roles & Permissions",
+      description:
+        "A role is a named set of permissions. System roles control the instance itself; workspace roles control what a member can do inside one workspace, so one account can be a manager in one workspace and read-only in another.",
+      "system-tab": "System Roles",
+      "workspace-tab": "Workspace Roles",
+    },
+    "system-prompt-variables": {
+      title: "System Prompt Variables",
+      description:
+        "System prompt variables store configuration values that can be referenced in your system prompt to enable dynamic prompt content.",
+    },
+    "instance-owner": {
+      title: "Instance Owner",
+      description:
+        "You hold the super admin role for this deployment. It cannot be deleted, suspended, or assigned to others; it can only be moved using the transfer option below. Operations on this page are irreversible and unavailable to other users.",
+    },
+    "slash-commands": {
+      title: "Built-in Slash Commands",
+      description:
+        "Commands defined here are available in every workspace. To add a command for one workspace only, use that workspace's settings.",
+    },
+    "default-system-prompt": {
+      title: "Default System Prompt",
+      description:
+        "This is the default system prompt that will be used for new workspaces.",
+    },
+    "watched-documents": {
+      title: "Watched Documents",
+      description:
+        "These are all documents currently being watched in your instance. Their content is synchronized periodically.",
+    },
+  },
   login: {
     form: {
       welcome: "Welcome",
@@ -150,7 +210,7 @@ const TRANSLATIONS = {
       add: "Add new message",
       save: "Save Messages",
       heading: "Explain to me",
-      body: "the benefits of NexusAI",
+      body: "the benefits of Nexus AI",
     },
     status: {
       title: "Workspace Status",
@@ -739,7 +799,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "Intelligent Skill Selection",
         description:
-          "Enable unlimited tools and cut token usage by up to 80% per query — NexusAI automatically selects the right skills for every prompt.",
+          "Enable unlimited tools and cut token usage by up to 80% per query — Nexus AI automatically selects the right skills for every prompt.",
         "max-tools": {
           title: "Max Tools",
           description:
@@ -786,15 +846,15 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI Preferences",
-      description: "Set your UI preferences for NexusAI.",
+      description: "Set your UI preferences for Nexus AI.",
     },
     branding: {
       title: "Branding & Whitelabeling",
-      description: "White-label your NexusAI instance with custom branding.",
+      description: "White-label your Nexus AI instance with custom branding.",
     },
     chat: {
       title: "Chat",
-      description: "Set your chat preferences for NexusAI.",
+      description: "Set your chat preferences for Nexus AI.",
       auto_submit: {
         title: "Auto-Submit Speech Input",
         description:
@@ -836,7 +896,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Display Language",
         description:
-          "Select the preferred language to render NexusAI's UI in - when translations are available.",
+          "Select the preferred language to render Nexus AI's UI in - when translations are available.",
       },
       logo: {
         title: "Brand Logo",
@@ -877,7 +937,7 @@ const TRANSLATIONS = {
   api: {
     title: "API Keys",
     description:
-      "API keys allow the holder to programmatically access and manage this NexusAI instance.",
+      "API keys allow the holder to programmatically access and manage this Nexus AI instance.",
     link: "Read the API documentation",
     generate: "Generate New API Key",
     empty: "No API keys found",
@@ -891,7 +951,7 @@ const TRANSLATIONS = {
       close: "Close",
       create: "Create API Key",
       helper:
-        "Once created the API key can be used to programmatically access and configure this NexusAI instance.",
+        "Once created the API key can be used to programmatically access and configure this Nexus AI instance.",
       name: {
         label: "Name",
         placeholder: "Production integration",
@@ -916,7 +976,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM Preference",
     description:
-      "These are the credentials and settings for your preferred LLM chat & embedding provider. It is important that these keys are current and correct, or else NexusAI will not function properly.",
+      "These are the credentials and settings for your preferred LLM chat & embedding provider. It is important that these keys are current and correct, or else Nexus AI will not function properly.",
     provider: "LLM Provider",
     providers: {
       azure_openai: {
@@ -1105,7 +1165,7 @@ const TRANSLATIONS = {
       "These are the credentials and settings for your preferred transcription model provider. Its important these keys are current and correct or else media files and audio will not transcribe.",
     provider: "Transcription Provider",
     "warn-start":
-      "Using the local whisper model on machines with limited RAM or CPU can stall NexusAI when processing media files.",
+      "Using the local whisper model on machines with limited RAM or CPU can stall Nexus AI when processing media files.",
     "warn-recommend":
       "We recommend at least 2GB of RAM and upload files <10Mb.",
     "warn-end":
@@ -1116,7 +1176,7 @@ const TRANSLATIONS = {
     "desc-start":
       "When using an LLM that does not natively support an embedding engine - you may need to additionally specify credentials for embedding text.",
     "desc-end":
-      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which NexusAI can use to process.",
+      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which Nexus AI can use to process.",
     provider: {
       title: "Embedding Provider",
     },
@@ -1160,7 +1220,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Vector Database",
     description:
-      "These are the credentials and settings for how your NexusAI instance will function. It's important these keys are current and correct.",
+      "These are the credentials and settings for how your Nexus AI instance will function. It's important these keys are current and correct.",
     provider: {
       title: "Vector Database Provider",
       description: "There is no configuration needed for LanceDB.",
@@ -1194,7 +1254,7 @@ const TRANSLATIONS = {
   telegram: {
     title: "Telegram Bot",
     description:
-      "Connect your NexusAI instance to Telegram. One bot serves everyone - each person links their own account and reaches only their own workspaces.",
+      "Connect your Nexus AI instance to Telegram. One bot serves everyone - each person links their own account and reaches only their own workspaces.",
     setup: {
       step1: {
         title: "Step 1: Create your Telegram bot",
@@ -1275,7 +1335,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privacy & Data-Handling",
     description:
-      "This is your configuration for how connected third party providers and NexusAI handle your data.",
+      "This is your configuration for how connected third party providers and Nexus AI handle your data.",
     anonymous: "Anonymous Telemetry Enabled",
     personalization: {
       label: "Personalization & Memories Enabled",
@@ -1502,22 +1562,22 @@ const TRANSLATIONS = {
       fetching: "Fetching...",
       "fetch-website": "Fetch website",
       "privacy-notice":
-        "These files will be uploaded to the document processor running on this NexusAI instance. These files are not sent or shared with a third party.",
+        "These files will be uploaded to the document processor running on this Nexus AI instance. These files are not sent or shared with a third party.",
     },
     pinning: {
       what_pinning: "What is document pinning?",
       pin_explained_block1:
-        "When you <b>pin</b> a document in NexusAI we will inject the entire content of the document into your prompt window for your LLM to fully comprehend.",
+        "When you <b>pin</b> a document in Nexus AI we will inject the entire content of the document into your prompt window for your LLM to fully comprehend.",
       pin_explained_block2:
         "This works best with <b>large-context models</b> or small files that are critical to its knowledge-base.",
       pin_explained_block3:
-        "If you are not getting the answers you desire from NexusAI by default then pinning is a great way to get higher quality answers in a click.",
+        "If you are not getting the answers you desire from Nexus AI by default then pinning is a great way to get higher quality answers in a click.",
       accept: "Okay, got it",
     },
     watching: {
       what_watching: "What does watching a document do?",
       watch_explained_block1:
-        "When you <b>watch</b> a document in NexusAI we will <i>automatically</i> sync your document content from it's original source on regular intervals. This will automatically update the content in every workspace where this file is managed.",
+        "When you <b>watch</b> a document in Nexus AI we will <i>automatically</i> sync your document content from it's original source on regular intervals. This will automatically update the content in every workspace where this file is managed.",
       watch_explained_block2:
         "This feature currently supports online-based content and will not be available for manually uploaded documents.",
       watch_explained_block3_start:
@@ -1657,7 +1717,7 @@ const TRANSLATIONS = {
           'Memories should be a single, concise statement. e.g. "User prefers Python over JavaScript"',
         edit_description: "Update the content of this memory.",
         label: "Memory",
-        placeholder: "e.g. User's name is Joe, User works on NexusAI, etc.",
+        placeholder: "e.g. User's name is Joe, User works on Nexus AI, etc.",
         create: "Create",
         save: "Save",
         cancel: "Cancel",
@@ -1864,7 +1924,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Authentication Required",
           description:
-            "You need to authenticate with the NexusAI Community Hub before publishing items.",
+            "You need to authenticate with the Nexus AI Community Hub before publishing items.",
           button: "Connect to Community Hub",
         },
       },
@@ -2093,10 +2153,10 @@ const TRANSLATIONS = {
       "suspend-description":
         "After suspending they will be logged out and unable to log back in until unsuspended by an admin.",
       "unsuspend-description":
-        "The user will be able to log back into this instance of NexusAI.",
+        "The user will be able to log back into this instance of Nexus AI.",
       "delete-title": "Delete {{username}}?",
       "delete-description":
-        "After deleting they will be logged out and unable to use this instance of NexusAI. This action is irreversible.",
+        "After deleting they will be logged out and unable to use this instance of Nexus AI. This action is irreversible.",
       "suspend-toast": "User has been suspended.",
       "unsuspend-toast": "User is no longer suspended.",
       "delete-toast": "User deleted from system.",
@@ -2158,11 +2218,11 @@ const TRANSLATIONS = {
   smtp: {
     title: "SMTP / Outbound Email",
     description:
-      "Configure the mailbox NexusAI sends system email from - password resets, invitations, and notifications. Restricted to the instance owner.",
+      "Configure the mailbox Nexus AI sends system email from - password resets, invitations, and notifications. Restricted to the instance owner.",
     "enable-aria": "Enable SMTP",
     "enable-title": "Enable outbound email",
     "enable-description":
-      "When off, NexusAI will not attempt to send any email even if the fields below are filled in.",
+      "When off, Nexus AI will not attempt to send any email even if the fields below are filled in.",
     "service-label": "Email service",
     "service-placeholder": "Choose a service",
     providers: {
@@ -2193,7 +2253,7 @@ const TRANSLATIONS = {
     "from-email": "From address",
     "from-email-placeholder": "noreply@example.com",
     "from-name": "From name",
-    "from-name-placeholder": "NexusAI",
+    "from-name-placeholder": "Nexus AI",
     saving: "Saving…",
     save: "Save Changes",
     "save-failed": "Failed to save SMTP settings.",
@@ -2293,6 +2353,22 @@ const TRANSLATIONS = {
       "store-result-in": "Store Result In",
       "result-variable": "Result Variable",
       url: "URL",
+      "add-block": "Add Block",
+    },
+    header: {
+      builder: "Builder",
+      "untitled-flow": "Untitled Flow",
+      "new-flow": "New Flow",
+      save: "Save",
+      "view-documentation": "View documentation →",
+    },
+    messages: {
+      "load-flows-failed": "Failed to load available flows.",
+      "load-flow-failed": "Failed to load flow.",
+      "name-description-required":
+        "Please provide both a name and description for your flow.",
+      saved: "Agent flow saved successfully!",
+      "save-failed": "Failed to save agent flow. {{error}}",
     },
     flowInfo: {
       name: "Flow Name",
@@ -2379,6 +2455,26 @@ const TRANSLATIONS = {
         "Note: This may affect data quality and remove specific details from the original content.",
     },
     blockList: {
+      "flow-information": "Flow Information",
+      "flow-information-description": "Basic flow information",
+      "untitled-flow": "Untitled Flow",
+      "flow-variables": "Flow Variables",
+      "flow-variables-description": "Configure agent variables and settings",
+      "variables-defined": "Variables defined: {{count}}",
+      "api-call": "API Call",
+      "api-call-description": "Make an HTTP request",
+      "no-url": "No URL specified",
+      "llm-instruction": "LLM Instruction",
+      "llm-instruction-description": "Process data using LLM instructions",
+      "no-instruction": "No instruction",
+      "web-scraping": "Web Scraping",
+      "web-scraping-description": "Scrape content from a webpage",
+      "flow-complete": "Flow Complete",
+      "flow-complete-description": "End of agent flow",
+      "flow-will-end": "Flow will end here",
+      "move-up": "Move block up",
+      "move-down": "Move block down",
+      "delete-block": "Delete block",
       "direct-output": "Direct Output",
       "direct-output-description":
         "The output of this block will be returned directly to the chat. This will prevent any further tool calls from being executed.",
@@ -2387,6 +2483,9 @@ const TRANSLATIONS = {
   },
   "sql-connector": {
     title: "SQL Connector",
+    "page-description":
+      "Manage the database connections available to your agents.",
+    restricted: "SQL Connector is restricted to the instance owner.",
     "list-description":
       "Browse the database connections configured for this instance.",
     "connections-heading": "Database Connections",
@@ -2467,7 +2566,7 @@ const TRANSLATIONS = {
     tos: {
       title: "Terms of use for experimental features",
       intro:
-        "Experimental features of NexusAI are features that we are piloting and are <b>opt-in</b>. We proactively will condition or warn you on any potential concerns should any exist prior to approval of any feature.",
+        "Experimental features of Nexus AI are features that we are piloting and are <b>opt-in</b>. We proactively will condition or warn you on any potential concerns should any exist prior to approval of any feature.",
       "risks-intro":
         "Use of any feature on this page can result in, but not limited to, the following possibilities.",
       "risk-data-loss": "Loss of data.",
@@ -2476,13 +2575,13 @@ const TRANSLATIONS = {
       "risk-resources": "Increased resource consumption.",
       "risk-cost":
         "Increased cost or use of any connected LLM or embedding provider.",
-      "risk-bugs": "Potential bugs or issues using NexusAI.",
+      "risk-bugs": "Potential bugs or issues using Nexus AI.",
       "conditions-intro":
         "Use of an experimental feature also comes with the following list of non-exhaustive conditions.",
       "condition-removal": "Feature may not exist in future updates.",
       "condition-stability": "The feature being used is not currently stable.",
       "condition-availability":
-        "The feature may not be available in future versions, configurations, or subscriptions of NexusAI.",
+        "The feature may not be available in future versions, configurations, or subscriptions of Nexus AI.",
       "condition-privacy":
         "Your privacy settings <b>will be honored</b> with use of any beta feature.",
       "condition-change": "These conditions may change in future updates.",
@@ -2542,11 +2641,57 @@ const TRANSLATIONS = {
     "flows-description": "Browse the flows configured for this instance.",
     "skills-title": "Agent skills & settings",
     "skills-description": "Browse skills and connected services.",
+    "preferences-saved": "Agent preferences saved successfully.",
+    "preferences-save-failed": "Agent preferences failed to save.",
+    "toggle-tool-failed": "Failed to toggle tool.",
+    "skills-integrations": "Skills & Integrations",
+    "choose-capability": "Choose a capability to configure.",
+    "flows-restricted":
+      "Agent Flows are restricted to the instance owner.",
+    "app-integrations": "App Integrations",
+    "select-mobile": "Select an Agent Skill, Agent Flow, or MCP Server",
+    "page-skills-title": "Agent Skills",
+    "page-skills-description":
+      "Choose and configure the capabilities available to your agents.",
+    "page-flow-description":
+      "Build and manage the automated flows available to your agents.",
+    "select-configure": "Select something to configure",
+    on: "On",
+    off: "Off",
+    "skill-settings": "Agent Skill Settings",
+    configure: "Configure",
     "agent-flows": "Agent Flows",
     "custom-skills": "Custom Skills",
     back: "Back",
     "create-flow": "Create Flow",
     "open-builder": "Open Builder",
+  },
+  "agent-flow": {
+    "learn-more": "Learn more about Agent Flows.",
+    on: "On",
+    off: "Off",
+    manage: "Manage flow",
+    "delete-title": "Delete this flow?",
+    "delete-description": "This action cannot be undone.",
+    "delete-confirm": "Delete flow",
+    edit: "Edit flow",
+    delete: "Delete flow",
+    deleted: "Flow deleted successfully.",
+    "delete-failed": "Failed to delete flow.",
+    "toggle-failed": "Failed to toggle flow.",
+    "no-description": "No description provided",
+    visibility: {
+      title: "Visible to workspaces",
+      description: "Choose which workspaces' agents can use this flow.",
+      "select-all": "Select all",
+      "clear-all": "Clear all",
+      loading: "Loading workspaces...",
+      empty: "No workspaces on this instance yet.",
+      save: "Save visibility",
+      saving: "Saving...",
+      updated: "Workspace visibility updated.",
+      failed: "Failed to update workspace visibility.",
+    },
   },
   "vector-providers": {
     pgvector: {
@@ -2601,7 +2746,7 @@ const TRANSLATIONS = {
     "intro-1":
       "The community hub is a place where you can find, share, and import agent-skills, system prompts, slash commands, and more!",
     "intro-2":
-      "These items are created by the NexusAI team and community, and are a great way to get started with NexusAI as well as extend NexusAI in a way that is customized to your needs.",
+      "These items are created by the Nexus AI team and community, and are a great way to get started with Nexus AI as well as extend Nexus AI in a way that is customized to your needs.",
     "intro-3":
       "There are both <b>private</b> and <b>public</b> items in the community hub. Private items are only visible to you, while public items are visible to everyone.",
     warning:
@@ -2666,8 +2811,8 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "Confirm it is you",
     "what-to-clear": "What to clear",
     "choose-an-account": "Choose an account",
-    "hub-account-title": "Your NexusAI Community Hub Account",
-    "hub-api-key-placeholder": "Enter your NexusAI Hub API key",
+    "hub-account-title": "Your Nexus AI Community Hub Account",
+    "hub-api-key-placeholder": "Enter your Nexus AI Hub API key",
     "add-to-workspace": "Add to Workspace",
     "apply-to-workspace": "Apply to Workspace",
     "max-vector-text-length": "maximum length of vectorized text",
@@ -2729,7 +2874,7 @@ const TRANSLATIONS = {
     "toggle-2":
       "Watched documents will automatically update in all workspaces they are referenced in at the same time of update.",
     toggle:
-      'Enable the ability to specify a document to be "watched". Watched document\'s content will be regularly fetched and updated in NexusAI.',
+      'Enable the ability to specify a document to be "watched". Watched document\'s content will be regularly fetched and updated in Nexus AI.',
     "role-modal":
       "This role holds the system administrator grant, so it has every permission — including any added by future updates — regardless of the boxes below.",
     "factory-reset":
@@ -2745,9 +2890,9 @@ const TRANSLATIONS = {
     "new-workspace-modal":
       "After creating this workspace only admins will be able to see it. You can add users after it has been created.",
     "new-browser-extension-api-key-modal-3":
-      'If you see "Connected to NexusAI" in the extension, the connection was successful. If not, please copy the connection string and paste it into the extension manually.',
+      'If you see "Connected to Nexus AI" in the extension, the connection was successful. If not, please copy the connection string and paste it into the extension manually.',
     "new-browser-extension-api-key-modal-2":
-      'After clicking "Create API Key", NexusAI will attempt to connect to your browser extension automatically.',
+      'After clicking "Create API Key", Nexus AI will attempt to connect to your browser extension automatically.',
     "new-browser-extension-api-key-modal":
       "Warning: this API key will allow access to all workspaces associated with your account. Please share it cautiously.",
     "code-snippet-modal":
@@ -2765,25 +2910,25 @@ const TRANSLATIONS = {
     "new-embed-modal":
       "After creating an embed you will be provided a link that you can publish on your website with a simple",
     authentication:
-      "You do not need to connect your NexusAI Community Hub account to pull in public items from the NexusAI Community Hub.",
+      "You do not need to connect your Nexus AI Community Hub account to pull in public items from the Nexus AI Community Hub.",
     "agent-flow":
       "Agent flows allow you to create reusable sequences of actions that can be triggered by your agent.",
     "agent-skill":
-      "Agent skills can execute code on your NexusAI instance, so only import agent skills from sources you trust. You should also review the code before importing. If you are unsure about what a skill does - don't import it!",
+      "Agent skills can execute code on your Nexus AI instance, so only import agent skills from sources you trust. You should also review the code before importing. If you are unsure about what a skill does - don't import it!",
     "slash-command":
-      "Slash commands are used to prefill information into a prompt while chatting with a NexusAI workspace.",
+      "Slash commands are used to prefill information into a prompt while chatting with a Nexus AI workspace.",
     "system-prompt":
       "System prompts are used to guide the behavior of the AI agents and can be applied to any existing workspace.",
     unknown:
-      "We found an item in the community hub, but we don't know what it is or it is not yet supported for import into NexusAI.",
+      "We found an item in the community hub, but we don't know what it is or it is not yet supported for import into Nexus AI.",
     "pull-and-review":
       "An error occurred while fetching the item. Please try again later.",
     "connection-modal-3":
-      "Scan the QR code with the NexusAI Mobile app to enable live sync of your workspaces, chats, threads and documents.",
+      "Scan the QR code with the Nexus AI Mobile app to enable live sync of your workspaces, chats, threads and documents.",
     "connection-modal-2":
       "Run with local models on your phone privately or relay chats directly to this instance seamlessly.",
     "connection-modal":
-      "NexusAI for mobile allows you to connect to your workspace's chats, threads, tools, and documents for you to use on the go.",
+      "Nexus AI for mobile allows you to connect to your workspace's chats, threads, tools, and documents for you to use on the go.",
     "privacy-and-data":
       "As an open-source project we respect your right to privacy. We are dedicated to building the best solution for integrating AI and documents privately and securely. If you do decide to turn off telemetry all we ask is to consider sending us feedback and thoughts",
     "existing-user-form":
@@ -2801,9 +2946,9 @@ const TRANSLATIONS = {
     "gemini-options":
       "The number of dimensions the resulting output embeddings should have if it supports multiple dimensions output.",
     "generic-open-ai-options-2":
-      'Text prepended to the query text before embedding for search. Some models require this to distinguish queries from passages (e.g. "query: " or "search_query: ").<br /><br />NexusAI <b>does not</b> append anything to this text including the ":" character.',
+      'Text prepended to the query text before embedding for search. Some models require this to distinguish queries from passages (e.g. "query: " or "search_query: ").<br /><br />Nexus AI <b>does not</b> append anything to this text including the ":" character.',
     "generic-open-ai-options":
-      'Text prepended to each chunk of content before embedding for storage. Some models require this to distinguish passages from queries (e.g. "passage: " or "search_document: ").<br /><br />NexusAI <b>does not</b> append anything to this text including the ":" character.',
+      'Text prepended to each chunk of content before embedding for storage. Some models require this to distinguish passages from queries (e.g. "passage: " or "search_document: ").<br /><br />Nexus AI <b>does not</b> append anything to this text including the ":" character.',
     "lemonade-options":
       "Select the Lemonade model for embeddings. Models will load after entering a valid Lemonade URL.",
     "lmstudio-options-2":
@@ -2841,7 +2986,7 @@ const TRANSLATIONS = {
     "ollama-llmoptions-4":
       "Select the Ollama model you want to use. Models will load after entering a valid Ollama URL.",
     "ollama-llmoptions-3":
-      "If an invalid value is entered, NexusAI will handle this for you so that chats do not fail.",
+      "If an invalid value is entered, Nexus AI will handle this for you so that chats do not fail.",
     "ollama-llmoptions-2":
       "If you leave this field blank, the context window limit will be auto-detected from the model and applied to all chats. If auto-detection fails, a fallback context window limit of 4096 will be used.",
     "ollama-llmoptions":
@@ -2849,7 +2994,7 @@ const TRANSLATIONS = {
     "omlxoptions-4":
       "Select the OMLX model you want to use. Models will load after entering a valid OMLX URL.",
     "omlxoptions-3":
-      "If an invalid value is entered, NexusAI will handle this for you so that chats do not fail.",
+      "If an invalid value is entered, Nexus AI will handle this for you so that chats do not fail.",
     "omlxoptions-2":
       "If you leave this field blank, the context window limit will be auto-detected from the model and applied to all chats. If auto-detection fails, a fallback context window limit of 16000 will be used.",
     omlxoptions:

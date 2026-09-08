@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 export default function HeaderMenu({
   agentName,
@@ -20,11 +21,12 @@ export default function HeaderMenu({
   const { flowId = null } = useParams();
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const hasOtherFlows =
     availableFlows.filter((flow) => flow.uuid !== flowId).length > 0;
 
   return (
-    <div className="absolute top-[56px] left-4 right-4">
+    <div className="absolute top-4 left-4 right-4">
       <div className="flex justify-between items-start max-w-[1700px] mx-auto">
         <div className="flex items-center gap-x-2">
           <button
@@ -44,7 +46,7 @@ export default function HeaderMenu({
                 className="w-[20px] light:invert"
               />
               <span className="text-theme-text-primary text-sm uppercase tracking-widest">
-                Builder
+                {t("agent-builder.header.builder")}
               </span>
             </button>
             <DropdownMenu open={showDropdown} onOpenChange={setShowDropdown}>
@@ -63,7 +65,7 @@ export default function HeaderMenu({
                 <span
                   className={`text-sm font-medium truncate ${!!agentName ? "text-theme-text-primary " : "text-theme-text-secondary"}`}
                 >
-                  {agentName || "Untitled Flow"}
+                  {agentName || t("agent-builder.header.untitled-flow")}
                 </span>
                 {hasOtherFlows && (
                   <div className="ml-2 flex shrink-0 flex-col">
@@ -83,7 +85,7 @@ export default function HeaderMenu({
                       }
                     >
                       <span className="block truncate">
-                        {flow?.name || "Untitled Flow"}
+                        {flow?.name || t("agent-builder.header.untitled-flow")}
                       </span>
                     </DropdownMenuItem>
                   ))}
@@ -99,20 +101,20 @@ export default function HeaderMenu({
               className="flex items-center gap-x-2 text-theme-text-primary text-sm font-medium px-3 py-2 rounded-lg border border-white bg-theme-settings-input-bg hover:bg-theme-action-menu-bg transition-colors duration-300"
             >
               <Plus className="w-4 h-4" />
-              New Flow
+              {t("agent-builder.header.new-flow")}
             </button>
             <button
               onClick={onSaveFlow}
               className="border-none bg-primary-button hover:opacity-80 text-black light:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-300 flex items-center justify-center gap-2"
             >
-              Save
+              {t("agent-builder.header.save")}
             </button>
           </div>
           <Link
             to="https://docs.nexusai.com/agent-flows/overview"
             className="text-theme-text-secondary text-sm hover:underline hover:text-cta-button flex items-center gap-x-1 w-fit float-right"
           >
-            view documentation &rarr;
+            {t("agent-builder.header.view-documentation")}
           </Link>
         </div>
       </div>

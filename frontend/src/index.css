@@ -291,6 +291,36 @@
   textarea::placeholder {
     color: var(--color-muted-foreground);
   }
+
+  /* Use the same slim, unobtrusive scrollbar as the settings provider lists
+     across every scrollable surface. Explicit `no-scroll` containers still
+     hide their scrollbar through the utility below. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--theme-scrollbar-thumb) var(--theme-scrollbar-track);
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--theme-scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-button,
+  *::-webkit-scrollbar-button:single-button {
+    display: none;
+    width: 0;
+    height: 0;
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--theme-scrollbar-thumb);
+    border-radius: 9999px;
+  }
 }
 
 /* Hide the scrollbar (all engines). Declared with `@utility` rather than as a
@@ -469,6 +499,8 @@
     --theme-button-disable-hover-bg: #3a3128;
     --theme-button-delete-hover-text: #f97066;
     --theme-button-delete-hover-bg: #37282b;
+    --theme-scrollbar-thumb: rgba(255, 255, 255, 0.3);
+    --theme-scrollbar-track: transparent;
   }
 
   [data-theme='light'] {
@@ -488,6 +520,8 @@
     --border: oklch(0.92 0.004 286.32);
     --input: oklch(0.92 0.004 286.32);
     --ring: #0ba5ec;
+    --theme-scrollbar-thumb: rgba(0, 0, 0, 0.3);
+    --theme-scrollbar-track: transparent;
 
     /* Quiet surfaces: the same #edf2fa the settings inputs use, so a secondary
      button and a ghost hover read as a tint of the page rather than a hole. */
@@ -834,11 +868,13 @@ onboarding flow since its background is dark and is the same fill as the inputs.
  * only has to add this one class rather than repeat the whole set. */
   .thin-scrollbar {
     scrollbar-width: thin !important;
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent !important;
+    scrollbar-color: var(--theme-scrollbar-thumb)
+      var(--theme-scrollbar-track) !important;
   }
 
   [data-theme='light'] .thin-scrollbar {
-    scrollbar-color: rgba(0, 0, 0, 0.3) transparent !important;
+    scrollbar-color: var(--theme-scrollbar-thumb)
+      var(--theme-scrollbar-track) !important;
   }
 
   .thin-scrollbar::-webkit-scrollbar {
@@ -848,7 +884,7 @@ onboarding flow since its background is dark and is the same fill as the inputs.
   }
 
   .thin-scrollbar::-webkit-scrollbar-track {
-    background: transparent !important;
+    background: var(--theme-scrollbar-track) !important;
   }
 
   .thin-scrollbar::-webkit-scrollbar-button,
@@ -864,40 +900,42 @@ onboarding flow since its background is dark and is the same fill as the inputs.
   }
 
   .thin-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.3) !important;
+    background-color: var(--theme-scrollbar-thumb) !important;
     border-radius: 9999px !important;
   }
 
   [data-theme='light'] .thin-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.3) !important;
+    background-color: var(--theme-scrollbar-thumb) !important;
   }
 
   .show-scrollbar {
     overflow-y: scroll !important;
     scrollbar-width: thin !important;
-    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(0, 0, 0, 0.1) !important;
+    scrollbar-color: var(--theme-scrollbar-thumb)
+      var(--theme-scrollbar-track) !important;
     -webkit-overflow-scrolling: touch !important;
   }
 
   [data-theme='light'] .show-scrollbar {
-    scrollbar-color: rgba(0, 0, 0, 0.5) rgba(28, 28, 28, 0.3) !important;
+    scrollbar-color: var(--theme-scrollbar-thumb)
+      var(--theme-scrollbar-track) !important;
   }
 
   .show-scrollbar::-webkit-scrollbar {
-    width: 8px !important;
+    width: 6px !important;
+    height: 6px !important;
     display: block !important;
     background: transparent !important;
   }
 
   .show-scrollbar::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1) !important;
-    margin: 3px !important;
-    border-radius: 4px !important;
+    background: var(--theme-scrollbar-track) !important;
+    margin: 0 !important;
   }
 
   .show-scrollbar::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.3) !important;
-    border-radius: 4px !important;
+    background-color: var(--theme-scrollbar-thumb) !important;
+    border-radius: 9999px !important;
     border: none !important;
     min-height: 40px !important;
   }

@@ -16,6 +16,21 @@ export default function WebScrapingNode({
   renderVariableSelect,
 }) {
   const { t } = useTranslation();
+  const captureOptions = [
+    {
+      label: t("agent-builder.webScraping.capture-text"),
+      value: "text",
+    },
+    {
+      label: t("agent-builder.webScraping.capture-html"),
+      value: "html",
+    },
+    {
+      label: t("agent-builder.webScraping.capture-selector"),
+      value: "querySelector",
+    },
+  ];
+
   return (
     <div className="space-y-4">
       <div>
@@ -40,6 +55,7 @@ export default function WebScrapingNode({
         </Label>
         <Select
           value={config.captureAs}
+          items={captureOptions}
           onValueChange={(value) =>
             onConfigChange({ ...config, captureAs: value })
           }
@@ -50,20 +66,7 @@ export default function WebScrapingNode({
             />
           </SelectTrigger>
           <SelectContent>
-            {[
-              {
-                label: t("agent-builder.webScraping.capture-text"),
-                value: "text",
-              },
-              {
-                label: t("agent-builder.webScraping.capture-html"),
-                value: "html",
-              },
-              {
-                label: t("agent-builder.webScraping.capture-selector"),
-                value: "querySelector",
-              },
-            ].map((captureAs) => (
+            {captureOptions.map((captureAs) => (
               <SelectItem key={captureAs.value} value={captureAs.value}>
                 {captureAs.label}
               </SelectItem>

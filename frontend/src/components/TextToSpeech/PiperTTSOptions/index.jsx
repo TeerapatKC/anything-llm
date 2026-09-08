@@ -160,7 +160,7 @@ function DemoVoiceSample({ voiceId }) {
         setLoading(true);
         const client = new PiperTTSClient({ voiceId });
         const blobUrl = await client.getAudioBlobForText(
-          "Hello, welcome to NexusAI!"
+          "Hello, welcome to Nexus AI!"
         );
         setAudioSrc(blobUrl);
         setLoading(false);

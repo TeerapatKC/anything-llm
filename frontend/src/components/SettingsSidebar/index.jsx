@@ -64,7 +64,7 @@ export default function SettingsSidebar() {
             <SheetHeader className="sr-only">
               <SheetTitle>{t("settings.title")}</SheetTitle>
               <SheetDescription>
-                Displays the settings sidebar.
+                {t("settings-page.sidebar-description")}
               </SheetDescription>
             </SheetHeader>
             <div className="flex h-full w-full flex-col">

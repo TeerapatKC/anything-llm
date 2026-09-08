@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 /**
  * Roles live in two scopes that never overlap. System roles decide what an account can
@@ -31,19 +32,22 @@ import {
  * are assigned per membership so the same person can differ between workspaces.
  */
 export default function AdminRoles() {
+  const { t } = useTranslation();
   return (
     <SettingsLayout>
       <PageHeader
-        title={"Roles & Permissions"}
-        description={
-          "A role is a named set of permissions. System roles control the instance itself; workspace roles control what a member can do inside a single workspace, so one account can be a manager of one workspace and read-only in another."
-        }
+        title={t("settings-page.roles.title")}
+        description={t("settings-page.roles.description")}
       />
 
       <Tabs defaultValue="system" className="mt-6">
         <TabsList>
-          <TabsTrigger value="system">System roles</TabsTrigger>
-          <TabsTrigger value="workspace">Workspace roles</TabsTrigger>
+          <TabsTrigger value="system">
+            {t("settings-page.roles.system-tab")}
+          </TabsTrigger>
+          <TabsTrigger value="workspace">
+            {t("settings-page.roles.workspace-tab")}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="system">
           <RolesPanel scope="system" />

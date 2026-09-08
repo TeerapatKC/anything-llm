@@ -317,7 +317,7 @@ const VECTOR_DB_PROVIDER_PRIVACY_MAP = {
   lancedb: {
     name: "LanceDB",
     description: [
-      "Your vectors and document text are stored privately on this instance of NexusAI.",
+      "Your vectors and document text are stored privately on this instance of Nexus AI.",
     ],
     logo: LanceDbLogo,
   },
@@ -325,9 +325,9 @@ const VECTOR_DB_PROVIDER_PRIVACY_MAP = {
 
 const EMBEDDING_ENGINE_PROVIDER_PRIVACY_MAP = {
   native: {
-    name: "NexusAI Embedder",
+    name: "Nexus AI Embedder",
     description: [
-      "Your document text is embedded privately on this instance of NexusAI.",
+      "Your document text is embedded privately on this instance of Nexus AI.",
     ],
     logo: NexusAIIcon,
   },

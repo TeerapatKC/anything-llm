@@ -1,0 +1,77 @@
+{
+  "app_name": { "message": "Nexus AI ブラウザコンパニオン" },
+  "app_description": {
+    "message": "ブラウザからウェブコンテンツを直接収集し、Nexus AI のワークスペースに保存できます。"
+  },
+  "document_title": { "message": "Nexus AI ドキュメント保存" },
+  "logo_alt": { "message": "Nexus AI ロゴ" },
+  "intro": {
+    "message": "ページ上で右クリックすると、選択したテキストまたはページ全体を Nexus AI に送信できます。"
+  },
+  "connection_string_label": { "message": "Nexus AI 接続文字列" },
+  "connection_string_placeholder": {
+    "message": "接続文字列を貼り付けてください"
+  },
+  "connect": { "message": "接続" },
+  "connected": { "message": "Nexus AI に接続済み" },
+  "disconnect": { "message": "切断" },
+  "disconnect_success": { "message": "Nexus AI との接続を解除しました" },
+  "invalid_connection_string": {
+    "message": "接続文字列の形式が正しくありません。"
+  },
+  "offline": {
+    "message": "Nexus AI は現在オフラインです。しばらくしてからもう一度お試しください。"
+  },
+  "invalid_api_key": { "message": "接続に失敗しました: API キーが無効です" },
+  "connect_success": { "message": "Nexus AI に接続しました" },
+  "connection_error": {
+    "message": "接続中にエラーが発生しました: $error$",
+    "placeholders": { "error": { "content": "$1" } }
+  },
+  "no_connection": { "message": "接続情報が見つかりません" },
+  "disconnect_server_failed": { "message": "サーバーから切断できませんでした" },
+  "disconnection_error": {
+    "message": "切断中にエラーが発生しました: $error$",
+    "placeholders": { "error": { "content": "$1" } }
+  },
+  "generic_error": {
+    "message": "エラーが発生しました。しばらくしてからもう一度お試しください。"
+  },
+  "context_save_selection": { "message": "選択したテキストを Nexus AI に保存" },
+  "context_embed_selection": {
+    "message": "選択したコンテンツをワークスペースに埋め込む"
+  },
+  "context_save_page": { "message": "ページ全体を Nexus AI に保存" },
+  "context_embed_page": { "message": "ページ全体をワークスペースに埋め込む" },
+  "upload_selection_loading": {
+    "message": "選択したテキストを利用可能なドキュメントにアップロードしています。しばらくお待ちください。"
+  },
+  "embed_selection_loading": {
+    "message": "選択したテキストをワークスペースに埋め込んでいます。しばらくお待ちください。"
+  },
+  "upload_page_loading": {
+    "message": "ページ全体を利用可能なドキュメントにアップロードしています。しばらくお待ちください。"
+  },
+  "embed_page_loading": {
+    "message": "ページ全体をワークスペースに埋め込んでいます。しばらくお待ちください。"
+  },
+  "action_save_content": { "message": "コンテンツを保存" },
+  "action_embed_content": { "message": "コンテンツを埋め込む" },
+  "action_save_page": { "message": "ページ全体を保存" },
+  "action_embed_page": { "message": "ページ全体を埋め込む" },
+  "authentication_failed": {
+    "message": "認証に失敗しました。拡張機能を再接続してください。"
+  },
+  "action_failed": {
+    "message": "$action$できませんでした。もう一度お試しください。",
+    "placeholders": { "action": { "content": "$1" } }
+  },
+  "save_success": { "message": "コンテンツを Nexus AI に保存しました。" },
+  "status_success": { "message": "成功" },
+  "status_error": { "message": "エラー" },
+  "status_loading": { "message": "処理中" },
+  "extension_title": { "message": "Nexus AI 拡張機能" },
+  "page_content_failed": {
+    "message": "ページのコンテンツを取得できませんでした。もう一度お試しください。"
+  }
+}

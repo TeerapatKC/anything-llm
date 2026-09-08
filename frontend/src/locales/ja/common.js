@@ -38,7 +38,7 @@ const TRANSLATIONS = {
     title: "インスタンス設定",
     invites: "招待",
     users: "ユーザー",
-    roles: "Roles & Permissions",
+    roles: "ロールと権限",
     workspaces: "ワークスペース",
     "workspace-chats": "ワークスペースチャット",
     customization: "カスタマイズ",
@@ -56,13 +56,13 @@ const TRANSLATIONS = {
     "agent-skills": "エージェントスキル",
     "agent-flow": "エージェントフロー",
     "sql-connector": "SQLコネクタ",
-    "agent-skills-setting": "設定",
+    "agent-skills-settings": "設定",
     "default-system-prompt": "デフォルトシステムプロンプト",
     "instance-owner": "インスタンス所有者",
     admin: "管理者",
     tools: "ツール",
     "system-prompt-variables": "システムプロンプト変数",
-    "slash-commands": "Slash Commands",
+    "slash-commands": "スラッシュコマンド",
     "experimental-features": "実験的機能",
     contact: "サポートに連絡",
     "browser-extension": "ブラウザ拡張",
@@ -84,6 +84,66 @@ const TRANSLATIONS = {
     "scheduled-jobs": "計画された作業",
     "model-router": "モデルルーター",
     "image-generation": "画像生成",
+  },
+  "settings-page": {
+    "sidebar-description": "設定サイドバーを表示します。",
+    audio: {
+      "stt-title": "音声テキスト変換設定",
+      "stt-description":
+        "Nexus AI で使用する音声テキスト変換プロバイダーを選択します。対応している場合は、デフォルトでブラウザ内蔵サービスを使用します。",
+      "tts-title": "テキスト読み上げ設定",
+      "tts-description":
+        "Nexus AI で使用するテキスト読み上げプロバイダーを選択します。対応している場合は、デフォルトでブラウザ内蔵サービスを使用します。",
+    },
+    "browser-extension": {
+      title: "ブラウザ拡張機能の API キー",
+      description:
+        "Nexus AI インスタンスに接続するブラウザ拡張機能の API キーを管理します。",
+    },
+    "community-hub": {
+      title: "コミュニティハブ",
+      "trending-description": "Nexus AI コミュニティで共有し、共同作業を行います。",
+      "import-title": "コミュニティアイテムをインポート",
+      "import-description":
+        "Nexus AI コミュニティハブからプロンプト、スキル、コマンドなどをインポートして、このインスタンスを拡張します。",
+    },
+    workspaces: {
+      title: "インスタンスのワークスペース",
+      description:
+        "このインスタンスに存在するすべてのワークスペースです。ワークスペースを削除すると、関連するチャットと設定もすべて削除されます。",
+    },
+    roles: {
+      title: "ロールと権限",
+      description:
+        "ロールは権限のまとまりに名前を付けたものです。システムロールはインスタンス全体を制御し、ワークスペースロールは各ワークスペース内でメンバーが実行できる操作を制御します。そのため、同じアカウントでもワークスペースごとに異なるロールを持つことができます。",
+      "system-tab": "システムロール",
+      "workspace-tab": "ワークスペースロール",
+    },
+    "system-prompt-variables": {
+      title: "システムプロンプト変数",
+      description:
+        "システムプロンプト変数には、動的なプロンプト内容を実現するためにシステムプロンプトから参照できる設定値を保存します。",
+    },
+    "instance-owner": {
+      title: "インスタンス所有者",
+      description:
+        "このデプロイのスーパー管理者ロールを保持しています。このロールは削除、停止、他のユーザーへの付与はできず、下の移行機能でのみ移動できます。このページの操作は元に戻せず、他のユーザーは実行できません。",
+    },
+    "slash-commands": {
+      title: "組み込みスラッシュコマンド",
+      description:
+        "ここで定義したコマンドは、すべてのワークスペースで使用できます。特定のワークスペースだけに追加する場合は、そのワークスペースの設定を使用してください。",
+    },
+    "default-system-prompt": {
+      title: "デフォルトシステムプロンプト",
+      description:
+        "新しいワークスペースで使用されるデフォルトのシステムプロンプトです。",
+    },
+    "watched-documents": {
+      title: "監視中のドキュメント",
+      description:
+        "このインスタンスで現在監視されているすべてのドキュメントです。内容は定期的に同期されます。",
+    },
   },
   login: {
     form: {
@@ -133,7 +193,7 @@ const TRANSLATIONS = {
       add: "新しいメッセージを追加",
       save: "メッセージを保存",
       heading: "説明してください",
-      body: "NexusAIの利点",
+      body: "Nexus AIの利点",
     },
     status: {
       title: "ワークスペースのステータス",
@@ -721,7 +781,7 @@ const TRANSLATIONS = {
       "intelligent-skill-selection": {
         title: "知的なスキル選択",
         description:
-          "クエリごとに、無制限のツールを使用し、トークン使用量を最大80%削減できます。NexusAIは、各プロンプトに対して最適なスキルを自動的に選択します。",
+          "クエリごとに、無制限のツールを使用し、トークン使用量を最大80%削減できます。Nexus AIは、各プロンプトに対して最適なスキルを自動的に選択します。",
         "max-tools": {
           title: "マックスツールズ",
           description:
@@ -769,7 +829,7 @@ const TRANSLATIONS = {
   api: {
     title: "APIキー",
     description:
-      "APIキーにより、プログラム経由でこのNexusAIインスタンスにアクセスおよび管理できます。",
+      "APIキーにより、プログラム経由でこのNexus AIインスタンスにアクセスおよび管理できます。",
     link: "APIドキュメントを読む",
     generate: "新しいAPIキーを生成",
     empty: "APIキーが見つかりません",
@@ -783,7 +843,7 @@ const TRANSLATIONS = {
       close: "閉じる",
       create: "APIキーを作成",
       helper:
-        "作成したAPIキーは、このNexusAIインスタンスにプログラムからアクセスして設定するために使用できます。",
+        "作成したAPIキーは、このNexus AIインスタンスにプログラムからアクセスして設定するために使用できます。",
       name: {
         label: "名前",
         placeholder: "本番環境の統合",
@@ -807,7 +867,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLMの設定",
     description:
-      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、NexusAIは正しく動作しません。",
+      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、Nexus AIは正しく動作しません。",
     provider: "LLMプロバイダー",
     providers: {
       azure_openai: {
@@ -830,7 +890,7 @@ const TRANSLATIONS = {
       "これは、お好みの文字起こしモデルプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、メディアファイルや音声が正しく文字起こしされません。",
     provider: "文字起こしプロバイダー",
     "warn-start":
-      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にNexusAIが停止する可能性があります。",
+      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にNexus AIが停止する可能性があります。",
     "warn-recommend":
       "少なくとも2GBのRAMが推奨され、ファイルサイズは10Mb未満であることをお勧めします。",
     "warn-end": "組み込みモデルは初回使用時に自動的にダウンロードされます。",
@@ -840,7 +900,7 @@ const TRANSLATIONS = {
     "desc-start":
       "LLMがネイティブに埋め込みエンジンをサポートしていない場合、テキストの埋め込み用に追加の認証情報を指定する必要がある場合があります。",
     "desc-end":
-      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをNexusAIが処理できるフォーマットに変換するために必要です。",
+      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをNexus AIが処理できるフォーマットに変換するために必要です。",
     provider: {
       title: "埋め込みプロバイダー",
     },
@@ -864,7 +924,7 @@ const TRANSLATIONS = {
   vector: {
     title: "ベクターデータベース設定",
     description:
-      "これは、NexusAIインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
+      "これは、Nexus AIインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
     provider: {
       title: "ベクターデータベースプロバイダー",
       description: "LanceDBの場合、特に設定は必要ありません。",
@@ -909,7 +969,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "プライバシーとデータ処理",
     description:
-      "これは、接続されているサードパーティプロバイダーとNexusAIがデータをどのように処理するかの設定です。",
+      "これは、接続されているサードパーティプロバイダーとNexus AIがデータをどのように処理するかの設定です。",
     anonymous: "匿名テレメトリが有効",
     personalization: {
       label: "パーソナライズと記憶を有効にする",
@@ -1097,12 +1157,12 @@ const TRANSLATIONS = {
       fetching: "取得中...",
       "fetch-website": "ウェブサイトを取得",
       "privacy-notice":
-        "これらのファイルは、このNexusAIインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
+        "これらのファイルは、このNexus AIインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
     },
     pinning: {
       what_pinning: "ドキュメントのピン留めとは？",
       pin_explained_block1:
-        "NexusAIでドキュメントを<b>ピン留め</b>すると、その内容全体がプロンプトウィンドウに挿入され、LLMがしっかり理解できるようになります。",
+        "Nexus AIでドキュメントを<b>ピン留め</b>すると、その内容全体がプロンプトウィンドウに挿入され、LLMがしっかり理解できるようになります。",
       pin_explained_block2:
         "<b>大きなコンテキストを持つモデル</b>や、重要な小さなファイルで特に効果的です。",
       pin_explained_block3:
@@ -1112,7 +1172,7 @@ const TRANSLATIONS = {
     watching: {
       what_watching: "ドキュメントのウォッチとは？",
       watch_explained_block1:
-        "NexusAIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
+        "Nexus AIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
       watch_explained_block2:
         "この機能は現在オンラインベースのコンテンツのみ対応しており、手動アップロードしたドキュメントには利用できません。",
       watch_explained_block3_start: "ウォッチしているドキュメントの管理は",
@@ -1160,7 +1220,12 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
-    agent_exit_hint: "Type /exit to exit agent execution loop early.",
+    agent_exit_hint: "エージェントの実行ループを途中で終了するには /exit と入力してください。",
+    generating_response: "応答を生成中",
+    thought_in_progress: "モデルが思考中...",
+    thoughts: "思考",
+    response_failed: "メッセージに応答できませんでした。",
+    response_failed_reason: "理由: {{reason}}",
     send_message: "メッセージを送信",
     attach_file: "このチャットにファイルを添付",
     text_size: "テキストサイズを変更",
@@ -1278,7 +1343,7 @@ const TRANSLATIONS = {
         edit_description: "この記憶の内容を更新してください。",
         label: "記憶",
         placeholder:
-          "例：ユーザー名がジョー、ユーザーが使用しているツールがNexusAIなど。",
+          "例：ユーザー名がジョー、ユーザーが使用しているツールがNexus AIなど。",
         create: "作成する",
         save: "保存",
         cancel: "キャンセル",
@@ -1292,6 +1357,13 @@ const TRANSLATIONS = {
     export: "チャットを以下のような形式でエクスポートする：",
     exporting: "輸出…",
     preset_img_description: "テキストプロンプトから画像を生成する。",
+    leave_generating: {
+      title: "応答の生成を停止しますか？",
+      description:
+        "このチャットから移動しようとしています。移動するとモデルによる応答の生成が停止し、復元できません。",
+      cancel: "キャンセル",
+      confirm: "続行",
+    },
   },
   profile_settings: {
     edit_account: "アカウントを編集",
@@ -1376,16 +1448,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI設定",
-      description: "NexusAI の UI 設定を調整してください。",
+      description: "Nexus AI の UI 設定を調整してください。",
     },
     branding: {
       title: "ブランディングとホワイトレーベル化",
       description:
-        "NexusAIインスタンスを、独自のブランドでカスタマイズしてください。",
+        "Nexus AIインスタンスを、独自のブランドでカスタマイズしてください。",
     },
     chat: {
       title: "チャット",
-      description: "NexusAI のチャット設定をカスタマイズしてください。",
+      description: "Nexus AI のチャット設定をカスタマイズしてください。",
       auto_submit: {
         title: "自動音声入力送信",
         description: "沈黙の後に自動で音声入力を行う",
@@ -1423,7 +1495,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "表示言語",
         description:
-          "NexusAIのUIを特定の言語で表示するためのオプションを選択してください。翻訳が利用可能な場合にのみ有効です。",
+          "Nexus AIのUIを特定の言語で表示するためのオプションを選択してください。翻訳が利用可能な場合にのみ有効です。",
       },
       logo: {
         title: "ブランドロゴ",
@@ -1566,7 +1638,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "本人確認が必要です。",
           description:
-            "アイテムを公開する前に、NexusAIコミュニティハブで認証する必要があります。",
+            "アイテムを公開する前に、Nexus AIコミュニティハブで認証する必要があります。",
           button: "コミュニティハブへの接続",
         },
       },
@@ -2094,10 +2166,10 @@ const TRANSLATIONS = {
       "suspend-description":
         "停止するとログアウトされ、管理者が停止を解除するまで再ログインできなくなります。",
       "unsuspend-description":
-        "このユーザーは NexusAI のこのインスタンスに再度ログインできるようになります。",
+        "このユーザーは Nexus AI のこのインスタンスに再度ログインできるようになります。",
       "delete-title": "{{username}} を削除しますか？",
       "delete-description":
-        "削除するとログアウトされ、NexusAI のこのインスタンスを利用できなくなります。この操作は元に戻せません。",
+        "削除するとログアウトされ、Nexus AI のこのインスタンスを利用できなくなります。この操作は元に戻せません。",
       "suspend-toast": "ユーザーを停止しました。",
       "unsuspend-toast": "ユーザーの停止を解除しました。",
       "delete-toast": "ユーザーをシステムから削除しました。",
@@ -2160,11 +2232,11 @@ const TRANSLATIONS = {
   smtp: {
     title: "SMTP / 送信メール",
     description:
-      "NexusAI がシステムメール（パスワードリセット、招待、通知）の送信に使用するメールボックスを設定します。インスタンスのオーナーのみが操作できます。",
+      "Nexus AI がシステムメール（パスワードリセット、招待、通知）の送信に使用するメールボックスを設定します。インスタンスのオーナーのみが操作できます。",
     "enable-aria": "SMTP を有効にする",
     "enable-title": "送信メールを有効にする",
     "enable-description":
-      "オフの場合、以下の項目が入力されていても NexusAI はメールを送信しません。",
+      "オフの場合、以下の項目が入力されていても Nexus AI はメールを送信しません。",
     "service-label": "メールサービス",
     "service-placeholder": "サービスを選択",
     providers: {
@@ -2196,7 +2268,7 @@ const TRANSLATIONS = {
     "from-email": "送信元アドレス",
     "from-email-placeholder": "noreply@example.com",
     "from-name": "送信者名",
-    "from-name-placeholder": "NexusAI",
+    "from-name-placeholder": "Nexus AI",
     saving: "保存中…",
     save: "変更を保存",
     "save-failed": "SMTP 設定の保存に失敗しました。",
@@ -2296,6 +2368,21 @@ const TRANSLATIONS = {
       "store-result-in": "結果の保存先",
       "result-variable": "結果変数",
       url: "URL",
+      "add-block": "ブロックを追加",
+    },
+    header: {
+      builder: "ビルダー",
+      "untitled-flow": "無題のフロー",
+      "new-flow": "新しいフロー",
+      save: "保存",
+      "view-documentation": "ドキュメントを見る →",
+    },
+    messages: {
+      "load-flows-failed": "利用可能なフローを読み込めませんでした。",
+      "load-flow-failed": "フローを読み込めませんでした。",
+      "name-description-required": "フローの名前と説明を入力してください。",
+      saved: "エージェントフローを保存しました。",
+      "save-failed": "エージェントフローを保存できませんでした。{{error}}",
     },
     flowInfo: {
       name: "フロー名",
@@ -2381,6 +2468,26 @@ const TRANSLATIONS = {
         "注意: データの品質に影響し、元の内容から具体的な詳細が失われる可能性があります。",
     },
     blockList: {
+      "flow-information": "フロー情報",
+      "flow-information-description": "フローの基本情報",
+      "untitled-flow": "無題のフロー",
+      "flow-variables": "フロー変数",
+      "flow-variables-description": "エージェントの変数と設定を構成します",
+      "variables-defined": "定義済みの変数: {{count}}",
+      "api-call": "API 呼び出し",
+      "api-call-description": "HTTP リクエストを実行します",
+      "no-url": "URL が指定されていません",
+      "llm-instruction": "LLM への指示",
+      "llm-instruction-description": "LLM への指示を使用してデータを処理します",
+      "no-instruction": "指示がありません",
+      "web-scraping": "ウェブスクレイピング",
+      "web-scraping-description": "ウェブページからコンテンツを取得します",
+      "flow-complete": "フロー完了",
+      "flow-complete-description": "エージェントフローの終了",
+      "flow-will-end": "ここでフローが終了します",
+      "move-up": "ブロックを上へ移動",
+      "move-down": "ブロックを下へ移動",
+      "delete-block": "ブロックを削除",
       "direct-output": "直接出力",
       "direct-output-description":
         "このブロックの出力はチャットへ直接返されます。これ以降のツール呼び出しは実行されません。",
@@ -2389,6 +2496,9 @@ const TRANSLATIONS = {
   },
   "sql-connector": {
     title: "SQL コネクタ",
+    "page-description":
+      "エージェントが使用できるデータベース接続を管理します。",
+    restricted: "SQL コネクターはインスタンス所有者のみ管理できます。",
     "list-description":
       "このインスタンスに設定されたデータベース接続を一覧表示します。",
     "connections-heading": "データベース接続",
@@ -2470,7 +2580,7 @@ const TRANSLATIONS = {
     tos: {
       title: "実験的機能の利用規約",
       intro:
-        "NexusAI の実験的機能は試験運用中の機能であり、<b>オプトイン</b>制です。懸念事項がある場合は、機能を承認する前に事前に条件を提示または警告します。",
+        "Nexus AI の実験的機能は試験運用中の機能であり、<b>オプトイン</b>制です。懸念事項がある場合は、機能を承認する前に事前に条件を提示または警告します。",
       "risks-intro":
         "このページの機能を使用すると、以下のような事態が発生する可能性があります（これらに限られません）。",
       "risk-data-loss": "データの損失。",
@@ -2479,14 +2589,14 @@ const TRANSLATIONS = {
       "risk-resources": "リソース消費量の増加。",
       "risk-cost":
         "接続中の LLM や埋め込みプロバイダーのコストまたは使用量の増加。",
-      "risk-bugs": "NexusAI 使用時の不具合や問題の発生。",
+      "risk-bugs": "Nexus AI 使用時の不具合や問題の発生。",
       "conditions-intro":
         "実験的機能の使用には、以下のような条件も伴います（これらに限られません）。",
       "condition-removal":
         "機能が今後のアップデートで存在しなくなる場合があります。",
       "condition-stability": "使用中の機能は現時点で安定していません。",
       "condition-availability":
-        "この機能は、今後のバージョン、構成、またはサブスクリプションの NexusAI では利用できない場合があります。",
+        "この機能は、今後のバージョン、構成、またはサブスクリプションの Nexus AI では利用できない場合があります。",
       "condition-privacy":
         "ベータ機能の使用時も、プライバシー設定は<b>尊重されます</b>。",
       "condition-change":
@@ -2548,11 +2658,58 @@ const TRANSLATIONS = {
     "flows-description": "このインスタンスに設定されたフローを一覧表示します。",
     "skills-title": "エージェントのスキルと設定",
     "skills-description": "スキルと接続済みサービスを一覧表示します。",
+    "preferences-saved": "エージェント設定を保存しました。",
+    "preferences-save-failed": "エージェント設定を保存できませんでした。",
+    "toggle-tool-failed": "ツールの有効状態を変更できませんでした。",
+    "skills-integrations": "スキルと連携",
+    "choose-capability": "設定する機能を選択してください。",
+    "flows-restricted":
+      "エージェントフローはインスタンス所有者のみ管理できます。",
+    "app-integrations": "アプリ連携",
+    "select-mobile":
+      "エージェントスキル、エージェントフロー、または MCP サーバーを選択してください",
+    "page-skills-title": "エージェントスキル",
+    "page-skills-description":
+      "エージェントが使用できる機能を選択して設定します。",
+    "page-flow-description":
+      "エージェントが使用できる自動化フローを作成・管理します。",
+    "select-configure": "設定する項目を選択してください",
+    on: "オン",
+    off: "オフ",
+    "skill-settings": "エージェントスキル設定",
+    configure: "設定",
     "agent-flows": "エージェントフロー",
     "custom-skills": "カスタムスキル",
     back: "戻る",
     "create-flow": "フローを作成",
     "open-builder": "ビルダーを開く",
+  },
+  "agent-flow": {
+    "learn-more": "エージェントフローについて詳しく見る",
+    on: "オン",
+    off: "オフ",
+    manage: "フローを管理",
+    "delete-title": "このフローを削除しますか？",
+    "delete-description": "この操作は元に戻せません。",
+    "delete-confirm": "フローを削除",
+    edit: "フローを編集",
+    delete: "フローを削除",
+    deleted: "フローを削除しました。",
+    "delete-failed": "フローを削除できませんでした。",
+    "toggle-failed": "フローの有効状態を変更できませんでした。",
+    "no-description": "説明はありません",
+    visibility: {
+      title: "ワークスペースへの公開範囲",
+      description: "このフローを使用できるワークスペースを選択します。",
+      "select-all": "すべて選択",
+      "clear-all": "すべて解除",
+      loading: "ワークスペースを読み込み中...",
+      empty: "このインスタンスにはまだワークスペースがありません。",
+      save: "公開範囲を保存",
+      saving: "保存中...",
+      updated: "ワークスペースへの公開範囲を更新しました。",
+      failed: "ワークスペースへの公開範囲を更新できませんでした。",
+    },
   },
   "vector-providers": {
     pgvector: {
@@ -2606,7 +2763,7 @@ const TRANSLATIONS = {
     "intro-1":
       "コミュニティハブでは、エージェントスキル、システムプロンプト、スラッシュコマンドなどを探して共有・インポートできます。",
     "intro-2":
-      "これらのアイテムは NexusAI チームとコミュニティによって作成されており、NexusAI を使い始めるのにも、ニーズに合わせて拡張するのにも最適です。",
+      "これらのアイテムは Nexus AI チームとコミュニティによって作成されており、Nexus AI を使い始めるのにも、ニーズに合わせて拡張するのにも最適です。",
     "intro-3":
       "コミュニティハブには<b>非公開</b>アイテムと<b>公開</b>アイテムがあります。非公開アイテムはあなたにのみ表示され、公開アイテムは全員に表示されます。",
     warning:
@@ -2672,8 +2829,8 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "本人であることを確認",
     "what-to-clear": "消去する対象",
     "choose-an-account": "アカウントを選択",
-    "hub-account-title": "NexusAI コミュニティハブのアカウント",
-    "hub-api-key-placeholder": "NexusAI Hub の API キーを入力してください",
+    "hub-account-title": "Nexus AI コミュニティハブのアカウント",
+    "hub-api-key-placeholder": "Nexus AI Hub の API キーを入力してください",
     "add-to-workspace": "ワークスペースに追加",
     "apply-to-workspace": "ワークスペースに適用",
     "max-vector-text-length": "ベクトル化するテキストの最大長",
@@ -2735,7 +2892,7 @@ const TRANSLATIONS = {
     "toggle-2":
       "監視中のドキュメントは、参照しているすべてのワークスペースで同時に自動更新されます。",
     toggle:
-      "ドキュメントを「監視」対象に指定できるようにします。監視中のドキュメントの内容は定期的に取得され、NexusAI 上で更新されます。",
+      "ドキュメントを「監視」対象に指定できるようにします。監視中のドキュメントの内容は定期的に取得され、Nexus AI 上で更新されます。",
     "role-modal":
       "このロールはシステム管理者権限を持つため、下のチェックボックスに関わらず、今後のアップデートで追加されるものも含めてすべての権限を保持します。",
     "factory-reset":
@@ -2751,9 +2908,9 @@ const TRANSLATIONS = {
     "new-workspace-modal":
       "このワークスペースを作成した直後は管理者のみが閲覧できます。作成後にユーザーを追加できます。",
     "new-browser-extension-api-key-modal-3":
-      "拡張機能に「Connected to NexusAI」と表示されれば接続成功です。表示されない場合は、接続文字列をコピーして拡張機能に手動で貼り付けてください。",
+      "拡張機能に「Connected to Nexus AI」と表示されれば接続成功です。表示されない場合は、接続文字列をコピーして拡張機能に手動で貼り付けてください。",
     "new-browser-extension-api-key-modal-2":
-      "「API キーを作成」をクリックすると、NexusAI がブラウザ拡張機能への自動接続を試みます。",
+      "「API キーを作成」をクリックすると、Nexus AI がブラウザ拡張機能への自動接続を試みます。",
     "new-browser-extension-api-key-modal":
       "警告: この API キーはアカウントに紐づくすべてのワークスペースへのアクセスを許可します。共有には十分ご注意ください。",
     "code-snippet-modal":
@@ -2771,25 +2928,25 @@ const TRANSLATIONS = {
     "new-embed-modal":
       "埋め込みを作成すると、ウェブサイトに公開できるリンクが発行されます。次のような簡単な",
     authentication:
-      "NexusAI コミュニティハブの公開アイテムを取り込むだけであれば、コミュニティハブのアカウントを接続する必要はありません。",
+      "Nexus AI コミュニティハブの公開アイテムを取り込むだけであれば、コミュニティハブのアカウントを接続する必要はありません。",
     "agent-flow":
       "エージェントフローを使うと、エージェントから呼び出せる再利用可能な一連の処理を作成できます。",
     "agent-skill":
-      "エージェントスキルは NexusAI インスタンス上でコードを実行できるため、信頼できる提供元のスキルのみをインポートしてください。インポート前にコードを確認することも推奨します。スキルの動作が不明な場合は、インポートしないでください。",
+      "エージェントスキルは Nexus AI インスタンス上でコードを実行できるため、信頼できる提供元のスキルのみをインポートしてください。インポート前にコードを確認することも推奨します。スキルの動作が不明な場合は、インポートしないでください。",
     "slash-command":
-      "スラッシュコマンドは、NexusAI のワークスペースでチャットする際にプロンプトへ情報をあらかじめ入力するために使用します。",
+      "スラッシュコマンドは、Nexus AI のワークスペースでチャットする際にプロンプトへ情報をあらかじめ入力するために使用します。",
     "system-prompt":
       "システムプロンプトは AI エージェントの振る舞いを導くために使用され、既存の任意のワークスペースに適用できます。",
     unknown:
-      "コミュニティハブでアイテムが見つかりましたが、種類を判別できないか、NexusAI へのインポートにまだ対応していません。",
+      "コミュニティハブでアイテムが見つかりましたが、種類を判別できないか、Nexus AI へのインポートにまだ対応していません。",
     "pull-and-review":
       "アイテムの取得中にエラーが発生しました。しばらくしてからもう一度お試しください。",
     "connection-modal-3":
-      "NexusAI Mobile アプリで QR コードをスキャンすると、ワークスペース、チャット、スレッド、ドキュメントのライブ同期が有効になります。",
+      "Nexus AI Mobile アプリで QR コードをスキャンすると、ワークスペース、チャット、スレッド、ドキュメントのライブ同期が有効になります。",
     "connection-modal-2":
       "スマートフォン上のローカルモデルでプライベートに実行するか、チャットをこのインスタンスへシームレスに中継できます。",
     "connection-modal":
-      "NexusAI モバイルを使うと、ワークスペースのチャット、スレッド、ツール、ドキュメントに接続して外出先でも利用できます。",
+      "Nexus AI モバイルを使うと、ワークスペースのチャット、スレッド、ツール、ドキュメントに接続して外出先でも利用できます。",
     "privacy-and-data":
       "オープンソースプロジェクトとして、私たちはあなたのプライバシーの権利を尊重します。AI とドキュメントをプライベートかつ安全に統合する最良のソリューションを構築することに専念しています。テレメトリを無効にする場合でも、ぜひご意見やご感想をお寄せいただければ幸いです。",
     "existing-user-form":
@@ -2807,9 +2964,9 @@ const TRANSLATIONS = {
     "gemini-options":
       "モデルが複数の次元数の出力に対応している場合に、生成される埋め込みの次元数を指定します。",
     "generic-open-ai-options-2":
-      '検索用の埋め込みを作成する前に、クエリテキストの先頭へ付加するテキストです。一部のモデルでは、クエリと文章を区別するためにこれが必要です（例: "query: " や "search_query: "）。<br /><br />NexusAI はこのテキストに「:」を含め、何も<b>追加しません</b>。',
+      '検索用の埋め込みを作成する前に、クエリテキストの先頭へ付加するテキストです。一部のモデルでは、クエリと文章を区別するためにこれが必要です（例: "query: " や "search_query: "）。<br /><br />Nexus AI はこのテキストに「:」を含め、何も<b>追加しません</b>。',
     "generic-open-ai-options":
-      '保存用の埋め込みを作成する前に、各コンテンツチャンクの先頭へ付加するテキストです。一部のモデルでは、文章とクエリを区別するためにこれが必要です（例: "passage: " や "search_document: "）。<br /><br />NexusAI はこのテキストに「:」を含め、何も<b>追加しません</b>。',
+      '保存用の埋め込みを作成する前に、各コンテンツチャンクの先頭へ付加するテキストです。一部のモデルでは、文章とクエリを区別するためにこれが必要です（例: "passage: " や "search_document: "）。<br /><br />Nexus AI はこのテキストに「:」を含め、何も<b>追加しません</b>。',
     "lemonade-options":
       "埋め込みに使用する Lemonade モデルを選択します。有効な Lemonade の URL を入力するとモデルが読み込まれます。",
     "lmstudio-options-2":
@@ -2847,7 +3004,7 @@ const TRANSLATIONS = {
     "ollama-llmoptions-4":
       "使用する Ollama モデルを選択します。有効な Ollama の URL を入力するとモデルが読み込まれます。",
     "ollama-llmoptions-3":
-      "無効な値が入力された場合でも、チャットが失敗しないように NexusAI が処理します。",
+      "無効な値が入力された場合でも、チャットが失敗しないように Nexus AI が処理します。",
     "ollama-llmoptions-2":
       "この項目を空欄にすると、コンテキストウィンドウの上限をモデルから自動検出し、すべてのチャットに適用します。自動検出に失敗した場合は、フォールバック値の 4096 が使用されます。",
     "ollama-llmoptions":
@@ -2855,7 +3012,7 @@ const TRANSLATIONS = {
     "omlxoptions-4":
       "使用する OMLX モデルを選択します。有効な OMLX の URL を入力するとモデルが読み込まれます。",
     "omlxoptions-3":
-      "無効な値が入力された場合でも、チャットが失敗しないように NexusAI が処理します。",
+      "無効な値が入力された場合でも、チャットが失敗しないように Nexus AI が処理します。",
     "omlxoptions-2":
       "この項目を空欄にすると、コンテキストウィンドウの上限をモデルから自動検出し、すべてのチャットに適用します。自動検出に失敗した場合は、フォールバック値の 16000 が使用されます。",
     omlxoptions:

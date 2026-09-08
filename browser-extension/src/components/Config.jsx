@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import BrowserExtension from "../models/browserExtension";
+import { t } from "../utils/i18n";
 
 export default function Config({ status, onStatusChange }) {
   const [connectionString, setConnectionString] = useState("");
@@ -18,7 +19,7 @@ export default function Config({ status, onStatusChange }) {
   async function disconnectFromExtension() {
     await chrome.storage.sync.remove(["apiBase", "apiKey"]);
     onStatusChange();
-    setSaveStatus("Successfully disconnected from NexusAI");
+    setSaveStatus({ type: "success", message: t("disconnect_success") });
     chrome.runtime.sendMessage({ action: "connectionUpdated" });
   }
 
@@ -26,29 +27,33 @@ export default function Config({ status, onStatusChange }) {
     try {
       const [apiBase, apiKey] = connectionString.split("|");
       if (!apiBase || !apiKey) {
-        setSaveStatus("Invalid connection string format.");
+        setSaveStatus({
+          type: "error",
+          message: t("invalid_connection_string"),
+        });
         return;
       }
 
       const { online } = await BrowserExtension.checkOnline(apiBase);
       if (!online) {
-        setSaveStatus(
-          "NexusAI is currently offline. Please try again later."
-        );
+        setSaveStatus({ type: "error", message: t("offline") });
         return;
       }
 
       const { response } = await BrowserExtension.checkApiKey(apiBase, apiKey);
       if (!response.ok)
-        return setSaveStatus("Failed to connect: Invalid API key");
+        return setSaveStatus({ type: "error", message: t("invalid_api_key") });
 
       // Saves the apiBase and apiKey to storage sync.
       await chrome.storage.sync.set({ apiBase, apiKey });
       onStatusChange();
-      setSaveStatus("Successfully connected to NexusAI");
+      setSaveStatus({ type: "success", message: t("connect_success") });
       chrome.runtime.sendMessage({ action: "connectionUpdated" });
     } catch (error) {
-      setSaveStatus(`An error occurred during connection: ${error.message}`);
+      setSaveStatus({
+        type: "error",
+        message: t("connection_error", error.message),
+      });
     }
   };
 
@@ -58,16 +63,18 @@ export default function Config({ status, onStatusChange }) {
         "apiBase",
         "apiKey",
       ]);
-      if (!apiBase || !apiKey) throw new Error("No connection found");
+      if (!apiBase || !apiKey) throw new Error(t("no_connection"));
       const { success, error } = await BrowserExtension.disconnect(
         apiBase,
         apiKey
       );
-      if (!success)
-        throw new Error(error || "Failed to disconnect from the server");
+      if (!success) throw new Error(error || t("disconnect_server_failed"));
       await disconnectFromExtension();
     } catch (error) {
-      setSaveStatus(`An error occurred during disconnection: ${error.message}`);
+      setSaveStatus({
+        type: "error",
+        message: t("disconnection_error", error.message),
+      });
     }
   };
 
@@ -77,13 +84,13 @@ export default function Config({ status, onStatusChange }) {
         <div className="w-full flex flex-col gap-y-4">
           <div className="flex flex-col w-full">
             <label className="text-white text-sm font-semibold block mb-3">
-              NexusAI Connection String
+              {t("connection_string_label")}
             </label>
             <input
               type="text"
               value={connectionString}
               onChange={(e) => setConnectionString(e.target.value)}
-              placeholder="Paste connection string here"
+              placeholder={t("connection_string_placeholder")}
               className="bg-zinc-900 text-white placeholder:text-white/20 text-sm rounded-lg focus:outline-[#46C8FF] active:outline-[#46C8FF] outline-none block w-full p-2.5"
             />
           </div>
@@ -91,7 +98,7 @@ export default function Config({ status, onStatusChange }) {
             onClick={handleConnect}
             className="bg-[#46C8FF] hover:bg-[#3BA3D0] text-white font-bold py-2 px-4 rounded-lg transition duration-300 border border-[#46C8FF] hover:border-[#3BA3D0] focus:outline-none focus:ring-2 focus:ring-[#46C8FF] focus:ring-opacity-50"
           >
-            Connect
+            {t("connect")}
           </button>
         </div>
       )}
@@ -101,14 +108,14 @@ export default function Config({ status, onStatusChange }) {
           <div className="flex items-center justify-center gap-x-2 bg-zinc-900 p-2.5 rounded-lg">
             <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
             <p className="text-green-400 text-sm font-medium">
-              Connected to NexusAI
+              {t("connected")}
             </p>
           </div>
           <button
             onClick={handleDisconnect}
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 border border-red-500 hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           >
-            Disconnect
+            {t("disconnect")}
           </button>
         </div>
       )}
@@ -119,29 +126,29 @@ export default function Config({ status, onStatusChange }) {
             onClick={disconnectFromExtension}
             className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 border border-red-500 hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
           >
-            Disconnect
+            {t("disconnect")}
           </button>
           <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-2.5 rounded-lg">
-            NexusAI is currently offline. Please try again later.
+            {t("offline")}
           </div>
         </div>
       )}
 
       {status === "error" && (
         <div className="bg-red-500/10 border border-red-500/50 text-red-400 p-2.5 rounded-lg">
-          An error occurred. Please try again later.
+          {t("generic_error")}
         </div>
       )}
 
       {saveStatus && (
         <div
           className={`p-2.5 rounded-lg ${
-            saveStatus.includes("Successfully")
+            saveStatus.type === "success"
               ? "bg-green-500/10 border border-green-500/50 text-green-400"
               : "bg-red-500/10 border border-red-500/50 text-red-400"
           }`}
         >
-          {saveStatus}
+          {saveStatus.message}
         </div>
       )}
     </div>

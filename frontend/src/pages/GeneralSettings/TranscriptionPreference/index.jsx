@@ -38,7 +38,7 @@ const PROVIDERS = [
       "Transcribe audio using any OpenAI-compatible API via custom configuration.",
   },
   {
-    name: "NexusAI Built-In",
+    name: "Nexus AI Built-In",
     value: "local",
     logo: NexusAIIcon,
     options: (settings) => <NativeTranscriptionOptions settings={settings} />,

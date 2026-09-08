@@ -57,7 +57,7 @@ function useCommunityHubAuthentication() {
       if (!response.success)
         return showToast("Failed to disconnect from hub", "error");
       setHasChanges(false);
-      showToast("Disconnected from NexusAI Community Hub", "success");
+      showToast("Disconnected from Nexus AI Community Hub", "success");
       setOriginalConnectionKey("");
       setConnectionKey("");
     } catch (error) {
@@ -120,9 +120,9 @@ export default function CommunityHubAuthentication() {
         title={t("ui.hub-account-title")}
         description={
           <>
-            Connecting your NexusAI Community Hub account allows you to access
-            your <b>private</b> NexusAI Community Hub items as well as upload
-            your own items to the NexusAI Community Hub.
+            Connecting your Nexus AI Community Hub account allows you to access
+            your <b>private</b> Nexus AI Community Hub items as well as upload
+            your own items to the Nexus AI Community Hub.
           </>
         }
       />
@@ -133,13 +133,13 @@ export default function CommunityHubAuthentication() {
             <div className="gap-x-2 flex items-center">
               <Info size={25} />
               <h1 className="text-lg font-semibold">
-                Why connect my NexusAI Community Hub account?
+                Why connect my Nexus AI Community Hub account?
               </h1>
             </div>
             <p className="text-sm text-theme-text-secondary">
-              Connecting your NexusAI Community Hub account allows you to pull
-              in your <b>private</b> items from the NexusAI Community Hub as
-              well as upload your own items to the NexusAI Community Hub.
+              Connecting your Nexus AI Community Hub account allows you to pull
+              in your <b>private</b> items from the Nexus AI Community Hub as
+              well as upload your own items to the Nexus AI Community Hub.
               <br />
               <br />
               <i>{t("help.authentication")}</i>
@@ -152,7 +152,7 @@ export default function CommunityHubAuthentication() {
       <div className="mt-6 mb-12">
         <div className="flex flex-col w-full max-w-[400px]">
           <label className="text-theme-text-primary text-sm font-semibold block mb-2">
-            NexusAI Hub API Key
+            Nexus AI Hub API Key
           </label>
           <Input
             type="password"
@@ -167,7 +167,7 @@ export default function CommunityHubAuthentication() {
                 href={paths.communityHub.profile()}
                 className="underline text-primary-button"
               >
-                NexusAI Community Hub profile page
+                Nexus AI Community Hub profile page
               </a>
               .
             </p>

@@ -69,7 +69,7 @@ const HistoricalMessage = forwardRef(
         {role === "assistant" && (
           <div className="allm-text-[10px] allm-text-gray-400 allm-ml-[54px] allm-mr-6 allm-mb-2 allm-text-left allm-font-sans">
             {embedderSettings.settings.assistantName ||
-              "NexusAI Chat Assistant"}
+              "Nexus AI Chat Assistant"}
           </div>
         )}
         <div
@@ -82,7 +82,7 @@ const HistoricalMessage = forwardRef(
           {role === "assistant" && (
             <img
               src={embedderSettings.settings.assistantIcon || NexusAIIcon}
-              alt="NexusAI Icon"
+              alt="Nexus AI Icon"
               className="allm-w-9 allm-h-9 allm-flex-shrink-0 allm-ml-2"
               id="nexus-ai-icon"
             />

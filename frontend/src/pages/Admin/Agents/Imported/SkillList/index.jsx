@@ -20,7 +20,7 @@ export default function ImportedSkillList({
             className="text-theme-text-secondary underline hover:text-cta-button"
             rel="noreferrer"
           >
-            NexusAI Agent Docs
+            Nexus AI Agent Docs
           </a>
           .
         </p>

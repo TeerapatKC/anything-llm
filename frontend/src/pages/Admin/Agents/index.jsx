@@ -239,11 +239,13 @@ export default function AdminAgents() {
         _preferences.settings?.disabled_agent_skills ?? []
       );
       setImportedSkills(_preferences.settings?.imported_agent_skills ?? []);
-      showToast(`Agent preferences saved successfully.`, "success", {
+      showToast(t("agent-panel.preferences-saved"), "success", {
         clear: true,
       });
     } else {
-      showToast(`Agent preferences failed to save.`, "error", { clear: true });
+      showToast(t("agent-panel.preferences-save-failed"), "error", {
+        clear: true,
+      });
     }
 
     setHasChanges(false);
@@ -316,7 +318,9 @@ export default function AdminAgents() {
     );
 
     if (!success) {
-      showToast(error || "Failed to toggle tool.", "error", { clear: true });
+      showToast(error || t("agent-panel.toggle-tool-failed"), "error", {
+        clear: true,
+      });
       return;
     }
 
@@ -395,10 +399,10 @@ export default function AdminAgents() {
             </span>
             <div className="min-w-0">
               <h1 className="text-xl font-semibold text-theme-text-primary">
-                SQL Connector
+                {t("sql-connector.title")}
               </h1>
               <p className="mt-0.5 text-sm text-theme-text-secondary">
-                Manage the database connections available to your agents.
+                {t("sql-connector.page-description")}
               </p>
             </div>
           </header>
@@ -413,7 +417,7 @@ export default function AdminAgents() {
             />
           ) : (
             <p className="text-sm text-theme-text-secondary">
-              SQL Connector is restricted to the instance owner.
+              {t("sql-connector.restricted")}
             </p>
           )}
         </form>
@@ -470,10 +474,10 @@ export default function AdminAgents() {
                 <Bot size={24} />
                 <div>
                   <p className="text-lg font-semibold">
-                    Skills &amp; Integrations
+                    {t("agent-panel.skills-integrations")}
                   </p>
                   <p className="text-xs text-theme-text-secondary">
-                    Choose a capability to configure.
+                    {t("agent-panel.choose-capability")}
                   </p>
                 </div>
               </div>
@@ -494,13 +498,15 @@ export default function AdminAgents() {
                   >
                     <Hammer size={16} />
                     <p className="text-sm">
-                      {agentFlows.length === 0 ? "Create Flow" : "Open Builder"}
+                      {agentFlows.length === 0
+                        ? t("agent-panel.create-flow")
+                        : t("agent-panel.open-builder")}
                     </p>
                   </Link>
                 </>
               ) : (
                 <p className="text-sm text-theme-text-secondary">
-                  Agent Flows are restricted to the instance owner.
+                  {t("agent-panel.flows-restricted")}
                 </p>
               )
             ) : (
@@ -533,7 +539,7 @@ export default function AdminAgents() {
                         <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
                           <Package size={24} />
                           <p className="text-lg font-medium">
-                            App Integrations
+                            {t("agent-panel.app-integrations")}
                           </p>
                         </div>
                         <SkillList
@@ -681,7 +687,7 @@ export default function AdminAgents() {
                       <div className="flex flex-col items-center justify-center h-full text-theme-text-secondary">
                         <Bot size={40} />
                         <p className="font-medium">
-                          Select an Agent Skill, Agent Flow, or MCP Server
+                          {t("agent-panel.select-mobile")}
                         </p>
                       </div>
                     )}
@@ -733,12 +739,14 @@ export default function AdminAgents() {
           </span>
           <div className="min-w-0">
             <h1 className="text-xl font-semibold text-theme-text-primary">
-              {isAgentFlowRoute ? "Agent Flow" : "Agent skills"}
+              {isAgentFlowRoute
+                ? t("agent-panel.agent-flow")
+                : t("agent-panel.page-skills-title")}
             </h1>
             <p className="mt-0.5 text-sm text-theme-text-secondary">
               {isAgentFlowRoute
-                ? "Build and manage the automated flows available to your agents."
-                : "Choose and configure the capabilities available to your agents."}
+                ? t("agent-panel.page-flow-description")
+                : t("agent-panel.page-skills-description")}
             </p>
           </div>
         </header>
@@ -802,7 +810,7 @@ export default function AdminAgents() {
                     </>
                   ) : (
                     <p className="text-sm text-theme-text-secondary">
-                      Agent Flows are restricted to the instance owner.
+                      {t("agent-panel.flows-restricted")}
                     </p>
                   )
                 ) : (
@@ -835,7 +843,7 @@ export default function AdminAgents() {
                             <div className="text-theme-text-primary flex items-center gap-x-2 mt-6">
                               <Package size={24} />
                               <p className="text-lg font-medium">
-                                App Integrations
+                                {t("agent-panel.app-integrations")}
                               </p>
                             </div>
                             <SkillList
@@ -961,7 +969,7 @@ export default function AdminAgents() {
                     <Bot size={24} />
                   </span>
                   <h2 className="font-medium text-theme-text-primary">
-                    Select something to configure
+                    {t("agent-panel.select-configure")}
                   </h2>
                   <p className="mt-1 max-w-sm text-sm">{t("help.agents")}</p>
                 </div>
@@ -995,6 +1003,7 @@ function SkillList({
   activeSkills = [],
   Icon = null,
 }) {
+  const { t } = useTranslation();
   if (skills.length === 0) return null;
 
   return (
@@ -1029,7 +1038,9 @@ function SkillList({
                 <DefaultBadge title={skill} />
               ) : (
                 <div className="text-sm text-theme-text-secondary font-medium">
-                  {activeSkills.includes(skill) ? "On" : "Off"}
+                  {activeSkills.includes(skill)
+                    ? t("agent-panel.on")
+                    : t("agent-panel.off")}
                 </div>
               )}
               <ChevronRight size={14} className="text-theme-text-secondary" />
@@ -1043,6 +1054,7 @@ function SkillList({
 }
 
 function AgentSettingsNavItem({ selected, onClick }) {
+  const { t } = useTranslation();
   return (
     <button
       type="button"
@@ -1054,12 +1066,12 @@ function AgentSettingsNavItem({ selected, onClick }) {
       <span className="flex min-w-0 items-center gap-x-2">
         <SlidersHorizontal size={16} className="shrink-0" />
         <span className="truncate text-sm font-light">
-          Agent Skill Settings
+          {t("agent-panel.skill-settings")}
         </span>
       </span>
       <span className="flex items-center gap-x-2">
         <span className="text-sm font-medium text-theme-text-secondary">
-          Configure
+          {t("agent-panel.configure")}
         </span>
         <ChevronRight size={14} className="text-theme-text-secondary" />
       </span>

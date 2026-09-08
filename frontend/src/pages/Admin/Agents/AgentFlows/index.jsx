@@ -19,7 +19,7 @@ export default function AgentFlowsList({
           className="text-theme-text-secondary underline hover:text-cta-button"
           rel="noreferrer"
         >
-          Learn more about Agent Flows.
+          {t("agent-flow.learn-more")}
         </a>
       </div>
     );
@@ -46,7 +46,9 @@ export default function AgentFlowsList({
           <div className="text-sm font-light">{flow.name}</div>
           <div className="flex items-center gap-x-2">
             <div className="text-sm text-theme-text-secondary font-medium">
-              {activeFlowIds.includes(flow.uuid) ? "On" : "Off"}
+              {activeFlowIds.includes(flow.uuid)
+                ? t("agent-flow.on")
+                : t("agent-flow.off")}
             </div>
             <ChevronRight size={14} className="text-theme-text-secondary" />
           </div>
