@@ -330,8 +330,8 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_APPEARANCE_FOOTER,
-    label: "Change footer & support links",
-    description: "Footer links and the support email shown to users.",
+    label: "Change support email",
+    description: "The support email shown to users.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_APPEARANCE,
   },
@@ -1334,7 +1334,6 @@ const SETTING_PERMISSIONS = {
   meta_page_title: PERMISSIONS.SYSTEM_APPEARANCE_BRANDING,
   meta_page_favicon: PERMISSIONS.SYSTEM_APPEARANCE_BRANDING,
   logo_filename: PERMISSIONS.SYSTEM_APPEARANCE_BRANDING,
-  footer_data: PERMISSIONS.SYSTEM_APPEARANCE_FOOTER,
   support_email: PERMISSIONS.SYSTEM_APPEARANCE_FOOTER,
 
   limit_user_messages: PERMISSIONS.SYSTEM_SETTINGS_SECURITY,

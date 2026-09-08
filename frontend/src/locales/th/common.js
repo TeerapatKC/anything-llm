@@ -894,12 +894,6 @@ const TRANSLATIONS = {
           description: "ใช้ favicon ที่กำหนดเองสำหรับแท็บเบราว์เซอร์",
         },
       },
-      "sidebar-footer": {
-        title: "รายการส่วนท้ายแถบด้านข้าง",
-        description: "ปรับแต่งรายการที่แสดงอยู่ด้านล่างของแถบด้านข้าง",
-        icon: "ไอคอน",
-        link: "ลิงก์",
-      },
       "render-html": {
         title: "แสดงผล HTML ในการสนทนา",
         description:

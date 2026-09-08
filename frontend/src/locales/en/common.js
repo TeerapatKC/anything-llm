@@ -905,13 +905,6 @@ const TRANSLATIONS = {
           description: "Use a custom favicon for the browser tab.",
         },
       },
-      "sidebar-footer": {
-        title: "Sidebar Footer Items",
-        description:
-          "Customize the footer items displayed on the bottom of the sidebar.",
-        icon: "Icon",
-        link: "Link",
-      },
       "render-html": {
         title: "Render HTML in chat",
         description:

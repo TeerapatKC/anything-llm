@@ -75,7 +75,7 @@ const RESET_SCOPES = [
     key: "customization",
     label: "Appearance & customization",
     description:
-      "Branding, logo, footer links, welcome messages and other look-and-feel settings, back to their defaults. LLM, embedder and vector database configuration is not touched.",
+      "Branding, logo, welcome messages and other look-and-feel settings, back to their defaults. LLM, embedder and vector database configuration is not touched.",
     implies: [],
   },
 ];

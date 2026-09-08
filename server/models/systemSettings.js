@@ -3,7 +3,7 @@ process.env.NODE_ENV === "development"
   : require("dotenv").config();
 
 const { default: slugify } = require("slugify");
-const { isValidUrl, safeJsonParse } = require("../utils/http");
+const { safeJsonParse } = require("../utils/http");
 const prisma = require("../utils/prisma");
 const { MetaGenerator } = require("../utils/boot/MetaGenerator");
 const { PGVector } = require("../utils/vectorDbProviders/pgvector");
@@ -39,7 +39,6 @@ const SystemSettings = {
     "Given the following conversation, relevant context, and a follow up question, reply with an answer to the current question the user is asking. The current date and time is {datetime}. Return only your response to the question given the above information following the users instructions as needed.",
   protectedFields: ["onboarding_complete"],
   publicFields: [
-    "footer_data",
     "support_email",
     "text_splitter_chunk_size",
     "text_splitter_chunk_overlap",
@@ -67,7 +66,6 @@ const SystemSettings = {
   supportedFields: [
     "logo_filename",
     "telemetry_id",
-    "footer_data",
     "support_email",
 
     "text_splitter_chunk_size",
@@ -100,17 +98,6 @@ const SystemSettings = {
     "memory_auto_extraction",
   ],
   validations: {
-    footer_data: (updates) => {
-      try {
-        const array = JSON.parse(updates)
-          .filter((setting) => isValidUrl(setting.url))
-          .slice(0, 3); // max of 3 items in footer.
-        return JSON.stringify(array);
-      } catch {
-        console.error(`Failed to run validation function on footer_data`);
-        return JSON.stringify([]);
-      }
-    },
     text_splitter_chunk_size: (update) => {
       try {
         if (isNullOrNaN(update)) throw new Error("Value is not a number.");

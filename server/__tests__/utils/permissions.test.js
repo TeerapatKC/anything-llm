@@ -179,10 +179,9 @@ describe("system setting permissions", () => {
         PERMISSIONS.SYSTEM_APPEARANCE_BRANDING
       );
 
-    for (const label of ["footer_data", "support_email"])
-      expect(permissionForSetting(label)).toBe(
-        PERMISSIONS.SYSTEM_APPEARANCE_FOOTER
-      );
+    expect(permissionForSetting("support_email")).toBe(
+      PERMISSIONS.SYSTEM_APPEARANCE_FOOTER
+    );
   });
 
   it("routes each settings label to its own finer-grained permission", () => {

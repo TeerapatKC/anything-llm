@@ -1497,13 +1497,6 @@ const TRANSLATIONS = {
           description: "ブラウザのタブにカスタムのfaviconを使用する。",
         },
       },
-      "sidebar-footer": {
-        title: "サイドバーのフッター項目",
-        description:
-          "サイドバーの下部に表示されるフッターの項目をカスタマイズする。",
-        icon: "アイコン",
-        link: "リンク",
-      },
       "render-html": {
         title: "チャットでHTMLをレンダリングする",
         description:

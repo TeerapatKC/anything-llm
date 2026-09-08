@@ -1,6 +1,5 @@
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
-import FooterCustomization from "../components/FooterCustomization";
 import SupportEmail from "../components/SupportEmail";
 import CustomLogo from "../components/CustomLogo";
 import { useTranslation } from "react-i18next";
@@ -18,7 +17,6 @@ export default function BrandingSettings() {
       />
       <CustomAppName />
       <CustomLogo />
-      <FooterCustomization />
       <SupportEmail />
       <CustomSiteSettings />
     </SettingsLayout>

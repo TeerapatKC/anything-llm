@@ -8,7 +8,6 @@ export const CUSTOM_APP_NAME_UPDATED_EVENT = "custom-app-name-updated";
 
 const System = {
   cacheKeys: {
-    footerIcons: "nexusai_footer_links",
     supportEmail: "nexusai_support_email",
     customAppName: "nexusai_custom_app_name",
     canViewChatHistory: "nexusai_can_view_chat_history",
@@ -336,38 +335,6 @@ const System = {
         console.log(e);
         return { success: false, error: e.message };
       });
-  },
-  fetchCustomFooterIcons: async function () {
-    const cache = window.localStorage.getItem(this.cacheKeys.footerIcons);
-    const { data, lastFetched } = cache
-      ? safeJsonParse(cache, { data: [], lastFetched: 0 })
-      : { data: [], lastFetched: 0 };
-
-    if (!!data && Date.now() - lastFetched < 3_600_000)
-      return { footerData: data, error: null };
-
-    const { footerData, error } = await fetch(
-      `${API_BASE}/system/footer-data`,
-      {
-        method: "GET",
-        cache: "no-cache",
-        headers: baseHeaders(),
-      }
-    )
-      .then((res) => res.json())
-      .catch((e) => {
-        console.log(e);
-        return { footerData: [], error: e.message };
-      });
-
-    if (!footerData || !!error) return { footerData: [], error: null };
-
-    const newData = safeJsonParse(footerData, []);
-    window.localStorage.setItem(
-      this.cacheKeys.footerIcons,
-      JSON.stringify({ data: newData, lastFetched: Date.now() })
-    );
-    return { footerData: newData, error: null };
   },
   fetchSupportEmail: async function () {
     const cache = window.localStorage.getItem(this.cacheKeys.supportEmail);

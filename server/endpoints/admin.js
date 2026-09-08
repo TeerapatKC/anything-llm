@@ -541,9 +541,6 @@ function adminEndpoints(app) {
             : await SystemSettings.get({ label });
 
           switch (label) {
-            case "footer_data":
-              requestedSettings[label] = setting?.value ?? JSON.stringify([]);
-              break;
             case "support_email":
               requestedSettings[label] = setting?.value || null;
               break;
