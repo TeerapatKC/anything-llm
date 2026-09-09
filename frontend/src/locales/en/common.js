@@ -1521,13 +1521,16 @@ const TRANSLATIONS = {
   },
   scheduledJobs: {
     title: "Scheduled Jobs",
-    enableNotifications: "Enable browser notifications for job results",
     description:
       "Create recurring AI tasks that run on a schedule. Each job runs a prompt with optional tools and saves the result for review.",
     newJob: "New Job",
     loading: "Loading...",
     emptyTitle: "No Scheduled Jobs yet",
     emptySubtitle: "Create one to get started.",
+    smtpRequiredTitle: "SMTP email must be configured first",
+    smtpRequiredDescription:
+      "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
+    smtpRequiredCta: "Go to SMTP settings",
     table: {
       name: "Name",
       schedule: "Schedule",
@@ -1580,6 +1583,23 @@ const TRANSLATIONS = {
       needsSetup: "This skill requires configuration before use",
       needsSetupLabel: "Needs Setup",
       toolsNoResults: "No tools match",
+      recipientsLabel: "Email results to",
+      recipientsDescription:
+        "Send the job's result by email when it completes successfully.",
+      recipientType: {
+        none: "Off",
+        workspace: "Workspace",
+        user: "User",
+      },
+      recipientsSelected: "{{count}} of {{total}} selected",
+      noWorkspaces: "No workspaces found",
+      noUsers: "No users with an email on file",
+      chooseRecipients: "Choose recipients",
+      recipientsTurnOff: "Turn off emailing results",
+      recipientsChangeType: "Change type",
+      pickWorkspaces: "Select workspaces",
+      pickUsers: "Select users",
+      recipientsDone: "Done",
       required: "Required",
       requiredFieldsBanner:
         "Please fill out all required fields in order to create job.",

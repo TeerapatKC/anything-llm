@@ -4,7 +4,7 @@ const { safeJsonParse } = require("../utils/http");
 const {
   agentActionCb,
   SCHEDULED_JOB_TIMEOUT_MS,
-  sendWebPushNotification,
+  sendScheduledJobResultEmails,
 } = require("./helpers/scheduled-job-helper.js");
 const { ScheduledJob } = require("../models/scheduledJob.js");
 const { ScheduledJobRun } = require("../models/scheduledJobRun.js");
@@ -126,7 +126,7 @@ process.on("message", async (payload) => {
       },
     });
     log(`Scheduled job "${job.name}" completed in ${duration}ms)`);
-    await sendWebPushNotification(job, runId, state.textResponse, log);
+    await sendScheduledJobResultEmails(job, state.textResponse, log);
   } catch (error) {
     if (error.message === "SCHEDULED_JOB_TIMEOUT") {
       status = "timed_out";

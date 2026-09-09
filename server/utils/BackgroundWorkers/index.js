@@ -364,6 +364,15 @@ class BackgroundService {
    */
   async enqueueScheduledJob(jobId) {
     const { ScheduledJobRun } = require("../../models/scheduledJobRun");
+    const { isSendingEnabled } = require("../smtp");
+
+    // Scheduled Jobs only exists to deliver results by email - if SMTP isn't
+    // configured and enabled, cron-fired and manually-triggered runs alike are
+    // skipped rather than executed with nowhere to send the result.
+    if (!isSendingEnabled()) {
+      this.#log(`Scheduled job ${jobId} skipped: SMTP is not configured`);
+      return null;
+    }
 
     const run = await ScheduledJobRun.start(jobId);
     // if start returns null, skip enqueuing, schueduled job already has a run in flight

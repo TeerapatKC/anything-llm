@@ -9,8 +9,19 @@ const cronValidate = require("cron-validate").default;
 // when displaying.
 later.date.UTC();
 
+const RECIPIENT_TYPES = ["none", "workspace", "user"];
+
 const ScheduledJob = {
-  writable: ["name", "prompt", "tools", "schedule", "enabled"],
+  writable: [
+    "name",
+    "prompt",
+    "tools",
+    "schedule",
+    "enabled",
+    "recipientType",
+    "recipientWorkspaceIds",
+    "recipientUserIds",
+  ],
 
   /**
    * Maximum number of scheduled jobs that can be enabled at once.
@@ -55,7 +66,20 @@ const ScheduledJob = {
     }
   },
 
-  create: async function ({ name, prompt, tools = null, schedule } = {}) {
+  /** Whether a recipientType value is one of the recognized options. */
+  isValidRecipientType: function (recipientType) {
+    return RECIPIENT_TYPES.includes(recipientType);
+  },
+
+  create: async function ({
+    name,
+    prompt,
+    tools = null,
+    schedule,
+    recipientType = "none",
+    recipientWorkspaceIds = null,
+    recipientUserIds = null,
+  } = {}) {
     try {
       const nextRunAt = this.computeNextRunAt(schedule);
       const job = await prisma.scheduled_jobs.create({
@@ -64,6 +88,13 @@ const ScheduledJob = {
           prompt: String(prompt),
           tools: tools ? JSON.stringify(tools) : null,
           schedule: String(schedule),
+          recipientType,
+          recipientWorkspaceIds: recipientWorkspaceIds
+            ? JSON.stringify(recipientWorkspaceIds)
+            : null,
+          recipientUserIds: recipientUserIds
+            ? JSON.stringify(recipientUserIds)
+            : null,
           nextRunAt,
         },
       });
@@ -76,10 +107,11 @@ const ScheduledJob = {
 
   update: async function (id, data = {}) {
     try {
+      const JSON_ARRAY_FIELDS = ["tools", "recipientWorkspaceIds", "recipientUserIds"];
       const updates = {};
       for (const key of this.writable) {
         if (data.hasOwnProperty(key)) {
-          if (key === "tools") {
+          if (JSON_ARRAY_FIELDS.includes(key)) {
             updates[key] = data[key] ? JSON.stringify(data[key]) : null;
           } else {
             updates[key] = data[key];
@@ -405,6 +437,79 @@ const ScheduledJob = {
     }
 
     return categories;
+  },
+
+  /**
+   * Workspaces and users a job's results can be emailed to. Users without an email
+   * on file are excluded - there is nowhere to send their notification.
+   * @returns {Promise<{
+   *   workspaces: Array<{id: number, name: string}>,
+   *   users: Array<{id: number, username: string, email: string}>
+   * }>}
+   */
+  availableRecipients: async function () {
+    try {
+      const [workspaces, users] = await Promise.all([
+        prisma.workspaces.findMany({
+          select: { id: true, name: true },
+          orderBy: { name: "asc" },
+        }),
+        prisma.users.findMany({
+          where: { email: { not: null } },
+          select: { id: true, username: true, email: true },
+          orderBy: { username: "asc" },
+        }),
+      ]);
+      return { workspaces, users };
+    } catch (error) {
+      console.error("Failed to load available recipients:", error.message);
+      return { workspaces: [], users: [] };
+    }
+  },
+
+  /**
+   * Resolve a job's recipientType/recipientWorkspaceIds/recipientUserIds into a flat,
+   * de-duplicated list of email addresses to notify when a run completes.
+   * @param {object} job - A scheduled_jobs record.
+   * @returns {Promise<string[]>}
+   */
+  resolveRecipientEmails: async function (job) {
+    try {
+      if (job.recipientType === "user") {
+        const userIds = JSON.parse(job.recipientUserIds || "[]");
+        if (!Array.isArray(userIds) || userIds.length === 0) return [];
+
+        const users = await prisma.users.findMany({
+          where: {
+            id: { in: userIds.map(Number) },
+            email: { not: null },
+          },
+          select: { email: true },
+        });
+        return [...new Set(users.map((u) => u.email))];
+      }
+
+      if (job.recipientType === "workspace") {
+        const workspaceIds = JSON.parse(job.recipientWorkspaceIds || "[]");
+        if (!Array.isArray(workspaceIds) || workspaceIds.length === 0)
+          return [];
+
+        const members = await prisma.workspace_users.findMany({
+          where: { workspace_id: { in: workspaceIds.map(Number) } },
+          select: { users: { select: { email: true } } },
+        });
+        return [
+          ...new Set(
+            members.map((m) => m.users?.email).filter((email) => !!email)
+          ),
+        ];
+      }
+
+      return [];
+    } catch (error) {
+      console.error("Failed to resolve job recipient emails:", error.message);
+      return [];
+    }
   },
 };
 

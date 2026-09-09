@@ -7,14 +7,47 @@ const {
 const { PERMISSIONS } = require("../utils/permissions");
 const { reqBody, safeJsonParse } = require("../utils/http");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
+const { isSendingEnabled } = require("../utils/smtp");
 
 // BackgroundService is a singleton, so `new BackgroundService()` anywhere in
 // the codebase returns the same instance that `server/index.js` booted. We
 // grab that reference once and reuse it across handlers.
 const backgroundService = new BackgroundService();
 
+// Scheduled Jobs only exists to deliver results by email, so the whole feature
+// is gated on SMTP being configured AND turned on - every route below except
+// the status check itself requires this.
+function requireSmtpReady(_request, response, next) {
+  if (!isSendingEnabled()) {
+    return response.status(403).json({
+      error: "smtp_not_configured",
+      message:
+        "Scheduled Jobs requires SMTP email to be configured and enabled first.",
+    });
+  }
+  next();
+}
+
 function scheduledJobEndpoints(app) {
   if (!app) return;
+
+  // Whether SMTP is configured and enabled - the frontend checks this before
+  // showing anything else on the page, so it must not itself require SMTP.
+  app.get(
+    "/scheduled-jobs/smtp-status",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+    ],
+    async (_request, response) => {
+      try {
+        return response.status(200).json({ ready: isSendingEnabled() });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
 
   // List available tools for job configuration
   app.get(
@@ -22,6 +55,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -34,12 +68,32 @@ function scheduledJobEndpoints(app) {
     }
   );
 
+  // List workspaces/users a job's results can be emailed to
+  app.get(
+    "/scheduled-jobs/available-recipients",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (_request, response) => {
+      try {
+        const recipients = await ScheduledJob.availableRecipients();
+        return response.status(200).json(recipients);
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).json({ workspaces: [], users: [] });
+      }
+    }
+  );
+
   // Get a single run detail
   app.get(
     "/scheduled-jobs/runs/:runId",
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -73,6 +127,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -127,6 +182,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -156,10 +212,19 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
-        const { name, prompt, tools, schedule } = reqBody(request);
+        const {
+          name,
+          prompt,
+          tools,
+          schedule,
+          recipientType,
+          recipientWorkspaceIds,
+          recipientUserIds,
+        } = reqBody(request);
         let errorMessage = null;
 
         if (!name?.trim()) {
@@ -172,6 +237,21 @@ function scheduledJobEndpoints(app) {
           errorMessage = "Invalid cron expression";
         } else if (tools?.length > 0 && !Array.isArray(tools)) {
           errorMessage = "Tools must be an array";
+        } else if (
+          recipientType !== undefined &&
+          !ScheduledJob.isValidRecipientType(recipientType)
+        ) {
+          errorMessage = "Invalid recipient type";
+        } else if (
+          recipientType === "workspace" &&
+          !Array.isArray(recipientWorkspaceIds)
+        ) {
+          errorMessage = "Recipient workspaces must be an array";
+        } else if (
+          recipientType === "user" &&
+          !Array.isArray(recipientUserIds)
+        ) {
+          errorMessage = "Recipient users must be an array";
         }
         if (errorMessage)
           return response.status(400).json({
@@ -194,6 +274,10 @@ function scheduledJobEndpoints(app) {
           prompt: prompt.trim(),
           tools: tools || null,
           schedule: schedule.trim(),
+          recipientType: recipientType || "none",
+          recipientWorkspaceIds:
+            recipientType === "workspace" ? recipientWorkspaceIds : null,
+          recipientUserIds: recipientType === "user" ? recipientUserIds : null,
         });
 
         if (error) {
@@ -215,6 +299,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -240,10 +325,20 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
-        const { name, prompt, tools, schedule, enabled } = reqBody(request);
+        const {
+          name,
+          prompt,
+          tools,
+          schedule,
+          enabled,
+          recipientType,
+          recipientWorkspaceIds,
+          recipientUserIds,
+        } = reqBody(request);
         const updates = {};
 
         if (name !== undefined) updates.name = String(name).trim();
@@ -257,6 +352,28 @@ function scheduledJobEndpoints(app) {
               .json({ job: null, error: "Invalid cron expression" });
           }
           updates.schedule = String(schedule).trim();
+        }
+        if (recipientType !== undefined) {
+          if (!ScheduledJob.isValidRecipientType(recipientType)) {
+            return response
+              .status(400)
+              .json({ job: null, error: "Invalid recipient type" });
+          }
+          if (recipientType === "workspace" && !Array.isArray(recipientWorkspaceIds)) {
+            return response
+              .status(400)
+              .json({ job: null, error: "Recipient workspaces must be an array" });
+          }
+          if (recipientType === "user" && !Array.isArray(recipientUserIds)) {
+            return response
+              .status(400)
+              .json({ job: null, error: "Recipient users must be an array" });
+          }
+          updates.recipientType = recipientType;
+          updates.recipientWorkspaceIds =
+            recipientType === "workspace" ? recipientWorkspaceIds : null;
+          updates.recipientUserIds =
+            recipientType === "user" ? recipientUserIds : null;
         }
 
         // If this update would activate the job, enforce the active-jobs cap.
@@ -299,6 +416,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -319,6 +437,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -363,6 +482,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -390,6 +510,7 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
     ],
     async (request, response) => {
       try {

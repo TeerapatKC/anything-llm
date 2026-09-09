@@ -197,6 +197,36 @@ async function sendTelegramPairingEmail({ to, code, username }) {
   });
 }
 
+/**
+ * Truncate a scheduled job's text result to a readable email-body length.
+ * @param {string} text
+ * @returns {string}
+ */
+function truncateJobResult(text = "") {
+  if (!text) return "(no text response)";
+  if (text.length <= 2000) return text;
+  return text.slice(0, 2000) + "...";
+}
+
+/**
+ * Sent to a scheduled job's configured recipients (workspace members or specific
+ * users) after a run completes successfully.
+ * @param {{to: string, jobName: string, resultText: string}} params
+ * @returns {Promise<{sent: boolean, reason: string|null}>}
+ */
+async function sendScheduledJobResultEmail({ to, jobName, resultText }) {
+  const body = truncateJobResult(resultText);
+  return sendSystemMail({
+    to,
+    subject: `${jobName} completed`,
+    text: `Your scheduled job "${jobName}" has completed.\n\nResult:\n${body}`,
+    html:
+      `<p>Your scheduled job <b>${escapeHtml(jobName)}</b> has completed.</p>` +
+      `<p><b>Result:</b></p>` +
+      `<pre style="white-space: pre-wrap; font-family: inherit;">${escapeHtml(body)}</pre>`,
+  });
+}
+
 module.exports = {
   SMTP_PROVIDER_PRESETS,
   resolvedConfig,
@@ -209,4 +239,5 @@ module.exports = {
   sendInviteEmail,
   sendLinePairingEmail,
   sendTelegramPairingEmail,
+  sendScheduledJobResultEmail,
 };

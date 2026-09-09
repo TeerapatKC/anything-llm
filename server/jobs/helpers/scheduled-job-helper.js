@@ -64,46 +64,40 @@ function agentActionCb() {
   };
 }
 
-function truncateNotificationBody(bodyText = "") {
-  if (!bodyText) return "Job completed";
-  if (bodyText.length <= 100) return bodyText;
-  return bodyText.slice(0, 100) + (bodyText.length > 100 ? "..." : "");
-}
-
 /**
- * Send a web push notification to every subscribed system administrator. Scheduled jobs
- * are instance-wide and admin-managed, so there is no single owner to notify.
+ * Email every configured recipient (workspace members or specific users) once a
+ * scheduled job run completes successfully. Never throws - a failed notification
+ * email should never fail the run it's reporting on.
  * @param {object} job - The scheduled job object.
- * @param {string} runId - The ID of the scheduled job run.
  * @param {string} textResponse - The text response from the agent.
- * @param {function} logFn - The function to log the error.
+ * @param {function} logFn - The function to log errors.
  * @returns {Promise<void>}
  */
-async function sendWebPushNotification(job, runId, textResponse, logFn) {
+async function sendScheduledJobResultEmails(job, textResponse, logFn) {
   try {
-    const {
-      pushNotificationService,
-    } = require("../../utils/PushNotifications/index.js");
-    await pushNotificationService.loadSubscriptions();
+    if (!job.recipientType || job.recipientType === "none") return;
 
-    // Strip thinking tags from the text response and then truncate to 100 characters
-    // if the response is longer than 100 characters.
-    let notificationBody = stripThinkingFromText(textResponse);
-    notificationBody = truncateNotificationBody(notificationBody);
-    await pushNotificationService.sendNotificationToAdmins({
-      title: `${job.name} completed`,
-      body: notificationBody,
-      data: {
-        onClickUrl: `/settings/scheduled-jobs/${job.id}/runs/${runId}`,
-      },
-    });
-  } catch (pushError) {
-    logFn(`Failed to send push notification: ${pushError.message}`);
+    const { ScheduledJob } = require("../../models/scheduledJob.js");
+    const emails = await ScheduledJob.resolveRecipientEmails(job);
+    if (emails.length === 0) return;
+
+    const {
+      sendScheduledJobResultEmail,
+    } = require("../../utils/smtp/index.js");
+    const resultText = stripThinkingFromText(textResponse);
+
+    await Promise.all(
+      emails.map((to) =>
+        sendScheduledJobResultEmail({ to, jobName: job.name, resultText })
+      )
+    );
+  } catch (emailError) {
+    logFn(`Failed to send result email: ${emailError.message}`);
   }
 }
 
 module.exports = {
-  sendWebPushNotification,
   SCHEDULED_JOB_TIMEOUT_MS,
   agentActionCb,
+  sendScheduledJobResultEmails,
 };

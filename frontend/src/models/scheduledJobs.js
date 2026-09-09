@@ -2,6 +2,14 @@ import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 
 const ScheduledJobs = {
+  smtpStatus: async function () {
+    return await fetch(`${API_BASE}/scheduled-jobs/smtp-status`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch(() => ({ ready: false }));
+  },
+
   list: async function () {
     return await fetch(`${API_BASE}/scheduled-jobs`, {
       headers: baseHeaders(),
@@ -112,6 +120,14 @@ const ScheduledJobs = {
     })
       .then((res) => res.json())
       .catch(() => ({ tools: [] }));
+  },
+
+  availableRecipients: async function () {
+    return await fetch(`${API_BASE}/scheduled-jobs/available-recipients`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch(() => ({ workspaces: [], users: [] }));
   },
 
   killRun: async function (runId) {
