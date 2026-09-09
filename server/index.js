@@ -44,6 +44,7 @@ const { superAdminEndpoints } = require("./endpoints/superAdmin");
 const { smtpEndpoints } = require("./endpoints/smtp");
 const { usecaseDataEndpoints } = require("./endpoints/usecaseData");
 const { httpLogger } = require("./middleware/httpLogger");
+const { register, httpMetricsMiddleware } = require("./utils/metrics");
 const app = express();
 const apiRouter = express.Router();
 const FILE_LIMIT = "3GB";
@@ -60,6 +61,13 @@ if (
   );
 }
 app.use(cors({ origin: true }));
+app.use(httpMetricsMiddleware);
+// Unauthenticated by design, same as node-exporter/cAdvisor - scraped only from
+// inside the docker-compose network by the monitoring stack's Prometheus.
+app.get("/metrics", async (_request, response) => {
+  response.set("Content-Type", register.contentType);
+  response.end(await register.metrics());
+});
 app.use(bodyParser.text({ limit: FILE_LIMIT }));
 app.use(
   bodyParser.json({
