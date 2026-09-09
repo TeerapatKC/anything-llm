@@ -65,10 +65,10 @@ const TRANSLATIONS = {
     "scheduled-jobs": "งานตามกำหนดเวลา",
     privacy: "ความเป็นส่วนตัวและข้อมูล",
     "ai-providers": "ผู้ให้บริการ AI",
-    "agent-skills": "ทักษะของเอเจนต์",
+    "agent": "Agent",
+    "agent-skills": "Agent Skills",
     "agent-flow": "Agent Flow",
-    "sql-connector": "ตัวเชื่อมต่อ SQL",
-    "agent-skills-settings": "การตั้งค่าทักษะของเอเจนต์",
+    "sql-connector": "การเชื่อมต่อ SQL",
     "default-system-prompt": "System Prompt เริ่มต้น",
     "instance-owner": "เจ้าของอินสแตนซ์",
     "model-router": "ตัวจัดเส้นทางโมเดล",
@@ -2035,14 +2035,14 @@ const TRANSLATIONS = {
     },
   },
   "sql-connector": {
-    title: "ตัวเชื่อมต่อ SQL",
+    title: "การเชื่อมต่อ SQL",
     "page-description": "จัดการการเชื่อมต่อฐานข้อมูลที่เอเจนต์สามารถใช้งานได้",
     restricted: "SQL Connector จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
     "list-description":
       "ดูรายการการเชื่อมต่อฐานข้อมูลที่กำหนดค่าไว้สำหรับอินสแตนซ์นี้",
     "connections-heading": "การเชื่อมต่อฐานข้อมูล",
     "new-connection": "การเชื่อมต่อใหม่",
-    "enable-title": "เปิดใช้งานตัวเชื่อมต่อ SQL",
+    "enable-title": "เปิดใช้งานการเชื่อมต่อ SQL",
     "enable-description":
       "ให้เอเจนต์ของคุณสอบถามข้อมูลจากการเชื่อมต่อด้านล่างได้",
     "enable-first":
