@@ -9,7 +9,6 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MOBILE_TOPBAR_ACTIONS_ID } from "@/components/Sidebar/MobileTopbar";
 import TextSizeRow from "./TextSize";
-import MemoriesRow from "./Memories";
 import CopyLinkToChatRow from "./CopyLinkToChat";
 import ExportRow from "./Export";
 
@@ -46,7 +45,6 @@ export default function ChatSettingsMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[226px]">
         <TextSizeRow />
-        <MemoriesRow />
         <ExportRow
           history={history}
           workspace={workspace}

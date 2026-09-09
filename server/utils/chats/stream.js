@@ -8,6 +8,10 @@ const { writeResponseChunk } = require("../helpers/chat/responses");
 const { abortConnectorOnClientDisconnect } = require("../helpers/abortSignals");
 const { grepAgents } = require("./agents");
 const {
+  captureMemoryFromTurn,
+  looksLikeCaptureRequest,
+} = require("../memories/capture");
+const {
   grepCommand,
   VALID_COMMANDS,
   chatPrompt,
@@ -43,6 +47,24 @@ async function streamChatWithWorkspace(
     return;
   }
 
+  // Started before the agent check, not after, because a workspace in automatic
+  // mode with a tool-calling model sends *every* message down the agent path -
+  // so a capture placed below it would never run for those deployments. It also
+  // means the round trip overlaps retrieval and generation rather than being
+  // tacked onto the end of the turn. It reads only what the user wrote, so it
+  // does not need the reply, and it is a no-op on every message that does not
+  // read as an explicit "remember this".
+  const memoryCapture = captureMemoryFromTurn({
+    user,
+    workspace,
+    prompt: message,
+  });
+
+  // An explicit "remember this" turn must finish writing before the agent's
+  // system prompt is assembled. Otherwise the agent cannot see the new memory
+  // yet and may unnecessarily ask the user for information they just gave.
+  if (looksLikeCaptureRequest(message)) await memoryCapture;
+
   // If is agent enabled chat we will exit this flow early.
   const isAgentChat = await grepAgents({
     uuid,
@@ -53,6 +75,11 @@ async function streamChatWithWorkspace(
     thread,
     attachments,
   });
+
+  // The agent takes over on its own websocket and this HTTP stream is already
+  // closed, so there is no finalize chunk left to carry the "memories changed"
+  // flag. The capture still runs to completion in the background; the panel
+  // picks it up the next time it is opened.
   if (isAgentChat) return;
 
   const {
@@ -346,6 +373,8 @@ async function streamChatWithWorkspace(
     user,
   });
 
+  const memoriesUpdated = await memoryCapture;
+
   writeResponseChunk(response, {
     uuid,
     type: "finalizeResponseStream",
@@ -353,6 +382,7 @@ async function streamChatWithWorkspace(
     error: false,
     chatId: chat?.id ?? null,
     metrics,
+    memoriesUpdated,
   });
   return;
 }

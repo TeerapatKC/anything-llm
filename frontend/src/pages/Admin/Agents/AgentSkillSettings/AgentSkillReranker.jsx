@@ -1,25 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash.debounce";
 import Toggle from "@/components/lib/Toggle";
 import System from "@/models/system";
 
-export default function AgentSkillReranker() {
+export default function AgentSkillReranker({ setHasChanges }) {
   const { t } = useTranslation();
   const [enabled, setEnabled] = useState(false);
   const [maxTools, setMaxTools] = useState(15);
   const [loading, setLoading] = useState(true);
-
-  const debouncedUpdateMaxTools = useMemo(
-    () =>
-      debounce(async (newMaxToolsCount) => {
-        await System.updateSystem({
-          AgentSkillRerankerTopN: newMaxToolsCount.toString(),
-        });
-      }, 800),
-    []
-  );
 
   useEffect(() => {
     System.keys()
@@ -32,15 +21,9 @@ export default function AgentSkillReranker() {
       });
   }, []);
 
-  useEffect(() => {
-    return () => debouncedUpdateMaxTools.cancel();
-  }, [debouncedUpdateMaxTools]);
-
-  async function toggleEnabled(enabled) {
+  function toggleEnabled(enabled) {
     setEnabled(enabled);
-    await System.updateSystem({
-      AgentSkillRerankerEnabled: String(enabled),
-    });
+    setHasChanges?.(true);
   }
 
   return (
@@ -57,12 +40,14 @@ export default function AgentSkillReranker() {
         {loading ? (
           <Spinner className="shrink-0 text-theme-text-primary" />
         ) : (
-          <Toggle
-            size="lg"
-            name="agentSkillRerankerEnabled"
-            enabled={enabled}
-            onChange={toggleEnabled}
-          />
+          <>
+            <input
+              type="hidden"
+              name="env::AgentSkillRerankerEnabled"
+              value={String(enabled)}
+            />
+            <Toggle size="lg" enabled={enabled} onChange={toggleEnabled} />
+          </>
         )}
       </div>
       {enabled && (
@@ -79,13 +64,13 @@ export default function AgentSkillReranker() {
           </div>
           <input
             type="number"
-            name="agentSkillRerankerTopN"
+            name="env::AgentSkillRerankerTopN"
             min={10}
             value={maxTools}
             onChange={(e) => {
               if (e.target.value < 10) return;
-              debouncedUpdateMaxTools(e.target.value);
-              setMaxTools(parseInt(e.target.value));
+                setMaxTools(parseInt(e.target.value));
+                setHasChanges?.(true);
             }}
             onWheel={(e) => e.target.blur()}
             className="border border-theme-sidebar-border bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[80px] p-2.5 text-center"

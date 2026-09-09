@@ -37,7 +37,8 @@ async function validateMemoryOwner(request, response, next) {
     // unreachable. Refusing outright matters anyway: falling back to
     // `userId: null` would match memories orphaned by the single-user era
     // rather than denying the request.
-    if (!user?.id) return response.status(404).json({ error: "Memory not found." });
+    if (!user?.id)
+      return response.status(404).json({ error: "Memory not found." });
 
     const memory = await Memory.get({
       id: Number(request.params.memoryId),
@@ -64,32 +65,37 @@ function memoryEndpoints(app) {
    * own personalization off still has to be able to reach this route to switch
    * it back on.
    */
-  app.get("/memories/preferences", [validatedRequest], async (request, response) => {
-    try {
-      const user = await userFromSession(request, response);
-      const preferences = await User.memoryPreferences(user.id);
-      response.status(200).json({
-        preferences,
-        instance: {
-          memoryEnabled: await SystemSettings.memoriesEnabled(),
-          memoryAutoExtraction: await SystemSettings.memoryAutoExtractionSetting(),
-        },
-        effective: {
-          memoryEnabled: await Memory.enabledForUser({
-            ...user,
-            ...preferences,
-          }),
-          memoryAutoExtraction: await Memory.autoEnabledForUser({
-            ...user,
-            ...preferences,
-          }),
-        },
-      });
-    } catch (e) {
-      console.error(e);
-      return response.sendStatus(500);
+  app.get(
+    "/memories/preferences",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const preferences = await User.memoryPreferences(user.id);
+        response.status(200).json({
+          preferences,
+          instance: {
+            memoryEnabled: await SystemSettings.memoriesEnabled(),
+            memoryAutoExtraction:
+              await SystemSettings.memoryAutoExtractionSetting(),
+          },
+          effective: {
+            memoryEnabled: await Memory.enabledForUser({
+              ...user,
+              ...preferences,
+            }),
+            memoryAutoExtraction: await Memory.autoEnabledForUser({
+              ...user,
+              ...preferences,
+            }),
+          },
+        });
+      } catch (e) {
+        console.error(e);
+        return response.sendStatus(500);
+      }
     }
-  });
+  );
 
   /**
    * Update the session user's own preferences. No permission check beyond being
@@ -136,6 +142,11 @@ function memoryEndpoints(app) {
       try {
         const user = await userFromSession(request, response);
         const workspace = response.locals.workspace;
+
+        // Older agent memories lived only in the vector database, so they did
+        // not have rows for the Memories panel. Import citations owned by this
+        // user before returning the list so existing memories remain visible.
+        await Memory.migrateLegacyChatSources(user?.id, workspace);
 
         const [globalMemories, workspaceMemories] = await Promise.all([
           Memory.globalForUser(user?.id),

@@ -29,7 +29,7 @@ const PromptReply = ({
       // Same row geometry as the Thinking disclosure - full width, `py-2`, an
       // 18px leading slot - so the two loading states occupy the same line and
       // the same left edge instead of each sitting at its own inset.
-      <div className="flex w-full justify-start">
+      <div className="flex w-full justify-start px-4 md:pl-0">
         <div className="flex w-full items-center gap-x-2.5 py-2">
           {/*
             The dots below are the only signal that a reply is coming, and they

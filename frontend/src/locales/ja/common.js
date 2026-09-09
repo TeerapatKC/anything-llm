@@ -53,7 +53,7 @@ const TRANSLATIONS = {
     "event-logs": "イベントログ",
     privacy: "プライバシーとデータ",
     "ai-providers": "AIプロバイダー",
-    "agent": "代理",
+    agent: "代理",
     "agent-skills": "エージェントスキル",
     "agent-flow": "エージェントフロー",
     "sql-connector": "SQL接続",
@@ -498,6 +498,14 @@ const TRANSLATIONS = {
             "調査において、担当者が尋ねることができる質問の最大数はいくつですか。",
         },
       },
+      personalization: {
+        label: "パーソナライズと記憶を有効にする",
+        description:
+          "アシスタントがユーザーやワークスペースに関する事実を記憶し、以降の会話で利用できるようにします。これはインスタンス全体のポリシーです。無効にすると全員がこの機能を利用できなくなります。各ユーザーはチャットの記憶パネルで記憶されるかどうかを選択でき、記憶がユーザー間で共有されることはありません。",
+        auto_label: "記憶の自動抽出を有効にする",
+        auto_description:
+          "アクティブなユーザーとワークスペースごとにLLM呼び出しのコストがかかるバックグラウンドジョブを実行します。",
+      },
     },
   },
   recorded: {
@@ -668,12 +676,6 @@ const TRANSLATIONS = {
     title: "プライバシーとデータ処理",
     description:
       "これは、接続されているサードパーティプロバイダーとNexus AIがデータをどのように処理するかの設定です。",
-    personalization: {
-      label: "パーソナライズと記憶を有効にする",
-      auto_label: "記憶の自動抽出を有効にする",
-      description:
-        "アシスタントがユーザーやワークスペースに関する事実を記憶し、以降の会話で利用できるようにします。これはインスタンス全体のポリシーです。無効にすると全員がこの機能を利用できなくなります。各ユーザーはチャットの記憶パネルで記憶されるかどうかを選択でき、記憶がユーザー間で共有されることはありません。自動抽出は、アクティブなユーザーとワークスペースごとにLLM呼び出しのコストがかかるバックグラウンドジョブを実行します。",
-    },
   },
   connectors: {
     "search-placeholder": "データコネクタを検索",
@@ -955,7 +957,7 @@ const TRANSLATIONS = {
     large: "大規模",
     submit: "送信",
     edit_info_user:
-      "「送信」はAIの応答を再生成します。「保存」は、あなたのメッセージのみを更新します。",
+      "「送信」は編集したメッセージを使ってAIの応答を再生成します。",
     edit_info_assistant: "あなたの変更は、この回答に直接保存されます。",
     see_less: "詳細を見る",
     see_more: "詳細を見る",
@@ -1005,18 +1007,6 @@ const TRANSLATIONS = {
       empty_cta: "新しい記憶を作成する",
       tab_workspace: "作業スペース",
       tab_global: "世界的な",
-      toggle: {
-        label: "パーソナライズ機能を有効にする",
-        description:
-          "アシスタントに、あなたやこの作業スペースに関する情報を思い出させ、会話の中で活用してもらうようにしましょう。",
-      },
-      auto_extraction: {
-        label: "自動生成された思い出",
-        description:
-          "アシスタントに、バックグラウンドで自動的に思い出を作成させるように設定してください。",
-      },
-      scope_hint:
-        "これらの設定はご自身のアカウントにのみ適用されます。あなたの記憶が他のユーザーと共有されることはありません。",
       menu: {
         edit: "編集",
         delete: "削除",
@@ -1063,8 +1053,13 @@ const TRANSLATIONS = {
     password_description: "パスワードは8文字以上である必要があります",
     cancel: "キャンセル",
     update_account: "アカウントを更新",
-    theme: "テーマ設定",
-    language: "優先言語",
+    theme: "テーマ",
+    language: "言語",
+    theme_options: {
+      system: "システム",
+      light: "ライト",
+      dark: "ダーク",
+    },
     failed_upload: "プロフィール写真のアップロードに失敗しました：{{error}}",
     upload_success: "プロフィール写真がアップロードされました。",
     failed_remove: "プロフィール写真の削除に失敗しました：{{error}}",
@@ -2234,6 +2229,12 @@ const TRANSLATIONS = {
     on: "オン",
     off: "オフ",
     "skill-settings": "エージェントスキル設定",
+    "personalization-settings": "パーソナライズとメモリ",
+    "personalization-description":
+      "メモリとパーソナライズに関するインスタンス全体のポリシーを設定します。",
+    "system-wide": "システム全体",
+    "system-wide-settings": "システム全体の設定",
+    "workspace-defaults": "ワークスペースのデフォルト",
     configure: "設定",
     "agent-flows": "エージェントフロー",
     back: "戻る",

@@ -63,7 +63,7 @@ const WORKSPACE_AGENT = {
     // If clarifying questions tools are enabled, add a note to the role that the user must use the request-user-input tool to ask questions.
     if (!!clarifyingQuestionsSkills?.length)
       role +=
-        "\n\nWhen you need information from the user (URLs, file paths, preferences, choices, etc.), you MUST use the request-user-input tool. Do not ask questions in your text response - the user cannot reply to text. Only the tool can collect user input.";
+        "\n\nWhen you need information from the user (URLs, file paths, preferences, choices, etc.), you MUST use the request-user-input tool. Do not ask questions in your text response - the user cannot reply to text. Only the tool can collect user input. Never ask for information that the user already supplied clearly in the current prompt; when an explicit request to remember a complete fact is already satisfied, acknowledge it without asking again.";
 
     const skillConfig = await resolveConfigForWorkspace(workspace);
     return {

@@ -1,10 +1,34 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ChatSidebarContext = createContext();
+
+export const OPEN_MEMORIES_SIDEBAR_EVENT = "open-memories-sidebar";
+
+/**
+ * Asks the open workspace chat to show its Memories panel.
+ *
+ * The trigger for that panel lives in the account menu, which sits in the app
+ * sidebar - a sibling of the chat, not a descendant - so it cannot reach this
+ * provider through React context. An event keeps the panel's state where it
+ * belongs instead of hoisting it above both trees for one menu item.
+ */
+export function requestMemoriesSidebar() {
+  window.dispatchEvent(new CustomEvent(OPEN_MEMORIES_SIDEBAR_EVENT));
+}
 
 export function ChatSidebarProvider({ children }) {
   const [activeSidebar, setActiveSidebar] = useState(null);
   const [sidebarData, setSidebarData] = useState(null);
+
+  useEffect(() => {
+    function onOpenMemories() {
+      setActiveSidebar("memories");
+      setSidebarData(null);
+    }
+    window.addEventListener(OPEN_MEMORIES_SIDEBAR_EVENT, onOpenMemories);
+    return () =>
+      window.removeEventListener(OPEN_MEMORIES_SIDEBAR_EVENT, onOpenMemories);
+  }, []);
 
   function openSidebar(type, data = null) {
     setActiveSidebar(type);

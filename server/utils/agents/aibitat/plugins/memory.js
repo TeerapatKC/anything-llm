@@ -1,9 +1,10 @@
-const { v4 } = require("uuid");
 const {
   getVectorDbClass,
   resolveProviderConnector,
 } = require("../../../helpers");
 const { Deduplicator } = require("../utils/dedupe");
+const { Memory } = require("../../../../models/memory");
+const { User } = require("../../../../models/user");
 
 const memory = {
   name: "rag-memory",
@@ -111,7 +112,12 @@ const memory = {
                 `${this.caller}: Found ${contextTexts.length} additional piece of context to help answer this question.`
               );
 
-              this.super.addCitation?.(sources);
+              const { visibleSources } = await Memory.migrateLegacySources(
+                sources,
+                this.super.handlerProps.invocation.user_id,
+                workspace
+              );
+              this.super.addCitation?.(visibleSources);
 
               let combinedText = "Additional context for query:\n";
               for (const text of contextTexts) combinedText += text + "\n\n";
@@ -125,38 +131,42 @@ const memory = {
           },
           store: async function (content = "") {
             try {
-              const workspace = this.super.handlerProps.invocation.workspace;
-              const vectorDB = getVectorDbClass();
-              const { error } = await vectorDB.addDocumentToNamespace(
-                workspace.slug,
-                {
-                  docId: v4(),
-                  id: v4(),
-                  url: "file://embed-via-agent.txt",
-                  title: "agent-memory.txt",
-                  docAuthor: "@agent",
-                  description: "Unknown",
-                  docSource: "a text file stored by the workspace agent.",
-                  chunkSource: "",
-                  published: new Date().toLocaleString(),
-                  wordCount: content.split(" ").length,
-                  pageContent: content,
-                  token_count_estimate: 0,
-                },
-                null
-              );
+              const invocation = this.super.handlerProps.invocation;
+              const workspace = invocation.workspace;
+              const userId = invocation.user_id
+                ? Number(invocation.user_id)
+                : null;
+              const user = userId ? await User.get({ id: userId }) : null;
+              if (!(await Memory.enabledForUser(user)))
+                return "Personalization and memories are disabled.";
 
-              if (!!error)
-                return "The content was failed to be embedded properly.";
+              const existing = await Memory.get({
+                userId,
+                workspaceId: Number(workspace.id),
+                scope: "workspace",
+                content,
+              });
+              if (existing)
+                return "This fact is already present in workspace memory.";
+
+              const { memory: storedMemory, message } = await Memory.create({
+                userId,
+                workspaceId: Number(workspace.id),
+                scope: "workspace",
+                content,
+              });
+              if (!storedMemory)
+                return `The memory could not be saved. ${message || "Unknown error."}`;
+
               this.super.introspect(
-                `${this.caller}: I saved the content to long-term memory in this workspaces vector database.`
+                `${this.caller}: I saved the content to the user's workspace memories.`
               );
-              return "The content given was successfully embedded. There is nothing else to do.";
+              return "The content was saved to workspace memory successfully.";
             } catch (error) {
               this.super.handlerProps.log(
                 `memory.store raised an error. ${error.message}`
               );
-              return `Let the user know this action was not successful. An error was raised while storing data in the vector database. ${error.message}`;
+              return `Let the user know this action was not successful. An error was raised while storing workspace memory. ${error.message}`;
             }
           },
         });

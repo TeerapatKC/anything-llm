@@ -289,6 +289,133 @@ const Memory = {
   },
 
   /**
+   * Move legacy `agent-memory.txt` sources into managed workspace memories.
+   * A source is only removed after both the memory row and vector cleanup
+   * succeed, which makes the operation safe to retry.
+   *
+   * @param {object[]} sources
+   * @param {number|null} userId
+   * @param {{id:number, slug:string}} workspace
+   * @returns {Promise<{visibleSources:object[], migratedCount:number}>}
+   */
+  migrateLegacySources: async function (sources, userId, workspace) {
+    const visibleSources = [];
+    let migratedCount = 0;
+
+    for (const source of sources || []) {
+      const title = source?.title || source?.metadata?.title;
+      if (title !== "agent-memory.txt") {
+        visibleSources.push(source);
+        continue;
+      }
+
+      const content = (source?.text || source?.metadata?.text || "").trim();
+      if (!content) {
+        visibleSources.push(source);
+        continue;
+      }
+
+      const ownerId = this.validations.userId(userId);
+      const workspaceId = this.validations.id(workspace.id);
+      let managedMemory = await this.get({
+        userId: ownerId,
+        workspaceId,
+        scope: "workspace",
+        content,
+      });
+      if (!managedMemory) {
+        const result = await this.create({
+          userId: ownerId,
+          workspaceId,
+          scope: "workspace",
+          content,
+        });
+        managedMemory = result.memory;
+      }
+      if (!managedMemory) {
+        visibleSources.push(source);
+        continue;
+      }
+
+      try {
+        const { getVectorDbClass } = require("../utils/helpers");
+        const { DocumentVectors } = require("./vectors");
+        let docId = source?.docId || source?.metadata?.docId;
+        const vectorId = source?.id || source?.metadata?.id;
+        if (!docId && vectorId) {
+          const [record] = await DocumentVectors.where({ vectorId }, 1);
+          docId = record?.docId;
+        }
+        if (!docId) throw new Error("Legacy memory has no document id.");
+
+        const VectorDb = getVectorDbClass();
+        await VectorDb.deleteDocumentFromNamespace(workspace.slug, docId);
+        // Some providers remove these records themselves and some do not.
+        // Deleting again is harmless and keeps every provider consistent.
+        await DocumentVectors.delete({ docId });
+        migratedCount += 1;
+      } catch (error) {
+        console.error(`Failed to remove legacy agent memory: ${error.message}`);
+        visibleSources.push(source);
+      }
+    }
+
+    return { visibleSources, migratedCount };
+  },
+
+  /**
+   * Import legacy citations from this user's recent chat history and remove
+   * each citation once its backing vector has been migrated successfully.
+   *
+   * @param {number|null} userId
+   * @param {{id:number, slug:string}} workspace
+   * @returns {Promise<number>} number of migrated legacy sources
+   */
+  migrateLegacyChatSources: async function (userId, workspace) {
+    try {
+      const ownerId = this.validations.userId(userId);
+      const targetWorkspaceId = this.validations.id(workspace.id);
+      const chats = await prisma.workspace_chats.findMany({
+        where: { workspaceId: targetWorkspaceId, user_id: ownerId },
+        select: { id: true, response: true },
+        orderBy: { id: "desc" },
+        take: 200,
+      });
+      let migratedCount = 0;
+
+      for (const chat of chats) {
+        let response;
+        try {
+          response = JSON.parse(chat.response);
+        } catch {
+          continue;
+        }
+
+        const sources = Array.isArray(response?.sources)
+          ? response.sources
+          : [];
+        const result = await this.migrateLegacySources(
+          sources,
+          ownerId,
+          workspace
+        );
+        if (result.migratedCount > 0) {
+          response.sources = result.visibleSources;
+          await prisma.workspace_chats.update({
+            where: { id: chat.id },
+            data: { response: JSON.stringify(response) },
+          });
+          migratedCount += result.migratedCount;
+        }
+      }
+      return migratedCount;
+    } catch (error) {
+      console.error(error.message);
+      return 0;
+    }
+  },
+
+  /**
    * Replace all of a user's workspace-scoped memories for a workspace with the given set.
    * Runs in a transaction so a failure mid-write does not leave a partial state.
    * Caps the input at this.WORKSPACE_LIMIT.

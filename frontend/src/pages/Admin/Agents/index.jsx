@@ -31,15 +31,10 @@ import paths from "@/utils/paths";
 import AgentFlows from "@/models/agentFlows";
 import AgentSkillSettings from "./AgentSkillSettings";
 import AgentSQLConnectorSelection from "./SQLConnectorSelection";
+import PersonalizationSettings from "./PersonalizationSettings";
 
-const IGNORE_CHANGE_SETTINGS = [
-  "agentSkillRerankerEnabled",
-  "agentSkillRerankerTopN",
-  "agentSkillMaxToolCalls",
-  "agentClarifyingQuestionsEnabled",
-  "agentClarifyingQuestionsMaxPerTurn",
-];
 const AGENT_SKILL_SETTINGS_KEY = "agent-skill-settings";
+const PERSONALIZATION_SETTINGS_KEY = "personalization-settings";
 
 export default function AdminAgents() {
   const { t } = useTranslation();
@@ -259,6 +254,8 @@ export default function AdminAgents() {
   let SelectedSkillComponent = null;
   if (selectedSkill === AGENT_SKILL_SETTINGS_KEY) {
     SelectedSkillComponent = AgentSkillSettings;
+  } else if (selectedSkill === PERSONALIZATION_SETTINGS_KEY) {
+    SelectedSkillComponent = PersonalizationSettings;
   } else if (selectedFlow) {
     SelectedSkillComponent = FlowPanel;
   } else if (selectedMcpServer) {
@@ -405,7 +402,6 @@ export default function AdminAgents() {
         <form
           onSubmit={handleSubmit}
           onChange={(e) => {
-            if (IGNORE_CHANGE_SETTINGS.includes(e.target.name)) return;
             if (!selectedFlow) setHasChanges(true);
           }}
           ref={formEl}
@@ -448,7 +444,9 @@ export default function AdminAgents() {
 
               <div className="w-full overflow-x-visible rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10">
                 {selectedSkill === AGENT_SKILL_SETTINGS_KEY ? (
-                  <AgentSkillSettings />
+                  <AgentSkillSettings setHasChanges={setHasChanges} />
+                ) : selectedSkill === PERSONALIZATION_SETTINGS_KEY ? (
+                  <PersonalizationSettings setHasChanges={setHasChanges} />
                 ) : selectedMcpServer ? (
                   <ServerPanel
                     server={selectedMcpServer}
@@ -564,6 +562,22 @@ export default function AdminAgents() {
                     )
                   ) : (
                     <>
+                      <SettingsGroupLabel>
+                        {t("agent-panel.system-wide-settings")}
+                      </SettingsGroupLabel>
+                      <AgentSettingsNavItem
+                        selected={
+                          selectedSkill === PERSONALIZATION_SETTINGS_KEY
+                        }
+                        onClick={() =>
+                          handleSkillClick(PERSONALIZATION_SETTINGS_KEY)
+                        }
+                        title={t("agent-panel.personalization-settings")}
+                        description={t("agent-panel.system-wide")}
+                      />
+                      <SettingsGroupLabel>
+                        {t("agent-panel.workspace-defaults")}
+                      </SettingsGroupLabel>
                       <AgentSettingsNavItem
                         selected={selectedSkill === AGENT_SKILL_SETTINGS_KEY}
                         onClick={() =>
@@ -618,7 +632,6 @@ export default function AdminAgents() {
       <form
         onSubmit={handleSubmit}
         onChange={(e) => {
-          if (IGNORE_CHANGE_SETTINGS.includes(e.target.name)) return;
           if (!selectedFlow) setHasChanges(true);
         }}
         ref={formEl}
@@ -713,6 +726,20 @@ export default function AdminAgents() {
                   )
                 ) : (
                   <>
+                    <SettingsGroupLabel>
+                      {t("agent-panel.system-wide-settings")}
+                    </SettingsGroupLabel>
+                    <AgentSettingsNavItem
+                      selected={selectedSkill === PERSONALIZATION_SETTINGS_KEY}
+                      onClick={() =>
+                        handleSkillClick(PERSONALIZATION_SETTINGS_KEY)
+                      }
+                      title={t("agent-panel.personalization-settings")}
+                      description={t("agent-panel.system-wide")}
+                    />
+                    <SettingsGroupLabel>
+                      {t("agent-panel.workspace-defaults")}
+                    </SettingsGroupLabel>
                     <AgentSettingsNavItem
                       selected={selectedSkill === AGENT_SKILL_SETTINGS_KEY}
                       onClick={() => handleSkillClick(AGENT_SKILL_SETTINGS_KEY)}
@@ -761,7 +788,9 @@ export default function AdminAgents() {
               {SelectedSkillComponent ? (
                 <>
                   {selectedSkill === AGENT_SKILL_SETTINGS_KEY ? (
-                    <AgentSkillSettings />
+                    <AgentSkillSettings setHasChanges={setHasChanges} />
+                  ) : selectedSkill === PERSONALIZATION_SETTINGS_KEY ? (
+                    <PersonalizationSettings setHasChanges={setHasChanges} />
                   ) : selectedMcpServer ? (
                     <ServerPanel
                       server={selectedMcpServer}
@@ -907,7 +936,7 @@ function SkillList({
   );
 }
 
-function AgentSettingsNavItem({ selected, onClick }) {
+function AgentSettingsNavItem({ selected, onClick, title, description }) {
   const { t } = useTranslation();
   return (
     <button
@@ -920,15 +949,23 @@ function AgentSettingsNavItem({ selected, onClick }) {
       <span className="flex min-w-0 items-center gap-x-2">
         <SlidersHorizontal size={16} className="shrink-0" />
         <span className="truncate text-sm font-light">
-          {t("agent-panel.skill-settings")}
+          {title || t("agent-panel.skill-settings")}
         </span>
       </span>
       <span className="flex items-center gap-x-2">
         <span className="text-sm font-medium text-theme-text-secondary">
-          {t("agent-panel.configure")}
+          {description || t("agent-panel.configure")}
         </span>
         <ChevronRight size={14} className="text-theme-text-secondary" />
       </span>
     </button>
+  );
+}
+
+function SettingsGroupLabel({ children }) {
+  return (
+    <p className="px-4 pt-4 text-xs font-semibold uppercase tracking-wide text-theme-text-secondary">
+      {children}
+    </p>
   );
 }

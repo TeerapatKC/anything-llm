@@ -170,7 +170,9 @@ export default function AdminSMTP() {
                 onValueChange={handleProviderChange}
               >
                 <SelectTrigger className="w-full">
-                  <SelectValue placeholder={t("smtp.service-placeholder")} />
+                  <SelectValue placeholder={t("smtp.service-placeholder")}>
+                    {t(`smtp.providers.${form.provider}`)}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {PROVIDER_KEYS.map((key) => (

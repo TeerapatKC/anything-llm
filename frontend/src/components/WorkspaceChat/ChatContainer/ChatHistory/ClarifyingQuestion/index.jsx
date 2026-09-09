@@ -20,7 +20,7 @@ function TimeoutProgressBar({ percent }) {
 
 function CardWrapper({ children }) {
   return (
-    <div className="flex justify-center w-full my-1 pr-4">
+    <div className="my-1 flex w-full justify-center px-4 md:pl-0">
       <div className="w-full flex flex-col">
         <div
           style={{ borderRadius: "20px" }}

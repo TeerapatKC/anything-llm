@@ -37,11 +37,8 @@ export function EditMessageAction({
     );
   }
 
-  // An unsaved assistant answer has nothing to edit into - there is no stored text
-  // to correct, and re-running it is what Retry is for. A prompt is editable either
-  // way: unsaved, editing it just replays the turn locally.
-  if (!messageKey || isEditing) return null;
-  if (!chatId && role !== "user") return null;
+  // AI responses are regenerated with Retry; only user prompts can be edited.
+  if (!messageKey || isEditing || role !== "user") return null;
   return (
     <div
       className={`relative ${role === "user" && !isEditing ? "" : "opacity-100!"}`}
@@ -94,19 +91,6 @@ export function EditMessageForm({
     closeEditor();
   }
 
-  function handleSave() {
-    const editedMessage = formRef.current.value;
-    saveChanges({
-      editedMessage,
-      messageKey,
-      chatId,
-      role,
-      attachments,
-      saveOnly: true,
-    });
-    closeEditor();
-  }
-
   function cancelEdits() {
     closeEditor();
     return false;
@@ -134,7 +118,6 @@ export function EditMessageForm({
         />
         <EditActionBar
           onCancel={cancelEdits}
-          onSave={handleSave}
           isUserMessage
         />
       </form>
@@ -159,7 +142,7 @@ export function EditMessageForm({
   );
 }
 
-function EditActionBar({ onCancel, onSave, isUserMessage = false }) {
+function EditActionBar({ onCancel, isUserMessage = false }) {
   const { t } = useTranslation();
   return (
     <div className="mt-2 flex flex-col md:flex-row md:items-center justify-between gap-2 bg-zinc-800 light:bg-slate-200 rounded-lg p-2">
@@ -182,20 +165,11 @@ function EditActionBar({ onCancel, onSave, isUserMessage = false }) {
         >
           {t("chat_window.cancel")}
         </button>
-        {isUserMessage && (
-          <button
-            type="button"
-            onClick={onSave}
-            className="border border-zinc-600 light:border-slate-600 text-theme-text-primary light:text-slate-900 text-sm font-medium w-[70px] h-9 rounded-lg hover:bg-white/5 light:hover:bg-slate-300"
-          >
-            {t("chat_window.save")}
-          </button>
-        )}
         <button
           type="submit"
           className="border-none bg-zinc-50 light:bg-slate-800 text-zinc-800 light:text-white text-sm font-medium w-[70px] h-9 rounded-lg hover:bg-zinc-200 light:hover:bg-slate-800"
         >
-          {isUserMessage ? t("chat_window.submit") : t("chat_window.save")}
+          {t("chat_window.submit")}
         </button>
       </div>
     </div>
