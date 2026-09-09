@@ -1,5 +1,4 @@
 const { ApiKey } = require("../models/apiKeys");
-const { BrowserExtensionApiKey } = require("../models/browserExtensionApiKey");
 const { Document } = require("../models/documents");
 const { EventLogs } = require("../models/eventLogs");
 const { Invite } = require("../models/invite");
@@ -263,10 +262,10 @@ function adminEndpoints(app) {
           return;
         }
 
-        // Checked before any of the side effects below. `validCanModify` lets the owner
-        // act on their own account so they can edit their profile, but deleting it would
-        // orphan the instance - and the model refuses it, so without this the request
-        // would strip their extension keys and then report a success that never happened.
+        // `validCanModify` lets the owner act on their own account so they can edit
+        // their profile, but deleting it would orphan the instance. The model refuses
+        // that too; this check exists so the caller gets the reason rather than a bare
+        // "failed to delete".
         if (Role.isSuperAdmin(user)) {
           response.status(200).json({
             success: false,
@@ -276,7 +275,6 @@ function adminEndpoints(app) {
           return;
         }
 
-        await BrowserExtensionApiKey.deleteAllForUser(Number(id));
         const deleted = await User.delete({ id: Number(id) });
         if (!deleted) {
           response

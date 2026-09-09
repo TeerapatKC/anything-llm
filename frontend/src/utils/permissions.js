@@ -35,7 +35,6 @@ export const PERMISSIONS = {
   SYSTEM_EVENT_LOGS_CLEAR: "system.event_logs.clear",
 
   SYSTEM_API_KEYS: "system.api_keys",
-  SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
 
   USERS_VIEW: "users.view",

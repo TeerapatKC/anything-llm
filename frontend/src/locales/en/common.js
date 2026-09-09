@@ -78,7 +78,6 @@ const TRANSLATIONS = {
     "system-prompt-variables": "System Prompt Variables",
     "slash-commands": "Slash Commands",
     contact: "Contact Support",
-    "browser-extension": "Browser Extension",
     smtp: "SMTP",
     channels: "Channels",
     "available-channels": {
@@ -95,11 +94,6 @@ const TRANSLATIONS = {
       "tts-title": "Text-to-speech Preference",
       "tts-description":
         "Choose the text-to-speech provider used in your Nexus AI experience. The browser's built-in service is used by default when supported.",
-    },
-    "browser-extension": {
-      title: "Browser Extension API Keys",
-      description:
-        "Manage API keys for browser extensions connecting to your Nexus AI instance.",
     },
     workspaces: {
       title: "Instance Workspaces",
@@ -2257,18 +2251,6 @@ const TRANSLATIONS = {
       'Manage who can access "{{workspace}}" and assign their workspace roles.',
     "manage-users": "Manage users",
   },
-  "browser-extension-keys": {
-    table: {
-      "connection-string": "Extension Connection String",
-      "created-by": "Created By",
-      "created-at": "Created At",
-      actions: "Actions",
-    },
-    "empty-description":
-      "Generate a key to connect the browser extension to this instance.",
-    empty: "No API keys yet",
-    error: "Error: {{error}}",
-  },
   sidebar: {
     workspaces: "Workspaces",
     "new-workspace": "New Workspace",
@@ -2528,12 +2510,6 @@ const TRANSLATIONS = {
       "There is nobody to hand this instance to yet. Ownership can only go to another active account, so create one first.",
     "new-workspace-modal":
       "After creating this workspace only admins will be able to see it. You can add users after it has been created.",
-    "new-browser-extension-api-key-modal-3":
-      'If you see "Connected to Nexus AI" in the extension, the connection was successful. If not, please copy the connection string and paste it into the extension manually.',
-    "new-browser-extension-api-key-modal-2":
-      'After clicking "Create API Key", Nexus AI will attempt to connect to your browser extension automatically.',
-    "new-browser-extension-api-key-modal":
-      "Warning: this API key will allow access to all workspaces associated with your account. Please share it cautiously.",
     "code-snippet-modal":
       "Have your workspace chat embed function like a help desk chat bottom in the corner of your website.",
     "edit-embed-modal":
