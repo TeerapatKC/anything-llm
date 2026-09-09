@@ -9,7 +9,7 @@
  * at all:
  *
  *   <tool_call>
- *   {"name": "web-scraping", "arguments": {"url": "https://nexusai.com"}}
+ *   {"name": "web-scraping", "arguments": {"url": "https://example.com"}}
  *   </tool_call>
  *
  * The native copy (when present) is what actually invokes the tool, so the

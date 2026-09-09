@@ -732,6 +732,75 @@ const Workspace = {
       });
   },
 
+  /**
+   * SQL connections scoped to one workspace.
+   *
+   * Separate from the instance-wide calls in `models/system.js`: these hit routes gated
+   * on a workspace permission, so a workspace manager can reach them without holding
+   * `agents.manage_skills`, and they can only touch connections this workspace owns.
+   * A global connection comes back without its `connectionString` - the credentials in
+   * it never leave the admin screens.
+   */
+  sqlConnections: {
+    /** Global connections plus this workspace's own. */
+    all: async function (slug) {
+      return await fetch(`${API_BASE}/workspace/${slug}/sql-connections`, {
+        method: "GET",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, connections: [] }));
+    },
+
+    create: async function (slug, connection = {}) {
+      return await fetch(`${API_BASE}/workspace/${slug}/sql-connections`, {
+        method: "POST",
+        headers: { ...baseHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify(connection),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    update: async function (slug, databaseId, connection = {}) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/sql-connections/${databaseId}`,
+        {
+          method: "POST",
+          headers: { ...baseHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify(connection),
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    toggle: async function (slug, databaseId, active) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/sql-connections/${databaseId}/toggle`,
+        {
+          method: "POST",
+          headers: { ...baseHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({ active }),
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    delete: async function (slug, databaseId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/sql-connections/${databaseId}`,
+        {
+          method: "DELETE",
+          headers: baseHeaders(),
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+  },
+
   threads: WorkspaceThread,
 };
 

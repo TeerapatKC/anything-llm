@@ -1,14 +1,9 @@
-const { Telemetry } = require("../../models/telemetry");
 const { BackgroundService } = require("../BackgroundWorkers");
 const { EncryptionManager } = require("../EncryptionManager");
 const { CommunicationKey } = require("../comKey");
-const setupTelemetry = require("../telemetry");
 const eagerLoadContextWindows = require("./eagerLoadContextWindows");
 const markOnboarded = require("./markOnboarded");
-const {
-  bootstrapAdminFromEnv,
-  ensureJWTSecret,
-} = require("./bootstrapAdmin");
+const { bootstrapAdminFromEnv, ensureJWTSecret } = require("./bootstrapAdmin");
 const {
   ensureSuperAdminExists,
   applyBreakGlassFromEnv,
@@ -46,20 +41,24 @@ function bootSSL(app, port = 3001) {
         await markOnboarded();
         await Role.seed();
         await WorkspaceRole.seed();
-      // One-time grants for permissions introduced after an instance was first booted;
-      // seeding alone never revisits a role that already exists.
-      await WorkspaceRole.grantOnce(
-        "workspace-manager",
-        WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
-        "backfill_workspace_manager_agent_flows"
-      );
+        // One-time grants for permissions introduced after an instance was first booted;
+        // seeding alone never revisits a role that already exists.
+        await WorkspaceRole.grantOnce(
+          "workspace-manager",
+          WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
+          "backfill_workspace_manager_agent_flows"
+        );
+        await WorkspaceRole.grantOnce(
+          "workspace-manager",
+          WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+          "backfill_workspace_manager_sql_connectors"
+        );
         // After role seeding - the owner role must exist before the account can be made.
         await bootstrapAdminFromEnv();
         // Instances created before the owner role existed have nobody holding it, and the
         // recovery paths are the only way ownership moves without a signed-in owner.
         await ensureSuperAdminExists();
         await applyBreakGlassFromEnv();
-        await setupTelemetry();
         new CommunicationKey(true);
         new EncryptionManager();
         new BackgroundService().boot();
@@ -102,13 +101,17 @@ function bootHTTP(app, port = 3001) {
         WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
         "backfill_workspace_manager_agent_flows"
       );
+      await WorkspaceRole.grantOnce(
+        "workspace-manager",
+        WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+        "backfill_workspace_manager_sql_connectors"
+      );
       // After role seeding - the owner role must exist before the account can be made.
       await bootstrapAdminFromEnv();
       // Instances created before the owner role existed have nobody holding it, and the
       // recovery paths are the only way ownership moves without a signed-in owner.
       await ensureSuperAdminExists();
       await applyBreakGlassFromEnv();
-      await setupTelemetry();
       new CommunicationKey(true);
       new EncryptionManager();
       new BackgroundService().boot();
@@ -124,11 +127,9 @@ function bootHTTP(app, port = 3001) {
 
 function catchSigTerms() {
   process.once("SIGUSR2", function () {
-    Telemetry.flush();
     process.kill(process.pid, "SIGUSR2");
   });
   process.on("SIGINT", function () {
-    Telemetry.flush();
     process.kill(process.pid, "SIGINT");
   });
 }

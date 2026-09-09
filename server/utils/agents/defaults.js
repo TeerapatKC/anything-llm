@@ -1,6 +1,5 @@
 const AgentPlugins = require("./aibitat/plugins");
 const Provider = require("./aibitat/providers/ai-provider");
-const ImportedPlugin = require("./imported");
 const { AgentFlows } = require("../agentFlows");
 const MCPCompatibilityLayer = require("../MCP");
 const {
@@ -23,16 +22,6 @@ const SKILL_FILTER_CONFIG = {
     getAvailability: () =>
       require("./aibitat/plugins/create-files/lib").isToolAvailable(),
     disabledSettingKey: "disabled_create_files_skills",
-  },
-  "gmail-agent": {
-    getAvailability: async () =>
-      require("./aibitat/plugins/gmail/lib").GmailBridge.isToolAvailable(),
-    disabledSettingKey: "disabled_gmail_skills",
-  },
-  "outlook-agent": {
-    getAvailability: async () =>
-      require("./aibitat/plugins/outlook/lib").OutlookBridge.isToolAvailable(),
-    disabledSettingKey: "disabled_outlook_skills",
   },
 };
 
@@ -82,7 +71,6 @@ const WORKSPACE_AGENT = {
       functions: [
         ...(await agentSkillsFromSystemSettings(workspace, skillConfig)),
         ...clarifyingQuestionsSkills,
-        ...importedPluginsForConfig(skillConfig),
         ...flowPluginsForConfig(skillConfig, workspace),
         ...(await mcpServersForConfig(skillConfig)),
       ],
@@ -179,21 +167,6 @@ async function agentSkillsFromSystemSettings(
 }
 
 /**
- * Imported (community hub) plugins enabled for this workspace. The plugin's own
- * `active` flag on disk still gates it — a workspace can only pick from plugins
- * that are installed and active instance-wide.
- * @param {object} config - resolved workspace skill config
- * @returns {string[]}
- */
-function importedPluginsForConfig(config) {
-  const available = ImportedPlugin.activeImportedPlugins();
-  if (!Array.isArray(config?.activeImportedSkills)) return available;
-  return available.filter((id) =>
-    config.activeImportedSkills.includes(id.replace(/^@@/, ""))
-  );
-}
-
-/**
  * Agent flows enabled for this workspace, intersected with the flows the workspace is
  * actually allowed to load: the global pool plus the ones it owns. Passing the workspace
  * is what keeps another workspace's flow out even if its uuid is still sitting in this
@@ -268,10 +241,6 @@ function resolveAgentSkill(skill = "", { serverName = null } = {}) {
     return { loadable: [plugin.name], registered: [plugin.name] };
   }
 
-  // Imported plugin referenced by hubId (registered under the hubId itself).
-  if (ImportedPlugin.validateImportedPluginHandler(skill))
-    return { loadable: [`@@${skill}`], registered: [skill] };
-
   // Sub-skill child name (e.g. a filesystem-agent child): find its parent so the
   // loader can attach just that child via the `parent#child` convention.
   for (const key of Object.keys(AgentPlugins)) {
@@ -293,7 +262,6 @@ module.exports = {
   USER_AGENT,
   WORKSPACE_AGENT,
   agentSkillsFromSystemSettings,
-  importedPluginsForConfig,
   flowPluginsForConfig,
   mcpServersForConfig,
   resolveAgentSkill,

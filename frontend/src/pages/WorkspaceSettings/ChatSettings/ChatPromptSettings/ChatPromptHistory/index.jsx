@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default forwardRef(function ChatPromptHistory(
-  { show, workspaceSlug, onRestore, onClose, onPublishClick },
+  { show, workspaceSlug, onRestore, onClose },
   ref
 ) {
   const { t } = useTranslation();
@@ -99,7 +99,6 @@ export default forwardRef(function ChatPromptHistory(
                 id={item.id}
                 {...item}
                 onRestore={() => onRestore(item.prompt)}
-                onPublishClick={onPublishClick}
                 setHistory={setHistory}
               />
             ))

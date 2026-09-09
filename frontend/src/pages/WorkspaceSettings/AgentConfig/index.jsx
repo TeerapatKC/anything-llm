@@ -3,18 +3,23 @@ import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import { castToType } from "@/utils/types";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AgentLLMSelection from "./AgentLLMSelection";
 import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
 import useUser from "@/hooks/useUser";
+import { useIsMobile } from "@/hooks/use-mobile";
 import AgentSkillSelection from "./AgentSkillSelection";
+import { WORKSPACE_PERMISSIONS, workspaceCan } from "@/utils/permissions";
 import {
-  WORKSPACE_PERMISSIONS,
-  workspaceCan,
-  isSuperAdmin,
-} from "@/utils/permissions";
-import { Bot, ChevronRight, Cpu, SlidersHorizontal } from "lucide-react";
+  Bot,
+  ChevronLeft,
+  ChevronRight,
+  Cpu,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const CONFIG_SECTIONS = {
   MODEL: "model",
@@ -22,6 +27,8 @@ const CONFIG_SECTIONS = {
 
 export default function WorkspaceAgentConfiguration({ workspace }) {
   const { user } = useUser();
+  const isMobile = useIsMobile();
+  const navigate = useNavigate();
   const [settings, setSettings] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -38,6 +45,13 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
   // through everywhere, mirroring the server.
   const canManageSkills = workspaceCan(
     WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
+    workspace?.slug,
+    user
+  );
+  // Picking the agent's provider/model is the same capability as choosing the
+  // workspace's chat LLM, so it rides on that permission rather than a role check.
+  const canSetAgentModel = workspaceCan(
+    WORKSPACE_PERMISSIONS.SETTINGS_LLM,
     workspace?.slug,
     user
   );
@@ -112,138 +126,175 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
       id="workspace-agent-settings-container"
       className="flex min-h-0 flex-col gap-5 min-[1100px]:h-[calc(100vh-48px)]"
     >
-      <header className="flex flex-none items-start gap-3">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
-          <Bot size={21} />
-        </span>
-        <div className="min-w-0">
-          <h1 className="text-xl font-semibold text-theme-text-primary">
-            Agent configuration
-          </h1>
-          <p className="mt-0.5 text-sm text-theme-text-secondary">
-            Configure the model and capabilities available to this workspace.
-          </p>
-        </div>
-      </header>
+      {(!isMobile || !selectedSection) && (
+        <header className="flex flex-none items-start gap-3">
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+            <Bot size={21} />
+          </span>
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold text-theme-text-primary">
+              Agent configuration
+            </h1>
+            <p className="mt-0.5 text-sm text-theme-text-secondary">
+              Configure the model and capabilities available to this workspace.
+            </p>
+          </div>
+        </header>
+      )}
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 min-[1100px]:flex-row min-[1100px]:gap-6">
         {/* `overflow-hidden` keeps the rounded corners from being painted over,
             so the item list below has to do the scrolling itself — the list
             grows with every skill, flow and MCP server the instance has. */}
-        <nav className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 min-[1100px]:w-[400px]">
-          <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
-            <h2 className="text-base font-semibold text-theme-text-primary">
-              Agent skills &amp; settings
-            </h2>
-            <p className="mt-1 text-sm text-theme-text-secondary">
-              Choose an item to configure.
-            </p>
-          </div>
-          <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
-            {/* #TEMPORARILY_HIDDEN: Model & provider is limited to super admins. */}
-            <div hidden={!isSuperAdmin()}>
-              <ConfigNavItem
-                icon={Cpu}
-                title="Model & provider"
-                selected={selectedSection === CONFIG_SECTIONS.MODEL}
-                onClick={() => setSelectedSection(CONFIG_SECTIONS.MODEL)}
-              />
-            </div>
-            {canManageSkills && (
-              <>
-                {skillNavigation.map((item, index) => (
-                  <div key={item.key}>
-                    {(index === 0 ||
-                      skillNavigation[index - 1]?.category !==
-                        item.category) && (
-                      <p className="px-4 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-theme-text-secondary">
-                        {item.category}
-                      </p>
-                    )}
-                    {item.empty ? (
-                      // A category with nothing to configure still shows its
-                      // heading, with this row explaining why it is empty.
-                      // Not a button: there is nothing to open.
-                      <p className="px-4 py-3 text-sm font-light text-theme-text-secondary/70">
-                        {item.title}
-                      </p>
-                    ) : (
-                      <ConfigNavItem
-                        icon={item.icon ?? SlidersHorizontal}
-                        title={item.title}
-                        status={item.status}
-                        selected={selectedSection === item.key}
-                        onClick={() => setSelectedSection(item.key)}
-                      />
-                    )}
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-        </nav>
-
-        <section
-          hidden={!selectedSection}
-          className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary"
-        >
-          {/* #TEMPORARILY_HIDDEN: Model & provider is limited to super admins. Anyone
-              else cannot reach it anyway - the nav item that selects it is hidden too.
-              It also only belongs to its own nav item: the provider/model is one
-              setting for the whole workspace agent, not something a skill carries,
-              so rendering it alongside a skill panel implied a per-skill choice
-              that does not exist. */}
-          <div
-            hidden={
-              !isSuperAdmin() || selectedSection !== CONFIG_SECTIONS.MODEL
-            }
-          >
-            <div className="mb-5">
+        {(!isMobile || !selectedSection) && (
+          <nav className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10 min-[1100px]:w-[400px]">
+            <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
               <h2 className="text-base font-semibold text-theme-text-primary">
-                Model &amp; provider
+                Agent skills &amp; settings
               </h2>
               <p className="mt-1 text-sm text-theme-text-secondary">
-                Select the provider and model used by this workspace's agent.
+                Choose an item to configure.
               </p>
             </div>
-            <form
-              ref={formEl}
-              onSubmit={handleUpdate}
-              onChange={() => setHasChanges(true)}
-              id="agent-settings-form"
-              className="flex max-w-[720px] flex-col gap-y-6"
-            >
-              <AgentLLMSelection
-                settings={settings}
-                workspace={workspace}
-                setHasChanges={setHasChanges}
-              />
-              {hasChanges && (
-                <Button
-                  type="submit"
-                  size="lg"
-                  form="agent-settings-form"
-                  className="w-fit"
-                >
-                  {saving ? "Updating agent..." : "Update workspace agent"}
-                </Button>
+            <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
+              <div hidden={!canSetAgentModel}>
+                <ConfigNavItem
+                  icon={Cpu}
+                  title="Model & provider"
+                  selected={selectedSection === CONFIG_SECTIONS.MODEL}
+                  onClick={() => setSelectedSection(CONFIG_SECTIONS.MODEL)}
+                />
+              </div>
+              {canManageSkills && (
+                <>
+                  {skillNavigation.map((item, index) => (
+                    <div key={item.key}>
+                      {(index === 0 ||
+                        skillNavigation[index - 1]?.category !==
+                          item.category) && (
+                        <p className="px-4 pb-1 pt-4 text-[10px] font-semibold uppercase tracking-wider text-theme-text-secondary">
+                          {item.category}
+                        </p>
+                      )}
+                      {item.empty ? (
+                        // A category with nothing to configure still shows its
+                        // heading, with this row explaining why it is empty.
+                        // Not a button: there is nothing to open.
+                        <p className="px-4 py-3 text-sm font-light text-theme-text-secondary/70">
+                          {item.title}
+                        </p>
+                      ) : (
+                        <ConfigNavItem
+                          icon={item.icon ?? SlidersHorizontal}
+                          title={item.title}
+                          badge={item.badge}
+                          badgeIcon={item.badgeIcon}
+                          status={item.status}
+                          accent={item.accent}
+                          selected={selectedSection === item.key}
+                          onClick={() =>
+                            item.to
+                              ? navigate(item.to)
+                              : setSelectedSection(item.key)
+                          }
+                        />
+                      )}
+                    </div>
+                  ))}
+                </>
               )}
-            </form>
-          </div>
+            </div>
+          </nav>
+        )}
 
-          {/* Kept outside the provider/model form: skills save through their
-              own endpoint, so their toggles do not mark the model form dirty. */}
-          {canManageSkills && (
-            <div hidden={selectedSection === CONFIG_SECTIONS.MODEL}>
-              <AgentSkillSelection
-                workspace={workspace}
-                focusSkillId={selectedSection}
-                onNavigationChange={handleSkillNavigation}
-                onItemStatusChange={handleSkillStatusChange}
-              />
+        <div
+          hidden={!selectedSection}
+          className="flex min-w-0 flex-1 flex-col gap-5"
+        >
+          {isMobile && (
+            <div className="flex w-fit">
+              <button
+                type="button"
+                onClick={() => setSelectedSection(null)}
+                className="flex items-center gap-x-1 rounded-lg border border-theme-sidebar-border bg-card px-3 py-2 text-sm font-medium text-cta-button transition-colors hover:bg-theme-action-menu-bg"
+              >
+                <ChevronLeft size={20} />
+                Back
+              </button>
             </div>
           )}
-        </section>
+          <section className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10 min-[1100px]:p-5">
+            {/* Belongs only to its own nav item: the provider/model is one setting for
+              the whole workspace agent, not something a skill carries, so rendering it
+              alongside a skill panel would imply a per-skill choice that does not
+              exist. */}
+            <div
+              hidden={
+                !canSetAgentModel || selectedSection !== CONFIG_SECTIONS.MODEL
+              }
+            >
+              <div className="mb-5">
+                <h2 className="text-base font-semibold text-theme-text-primary">
+                  Model &amp; provider
+                </h2>
+                <p className="mt-1 text-sm text-theme-text-secondary">
+                  Select the provider and model used by this workspace's agent.
+                </p>
+              </div>
+              <form
+                ref={formEl}
+                onSubmit={handleUpdate}
+                onChange={() => setHasChanges(true)}
+                id="agent-settings-form"
+                className="flex w-full flex-col gap-y-6 min-[1100px]:max-w-[720px]"
+              >
+                <AgentLLMSelection
+                  settings={settings}
+                  workspace={workspace}
+                  setHasChanges={setHasChanges}
+                />
+                {hasChanges && (
+                  <Button
+                    type="submit"
+                    size="lg"
+                    form="agent-settings-form"
+                    className="w-fit"
+                  >
+                    {saving ? "Updating agent..." : "Update workspace agent"}
+                  </Button>
+                )}
+              </form>
+            </div>
+
+            {/* Kept outside the provider/model form: skills save through their
+              own endpoint, so their toggles do not mark the model form dirty. */}
+            {canManageSkills && (
+              <div hidden={selectedSection === CONFIG_SECTIONS.MODEL}>
+                <AgentSkillSelection
+                  workspace={workspace}
+                  focusSkillId={selectedSection}
+                  onNavigationChange={handleSkillNavigation}
+                  onItemStatusChange={handleSkillStatusChange}
+                />
+              </div>
+            )}
+          </section>
+        </div>
+
+        {!isMobile && !selectedSection && (
+          <section className="flex min-h-[360px] min-w-0 flex-1 flex-col items-center justify-center rounded-xl bg-card px-6 text-center text-theme-text-secondary ring-1 ring-foreground/10">
+            <span className="mb-3 flex size-12 items-center justify-center rounded-xl bg-muted/40">
+              <Bot size={24} />
+            </span>
+            <h2 className="font-medium text-theme-text-primary">
+              Select something to configure
+            </h2>
+            <p className="mt-1 max-w-sm text-sm">
+              Choose a model, skill, integration, flow, or MCP server from the
+              list.
+            </p>
+          </section>
+        )}
       </div>
     </div>
   );
@@ -252,7 +303,10 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
 function ConfigNavItem({
   icon: Icon,
   title,
+  badge = null,
+  badgeIcon: BadgeIcon = null,
   status = "Configure",
+  accent = false,
   selected,
   onClick,
 }) {
@@ -260,20 +314,32 @@ function ConfigNavItem({
     <button
       type="button"
       onClick={onClick}
-      className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-theme-text-primary transition-colors hover:bg-theme-bg-primary ${
+      className={`group flex w-full items-center justify-between rounded-xl px-4 py-3 text-left text-theme-text-primary transition-colors hover:bg-theme-bg-primary ${
         selected ? "bg-white/10 light:bg-theme-bg-sidebar" : ""
       }`}
     >
-      <span className="flex min-w-0 items-center gap-x-2">
+      <span
+        className={`flex min-w-0 items-center gap-x-2 ${
+          accent ? "text-cta-button group-hover:underline" : ""
+        }`}
+      >
         <Icon size={16} className="shrink-0" />
         <span className="truncate text-sm font-light">{title}</span>
+        {badge && (
+          <Badge variant="outline" className="shrink-0 gap-x-1 text-[10px]">
+            {BadgeIcon && <BadgeIcon className="h-3 w-3" />}
+            {badge}
+          </Badge>
+        )}
       </span>
-      <span className="flex items-center gap-x-2">
-        <span className="text-sm font-medium text-theme-text-secondary">
-          {status}
+      {!accent && (
+        <span className="flex items-center gap-x-2">
+          <span className="text-sm font-medium text-theme-text-secondary">
+            {status}
+          </span>
+          <ChevronRight size={14} className="text-theme-text-secondary" />
         </span>
-        <ChevronRight size={14} className="text-theme-text-secondary" />
-      </span>
+      )}
     </button>
   );
 }

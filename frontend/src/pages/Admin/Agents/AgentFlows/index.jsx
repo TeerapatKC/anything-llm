@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import React from "react";
 import { ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function AgentFlowsList({
   flows = [],
@@ -13,14 +14,6 @@ export default function AgentFlowsList({
     return (
       <div className="text-theme-text-secondary text-center text-xs flex flex-col gap-y-2">
         <p>{t("ui.no-agent-flows")}</p>
-        <a
-          href="https://docs.nexusai.com/agent-flows/getting-started"
-          target="_blank"
-          className="text-theme-text-secondary underline hover:text-cta-button"
-          rel="noreferrer"
-        >
-          {t("agent-flow.learn-more")}
-        </a>
       </div>
     );
   }
@@ -48,9 +41,17 @@ export default function AgentFlowsList({
             {flow.scope === "workspace" && (
               // Built inside a workspace. Listed here so an operator can audit it, but
               // it belongs to that workspace and cannot be shared with others.
-              <span className="shrink-0 rounded-full border border-theme-sidebar-border px-2 py-0.5 text-[10px] uppercase tracking-wide text-theme-text-secondary">
+              <Badge variant="outline" className="shrink-0 text-[10px]">
                 {t("agent-flow.workspace-owned")}
-              </span>
+              </Badge>
+            )}
+            {flow.scope !== "workspace" && (
+              <Badge
+                variant="outline"
+                className="shrink-0 text-[10px]"
+              >
+                {t("agent-flow.shared")}
+              </Badge>
             )}
           </div>
           <div className="flex shrink-0 items-center gap-x-2">

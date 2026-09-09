@@ -12,7 +12,6 @@ later.date.UTC();
 class BackgroundService {
   name = "BackgroundWorkerService";
   static _instance = null;
-  documentSyncEnabled = false;
   memoryExtractionEnabled = false;
   #root = path.resolve(__dirname, "../../jobs");
   #scheduledJobTimers = new Map();
@@ -47,15 +46,6 @@ class BackgroundService {
     {
       name: "extract-memories",
       interval: process.env.MEMORY_EXTRACTION_INTERVAL || "3hr",
-    },
-  ];
-
-  #documentSyncJobs = [
-    // Job for auto-sync of documents
-    // https://github.com/breejs/bree
-    {
-      name: "sync-watched-documents",
-      interval: "1hr",
     },
   ];
 
@@ -103,11 +93,9 @@ class BackgroundService {
   }
 
   async boot() {
-    const { DocumentSyncQueue } = require("../../models/documentSyncQueue");
     const { SystemSettings } = require("../../models/systemSettings");
     const { ScheduledJobRun } = require("../../models/scheduledJobRun");
 
-    this.documentSyncEnabled = await DocumentSyncQueue.enabled();
     this.memoryExtractionEnabled = await SystemSettings.autoMemoriesEnabled();
 
     // Mark any orphaned scheduled job runs as failed (server crashed mid-execution)
@@ -165,7 +153,6 @@ class BackgroundService {
   jobs() {
     const activeJobs = [...this.#alwaysRunJobs];
     if (this.memoryExtractionEnabled) activeJobs.push(...this.#memoryJobs);
-    if (this.documentSyncEnabled) activeJobs.push(...this.#documentSyncJobs);
     return activeJobs;
   }
 

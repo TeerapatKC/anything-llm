@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Copy, Lock, Pencil, Plus, Trash2 } from "lucide-react";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -12,6 +11,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 import Role, { WorkspaceRole } from "@/models/role";
@@ -115,6 +115,7 @@ export default function WorkspaceRoles({ workspace }) {
               size="lg"
               className="shrink-0"
               onClick={() => setEditing({})}
+              disabled={loading}
             >
               <Plus className="mr-1.5 size-4" />
               New role
@@ -123,39 +124,32 @@ export default function WorkspaceRoles({ workspace }) {
         }
       />
 
-      {loading ? (
-        <Skeleton
-          height="60vh"
-          width="100%"
-          highlightColor="var(--theme-bg-primary)"
-          baseColor="var(--theme-bg-secondary)"
-          count={1}
-          className="w-full rounded-lg p-4"
-          containerClassName="flex w-full"
-        />
-      ) : (
-        <Table>
-          <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
-            <TableRow>
-              <TableHead scope="col">Role</TableHead>
-              <TableHead scope="col">Permissions</TableHead>
-              <TableHead scope="col">Members</TableHead>
-              <TableHead scope="col"> </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {own.length === 0 && (
-              <TableRow>
-                <TableCell colSpan="4" className="text-theme-text-secondary">
-                  {workspace.name} has no roles of its own yet — every role
-                  below is shared with the rest of the instance.
-                  {canDefine &&
-                    " Use “New role”, or duplicate a shared role, to add one that only applies here."}
-                </TableCell>
-              </TableRow>
-            )}
-            {[...own, ...shared].map((role) => (
-              <TableRow key={role.id}>
+      <Table>
+        <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
+          <TableRow>
+            <TableHead scope="col">Role</TableHead>
+            <TableHead scope="col">Permissions</TableHead>
+            <TableHead scope="col">Members</TableHead>
+            <TableHead scope="col"> </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
+            <TableLoadingRow colSpan={4} />
+          ) : (
+            <>
+              {own.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan="4" className="text-theme-text-secondary">
+                    {workspace.name} has no roles of its own yet — every role
+                    below is shared with the rest of the instance.
+                    {canDefine &&
+                      " Use “New role”, or duplicate a shared role, to add one that only applies here."}
+                  </TableCell>
+                </TableRow>
+              )}
+              {[...own, ...shared].map((role) => (
+                <TableRow key={role.id}>
                 <TableCell className="max-w-sm whitespace-normal">
                   <div className="flex items-center gap-x-2">
                     <span className="font-medium">{role.displayName}</span>
@@ -218,9 +212,10 @@ export default function WorkspaceRoles({ workspace }) {
                 </TableCell>
               </TableRow>
             ))}
-          </TableBody>
-        </Table>
-      )}
+          </>
+        )}
+      </TableBody>
+    </Table>
 
       <Dialog
         open={editing !== null}

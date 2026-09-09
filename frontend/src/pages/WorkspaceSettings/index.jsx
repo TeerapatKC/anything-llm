@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
+import paths from "@/utils/paths";
 import { SidebarPageLayout } from "@/components/Sidebar";
 import WorkspaceSettingsSidebar from "@/components/Sidebar/WorkspaceSettingsSidebar";
 import Workspace from "@/models/workspace";
@@ -13,7 +14,6 @@ import WorkspaceAgentConfiguration from "./AgentConfig";
 import WorkspaceRoles from "./Roles";
 import WorkspaceDocuments from "./Documents";
 import WorkspaceSlashCommands from "./SlashCommands";
-import WorkspaceAgentFlows from "./AgentFlows";
 import System from "@/models/system";
 
 const TABS = {
@@ -25,7 +25,6 @@ const TABS = {
   "agent-config": WorkspaceAgentConfiguration,
   documents: WorkspaceDocuments,
   "slash-commands": WorkspaceSlashCommands,
-  "agent-flows": WorkspaceAgentFlows,
 };
 
 export default function WorkspaceSettings() {
@@ -70,6 +69,12 @@ function ShowWorkspaceChat() {
   if (loading) return <FullScreenLoader />;
 
   const TabContent = TABS[tab];
+  // An unknown tab used to render `undefined` as a component, which throws and takes
+  // the whole page down with a React error rather than showing anything useful. A
+  // retired tab still sitting in someone's bookmarks is the common way to land here -
+  // agent flows moved into Agent Configuration, for instance.
+  if (!TabContent) return <Navigate to={paths.workspace.chat(slug)} replace />;
+
   return (
     <SidebarPageLayout>
       <WorkspaceSettingsSidebar workspace={workspace} />

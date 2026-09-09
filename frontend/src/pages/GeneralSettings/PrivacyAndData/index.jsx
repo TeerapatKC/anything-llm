@@ -4,7 +4,7 @@ import PageHeader from "@/components/layout/PageHeader";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
 import PreLoader from "@/components/Preloader";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import ProviderPrivacy from "@/components/ProviderPrivacy";
 import Toggle from "@/components/lib/Toggle";
 import Admin from "@/models/admin";
@@ -41,8 +41,6 @@ export default function PrivacyAndDataHandling() {
           <ProviderPrivacy />
           <Separator />
           <Personalization settings={settings} />
-          <Separator />
-          <TelemetryLogs settings={settings} />
         </div>
       )}
     </SettingsLayout>
@@ -99,75 +97,6 @@ function Personalization({ settings }) {
         <p className="w-96 text-xs text-theme-text-secondary">
           {t("privacy.personalization.description")}
         </p>
-      </div>
-    </div>
-  );
-}
-
-function TelemetryLogs({ settings }) {
-  const [telemetry, setTelemetry] = useState(
-    settings?.DisableTelemetry !== "true"
-  );
-  const { t } = useTranslation();
-  async function toggleTelemetry() {
-    await System.updateSystem({
-      DisableTelemetry: !telemetry ? "false" : "true",
-    });
-    setTelemetry(!telemetry);
-    showToast(
-      `Anonymous Telemetry has been ${!telemetry ? "enabled" : "disabled"}.`,
-      "info",
-      { clear: true }
-    );
-  }
-
-  return (
-    <div className="relative w-full max-h-full">
-      <div className="relative rounded-lg">
-        <div className="space-y-6 flex h-full w-full">
-          <div className="w-full flex flex-col gap-y-4">
-            <div className="">
-              <Toggle
-                size="lg"
-                className="mb-4"
-                label={t("privacy.anonymous")}
-                enabled={telemetry}
-                onChange={toggleTelemetry}
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-left space-y-2">
-          <p className="text-theme-text-secondary text-xs rounded-lg w-96">
-            <Trans
-              i18nKey="help.telemetry-note"
-              components={{
-                b: <b />,
-                a: (
-                  <a
-                    href="https://github.com/search?q=repo%3AMintplex-Labs%2Fnexus-ai%20.sendTelemetry(&type=code"
-                    className="underline text-blue-400"
-                    target="_blank"
-                    rel="noreferrer"
-                  />
-                ),
-              }}
-            />
-          </p>
-          <p className="text-theme-text-secondary text-xs rounded-lg w-96">
-            {t("help.privacy-and-data")}
-            so that we can continue to improve Nexus AI for you.{" "}
-            <a
-              href="mailto:team@mintplexlabs.com"
-              className="underline text-blue-400"
-              target="_blank"
-              rel="noreferrer"
-            >
-              team@mintplexlabs.com
-            </a>
-            .
-          </p>
-        </div>
       </div>
     </div>
   );

@@ -5,12 +5,10 @@ import useLogo from "@/hooks/useLogo";
 import {
   Bot,
   Briefcase,
-  FlaskConical,
   Mail,
   PanelLeftIcon,
   PenLine,
   Settings,
-  Store,
   Unplug,
   UserCog,
 } from "lucide-react";
@@ -18,7 +16,6 @@ import useUser from "@/hooks/useUser";
 import Footer from "../Footer";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import showToast from "@/utils/toast";
 import System, { SUPPORT_EMAIL_UPDATED_EVENT } from "@/models/system";
 import Option from "./MenuOption";
 import { CanViewChatHistoryProvider } from "../CanViewChatHistory";
@@ -212,56 +209,53 @@ const SidebarOptions = ({ user = null, t }) => (
   <CanViewChatHistoryProvider>
     {({ viewable: canViewChatHistory }) => (
       <>
-        {/* #TEMPORARILY_HIDDEN: AI Providers is limited to super admins. */}
-        {isSuperAdmin(user) && (
-          <Option
-            btnText={t("settings.ai-providers")}
-            icon={<Settings className="h-5 w-5 shrink-0" />}
-            user={user}
-            childOptions={[
-              {
-                btnText: t("settings.llm"),
-                href: paths.settings.llmPreference(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_LLM],
-              },
-              {
-                btnText: t("settings.vector-database"),
-                href: paths.settings.vectorDatabase(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB],
-              },
-              {
-                btnText: t("settings.embedder"),
-                href: paths.settings.embedder.modelPreference(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER],
-              },
-              {
-                btnText: t("settings.text-splitting"),
-                href: paths.settings.embedder.chunkingPreference(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING],
-              },
-              {
-                btnText: t("settings.image-generation"),
-                href: paths.settings.imageGenerationPreference(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION],
-              },
-              {
-                btnText: t("settings.voice-speech"),
-                href: paths.settings.audioPreference(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION],
-              },
-              {
-                btnText: t("settings.transcription"),
-                href: paths.settings.transcriptionPreference(),
-                permissions: [PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION],
-              },
-              {
-                btnText: t("settings.model-router"),
-                href: paths.settings.modelRouters(),
-                permissions: [PERMISSIONS.SYSTEM_MODEL_ROUTING],
-              },
-            ]}
-          />
-        )}
+        <Option
+          btnText={t("settings.ai-providers")}
+          icon={<Settings className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
+            {
+              btnText: t("settings.llm"),
+              href: paths.settings.llmPreference(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_LLM],
+            },
+            {
+              btnText: t("settings.vector-database"),
+              href: paths.settings.vectorDatabase(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB],
+            },
+            {
+              btnText: t("settings.embedder"),
+              href: paths.settings.embedder.modelPreference(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER],
+            },
+            {
+              btnText: t("settings.text-splitting"),
+              href: paths.settings.embedder.chunkingPreference(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING],
+            },
+            {
+              btnText: t("settings.image-generation"),
+              href: paths.settings.imageGenerationPreference(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION],
+            },
+            {
+              btnText: t("settings.voice-speech"),
+              href: paths.settings.audioPreference(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION],
+            },
+            {
+              btnText: t("settings.transcription"),
+              href: paths.settings.transcriptionPreference(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION],
+            },
+            {
+              btnText: t("settings.model-router"),
+              href: paths.settings.modelRouters(),
+              permissions: [PERMISSIONS.SYSTEM_MODEL_ROUTING],
+            },
+          ]}
+        />
         {isSuperAdmin(user) && (
           <Option
             btnText={t("settings.smtp")}
@@ -323,6 +317,11 @@ const SidebarOptions = ({ user = null, t }) => (
           user={user}
           childOptions={[
             {
+              btnText: t("settings.agent-skills-settings"),
+              href: paths.settings.agentSkills(),
+              permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
+            },
+            {
               // Deliberately a role check rather than a permission check - the flow
               // list is temporarily restricted to the instance owner regardless of
               // who else holds the AGENTS_FLOWS permission.
@@ -338,33 +337,6 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.sql-connector"),
               href: paths.settings.sqlConnector(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
-            },
-            {
-              btnText: t("settings.agent-skills-settings"),
-              href: paths.settings.agentSkills(),
-              permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
-            },
-          ]}
-        />
-        <Option
-          btnText={t("settings.community-hub.title")}
-          icon={<Store className="h-5 w-5 shrink-0" />}
-          user={user}
-          childOptions={[
-            {
-              btnText: t("settings.community-hub.trending"),
-              href: paths.communityHub.trending(),
-              permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
-            },
-            {
-              btnText: t("settings.community-hub.your-account"),
-              href: paths.communityHub.authentication(),
-              permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
-            },
-            {
-              btnText: t("settings.community-hub.import-item"),
-              href: paths.communityHub.importItem(),
-              permissions: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
             },
           ]}
         />
@@ -445,78 +417,17 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
-        <HoldToReveal key="exp_features">
-          <Option
-            btnText={t("settings.experimental-features")}
-            icon={<FlaskConical className="h-5 w-5 shrink-0" />}
-            href={paths.settings.experimental()}
-            user={user}
-            permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
-          />
-        </HoldToReveal>
       </>
     )}
   </CanViewChatHistoryProvider>
 );
 
-function HoldToReveal({ children, holdForMs = 3_000 }) {
-  let timeout = null;
-  const [showing, setShowing] = useState(
-    window.localStorage.getItem("nexusai_experimental_feature_preview_unlocked")
-  );
-
-  useEffect(() => {
-    const onPress = (e) => {
-      if (!["Control", "Meta"].includes(e.key) || timeout !== null) return;
-      timeout = setTimeout(() => {
-        setShowing(true);
-        // Setting toastId prevents hook spam from holding control too many times or the event not detaching
-        showToast("Experimental feature previews unlocked!");
-        window.localStorage.setItem(
-          "nexusai_experimental_feature_preview_unlocked",
-          "enabled"
-        );
-        window.removeEventListener("keypress", onPress);
-        window.removeEventListener("keyup", onRelease);
-        clearTimeout(timeout);
-      }, holdForMs);
-    };
-    const onRelease = (e) => {
-      if (!["Control", "Meta"].includes(e.key)) return;
-      if (showing) {
-        window.removeEventListener("keypress", onPress);
-        window.removeEventListener("keyup", onRelease);
-        clearTimeout(timeout);
-        return;
-      }
-      clearTimeout(timeout);
-    };
-
-    if (!showing) {
-      window.addEventListener("keydown", onPress);
-      window.addEventListener("keyup", onRelease);
-    }
-    return () => {
-      window.removeEventListener("keydown", onPress);
-      window.removeEventListener("keyup", onRelease);
-    };
-  }, []);
-
-  if (!showing) return null;
-  return children;
-}
-
 function AppVersion() {
   const { version, isLoading } = useAppVersion();
   if (isLoading) return null;
   return (
-    <Link
-      to={`https://github.com/Mintplex-Labs/nexus-ai/releases/tag/v${version}`}
-      target="_blank"
-      rel="noreferrer"
-      className="text-theme-text-secondary light:opacity-80 opacity-50 text-xs mx-3"
-    >
+    <span className="text-theme-text-secondary light:opacity-80 opacity-50 text-xs mx-3">
       v{version}
-    </Link>
+    </span>
   );
 }

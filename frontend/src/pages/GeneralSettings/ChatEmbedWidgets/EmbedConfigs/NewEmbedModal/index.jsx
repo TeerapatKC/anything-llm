@@ -145,14 +145,29 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
           {t("help.new-embed-modal-2")}
         </p>
       </div>
-      <Select name="workspace_id" required={true} defaultValue={defaultValue}>
+      <Select
+        name="workspace_id"
+        required={true}
+        defaultValue={defaultValue ? String(defaultValue) : undefined}
+      >
         <SelectTrigger className="min-w-60 rounded-lg bg-theme-settings-input-bg px-4 py-2 text-sm text-theme-text-primary focus:ring-blue-500 focus:border-blue-500">
-          <SelectValue placeholder={t("ui.select-option")} />
+          <SelectValue placeholder={t("ui.select-option")}>
+            {(value) =>
+              !value
+                ? t("ui.select-option")
+                : workspaces.find((w) => String(w.id) === String(value))
+                    ?.name || value
+            }
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {workspaces.map((workspace) => {
             return (
-              <SelectItem key={workspace.id} value={workspace.id}>
+              <SelectItem
+                key={workspace.id}
+                value={String(workspace.id)}
+                label={workspace.name}
+              >
                 {workspace.name}
               </SelectItem>
             );
@@ -293,7 +308,7 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
         value={domains}
         onChange={handleChange}
         onBlur={handleBlur}
-        placeholder="https://mysite.com, https://nexusai.com"
+        placeholder="https://mysite.com, https://myothersite.com"
         classNames={{
           tag: "bg-theme-settings-input-bg light:bg-black/10 bg-blue-300/10 text-zinc-800",
           input:

@@ -69,21 +69,14 @@ const TRANSLATIONS = {
     "agent-skills": "Agent Skills",
     "agent-flow": "Agent Flow",
     "sql-connector": "SQL Connector",
-    "agent-skills-settings": "Settings",
+    "agent-skills-settings": "Agent Skills Settings",
     "default-system-prompt": "Default System Prompt",
     "instance-owner": "Instance Owner",
     "model-router": "Model Router",
-    "community-hub": {
-      title: "Community Hub",
-      trending: "Explore Trending",
-      "your-account": "Your Account",
-      "import-item": "Import Item",
-    },
     admin: "Admin",
     tools: "Tools",
     "system-prompt-variables": "System Prompt Variables",
     "slash-commands": "Slash Commands",
-    "experimental-features": "Experimental Features",
     contact: "Contact Support",
     "browser-extension": "Browser Extension",
     smtp: "SMTP",
@@ -107,13 +100,6 @@ const TRANSLATIONS = {
       title: "Browser Extension API Keys",
       description:
         "Manage API keys for browser extensions connecting to your Nexus AI instance.",
-    },
-    "community-hub": {
-      title: "Community Hub",
-      "trending-description": "Share and collaborate with the Nexus AI community.",
-      "import-title": "Import a Community Item",
-      "import-description":
-        "Import items from the Nexus AI Community Hub to enhance your instance with community-created prompts, skills, and commands.",
     },
     workspaces: {
       title: "Instance Workspaces",
@@ -163,8 +149,7 @@ const TRANSLATIONS = {
       "forgot-pass": "Forgot password",
       reset: "Reset",
     },
-    "sign-in":
-      "Enter your username and password to access.",
+    "sign-in": "Enter your username and password to access.",
     "password-reset": {
       title: "Password Reset",
       "admin-reset-description":
@@ -194,7 +179,6 @@ const TRANSLATIONS = {
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
     "slash-commands": "Slash Commands",
-    "agent-flows": "Agent Flows",
   },
   general: {
     vector: {
@@ -401,7 +385,7 @@ const TRANSLATIONS = {
         readActions: "Read Actions",
         writeActions: "Write Actions",
         warning:
-          "Filesystem access can be dangerous as it can modify or delete files. Please consult the <a>documentation</a> before enabling.",
+          "Filesystem access can be dangerous as it can modify or delete files.",
         skills: {
           "read-text-file": {
             title: "Read File",
@@ -477,293 +461,6 @@ const TRANSLATIONS = {
             title: "Word Documents",
             description:
               "Create Word documents with basic styling and formatting",
-          },
-        },
-      },
-      gmail: {
-        title: "GMail",
-        description:
-          "Enable your agent to interact with Gmail - search emails, read threads, compose drafts, send emails, and manage your inbox. <a>Read the documentation</a>.",
-        configuration: "Gmail Configuration",
-        deploymentId: "Deployment ID",
-        deploymentIdHelp:
-          "The deployment ID from your Google Apps Script web app",
-        apiKey: "API Key",
-        apiKeyHelp:
-          "The API key you configured in your Google Apps Script deployment",
-        configurationRequired:
-          "Please configure the Deployment ID and API Key to enable Gmail skills.",
-        configured: "Configured",
-        searchSkills: "Search skills...",
-        noSkillsFound: "No skills match your search.",
-        categories: {
-          search: {
-            title: "Search & Read Emails",
-            description: "Search and read emails from your Gmail inbox",
-          },
-          drafts: {
-            title: "Draft Emails",
-            description: "Create, edit, and manage email drafts",
-          },
-          send: {
-            title: "Send & Reply to Emails",
-            description: "Send emails and reply to threads immediately",
-          },
-          threads: {
-            title: "Manage Email Threads",
-            description:
-              "Manage email threads - mark read/unread, archive, trash",
-          },
-          account: {
-            title: "Integration Statistics",
-            description: "View mailbox statistics and account information",
-          },
-        },
-        skills: {
-          getInbox: {
-            title: "Get Inbox",
-            description: "Streamlined way to get the inbox emails from Gmail",
-          },
-          search: {
-            title: "Search Emails",
-            description: "Search emails using Gmail query syntax",
-          },
-          readThread: {
-            title: "Read Thread",
-            description: "Read a full email thread by ID",
-          },
-          createDraft: {
-            title: "Create Draft",
-            description: "Create a new draft email",
-          },
-          createDraftReply: {
-            title: "Create Draft Reply",
-            description: "Create a draft reply to an existing thread",
-          },
-          updateDraft: {
-            title: "Update Draft",
-            description: "Update an existing draft email",
-          },
-          getDraft: {
-            title: "Get Draft",
-            description: "Retrieve a specific draft by ID",
-          },
-          listDrafts: {
-            title: "List Drafts",
-            description: "List all draft emails",
-          },
-          deleteDraft: {
-            title: "Delete Draft",
-            description: "Delete a draft email",
-          },
-          sendDraft: {
-            title: "Send Draft",
-            description: "Send an existing draft email",
-          },
-          sendEmail: {
-            title: "Send Email",
-            description: "Send an email immediately",
-          },
-          replyToThread: {
-            title: "Reply to Thread",
-            description: "Reply to an email thread immediately",
-          },
-          markRead: {
-            title: "Mark Read",
-            description: "Mark a thread as read",
-          },
-          markUnread: {
-            title: "Mark Unread",
-            description: "Mark a thread as unread",
-          },
-          moveToTrash: {
-            title: "Move to Trash",
-            description: "Move a thread to trash",
-          },
-          moveToArchive: {
-            title: "Archive",
-            description: "Archive a thread",
-          },
-          moveToInbox: {
-            title: "Move to Inbox",
-            description: "Move a thread to inbox",
-          },
-          getMailboxStats: {
-            title: "Mailbox Stats",
-            description: "Get unread counts and mailbox statistics",
-          },
-        },
-      },
-      googleCalendar: {
-        title: "Google Calendar",
-        description:
-          "Enable your agent to interact with Google Calendar - view calendars, get events, create and update events, and manage RSVPs. <a>Read the documentation</a>.",
-        configuration: "Google Calendar Configuration",
-        deploymentId: "Deployment ID",
-        deploymentIdHelp:
-          "The deployment ID from your Google Apps Script web app",
-        apiKey: "API Key",
-        apiKeyHelp:
-          "The API key you configured in your Google Apps Script deployment",
-        configurationRequired:
-          "Please configure the Deployment ID and API Key to enable Google Calendar skills.",
-        configured: "Configured",
-        searchSkills: "Search skills...",
-        noSkillsFound: "No skills match your search.",
-        categories: {
-          calendars: {
-            title: "Calendars",
-            description: "View and manage your Google Calendars",
-          },
-          readEvents: {
-            title: "Read Events",
-            description: "View and search calendar events",
-          },
-          writeEvents: {
-            title: "Create & Update Events",
-            description: "Create new events and modify existing ones",
-          },
-          rsvp: {
-            title: "RSVP Management",
-            description: "Manage your response status for events",
-          },
-        },
-        skills: {
-          listCalendars: {
-            title: "List Calendars",
-            description: "List all calendars you own or are subscribed to",
-          },
-          getCalendar: {
-            title: "Get Calendar Details",
-            description: "Get detailed information about a specific calendar",
-          },
-          getEvent: {
-            title: "Get Event",
-            description: "Get detailed information about a specific event",
-          },
-          getEventsForDay: {
-            title: "Get Events for Day",
-            description: "Get all events scheduled for a specific day",
-          },
-          getEvents: {
-            title: "Get Events (Date Range)",
-            description: "Get events within a custom date range",
-          },
-          getUpcomingEvents: {
-            title: "Get Upcoming Events",
-            description:
-              "Get events for today, this week, or this month using simple keywords",
-          },
-          quickAdd: {
-            title: "Quick Add Event",
-            description:
-              "Create an event from natural language (e.g., 'Meeting tomorrow at 3pm')",
-          },
-          createEvent: {
-            title: "Create Event",
-            description:
-              "Create a new event with full control over all properties",
-          },
-          updateEvent: {
-            title: "Update Event",
-            description: "Update an existing calendar event",
-          },
-          setMyStatus: {
-            title: "Set RSVP Status",
-            description: "Accept, decline, or tentatively accept an event",
-          },
-        },
-      },
-      outlook: {
-        title: "Outlook",
-        description:
-          "Enable your agent to interact with Microsoft Outlook - search emails, read threads, compose drafts, send emails, and manage your inbox via Microsoft Graph API. <a>Read the documentation</a>.",
-        configuration: "Outlook Configuration",
-        authType: "Account Type",
-        authTypeHelp:
-          "Choose which types of Microsoft accounts can authenticate. 'All accounts' supports both personal and work/school accounts. 'Personal only' restricts to personal Microsoft accounts. 'Organization only' restricts to work/school accounts from a specific Azure AD tenant.",
-        authTypeCommon: "All accounts (personal & work/school)",
-        authTypeConsumers: "Personal Microsoft accounts only",
-        authTypeOrganization: "Organization accounts only (requires Tenant ID)",
-        clientId: "Application (Client) ID",
-        clientIdHelp:
-          "The Application (Client) ID from your Azure AD app registration",
-        tenantId: "Directory (Tenant) ID",
-        tenantIdHelp:
-          "The Directory (Tenant) ID from your Azure AD app registration. Required only for organization-only authentication.",
-        clientSecret: "Client Secret",
-        clientSecretHelp:
-          "The client secret value from your Azure AD app registration",
-        configurationRequired:
-          "Please configure the Client ID and Client Secret to enable Outlook skills.",
-        authRequired:
-          "Save your credentials first, then authenticate with Microsoft to complete the setup.",
-        authenticateWithMicrosoft: "Authenticate with Microsoft",
-        authenticated: "Successfully authenticated with Microsoft Outlook.",
-        revokeAccess: "Revoke Access",
-        configured: "Configured",
-        searchSkills: "Search skills...",
-        noSkillsFound: "No skills match your search.",
-        categories: {
-          search: {
-            title: "Search & Read Emails",
-            description: "Search and read emails from your Outlook inbox",
-          },
-          drafts: {
-            title: "Draft Emails",
-            description: "Create, edit, and manage email drafts",
-          },
-          send: {
-            title: "Send Emails",
-            description: "Send new emails or reply to messages immediately",
-          },
-          account: {
-            title: "Integration Statistics",
-            description: "View mailbox statistics and account information",
-          },
-        },
-        skills: {
-          getInbox: {
-            title: "Get Inbox",
-            description: "Get recent emails from your Outlook inbox",
-          },
-          search: {
-            title: "Search Emails",
-            description: "Search emails using Microsoft Search syntax",
-          },
-          readThread: {
-            title: "Read Conversation",
-            description: "Read a full email conversation thread",
-          },
-          createDraft: {
-            title: "Create Draft",
-            description:
-              "Create a new draft email or draft reply to an existing message",
-          },
-          updateDraft: {
-            title: "Update Draft",
-            description: "Update an existing draft email",
-          },
-          listDrafts: {
-            title: "List Drafts",
-            description: "List all draft emails",
-          },
-          deleteDraft: {
-            title: "Delete Draft",
-            description: "Delete a draft email",
-          },
-          sendDraft: {
-            title: "Send Draft",
-            description: "Send an existing draft email",
-          },
-          sendEmail: {
-            title: "Send Email",
-            description:
-              "Send a new email or reply to an existing message immediately",
-          },
-          getMailboxStats: {
-            title: "Mailbox Stats",
-            description: "Get folder counts and mailbox statistics",
           },
         },
       },
@@ -920,13 +617,6 @@ const TRANSLATIONS = {
           title: "Favicon",
           description: "Use a custom favicon for the browser tab.",
         },
-      },
-      "sidebar-footer": {
-        title: "Sidebar Footer Items",
-        description:
-          "Customize the footer items displayed on the bottom of the sidebar.",
-        icon: "Icon",
-        link: "Link",
       },
       "render-html": {
         title: "Render HTML in chat",
@@ -1337,7 +1027,6 @@ const TRANSLATIONS = {
     title: "Privacy & Data-Handling",
     description:
       "This is your configuration for how connected third party providers and Nexus AI handle your data.",
-    anonymous: "Anonymous Telemetry Enabled",
     personalization: {
       label: "Personalization & Memories Enabled",
       auto_label: "Automatic Memory Extraction Enabled",
@@ -1573,18 +1262,6 @@ const TRANSLATIONS = {
         "This works best with <b>large-context models</b> or small files that are critical to its knowledge-base.",
       pin_explained_block3:
         "If you are not getting the answers you desire from Nexus AI by default then pinning is a great way to get higher quality answers in a click.",
-      accept: "Okay, got it",
-    },
-    watching: {
-      what_watching: "What does watching a document do?",
-      watch_explained_block1:
-        "When you <b>watch</b> a document in Nexus AI we will <i>automatically</i> sync your document content from it's original source on regular intervals. This will automatically update the content in every workspace where this file is managed.",
-      watch_explained_block2:
-        "This feature currently supports online-based content and will not be available for manually uploaded documents.",
-      watch_explained_block3_start:
-        "You can manage what documents are watched from the ",
-      watch_explained_block3_link: "File manager",
-      watch_explained_block3_end: " admin view.",
       accept: "Okay, got it",
     },
   },
@@ -1840,95 +1517,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM Preferences",
       chatSettings: "Chat Settings",
       help: "Show keyboard shortcuts help",
-    },
-  },
-  community_hub: {
-    publish: {
-      system_prompt: {
-        success_title: "Success!",
-        success_description:
-          "Your System Prompt has been published to the Community Hub!",
-        success_thank_you: "Thank you for sharing to the Community!",
-        view_on_hub: "View on Community Hub",
-        modal_title: "Publish System Prompt",
-        name_label: "Name",
-        name_description: "This is the display name of your system prompt.",
-        name_placeholder: "My System Prompt",
-        description_label: "Description",
-        description_description:
-          "This is the description of your system prompt. Use this to describe the purpose of your system prompt.",
-        tags_label: "Tags",
-        tags_description:
-          "Tags are used to label your system prompt for easier searching. You can add multiple tags. Max 5 tags. Max 20 characters per tag.",
-        tags_placeholder: "Type and press Enter to add tags",
-        visibility_label: "Visibility",
-        public_description: "Public system prompts are visible to everyone.",
-        private_description: "Private system prompts are only visible to you.",
-        publish_button: "Publish to Community Hub",
-        submitting: "Publishing...",
-        prompt_label: "Prompt",
-        prompt_description:
-          "This is the actual system prompt that will be used to guide the LLM.",
-        prompt_placeholder: "Enter your system prompt here...",
-      },
-      agent_flow: {
-        success_title: "Success!",
-        success_description:
-          "Your Agent Flow has been published to the Community Hub!",
-        success_thank_you: "Thank you for sharing to the Community!",
-        view_on_hub: "View on Community Hub",
-        modal_title: "Publish Agent Flow",
-        name_label: "Name",
-        name_description: "This is the display name of your agent flow.",
-        name_placeholder: "My Agent Flow",
-        description_label: "Description",
-        description_description:
-          "This is the description of your agent flow. Use this to describe the purpose of your agent flow.",
-        tags_label: "Tags",
-        tags_description:
-          "Tags are used to label your agent flow for easier searching. You can add multiple tags. Max 5 tags. Max 20 characters per tag.",
-        tags_placeholder: "Type and press Enter to add tags",
-        visibility_label: "Visibility",
-        submitting: "Publishing...",
-        submit: "Publish to Community Hub",
-        privacy_note:
-          "Agent flows are always uploaded as private to protect any sensitive data. You can change the visibility in the Community Hub after publishing. Please verify your flow does not contain any sensitive or private information before publishing.",
-      },
-      slash_command: {
-        success_title: "Success!",
-        success_description:
-          "Your Slash Command has been published to the Community Hub!",
-        success_thank_you: "Thank you for sharing to the Community!",
-        view_on_hub: "View on Community Hub",
-        modal_title: "Publish Slash Command",
-        name_label: "Name",
-        name_description: "This is the display name of your slash command.",
-        name_placeholder: "My Slash Command",
-        description_label: "Description",
-        description_description:
-          "This is the description of your slash command. Use this to describe the purpose of your slash command.",
-        tags_label: "Tags",
-        tags_description:
-          "Tags are used to label your slash command for easier searching. You can add multiple tags. Max 5 tags. Max 20 characters per tag.",
-        tags_placeholder: "Type and press Enter to add tags",
-        visibility_label: "Visibility",
-        public_description: "Public slash commands are visible to everyone.",
-        private_description: "Private slash commands are only visible to you.",
-        publish_button: "Publish to Community Hub",
-        submitting: "Publishing...",
-        prompt_label: "Prompt",
-        prompt_description:
-          "This is the prompt that will be used when the slash command is triggered.",
-        prompt_placeholder: "Enter your prompt here...",
-      },
-      generic: {
-        unauthenticated: {
-          title: "Authentication Required",
-          description:
-            "You need to authenticate with the Nexus AI Community Hub before publishing items.",
-          button: "Connect to Community Hub",
-        },
-      },
     },
   },
   scheduledJobs: {
@@ -2505,6 +2093,10 @@ const TRANSLATIONS = {
     "connector-off-description":
       "Enable it on the left to add and manage database connections.",
     "toggle-failed": "Failed to update connection.",
+    saved: "Database connection saved.",
+    "save-failed": "Failed to save database connection.",
+    "connector-updated": "SQL Connector updated.",
+    "connector-update-failed": "Failed to update SQL Connector.",
     manage: {
       "aria-label": "Manage connection",
       edit: "Edit connection",
@@ -2559,40 +2151,6 @@ const TRANSLATIONS = {
         "Failed to validate connection. Please check your connection details.",
     },
   },
-  "experimental-features": {
-    title: "Experimental Features",
-    "select-feature": "Select an experimental feature",
-    on: "On",
-    off: "Off",
-    tos: {
-      title: "Terms of use for experimental features",
-      intro:
-        "Experimental features of Nexus AI are features that we are piloting and are <b>opt-in</b>. We proactively will condition or warn you on any potential concerns should any exist prior to approval of any feature.",
-      "risks-intro":
-        "Use of any feature on this page can result in, but not limited to, the following possibilities.",
-      "risk-data-loss": "Loss of data.",
-      "risk-quality": "Change in quality of results.",
-      "risk-storage": "Increased storage.",
-      "risk-resources": "Increased resource consumption.",
-      "risk-cost":
-        "Increased cost or use of any connected LLM or embedding provider.",
-      "risk-bugs": "Potential bugs or issues using Nexus AI.",
-      "conditions-intro":
-        "Use of an experimental feature also comes with the following list of non-exhaustive conditions.",
-      "condition-removal": "Feature may not exist in future updates.",
-      "condition-stability": "The feature being used is not currently stable.",
-      "condition-availability":
-        "The feature may not be available in future versions, configurations, or subscriptions of Nexus AI.",
-      "condition-privacy":
-        "Your privacy settings <b>will be honored</b> with use of any beta feature.",
-      "condition-change": "These conditions may change in future updates.",
-      "docs-prefix":
-        "Access to any features requires approval of this modal. If you would like to read more you can refer to",
-      "docs-or-email": "or email",
-      reject: "Reject & close",
-      accept: "I understand",
-    },
-  },
   "admin-workspaces": {
     table: {
       name: "Name",
@@ -2638,6 +2196,13 @@ const TRANSLATIONS = {
     "general-appearance": "General appearance settings",
   },
   "agent-panel": {
+    "sql-connections": "SQL connections",
+    "sql-connections-description":
+      "Connections added here belong to this workspace and are usable only by its agent.",
+    "new-sql-connection": "New connection",
+    "no-sql-connections": "No SQL connections for this workspace yet.",
+    "sql-connections-shared":
+      "{{count}} connection(s) shared with this workspace by an administrator. Switch them on from the list; their credentials stay instance-wide.",
     "agent-flow": "Agent Flow",
     "flows-description": "Browse the flows configured for this instance.",
     "skills-title": "Agent skills & settings",
@@ -2647,9 +2212,7 @@ const TRANSLATIONS = {
     "toggle-tool-failed": "Failed to toggle tool.",
     "skills-integrations": "Skills & Integrations",
     "choose-capability": "Choose a capability to configure.",
-    "flows-restricted":
-      "Agent Flows are restricted to the instance owner.",
-    "app-integrations": "App Integrations",
+    "flows-restricted": "Agent Flows are restricted to the instance owner.",
     "select-mobile": "Select an Agent Skill, Agent Flow, or MCP Server",
     "page-skills-title": "Agent Skills",
     "page-skills-description":
@@ -2662,7 +2225,6 @@ const TRANSLATIONS = {
     "skill-settings": "Agent Skill Settings",
     configure: "Configure",
     "agent-flows": "Agent Flows",
-    "custom-skills": "Custom Skills",
     back: "Back",
     "create-flow": "Create Flow",
     "open-builder": "Open Builder",
@@ -2682,7 +2244,9 @@ const TRANSLATIONS = {
     "toggle-failed": "Failed to toggle flow.",
     "no-description": "No description provided",
     "workspace-owned": "Workspace",
-    "workspace-owned-hint": "This flow belongs to a workspace and is available only there.",
+    shared: "Shared",
+    "workspace-owned-hint":
+      "This flow belongs to a workspace and is available only there.",
     visibility: {
       title: "Visible to workspaces",
       description: "Choose which workspaces' agents can use this flow.",
@@ -2744,20 +2308,6 @@ const TRANSLATIONS = {
       error: "Error: {{error}}",
     },
   },
-  "hub-import": {
-    title: "Import an item from the community hub",
-    "intro-1":
-      "The community hub is a place where you can find, share, and import agent-skills, system prompts, slash commands, and more!",
-    "intro-2":
-      "These items are created by the Nexus AI team and community, and are a great way to get started with Nexus AI as well as extend Nexus AI in a way that is customized to your needs.",
-    "intro-3":
-      "There are both <b>private</b> and <b>public</b> items in the community hub. Private items are only visible to you, while public items are visible to everyone.",
-    warning:
-      "If you are pulling in a private item, make sure it is <b>shared with a team</b> you belong to, and you have added a <a>Connection Key.</a>",
-    "item-id": "Community Hub Item Import ID",
-    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
-    "enter-item-id": "Please enter an item ID",
-  },
   ui: {
     "select-option": "Select an option",
     "select-model": "Select a model",
@@ -2814,8 +2364,6 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "Confirm it is you",
     "what-to-clear": "What to clear",
     "choose-an-account": "Choose an account",
-    "hub-account-title": "Your Nexus AI Community Hub Account",
-    "hub-api-key-placeholder": "Enter your Nexus AI Hub API key",
     "add-to-workspace": "Add to Workspace",
     "apply-to-workspace": "Apply to Workspace",
     "max-vector-text-length": "maximum length of vectorized text",
@@ -2862,8 +2410,6 @@ const TRANSLATIONS = {
       "You need to provide an API token for authentication. See the Drupal Wiki <a>manual</a> on how to generate an API-Token for your user.",
     "lmstudio-context-window":
       "Override the context window limit. Leave empty to auto-detect from the model (defaults to 4096 if detection fails).",
-    "telemetry-note":
-      "All events do not record IP-address and contain <b>no identifying</b> content, settings, chats, or other non-usage based information. To see the list of event tags collected you can look on <a>GitHub here</a>.",
     "finish-node":
       "This is the end of your agent flow. All steps above will be executed in sequence.",
     "agent-skill-settings":
@@ -2933,7 +2479,7 @@ const TRANSLATIONS = {
     "connection-modal":
       "Nexus AI for mobile allows you to connect to your workspace's chats, threads, tools, and documents for you to use on the go.",
     "privacy-and-data":
-      "As an open-source project we respect your right to privacy. We are dedicated to building the best solution for integrating AI and documents privately and securely. If you do decide to turn off telemetry all we ask is to consider sending us feedback and thoughts",
+      "As an open-source project we respect your right to privacy. We are dedicated to building the best solution for integrating AI and documents privately and securely.",
     "existing-user-form":
       "Sign in with your existing account to add it to the invite's workspaces. Your role does not change.",
     invite:

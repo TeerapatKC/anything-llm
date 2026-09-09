@@ -64,7 +64,6 @@ export default function DBConnection({
   onRemove,
   onUpdate,
   onToggleActive,
-  setHasChanges,
   connections = [],
 }) {
   const { t } = useTranslation();
@@ -132,7 +131,6 @@ export default function DBConnection({
         closeModal={closeModal}
         existingConnection={connection}
         onSubmit={onUpdate}
-        setHasChanges={setHasChanges}
         connections={connections}
       />
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />

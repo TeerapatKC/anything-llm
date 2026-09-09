@@ -35,14 +35,11 @@ const createScheduledJob = {
             {
               prompt: "Step 2 - create the job using IDs returned by listTools",
               call: JSON.stringify({
-                name: "Weekday inbox summary",
+                name: "Weekday competitor digest",
                 prompt:
-                  "Summarize my unread inbox emails and send me a summary email.",
+                  "Search the web for news about our top competitors from the last day and write a short digest.",
                 schedule: "0 9 * * 1-5",
-                tools: [
-                  "gmail-agent#gmail-get-inbox",
-                  "gmail-agent#gmail-send-email",
-                ],
+                tools: ["web-browsing"],
               }),
             },
           ],
@@ -96,8 +93,8 @@ const createScheduledJob = {
 
           execute: async function (args) {
             // Only offer tools that are configured and ready to use - a job
-            // can't use a tool that still needs setup (e.g. Gmail without
-            // credentials), exactly like the manual Scheduled Jobs UI.
+            // can't use a tool that still needs setup (e.g. sql-agent with no
+            // connection), exactly like the manual Scheduled Jobs UI.
             const fullCatalog = await ScheduledJob.availableTools();
             const catalog = readyToolsCatalog(fullCatalog);
 

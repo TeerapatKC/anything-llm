@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require("uuid");
 const { Document } = require("../../../models/documents");
-const { Telemetry } = require("../../../models/telemetry");
 const { Workspace } = require("../../../models/workspace");
 const { getEmbeddingEngineSelection } = require("../../../utils/helpers");
 const { reqBody } = require("../../../utils/http");
@@ -9,7 +8,6 @@ const { EventLogs } = require("../../../models/eventLogs");
 const {
   OpenAICompatibleChat,
 } = require("../../../utils/chats/openaiCompatible");
-const { getModelTag } = require("../../utils");
 const { extractTextContent, extractAttachments } = require("./helpers");
 const { handleImageGenUpload } = require("../../../utils/files/multer");
 
@@ -81,7 +79,7 @@ function apiOpenAICompatibleEndpoints(app) {
       #swagger.tags = ['OpenAI Compatible Endpoints']
       #swagger.description = 'Execute a chat with a workspace with OpenAI compatibility. Supports streaming as well. Model must be a workspace slug from /models.'
       #swagger.requestBody = {
-          description: 'Send a prompt to the workspace with full use of documents as if sending a chat in NexusAI. Only supports some values of OpenAI API. See example below.',
+          description: 'Send a prompt to the workspace with full use of documents as if sending a chat in Nexus AI. Only supports some values of OpenAI API. See example below.',
           required: true,
           content: {
             "application/json": {
@@ -142,13 +140,6 @@ function apiOpenAICompatibleEndpoints(app) {
             temperature: Number(temperature),
           });
 
-          await Telemetry.sendTelemetry("sent_chat", {
-            LLMSelection:
-              workspace.chatProvider ?? process.env.LLM_PROVIDER ?? "openai",
-            Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-            VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-            TTSSelection: process.env.TTS_PROVIDER || "native",
-          });
           await EventLogs.logEvent("api_sent_chat", {
             workspaceName: workspace?.name,
             chatModel: workspace?.chatModel || "System Default",
@@ -170,13 +161,6 @@ function apiOpenAICompatibleEndpoints(app) {
           attachments: extractAttachments(userMessage.content),
           temperature: Number(temperature),
           response,
-        });
-        await Telemetry.sendTelemetry("sent_chat", {
-          LLMSelection: process.env.LLM_PROVIDER || "openai",
-          Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-          VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-          TTSSelection: process.env.TTS_PROVIDER || "native",
-          LLMModel: getModelTag(),
         });
         await EventLogs.logEvent("api_sent_chat", {
           workspaceName: workspace?.name,
@@ -250,16 +234,16 @@ function apiOpenAICompatibleEndpoints(app) {
         const result =
           imageBuffers.length > 0
             ? await editImageForWorkspace({
-              prompt: String(prompt),
-              images: imageBuffers,
-              size: size ? String(size) : undefined,
-              signal,
-            })
+                prompt: String(prompt),
+                images: imageBuffers,
+                size: size ? String(size) : undefined,
+                signal,
+              })
             : await generateImageForWorkspace({
-              prompt: String(prompt),
-              size: size ? String(size) : undefined,
-              signal,
-            });
+                prompt: String(prompt),
+                size: size ? String(size) : undefined,
+                signal,
+              });
 
         if (responseFormat === "blob") {
           if (result.notice)
@@ -358,7 +342,7 @@ function apiOpenAICompatibleEndpoints(app) {
     async (request, response) => {
       /*
       #swagger.tags = ['OpenAI Compatible Endpoints']
-      #swagger.description = 'List all the vector database collections connected to NexusAI. These are essentially workspaces but return their unique vector db identifier - this is the same as the workspace slug.'
+      #swagger.description = 'List all the vector database collections connected to Nexus AI. These are essentially workspaces but return their unique vector db identifier - this is the same as the workspace slug.'
       #swagger.responses[200] = {
         content: {
           "application/json": {

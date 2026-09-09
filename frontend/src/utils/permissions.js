@@ -38,13 +38,6 @@ export const PERMISSIONS = {
   SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
 
-  SYSTEM_COMMUNITY_HUB: "system.community_hub",
-  SYSTEM_COMMUNITY_HUB_BROWSE: "system.community_hub.browse",
-  SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
-  SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
-
-  SYSTEM_EXPERIMENTAL: "system.experimental",
-
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
   USERS_CREATE: "users.create",
@@ -96,8 +89,6 @@ export const PERMISSIONS = {
   EMBEDS_VIEW_CHATS: "embeds.view_chats",
 
   INTEGRATIONS_TELEGRAM: "integrations.telegram",
-  INTEGRATIONS_GOOGLE: "integrations.google",
-  INTEGRATIONS_OUTLOOK: "integrations.outlook",
   INTEGRATIONS_LINE: "integrations.line",
 };
 
@@ -146,6 +137,7 @@ export const WORKSPACE_PERMISSIONS = {
 
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
+  SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",

@@ -5,9 +5,6 @@ process.env.NODE_ENV = "test";
 const { SystemSettings } = require("../../../models/systemSettings");
 
 jest.mock("../../../models/systemSettings");
-jest.mock("../../../utils/agents/imported", () => ({
-  activeImportedPlugins: jest.fn().mockReturnValue([]),
-}));
 jest.mock("../../../utils/agentFlows", () => ({
   AgentFlows: {
     activeFlowPlugins: jest.fn().mockReturnValue([]),

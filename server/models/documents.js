@@ -1,34 +1,10 @@
 const { v4: uuidv4 } = require("uuid");
 const { getVectorDbClass } = require("../utils/helpers");
 const prisma = require("../utils/prisma");
-const { Telemetry } = require("./telemetry");
 const { EventLogs } = require("./eventLogs");
-const { safeJsonParse } = require("../utils/http");
-const { getModelTag } = require("../endpoints/utils");
 
 const Document = {
-  writable: ["pinned", "watched", "lastUpdatedAt"],
-  /**
-   * @param {import("@prisma/client").workspace_documents} document - Document PrismaRecord
-   * @returns {{
-   *  metadata: (null|object),
-   *  type: import("./documentSyncQueue.js").validFileType,
-   *  source: string
-   * }}
-   */
-  parseDocumentTypeAndSource: function (document) {
-    const metadata = safeJsonParse(document.metadata, null);
-    if (!metadata) return { metadata: null, type: null, source: null };
-
-    // Parse the correct type of source and its original source path.
-    const idx = metadata.chunkSource.indexOf("://");
-    const [type, source] = [
-      metadata.chunkSource.slice(0, idx),
-      metadata.chunkSource.slice(idx + 3),
-    ];
-    return { metadata, type, source: this._stripSource(source, type) };
-  },
-
+  writable: ["pinned", "lastUpdatedAt"],
   forWorkspace: async function (workspaceId = null) {
     if (!workspaceId) return [];
     return await prisma.workspace_documents.findMany({
@@ -85,8 +61,8 @@ const Document = {
    * that folder was renamed on disk.
    *
    * Embedded documents keep their vectors (those are keyed by `docId`), but
-   * their file is still read back by `docpath` - pinning, live-sync and the
-   * picker's "which of these are already embedded" check all go through it -
+   * their file is still read back by `docpath` - pinning and the picker's
+   * "which of these are already embedded" check both go through it -
    * so a rename that skipped this would leave a workspace listing documents
    * whose content no longer resolves.
    *
@@ -225,13 +201,6 @@ const Document = {
       failed: failedToEmbed.length,
     });
 
-    await Telemetry.sendTelemetry("documents_embedded_in_workspace", {
-      LLMSelection: process.env.LLM_PROVIDER || "openai",
-      Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-      VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-      TTSSelection: process.env.TTS_PROVIDER || "native",
-      LLMModel: getModelTag(),
-    });
     await EventLogs.logEvent(
       "workspace_documents_added",
       {
@@ -338,17 +307,6 @@ const Document = {
     const { fileData } = require("../utils/files");
     const data = await fileData(docPath);
     return { title: data.title, content: data.pageContent };
-  },
-
-  // Some data sources have encoded params in them we don't want to log - so strip those details.
-  _stripSource: function (sourceString, type) {
-    if (["confluence", "github"].includes(type)) {
-      const _src = new URL(sourceString);
-      _src.search = ""; // remove all search params that are encoded for resync.
-      return _src.toString();
-    }
-
-    return sourceString;
   },
 
   /**

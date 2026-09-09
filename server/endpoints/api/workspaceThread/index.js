@@ -4,7 +4,6 @@ const { Workspace } = require("../../../models/workspace");
 const { validApiKey } = require("../../../utils/middleware/validApiKey");
 const { reqBody } = require("../../../utils/http");
 const { VALID_CHAT_MODE } = require("../../../utils/chats/stream");
-const { Telemetry } = require("../../../models/telemetry");
 const { EventLogs } = require("../../../models/eventLogs");
 const {
   writeResponseChunk,
@@ -13,7 +12,6 @@ const {
 const { WorkspaceChats } = require("../../../models/workspaceChats");
 const { User } = require("../../../models/user");
 const { ApiChatHandler } = require("../../../utils/chats/apiChatHandler");
-const { getModelTag } = require("../../utils");
 
 function apiWorkspaceThreadEndpoints(app) {
   if (!app) return;
@@ -85,12 +83,6 @@ function apiWorkspaceThreadEndpoints(app) {
           { name, slug }
         );
 
-        await Telemetry.sendTelemetry("workspace_thread_created", {
-          LLMSelection: process.env.LLM_PROVIDER || "openai",
-          Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-          VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-          TTSSelection: process.env.TTS_PROVIDER || "native",
-        });
         await EventLogs.logEvent("api_workspace_thread_created", {
           workspaceName: workspace?.name || "Unknown Workspace",
         });
@@ -449,13 +441,6 @@ function apiWorkspaceThreadEndpoints(app) {
           attachments,
           reset,
         });
-        await Telemetry.sendTelemetry("sent_chat", {
-          LLMSelection: process.env.LLM_PROVIDER || "openai",
-          Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-          VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-          TTSSelection: process.env.TTS_PROVIDER || "native",
-          LLMModel: getModelTag(),
-        });
         await EventLogs.logEvent("api_sent_chat", {
           workspaceName: workspace?.name,
           chatModel: workspace?.chatModel || "System Default",
@@ -628,13 +613,6 @@ function apiWorkspaceThreadEndpoints(app) {
           thread,
           attachments,
           reset,
-        });
-        await Telemetry.sendTelemetry("sent_chat", {
-          LLMSelection: process.env.LLM_PROVIDER || "openai",
-          Embedder: process.env.EMBEDDING_ENGINE || "inherit",
-          VectorDbSelection: process.env.VECTOR_DB || "lancedb",
-          TTSSelection: process.env.TTS_PROVIDER || "native",
-          LLMModel: getModelTag(),
         });
         await EventLogs.logEvent("api_sent_chat", {
           workspaceName: workspace?.name,

@@ -2,7 +2,6 @@ import { useModal } from "@/hooks/useModal";
 import { useTranslation } from "react-i18next";
 import Admin from "@/models/admin";
 import { useCallback, useEffect, useState } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import AddMemberModal from "./AddMemberModal";
 import WorkspaceMemberRow from "./WorkspaceMemberRow";
 import { Button } from "@/components/ui/button";
@@ -16,6 +15,7 @@ import {
   TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 import { UserPlus } from "lucide-react";
@@ -99,55 +99,45 @@ export default function Members({ workspace }) {
             </DialogTrigger>
           }
         />
-        {loading ? (
-          <Skeleton
-            height="80vh"
-            width="100%"
-            highlightColor="var(--theme-bg-primary)"
-            baseColor="var(--theme-bg-secondary)"
-            count={1}
-            className="w-full rounded-lg p-4"
-            containerClassName="flex w-full"
-          />
-        ) : (
-          <Table className="text-left">
-            <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
-              <TableRow>
-                <TableHead scope="col">
-                  {t("workspace-members.table.username")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("workspace-members.table.role")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("workspace-members.table.system-role")}
-                </TableHead>
-                <TableHead scope="col">
-                  {t("workspace-members.table.date-added")}
-                </TableHead>
-                <TableHead scope="col"> </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {members.length > 0 ? (
-                members.map((member) => (
-                  <WorkspaceMemberRow
-                    key={member.user_id}
-                    member={member}
-                    workspaceSlug={workspace.slug}
-                    workspaceRoles={workspaceRoles}
-                    systemRoles={systemRoles}
-                    canManage={canManageMembers}
-                  />
-                ))
-              ) : (
-                <TableEmptyRow colSpan="5">
-                  {t("workspace-members.empty")}
-                </TableEmptyRow>
-              )}
-            </TableBody>
-          </Table>
-        )}
+        <Table className="text-left">
+          <TableHeader className="leading-[18px] font-bold uppercase border-theme-sidebar-border/60">
+            <TableRow>
+              <TableHead scope="col">
+                {t("workspace-members.table.username")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("workspace-members.table.role")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("workspace-members.table.system-role")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("workspace-members.table.date-added")}
+              </TableHead>
+              <TableHead scope="col"> </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableLoadingRow colSpan={5} />
+            ) : members.length > 0 ? (
+              members.map((member) => (
+                <WorkspaceMemberRow
+                  key={member.user_id}
+                  member={member}
+                  workspaceSlug={workspace.slug}
+                  workspaceRoles={workspaceRoles}
+                  systemRoles={systemRoles}
+                  canManage={canManageMembers}
+                />
+              ))
+            ) : (
+              <TableEmptyRow colSpan={5}>
+                {t("workspace-members.empty")}
+              </TableEmptyRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
       <DialogContent size="lg">
         <AddMemberModal

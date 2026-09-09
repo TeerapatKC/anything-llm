@@ -17,7 +17,6 @@ class OpenRouterImageGenerator extends BaseImageGenerator {
         baseURL: "https://openrouter.ai/api/v1",
         apiKey: process.env.IMAGE_GEN_OPENROUTER_API_KEY,
         defaultHeaders: {
-          "HTTP-Referer": "https://nexusai.com",
           "X-Title": "NexusAI",
         },
       }),
@@ -44,7 +43,6 @@ class OpenRouterImageGenerator extends BaseImageGenerator {
 
     const dataUrl =
       completion?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    this._sendImageTelemetry("image_generated");
     return { buffer: this._extractImageBuffer(dataUrl) };
   }
 
@@ -73,9 +71,6 @@ class OpenRouterImageGenerator extends BaseImageGenerator {
 
     const dataUrl =
       completion?.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-    this._sendImageTelemetry("image_generated", {
-      withReferences: images.length > 0,
-    });
     return { buffer: this._extractImageBuffer(dataUrl) };
   }
 }

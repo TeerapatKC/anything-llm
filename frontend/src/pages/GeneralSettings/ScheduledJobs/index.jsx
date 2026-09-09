@@ -13,7 +13,6 @@ import showToast from "@/utils/toast";
 import JobRow from "./components/JobRow";
 import { Bell, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -21,6 +20,7 @@ import {
   TableHeader,
   TableRow,
   TableEmptyRow,
+  TableLoadingRow,
 } from "@/components/ui/table";
 import {
   Tooltip,
@@ -124,7 +124,7 @@ export default function ScheduledJobsPage() {
         actions={
           <div className="flex items-center gap-x-2 shrink-0">
             <NotificationBellButton />
-            <Button size="lg" onClick={handleCreate}>
+            <Button size="lg" onClick={handleCreate} disabled={loading}>
               <Plus className="h-4 w-4" />
               {t("scheduledJobs.newJob")}
             </Button>
@@ -133,59 +133,49 @@ export default function ScheduledJobsPage() {
       />
 
       <div className="overflow-x-auto mt-6">
-        {loading ? (
-          <Skeleton
-            height="80vh"
-            width="100%"
-            highlightColor="var(--theme-bg-primary)"
-            baseColor="var(--theme-bg-secondary)"
-            count={1}
-            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
-            containerClassName="flex w-full"
-          />
-        ) : (
-          <Table className="text-left min-w-[720px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.schedule")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.status")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.lastRun")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.nextRun")}</TableHead>
-                <TableHead scope="col" className="text-right">
-                  {t("scheduledJobs.table.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {jobs.length === 0 ? (
-                <TableEmptyRow
-                  colSpan="6"
-                  description={t("scheduledJobs.emptySubtitle")}
-                  action={
-                    <Button onClick={handleCreate}>
-                      <Plus className="h-4 w-4" />
-                      {t("scheduledJobs.newJob")}
-                    </Button>
-                  }
-                >
-                  {t("scheduledJobs.emptyTitle")}
-                </TableEmptyRow>
-              ) : (
-                jobs.map((job) => (
-                  <JobRow
-                    key={job.id}
-                    job={job}
-                    onTrigger={handleTrigger}
-                    onToggle={handleToggle}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                  />
-                ))
-              )}
-            </TableBody>
-          </Table>
-        )}
+        <Table className="text-left min-w-[720px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
+              <TableHead scope="col">{t("scheduledJobs.table.schedule")}</TableHead>
+              <TableHead scope="col">{t("scheduledJobs.table.status")}</TableHead>
+              <TableHead scope="col">{t("scheduledJobs.table.lastRun")}</TableHead>
+              <TableHead scope="col">{t("scheduledJobs.table.nextRun")}</TableHead>
+              <TableHead scope="col" className="text-right">
+                {t("scheduledJobs.table.actions")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableLoadingRow colSpan={6} />
+            ) : jobs.length === 0 ? (
+              <TableEmptyRow
+                colSpan={6}
+                description={t("scheduledJobs.emptySubtitle")}
+                action={
+                  <Button onClick={handleCreate}>
+                    <Plus className="h-4 w-4" />
+                    {t("scheduledJobs.newJob")}
+                  </Button>
+                }
+              >
+                {t("scheduledJobs.emptyTitle")}
+              </TableEmptyRow>
+            ) : (
+              jobs.map((job) => (
+                <JobRow
+                  key={job.id}
+                  job={job}
+                  onTrigger={handleTrigger}
+                  onToggle={handleToggle}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
 
       <Dialog

@@ -23,7 +23,6 @@ class OpenRouterProvider extends InheritMultiple([Provider, UnTooled]) {
       baseURL: "https://openrouter.ai/api/v1",
       apiKey: process.env.OPENROUTER_API_KEY,
       defaultHeaders: {
-        "HTTP-Referer": "https://nexusai.com",
         "X-Title": "NexusAI",
       },
     });

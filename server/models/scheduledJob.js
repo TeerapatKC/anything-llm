@@ -252,39 +252,17 @@ const ScheduledJob = {
    */
   availableTools: async function () {
     const AgentPlugins = require("../utils/agents/aibitat/plugins");
-    const ImportedPlugin = require("../utils/agents/imported");
     const { AgentFlows } = require("../utils/agentFlows");
     const MCPCompatibilityLayer = require("../utils/MCP");
     const {
       listSQLConnections,
     } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
-    const {
-      GmailBridge,
-    } = require("../utils/agents/aibitat/plugins/gmail/lib");
-    const {
-      GoogleCalendarBridge,
-    } = require("../utils/agents/aibitat/plugins/google-calendar/lib");
-    const {
-      OutlookBridge,
-    } = require("../utils/agents/aibitat/plugins/outlook/lib");
 
     const categories = [];
 
     // Check which skills need setup
     const sqlConnections = await listSQLConnections();
     const sqlNeedsSetup = sqlConnections.length === 0;
-
-    const gmailConfig = await GmailBridge.getConfig();
-    const gmailNeedsSetup = !gmailConfig.deploymentId || !gmailConfig.apiKey;
-
-    const gcalConfig = await GoogleCalendarBridge.getConfig();
-    const gcalNeedsSetup = !gcalConfig.deploymentId || !gcalConfig.apiKey;
-
-    const outlookConfig = await OutlookBridge.getConfig();
-    const outlookNeedsSetup =
-      !outlookConfig.clientId ||
-      !outlookConfig.clientSecret ||
-      !outlookConfig.accessToken;
 
     // Default skills (always available)
     const DEFAULT_SKILLS = [
@@ -336,16 +314,11 @@ const ScheduledJob = {
       });
     }
 
-    // Helper to prettify a sub-skill name (e.g., "gmail-get-inbox" -> "Get Inbox")
+    // Helper to prettify a sub-skill name (e.g., "filesystem-list-files" -> "List Files")
     const prettifySubSkillName = (name, prefix) => {
-      let cleaned = name;
-      const prefixes = [prefix, "gcal", "filesystem", "create"];
-      for (const p of prefixes) {
-        if (cleaned.startsWith(`${p}-`)) {
-          cleaned = cleaned.slice(p.length + 1);
-          break;
-        }
-      }
+      const cleaned = name.startsWith(`${prefix}-`)
+        ? name.slice(prefix.length + 1)
+        : name;
       return cleaned
         .split("-")
         .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -381,67 +354,6 @@ const ScheduledJob = {
         category: "create-files-agent",
         name: "Create Files",
         items: createFilesItems,
-      });
-    }
-
-    // Gmail Agent (has sub-skills)
-    const gmailItems = buildSubSkillItems("gmailAgent", "gmail");
-    if (gmailItems.length > 0) {
-      categories.push({
-        category: "gmail-agent",
-        name: "Gmail",
-        items: gmailItems.map((item) => ({
-          ...item,
-          requiresSetup: gmailNeedsSetup,
-        })),
-        requiresSetup: gmailNeedsSetup,
-      });
-    }
-
-    // Google Calendar Agent (has sub-skills)
-    const googleCalendarItems = buildSubSkillItems(
-      "googleCalendarAgent",
-      "gcal"
-    );
-    if (googleCalendarItems.length > 0) {
-      categories.push({
-        category: "google-calendar-agent",
-        name: "Google Calendar",
-        items: googleCalendarItems.map((item) => ({
-          ...item,
-          requiresSetup: gcalNeedsSetup,
-        })),
-        requiresSetup: gcalNeedsSetup,
-      });
-    }
-
-    // Outlook Agent (has sub-skills)
-    const outlookItems = buildSubSkillItems("outlookAgent", "outlook");
-    if (outlookItems.length > 0) {
-      categories.push({
-        category: "outlook-agent",
-        name: "Outlook",
-        items: outlookItems.map((item) => ({
-          ...item,
-          requiresSetup: outlookNeedsSetup,
-        })),
-        requiresSetup: outlookNeedsSetup,
-      });
-    }
-
-    // Custom/imported skills category
-    const importedPlugins = ImportedPlugin.listImportedPlugins();
-    if (importedPlugins.length > 0) {
-      const customSkillItems = importedPlugins.map((plugin) => ({
-        id: `@@${plugin.hubId}`,
-        name: plugin.name || plugin.hubId,
-        description: plugin.description || null,
-      }));
-
-      categories.push({
-        category: "custom-skills",
-        name: "Custom Skills",
-        items: customSkillItems,
       });
     }
 

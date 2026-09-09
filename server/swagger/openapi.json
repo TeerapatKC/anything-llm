@@ -962,17 +962,17 @@
                     "documents": [
                       {
                         "id": "c530dbe6-bff1-4b9e-b87f-710d539d20bc",
-                        "url": "file://useanything_com.html",
-                        "title": "useanything_com.html",
+                        "url": "file://example_com.html",
+                        "title": "example_com.html",
                         "docAuthor": "no author found",
                         "description": "No description found.",
                         "docSource": "URL link uploaded by the user.",
-                        "chunkSource": "https:nexusai.com.html",
+                        "chunkSource": "https:example.com.html",
                         "published": "1/16/2024, 3:46:33 PM",
                         "wordCount": 252,
-                        "pageContent": "NexusAI is the best....",
+                        "pageContent": "Example page content....",
                         "token_count_estimate": 447,
-                        "location": "custom-documents/url-useanything_com-c530dbe6-bff1-4b9e-b87f-710d539d20bc.json"
+                        "location": "custom-documents/url-example_com-c530dbe6-bff1-4b9e-b87f-710d539d20bc.json"
                       }
                     ]
                   }
@@ -1010,7 +1010,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "link": "https://nexusai.com",
+                  "link": "https://example.com",
                   "addToWorkspaces": "workspace1,workspace2",
                   "scraperHeaders": {
                     "Authorization": "Bearer token123",
@@ -1097,7 +1097,7 @@
               "schema": {
                 "type": "object",
                 "example": {
-                  "textContent": "This is the raw text that will be saved as a document in NexusAI.",
+                  "textContent": "This is the raw text that will be saved as a document in Nexus AI.",
                   "addToWorkspaces": "workspace1,workspace2",
                   "metadata": {
                     "title": "This key is required. See in /server/endpoints/api/document/index.js:287",
@@ -1219,7 +1219,6 @@
                         "type": "file",
                         "cached": false,
                         "pinnedWorkspaces": [],
-                        "watched": false,
                         "more": "data"
                       },
                       {
@@ -1227,7 +1226,6 @@
                         "type": "file",
                         "cached": false,
                         "pinnedWorkspaces": [],
-                        "watched": false,
                         "more": "data"
                       }
                     ]
@@ -3531,7 +3529,7 @@
           }
         },
         "requestBody": {
-          "description": "Send a prompt to the workspace with full use of documents as if sending a chat in NexusAI. Only supports some values of OpenAI API. See example below.",
+          "description": "Send a prompt to the workspace with full use of documents as if sending a chat in Nexus AI. Only supports some values of OpenAI API. See example below.",
           "required": true,
           "content": {
             "application/json": {
@@ -3692,7 +3690,7 @@
         "tags": [
           "OpenAI Compatible Endpoints"
         ],
-        "description": "List all the vector database collections connected to NexusAI. These are essentially workspaces but return their unique vector db identifier - this is the same as the workspace slug.",
+        "description": "List all the vector database collections connected to Nexus AI. These are essentially workspaces but return their unique vector db identifier - this is the same as the workspace slug.",
         "parameters": [],
         "responses": {
           "200": {

@@ -61,10 +61,6 @@ const DESTINATIONS = [
     path: () => paths.settings.embedChatWidgets(),
     needs: [PERMISSIONS.EMBEDS_MANAGE],
   },
-  {
-    path: () => paths.communityHub.trending(),
-    needs: [PERMISSIONS.SYSTEM_COMMUNITY_HUB],
-  },
 ];
 
 /**

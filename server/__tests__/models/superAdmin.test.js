@@ -174,6 +174,20 @@ beforeEach(async () => {
 });
 
 describe("the owner role", () => {
+  it("seeds the owner role when onboarding races boot initialization", async () => {
+    mockReset();
+    Role.flushCache();
+
+    const { user, error } = await User.createSuperAdmin({
+      username: "owner",
+      email: "owner@example.com",
+      password: PASSWORD,
+    });
+
+    expect(error).toBeNull();
+    expect(user.role).toBe(SUPER_ADMIN_ROLE);
+  });
+
   it("is seeded as a singleton that cannot be edited or handed out", async () => {
     const role = await Role.get({ name: SUPER_ADMIN_ROLE });
     expect(role.isSystem).toBe(true);

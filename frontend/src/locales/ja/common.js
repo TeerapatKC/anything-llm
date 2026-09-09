@@ -56,26 +56,19 @@ const TRANSLATIONS = {
     "agent-skills": "エージェントスキル",
     "agent-flow": "エージェントフロー",
     "sql-connector": "SQLコネクタ",
-    "agent-skills-settings": "設定",
+    "agent-skills-settings": "エージェントスキル設定",
     "default-system-prompt": "デフォルトシステムプロンプト",
     "instance-owner": "インスタンス所有者",
     admin: "管理者",
     tools: "ツール",
     "system-prompt-variables": "システムプロンプト変数",
     "slash-commands": "スラッシュコマンド",
-    "experimental-features": "実験的機能",
     contact: "サポートに連絡",
     "browser-extension": "ブラウザ拡張",
     smtp: "SMTP",
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
     chat: "チャット",
-    "community-hub": {
-      title: "地域交流拠点",
-      trending: "人気のあるものを探す",
-      "your-account": "あなたのアカウント",
-      "import-item": "輸入品",
-    },
     channels: "チャンネル",
     "available-channels": {
       telegram: "テレグラム",
@@ -99,13 +92,6 @@ const TRANSLATIONS = {
       title: "ブラウザ拡張機能の API キー",
       description:
         "Nexus AI インスタンスに接続するブラウザ拡張機能の API キーを管理します。",
-    },
-    "community-hub": {
-      title: "コミュニティハブ",
-      "trending-description": "Nexus AI コミュニティで共有し、共同作業を行います。",
-      "import-title": "コミュニティアイテムをインポート",
-      "import-description":
-        "Nexus AI コミュニティハブからプロンプト、スキル、コマンドなどをインポートして、このインスタンスを拡張します。",
     },
     workspaces: {
       title: "インスタンスのワークスペース",
@@ -177,7 +163,6 @@ const TRANSLATIONS = {
     agent: "エージェント構成",
     "upload-documents": "ドキュメントをアップロード",
     "slash-commands": "スラッシュコマンド",
-    "agent-flows": "エージェントフロー",
   },
   general: {
     vector: {
@@ -380,7 +365,7 @@ const TRANSLATIONS = {
         readActions: "行動",
         writeActions: "行動",
         warning:
-          "ファイルシステムへのアクセスは危険であり、ファイルの内容を変更または削除する可能性があります。設定する前に、必ず<a>のドキュメント</a>を参照してください。",
+          "ファイルシステムへのアクセスは危険であり、ファイルの内容を変更または削除する可能性があります。",
         skills: {
           "read-text-file": {
             title: "ファイルを開く",
@@ -455,294 +440,6 @@ const TRANSLATIONS = {
           "create-docx": {
             title: "Wordドキュメント",
             description: "基本的なスタイルと書式でWordドキュメントを作成する",
-          },
-        },
-      },
-      gmail: {
-        title: "Gmail 接続",
-        description:
-          "エージェントがGmailと連携できるようにする：メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を可能にします。詳細については、<a>ドキュメントを参照</a>。",
-        configuration: "Gmail の設定",
-        deploymentId: "デプロイメントID",
-        deploymentIdHelp:
-          "あなたのGoogle Apps ScriptウェブアプリケーションのデプロイメントID",
-        apiKey: "APIキー",
-        apiKeyHelp: "Google Apps Script のデプロイ時に設定した API キー",
-        configurationRequired:
-          "Gmail の機能を有効にするには、デプロイメント ID と API キーを設定してください。",
-        configured: "設定済み",
-        searchSkills: "検索スキル...",
-        noSkillsFound: "検索条件に合致するスキルは見つかりませんでした。",
-        categories: {
-          search: {
-            title: "メールの検索と閲覧",
-            description: "Gmail の受信トレイから、メールを検索および閲覧する",
-          },
-          drafts: {
-            title: "サンプルメール",
-            description: "メールの作成、編集、および管理",
-          },
-          send: {
-            title: "メールの送信と返信",
-            description: "メールを送信し、スレッドへの返信をすぐに行う。",
-          },
-          threads: {
-            title: "メールのトピックを管理する",
-            description:
-              "メールのトピックを管理する - 既読/未読のマーク、アーカイブ、削除",
-          },
-          account: {
-            title: "統合に関する統計",
-            description: "メールボックスの統計情報とアカウント情報を表示する",
-          },
-        },
-        skills: {
-          search: {
-            title: "メールを検索する",
-            description: "Gmail のクエリ構文を使用して、メールを検索する",
-          },
-          readThread: {
-            title: "スレッドを読む",
-            description: "IDでメールの全文を閲覧する",
-          },
-          createDraft: {
-            title: "ドラフト作成",
-            description: "新しいメールの草案を作成する",
-          },
-          createDraftReply: {
-            title: "草案の返信を作成する",
-            description: "既存のスレッドに対する返信の草案を作成する",
-          },
-          updateDraft: {
-            title: "ドラフトの更新",
-            description: "既存のメールドラフトを更新する",
-          },
-          getDraft: {
-            title: "草案を入手",
-            description: "IDで特定のドラフトを取得する",
-          },
-          listDrafts: {
-            title: "ドラフト案リスト",
-            description: "すべての草案メールの一覧を表示する",
-          },
-          deleteDraft: {
-            title: "草案を削除",
-            description: "草案のメールを削除する",
-          },
-          sendDraft: {
-            title: "草案を送信",
-            description: "既存のメールドラフトを送信する",
-          },
-          sendEmail: {
-            title: "メールを送信する",
-            description: "すぐにメールを送信してください",
-          },
-          replyToThread: {
-            title: "スレッドへの返信",
-            description: "メールのやり取りにすぐに返信する",
-          },
-          markRead: {
-            title: "マーク・リード",
-            description: "スレッドを「読了」としてマークする",
-          },
-          markUnread: {
-            title: "未読としてマーク",
-            description: "スレッドを「未読」としてマークする",
-          },
-          moveToTrash: {
-            title: "ゴミ箱へ移動",
-            description: "スレッドをゴミ箱に移動する",
-          },
-          moveToArchive: {
-            title: "アーカイブ",
-            description: "スレッドをアーカイブする",
-          },
-          moveToInbox: {
-            title: "受信トレイへ移動",
-            description: "スレッドをインボックスに移動する",
-          },
-          getMailboxStats: {
-            title: "メールボックスの統計情報",
-            description: "未読件数とメールボックスの統計情報を取得する",
-          },
-          getInbox: {
-            title: "インボックスを開く",
-            description: "Gmail から受信したメールを効率的に取得する方法",
-          },
-        },
-      },
-      outlook: {
-        title: "Outlook 連携機能",
-        description:
-          "エージェントがMicrosoft Outlookと連携できるようにする - Microsoft Graph APIを使用して、メールの検索、スレッドの閲覧、ドラフトの作成、メールの送信、およびインボックスの管理を行う。詳細については、ドキュメントを参照してください。",
-        configuration: "Outlook の設定",
-        authType: "アカウントの種類",
-        authTypeHelp:
-          "認証に使用できるMicrosoftアカウントの種類を選択します。「すべて」は、個人用アカウントと職場/学校用アカウントの両方をサポートします。「個人用のみ」は、個人用Microsoftアカウントに限定されます。「職場/学校用のみ」は、特定のAzure ADテナントからの職場/学校用アカウントに限定されます。",
-        authTypeCommon: "すべての口座（個人用および仕事/学校用）",
-        authTypeConsumers: "個人のMicrosoftアカウントのみ",
-        authTypeOrganization: "組織アカウントのみ（テナントIDが必要です）",
-        clientId: "アプリケーション（クライアント）ID",
-        clientIdHelp:
-          "あなたのAzure ADアプリケーションの「アプリケーション（クライアント）ID」",
-        tenantId: "テナントID",
-        tenantIdHelp:
-          "あなたの Azure AD アプリの登録から取得した「ディレクトリ（テナント）ID」。組織での認証のみに必要です。",
-        clientSecret: "クライアントの秘密",
-        clientSecretHelp:
-          "Azure AD アプリの登録から取得したクライアントのシークレット値",
-        configurationRequired:
-          "Outlook の機能を有効にするには、クライアント ID とクライアントシークレットを設定してください。",
-        authRequired:
-          "まず、認証情報を保存し、その後、Microsoftとの認証を行い、設定を完了してください。",
-        authenticateWithMicrosoft: "マイクロソフトとの認証",
-        authenticated: "Microsoft Outlookとの認証に成功しました。",
-        revokeAccess: "アクセス権を停止する",
-        configured: "設定済み",
-        searchSkills: "検索スキル...",
-        noSkillsFound: "検索条件に一致するスキルは見つかりませんでした。",
-        categories: {
-          search: {
-            title: "メールの検索と閲覧",
-            description: "Outlook の受信トレイから、メールを検索して読み取る。",
-          },
-          drafts: {
-            title: "サンプルメール",
-            description: "メールの作成、編集、および管理",
-          },
-          send: {
-            title: "メールの送信",
-            description:
-              "新しいメールを送信するか、すぐにメッセージに返信してください。",
-          },
-          account: {
-            title: "統合に関する統計",
-            description: "メールボックスの統計情報とアカウント情報を確認する",
-          },
-        },
-        skills: {
-          getInbox: {
-            title: "受信トレイを開く",
-            description: "Outlook の受信トレイから、最近のメールを取得する",
-          },
-          search: {
-            title: "メールを検索する",
-            description: "Microsoft の検索構文を使用してメールを検索する",
-          },
-          readThread: {
-            title: "会話の内容を読み取る",
-            description: "メールのやり取り全体を読み込む",
-          },
-          createDraft: {
-            title: "ドラフト作成",
-            description:
-              "新しいメールの草案を作成するか、既存のメッセージへの返信の草案を作成する。",
-          },
-          updateDraft: {
-            title: "ドラフトの更新",
-            description: "既存のメールドラフトを更新する",
-          },
-          listDrafts: {
-            title: "ドラフト案リスト",
-            description: "すべての草案メールの一覧",
-          },
-          deleteDraft: {
-            title: "草案を削除",
-            description: "草案のメールを削除する",
-          },
-          sendDraft: {
-            title: "草案を送信",
-            description: "既存のメールの草稿を送信する",
-          },
-          sendEmail: {
-            title: "メールを送信する",
-            description:
-              "新しいメールを作成するか、既存のメッセージにすぐに返信してください。",
-          },
-          getMailboxStats: {
-            title: "メールボックスの統計",
-            description: "フォルダの数とメールボックスの統計情報を取得する",
-          },
-        },
-      },
-      googleCalendar: {
-        title: "Google カレンダー 連携機能",
-        description:
-          "エージェントがGoogleカレンダーと連携できるようにする - カレンダーの表示、イベントの取得、イベントの作成と更新、およびRSVPの管理を可能にする。詳細については、ドキュメントを参照してください。",
-        configuration: "Google カレンダーの設定",
-        deploymentId: "デプロイメントID",
-        deploymentIdHelp:
-          "あなたのGoogle Apps ScriptのウェブアプリケーションのデプロイID",
-        apiKey: "APIキー",
-        apiKeyHelp: "Google Apps Script のデプロイ時に設定した API キー",
-        configurationRequired:
-          "Google カレンダーの機能を使用するために、デプロイメントIDとAPIキーを設定してください。",
-        configured: "設定済み",
-        searchSkills: "検索スキル...",
-        noSkillsFound:
-          "あなたの検索条件に合致するスキルは見つかりませんでした。",
-        categories: {
-          calendars: {
-            title: "カレンダー",
-            description: "Googleカレンダーの表示と管理",
-          },
-          readEvents: {
-            title: "イベント情報",
-            description: "カレンダー上のイベントの表示と検索",
-          },
-          writeEvents: {
-            title: "イベントの作成と更新",
-            description: "新しいイベントを作成し、既存のイベントを修正する",
-          },
-          rsvp: {
-            title: "RSVP（出欠確認）管理",
-            description: "イベントへの参加状況を管理する",
-          },
-        },
-        skills: {
-          listCalendars: {
-            title: "カレンダーリスト",
-            description:
-              "所有している、または購読しているすべてのカレンダーの一覧",
-          },
-          getCalendar: {
-            title: "カレンダーの詳細を確認する",
-            description: "特定のカレンダーに関する詳細な情報த்தைப்入手する",
-          },
-          getEvent: {
-            title: "イベント情報を入手",
-            description: "特定のイベントに関する詳細な情報த்தைப்入手する",
-          },
-          getEventsForDay: {
-            title: "その日のイベントを検索する",
-            description: "特定の日に予定されているすべてのイベントを取得する",
-          },
-          getEvents: {
-            title: "イベント（期間指定）",
-            description: "指定した期間内のイベントを取得する",
-          },
-          getUpcomingEvents: {
-            title: "今後のイベントをチェックする",
-            description:
-              "今日、今週、または今月のイベントを、簡単なキーワードを使って検索する",
-          },
-          quickAdd: {
-            title: "イベントをすぐに登録",
-            description:
-              "自然言語（例：「明日午後3時に会議」）からイベントを作成する",
-          },
-          createEvent: {
-            title: "イベントを作成する",
-            description:
-              "すべてのプロパティを完全に制御できる、新しいイベントを作成する。",
-          },
-          updateEvent: {
-            title: "イベント情報更新",
-            description: "既存の予定を更新する",
-          },
-          setMyStatus: {
-            title: "返信状況を設定する",
-            description: "イベントへの参加、拒否、または仮の参加",
           },
         },
       },
@@ -971,7 +668,6 @@ const TRANSLATIONS = {
     title: "プライバシーとデータ処理",
     description:
       "これは、接続されているサードパーティプロバイダーとNexus AIがデータをどのように処理するかの設定です。",
-    anonymous: "匿名テレメトリが有効",
     personalization: {
       label: "パーソナライズと記憶を有効にする",
       auto_label: "記憶の自動抽出を有効にする",
@@ -1127,7 +823,8 @@ const TRANSLATIONS = {
         "これらのファイルを削除してもよろしいですか？\nシステムおよび既存のワークスペースから自動的に削除されます。\nこの操作は元に戻せません。",
       "delete-confirmation":
         "これらのファイルやフォルダーを削除してもよろしいですか？\nシステムから削除され、既存のワークスペースからも自動的に削除されます。\nこの操作は元に戻せません。",
-      "removing-message-files": "{{count}} 件のドキュメントを削除中です。お待ちください。",
+      "removing-message-files":
+        "{{count}} 件のドキュメントを削除中です。お待ちください。",
       "removing-message":
         "{{count}}件のドキュメントと{{folderCount}}件のフォルダーを削除中です。しばらくお待ちください。",
       "move-success": "{{count}}件のドキュメントを移動しました。",
@@ -1170,17 +867,6 @@ const TRANSLATIONS = {
         "デフォルトのままでは満足できる回答が得られない場合、ピン留めを活用するとより高品質な回答が得られます。",
       accept: "わかりました",
     },
-    watching: {
-      what_watching: "ドキュメントのウォッチとは？",
-      watch_explained_block1:
-        "Nexus AIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
-      watch_explained_block2:
-        "この機能は現在オンラインベースのコンテンツのみ対応しており、手動アップロードしたドキュメントには利用できません。",
-      watch_explained_block3_start: "ウォッチしているドキュメントの管理は",
-      watch_explained_block3_link: "ファイルマネージャー",
-      watch_explained_block3_end: "管理画面から行えます。",
-      accept: "わかりました",
-    },
     obsidian: {
       vault_location: "保管場所",
       vault_description:
@@ -1221,7 +907,8 @@ const TRANSLATIONS = {
     },
   },
   chat_window: {
-    agent_exit_hint: "エージェントの実行ループを途中で終了するには /exit と入力してください。",
+    agent_exit_hint:
+      "エージェントの実行ループを途中で終了するには /exit と入力してください。",
     generating_response: "応答を生成中",
     thought_in_progress: "モデルが思考中...",
     thoughts: "思考",
@@ -1521,13 +1208,6 @@ const TRANSLATIONS = {
           description: "ブラウザのタブにカスタムのfaviconを使用する。",
         },
       },
-      "sidebar-footer": {
-        title: "サイドバーのフッター項目",
-        description:
-          "サイドバーの下部に表示されるフッターの項目をカスタマイズする。",
-        icon: "アイコン",
-        link: "リンク",
-      },
       "render-html": {
         title: "チャットでHTMLをレンダリングする",
         description:
@@ -1576,104 +1256,6 @@ const TRANSLATIONS = {
       llmPreferences: "LLM の好み",
       chatSettings: "チャット設定",
       help: "キーボードショートカットのヘルプを表示する",
-    },
-  },
-  community_hub: {
-    publish: {
-      system_prompt: {
-        success_title: "成功！",
-        success_description:
-          "システムプロンプトがコミュニティハブに公開されました。",
-        success_thank_you: "コミュニティへの共有ありがとうございます。",
-        view_on_hub: "コミュニティハブでの表示",
-        modal_title: "出版システムに関するプロンプト",
-        name_label: "名前",
-        name_description: "これは、システムのプロンプトの名前です。",
-        name_placeholder: "私のシステムプロンプト",
-        description_label: "説明",
-        description_description:
-          "これは、システムプロンプトの説明です。システムプロンプトの目的を説明するために使用してください。",
-        tags_label: "タグ",
-        tags_description:
-          "タグは、システムプロンプトを簡単に検索できるようにラベル付けするために使用されます。複数のタグを追加できます。最大5つのタグ。各タグは最大20文字です。",
-        tags_placeholder:
-          "タグを追加するには、タイプしてEnterキーを押してください。",
-        visibility_label: "視界",
-        public_description:
-          "一般のシステムからのメッセージは、すべての人に表示されます。",
-        private_description:
-          "プライベートなシステムからのメッセージは、あなただけが見ることができます。",
-        publish_button: "コミュニティハブに公開する",
-        submitting: "出版...",
-        prompt_label: "プロンプト",
-        prompt_description:
-          "これは、大規模言語モデル（LLM）を誘導するために使用される実際のシステムプロンプトです。",
-        prompt_placeholder: "ここにシステムプロンプトを入力してください...",
-      },
-      agent_flow: {
-        success_title: "成功！",
-        success_description:
-          "あなたのエージェントフローがコミュニティハブに公開されました。",
-        success_thank_you: "コミュニティへの共有ありがとうございます。",
-        view_on_hub: "コミュニティハブで確認",
-        modal_title: "出版代理店フロー",
-        name_label:
-          "山田太郎\n\n\n氏名\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n\n名前\n山田 太郎\n<|im",
-        name_description: "これは、あなたのエージェントフローの名前です。",
-        name_placeholder: "私のエージェントフロー",
-        description_label: "説明",
-        description_description:
-          "これは、あなたのエージェントフローの説明です。この説明文を使って、あなたのエージェントフローの目的を記述してください。",
-        tags_label: "タグ",
-        tags_description:
-          "タグは、ワークフローをより簡単に検索するために使用されます。複数のタグを追加できます。最大5つのタグ。各タグは最大20文字です。",
-        tags_placeholder:
-          "タグを追加するには、タイプしてEnterキーを押してください。",
-        visibility_label: "視界",
-        submitting: "出版...",
-        submit: "コミュニティハブに公開する",
-        privacy_note:
-          "機密性の高いデータ保護のため、ワークフローは常にプライベートでアップロードされます。公開後、コミュニティハブで可視性を変更できます。公開前に、ワークフローに機密情報や個人情報が含まれていないことを確認してください。",
-      },
-      generic: {
-        unauthenticated: {
-          title: "本人確認が必要です。",
-          description:
-            "アイテムを公開する前に、Nexus AIコミュニティハブで認証する必要があります。",
-          button: "コミュニティハブへの接続",
-        },
-      },
-      slash_command: {
-        success_title: "成功！",
-        success_description:
-          "スラッシュコマンドがコミュニティハブに公開されました。",
-        success_thank_you: "コミュニティへの共有ありがとうございます。",
-        view_on_hub: "コミュニティハブでの表示",
-        modal_title: "スラッシュコマンドを公開する",
-        name_label: "名前",
-        name_description: "これは、スラッシュコマンドの名前です。",
-        name_placeholder: "私のスラッシュコマンド",
-        description_label: "説明",
-        description_description:
-          "これは、スラッシュコマンドの説明です。スラッシュコマンドの目的を記述するために使用してください。",
-        tags_label: "タグ",
-        tags_description:
-          "スラッシュコマンドをより簡単に検索できるように、タグを使用してコマンドを分類します。複数のタグを追加できます。最大5つのタグ。各タグは最大20文字です。",
-        tags_placeholder:
-          "タグを追加するには、タイプしてEnterキーを押してください。",
-        visibility_label: "視界",
-        public_description:
-          "一般のユーザーが利用できるコマンドは、すべての人に公開されています。",
-        private_description:
-          "私だけが利用できるプライベートなスラッシュコマンドのみが表示されます。",
-        publish_button: "コミュニティハブに公開する",
-        submitting: "出版...",
-        prompt_label:
-          "どのような状況で、どのような目的で、どのような方法で、どのような結果を期待していますか？",
-        prompt_description:
-          "これは、スラッシュコマンドが実行されたときに使用されるプロンプトです。",
-        prompt_placeholder: "ここに指示を入力してください...",
-      },
     },
   },
   home: {
@@ -2519,6 +2101,10 @@ const TRANSLATIONS = {
     "connector-off-description":
       "左側で有効にすると、データベース接続の追加と管理ができます。",
     "toggle-failed": "接続の更新に失敗しました。",
+    saved: "データベース接続を保存しました。",
+    "save-failed": "データベース接続の保存に失敗しました。",
+    "connector-updated": "SQL コネクタを更新しました。",
+    "connector-update-failed": "SQL コネクタの更新に失敗しました。",
     manage: {
       "aria-label": "接続を管理",
       edit: "接続を編集",
@@ -2573,42 +2159,6 @@ const TRANSLATIONS = {
         "接続の検証に失敗しました。接続情報を確認してください。",
     },
   },
-  "experimental-features": {
-    title: "実験的機能",
-    "select-feature": "実験的機能を選択してください",
-    on: "オン",
-    off: "オフ",
-    tos: {
-      title: "実験的機能の利用規約",
-      intro:
-        "Nexus AI の実験的機能は試験運用中の機能であり、<b>オプトイン</b>制です。懸念事項がある場合は、機能を承認する前に事前に条件を提示または警告します。",
-      "risks-intro":
-        "このページの機能を使用すると、以下のような事態が発生する可能性があります（これらに限られません）。",
-      "risk-data-loss": "データの損失。",
-      "risk-quality": "結果の品質の変化。",
-      "risk-storage": "ストレージ使用量の増加。",
-      "risk-resources": "リソース消費量の増加。",
-      "risk-cost":
-        "接続中の LLM や埋め込みプロバイダーのコストまたは使用量の増加。",
-      "risk-bugs": "Nexus AI 使用時の不具合や問題の発生。",
-      "conditions-intro":
-        "実験的機能の使用には、以下のような条件も伴います（これらに限られません）。",
-      "condition-removal":
-        "機能が今後のアップデートで存在しなくなる場合があります。",
-      "condition-stability": "使用中の機能は現時点で安定していません。",
-      "condition-availability":
-        "この機能は、今後のバージョン、構成、またはサブスクリプションの Nexus AI では利用できない場合があります。",
-      "condition-privacy":
-        "ベータ機能の使用時も、プライバシー設定は<b>尊重されます</b>。",
-      "condition-change":
-        "これらの条件は今後のアップデートで変更される場合があります。",
-      "docs-prefix":
-        "機能を利用するにはこのダイアログの承認が必要です。詳しくは次をご覧ください:",
-      "docs-or-email": "またはメール:",
-      reject: "拒否して閉じる",
-      accept: "理解しました",
-    },
-  },
   "admin-workspaces": {
     table: {
       name: "名前",
@@ -2655,6 +2205,13 @@ const TRANSLATIONS = {
     "general-appearance": "全般の外観設定",
   },
   "agent-panel": {
+    "sql-connections": "SQL接続",
+    "sql-connections-description":
+      "ここで追加した接続はこのワークスペースに属し、そのエージェントだけが利用できます。",
+    "new-sql-connection": "新しい接続",
+    "no-sql-connections": "このワークスペースのSQL接続はまだありません。",
+    "sql-connections-shared":
+      "管理者が共有した接続が{{count}}件あります。認証情報はインスタンス全体で管理されます。",
     "agent-flow": "エージェントフロー",
     "flows-description": "このインスタンスに設定されたフローを一覧表示します。",
     "skills-title": "エージェントのスキルと設定",
@@ -2666,7 +2223,6 @@ const TRANSLATIONS = {
     "choose-capability": "設定する機能を選択してください。",
     "flows-restricted":
       "エージェントフローはインスタンス所有者のみ管理できます。",
-    "app-integrations": "アプリ連携",
     "select-mobile":
       "エージェントスキル、エージェントフロー、または MCP サーバーを選択してください",
     "page-skills-title": "エージェントスキル",
@@ -2680,7 +2236,6 @@ const TRANSLATIONS = {
     "skill-settings": "エージェントスキル設定",
     configure: "設定",
     "agent-flows": "エージェントフロー",
-    "custom-skills": "カスタムスキル",
     back: "戻る",
     "create-flow": "フローを作成",
     "open-builder": "ビルダーを開く",
@@ -2700,7 +2255,9 @@ const TRANSLATIONS = {
     "toggle-failed": "フローの有効状態を変更できませんでした。",
     "no-description": "説明はありません",
     "workspace-owned": "ワークスペース",
-    "workspace-owned-hint": "このフローは特定のワークスペースに属しており、そこでのみ利用できます。",
+    shared: "共有",
+    "workspace-owned-hint":
+      "このフローは特定のワークスペースに属しており、そこでのみ利用できます。",
     visibility: {
       title: "ワークスペースへの公開範囲",
       description: "このフローを使用できるワークスペースを選択します。",
@@ -2761,20 +2318,6 @@ const TRANSLATIONS = {
       error: "エラー: {{error}}",
     },
   },
-  "hub-import": {
-    title: "コミュニティハブからアイテムをインポート",
-    "intro-1":
-      "コミュニティハブでは、エージェントスキル、システムプロンプト、スラッシュコマンドなどを探して共有・インポートできます。",
-    "intro-2":
-      "これらのアイテムは Nexus AI チームとコミュニティによって作成されており、Nexus AI を使い始めるのにも、ニーズに合わせて拡張するのにも最適です。",
-    "intro-3":
-      "コミュニティハブには<b>非公開</b>アイテムと<b>公開</b>アイテムがあります。非公開アイテムはあなたにのみ表示され、公開アイテムは全員に表示されます。",
-    warning:
-      "非公開アイテムを取り込む場合は、そのアイテムが所属する<b>チームに共有されている</b>こと、および<a>接続キー</a>を追加済みであることを確認してください。",
-    "item-id": "コミュニティハブのアイテムインポート ID",
-    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
-    "enter-item-id": "アイテム ID を入力してください",
-  },
   ui: {
     "select-option": "オプションを選択",
     "select-model": "モデルを選択",
@@ -2832,8 +2375,6 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "本人であることを確認",
     "what-to-clear": "消去する対象",
     "choose-an-account": "アカウントを選択",
-    "hub-account-title": "Nexus AI コミュニティハブのアカウント",
-    "hub-api-key-placeholder": "Nexus AI Hub の API キーを入力してください",
     "add-to-workspace": "ワークスペースに追加",
     "apply-to-workspace": "ワークスペースに適用",
     "max-vector-text-length": "ベクトル化するテキストの最大長",
@@ -2880,8 +2421,6 @@ const TRANSLATIONS = {
       "認証には API トークンが必要です。ユーザー用の API トークンを生成する方法は、Drupal Wiki の<a>マニュアル</a>を参照してください。",
     "lmstudio-context-window":
       "コンテキストウィンドウの上限を上書きします。空欄にするとモデルから自動検出します（検出に失敗した場合は 4096 が使用されます）。",
-    "telemetry-note":
-      "すべてのイベントで IP アドレスは記録されず、<b>個人を特定できる</b>内容、設定、チャット、その他の利用状況以外の情報も含まれません。収集されるイベントタグの一覧は <a>GitHub のこちら</a>で確認できます。",
     "finish-node":
       "これがエージェントフローの終端です。上のすべてのステップが順番に実行されます。",
     "agent-skill-settings":
@@ -2951,7 +2490,7 @@ const TRANSLATIONS = {
     "connection-modal":
       "Nexus AI モバイルを使うと、ワークスペースのチャット、スレッド、ツール、ドキュメントに接続して外出先でも利用できます。",
     "privacy-and-data":
-      "オープンソースプロジェクトとして、私たちはあなたのプライバシーの権利を尊重します。AI とドキュメントをプライベートかつ安全に統合する最良のソリューションを構築することに専念しています。テレメトリを無効にする場合でも、ぜひご意見やご感想をお寄せいただければ幸いです。",
+      "オープンソースプロジェクトとして、私たちはあなたのプライバシーの権利を尊重します。AI とドキュメントをプライベートかつ安全に統合する最良のソリューションを構築することに専念しています。",
     "existing-user-form":
       "既存のアカウントでサインインすると、そのアカウントが招待のワークスペースに追加されます。ロールは変更されません。",
     invite:

@@ -31,7 +31,6 @@ class NovitaLLM {
       baseURL: this.basePath,
       apiKey: process.env.NOVITA_LLM_API_KEY ?? null,
       defaultHeaders: {
-        "HTTP-Referer": "https://nexusai.com",
         "X-Novita-Source": "nexusai",
       },
     });

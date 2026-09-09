@@ -61,7 +61,7 @@ WORKDIR /app
 # so web-scraping would be broken in arm docker containers unless we patch it
 # by manually installing a compatible chromedriver.
 RUN echo "Need to patch Puppeteer x Chromium support for ARM86 - installing dep!" && \
-    curl -fSL https://webassets.nexusai.com/chromium-1088-linux-arm64.zip -o chrome-linux.zip && \
+    curl -fSL https://webassets.anythingllm.com/chromium-1088-linux-arm64.zip -o chrome-linux.zip && \
     unzip chrome-linux.zip && \
     rm -rf chrome-linux.zip
 
@@ -205,7 +205,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXUS_AI_RUNTIME=docker
-ENV DEPLOYMENT_VERSION=1.16.0
+ENV DEPLOYMENT_VERSION=1.16.1
 
 HEALTHCHECK --interval=1m --timeout=10s --start-period=1m \
   CMD /bin/bash /usr/local/bin/docker-healthcheck.sh || exit 1

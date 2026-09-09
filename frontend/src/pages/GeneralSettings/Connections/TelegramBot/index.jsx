@@ -5,7 +5,6 @@ import Telegram from "@/models/telegram";
 import ConnectedView from "./ConnectedView";
 import SetupView from "./SetupView";
 import { useTranslation } from "react-i18next";
-import paths from "@/utils/paths";
 
 export default function TelegramBotSettings() {
   const [loading, setLoading] = useState(true);
@@ -71,14 +70,6 @@ function ConnectionsLayout({ children, fullPage = false }) {
               <p className="text-xs leading-4 text-zinc-400 light:text-slate-600 max-w-[700px]">
                 {t("telegram.description")}
               </p>
-              <a
-                href={paths.docs("/channels/telegram")}
-                target="_blank"
-                rel="noreferrer"
-                className="text-xs leading-4 text-theme-text-primary light:text-slate-900 underline w-fit"
-              >
-                View Documentation
-              </a>
             </div>
             {children}
           </div>

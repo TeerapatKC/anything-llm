@@ -4,10 +4,9 @@ import {
   getFileExtension,
   middleTruncate,
 } from "@/utils/directories";
-import { Undo2, Eye, EyeOff, FileText, Pin } from "lucide-react";
+import { Undo2, FileText, Pin } from "lucide-react";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
-import System from "@/models/system";
 import {
   Tooltip,
   TooltipContent,
@@ -104,11 +103,6 @@ export default function WorkspaceFileRow({
           <div className="w-4 h-4 ml-2 shrink-0" />
         ) : (
           <div className="flex gap-x-2 items-center">
-            <WatchForChanges
-              workspace={workspace}
-              docPath={`${folderName}/${item.name}`}
-              item={item}
-            />
             <PinItemToWorkspace
               workspace={workspace}
               docPath={`${folderName}/${item.name}`}
@@ -184,75 +178,6 @@ const PinItemToWorkspace = memo(({ workspace, docPath, item }) => {
       </TooltipTrigger>
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
         {pinned ? "Un-pin from workspace" : "Pin to workspace"}
-      </TooltipContent>
-    </Tooltip>
-  );
-});
-
-const WatchForChanges = memo(({ workspace, docPath, item }) => {
-  const [watched, setWatched] = useState(item?.watched || false);
-  const watchEvent = new CustomEvent("watch_document_for_changes");
-
-  const updateWatchStatus = async (e) => {
-    try {
-      e.stopPropagation();
-      if (!watched) window.dispatchEvent(watchEvent);
-      const success =
-        await System.experimentalFeatures.liveSync.setWatchStatusForDocument(
-          workspace.slug,
-          docPath,
-          !watched
-        );
-
-      if (!success) {
-        showToast(
-          `Failed to ${!watched ? "watch" : "unwatch"} document.`,
-          "error",
-          {
-            clear: true,
-          }
-        );
-        return;
-      }
-
-      showToast(
-        `Document ${
-          !watched
-            ? "will be watched for changes"
-            : "will no longer be watched for changes"
-        }.`,
-        "success",
-        { clear: true }
-      );
-      setWatched(!watched);
-    } catch (error) {
-      showToast(`Failed to watch document. ${error.message}`, "error", {
-        clear: true,
-      });
-      return;
-    }
-  };
-
-  if (!item || !item.canWatch) return <div className="w-[16px] p-[2px] ml-2" />;
-
-  return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <div
-            className="group flex gap-x-2 items-center hover:bg-theme-file-picker-hover p-[2px] rounded ml-2 cursor-pointer"
-            onClick={updateWatchStatus}
-          />
-        }
-      >
-        {watched ? (
-          <Eye className="h-4 w-4 outline-none shrink-0" />
-        ) : (
-          <EyeOff className="h-4 w-4 outline-none shrink-0" />
-        )}
-      </TooltipTrigger>
-      <TooltipContent side="bottom" className="max-w-[250px] text-xs">
-        {watched ? "Stop watching for changes" : "Watch document for changes"}
       </TooltipContent>
     </Tooltip>
   );

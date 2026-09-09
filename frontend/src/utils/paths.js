@@ -42,23 +42,8 @@ export default {
       return "/onboarding/user-setup";
     },
   },
-  github: () => {
-    return "https://github.com/Mintplex-Labs/nexus-ai";
-  },
   discord: () => {
     return "https://discord.com/invite/6UyHPeGZAC";
-  },
-  docs: (path = "") => {
-    return `https://docs.nexusai.com${path}`;
-  },
-  chatModes: () => {
-    return "https://docs.nexusai.com/features/chat-modes";
-  },
-  mailToMintplex: () => {
-    return "mailto:team@mintplexlabs.com";
-  },
-  hosting: () => {
-    return "https://my.mintplexlabs.com/aio-checkout?product=nexusai";
   },
   workspace: {
     chat: (slug, options = {}) => {
@@ -91,9 +76,6 @@ export default {
       },
       slashCommands: (slug) => {
         return `/workspace/${slug}/settings/slash-commands`;
-      },
-      agentFlows: (slug) => {
-        return `/workspace/${slug}/settings/agent-flows`;
       },
     },
     thread: (wsSlug, threadSlug) => {
@@ -203,9 +185,6 @@ export default {
     browserExtension: () => {
       return `/settings/browser-extension`;
     },
-    experimental: () => {
-      return `/settings/beta-features`;
-    },
     telegram: () => {
       return `/settings/external-connections/telegram`;
     },
@@ -228,53 +207,6 @@ export default {
     },
     editAgent: (uuid) => {
       return `/settings/agents/builder/${uuid}`;
-    },
-  },
-  communityHub: {
-    website: () => {
-      return import.meta.env.DEV
-        ? `http://localhost:5173`
-        : `https://hub.nexusai.com`;
-    },
-    /**
-     * View more items of a given type on the community hub.
-     * @param {string} type - The type of items to view more of. Should be kebab-case.
-     * @returns {string} The path to view more items of the given type.
-     */
-    viewMoreOfType: function (type) {
-      return `${this.website()}/list/${type}`;
-    },
-    viewItem: function (type, id) {
-      return `${this.website()}/i/${type}/${id}`;
-    },
-    trending: () => {
-      return `/settings/community-hub/trending`;
-    },
-    authentication: () => {
-      return `/settings/community-hub/authentication`;
-    },
-    importItem: (importItemId) => {
-      return `/settings/community-hub/import-item${importItemId ? `?id=${importItemId}` : ""}`;
-    },
-    profile: function (username) {
-      if (username) return `${this.website()}/u/${username}`;
-      return `${this.website()}/me`;
-    },
-    noPrivateItems: () => {
-      return "https://docs.nexusai.com/community-hub/faq#no-private-items";
-    },
-  },
-
-  // TODO: Migrate all docs.nexusai.com links to the new docs.
-  documentation: {
-    contextWindows: () => {
-      return "https://docs.nexusai.com/chatting-with-documents/introduction#you-exceed-the-context-window---what-now";
-    },
-  },
-
-  experimental: {
-    liveDocumentSync: {
-      manage: () => `/settings/beta-features/live-document-sync/manage`,
     },
   },
 };

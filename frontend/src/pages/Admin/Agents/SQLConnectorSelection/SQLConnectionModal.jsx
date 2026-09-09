@@ -96,7 +96,6 @@ const DEFAULT_CONFIG = {
  * @param {boolean} props.isOpen - Whether the modal is currently open
  * @param {Function} props.closeModal - Callback to close the modal
  * @param {Function} props.onSubmit - Callback when connection is successfully validated and saved
- * @param {Function} props.setHasChanges - Callback to mark that changes have been made
  * @param {Object|null} [props.existingConnection=null] - Existing connection data for edit mode (contains database_id, engine, username, password, host, port, database, schema, encrypt)
  * @param {Array} [props.connections=[]] - List of all existing connections for duplicate detection
  * @returns {React.ReactPortal|null} - Portal containing the modal UI, or null if not open
@@ -105,7 +104,6 @@ export default function SQLConnectionModal({
   isOpen,
   closeModal,
   onSubmit,
-  setHasChanges,
   existingConnection = null, // { database_id, engine } for edit mode
   connections = [], // List of all existing connections for duplicate detection
 }) {
@@ -251,21 +249,22 @@ export default function SQLConnectionModal({
         // EDIT MODE: Send update action with originalDatabaseId
         // This tells the backend to find the connection with originalDatabaseId
         // and replace it with the new connection data
-        onSubmit({
+        const saved = await onSubmit({
           ...connectionData,
           action: "update",
           originalDatabaseId: originalDatabaseId,
         });
+        if (!saved) return false;
       } else {
         // CREATE MODE: Send add action
         // Backend will check for duplicates and add if unique
-        onSubmit({
+        const saved = await onSubmit({
           ...connectionData,
           action: "add",
         });
+        if (!saved) return false;
       }
 
-      setHasChanges(true);
       handleClose();
     } catch (error) {
       console.error("Error validating connection:", error);

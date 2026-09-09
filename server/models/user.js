@@ -591,6 +591,11 @@ const User = {
    * @returns {Promise<{user: Object|null, error: string|null}>}
    */
   createSuperAdmin: async function ({ username, email, password }) {
+    // A fresh HTTP server starts listening before its async boot callback has finished
+    // seeding built-in roles. Onboarding can therefore arrive before `super-admin`
+    // exists unless owner creation explicitly waits for the shared seed operation.
+    await Role.seed();
+
     if (await Role.currentSuperAdmin())
       return { user: null, error: "This instance already has an owner." };
 

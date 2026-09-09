@@ -1,9 +1,19 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
+import AgentFlows from "@/models/agentFlows";
 import showToast from "@/utils/toast";
-import { userCan, PERMISSIONS, SUPER_ADMIN_ROLE } from "@/utils/permissions";
+import paths from "@/utils/paths";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import SQLConnectionModal from "@/pages/Admin/Agents/SQLConnectorSelection/SQLConnectionModal";
+import {
+  userCan,
+  workspaceCan,
+  PERMISSIONS,
+  WORKSPACE_PERMISSIONS,
+} from "@/utils/permissions";
 import { userFromStorage } from "@/utils/request";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -11,7 +21,6 @@ import Toggle from "@/components/lib/Toggle";
 import {
   getDefaultSkills,
   getConfigurableSkills,
-  getAppIntegrationSkills,
 } from "@/pages/Admin/Agents/skills.jsx";
 import { getSubSkillsFor } from "./subSkills";
 import { SEARCH_PROVIDERS } from "@/pages/Admin/Agents/WebSearchSelection";
@@ -23,15 +32,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   Bot,
   Brain,
-  Package,
-  Plug,
+  Database,
   Server,
+  Settings,
   SlidersHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
   Workflow,
   Wrench,
 } from "lucide-react";
+
+/** Nav key for the panel that manages this workspace's SQL connections. */
+const SQL_MANAGER_KEY = "workspace-sql-connections";
+
+/** Nav key for the panel that builds and removes this workspace's agent flows. */
+const FLOW_MANAGER_KEY = "workspace-agent-flows";
 
 /** Sentinel for "inherit the instance-wide engine" (Radix Select rejects ""). */
 const INHERIT_SEARCH_PROVIDER = "__instance__";
@@ -117,19 +142,53 @@ export default function AgentSkillSelection({
     fileSystemAgentAvailable: false,
     createFilesAgentAvailable: false,
   });
+  const navigate = useNavigate();
+  const [confirm, setConfirm] = useState(null);
+  // Bumped after a flow is deleted so the catalog refetches; the flow list lives in
+  // the same payload as the rest of the skill catalog.
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [sqlModalOpen, setSqlModalOpen] = useState(false);
+  const [editingConnection, setEditingConnection] = useState(null);
   const currentUser = userFromStorage();
   const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
-  // #TEMPORARILY_HIDDEN: Advanced agent menus are visible only to super admins.
-  const isSuperAdmin = currentUser?.role === SUPER_ADMIN_ROLE;
+  // Toggling a flow on for this workspace is part of managing agent skills; building
+  // one is a separate, wider capability, so the build/edit/delete affordances below
+  // are gated on their own permission.
+  const canManageFlows = workspaceCan(
+    WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
+    workspace?.slug,
+    currentUser
+  );
+  // Supplying a database credential is its own capability, separate from switching an
+  // already-configured connection on for this workspace.
+  const canManageSqlConnections = workspaceCan(
+    WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+    workspace?.slug,
+    currentUser
+  );
 
   useEffect(() => {
     async function fetchSkills() {
       if (!workspace?.slug) return;
-      const [skills, fsAvailable, createFilesAvailable] = await Promise.all([
-        Workspace.agentSkills(workspace.slug),
-        System.isFileSystemAgentAvailable(),
-        System.isCreateFilesAgentAvailable(),
-      ]);
+      // These two only decide whether a single host-dependent skill is offered, but
+      // they used to sit in a `Promise.all` with the catalog fetch - so whenever one of
+      // the availability probes failed or hung, the whole screen came up empty and no
+      // skills, flows or MCP servers were listed at all. Settle them independently and
+      // treat a failure as "not available".
+      const [skillsResult, fsResult, createFilesResult] =
+        await Promise.allSettled([
+          Workspace.agentSkills(workspace.slug),
+          System.isFileSystemAgentAvailable(),
+          System.isCreateFilesAgentAvailable(),
+        ]);
+      const skills =
+        skillsResult.status === "fulfilled" ? skillsResult.value : null;
+      const fsAvailable =
+        fsResult.status === "fulfilled" ? fsResult.value : false;
+      const createFilesAvailable =
+        createFilesResult.status === "fulfilled"
+          ? createFilesResult.value
+          : false;
       setConfigured(skills?.configured ?? false);
       setConfig(skills?.config ?? null);
       setCatalog(skills?.catalog ?? null);
@@ -177,63 +236,103 @@ export default function AgentSkillSelection({
       const withEmptyState = (items, category, text) =>
         items.length > 0 ? items : [emptyNavItem(category, text)];
 
-      const advancedNavItems = isSuperAdmin
-        ? [
-            // Integrations whose credential an administrator has not supplied are
-            // filtered out by `canShow`, so an all-unconfigured instance lands on
-            // the empty state rather than on unusable toggles.
-            ...withEmptyState(
-              toNavItems(
-                "App integrations",
-                getAppIntegrationSkills(t),
-                resolvedConfig.activeSkills
-              ),
-              "App integrations",
-              "No integrations connected on this instance."
-            ),
-            ...withEmptyState(
-              (skills?.catalog?.importedSkills ?? []).map((item) => ({
-                key: `imported:${item.id}`,
-                category: "Custom skills",
-                title: item.name,
-                icon: Package,
-                status: resolvedConfig.activeImportedSkills?.includes(item.id)
-                  ? "On"
-                  : "Off",
-              })),
-              "Custom skills",
-              "No custom skills installed on this instance."
-            ),
-            ...withEmptyState(
-              (skills?.catalog?.flows ?? []).map((item) => ({
-                key: `flow:${item.id}`,
-                category: "Agent flows",
-                title: item.name,
-                icon: Workflow,
-                status: resolvedConfig.activeFlows?.includes(item.id)
-                  ? "On"
-                  : "Off",
-              })),
-              "Agent flows",
-              "No agent flows on this instance."
-            ),
-            ...withEmptyState(
-              (skills?.catalog?.mcpServers ?? []).map((item) => ({
-                key: `mcp:${item.id}`,
-                category: "MCP servers",
-                title: item.name,
-                icon: Server,
-                status:
-                  resolvedConfig.activeMcpServers == null ||
-                  resolvedConfig.activeMcpServers?.includes(item.id)
-                    ? "On"
-                    : "Off",
-              })),
-              "MCP servers",
-              "No MCP servers running on this instance."
-            ),
-          ]
-        : [];
+      const advancedNavItems = [
+        ...withEmptyState(
+          (skills?.catalog?.mcpServers ?? []).map((item) => ({
+            key: `mcp:${item.id}`,
+            category: "MCP servers",
+            title: item.name,
+            icon: Server,
+            status:
+              resolvedConfig.activeMcpServers == null ||
+              resolvedConfig.activeMcpServers?.includes(item.id)
+                ? "On"
+                : "Off",
+          })),
+          "MCP servers",
+          "No MCP servers running on this instance."
+        ),
+      ];
+
+      // Agent flows are listed separately from `advancedNavItems` so workspace-owned
+      // and admin-provided flows can be identified at a glance, with the builder action
+      // kept at the top of the section.
+      const flowCatalog = skills?.catalog?.flows ?? [];
+      const flowCategory = t("agent-panel.agent-flows");
+      const flowNavItem = (item) => ({
+        key: `flow:${item.id}`,
+        category: flowCategory,
+        title: item.name,
+        badge:
+          item.scope === "workspace"
+            ? t("agent-flow.workspace-owned")
+            : t("agent-flow.shared"),
+        icon: Workflow,
+        status: resolvedConfig.activeFlows?.includes(item.id) ? "On" : "Off",
+      });
+
+      const flowNavItems = [
+        // Keep the builder action in the same place as the instance Agent Flows page,
+        // but route to the workspace-aware builder so newly created flows retain the
+        // correct owner.
+        ...(canManageFlows
+          ? [
+              {
+                key: FLOW_MANAGER_KEY,
+                category: flowCategory,
+                title: t("agent-panel.open-builder"),
+                icon: Plus,
+                status: null,
+                accent: true,
+                to: paths.workspace.agents.builder(workspace.slug),
+              },
+            ]
+          : []),
+        ...withEmptyState(
+          flowCatalog.map(flowNavItem),
+          flowCategory,
+          t("ui.no-agent-flows")
+        ),
+      ];
+
+      // SQL connections follow the same shape as agent flows: a create action at the
+      // top, then the workspace's own connections and the shared ones, each badged so
+      // it is obvious which can be edited here.
+      const sqlCatalog = skills?.catalog?.sqlConnections ?? [];
+      const sqlCategory = t("agent-panel.sql-connections");
+      const sqlNavItem = (item) => ({
+        key: `sql:${item.id}`,
+        category: sqlCategory,
+        title: item.name,
+        badge:
+          item.scope === "workspace"
+            ? t("agent-flow.workspace-owned")
+            : t("agent-flow.shared"),
+        icon: Database,
+        status: resolvedConfig.activeSqlConnections?.includes(item.id)
+          ? "On"
+          : "Off",
+      });
+
+      const sqlNavItems = [
+        ...(canManageSqlConnections
+          ? [
+              {
+                key: SQL_MANAGER_KEY,
+                category: sqlCategory,
+                title: t("agent-panel.new-sql-connection"),
+                icon: Plus,
+                status: null,
+                accent: true,
+              },
+            ]
+          : []),
+        ...withEmptyState(
+          sqlCatalog.map(sqlNavItem),
+          sqlCategory,
+          t("agent-panel.no-sql-connections")
+        ),
+      ];
 
       onNavigationChange?.([
         {
@@ -255,12 +354,95 @@ export default function AgentSkillSelection({
           }),
           resolvedConfig.activeSkills
         ),
+        ...flowNavItems,
+        ...sqlNavItems,
         ...advancedNavItems,
       ]);
       setLoading(false);
     }
     fetchSkills();
-  }, [isSuperAdmin, isSystemAdmin, onNavigationChange, t, workspace?.slug]);
+  }, [
+    canManageFlows,
+    canManageSqlConnections,
+    isSystemAdmin,
+    onNavigationChange,
+    t,
+    workspace?.slug,
+    refreshKey,
+  ]);
+
+  /**
+   * Remove a flow this workspace owns. Global flows shared in by an admin are not
+   * deletable from here - other workspaces rely on them - so the caller only offers
+   * this for `scope === "workspace"` entries.
+   */
+  function deleteFlow(flow) {
+    setConfirm({
+      title: "Delete flow",
+      description: `"${flow.name}" will be removed from this workspace. This cannot be undone.`,
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await AgentFlows.workspace.deleteFlow(
+          workspace.slug,
+          flow.id
+        );
+        if (!success)
+          return showToast(error || "Failed to delete flow", "error");
+        showToast("Flow deleted", "success");
+        setRefreshKey((key) => key + 1);
+      },
+    });
+  }
+
+  /**
+   * Persist a connection from the shared modal. It emits the same
+   * `{action, database_id, engine, connectionString, originalDatabaseId}` shape the
+   * admin screen uses, which maps onto the workspace-scoped routes directly.
+   */
+  async function saveSqlConnection(payload = {}) {
+    const body = {
+      database_id: payload.database_id,
+      engine: payload.engine,
+      connectionString: payload.connectionString,
+      ...(payload.schema ? { schema: payload.schema } : {}),
+    };
+    const { success, error } =
+      payload.action === "update"
+        ? await Workspace.sqlConnections.update(
+            workspace.slug,
+            payload.originalDatabaseId,
+            body
+          )
+        : await Workspace.sqlConnections.create(workspace.slug, body);
+
+    if (!success)
+      return showToast(error || "Failed to save connection", "error");
+    showToast("Connection saved", "success");
+    setSqlModalOpen(false);
+    setEditingConnection(null);
+    setRefreshKey((key) => key + 1);
+  }
+
+  /** Remove a connection this workspace owns. */
+  function deleteSqlConnection(connection) {
+    setConfirm({
+      title: "Delete connection",
+      description: `"${connection.name}" will be removed from this workspace. Agents here will no longer be able to query it.`,
+      confirmText: "Delete",
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await Workspace.sqlConnections.delete(
+          workspace.slug,
+          connection.id
+        );
+        if (!success)
+          return showToast(error || "Failed to delete connection", "error");
+        showToast("Connection deleted", "success");
+        setRefreshKey((key) => key + 1);
+      },
+    });
+  }
 
   /**
    * Toggle membership of `id` within one of the config's string-array fields.
@@ -388,29 +570,18 @@ export default function AgentSkillSelection({
     );
 
   const allConfigurableSkills = getConfigurableSkills(t, availability);
-  const allAppIntegrationSkills = getAppIntegrationSkills(t);
 
   const defaultSkills = getDefaultSkills(t);
   const configurableSkills = usableSkills(allConfigurableSkills);
-  const appIntegrationSkills = isSuperAdmin
-    ? usableSkills(allAppIntegrationSkills)
-    : {};
-  const hiddenSkillCount =
-    countHidden(allConfigurableSkills) +
-    (isSuperAdmin ? countHidden(allAppIntegrationSkills) : 0);
+  const hiddenSkillCount = countHidden(allConfigurableSkills);
 
   const focusedSkill =
-    defaultSkills[focusSkillId] ??
-    configurableSkills[focusSkillId] ??
-    appIntegrationSkills[focusSkillId] ??
-    null;
+    defaultSkills[focusSkillId] ?? configurableSkills[focusSkillId] ?? null;
   const focusedSkillCategory = defaultSkills[focusSkillId]
     ? "Default skill"
     : configurableSkills[focusSkillId]
       ? "Configurable skill"
-      : appIntegrationSkills[focusSkillId]
-        ? "App integration"
-        : null;
+      : null;
 
   if (focusedSkill) {
     const activeField =
@@ -425,7 +596,7 @@ export default function AgentSkillSelection({
         : [];
     const disabledChildren = config.disabledSubSkills?.[focusSkillId] ?? [];
     return (
-      <div className="flex max-w-[720px] flex-col gap-y-5">
+      <div className="flex w-full flex-col gap-y-5 min-[1100px]:max-w-[720px]">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 items-center gap-3">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
@@ -512,7 +683,7 @@ export default function AgentSkillSelection({
 
   if (focusSkillId === "agent-skill-settings") {
     return (
-      <div className="flex max-w-[720px] flex-col gap-y-5">
+      <div className="flex w-full flex-col gap-y-5 min-[1100px]:max-w-[720px]">
         <RuntimeGroup
           runtime={config.runtime}
           instanceRuntime={instanceRuntime}
@@ -532,12 +703,11 @@ export default function AgentSkillSelection({
   const [focusedEntityType, focusedEntityId] = String(focusSkillId ?? "").split(
     ":"
   );
-  const focusedEntityCatalog = !isSuperAdmin
-    ? null
-    : focusedEntityType === "imported"
-      ? catalog?.importedSkills
-      : focusedEntityType === "flow"
-        ? catalog?.flows
+  const focusedEntityCatalog =
+    focusedEntityType === "flow"
+      ? catalog?.flows
+      : focusedEntityType === "sql"
+        ? catalog?.sqlConnections
         : focusedEntityType === "mcp"
           ? catalog?.mcpServers
           : null;
@@ -545,21 +715,231 @@ export default function AgentSkillSelection({
     (item) => String(item.id) === focusedEntityId
   );
 
+  // Build/remove this workspace's own flows. Toggling any flow on for the agent is
+  // done from its own nav row; this panel is about authoring them.
+  // Add/edit/remove the SQL connections this workspace owns. Shared connections an
+  // admin configured are listed read-only: their credentials belong to the instance.
+  if (focusSkillId === SQL_MANAGER_KEY) {
+    const connections = catalog?.sqlConnections ?? [];
+    const owned = connections.filter((conn) => conn.scope === "workspace");
+    const shared = connections.filter((conn) => conn.scope !== "workspace");
+    return (
+      <div className="flex w-full flex-col gap-y-5 min-[1100px]:max-w-[720px]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+              <Database size={21} />
+            </span>
+            <div>
+              <h2 className="text-base font-semibold text-theme-text-primary">
+                {t("agent-panel.sql-connections")}
+              </h2>
+              <p className="mt-1 text-xs text-theme-text-secondary">
+                {t("agent-panel.sql-connections-description")}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="default"
+            className="shrink-0"
+            onClick={() => {
+              setEditingConnection(null);
+              setSqlModalOpen(true);
+            }}
+          >
+            <Plus />
+            {t("agent-panel.new-sql-connection")}
+          </Button>
+        </div>
+
+        {owned.length === 0 ? (
+          <div className="flex flex-col items-center gap-y-2 rounded-xl border border-dashed border-theme-sidebar-border py-10 text-center">
+            <Database size={20} className="text-theme-text-secondary" />
+            <p className="text-sm text-theme-text-primary">
+              {t("agent-panel.no-sql-connections")}
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+            {owned.map((conn, index) => (
+              <div
+                key={conn.id}
+                className={`flex items-center justify-between gap-4 px-4 py-3 ${
+                  index === owned.length - 1
+                    ? ""
+                    : "border-b border-theme-sidebar-border"
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-theme-text-primary">
+                    {conn.name}
+                  </p>
+                  <p className="text-xs text-theme-text-secondary">
+                    {conn.engine}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setEditingConnection(conn);
+                      setSqlModalOpen(true);
+                    }}
+                  >
+                    <Pencil />
+                    {t("agent-flow.edit")}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={t("agent-flow.delete")}
+                    onClick={() => deleteSqlConnection(conn)}
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {shared.length > 0 && (
+          <p className="text-xs text-theme-text-secondary">
+            {t("agent-panel.sql-connections-shared", { count: shared.length })}
+          </p>
+        )}
+
+        <SQLConnectionModal
+          isOpen={sqlModalOpen}
+          closeModal={() => {
+            setSqlModalOpen(false);
+            setEditingConnection(null);
+          }}
+          onSubmit={saveSqlConnection}
+          setHasChanges={() => {}}
+          existingConnection={editingConnection}
+          connections={connections.map((conn) => ({
+            database_id: conn.id,
+            engine: conn.engine,
+          }))}
+        />
+        <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      </div>
+    );
+  }
+
+  if (focusSkillId === FLOW_MANAGER_KEY) {
+    const flows = catalog?.flows ?? [];
+    const owned = flows.filter((flow) => flow.scope === "workspace");
+    const shared = flows.filter((flow) => flow.scope !== "workspace");
+    return (
+      <div className="flex w-full flex-col gap-y-5 min-[1100px]:max-w-[720px]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+              <Workflow size={21} />
+            </span>
+            <div>
+              <h2 className="text-base font-semibold text-theme-text-primary">
+                Agent flows
+              </h2>
+              <p className="mt-1 text-xs text-theme-text-secondary">
+                Flows built here belong to this workspace and run nowhere else.
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="default"
+            className="shrink-0"
+            onClick={() =>
+              navigate(paths.workspace.agents.builder(workspace.slug))
+            }
+          >
+            <Plus />
+            New flow
+          </Button>
+        </div>
+
+        {owned.length === 0 ? (
+          <div className="flex flex-col items-center gap-y-2 rounded-xl border border-dashed border-theme-sidebar-border py-10 text-center">
+            <Workflow size={20} className="text-theme-text-secondary" />
+            <p className="text-sm text-theme-text-primary">No flows yet</p>
+            <p className="max-w-[380px] text-xs text-theme-text-secondary">
+              Build a flow to give this workspace&apos;s agent a repeatable task
+              of its own.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+            {owned.map((flow, index) => (
+              <div
+                key={flow.id}
+                className={`flex items-center justify-between gap-4 px-4 py-3 ${
+                  index === owned.length - 1
+                    ? ""
+                    : "border-b border-theme-sidebar-border"
+                }`}
+              >
+                <p className="min-w-0 truncate text-sm font-medium text-theme-text-primary">
+                  {flow.name}
+                </p>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Edit ${flow.name}`}
+                    onClick={() =>
+                      navigate(
+                        paths.workspace.agents.editFlow(workspace.slug, flow.id)
+                      )
+                    }
+                  >
+                    <Pencil />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Delete ${flow.name}`}
+                    onClick={() => deleteFlow(flow)}
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {shared.length > 0 && (
+          <p className="text-xs text-theme-text-secondary">
+            {shared.length} flow{shared.length === 1 ? " is" : "s are"} shared
+            with this workspace by an administrator. Switch{" "}
+            {shared.length === 1 ? "it" : "them"} on from the list on the left;
+            editing {shared.length === 1 ? "it" : "them"} is done instance-wide.
+          </p>
+        )}
+
+        <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      </div>
+    );
+  }
+
   if (focusedEntity) {
     const entityConfig =
-      focusedEntityType === "imported"
+      focusedEntityType === "flow"
         ? {
-            label: "Custom skill",
-            Icon: Package,
-            field: "activeImportedSkills",
-            activeIds: config.activeImportedSkills ?? [],
+            label: "Agent flow",
+            Icon: Workflow,
+            field: "activeFlows",
+            activeIds: config.activeFlows ?? [],
           }
-        : focusedEntityType === "flow"
+        : focusedEntityType === "sql"
           ? {
-              label: "Agent flow",
-              Icon: Workflow,
-              field: "activeFlows",
-              activeIds: config.activeFlows ?? [],
+              label: "SQL connection",
+              Icon: Database,
+              field: "activeSqlConnections",
+              activeIds: config.activeSqlConnections ?? [],
             }
           : {
               label: "MCP server",
@@ -570,53 +950,164 @@ export default function AgentSkillSelection({
                 (catalog?.mcpServers ?? []).map((server) => server.id),
             };
     const EntityIcon = entityConfig.Icon;
+    // Only a flow this workspace owns can be opened in the builder. An admin-provided
+    // flow is instance-wide - other workspaces run the same definition - so it stays
+    // toggle-only here and is edited from /settings/agent-flows.
+    const canEditThisFlow =
+      focusedEntityType === "flow" &&
+      canManageFlows &&
+      focusedEntity.scope === "workspace";
+    // Same rule for connections: only one this workspace owns is editable here, and
+    // editing opens the shared modal rather than a separate screen.
+    const canEditThisConnection =
+      focusedEntityType === "sql" &&
+      canManageSqlConnections &&
+      focusedEntity.scope === "workspace";
+    const handleEntityToggle = (checked) => {
+      if (focusedEntityType !== "mcp") {
+        toggleInList(entityConfig.field, focusedEntity.id, checked);
+        return;
+      }
+      const current = Array.isArray(config.activeMcpServers)
+        ? config.activeMcpServers
+        : (catalog?.mcpServers ?? []).map((server) => server.id);
+      const next = checked
+        ? [...new Set([...current, focusedEntity.id])]
+        : current.filter((item) => item !== focusedEntity.id);
+      setConfig((prev) => ({ ...prev, activeMcpServers: next }));
+      onItemStatusChange?.(focusedEntity.id, checked);
+      setHasChanges(true);
+    };
     return (
-      <div className="flex max-w-[720px] flex-col gap-y-5">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-3">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
-              <EntityIcon size={21} />
-            </span>
-            <div>
-              <h2 className="text-base font-semibold text-theme-text-primary">
-                {focusedEntity.name}
-              </h2>
-              <p className="mt-1 text-xs text-theme-text-secondary">
-                {entityConfig.label}
-              </p>
+      <>
+        <div className="flex w-full flex-col gap-y-5 min-[1100px]:max-w-[720px]">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-3">
+              {focusedEntityType === "flow" ? (
+                <EntityIcon size={24} className="shrink-0" />
+              ) : (
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+                  <EntityIcon size={21} />
+                </span>
+              )}
+              <div>
+                <h2 className="text-base font-semibold text-theme-text-primary">
+                  {focusedEntity.name}
+                </h2>
+                <p className="mt-1 text-xs text-theme-text-secondary">
+                  {entityConfig.label}
+                </p>
+              </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-x-2">
+              <Toggle
+                size="lg"
+                enabled={entityConfig.activeIds.includes(focusedEntity.id)}
+                onChange={handleEntityToggle}
+              />
+              {canEditThisFlow && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={t("agent-flow.manage")}
+                      />
+                    }
+                  >
+                    <Settings />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem
+                      onClick={() =>
+                        navigate(
+                          paths.workspace.agents.editFlow(
+                            workspace.slug,
+                            focusedEntity.id
+                          )
+                        )
+                      }
+                    >
+                      <Pencil />
+                      {t("agent-flow.edit")}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => deleteFlow(focusedEntity)}
+                    >
+                      <Trash2 />
+                      {t("agent-flow.delete")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              {canEditThisConnection && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={t("agent-flow.manage")}
+                      />
+                    }
+                  >
+                    <Settings />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setEditingConnection(focusedEntity);
+                        setSqlModalOpen(true);
+                      }}
+                    >
+                      <Pencil />
+                      {t("agent-flow.edit")}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => deleteSqlConnection(focusedEntity)}
+                    >
+                      <Trash2 />
+                      {t("agent-flow.delete")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
-          <Toggle
-            size="lg"
-            enabled={entityConfig.activeIds.includes(focusedEntity.id)}
-            onChange={(checked) => {
-              if (focusedEntityType !== "mcp") {
-                toggleInList(entityConfig.field, focusedEntity.id, checked);
-                return;
-              }
-              const current = Array.isArray(config.activeMcpServers)
-                ? config.activeMcpServers
-                : (catalog?.mcpServers ?? []).map((server) => server.id);
-              const next = checked
-                ? [...new Set([...current, focusedEntity.id])]
-                : current.filter((item) => item !== focusedEntity.id);
-              setConfig((prev) => ({ ...prev, activeMcpServers: next }));
-              onItemStatusChange?.(focusedEntity.id, checked);
-              setHasChanges(true);
-            }}
+          <div className="flex h-48 items-center justify-center rounded-xl border border-theme-sidebar-border bg-sidebar-accent/30 text-theme-text-secondary">
+            <EntityIcon size={48} />
+          </div>
+          <SkillSaveActions
+            hasChanges={hasChanges}
+            configured={configured}
+            saving={saving}
+            onSave={handleSave}
+            onReset={handleReset}
           />
         </div>
-        <div className="flex h-48 items-center justify-center rounded-xl border border-theme-sidebar-border bg-sidebar-accent/30 text-theme-text-secondary">
-          <EntityIcon size={48} />
-        </div>
-        <SkillSaveActions
-          hasChanges={hasChanges}
-          configured={configured}
-          saving={saving}
-          onSave={handleSave}
-          onReset={handleReset}
-        />
-      </div>
+        {focusedEntityType === "sql" && (
+          <SQLConnectionModal
+            isOpen={sqlModalOpen}
+            closeModal={() => {
+              setSqlModalOpen(false);
+              setEditingConnection(null);
+            }}
+            onSubmit={saveSqlConnection}
+            setHasChanges={() => {}}
+            existingConnection={editingConnection}
+            connections={(catalog?.sqlConnections ?? []).map((conn) => ({
+              database_id: conn.id,
+              engine: conn.engine,
+            }))}
+          />
+        )}
+        <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      </>
     );
   }
 
@@ -686,65 +1177,39 @@ export default function AgentSkillSelection({
         }}
       />
 
-      {isSuperAdmin && (
-        <>
-          <SkillGroup
-            title="App integrations"
-            Icon={Plug}
-            skills={appIntegrationSkills}
-            activeIds={config.activeSkills}
-            onToggle={(id, enabled) =>
-              toggleInList("activeSkills", id, enabled)
-            }
-            t={t}
-            disabledSubSkills={config.disabledSubSkills}
-            onToggleSubSkill={toggleSubSkill}
-          />
+      <EntityGroup
+        title="Agent flows"
+        Icon={Workflow}
+        emptyText="No agent flows available to this workspace yet."
+        items={catalog?.flows ?? []}
+        activeIds={config.activeFlows}
+        onToggle={(id, enabled) => toggleInList("activeFlows", id, enabled)}
+      />
 
-          <EntityGroup
-            title="Imported skills"
-            Icon={Package}
-            emptyText="No active imported skills on this instance."
-            items={catalog?.importedSkills ?? []}
-            activeIds={config.activeImportedSkills}
-            onToggle={(id, enabled) =>
-              toggleInList("activeImportedSkills", id, enabled)
-            }
-          />
-
-          <EntityGroup
-            title="Agent flows"
-            Icon={Workflow}
-            emptyText="No active agent flows on this instance."
-            items={catalog?.flows ?? []}
-            activeIds={config.activeFlows}
-            onToggle={(id, enabled) => toggleInList("activeFlows", id, enabled)}
-          />
-
-          <EntityGroup
-            title="MCP servers"
-            Icon={Server}
-            emptyText="No running MCP servers on this instance."
-            items={catalog?.mcpServers ?? []}
-            // A null list means "every running server", which is what an
-            // unconfigured workspace inherits.
-            activeIds={
-              config.activeMcpServers ??
-              (catalog?.mcpServers ?? []).map((server) => server.id)
-            }
-            onToggle={(id, enabled) => {
-              const current = Array.isArray(config.activeMcpServers)
-                ? config.activeMcpServers
-                : (catalog?.mcpServers ?? []).map((server) => server.id);
-              const next = enabled
-                ? [...new Set([...current, id])]
-                : current.filter((item) => item !== id);
-              setConfig((prev) => ({ ...prev, activeMcpServers: next }));
-              setHasChanges(true);
-            }}
-          />
-        </>
-      )}
+      <>
+        <EntityGroup
+          title="MCP servers"
+          Icon={Server}
+          emptyText="No running MCP servers on this instance."
+          items={catalog?.mcpServers ?? []}
+          // A null list means "every running server", which is what an
+          // unconfigured workspace inherits.
+          activeIds={
+            config.activeMcpServers ??
+            (catalog?.mcpServers ?? []).map((server) => server.id)
+          }
+          onToggle={(id, enabled) => {
+            const current = Array.isArray(config.activeMcpServers)
+              ? config.activeMcpServers
+              : (catalog?.mcpServers ?? []).map((server) => server.id);
+            const next = enabled
+              ? [...new Set([...current, id])]
+              : current.filter((item) => item !== id);
+            setConfig((prev) => ({ ...prev, activeMcpServers: next }));
+            setHasChanges(true);
+          }}
+        />
+      </>
 
       {hiddenSkillCount > 0 && (
         <p className="text-theme-text-primary/40 text-xs">
@@ -773,6 +1238,8 @@ export default function AgentSkillSelection({
           </Button>
         )}
       </div>
+
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </div>
   );
 }
@@ -1005,12 +1472,12 @@ function SearchProviderPicker({
     : instanceEngine;
 
   return (
-    <div className="flex flex-col gap-y-1 ml-6 pl-3 border-l border-theme-sidebar-border">
+    <div className="ml-0 flex min-w-0 flex-col gap-y-1 border-l border-theme-sidebar-border pl-3 min-[640px]:ml-6">
       <label className="text-theme-text-primary text-xs font-medium">
         Search engine
       </label>
       <Select value={value ?? INHERIT_SEARCH_PROVIDER} onValueChange={onChange}>
-        <SelectTrigger className="w-fit min-w-[220px]">
+        <SelectTrigger className="w-full min-w-0 min-[640px]:w-fit min-[640px]:min-w-[220px]">
           {/* Base UI renders the raw value unless given a formatter, and the
               inherit sentinel is not something to show a user. */}
           <SelectValue placeholder={t("ui.select-engine")}>
@@ -1121,7 +1588,7 @@ function RuntimeGroup({ runtime, instanceRuntime, onChange }) {
           return (
             <div
               key={knob.field}
-              className="flex items-center justify-between gap-x-4 py-4"
+              className="flex flex-col items-stretch gap-3 py-4 min-[640px]:flex-row min-[640px]:items-center min-[640px]:justify-between min-[640px]:gap-x-4"
             >
               <div className="flex flex-1 flex-col gap-y-1">
                 <label className="text-sm font-medium text-theme-text-primary">
@@ -1142,7 +1609,7 @@ function RuntimeGroup({ runtime, instanceRuntime, onChange }) {
                     )
                   }
                 >
-                  <SelectTrigger className="w-fit min-w-[200px]">
+                  <SelectTrigger className="w-full min-[640px]:w-fit min-[640px]:min-w-[200px]">
                     <SelectValue>
                       {(selected) =>
                         selected === INHERIT_RUNTIME || selected === null

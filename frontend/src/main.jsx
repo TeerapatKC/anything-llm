@@ -62,7 +62,6 @@ const router = createBrowserRouter([
                   WORKSPACE_PERMISSIONS.MEMBERS_MANAGE,
                   WORKSPACE_PERMISSIONS.ROLES_MANAGE,
                   WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
-                  WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
                   WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
                 ]}
               />
@@ -400,22 +399,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/beta-features",
-        lazy: async () => {
-          const { default: ExperimentalFeatures } = await import(
-            "@/pages/Admin/ExperimentalFeatures"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={ExperimentalFeatures}
-                permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/settings/api-keys",
         lazy: async () => {
           const { default: GeneralApiKeys } = await import(
@@ -625,71 +608,6 @@ const router = createBrowserRouter([
       {
         path: "/onboarding/:step",
         element: <OnboardingFlow />,
-      },
-      // Experimental feature pages
-      {
-        path: "/settings/beta-features/live-document-sync/manage",
-        lazy: async () => {
-          const { default: LiveDocumentSyncManage } = await import(
-            "@/pages/Admin/ExperimentalFeatures/Features/LiveSync/manage"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={LiveDocumentSyncManage}
-                permissions={[PERMISSIONS.SYSTEM_EXPERIMENTAL]}
-              />
-            ),
-          };
-        },
-      },
-      {
-        path: "/settings/community-hub/trending",
-        lazy: async () => {
-          const { default: CommunityHubTrending } = await import(
-            "@/pages/GeneralSettings/CommunityHub/Trending"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={CommunityHubTrending}
-                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
-              />
-            ),
-          };
-        },
-      },
-      {
-        path: "/settings/community-hub/authentication",
-        lazy: async () => {
-          const { default: CommunityHubAuthentication } = await import(
-            "@/pages/GeneralSettings/CommunityHub/Authentication"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={CommunityHubAuthentication}
-                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
-              />
-            ),
-          };
-        },
-      },
-      {
-        path: "/settings/community-hub/import-item",
-        lazy: async () => {
-          const { default: CommunityHubImportItem } = await import(
-            "@/pages/GeneralSettings/CommunityHub/ImportItem"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={CommunityHubImportItem}
-                permissions={[PERMISSIONS.SYSTEM_COMMUNITY_HUB]}
-              />
-            ),
-          };
-        },
       },
       {
         path: "/settings/external-connections/telegram",

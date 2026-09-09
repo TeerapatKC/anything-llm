@@ -1,4 +1,3 @@
-const { Telemetry } = require("../../../models/telemetry");
 const { validApiKey } = require("../../../utils/middleware/validApiKey");
 const { handleAPIFileUpload } = require("../../../utils/files/multer");
 const {
@@ -163,7 +162,6 @@ function apiDocumentEndpoints(app) {
         Collector.log(
           `Document ${originalname} uploaded processed and successfully. It is now available in documents.`
         );
-        await Telemetry.sendTelemetry("document_uploaded");
         await EventLogs.logEvent("api_document_uploaded", {
           documentName: originalname,
         });
@@ -311,7 +309,6 @@ function apiDocumentEndpoints(app) {
           `Document ${originalname} uploaded, processed, and moved to folder ${folder} successfully.`
         );
 
-        await Telemetry.sendTelemetry("document_uploaded");
         await EventLogs.logEvent("api_document_uploaded", {
           documentName: originalname,
           folder,
@@ -345,7 +342,7 @@ function apiDocumentEndpoints(app) {
             schema: {
               type: 'object',
               example: {
-                "link": "https://nexusai.com",
+                "link": "https://example.com",
                 "addToWorkspaces": "workspace1,workspace2",
                 "scraperHeaders": {
                   "Authorization": "Bearer token123",
@@ -373,17 +370,17 @@ function apiDocumentEndpoints(app) {
               documents: [
                 {
                   "id": "c530dbe6-bff1-4b9e-b87f-710d539d20bc",
-                  "url": "file://useanything_com.html",
-                  "title": "useanything_com.html",
+                  "url": "file://example_com.html",
+                  "title": "example_com.html",
                   "docAuthor": "no author found",
                   "description": "No description found.",
                   "docSource": "URL link uploaded by the user.",
-                  "chunkSource": "https:nexusai.com.html",
+                  "chunkSource": "https:example.com.html",
                   "published": "1/16/2024, 3:46:33 PM",
                   "wordCount": 252,
-                  "pageContent": "NexusAI is the best....",
+                  "pageContent": "Example page content....",
                   "token_count_estimate": 447,
-                  "location": "custom-documents/url-useanything_com-c530dbe6-bff1-4b9e-b87f-710d539d20bc.json"
+                  "location": "custom-documents/url-example_com-c530dbe6-bff1-4b9e-b87f-710d539d20bc.json"
                 }
               ]
             }
@@ -436,7 +433,6 @@ function apiDocumentEndpoints(app) {
         Collector.log(
           `Link ${link} uploaded processed and successfully. It is now available in documents.`
         );
-        await Telemetry.sendTelemetry("link_uploaded");
         await EventLogs.logEvent("api_link_uploaded", {
           link,
         });
@@ -469,7 +465,7 @@ function apiDocumentEndpoints(app) {
           schema: {
             type: 'object',
             example: {
-              "textContent": "This is the raw text that will be saved as a document in NexusAI.",
+              "textContent": "This is the raw text that will be saved as a document in Nexus AI.",
               "addToWorkspaces": "workspace1,workspace2",
               "metadata": {
                 "title": "This key is required. See in /server/endpoints/api/document/index.js:287",
@@ -582,7 +578,6 @@ function apiDocumentEndpoints(app) {
         Collector.log(
           `Document created successfully. It is now available in documents.`
         );
-        await Telemetry.sendTelemetry("raw_document_uploaded");
         await EventLogs.logEvent("api_raw_document_uploaded");
 
         if (!!addToWorkspaces)
@@ -711,7 +706,6 @@ function apiDocumentEndpoints(app) {
                   type: "file",
                   cached: false,
                   pinnedWorkspaces: [],
-                  watched: false,
                   more: "data",
                 },
                 {
@@ -719,7 +713,6 @@ function apiDocumentEndpoints(app) {
                   type: "file",
                   cached: false,
                   pinnedWorkspaces: [],
-                  watched: false,
                   more: "data",
                 },
               ]
@@ -1263,10 +1256,6 @@ function apiDocumentEndpoints(app) {
         );
         response.setHeader("Content-Length", fileData.buffer.length);
         response.send(fileData.buffer);
-
-        Telemetry.sendTelemetry("agent_generated_file_downloaded", {
-          type: mimeType,
-        }).catch(() => { });
       } catch (error) {
         console.error(
           "[document/generated-files] Download error:",

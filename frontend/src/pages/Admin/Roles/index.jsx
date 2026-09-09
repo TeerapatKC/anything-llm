@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Crown, Eye, Lock, Pencil, Plus, Star, Trash2 } from "lucide-react";
 import Role, { WorkspaceRole } from "@/models/role";
 import { Button } from "@/components/ui/button";
@@ -12,8 +11,10 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableEmptyRow,
   TableHead,
   TableHeader,
+  TableLoadingRow,
   TableRow,
 } from "@/components/ui/table";
 import RoleModal from "./RoleModal";
@@ -144,37 +145,36 @@ function RolesPanel({ scope }) {
   return (
     <>
       <div className="w-full justify-end flex">
-        <Button size="lg" className="mt-3 mb-4" onClick={() => setEditing({})}>
+        <Button
+          size="lg"
+          className="mt-3 mb-4"
+          onClick={() => setEditing({})}
+          disabled={loading}
+        >
           <Plus className="h-4 w-4" /> New{" "}
           {isWorkspace ? "workspace role" : "role"}
         </Button>
       </div>
 
       <div className="overflow-x-auto">
-        {loading ? (
-          <Skeleton
-            height="50vh"
-            width="100%"
-            highlightColor="var(--theme-bg-primary)"
-            baseColor="var(--theme-bg-secondary)"
-            count={1}
-            className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-8"
-            containerClassName="flex w-full"
-          />
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead scope="col">Role</TableHead>
-                <TableHead scope="col">Permissions</TableHead>
-                <TableHead scope="col">
-                  {isWorkspace ? "Members" : "Users"}
-                </TableHead>
-                <TableHead scope="col"> </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {roles.map((role) => (
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead scope="col">Role</TableHead>
+              <TableHead scope="col">Permissions</TableHead>
+              <TableHead scope="col">
+                {isWorkspace ? "Members" : "Users"}
+              </TableHead>
+              <TableHead scope="col"> </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableLoadingRow colSpan={4} />
+            ) : roles.length === 0 ? (
+              <TableEmptyRow colSpan={4}>No roles found</TableEmptyRow>
+            ) : (
+              roles.map((role) => (
                 <TableRow key={role.id}>
                   <TableCell className="max-w-sm whitespace-normal">
                     <div className="flex items-center gap-x-2">
@@ -267,10 +267,10 @@ function RolesPanel({ scope }) {
                     </TableRowActions>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
 
       <Dialog

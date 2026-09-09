@@ -3,7 +3,7 @@ process.env.NODE_ENV === "development"
   : require("dotenv").config();
 
 const { default: slugify } = require("slugify");
-const { isValidUrl, safeJsonParse } = require("../utils/http");
+const { safeJsonParse } = require("../utils/http");
 const prisma = require("../utils/prisma");
 const { MetaGenerator } = require("../utils/boot/MetaGenerator");
 const { PGVector } = require("../utils/vectorDbProviders/pgvector");
@@ -18,28 +18,12 @@ function isNullOrNaN(value) {
   return isNaN(value);
 }
 
-/**
- * Merges a string field from source to target if it passes validation.
- * @param {Object} target - The target object to merge into
- * @param {Object} source - The source object to read from
- * @param {string} fieldName - The field name to merge
- * @param {Function|null} validator - Optional validator function that returns false to reject the value
- */
-function mergeStringField(target, source, fieldName, validator = null) {
-  const value = source[fieldName];
-  if (value && typeof value === "string" && value.trim()) {
-    if (validator && !validator(value)) return;
-    target[fieldName] = value.trim();
-  }
-}
-
 const SystemSettings = {
   /** A default system prompt that is used when no other system prompt is set or available to the function caller. */
   saneDefaultSystemPrompt:
     "Given the following conversation, relevant context, and a follow up question, reply with an answer to the current question the user is asking. The current date and time is {datetime}. Return only your response to the question given the above information following the users instructions as needed.",
-  protectedFields: ["hub_api_key", "onboarding_complete"],
+  protectedFields: ["onboarding_complete"],
   publicFields: [
-    "footer_data",
     "support_email",
     "text_splitter_chunk_size",
     "text_splitter_chunk_overlap",
@@ -50,17 +34,9 @@ const SystemSettings = {
     "disabled_agent_skills",
     "disabled_filesystem_skills",
     "disabled_create_files_skills",
-    "disabled_gmail_skills",
-    "gmail_agent_config",
-    "disabled_google_calendar_skills",
-    "google_calendar_agent_config",
-    "disabled_outlook_skills",
-    "outlook_agent_config",
-    "imported_agent_skills",
     "agent_clarifying_questions_enabled",
     "agent_clarifying_questions_max_per_turn",
     "custom_app_name",
-    "feature_flags",
     "meta_page_title",
     "meta_page_favicon",
     "memory_enabled",
@@ -68,8 +44,6 @@ const SystemSettings = {
   ],
   supportedFields: [
     "logo_filename",
-    "telemetry_id",
-    "footer_data",
     "support_email",
 
     "text_splitter_chunk_size",
@@ -79,12 +53,6 @@ const SystemSettings = {
     "disabled_agent_skills",
     "disabled_filesystem_skills",
     "disabled_create_files_skills",
-    "disabled_gmail_skills",
-    "gmail_agent_config",
-    "disabled_google_calendar_skills",
-    "google_calendar_agent_config",
-    "disabled_outlook_skills",
-    "outlook_agent_config",
     "agent_sql_connections",
     "agent_clarifying_questions_enabled",
     "agent_clarifying_questions_max_per_turn",
@@ -95,28 +63,13 @@ const SystemSettings = {
     "meta_page_title",
     "meta_page_favicon",
 
-    // beta feature flags
-    "experimental_live_file_sync",
-
     // Hub settings
-    "hub_api_key",
 
     // Memory/Personalization
     "memory_enabled",
     "memory_auto_extraction",
   ],
   validations: {
-    footer_data: (updates) => {
-      try {
-        const array = JSON.parse(updates)
-          .filter((setting) => isValidUrl(setting.url))
-          .slice(0, 3); // max of 3 items in footer.
-        return JSON.stringify(array);
-      } catch {
-        console.error(`Failed to run validation function on footer_data`);
-        return JSON.stringify([]);
-      }
-    },
     text_splitter_chunk_size: (update) => {
       try {
         if (isNullOrNaN(update)) throw new Error("Value is not a number.");
@@ -254,138 +207,6 @@ const SystemSettings = {
         return JSON.stringify([]);
       }
     },
-    disabled_gmail_skills: (updates) => {
-      try {
-        const skills = updates.split(",").filter((skill) => !!skill);
-        return JSON.stringify(skills);
-      } catch {
-        console.error(`Could not validate disabled gmail skills.`);
-        return JSON.stringify([]);
-      }
-    },
-    gmail_agent_config: async (update) => {
-      const GmailBridge = require("../utils/agents/aibitat/plugins/gmail/lib");
-      try {
-        if (!update) return JSON.stringify({});
-
-        const newConfig =
-          typeof update === "string" ? safeJsonParse(update, {}) : update;
-        const existingConfig = safeJsonParse(
-          (await SystemSettings.get({ label: "gmail_agent_config" }))?.value,
-          {}
-        );
-
-        const mergedConfig = { ...existingConfig };
-
-        mergeStringField(mergedConfig, newConfig, "deploymentId");
-        mergeStringField(
-          mergedConfig,
-          newConfig,
-          "apiKey",
-          (v) => !v.match(/^\*+$/)
-        );
-
-        return JSON.stringify(mergedConfig);
-      } catch (e) {
-        console.error(`Could not validate gmail agent config:`, e.message);
-        return JSON.stringify({});
-      } finally {
-        GmailBridge.reset();
-      }
-    },
-    disabled_google_calendar_skills: (updates) => {
-      try {
-        const skills = updates.split(",").filter((skill) => !!skill);
-        return JSON.stringify(skills);
-      } catch {
-        console.error(`Could not validate disabled google calendar skills.`);
-        return JSON.stringify([]);
-      }
-    },
-    google_calendar_agent_config: async (update) => {
-      const GoogleCalendarBridge = require("../utils/agents/aibitat/plugins/google-calendar/lib");
-      try {
-        if (!update) return JSON.stringify({});
-
-        const newConfig =
-          typeof update === "string" ? safeJsonParse(update, {}) : update;
-        const existingConfig = safeJsonParse(
-          (await SystemSettings.get({ label: "google_calendar_agent_config" }))
-            ?.value,
-          {}
-        );
-
-        const mergedConfig = { ...existingConfig };
-
-        mergeStringField(mergedConfig, newConfig, "deploymentId");
-        mergeStringField(
-          mergedConfig,
-          newConfig,
-          "apiKey",
-          (v) => !v.match(/^\*+$/)
-        );
-
-        return JSON.stringify(mergedConfig);
-      } catch (e) {
-        console.error(
-          `Could not validate google calendar agent config:`,
-          e.message
-        );
-        return JSON.stringify({});
-      } finally {
-        GoogleCalendarBridge.reset();
-      }
-    },
-    disabled_outlook_skills: (updates) => {
-      try {
-        const skills = updates.split(",").filter((skill) => !!skill);
-        return JSON.stringify(skills);
-      } catch {
-        console.error(`Could not validate disabled outlook skills.`);
-        return JSON.stringify([]);
-      }
-    },
-    outlook_agent_config: async (update) => {
-      const OutlookBridge = require("../utils/agents/aibitat/plugins/outlook/lib");
-      try {
-        if (!update) return JSON.stringify({});
-
-        const newConfig =
-          typeof update === "string" ? safeJsonParse(update, {}) : update;
-        const existingConfig = safeJsonParse(
-          (await SystemSettings.get({ label: "outlook_agent_config" }))?.value,
-          {}
-        );
-
-        const mergedConfig = { ...existingConfig };
-
-        mergeStringField(mergedConfig, newConfig, "clientId");
-        mergeStringField(mergedConfig, newConfig, "tenantId");
-        mergeStringField(
-          mergedConfig,
-          newConfig,
-          "clientSecret",
-          (v) => !v.match(/^\*+$/)
-        );
-
-        if (newConfig.accessToken !== undefined) {
-          mergedConfig.accessToken = newConfig.accessToken;
-        }
-        if (newConfig.refreshToken !== undefined) {
-          mergedConfig.refreshToken = newConfig.refreshToken;
-        }
-        if (newConfig.tokenExpiry !== undefined) {
-          mergedConfig.tokenExpiry = newConfig.tokenExpiry;
-        }
-
-        return JSON.stringify(mergedConfig);
-      } catch (e) {
-        console.error(`Could not validate outlook agent config:`, e.message);
-        return JSON.stringify({});
-      } finally {
-        OutlookBridge.reset();
-      }
-    },
     agent_sql_connections: async (updates) => {
       const existingConnections = safeJsonParse(
         (await SystemSettings.get({ label: "agent_sql_connections" }))?.value,
@@ -411,12 +232,6 @@ const SystemSettings = {
       if (!Number.isFinite(n) || n < 1) return 3;
       return Math.min(Math.floor(n), 10);
     },
-    experimental_live_file_sync: (update) => {
-      if (typeof update === "boolean")
-        return update === true ? "enabled" : "disabled";
-      if (!["enabled", "disabled"].includes(update)) return "disabled";
-      return String(update);
-    },
     meta_page_title: (newTitle) => {
       try {
         if (typeof newTitle !== "string" || !newTitle) return null;
@@ -437,10 +252,6 @@ const SystemSettings = {
       } finally {
         new MetaGenerator().clearConfig();
       }
-    },
-    hub_api_key: (apiKey) => {
-      if (!apiKey) return null;
-      return String(apiKey);
     },
     default_system_prompt: (prompt) => {
       if (typeof prompt !== "string" || !prompt) return null;
@@ -471,7 +282,6 @@ const SystemSettings = {
       StorageDir: process.env.STORAGE_DIR,
       MemoryEnabled: await this.memoriesEnabled(),
       MemoryAutoExtraction: await this.memoryAutoExtractionSetting(),
-      DisableTelemetry: process.env.DISABLE_TELEMETRY || "false",
 
       // --------------------------------------------------------
       // Embedder Provider Selection Settings & Configs
@@ -789,8 +599,6 @@ const SystemSettings = {
   markOnboardingComplete: async function () {
     try {
       await this._updateSettings({ onboarding_complete: true });
-      const { Telemetry } = require("./telemetry");
-      await Telemetry.sendTelemetry("onboarding_complete");
       return true;
     } catch (error) {
       console.error(error.message);
@@ -1098,30 +906,6 @@ const SystemSettings = {
 
     return connections;
   },
-  getFeatureFlags: async function () {
-    return {
-      experimental_live_file_sync:
-        (await SystemSettings.get({ label: "experimental_live_file_sync" }))
-          ?.value === "enabled",
-    };
-  },
-
-  /**
-   * Get user configured Community Hub Settings
-   * Connection key is used to authenticate with the Community Hub API
-   * for your account.
-   * @returns {Promise<{connectionKey: string}>}
-   */
-  hubSettings: async function () {
-    try {
-      const hubKey = await this.get({ label: "hub_api_key" });
-      return { connectionKey: hubKey?.value || null };
-    } catch (error) {
-      console.error(error.message);
-      return { connectionKey: null };
-    }
-  },
-
   simpleSSO: {
     /**
      * Gets the no login redirect URL. If the conditions below are not met, this will return null.
@@ -1168,6 +952,7 @@ function mergeConnections(existingConnections = [], updates = []) {
       engine,
       schema,
       active,
+      workspaceId,
     } = update;
 
     switch (action) {
@@ -1209,8 +994,12 @@ function mergeConnections(existingConnections = [], updates = []) {
 
         // Editing a connection's details never changes whether it's turned on -
         // that's a separate action (the toggle endpoint) from editing credentials.
-        const previousActive =
-          connectionsMap.get(originalDatabaseId)?.active ?? true;
+        const previous = connectionsMap.get(originalDatabaseId);
+        const previousActive = previous?.active ?? true;
+        // Ownership is whatever is already on disk. Taking it from the payload would
+        // let an edit re-home another workspace's connection - or hand a workspace one
+        // to the global pool - so the stored value always wins.
+        const previousOwner = previous?.workspaceId ?? null;
 
         // Remove old and add updated connection
         connectionsMap.delete(originalDatabaseId);
@@ -1219,6 +1008,7 @@ function mergeConnections(existingConnections = [], updates = []) {
           database_id: newId,
           connectionString,
           active: previousActive,
+          ...(previousOwner !== null ? { workspaceId: previousOwner } : {}),
           ...(schema && { schema }),
         });
         break;
@@ -1241,6 +1031,7 @@ function mergeConnections(existingConnections = [], updates = []) {
           database_id: slugifiedId,
           connectionString,
           active: true,
+          ...(workspaceId ? { workspaceId: Number(workspaceId) } : {}),
           ...(schema && { schema }),
         });
         break;

@@ -22,7 +22,6 @@ class NovitaProvider extends InheritMultiple([Provider, UnTooled]) {
       baseURL: "https://api.novita.ai/v3/openai",
       apiKey: process.env.NOVITA_LLM_API_KEY,
       defaultHeaders: {
-        "HTTP-Referer": "https://nexusai.com",
         "X-Novita-Source": "nexusai",
       },
     });

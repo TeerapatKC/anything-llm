@@ -30,9 +30,7 @@ const {
   agentSkillWhitelistEndpoints,
 } = require("./endpoints/agentSkillWhitelist");
 const { agentFileServerEndpoints } = require("./endpoints/agentFileServer");
-const { experimentalEndpoints } = require("./endpoints/experimental");
 const { browserExtensionEndpoints } = require("./endpoints/browserExtension");
-const { communityHubEndpoints } = require("./endpoints/communityHub");
 const { agentFlowEndpoints } = require("./endpoints/agentFlows");
 const { mcpServersEndpoints } = require("./endpoints/mcpServers");
 const { mobileEndpoints } = require("./endpoints/mobile");
@@ -40,12 +38,6 @@ const { webPushEndpoints } = require("./endpoints/webPush");
 const { telegramEndpoints } = require("./endpoints/telegram");
 const { lineEndpoints } = require("./endpoints/line");
 const { scheduledJobEndpoints } = require("./endpoints/scheduledJobs");
-const {
-  outlookAgentEndpoints,
-} = require("./endpoints/utils/outlookAgentUtils");
-const {
-  googleAgentSkillEndpoints,
-} = require("./endpoints/utils/googleAgentSkillEndpoints");
 const { memoryEndpoints } = require("./endpoints/memory");
 const { roleEndpoints } = require("./endpoints/roles");
 const { superAdminEndpoints } = require("./endpoints/superAdmin");
@@ -108,9 +100,7 @@ documentEndpoints(apiRouter);
 agentWebsocket(apiRouter);
 agentSkillWhitelistEndpoints(apiRouter);
 agentFileServerEndpoints(apiRouter);
-experimentalEndpoints(apiRouter);
 developerEndpoints(app, apiRouter);
-communityHubEndpoints(apiRouter);
 agentFlowEndpoints(apiRouter);
 mcpServersEndpoints(apiRouter);
 mobileEndpoints(apiRouter);
@@ -118,8 +108,6 @@ webPushEndpoints(apiRouter);
 telegramEndpoints(apiRouter);
 lineEndpoints(apiRouter);
 scheduledJobEndpoints(apiRouter);
-outlookAgentEndpoints(apiRouter);
-googleAgentSkillEndpoints(apiRouter);
 memoryEndpoints(apiRouter);
 roleEndpoints(apiRouter);
 superAdminEndpoints(apiRouter);

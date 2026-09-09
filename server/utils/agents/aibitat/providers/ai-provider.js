@@ -257,7 +257,7 @@ class Provider {
           configuration: {
             baseURL: "https://openrouter.ai/api/v1",
             defaultHeaders: {
-              "HTTP-Referer": "https://nexusai.com",
+              "HTTP-Referer": "https://Nexus AI.com",
               "X-Title": "NexusAI",
             },
           },
@@ -544,7 +544,7 @@ class Provider {
   static contextLimit(provider = "openai", modelName) {
     if (typeof provider !== "string") {
       console.log(
-        `\x1b[43m\x1b[30m[.contextLimit warning] A non-string provider for .contextLimit was given — Returning fallback context limit of 8000.\x1b[0m\n\x1b[43m\x1b[30mThis is a bug and should be reported so that context windows are properly managed by NexusAI.\x1b[0m`
+        `\x1b[43m\x1b[30m[.contextLimit warning] A non-string provider for .contextLimit was given — Returning fallback context limit of 8000.\x1b[0m\n\x1b[43m\x1b[30mThis is a bug and should be reported so that context windows are properly managed by Nexus AI.\x1b[0m`
       );
       console.trace();
       return 8_000;

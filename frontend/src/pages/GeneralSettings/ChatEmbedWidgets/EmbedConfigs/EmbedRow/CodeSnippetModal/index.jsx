@@ -37,15 +37,12 @@ export default function CodeSnippetModal({ embed }) {
 function createScriptTagSnippet(embed, scriptHost, serverHost) {
   return `<!--
 Paste this script at the bottom of your HTML before the </body> tag.
-See more style and config options on our docs
-https://github.com/Mintplex-Labs/nexusai-embed/blob/main/README.md
 -->
 <script
   data-embed-id="${embed.uuid}"
   data-base-api-url="${serverHost}/api/embed"
   src="${scriptHost}/embed/nexusai-chat-widget.min.js">
 </script>
-<!-- Nexus AI (https://nexusai.com) -->
 `;
 }
 
@@ -78,14 +75,6 @@ const ScriptTag = ({ embed }) => {
         <p className="text-theme-text-secondary text-xs">
           {t("help.code-snippet-modal")}
         </p>
-        <a
-          href="https://github.com/Mintplex-Labs/nexusai-embed/blob/main/README.md"
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-300 light:text-blue-500 hover:underline"
-        >
-          View all style and configuration options &rarr;
-        </a>
       </div>
       <button
         disabled={copied}

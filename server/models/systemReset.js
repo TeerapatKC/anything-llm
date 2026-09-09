@@ -47,7 +47,7 @@ const RESET_SCOPES = [
     key: "documents",
     label: "Document library",
     description:
-      "The shared document store, its cached vectors and any pending sync jobs. Embeddings already inside a workspace are removed with it.",
+      "The shared document store and its cached vectors. Embeddings already inside a workspace are removed with it.",
     implies: [],
   },
   {
@@ -75,7 +75,7 @@ const RESET_SCOPES = [
     key: "customization",
     label: "Appearance & customization",
     description:
-      "Branding, logo, footer links, welcome messages and other look-and-feel settings, back to their defaults. LLM, embedder and vector database configuration is not touched.",
+      "Branding, logo, welcome messages and other look-and-feel settings, back to their defaults. LLM, embedder and vector database configuration is not touched.",
     implies: [],
   },
 ];
@@ -89,8 +89,6 @@ const RESET_SCOPE_KEYS = RESET_SCOPES.map((scope) => scope.key);
 const PRESERVED_SETTINGS = [
   "multi_user_mode",
   "reserved_permissions",
-  "telemetry_id",
-  "hub_api_key",
   "agent_sql_connections",
   "text_splitter_chunk_size",
   "text_splitter_chunk_overlap",
@@ -106,8 +104,6 @@ const PRESERVED_SETTINGS = [
  * the first time round, so this list does not have to encode the dependency graph.
  */
 const FACTORY_WIPE_TABLES = [
-  "document_sync_executions",
-  "document_sync_queues",
   "workspace_parsed_files",
   "workspace_agent_invocations",
   "workspace_chats",
@@ -148,7 +144,7 @@ const FACTORY_WIPE_TABLES = [
 
 /**
  * Environment variables a factory reset leaves alone even though `updateENV` manages
- * them. Everything else it manages - every provider credential, the LLM and vector
+ * them. Everything it manages - every provider credential, the LLM and vector
  * database selection, and the JWT secret - is cleared, because leaving any of them behind
  * would have the next boot decide the instance had already been set up.
  *
@@ -156,7 +152,7 @@ const FACTORY_WIPE_TABLES = [
  * `SIG_KEY`, `SIG_SALT`, the port settings, the password policy and any hand-written keys
  * are not in its map, so they survive untouched.
  */
-const PRESERVED_ENV_KEYS = ["DISABLE_TELEMETRY"];
+const PRESERVED_ENV_KEYS = [];
 
 const SystemReset = {
   SCOPES: RESET_SCOPES,
@@ -219,7 +215,6 @@ const SystemReset = {
           prisma.workspace_documents.count()
         ),
         cachedVectors: await count(() => prisma.document_vectors.count()),
-        pendingSyncs: await count(() => prisma.document_sync_queues.count()),
       },
       users: {
         users: await count(() =>
@@ -570,7 +565,6 @@ const SystemReset = {
       select: { id: true, slug: true },
     });
 
-    await prisma.document_sync_queues.deleteMany({});
     await prisma.document_vectors.deleteMany({});
     await prisma.workspace_documents.deleteMany({});
     const { count } = await prisma.workspaces.deleteMany({});
@@ -602,10 +596,6 @@ const SystemReset = {
    * left behind would reappear in the library the next time it is listed.
    */
   _reset_documents: async function () {
-    // Sync queues cascade from the documents they watch, so they are cleared first -
-    // otherwise they would be gone before the count could report them.
-    const { count: pendingSyncs } =
-      await prisma.document_sync_queues.deleteMany({});
     const { count: cachedVectors } = await prisma.document_vectors.deleteMany(
       {}
     );
@@ -640,7 +630,7 @@ const SystemReset = {
       console.error("Could not clear the document store.", error.message);
     }
 
-    return { embeddedDocuments, cachedVectors, pendingSyncs, filesRemoved };
+    return { embeddedDocuments, cachedVectors, filesRemoved };
   },
 
   /**

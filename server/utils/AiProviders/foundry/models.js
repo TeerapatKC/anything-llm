@@ -25,7 +25,7 @@ const FoundryCatalog = require("./catalog.js");
  *  - `rest`   A pre-0.10 daemon that serves the management routes
  *             (/foundry/list, /openai/models, /openai/download). This is the
  *             only configuration where models can be browsed and installed
- *             from NexusAI.
+ *             from Nexus AI.
  *  - `openai` A 0.10+ daemon, which dropped every management route and serves
  *             only the OpenAI-compatible /v1 surface. Lists only what is
  *             installed; management is a host-side action via the CLI.

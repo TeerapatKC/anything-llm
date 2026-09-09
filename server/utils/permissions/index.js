@@ -71,13 +71,6 @@ const PERMISSIONS = {
   SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
 
-  SYSTEM_COMMUNITY_HUB: "system.community_hub",
-  SYSTEM_COMMUNITY_HUB_BROWSE: "system.community_hub.browse",
-  SYSTEM_COMMUNITY_HUB_IMPORT: "system.community_hub.import",
-  SYSTEM_COMMUNITY_HUB_PUBLISH: "system.community_hub.publish",
-
-  SYSTEM_EXPERIMENTAL: "system.experimental",
-
   // People
   USERS_VIEW: "users.view",
   USERS_MANAGE: "users.manage",
@@ -141,8 +134,6 @@ const PERMISSIONS = {
 
   // Outbound integrations that act on the instance's behalf
   INTEGRATIONS_TELEGRAM: "integrations.telegram",
-  INTEGRATIONS_GOOGLE: "integrations.google",
-  INTEGRATIONS_OUTLOOK: "integrations.outlook",
   INTEGRATIONS_LINE: "integrations.line",
 };
 
@@ -184,6 +175,7 @@ const WORKSPACE_PERMISSIONS = {
 
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
+  SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",
@@ -302,8 +294,8 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_SETTINGS_PRIVACY,
-    label: "Configure privacy & telemetry",
-    description: "Data handling preferences and anonymous telemetry.",
+    label: "Configure privacy",
+    description: "Data handling and personalization preferences.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
@@ -336,8 +328,8 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_APPEARANCE_FOOTER,
-    label: "Change footer & support links",
-    description: "Footer links and the support email shown to users.",
+    label: "Change support email",
+    description: "The support email shown to users.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_APPEARANCE,
   },
@@ -378,42 +370,6 @@ const PERMISSION_CATALOG = [
     key: PERMISSIONS.SYSTEM_MOBILE,
     label: "Manage mobile devices",
     description: "Approve, rename and revoke paired mobile/desktop devices.",
-    category: "system",
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-    label: "Manage community hub",
-    description:
-      "Everything to do with the community hub. Tick the parts below for narrower access.",
-    category: "system",
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB_BROWSE,
-    label: "Browse the community hub",
-    description:
-      "Search the hub and manage the hub connection key, without importing anything.",
-    category: "system",
-    parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB_IMPORT,
-    label: "Import from the community hub",
-    description: "Pull hub items (skills, prompts, flows) into this instance.",
-    category: "system",
-    parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-  },
-  {
-    key: PERMISSIONS.SYSTEM_COMMUNITY_HUB_PUBLISH,
-    label: "Publish to the community hub",
-    description: "Push items from this instance out to the community hub.",
-    category: "system",
-    parent: PERMISSIONS.SYSTEM_COMMUNITY_HUB,
-  },
-  {
-    key: PERMISSIONS.SYSTEM_EXPERIMENTAL,
-    label: "Manage experimental features",
-    description:
-      "Toggle experimental features such as live document sync and imported agent plugins.",
     category: "system",
   },
 
@@ -722,20 +678,6 @@ const PERMISSION_CATALOG = [
     category: "integrations",
   },
   {
-    key: PERMISSIONS.INTEGRATIONS_GOOGLE,
-    label: "Manage Google integration",
-    description:
-      "Connect and revoke the Google account agents use for Gmail and Drive skills.",
-    category: "integrations",
-  },
-  {
-    key: PERMISSIONS.INTEGRATIONS_OUTLOOK,
-    label: "Manage Outlook integration",
-    description:
-      "Connect and revoke the Microsoft account agents use for Outlook skills.",
-    category: "integrations",
-  },
-  {
     key: PERMISSIONS.INTEGRATIONS_LINE,
     label: "View LINE webhook integration",
     description:
@@ -971,6 +913,17 @@ const PERMISSION_CATALOG = [
     scope: SCOPES.WORKSPACE,
   },
   {
+    // Same reasoning as agent flows: supplying database credentials is a wider
+    // capability than editing this workspace's settings, so it is ticked on its own
+    // rather than riding on SETTINGS_MANAGE.
+    key: WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+    label: "Manage workspace SQL connections",
+    description:
+      "Add, edit and remove SQL database connections that belong to this workspace. Connections made here are usable only inside it.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
     key: WORKSPACE_PERMISSIONS.MEMBERS_MANAGE,
     label: "Manage members",
     description:
@@ -1132,7 +1085,7 @@ function expandPermissions(permissionKeys = []) {
 }
 
 /**
- * The instance-wide roles that ship with NexusAI. Seeded on boot, cannot be deleted
+ * The instance-wide roles that ship with Nexus AI. Seeded on boot, cannot be deleted
  * or renamed, and their permission sets reproduce the behavior of the legacy hardcoded
  * admin/manager/default roles so upgrading an existing instance changes nothing.
  *
@@ -1197,7 +1150,6 @@ const SYSTEM_ROLES = [
       PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_APPEARANCE,
       PERMISSIONS.SYSTEM_BROWSER_EXTENSION,
-      PERMISSIONS.SYSTEM_EXPERIMENTAL,
     ],
     singleton: false,
     immutable: false,
@@ -1222,7 +1174,7 @@ const SYSTEM_ROLES = [
 }));
 
 /**
- * The reusable workspace roles that ship with NexusAI. One of these is assigned to
+ * The reusable workspace roles that ship with Nexus AI. One of these is assigned to
  * each `workspace_users` row, so the same account can hold different powers in
  * different workspaces.
  */
@@ -1366,7 +1318,6 @@ const SETTING_PERMISSIONS = {
   meta_page_title: PERMISSIONS.SYSTEM_APPEARANCE_BRANDING,
   meta_page_favicon: PERMISSIONS.SYSTEM_APPEARANCE_BRANDING,
   logo_filename: PERMISSIONS.SYSTEM_APPEARANCE_BRANDING,
-  footer_data: PERMISSIONS.SYSTEM_APPEARANCE_FOOTER,
   support_email: PERMISSIONS.SYSTEM_APPEARANCE_FOOTER,
 
   limit_user_messages: PERMISSIONS.SYSTEM_SETTINGS_SECURITY,
@@ -1376,15 +1327,10 @@ const SETTING_PERMISSIONS = {
   text_splitter_chunk_overlap: PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
   max_embed_chunk_size: PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
 
-  telemetry_id: PERMISSIONS.SYSTEM_SETTINGS_PRIVACY,
-
   default_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_filesystem_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   disabled_create_files_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
-  disabled_gmail_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
-  disabled_outlook_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
-  imported_agent_skills: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_search_provider: PERMISSIONS.AGENTS_MANAGE_SKILLS,
   agent_sql_connections: PERMISSIONS.AGENTS_MANAGE_SKILLS,
 };

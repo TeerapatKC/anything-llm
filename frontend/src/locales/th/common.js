@@ -68,21 +68,14 @@ const TRANSLATIONS = {
     "agent-skills": "ทักษะของเอเจนต์",
     "agent-flow": "Agent Flow",
     "sql-connector": "ตัวเชื่อมต่อ SQL",
-    "agent-skills-settings": "การตั้งค่า",
+    "agent-skills-settings": "การตั้งค่าทักษะของเอเจนต์",
     "default-system-prompt": "System Prompt เริ่มต้น",
     "instance-owner": "เจ้าของอินสแตนซ์",
     "model-router": "ตัวจัดเส้นทางโมเดล",
-    "community-hub": {
-      title: "ศูนย์รวมชุมชน",
-      trending: "สำรวจรายการยอดนิยม",
-      "your-account": "บัญชีของคุณ",
-      "import-item": "นำเข้ารายการ",
-    },
     admin: "ผู้ดูแลระบบ",
     tools: "เครื่องมือ",
     "system-prompt-variables": "ตัวแปรของ System Prompt",
     "slash-commands": "คำสั่งสแลช",
-    "experimental-features": "ฟีเจอร์ทดลอง",
     contact: "ติดต่อฝ่ายสนับสนุน",
     "browser-extension": "ส่วนขยายเบราว์เซอร์",
     smtp: "SMTP",
@@ -106,13 +99,6 @@ const TRANSLATIONS = {
       title: "คีย์ API สำหรับส่วนขยายเบราว์เซอร์",
       description:
         "จัดการคีย์ API สำหรับส่วนขยายเบราว์เซอร์ที่เชื่อมต่อกับอินสแตนซ์ Nexus AI ของคุณ",
-    },
-    "community-hub": {
-      title: "ศูนย์รวมชุมชน",
-      "trending-description": "แบ่งปันและทำงานร่วมกับชุมชน Nexus AI",
-      "import-title": "นำเข้ารายการจากชุมชน",
-      "import-description":
-        "นำเข้ารายการจากศูนย์รวมชุมชน Nexus AI เพื่อเพิ่มพรอมต์ ทักษะ และคำสั่งที่สร้างโดยชุมชนให้กับอินสแตนซ์ของคุณ",
     },
     workspaces: {
       title: "พื้นที่ทำงานของอินสแตนซ์",
@@ -192,7 +178,6 @@ const TRANSLATIONS = {
     agent: "การกำหนดค่าเอเจนต์",
     "upload-documents": "อัปโหลดเอกสาร",
     "slash-commands": "คำสั่งสแลช",
-    "agent-flows": "โฟลว์เอเจนต์",
   },
   general: {
     vector: {
@@ -397,7 +382,7 @@ const TRANSLATIONS = {
         readActions: "การกระทำแบบอ่าน",
         writeActions: "การกระทำแบบเขียน",
         warning:
-          "การเข้าถึงระบบไฟล์อาจเป็นอันตรายได้ เนื่องจากสามารถแก้ไขหรือลบไฟล์ได้ โปรดศึกษา<a>เอกสารประกอบ</a>ก่อนเปิดใช้งาน",
+          "การเข้าถึงระบบไฟล์อาจเป็นอันตรายได้ เนื่องจากสามารถแก้ไขหรือลบไฟล์ได้",
         skills: {
           "read-text-file": {
             title: "อ่านไฟล์",
@@ -470,291 +455,6 @@ const TRANSLATIONS = {
           "create-docx": {
             title: "เอกสาร Word",
             description: "สร้างเอกสาร Word พร้อมการจัดรูปแบบพื้นฐาน",
-          },
-        },
-      },
-      gmail: {
-        title: "GMail",
-        description:
-          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Gmail ได้ - ค้นหาอีเมล อ่านเธรด ร่างข้อความ ส่งอีเมล และจัดการกล่องจดหมายของคุณ <a>อ่านเอกสารประกอบ</a>",
-        configuration: "การกำหนดค่า Gmail",
-        deploymentId: "Deployment ID",
-        deploymentIdHelp: "Deployment ID จากเว็บแอป Google Apps Script ของคุณ",
-        apiKey: "API Key",
-        apiKeyHelp:
-          "API key ที่คุณกำหนดไว้ในการดีพลอย Google Apps Script ของคุณ",
-        configurationRequired:
-          "โปรดกำหนดค่า Deployment ID และ API Key เพื่อเปิดใช้งานทักษะ Gmail",
-        configured: "กำหนดค่าแล้ว",
-        searchSkills: "ค้นหาทักษะ...",
-        noSkillsFound: "ไม่พบทักษะที่ตรงกับการค้นหาของคุณ",
-        categories: {
-          search: {
-            title: "ค้นหาและอ่านอีเมล",
-            description: "ค้นหาและอ่านอีเมลจากกล่องจดหมาย Gmail ของคุณ",
-          },
-          drafts: {
-            title: "ร่างอีเมล",
-            description: "สร้าง แก้ไข และจัดการอีเมลฉบับร่าง",
-          },
-          send: {
-            title: "ส่งและตอบกลับอีเมล",
-            description: "ส่งอีเมลและตอบกลับเธรดได้ทันที",
-          },
-          threads: {
-            title: "จัดการเธรดอีเมล",
-            description:
-              "จัดการเธรดอีเมล - ทำเครื่องหมายว่าอ่าน/ยังไม่อ่าน เก็บถาวร ทิ้งลงถังขยะ",
-          },
-          account: {
-            title: "สถิติการเชื่อมต่อ",
-            description: "ดูสถิติกล่องจดหมายและข้อมูลบัญชี",
-          },
-        },
-        skills: {
-          getInbox: {
-            title: "ดูกล่องจดหมาย",
-            description: "วิธีที่สะดวกในการดึงอีเมลในกล่องจดหมายจาก Gmail",
-          },
-          search: {
-            title: "ค้นหาอีเมล",
-            description: "ค้นหาอีเมลด้วยไวยากรณ์การค้นหาของ Gmail",
-          },
-          readThread: {
-            title: "อ่านเธรด",
-            description: "อ่านเธรดอีเมลทั้งหมดด้วย ID",
-          },
-          createDraft: {
-            title: "สร้างฉบับร่าง",
-            description: "สร้างอีเมลฉบับร่างใหม่",
-          },
-          createDraftReply: {
-            title: "สร้างฉบับร่างสำหรับตอบกลับ",
-            description: "สร้างฉบับร่างเพื่อตอบกลับเธรดที่มีอยู่",
-          },
-          updateDraft: {
-            title: "อัปเดตฉบับร่าง",
-            description: "อัปเดตอีเมลฉบับร่างที่มีอยู่",
-          },
-          getDraft: {
-            title: "ดูฉบับร่าง",
-            description: "เรียกดูฉบับร่างที่ต้องการด้วย ID",
-          },
-          listDrafts: {
-            title: "แสดงรายการฉบับร่าง",
-            description: "แสดงรายการอีเมลฉบับร่างทั้งหมด",
-          },
-          deleteDraft: {
-            title: "ลบฉบับร่าง",
-            description: "ลบอีเมลฉบับร่าง",
-          },
-          sendDraft: {
-            title: "ส่งฉบับร่าง",
-            description: "ส่งอีเมลฉบับร่างที่มีอยู่",
-          },
-          sendEmail: {
-            title: "ส่งอีเมล",
-            description: "ส่งอีเมลทันที",
-          },
-          replyToThread: {
-            title: "ตอบกลับเธรด",
-            description: "ตอบกลับเธรดอีเมลทันที",
-          },
-          markRead: {
-            title: "ทำเครื่องหมายว่าอ่านแล้ว",
-            description: "ทำเครื่องหมายเธรดว่าอ่านแล้ว",
-          },
-          markUnread: {
-            title: "ทำเครื่องหมายว่ายังไม่อ่าน",
-            description: "ทำเครื่องหมายเธรดว่ายังไม่อ่าน",
-          },
-          moveToTrash: {
-            title: "ย้ายไปถังขยะ",
-            description: "ย้ายเธรดไปยังถังขยะ",
-          },
-          moveToArchive: {
-            title: "เก็บถาวร",
-            description: "เก็บถาวรเธรด",
-          },
-          moveToInbox: {
-            title: "ย้ายไปกล่องจดหมาย",
-            description: "ย้ายเธรดไปยังกล่องจดหมาย",
-          },
-          getMailboxStats: {
-            title: "สถิติกล่องจดหมาย",
-            description: "ดูจำนวนอีเมลที่ยังไม่อ่านและสถิติกล่องจดหมาย",
-          },
-        },
-      },
-      googleCalendar: {
-        title: "Google Calendar",
-        description:
-          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Google Calendar ได้ - ดูปฏิทิน ดูกิจกรรม สร้างและอัปเดตกิจกรรม และจัดการการตอบรับ <a>อ่านเอกสารประกอบ</a>",
-        configuration: "การกำหนดค่า Google Calendar",
-        deploymentId: "Deployment ID",
-        deploymentIdHelp: "Deployment ID จากเว็บแอป Google Apps Script ของคุณ",
-        apiKey: "API Key",
-        apiKeyHelp:
-          "API key ที่คุณกำหนดไว้ในการดีพลอย Google Apps Script ของคุณ",
-        configurationRequired:
-          "โปรดกำหนดค่า Deployment ID และ API Key เพื่อเปิดใช้งานทักษะ Google Calendar",
-        configured: "กำหนดค่าแล้ว",
-        searchSkills: "ค้นหาทักษะ...",
-        noSkillsFound: "ไม่พบทักษะที่ตรงกับการค้นหาของคุณ",
-        categories: {
-          calendars: {
-            title: "ปฏิทิน",
-            description: "ดูและจัดการ Google Calendar ของคุณ",
-          },
-          readEvents: {
-            title: "อ่านกิจกรรม",
-            description: "ดูและค้นหากิจกรรมในปฏิทิน",
-          },
-          writeEvents: {
-            title: "สร้างและอัปเดตกิจกรรม",
-            description: "สร้างกิจกรรมใหม่และแก้ไขกิจกรรมที่มีอยู่",
-          },
-          rsvp: {
-            title: "การจัดการการตอบรับ",
-            description: "จัดการสถานะการตอบรับกิจกรรมของคุณ",
-          },
-        },
-        skills: {
-          listCalendars: {
-            title: "แสดงรายการปฏิทิน",
-            description:
-              "แสดงรายการปฏิทินทั้งหมดที่คุณเป็นเจ้าของหรือติดตามอยู่",
-          },
-          getCalendar: {
-            title: "ดูรายละเอียดปฏิทิน",
-            description: "ดูข้อมูลโดยละเอียดของปฏิทินที่ต้องการ",
-          },
-          getEvent: {
-            title: "ดูกิจกรรม",
-            description: "ดูข้อมูลโดยละเอียดของกิจกรรมที่ต้องการ",
-          },
-          getEventsForDay: {
-            title: "ดูกิจกรรมรายวัน",
-            description: "ดูกิจกรรมทั้งหมดที่กำหนดไว้ในวันที่ต้องการ",
-          },
-          getEvents: {
-            title: "ดูกิจกรรม (ช่วงวันที่)",
-            description: "ดูกิจกรรมภายในช่วงวันที่ที่กำหนดเอง",
-          },
-          getUpcomingEvents: {
-            title: "ดูกิจกรรมที่กำลังจะมาถึง",
-            description:
-              "ดูกิจกรรมของวันนี้ สัปดาห์นี้ หรือเดือนนี้ ด้วยคำสั่งง่าย ๆ",
-          },
-          quickAdd: {
-            title: "เพิ่มกิจกรรมอย่างรวดเร็ว",
-            description:
-              "สร้างกิจกรรมจากภาษาธรรมชาติ (เช่น 'ประชุมพรุ่งนี้บ่ายสามโมง')",
-          },
-          createEvent: {
-            title: "สร้างกิจกรรม",
-            description:
-              "สร้างกิจกรรมใหม่พร้อมควบคุมคุณสมบัติทั้งหมดได้อย่างเต็มที่",
-          },
-          updateEvent: {
-            title: "อัปเดตกิจกรรม",
-            description: "อัปเดตกิจกรรมในปฏิทินที่มีอยู่",
-          },
-          setMyStatus: {
-            title: "ตั้งค่าสถานะการตอบรับ",
-            description: "ตอบรับ ปฏิเสธ หรือตอบรับเบื้องต้นสำหรับกิจกรรม",
-          },
-        },
-      },
-      outlook: {
-        title: "Outlook",
-        description:
-          "เปิดใช้งานให้เอเจนต์ทำงานร่วมกับ Microsoft Outlook ได้ - ค้นหาอีเมล อ่านเธรด ร่างข้อความ ส่งอีเมล และจัดการกล่องจดหมายผ่าน Microsoft Graph API <a>อ่านเอกสารประกอบ</a>",
-        configuration: "การกำหนดค่า Outlook",
-        authType: "ประเภทบัญชี",
-        authTypeHelp:
-          "เลือกประเภทบัญชี Microsoft ที่สามารถยืนยันตัวตนได้ 'ทุกบัญชี' รองรับทั้งบัญชีส่วนตัวและบัญชีที่ทำงาน/โรงเรียน 'บัญชีส่วนตัวเท่านั้น' จำกัดเฉพาะบัญชี Microsoft ส่วนตัว 'บัญชีองค์กรเท่านั้น' จำกัดเฉพาะบัญชีที่ทำงาน/โรงเรียนจาก Azure AD tenant ที่ระบุ",
-        authTypeCommon: "ทุกบัญชี (ส่วนตัวและที่ทำงาน/โรงเรียน)",
-        authTypeConsumers: "บัญชี Microsoft ส่วนตัวเท่านั้น",
-        authTypeOrganization: "บัญชีองค์กรเท่านั้น (ต้องระบุ Tenant ID)",
-        clientId: "Application (Client) ID",
-        clientIdHelp:
-          "Application (Client) ID จากการลงทะเบียนแอปใน Azure AD ของคุณ",
-        tenantId: "Directory (Tenant) ID",
-        tenantIdHelp:
-          "Directory (Tenant) ID จากการลงทะเบียนแอปใน Azure AD ของคุณ จำเป็นเฉพาะสำหรับการยืนยันตัวตนแบบองค์กรเท่านั้น",
-        clientSecret: "Client Secret",
-        clientSecretHelp:
-          "ค่า client secret จากการลงทะเบียนแอปใน Azure AD ของคุณ",
-        configurationRequired:
-          "โปรดกำหนดค่า Client ID และ Client Secret เพื่อเปิดใช้งานทักษะ Outlook",
-        authRequired:
-          "บันทึกข้อมูลรับรองของคุณก่อน จากนั้นยืนยันตัวตนกับ Microsoft เพื่อทำการตั้งค่าให้เสร็จสมบูรณ์",
-        authenticateWithMicrosoft: "ยืนยันตัวตนกับ Microsoft",
-        authenticated: "ยืนยันตัวตนกับ Microsoft Outlook สำเร็จแล้ว",
-        revokeAccess: "เพิกถอนสิทธิ์การเข้าถึง",
-        configured: "กำหนดค่าแล้ว",
-        searchSkills: "ค้นหาทักษะ...",
-        noSkillsFound: "ไม่พบทักษะที่ตรงกับการค้นหาของคุณ",
-        categories: {
-          search: {
-            title: "ค้นหาและอ่านอีเมล",
-            description: "ค้นหาและอ่านอีเมลจากกล่องจดหมาย Outlook ของคุณ",
-          },
-          drafts: {
-            title: "ร่างอีเมล",
-            description: "สร้าง แก้ไข และจัดการอีเมลฉบับร่าง",
-          },
-          send: {
-            title: "ส่งอีเมล",
-            description: "ส่งอีเมลใหม่หรือตอบกลับข้อความได้ทันที",
-          },
-          account: {
-            title: "สถิติการเชื่อมต่อ",
-            description: "ดูสถิติกล่องจดหมายและข้อมูลบัญชี",
-          },
-        },
-        skills: {
-          getInbox: {
-            title: "ดูกล่องจดหมาย",
-            description: "ดึงอีเมลล่าสุดจากกล่องจดหมาย Outlook ของคุณ",
-          },
-          search: {
-            title: "ค้นหาอีเมล",
-            description: "ค้นหาอีเมลด้วยไวยากรณ์ของ Microsoft Search",
-          },
-          readThread: {
-            title: "อ่านบทสนทนา",
-            description: "อ่านเธรดบทสนทนาอีเมลทั้งหมด",
-          },
-          createDraft: {
-            title: "สร้างฉบับร่าง",
-            description:
-              "สร้างอีเมลฉบับร่างใหม่ หรือฉบับร่างสำหรับตอบกลับข้อความที่มีอยู่",
-          },
-          updateDraft: {
-            title: "อัปเดตฉบับร่าง",
-            description: "อัปเดตอีเมลฉบับร่างที่มีอยู่",
-          },
-          listDrafts: {
-            title: "แสดงรายการฉบับร่าง",
-            description: "แสดงรายการอีเมลฉบับร่างทั้งหมด",
-          },
-          deleteDraft: {
-            title: "ลบฉบับร่าง",
-            description: "ลบอีเมลฉบับร่าง",
-          },
-          sendDraft: {
-            title: "ส่งฉบับร่าง",
-            description: "ส่งอีเมลฉบับร่างที่มีอยู่",
-          },
-          sendEmail: {
-            title: "ส่งอีเมล",
-            description: "ส่งอีเมลใหม่หรือตอบกลับข้อความที่มีอยู่ได้ทันที",
-          },
-          getMailboxStats: {
-            title: "สถิติกล่องจดหมาย",
-            description: "ดูจำนวนในโฟลเดอร์และสถิติกล่องจดหมาย",
           },
         },
       },
@@ -908,12 +608,6 @@ const TRANSLATIONS = {
           title: "Favicon",
           description: "ใช้ favicon ที่กำหนดเองสำหรับแท็บเบราว์เซอร์",
         },
-      },
-      "sidebar-footer": {
-        title: "รายการส่วนท้ายแถบด้านข้าง",
-        description: "ปรับแต่งรายการที่แสดงอยู่ด้านล่างของแถบด้านข้าง",
-        icon: "ไอคอน",
-        link: "ลิงก์",
       },
       "render-html": {
         title: "แสดงผล HTML ในการสนทนา",
@@ -1318,7 +1012,6 @@ const TRANSLATIONS = {
     title: "ความเป็นส่วนตัวและการจัดการข้อมูล",
     description:
       "นี่คือการกำหนดค่าว่าผู้ให้บริการภายนอกที่เชื่อมต่ออยู่และ Nexus AI จะจัดการข้อมูลของคุณอย่างไร",
-    anonymous: "เปิดใช้งานการส่งข้อมูลการใช้งานแบบไม่ระบุตัวตน",
     personalization: {
       label: "เปิดใช้งานการปรับให้เหมาะกับบุคคลและหน่วยความจำ",
       auto_label: "เปิดใช้งานการสร้างหน่วยความจำอัตโนมัติ",
@@ -1511,8 +1204,7 @@ const TRANSLATIONS = {
         "คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์เหล่านี้?\nไฟล์จะถูกลบออกจากระบบและจาก workspace ทั้งหมดโดยอัตโนมัติ\nการกระทำนี้ย้อนกลับไม่ได้",
       "delete-confirmation":
         "คุณแน่ใจหรือไม่ว่าต้องการลบไฟล์และโฟลเดอร์เหล่านี้?\nการดำเนินการนี้จะลบไฟล์ออกจากระบบและลบออกจากพื้นที่ทำงานที่มีอยู่ทั้งหมดโดยอัตโนมัติ\nการดำเนินการนี้ไม่สามารถย้อนกลับได้",
-      "removing-message-files":
-        "กำลังลบเอกสาร {{count}} รายการ โปรดรอสักครู่",
+      "removing-message-files": "กำลังลบเอกสาร {{count}} รายการ โปรดรอสักครู่",
       "removing-message":
         "กำลังลบเอกสาร {{count}} รายการและโฟลเดอร์ {{folderCount}} รายการ โปรดรอสักครู่",
       "move-success": "ย้ายเอกสาร {{count}} รายการสำเร็จแล้ว",
@@ -1548,18 +1240,6 @@ const TRANSLATIONS = {
         "วิธีนี้ได้ผลดีที่สุดกับ<b>โมเดลที่รองรับบริบทขนาดใหญ่</b>หรือไฟล์ขนาดเล็กที่สำคัญต่อฐานความรู้",
       pin_explained_block3:
         "หากคุณไม่ได้รับคำตอบที่ต้องการจาก Nexus AI ตามค่าเริ่มต้น การปักหมุดเป็นวิธีที่ยอดเยี่ยมในการได้คำตอบคุณภาพสูงขึ้นในคลิกเดียว",
-      accept: "เข้าใจแล้ว",
-    },
-    watching: {
-      what_watching: "การเฝ้าดูเอกสารทำอะไรได้บ้าง?",
-      watch_explained_block1:
-        "เมื่อคุณ<b>เฝ้าดู</b>เอกสารใน Nexus AI เราจะซิงค์เนื้อหาเอกสารจากแหล่งต้นทาง<i>โดยอัตโนมัติ</i>เป็นระยะ ซึ่งจะอัปเดตเนื้อหาในทุกพื้นที่ทำงานที่จัดการไฟล์นี้โดยอัตโนมัติ",
-      watch_explained_block2:
-        "ปัจจุบันฟีเจอร์นี้รองรับเฉพาะเนื้อหาที่มาจากออนไลน์ และจะไม่พร้อมใช้งานสำหรับเอกสารที่อัปโหลดด้วยตนเอง",
-      watch_explained_block3_start:
-        "คุณสามารถจัดการเอกสารที่ถูกเฝ้าดูได้จากมุมมองผู้ดูแลระบบ ",
-      watch_explained_block3_link: "ตัวจัดการไฟล์",
-      watch_explained_block3_end: " ",
       accept: "เข้าใจแล้ว",
     },
   },
@@ -1806,96 +1486,6 @@ const TRANSLATIONS = {
       llmPreferences: "การตั้งค่า LLM",
       chatSettings: "การตั้งค่าการสนทนา",
       help: "แสดงความช่วยเหลือเกี่ยวกับปุ่มลัด",
-    },
-  },
-  community_hub: {
-    publish: {
-      system_prompt: {
-        success_title: "สำเร็จ!",
-        success_description:
-          "System Prompt ของคุณถูกเผยแพร่ไปยังศูนย์รวมชุมชนแล้ว!",
-        success_thank_you: "ขอบคุณที่แบ่งปันสู่ชุมชน!",
-        view_on_hub: "ดูในศูนย์รวมชุมชน",
-        modal_title: "เผยแพร่ System Prompt",
-        name_label: "ชื่อ",
-        name_description: "นี่คือชื่อที่แสดงของ system prompt ของคุณ",
-        name_placeholder: "System Prompt ของฉัน",
-        description_label: "คำอธิบาย",
-        description_description:
-          "นี่คือคำอธิบายของ system prompt ของคุณ ใช้เพื่ออธิบายวัตถุประสงค์ของ system prompt",
-        tags_label: "แท็ก",
-        tags_description:
-          "แท็กใช้สำหรับกำกับ system prompt ของคุณเพื่อให้ค้นหาได้ง่ายขึ้น คุณสามารถเพิ่มได้หลายแท็ก สูงสุด 5 แท็ก แท็กละไม่เกิน 20 ตัวอักษร",
-        tags_placeholder: "พิมพ์แล้วกด Enter เพื่อเพิ่มแท็ก",
-        visibility_label: "การมองเห็น",
-        public_description: "System prompt สาธารณะจะมองเห็นได้โดยทุกคน",
-        private_description:
-          "System prompt ส่วนตัวจะมองเห็นได้เฉพาะคุณเท่านั้น",
-        publish_button: "เผยแพร่ไปยังศูนย์รวมชุมชน",
-        submitting: "กำลังเผยแพร่...",
-        prompt_label: "พรอมต์",
-        prompt_description:
-          "นี่คือ system prompt จริงที่จะใช้ในการกำกับการทำงานของ LLM",
-        prompt_placeholder: "ป้อน system prompt ของคุณที่นี่...",
-      },
-      agent_flow: {
-        success_title: "สำเร็จ!",
-        success_description:
-          "Agent Flow ของคุณถูกเผยแพร่ไปยังศูนย์รวมชุมชนแล้ว!",
-        success_thank_you: "ขอบคุณที่แบ่งปันสู่ชุมชน!",
-        view_on_hub: "ดูในศูนย์รวมชุมชน",
-        modal_title: "เผยแพร่ Agent Flow",
-        name_label: "ชื่อ",
-        name_description: "นี่คือชื่อที่แสดงของ agent flow ของคุณ",
-        name_placeholder: "Agent Flow ของฉัน",
-        description_label: "คำอธิบาย",
-        description_description:
-          "นี่คือคำอธิบายของ agent flow ของคุณ ใช้เพื่ออธิบายวัตถุประสงค์ของ agent flow",
-        tags_label: "แท็ก",
-        tags_description:
-          "แท็กใช้สำหรับกำกับ agent flow ของคุณเพื่อให้ค้นหาได้ง่ายขึ้น คุณสามารถเพิ่มได้หลายแท็ก สูงสุด 5 แท็ก แท็กละไม่เกิน 20 ตัวอักษร",
-        tags_placeholder: "พิมพ์แล้วกด Enter เพื่อเพิ่มแท็ก",
-        visibility_label: "การมองเห็น",
-        submitting: "กำลังเผยแพร่...",
-        submit: "เผยแพร่ไปยังศูนย์รวมชุมชน",
-        privacy_note:
-          "Agent flow จะถูกอัปโหลดเป็นแบบส่วนตัวเสมอเพื่อปกป้องข้อมูลที่ละเอียดอ่อน คุณสามารถเปลี่ยนการมองเห็นได้ในศูนย์รวมชุมชนหลังจากเผยแพร่แล้ว โปรดตรวจสอบว่า flow ของคุณไม่มีข้อมูลที่ละเอียดอ่อนหรือเป็นส่วนตัวก่อนเผยแพร่",
-      },
-      slash_command: {
-        success_title: "สำเร็จ!",
-        success_description:
-          "คำสั่งสแลชของคุณถูกเผยแพร่ไปยังศูนย์รวมชุมชนแล้ว!",
-        success_thank_you: "ขอบคุณที่แบ่งปันสู่ชุมชน!",
-        view_on_hub: "ดูในศูนย์รวมชุมชน",
-        modal_title: "เผยแพร่คำสั่งสแลช",
-        name_label: "ชื่อ",
-        name_description: "นี่คือชื่อที่แสดงของคำสั่งสแลชของคุณ",
-        name_placeholder: "คำสั่งสแลชของฉัน",
-        description_label: "คำอธิบาย",
-        description_description:
-          "นี่คือคำอธิบายของคำสั่งสแลชของคุณ ใช้เพื่ออธิบายวัตถุประสงค์ของคำสั่งสแลช",
-        tags_label: "แท็ก",
-        tags_description:
-          "แท็กใช้สำหรับกำกับคำสั่งสแลชของคุณเพื่อให้ค้นหาได้ง่ายขึ้น คุณสามารถเพิ่มได้หลายแท็ก สูงสุด 5 แท็ก แท็กละไม่เกิน 20 ตัวอักษร",
-        tags_placeholder: "พิมพ์แล้วกด Enter เพื่อเพิ่มแท็ก",
-        visibility_label: "การมองเห็น",
-        public_description: "คำสั่งสแลชสาธารณะจะมองเห็นได้โดยทุกคน",
-        private_description: "คำสั่งสแลชส่วนตัวจะมองเห็นได้เฉพาะคุณเท่านั้น",
-        publish_button: "เผยแพร่ไปยังศูนย์รวมชุมชน",
-        submitting: "กำลังเผยแพร่...",
-        prompt_label: "พรอมต์",
-        prompt_description:
-          "นี่คือพรอมต์ที่จะใช้เมื่อมีการเรียกใช้คำสั่งสแลชนี้",
-        prompt_placeholder: "ป้อนพรอมต์ของคุณที่นี่...",
-      },
-      generic: {
-        unauthenticated: {
-          title: "ต้องยืนยันตัวตน",
-          description:
-            "คุณต้องยืนยันตัวตนกับศูนย์รวมชุมชนของ Nexus AI ก่อนเผยแพร่รายการ",
-          button: "เชื่อมต่อกับศูนย์รวมชุมชน",
-        },
-      },
     },
   },
   scheduledJobs: {
@@ -2446,8 +2036,7 @@ const TRANSLATIONS = {
   },
   "sql-connector": {
     title: "ตัวเชื่อมต่อ SQL",
-    "page-description":
-      "จัดการการเชื่อมต่อฐานข้อมูลที่เอเจนต์สามารถใช้งานได้",
+    "page-description": "จัดการการเชื่อมต่อฐานข้อมูลที่เอเจนต์สามารถใช้งานได้",
     restricted: "SQL Connector จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
     "list-description":
       "ดูรายการการเชื่อมต่อฐานข้อมูลที่กำหนดค่าไว้สำหรับอินสแตนซ์นี้",
@@ -2468,6 +2057,10 @@ const TRANSLATIONS = {
     "connector-off-description":
       "เปิดใช้งานทางด้านซ้ายเพื่อเพิ่มและจัดการการเชื่อมต่อฐานข้อมูล",
     "toggle-failed": "อัปเดตการเชื่อมต่อไม่สำเร็จ",
+    saved: "บันทึกการเชื่อมต่อฐานข้อมูลแล้ว",
+    "save-failed": "บันทึกการเชื่อมต่อฐานข้อมูลไม่สำเร็จ",
+    "connector-updated": "อัปเดตตัวเชื่อมต่อ SQL แล้ว",
+    "connector-update-failed": "อัปเดตตัวเชื่อมต่อ SQL ไม่สำเร็จ",
     manage: {
       "aria-label": "จัดการการเชื่อมต่อ",
       edit: "แก้ไขการเชื่อมต่อ",
@@ -2522,40 +2115,6 @@ const TRANSLATIONS = {
         "ตรวจสอบการเชื่อมต่อไม่สำเร็จ โปรดตรวจสอบรายละเอียดการเชื่อมต่อของคุณ",
     },
   },
-  "experimental-features": {
-    title: "ฟีเจอร์ทดลอง",
-    "select-feature": "เลือกฟีเจอร์ทดลอง",
-    on: "เปิด",
-    off: "ปิด",
-    tos: {
-      title: "เงื่อนไขการใช้งานฟีเจอร์ทดลอง",
-      intro:
-        "ฟีเจอร์ทดลองของ Nexus AI คือฟีเจอร์ที่เรากำลังทดสอบและเป็นแบบ<b>สมัครใจเข้าร่วม</b> เราจะแจ้งเงื่อนไขหรือเตือนคุณล่วงหน้าถึงข้อกังวลที่อาจเกิดขึ้นก่อนที่คุณจะอนุมัติการใช้ฟีเจอร์ใด ๆ",
-      "risks-intro":
-        "การใช้ฟีเจอร์ใด ๆ ในหน้านี้อาจส่งผลให้เกิดสิ่งต่อไปนี้ (แต่ไม่จำกัดเพียงเท่านี้)",
-      "risk-data-loss": "การสูญเสียข้อมูล",
-      "risk-quality": "คุณภาพของผลลัพธ์เปลี่ยนแปลงไป",
-      "risk-storage": "ใช้พื้นที่จัดเก็บเพิ่มขึ้น",
-      "risk-resources": "ใช้ทรัพยากรเพิ่มขึ้น",
-      "risk-cost":
-        "ค่าใช้จ่ายหรือการใช้งาน LLM หรือผู้ให้บริการฝังข้อความที่เชื่อมต่ออยู่เพิ่มขึ้น",
-      "risk-bugs": "อาจเกิดข้อบกพร่องหรือปัญหาในการใช้งาน Nexus AI",
-      "conditions-intro":
-        "การใช้ฟีเจอร์ทดลองยังมาพร้อมกับเงื่อนไขต่อไปนี้ (ซึ่งไม่ครอบคลุมทั้งหมด)",
-      "condition-removal": "ฟีเจอร์อาจไม่มีอยู่ในการอัปเดตในอนาคต",
-      "condition-stability": "ฟีเจอร์ที่ใช้อยู่ยังไม่เสถียรในขณะนี้",
-      "condition-availability":
-        "ฟีเจอร์อาจไม่พร้อมใช้งานในเวอร์ชัน การกำหนดค่า หรือแพ็กเกจของ Nexus AI ในอนาคต",
-      "condition-privacy":
-        "การตั้งค่าความเป็นส่วนตัวของคุณ<b>จะได้รับการเคารพ</b>เมื่อใช้ฟีเจอร์เบต้าใด ๆ",
-      "condition-change": "เงื่อนไขเหล่านี้อาจเปลี่ยนแปลงในการอัปเดตในอนาคต",
-      "docs-prefix":
-        "การเข้าถึงฟีเจอร์ใด ๆ ต้องได้รับการอนุมัติจากหน้าต่างนี้ หากต้องการอ่านเพิ่มเติม คุณสามารถดูได้ที่",
-      "docs-or-email": "หรืออีเมลถึง",
-      reject: "ปฏิเสธและปิด",
-      accept: "ฉันเข้าใจแล้ว",
-    },
-  },
   "admin-workspaces": {
     table: {
       name: "ชื่อ",
@@ -2602,6 +2161,13 @@ const TRANSLATIONS = {
     "general-appearance": "การตั้งค่ารูปลักษณ์ทั่วไป",
   },
   "agent-panel": {
+    "sql-connections": "การเชื่อมต่อ SQL",
+    "sql-connections-description":
+      "การเชื่อมต่อที่เพิ่มที่นี่เป็นของเวิร์กสเปซนี้เท่านั้น",
+    "new-sql-connection": "เพิ่มการเชื่อมต่อ",
+    "no-sql-connections": "ยังไม่มีการเชื่อมต่อ SQL สำหรับเวิร์กสเปซนี้",
+    "sql-connections-shared":
+      "มีการเชื่อมต่อ {{count}} รายการที่แอดมินแชร์มาให้",
     "agent-flow": "Agent Flow",
     "flows-description": "ดูรายการ flow ที่กำหนดค่าไว้สำหรับอินสแตนซ์นี้",
     "skills-title": "ทักษะและการตั้งค่าเอเจนต์",
@@ -2611,22 +2177,17 @@ const TRANSLATIONS = {
     "toggle-tool-failed": "ไม่สามารถเปลี่ยนสถานะเครื่องมือได้",
     "skills-integrations": "ทักษะและการเชื่อมต่อ",
     "choose-capability": "เลือกความสามารถที่ต้องการกำหนดค่า",
-    "flows-restricted":
-      "Agent Flow จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
-    "app-integrations": "การเชื่อมต่อกับแอป",
+    "flows-restricted": "Agent Flow จำกัดให้จัดการได้เฉพาะเจ้าของอินสแตนซ์",
     "select-mobile": "เลือกทักษะเอเจนต์, Agent Flow หรือเซิร์ฟเวอร์ MCP",
     "page-skills-title": "ทักษะเอเจนต์",
-    "page-skills-description":
-      "เลือกและกำหนดค่าความสามารถที่เอเจนต์ใช้งานได้",
-    "page-flow-description":
-      "สร้างและจัดการ Flow อัตโนมัติที่เอเจนต์ใช้งานได้",
+    "page-skills-description": "เลือกและกำหนดค่าความสามารถที่เอเจนต์ใช้งานได้",
+    "page-flow-description": "สร้างและจัดการ Flow อัตโนมัติที่เอเจนต์ใช้งานได้",
     "select-configure": "เลือกรายการที่ต้องการกำหนดค่า",
     on: "เปิด",
     off: "ปิด",
     "skill-settings": "การตั้งค่าทักษะเอเจนต์",
     configure: "กำหนดค่า",
     "agent-flows": "Agent Flows",
-    "custom-skills": "ทักษะที่กำหนดเอง",
     back: "กลับ",
     "create-flow": "สร้าง Flow",
     "open-builder": "เปิดตัวสร้าง",
@@ -2646,7 +2207,9 @@ const TRANSLATIONS = {
     "toggle-failed": "ไม่สามารถเปลี่ยนสถานะ Flow ได้",
     "no-description": "ไม่มีคำอธิบาย",
     "workspace-owned": "เวิร์กสเปซ",
-    "workspace-owned-hint": "โฟลว์นี้เป็นของเวิร์กสเปซใดเวิร์กสเปซหนึ่ง และใช้ได้เฉพาะที่นั่น",
+    shared: "แชร์",
+    "workspace-owned-hint":
+      "โฟลว์นี้เป็นของเวิร์กสเปซใดเวิร์กสเปซหนึ่ง และใช้ได้เฉพาะที่นั่น",
     visibility: {
       title: "พื้นที่ทำงานที่มองเห็นได้",
       description: "เลือกพื้นที่ทำงานที่อนุญาตให้เอเจนต์ใช้ Flow นี้",
@@ -2706,20 +2269,6 @@ const TRANSLATIONS = {
       error: "ข้อผิดพลาด: {{error}}",
     },
   },
-  "hub-import": {
-    title: "นำเข้ารายการจากศูนย์รวมชุมชน",
-    "intro-1":
-      "ศูนย์รวมชุมชนคือที่ที่คุณสามารถค้นหา แบ่งปัน และนำเข้าทักษะของเอเจนต์ system prompt คำสั่งสแลช และอื่น ๆ อีกมากมาย!",
-    "intro-2":
-      "รายการเหล่านี้สร้างขึ้นโดยทีมงาน Nexus AI และชุมชน เป็นวิธีที่ยอดเยี่ยมในการเริ่มต้นใช้งาน Nexus AI และขยายความสามารถของ Nexus AI ให้ตรงกับความต้องการของคุณ",
-    "intro-3":
-      "ในศูนย์รวมชุมชนมีทั้งรายการแบบ<b>ส่วนตัว</b>และ<b>สาธารณะ</b> รายการส่วนตัวจะมองเห็นได้เฉพาะคุณ ส่วนรายการสาธารณะจะมองเห็นได้โดยทุกคน",
-    warning:
-      "หากคุณกำลังดึงรายการส่วนตัวเข้ามา โปรดตรวจสอบว่ารายการนั้น<b>ถูกแชร์กับทีม</b>ที่คุณสังกัดอยู่ และคุณได้เพิ่ม<a>คีย์การเชื่อมต่อ</a>แล้ว",
-    "item-id": "รหัสนำเข้ารายการจากศูนย์รวมชุมชน",
-    "item-id-placeholder": "allm-community-id:agent-skill:1234567890",
-    "enter-item-id": "โปรดป้อนรหัสรายการ",
-  },
   ui: {
     "select-option": "เลือกตัวเลือก",
     "select-model": "เลือกโมเดล",
@@ -2776,8 +2325,6 @@ const TRANSLATIONS = {
     "confirm-it-is-you": "ยืนยันว่าเป็นคุณ",
     "what-to-clear": "สิ่งที่จะล้าง",
     "choose-an-account": "เลือกบัญชี",
-    "hub-account-title": "บัญชีศูนย์รวมชุมชน Nexus AI ของคุณ",
-    "hub-api-key-placeholder": "ป้อนคีย์ API ของ Nexus AI Hub ของคุณ",
     "add-to-workspace": "เพิ่มเข้าพื้นที่ทำงาน",
     "apply-to-workspace": "นำไปใช้กับพื้นที่ทำงาน",
     "max-vector-text-length": "ความยาวสูงสุดของข้อความที่แปลงเป็นเวกเตอร์",
@@ -2824,8 +2371,6 @@ const TRANSLATIONS = {
       "คุณต้องระบุโทเคน API สำหรับการยืนยันตัวตน ดู<a>คู่มือ</a>ของ Drupal Wiki เพื่อเรียนรู้วิธีสร้างโทเคน API สำหรับผู้ใช้ของคุณ",
     "lmstudio-context-window":
       "แทนที่ขีดจำกัดขนาดบริบท เว้นว่างไว้เพื่อตรวจหาอัตโนมัติจากโมเดล (ใช้ค่า 4096 หากตรวจหาไม่สำเร็จ)",
-    "telemetry-note":
-      "เหตุการณ์ทั้งหมดจะไม่บันทึกที่อยู่ IP และ<b>ไม่มี</b>เนื้อหาที่ระบุตัวตน การตั้งค่า การสนทนา หรือข้อมูลอื่นที่ไม่เกี่ยวกับการใช้งาน หากต้องการดูรายการแท็กเหตุการณ์ที่เก็บรวบรวม คุณสามารถดูได้ที่ <a>GitHub ที่นี่</a>",
     "finish-node":
       "นี่คือจุดสิ้นสุดของ agent flow ของคุณ ขั้นตอนทั้งหมดด้านบนจะถูกดำเนินการตามลำดับ",
     "agent-skill-settings":
@@ -2893,7 +2438,7 @@ const TRANSLATIONS = {
     "connection-modal":
       "Nexus AI สำหรับมือถือช่วยให้คุณเชื่อมต่อกับการสนทนา เธรด เครื่องมือ และเอกสารของพื้นที่ทำงาน เพื่อใช้งานได้ทุกที่",
     "privacy-and-data":
-      "ในฐานะโครงการโอเพนซอร์ส เราเคารพสิทธิ์ความเป็นส่วนตัวของคุณ เรามุ่งมั่นสร้างโซลูชันที่ดีที่สุดสำหรับการผสาน AI เข้ากับเอกสารอย่างเป็นส่วนตัวและปลอดภัย หากคุณตัดสินใจปิดการส่งข้อมูลการใช้งาน เราขอเพียงให้พิจารณาส่งความคิดเห็นและข้อเสนอแนะมาให้เรา",
+      "ในฐานะโครงการโอเพนซอร์ส เราเคารพสิทธิ์ความเป็นส่วนตัวของคุณ เรามุ่งมั่นสร้างโซลูชันที่ดีที่สุดสำหรับการผสาน AI เข้ากับเอกสารอย่างเป็นส่วนตัวและปลอดภัย",
     "existing-user-form":
       "เข้าสู่ระบบด้วยบัญชีที่มีอยู่ของคุณเพื่อเพิ่มบัญชีนั้นเข้าสู่พื้นที่ทำงานของคำเชิญ บทบาทของคุณจะไม่เปลี่ยนแปลง",
     invite:

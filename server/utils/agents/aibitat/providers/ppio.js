@@ -19,7 +19,6 @@ class PPIOProvider extends InheritMultiple([Provider, UnTooled]) {
       baseURL: "https://api.ppinfra.com/v3/openai",
       apiKey: process.env.PPIO_API_KEY,
       defaultHeaders: {
-        "HTTP-Referer": "https://nexusai.com",
         "X-API-Source": "nexusai",
       },
     });

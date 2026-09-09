@@ -22,10 +22,6 @@ const webScraping = {
               call: JSON.stringify({ url: "https://example.com" }),
             },
             {
-              prompt: "What is nexusai.com about?",
-              call: JSON.stringify({ url: "https://nexusai.com" }),
-            },
-            {
               prompt: "Scrape https://example.com",
               call: JSON.stringify({ url: "https://example.com" }),
             },
