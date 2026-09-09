@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import JobDescription from "./JobDescription";
 import JobSchedule from "./JobSchedule";
 import ToolsSelector from "./ToolsSelector";
+import RecipientsSelector from "./RecipientsSelector";
 import FormActions from "./FormActions";
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -17,6 +18,13 @@ function setDefaultFormState(job) {
     schedule: job?.schedule || "0 9 * * *",
     scheduleMode: "builder",
     selectedTools: job?.tools ? safeJsonParse(job.tools, []) : [],
+    recipientType: job?.recipientType || "none",
+    selectedRecipientWorkspaceIds: job?.recipientWorkspaceIds
+      ? safeJsonParse(job.recipientWorkspaceIds, [])
+      : [],
+    selectedRecipientUserIds: job?.recipientUserIds
+      ? safeJsonParse(job.recipientUserIds, [])
+      : [],
   };
 }
 
@@ -62,6 +70,18 @@ export default function JobFormModal({ job = null, onSaved }) {
     setForm((prev) => ({ ...prev, selectedTools }));
   };
 
+  const handleRecipientTypeChange = (recipientType) => {
+    setForm((prev) => ({ ...prev, recipientType }));
+  };
+
+  const setSelectedRecipientWorkspaceIds = (selectedRecipientWorkspaceIds) => {
+    setForm((prev) => ({ ...prev, selectedRecipientWorkspaceIds }));
+  };
+
+  const setSelectedRecipientUserIds = (selectedRecipientUserIds) => {
+    setForm((prev) => ({ ...prev, selectedRecipientUserIds }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const nextErrors = {
@@ -80,6 +100,9 @@ export default function JobFormModal({ job = null, onSaved }) {
       prompt: form.prompt.trim(),
       schedule: form.schedule.trim(),
       tools: form.selectedTools,
+      recipientType: form.recipientType,
+      recipientWorkspaceIds: form.selectedRecipientWorkspaceIds,
+      recipientUserIds: form.selectedRecipientUserIds,
     };
 
     const result = isEditing
@@ -141,6 +164,15 @@ export default function JobFormModal({ job = null, onSaved }) {
             onChange={setSelectedTools}
           />
         )}
+
+        <RecipientsSelector
+          recipientType={form.recipientType}
+          selectedWorkspaceIds={form.selectedRecipientWorkspaceIds}
+          selectedUserIds={form.selectedRecipientUserIds}
+          onTypeChange={handleRecipientTypeChange}
+          onWorkspaceIdsChange={setSelectedRecipientWorkspaceIds}
+          onUserIdsChange={setSelectedRecipientUserIds}
+        />
 
         <FormActions isEditing={isEditing} saving={saving} />
       </form>

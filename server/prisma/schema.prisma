@@ -557,17 +557,20 @@ model line_users {
 }
 
 model scheduled_jobs {
-  id        Int                  @id @default(autoincrement())
-  name      String
-  prompt    String
-  tools     String? // JSON array of tool identifiers (null = use all enabled agent skills)
-  schedule  String // Cron expression
-  enabled   Boolean              @default(true)
-  lastRunAt DateTime?
-  nextRunAt DateTime?
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @default(now())
-  runs      scheduled_job_runs[]
+  id                    Int                  @id @default(autoincrement())
+  name                  String
+  prompt                String
+  tools                 String? // JSON array of tool identifiers (null = use all enabled agent skills)
+  schedule              String // Cron expression
+  enabled               Boolean              @default(true)
+  recipientType         String               @default("none") // none | workspace | user - who gets emailed the result
+  recipientWorkspaceIds String? // JSON array of workspace ids - notifies every member of each workspace
+  recipientUserIds      String? // JSON array of user ids - notifies those users directly
+  lastRunAt             DateTime?
+  nextRunAt             DateTime?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @default(now())
+  runs                  scheduled_job_runs[]
 }
 
 model scheduled_job_runs {

@@ -110,6 +110,289 @@
         }
       ],
       "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
+    },
+    {
+      "id": 8,
+      "title": "Host Memory Available",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 30 },
+      "targets": [
+        {
+          "expr": "node_memory_MemAvailable_bytes",
+          "legendFormat": "Available"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 536870912 },
+              { "color": "green", "value": 1073741824 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "title": "Host Disk Free (C:)",
+      "description": "This host runs Docker Desktop on Windows via WSL2, so node-exporter sees the WSL VM's own filesystem tree rather than a plain \"/\" - there is no mountpoint that means \"host root\" here. /mnt/host/c is the actual Windows C: drive (9p passthrough), which is what running low on disk actually means on this machine.",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 30 },
+      "targets": [
+        {
+          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/host/c\"}",
+          "legendFormat": "Free"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
+    },
+    {
+      "id": 10,
+      "title": "Nexus AI - HTTP Requests In-Flight",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+      "targets": [
+        {
+          "expr": "nexusai_http_requests_in_flight",
+          "legendFormat": "In-flight requests"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 11,
+      "title": "Nexus AI - Active Agent Sessions",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+      "targets": [
+        {
+          "expr": "nexusai_active_agent_sessions",
+          "legendFormat": "Active sessions"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 12,
+      "title": "Nexus AI - HTTP Request Rate by Status",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 44 },
+      "targets": [
+        {
+          "expr": "sum by (status_code) (rate(nexusai_http_request_duration_seconds_count[5m]))",
+          "legendFormat": "{{status_code}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+    },
+    {
+      "id": 13,
+      "title": "Host Load Average",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
+      "targets": [
+        { "expr": "node_load1", "legendFormat": "1m" },
+        { "expr": "node_load5", "legendFormat": "5m" },
+        { "expr": "node_load15", "legendFormat": "15m" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 14,
+      "title": "Host Swap Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
+      "targets": [
+        {
+          "expr": "node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes",
+          "legendFormat": "Swap used"
+        },
+        {
+          "expr": "node_memory_SwapTotal_bytes",
+          "legendFormat": "Swap total"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 15,
+      "title": "Host Disk I/O",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 60 },
+      "targets": [
+        {
+          "expr": "sum(rate(node_disk_read_bytes_total[5m]))",
+          "legendFormat": "Read"
+        },
+        {
+          "expr": "sum(rate(node_disk_written_bytes_total[5m]))",
+          "legendFormat": "Write"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 16,
+      "title": "Host Network I/O (all interfaces)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 60 },
+      "targets": [
+        {
+          "expr": "sum(rate(node_network_receive_bytes_total{device!=\"lo\"}[5m]))",
+          "legendFormat": "Receive"
+        },
+        {
+          "expr": "sum(rate(node_network_transmit_bytes_total{device!=\"lo\"}[5m]))",
+          "legendFormat": "Transmit"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 17,
+      "title": "Nexus AI - Memory % of Host Total",
+      "description": "No memory limit is set on the container (docker-compose has no mem_limit), so container_spec_memory_limit_bytes reports 0 and a %-of-limit query would divide by zero. This compares against the host's total memory instead - the ceiling that actually gets a container OOM-killed.",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 68 },
+      "targets": [
+        {
+          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}) / sum(node_memory_MemTotal_bytes) * 100",
+          "legendFormat": "Memory % of host total"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "min": 0, "max": 100 },
+        "overrides": []
+      }
+    },
+    {
+      "id": 18,
+      "title": "Nexus AI - Disk I/O",
+      "description": "This cAdvisor build does not export container_fs_reads_bytes_total/container_fs_writes_bytes_total - only sector counts. Approximated as sectors * 512 bytes, the standard Linux block-device sector size.",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 68 },
+      "targets": [
+        {
+          "expr": "sum(rate(container_fs_sector_reads_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
+          "legendFormat": "Read"
+        },
+        {
+          "expr": "sum(rate(container_fs_sector_writes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
+          "legendFormat": "Write"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 19,
+      "title": "Nexus AI - Container Restart Count",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 76 },
+      "targets": [
+        {
+          "expr": "changes(container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[$__range])",
+          "legendFormat": "Restarts"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 3 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 20,
+      "title": "Nexus AI - Event Loop Lag",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 82 },
+      "targets": [
+        {
+          "expr": "nexusai_process_nodejs_eventloop_lag_seconds",
+          "legendFormat": "mean"
+        },
+        {
+          "expr": "nexusai_process_nodejs_eventloop_lag_p99_seconds",
+          "legendFormat": "p99"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 21,
+      "title": "Nexus AI - Heap Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 82 },
+      "targets": [
+        {
+          "expr": "nexusai_process_nodejs_heap_size_used_bytes",
+          "legendFormat": "Heap used"
+        },
+        {
+          "expr": "nexusai_process_nodejs_heap_size_total_bytes",
+          "legendFormat": "Heap total"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 22,
+      "title": "Nexus AI - Open File Descriptors",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 90 },
+      "targets": [
+        {
+          "expr": "nexusai_process_process_open_fds",
+          "legendFormat": "Open FDs"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 23,
+      "title": "Nexus AI - Active Handles / Requests",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 90 },
+      "targets": [
+        {
+          "expr": "nexusai_process_nodejs_active_handles_total",
+          "legendFormat": "Active handles"
+        },
+        {
+          "expr": "nexusai_process_nodejs_active_requests_total",
+          "legendFormat": "Active requests"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
     }
   ]
 }

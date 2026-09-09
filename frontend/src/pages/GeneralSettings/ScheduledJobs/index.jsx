@@ -3,16 +3,15 @@ import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import ScheduledJobs from "@/models/scheduledJobs";
-import { subscribeToPushNotifications } from "@/hooks/useWebPushNotifications";
-import useWebPushNotifications from "@/hooks/useWebPushNotifications";
 import usePolling from "@/hooks/usePolling";
 import JobFormModal from "./JobFormModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useModal } from "@/hooks/useModal";
 import showToast from "@/utils/toast";
 import JobRow from "./components/JobRow";
-import { Bell, Plus } from "lucide-react";
+import { Mail, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import paths from "@/utils/paths";
 import {
   Table,
   TableBody,
@@ -22,36 +21,17 @@ import {
   TableEmptyRow,
   TableLoadingRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
 export default function ScheduledJobsPage() {
   const { t } = useTranslation();
-  const { updateAvailable, applyUpdate, dismissUpdate } =
-    useWebPushNotifications(false);
   const { isOpen, openModal, closeModal } = useModal();
+  // null = still checking, true/false = known
+  const [smtpReady, setSmtpReady] = useState(null);
   const [loading, setLoading] = useState(true);
   const [jobs, setJobs] = useState([]);
   const [editingJob, setEditingJob] = useState(null);
   const [confirm, setConfirm] = useState(null);
-
-  // A newer build of the app finished installing in the background - ask before
-  // reloading so the user does not lose what they are in the middle of.
-  useEffect(() => {
-    if (!updateAvailable) return;
-    setConfirm({
-      title: "A new version is available",
-      description: "Reload now to update?",
-      confirmText: "Reload",
-      cancelText: "Not now",
-      variant: "default",
-      onConfirm: applyUpdate,
-    });
-  }, [updateAvailable]);
 
   const fetchJobs = async () => {
     const { jobs: foundJobs } = await ScheduledJobs.list();
@@ -60,11 +40,16 @@ export default function ScheduledJobsPage() {
   };
 
   useEffect(() => {
-    fetchJobs();
+    ScheduledJobs.smtpStatus().then(({ ready }) => setSmtpReady(!!ready));
   }, []);
 
+  useEffect(() => {
+    if (!smtpReady) return;
+    fetchJobs();
+  }, [smtpReady]);
+
   // Poll every 5s while tab is visible so status badges and run timestamps stay in sync.
-  usePolling(fetchJobs, 5000);
+  usePolling(fetchJobs, 5000, !!smtpReady);
 
   const handleDelete = async (id) => {
     setConfirm({
@@ -122,61 +107,64 @@ export default function ScheduledJobsPage() {
         title={t("scheduledJobs.title")}
         description={t("scheduledJobs.description")}
         actions={
-          <div className="flex items-center gap-x-2 shrink-0">
-            <NotificationBellButton />
+          smtpReady ? (
             <Button size="lg" onClick={handleCreate} disabled={loading}>
               <Plus className="h-4 w-4" />
               {t("scheduledJobs.newJob")}
             </Button>
-          </div>
+          ) : null
         }
       />
 
-      <div className="overflow-x-auto mt-6">
-        <Table className="text-left min-w-[720px]">
-          <TableHeader>
-            <TableRow>
-              <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
-              <TableHead scope="col">{t("scheduledJobs.table.schedule")}</TableHead>
-              <TableHead scope="col">{t("scheduledJobs.table.status")}</TableHead>
-              <TableHead scope="col">{t("scheduledJobs.table.lastRun")}</TableHead>
-              <TableHead scope="col">{t("scheduledJobs.table.nextRun")}</TableHead>
-              <TableHead scope="col" className="text-right">
-                {t("scheduledJobs.table.actions")}
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableLoadingRow colSpan={6} />
-            ) : jobs.length === 0 ? (
-              <TableEmptyRow
-                colSpan={6}
-                description={t("scheduledJobs.emptySubtitle")}
-                action={
-                  <Button onClick={handleCreate}>
-                    <Plus className="h-4 w-4" />
-                    {t("scheduledJobs.newJob")}
-                  </Button>
-                }
-              >
-                {t("scheduledJobs.emptyTitle")}
-              </TableEmptyRow>
-            ) : (
-              jobs.map((job) => (
-                <JobRow
-                  key={job.id}
-                  job={job}
-                  onTrigger={handleTrigger}
-                  onToggle={handleToggle}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      {smtpReady === false ? (
+        <SmtpRequiredNotice />
+      ) : (
+        <div className="overflow-x-auto mt-6">
+          <Table className="text-left min-w-[720px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.schedule")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.status")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.lastRun")}</TableHead>
+                <TableHead scope="col">{t("scheduledJobs.table.nextRun")}</TableHead>
+                <TableHead scope="col" className="text-right">
+                  {t("scheduledJobs.table.actions")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {smtpReady === null || loading ? (
+                <TableLoadingRow colSpan={6} />
+              ) : jobs.length === 0 ? (
+                <TableEmptyRow
+                  colSpan={6}
+                  description={t("scheduledJobs.emptySubtitle")}
+                  action={
+                    <Button onClick={handleCreate}>
+                      <Plus className="h-4 w-4" />
+                      {t("scheduledJobs.newJob")}
+                    </Button>
+                  }
+                >
+                  {t("scheduledJobs.emptyTitle")}
+                </TableEmptyRow>
+              ) : (
+                jobs.map((job) => (
+                  <JobRow
+                    key={job.id}
+                    job={job}
+                    onTrigger={handleTrigger}
+                    onToggle={handleToggle}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <Dialog
         open={isOpen}
@@ -192,56 +180,35 @@ export default function ScheduledJobsPage() {
           />
         </DialogContent>
       </Dialog>
-      <ConfirmDialog
-        config={confirm}
-        onClose={() => {
-          setConfirm(null);
-          dismissUpdate();
-        }}
-      />
+      <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
     </SettingsLayout>
   );
 }
 
-function NotificationBellButton() {
+function SmtpRequiredNotice() {
   const { t } = useTranslation();
-  const [permissionState, setPermissionState] = useState(
-    typeof Notification !== "undefined" ? Notification.permission : "denied"
-  );
-
-  if (
-    !("serviceWorker" in navigator) ||
-    !("PushManager" in window) ||
-    permissionState === "granted"
-  ) {
-    return null;
-  }
-
-  const handleClick = async () => {
-    await subscribeToPushNotifications();
-    setPermissionState(Notification.permission);
-  };
-
   return (
-    <Tooltip>
-      <TooltipTrigger
-        render={
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={handleClick}
-          />
-        }
-      >
-        <Bell size={20} className="text-orange-400" />
-      </TooltipTrigger>
-      <TooltipContent side="bottom" className="max-w-[250px] text-xs">
+    <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border border-zinc-700 light:border-slate-200 px-6 py-12 text-center">
+      <Mail size={28} className="text-zinc-400 light:text-slate-400" />
+      <p className="text-sm font-medium text-zinc-50 light:text-slate-700">
         {t(
-          "scheduledJobs.enableNotifications",
-          "Enable browser notifications for job results"
+          "scheduledJobs.smtpRequiredTitle",
+          "SMTP email must be configured first"
         )}
-      </TooltipContent>
-    </Tooltip>
+      </p>
+      <p className="max-w-md text-xs text-zinc-400 light:text-slate-500">
+        {t(
+          "scheduledJobs.smtpRequiredDescription",
+          "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled."
+        )}
+      </p>
+      <Button
+        size="sm"
+        render={<a href={paths.settings.smtp()} />}
+        className="mt-1"
+      >
+        {t("scheduledJobs.smtpRequiredCta", "Go to SMTP settings")}
+      </Button>
+    </div>
   );
 }

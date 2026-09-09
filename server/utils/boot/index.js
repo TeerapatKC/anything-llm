@@ -8,7 +8,6 @@ const {
   ensureSuperAdminExists,
   applyBreakGlassFromEnv,
 } = require("./superAdmin");
-const { PushNotifications } = require("../PushNotifications");
 const { TelegramBotService } = require("../telegramBot");
 const { Role } = require("../../models/role");
 const { WorkspaceRole } = require("../../models/workspaceRole");
@@ -63,7 +62,6 @@ function bootSSL(app, port = 3001) {
         new EncryptionManager();
         new BackgroundService().boot();
         await eagerLoadContextWindows();
-        await PushNotifications.setupPushNotificationService();
         await TelegramBotService.bootIfActive();
         console.log(`Primary server in HTTPS mode listening on port ${port}`);
       })
@@ -116,7 +114,6 @@ function bootHTTP(app, port = 3001) {
       new EncryptionManager();
       new BackgroundService().boot();
       await eagerLoadContextWindows();
-      await PushNotifications.setupPushNotificationService();
       await TelegramBotService.bootIfActive();
       console.log(`Primary server in HTTP mode listening on port ${port}`);
     })

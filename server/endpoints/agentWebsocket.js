@@ -6,6 +6,7 @@ const {
   WEBSOCKET_BAIL_COMMANDS,
 } = require("../utils/agents/aibitat/plugins/websocket");
 const { safeJsonParse } = require("../utils/http");
+const { activeAgentSessions } = require("../utils/metrics");
 
 // Setup listener for incoming messages to relay to socket so it can be handled by agent plugin.
 function relayToSocket(message) {
@@ -23,6 +24,16 @@ function agentWebsocket(app) {
   if (!app) return;
 
   app.ws("/agent-invocation/:uuid", async function (socket, request) {
+    activeAgentSessions.inc();
+    // Every exit path (guard return, close event, catch block) must release this
+    // exactly once, so route them all through one flag-guarded function.
+    let released = false;
+    const releaseSession = () => {
+      if (released) return;
+      released = true;
+      activeAgentSessions.dec();
+    };
+
     try {
       const agentHandler = await new AgentHandler({
         uuid: String(request.params.uuid),
@@ -30,6 +41,7 @@ function agentWebsocket(app) {
 
       if (!agentHandler.invocation) {
         socket.close();
+        releaseSession();
         return;
       }
 
@@ -40,6 +52,7 @@ function agentWebsocket(app) {
         agentHandler.aibitat?.abort();
         agentHandler.closeAlert();
         WorkspaceAgentInvocation.close(String(request.params.uuid));
+        releaseSession();
         return;
       });
 
@@ -65,6 +78,7 @@ function agentWebsocket(app) {
       console.error(e.message, e);
       socket?.send(JSON.stringify({ type: "wssFailure", content: e.message }));
       socket?.close();
+      releaseSession();
     }
   });
 }

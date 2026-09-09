@@ -1404,13 +1404,16 @@ const TRANSLATIONS = {
   },
   scheduledJobs: {
     title: "予定されている作業",
-    enableNotifications: "求人情報の通知をブラウザで許可する",
     description:
       "定期的に実行されるAIタスクを作成します。これらのタスクは、指定されたスケジュールに従って実行され、オプションのツールを使用してプロンプトを実行し、結果を保存してレビューします。",
     newJob: "新しい仕事",
     loading: "読み込み中...",
     emptyTitle: "現時点で予定されている作業はありません。",
     emptySubtitle: "まずは、簡単なものから始めてみましょう。",
+    smtpRequiredTitle: "先にSMTPメールを設定する必要があります",
+    smtpRequiredDescription:
+      "予定されている作業は結果をメールで送信するため、送信用メールの設定と有効化が完了するまで利用できません。",
+    smtpRequiredCta: "SMTP設定に移動",
     table: {
       name: "名前",
       schedule: "スケジュール",
@@ -1456,6 +1459,22 @@ const TRANSLATIONS = {
       needsSetup: "このスキルは使用前に設定が必要です",
       needsSetupLabel: "設定が必要",
       toolsNoResults: "該当するツールは見つかりませんでした。",
+      recipientsLabel: "結果をメールで送信",
+      recipientsDescription: "ジョブが正常に完了したら結果をメールで送信します。",
+      recipientType: {
+        none: "オフ",
+        workspace: "ワークスペース",
+        user: "ユーザー",
+      },
+      recipientsSelected: "{{total}}件中{{count}}件選択",
+      noWorkspaces: "ワークスペースが見つかりません",
+      noUsers: "メールアドレスが登録されているユーザーがいません",
+      chooseRecipients: "受信者を選択",
+      recipientsTurnOff: "結果のメール送信をオフにする",
+      recipientsChangeType: "種類を変更",
+      pickWorkspaces: "ワークスペースを選択",
+      pickUsers: "ユーザーを選択",
+      recipientsDone: "完了",
       required: "必要",
       requiredFieldsBanner:
         "求人を作成するには、必要なすべての項目を記入してください。",
