@@ -86,9 +86,11 @@ function apiWorkspaceEndpoints(app) {
         return;
       }
 
-      await EventLogs.logEvent("api_workspace_created", {
-        workspaceName: workspace?.name || "Unknown Workspace",
-      });
+      await EventLogs.logEvent(
+        "api_workspace_created",
+        { workspaceName: workspace?.name || "Unknown Workspace" },
+        response.locals.apiKeyOwner?.id
+      );
       response.status(200).json({ workspace, message });
     } catch (e) {
       console.error(e.message, e);
@@ -250,9 +252,11 @@ function apiWorkspaceEndpoints(app) {
         await Document.delete({ workspaceId: workspaceId });
         await Workspace.delete({ id: workspaceId });
 
-        await EventLogs.logEvent("api_workspace_deleted", {
-          workspaceName: workspace?.name || "Unknown Workspace",
-        });
+        await EventLogs.logEvent(
+          "api_workspace_deleted",
+          { workspaceName: workspace?.name || "Unknown Workspace" },
+          response.locals.apiKeyOwner?.id
+        );
         try {
           await VectorDb["delete-namespace"]({ namespace: slug });
         } catch (e) {
@@ -697,10 +701,14 @@ function apiWorkspaceEndpoints(app) {
           reset,
         });
 
-        await EventLogs.logEvent("api_sent_chat", {
-          workspaceName: workspace?.name,
-          chatModel: workspace?.chatModel || "System Default",
-        });
+        await EventLogs.logEvent(
+          "api_sent_chat",
+          {
+            workspaceName: workspace?.name,
+            chatModel: workspace?.chatModel || "System Default",
+          },
+          response.locals.apiKeyOwner?.id
+        );
         return response.status(200).json({ ...result });
       } catch (e) {
         console.error(e.message, e);
@@ -851,10 +859,14 @@ function apiWorkspaceEndpoints(app) {
           attachments,
           reset,
         });
-        await EventLogs.logEvent("api_sent_chat", {
-          workspaceName: workspace?.name,
-          chatModel: workspace?.chatModel || "System Default",
-        });
+        await EventLogs.logEvent(
+          "api_sent_chat",
+          {
+            workspaceName: workspace?.name,
+            chatModel: workspace?.chatModel || "System Default",
+          },
+          response.locals.apiKeyOwner?.id
+        );
         response.end();
       } catch (e) {
         console.error(e.message, e);

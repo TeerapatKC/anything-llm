@@ -203,9 +203,11 @@ function apiSystemEndpoints(app) {
           type,
           "workspace"
         );
-        await EventLogs.logEvent("exported_chats", {
-          type,
-        });
+        await EventLogs.logEvent(
+          "exported_chats",
+          { type },
+          response.locals.apiKeyOwner?.id
+        );
         response.setHeader("Content-Type", contentType);
         response.status(200).send(data);
       } catch (e) {

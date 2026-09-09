@@ -433,6 +433,13 @@ function adminEndpoints(app) {
           name,
           user.id
         );
+
+        if (workspace)
+          await EventLogs.logEvent(
+            "workspace_created",
+            { workspaceName: workspace.name },
+            user?.id
+          );
         response.status(200).json({ workspace, error });
       } catch (e) {
         console.error(e);
@@ -449,12 +456,27 @@ function adminEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const { workspaceId } = request.params;
         const { userIds } = reqBody(request);
+        const workspace = await Workspace.get({ id: Number(workspaceId) });
         const { success, error } = await Workspace.updateUsers(
           workspaceId,
           userIds
         );
+
+        // Who can reach a workspace is an access-control decision, so the resulting
+        // member list is worth recording even though the call replaces it wholesale
+        // rather than reporting who was added or removed.
+        if (success)
+          await EventLogs.logEvent(
+            "workspace_users_updated",
+            {
+              workspaceName: workspace?.name || "Unknown Workspace",
+              userIds: Array.isArray(userIds) ? userIds.map(Number) : [],
+            },
+            user?.id
+          );
         response.status(200).json({ success, error });
       } catch (e) {
         console.error(e);
@@ -490,6 +512,11 @@ function adminEndpoints(app) {
           console.error(e.message);
         }
 
+        await EventLogs.logEvent(
+          "workspace_deleted",
+          { workspaceName: workspace.name },
+          response.locals?.user?.id
+        );
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.error(e);
@@ -620,6 +647,17 @@ function adminEndpoints(app) {
         }
 
         await SystemSettings.updateSettings(permittedUpdates);
+
+        // Only the setting names, never the values. This endpoint carries LLM keys,
+        // SMTP passwords and vector database credentials, and the event log is
+        // readable by anyone holding `system.event_logs.view` - a weaker permission
+        // than the ones that gate writing these settings in the first place.
+        if (Object.keys(permittedUpdates).length > 0)
+          await EventLogs.logEvent(
+            "system_preferences_updated",
+            { settings: Object.keys(permittedUpdates).sort() },
+            user?.id
+          );
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.error(e);

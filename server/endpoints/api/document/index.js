@@ -162,9 +162,11 @@ function apiDocumentEndpoints(app) {
         Collector.log(
           `Document ${originalname} uploaded processed and successfully. It is now available in documents.`
         );
-        await EventLogs.logEvent("api_document_uploaded", {
-          documentName: originalname,
-        });
+        await EventLogs.logEvent(
+          "api_document_uploaded",
+          { documentName: originalname },
+          response.locals.apiKeyOwner?.id
+        );
 
         if (!!addToWorkspaces)
           await Document.api.uploadToWorkspace(
@@ -309,10 +311,11 @@ function apiDocumentEndpoints(app) {
           `Document ${originalname} uploaded, processed, and moved to folder ${folder} successfully.`
         );
 
-        await EventLogs.logEvent("api_document_uploaded", {
-          documentName: originalname,
-          folder,
-        });
+        await EventLogs.logEvent(
+          "api_document_uploaded",
+          { documentName: originalname, folder },
+          response.locals.apiKeyOwner?.id
+        );
 
         if (!!addToWorkspaces)
           await Document.api.uploadToWorkspace(
@@ -433,9 +436,11 @@ function apiDocumentEndpoints(app) {
         Collector.log(
           `Link ${link} uploaded processed and successfully. It is now available in documents.`
         );
-        await EventLogs.logEvent("api_link_uploaded", {
-          link,
-        });
+        await EventLogs.logEvent(
+          "api_link_uploaded",
+          { link },
+          response.locals.apiKeyOwner?.id
+        );
 
         if (!!addToWorkspaces)
           await Document.api.uploadToWorkspace(
@@ -578,7 +583,11 @@ function apiDocumentEndpoints(app) {
         Collector.log(
           `Document created successfully. It is now available in documents.`
         );
-        await EventLogs.logEvent("api_raw_document_uploaded");
+        await EventLogs.logEvent(
+          "api_raw_document_uploaded",
+          {},
+          response.locals.apiKeyOwner?.id
+        );
 
         if (!!addToWorkspaces)
           await Document.api.uploadToWorkspace(

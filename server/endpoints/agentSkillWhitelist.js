@@ -1,6 +1,7 @@
 const { AgentSkillWhitelist } = require("../models/agentSkillWhitelist");
 const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
+const { EventLogs } = require("../models/eventLogs");
 const {
   userPermissionValid,
 } = require("../utils/middleware/authorizedRequest");
@@ -70,6 +71,15 @@ function agentSkillWhitelistEndpoints(app) {
           skillName,
           userId
         );
+
+        // Whitelisting a skill widens what every agent on the instance may call,
+        // which is the kind of change an admin should be able to trace back later.
+        if (success)
+          await EventLogs.logEvent(
+            "agent_skill_whitelisted",
+            { skillName },
+            userId
+          );
         return response.status(success ? 200 : 400).json({ success, error });
       } catch (e) {
         console.error(e);

@@ -1280,20 +1280,23 @@ async function validDockerizedUrl(input = "") {
   return null;
 }
 
-async function handleVectorStoreReset(key, prevValue, nextValue) {
+async function handleVectorStoreReset(key, prevValue, nextValue, userId) {
   if (prevValue === nextValue) return;
   if (key === "VectorDB") {
     console.log(
       `Vector configuration changed from ${prevValue} to ${nextValue} - resetting ${prevValue} namespaces`
     );
-    return await resetAllVectorStores({ vectorDbKey: prevValue });
+    return await resetAllVectorStores({ vectorDbKey: prevValue, userId });
   }
 
   if (key === "EmbeddingEngine" || key === "EmbeddingModelPref") {
     console.log(
       `${key} changed from ${prevValue} to ${nextValue} - resetting ${process.env.VECTOR_DB} namespaces`
     );
-    return await resetAllVectorStores({ vectorDbKey: process.env.VECTOR_DB });
+    return await resetAllVectorStores({
+      vectorDbKey: process.env.VECTOR_DB,
+      userId,
+    });
   }
   return false;
 }
@@ -1434,8 +1437,12 @@ async function updateENV(newENVs = {}, force = false, userId = null) {
     newValues[key] = nextValue;
     process.env[envKey] = nextValue;
 
+    // `userId` is handed to every postUpdate hook, not just the ones that want it:
+    // the extra argument is ignored by hooks that take three parameters, and the
+    // alternative is a second hook shape for the one that needs to attribute its
+    // own event log entry.
     for (const postUpdateFunc of postUpdate)
-      await postUpdateFunc(key, prevValue, nextValue);
+      await postUpdateFunc(key, prevValue, nextValue, userId);
   }
 
   for (const runAfterAllFunc of runAfterAll)

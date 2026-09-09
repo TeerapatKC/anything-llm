@@ -505,9 +505,11 @@ function lineEndpoints(app) {
         if (error)
           return response.status(500).json({ success: false, error });
 
-        await EventLogs.logEvent("line_bot_connected", {
-          bot_display_name: verification.displayName,
-        });
+        await EventLogs.logEvent(
+          "line_bot_connected",
+          { bot_display_name: verification.displayName },
+          (await userFromSession(request, response))?.id
+        );
         return response.status(200).json({
           success: true,
           botDisplayName: verification.displayName,
@@ -522,12 +524,16 @@ function lineEndpoints(app) {
   app.post(
     "/line/disconnect",
     [validatedRequest, userPermissionValid([PERMISSIONS.INTEGRATIONS_LINE])],
-    async (_request, response) => {
+    async (request, response) => {
       try {
         await ExternalCommunicationConnector.delete("line");
         // The links are meaningless without a bot, and a new bot should start clean.
         await LineUser.deleteAll();
-        await EventLogs.logEvent("line_bot_disconnected");
+        await EventLogs.logEvent(
+          "line_bot_disconnected",
+          {},
+          (await userFromSession(request, response))?.id
+        );
         return response.status(200).json({ success: true });
       } catch (e) {
         console.error(e.message, e);

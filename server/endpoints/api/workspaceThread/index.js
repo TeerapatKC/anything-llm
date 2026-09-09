@@ -83,9 +83,11 @@ function apiWorkspaceThreadEndpoints(app) {
           { name, slug }
         );
 
-        await EventLogs.logEvent("api_workspace_thread_created", {
-          workspaceName: workspace?.name || "Unknown Workspace",
-        });
+        await EventLogs.logEvent(
+          "api_workspace_thread_created",
+          { workspaceName: workspace?.name || "Unknown Workspace" },
+          response.locals.apiKeyOwner?.id
+        );
         response.status(200).json({ thread, message });
       } catch (e) {
         console.error(e.message, e);
@@ -441,12 +443,15 @@ function apiWorkspaceThreadEndpoints(app) {
           attachments,
           reset,
         });
-        await EventLogs.logEvent("api_sent_chat", {
-          workspaceName: workspace?.name,
-          chatModel: workspace?.chatModel || "System Default",
-          threadName: thread?.name,
-          userId: user?.id,
-        });
+        await EventLogs.logEvent(
+          "api_sent_chat",
+          {
+            workspaceName: workspace?.name,
+            chatModel: workspace?.chatModel || "System Default",
+            threadName: thread?.name,
+          },
+          user?.id ?? response.locals.apiKeyOwner?.id
+        );
         response.status(200).json({ ...result });
       } catch (e) {
         console.error(e.message, e);
@@ -614,12 +619,15 @@ function apiWorkspaceThreadEndpoints(app) {
           attachments,
           reset,
         });
-        await EventLogs.logEvent("api_sent_chat", {
-          workspaceName: workspace?.name,
-          chatModel: workspace?.chatModel || "System Default",
-          threadName: thread?.name,
-          userId: user?.id,
-        });
+        await EventLogs.logEvent(
+          "api_sent_chat",
+          {
+            workspaceName: workspace?.name,
+            chatModel: workspace?.chatModel || "System Default",
+            threadName: thread?.name,
+          },
+          user?.id ?? response.locals.apiKeyOwner?.id
+        );
         response.end();
       } catch (e) {
         console.error(e.message, e);

@@ -6,9 +6,11 @@
  * - Deletes all vector db namespaces for each workspace.
  * - Logs an event indicating the reset.
  * @param {string} vectorDbKey - The _previous_ vector database provider name that we will be resetting.
+ * @param {number|null} userId - Who changed the setting that triggered this, so the
+ * event log can name them instead of reporting an unknown user.
  * @returns {Promise<boolean>} - True if successful, false otherwise.
  */
-async function resetAllVectorStores({ vectorDbKey }) {
+async function resetAllVectorStores({ vectorDbKey, userId = null }) {
   const { Workspace } = require("../../models/workspace");
   const { Document } = require("../../models/documents");
   const { DocumentVectors } = require("../../models/vectors");
@@ -20,9 +22,11 @@ async function resetAllVectorStores({ vectorDbKey }) {
     purgeEntireVectorCache(); // Purges the entire vector-cache folder.
     await DocumentVectors.delete(); // Deletes all document vectors from the database.
     await Document.delete(); // Deletes all documents from the database.
-    await EventLogs.logEvent("workspace_vectors_reset", {
-      reason: "System vector configuration changed",
-    });
+    await EventLogs.logEvent(
+      "workspace_vectors_reset",
+      { reason: "System vector configuration changed" },
+      userId
+    );
 
     console.log(
       "Resetting nexusai managed vector namespaces for",

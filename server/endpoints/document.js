@@ -7,6 +7,7 @@ const {
   renameVectorCacheEntry,
 } = require("../utils/files");
 const { reqBody } = require("../utils/http");
+const { EventLogs } = require("../models/eventLogs");
 const {
   userPermissionValid,
 } = require("../utils/middleware/authorizedRequest");
@@ -274,6 +275,13 @@ function documentEndpoints(app) {
         });
         if (error) throw new Error(error);
 
+        // Visibility is who can read the folder's documents, so this is an
+        // access-control change rather than housekeeping like a rename or a move.
+        await EventLogs.logEvent(
+          "document_folder_visibility_changed",
+          { folderName: name, visibility, workspaceId },
+          user?.id
+        );
         response.status(200).json({ success: true, message: null });
       } catch (e) {
         console.error(e);
