@@ -1,22 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import debounce from "lodash.debounce";
 import System from "@/models/system";
 
-export default function MaxToolCallStack() {
+export default function MaxToolCallStack({ setHasChanges }) {
   const { t } = useTranslation();
   const [maxCallStack, setMaxCallStack] = useState(10);
   const [loading, setLoading] = useState(true);
-
-  const debouncedUpdateMaxCallStack = useMemo(
-    () =>
-      debounce(async (newMaxCallStack) => {
-        await System.updateSystem({
-          AgentSkillMaxToolCalls: newMaxCallStack.toString(),
-        });
-      }, 800),
-    []
-  );
 
   useEffect(() => {
     System.keys()
@@ -27,10 +16,6 @@ export default function MaxToolCallStack() {
         setLoading(false);
       });
   }, []);
-
-  useEffect(() => {
-    return () => debouncedUpdateMaxCallStack.cancel();
-  }, [debouncedUpdateMaxCallStack]);
 
   return (
     <div className="flex flex-col gap-y-2">
@@ -45,14 +30,14 @@ export default function MaxToolCallStack() {
         </div>
         <input
           type="number"
-          name="agentSkillMaxToolCalls"
+          name="env::AgentSkillMaxToolCalls"
           min={1}
           value={maxCallStack}
           disabled={loading}
           onChange={(e) => {
             if (e.target.value < 1) return;
-            debouncedUpdateMaxCallStack(e.target.value);
             setMaxCallStack(parseInt(e.target.value));
+            setHasChanges?.(true);
           }}
           onWheel={(e) => e.target.blur()}
           className="border border-theme-sidebar-border bg-theme-settings-input-bg text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-[80px] p-2.5 text-center"

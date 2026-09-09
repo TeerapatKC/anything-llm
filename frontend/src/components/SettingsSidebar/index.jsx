@@ -312,12 +312,12 @@ const SidebarOptions = ({ user = null, t }) => (
           ]}
         />
         <Option
-          btnText={t("settings.agent-skills")}
+          btnText={t("settings.agent")}
           icon={<Bot className="h-5 w-5 shrink-0" />}
           user={user}
           childOptions={[
             {
-              btnText: t("settings.agent-skills-settings"),
+              btnText: t("settings.agent-skills"),
               href: paths.settings.agentSkills(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
             },

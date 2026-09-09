@@ -107,14 +107,14 @@ export default function Sidebar() {
                   type="button"
                   onClick={showNewWsModal}
                   aria-label={t("new-workspace.title")}
-                  className="hidden group-data-[collapsible=icon]:flex mx-auto items-center justify-center h-8 w-8 rounded-lg bg-white hover:bg-white/80 light:hover:bg-slate-300 transition-all duration-300"
+                  className="hidden group-data-[collapsible=icon]:flex mx-auto items-center justify-center h-8 w-8 rounded-lg bg-white hover:bg-white/80 light:bg-slate-900 light:hover:bg-slate-800 transition-all duration-300"
                 />
               }
             >
               <Plus
                 size={16}
                 strokeWidth={2.5}
-                className="text-black light:text-slate-500"
+                className="text-black light:text-white"
               />
             </TooltipTrigger>
             <TooltipContent side="right" className="max-w-[250px] text-xs">

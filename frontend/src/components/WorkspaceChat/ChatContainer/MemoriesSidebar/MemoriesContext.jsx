@@ -9,6 +9,19 @@ export const LIMITS = {
 
 const MemoriesContext = createContext(null);
 
+export const MEMORIES_UPDATED_EVENT = "memories-updated";
+
+/**
+ * Announces that the server wrote a memory during a chat turn.
+ *
+ * The panel otherwise only refetches when it is opened, so a memory saved from
+ * something the person just said would sit behind a stale list while the panel
+ * is open next to the conversation that created it.
+ */
+export function emitMemoriesUpdatedEvent() {
+  window.dispatchEvent(new CustomEvent(MEMORIES_UPDATED_EVENT));
+}
+
 export function useMemoriesContext() {
   const ctx = useContext(MemoriesContext);
   if (!ctx) {
@@ -24,41 +37,22 @@ export function MemoriesProvider({ workspace, children }) {
   const [activeTab, setActiveTab] = useState("workspace");
   const [modalState, setModalState] = useState({ open: false, mode: "create" });
   const [editingMemory, setEditingMemory] = useState(null);
-  // `enabled`/`autoExtraction` are the *effective* state - the instance policy
-  // ANDed with this user's own choice. `instance` is kept alongside so the UI
-  // can say "an admin turned this off" instead of showing a dead switch.
+  // Whether the feature exists at all, which is an admin's decision. The API
+  // also reports each user's own preference, but nothing in the UI sets it any
+  // more, so the panel follows the instance policy alone.
   const [enabled, setEnabled] = useState(false);
-  const [autoExtraction, setAutoExtraction] = useState(true);
-  const [instance, setInstance] = useState({
-    memoryEnabled: false,
-    memoryAutoExtraction: true,
-  });
-  const [loadingEnabled, setLoadingEnabled] = useState(true);
 
   async function loadPreferences() {
-    const { instance, effective } = await Memory.preferences();
-    setInstance(instance);
-    setEnabled(effective.memoryEnabled);
-    setAutoExtraction(effective.memoryAutoExtraction);
-    setLoadingEnabled(false);
+    const { instance } = await Memory.preferences();
+    setEnabled(instance.memoryEnabled);
   }
 
+  // Read on mount rather than when the panel opens. The panel only renders once
+  // this resolves, and it is now opened from the account menu, so deferring the
+  // read would leave the first click doing nothing visible until it lands.
   useEffect(() => {
-    if (!sidebarOpen) return;
     loadPreferences();
-  }, [sidebarOpen]);
-
-  /**
-   * Writes the caller's own preference and re-reads the resolved state, so the
-   * switches always reflect what the server actually decided rather than an
-   * optimistic guess that ignores the instance policy above it.
-   * @param {{memoryEnabled?: boolean, memoryAutoExtraction?: boolean}} updates
-   */
-  async function updatePreferences(updates) {
-    const { success } = await Memory.updatePreferences(updates);
-    if (!success) return;
-    await loadPreferences();
-  }
+  }, []);
 
   async function fetchMemories() {
     if (!workspace?.slug) return;
@@ -69,6 +63,16 @@ export function MemoriesProvider({ workspace, children }) {
   useEffect(() => {
     if (sidebarOpen && enabled) fetchMemories();
   }, [sidebarOpen, workspace?.slug, enabled]);
+
+  useEffect(() => {
+    if (!sidebarOpen || !enabled) return;
+    function onMemoriesUpdated() {
+      fetchMemories();
+    }
+    window.addEventListener(MEMORIES_UPDATED_EVENT, onMemoriesUpdated);
+    return () =>
+      window.removeEventListener(MEMORIES_UPDATED_EVENT, onMemoriesUpdated);
+  }, [sidebarOpen, enabled, workspace?.slug]);
 
   async function handleCreate(content) {
     const { memory } = await Memory.create(workspace.slug, {
@@ -126,10 +130,6 @@ export function MemoriesProvider({ workspace, children }) {
     setActiveTab,
     activeMemories,
     enabled,
-    autoExtraction,
-    instance,
-    updatePreferences,
-    loadingEnabled,
     modalState,
     editingMemory,
     openCreateModal,

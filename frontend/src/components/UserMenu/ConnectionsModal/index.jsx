@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 /**
@@ -19,9 +20,23 @@ import { useTranslation } from "react-i18next";
 export default function ConnectionsModal({ user, open, onClose }) {
   const { t } = useTranslation();
 
+  useEffect(() => {
+    if (!open) return;
+    const handleOutsidePress = (event) => {
+      if (!event.target.closest('[data-slot="dialog-content"]')) {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+      }
+    };
+    document.addEventListener("pointerdown", handleOutsidePress, true);
+    return () =>
+      document.removeEventListener("pointerdown", handleOutsidePress, true);
+  }, [onClose, open]);
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent>
+      <DialogContent onInteractOutside={onClose}>
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             {t("profile_settings.connections.title")}

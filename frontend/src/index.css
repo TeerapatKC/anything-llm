@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+/* Keep the fixed app sidebar blurred while dialogs are open. */
+body.dialog-overlay-active [data-sidebar="sidebar"] {
+  filter: blur(8px);
+  pointer-events: none;
+  transition: filter 100ms ease;
+}
+
 @import 'tw-animate-css';
 
 /*

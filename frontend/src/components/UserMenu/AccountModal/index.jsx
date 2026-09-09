@@ -2,7 +2,7 @@ import usePfp from "@/hooks/usePfp";
 import System from "@/models/system";
 import { AUTH_USER } from "@/utils/constants";
 import showToast from "@/utils/toast";
-import { Plus } from "lucide-react";
+import { Camera } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -12,7 +12,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { safeJsonParse } from "@/utils/request";
 import {
   USERNAME_MIN_LENGTH,
@@ -29,22 +29,37 @@ export default function AccountModal({ user, hideModal }) {
   const { pfp, setPfp } = usePfp();
   const { t } = useTranslation();
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [pendingPfp, setPendingPfp] = useState(null);
+  const [pfpPreview, setPfpPreview] = useState(null);
+  const profilePicture = pfpPreview || pfp;
 
-  const handleFileUpload = async (event) => {
+  useEffect(
+    () => () => {
+      if (pfpPreview) URL.revokeObjectURL(pfpPreview);
+    },
+    [pfpPreview]
+  );
+
+  useEffect(() => {
+    if (showChangePassword) return;
+    const handleOutsidePress = (event) => {
+      if (!event.target.closest('[data-slot="dialog-content"]')) {
+        event.preventDefault();
+        event.stopPropagation();
+        hideModal();
+      }
+    };
+    document.addEventListener("pointerdown", handleOutsidePress, true);
+    return () =>
+      document.removeEventListener("pointerdown", handleOutsidePress, true);
+  }, [hideModal, showChangePassword]);
+
+  const handleFileSelection = (event) => {
     const file = event.target.files[0];
-    if (!file) return false;
+    if (!file) return;
 
-    const formData = new FormData();
-    formData.append("file", file);
-    const { success, error } = await System.uploadPfp(formData);
-    if (!success) {
-      showToast(t("profile_settings.failed_upload", { error }), "error");
-      return;
-    }
-
-    const pfpUrl = await System.fetchPfp(user.id);
-    setPfp(pfpUrl);
-    showToast(t("profile_settings.upload_success"), "success");
+    setPendingPfp(file);
+    setPfpPreview(URL.createObjectURL(file));
   };
 
   const handleRemovePfp = async () => {
@@ -60,29 +75,53 @@ export default function AccountModal({ user, hideModal }) {
   const handleUpdate = async (e) => {
     e.preventDefault();
 
-    const data = {};
     const form = new FormData(e.target);
-    for (var [key, value] of form.entries()) {
-      if (!value || value === null) continue;
-      data[key] = value;
+    const submittedProfile = {
+      username: form.get("username") ?? "",
+      email: form.get("email") ?? "",
+      bio: form.get("bio") ?? "",
+    };
+    const data = Object.fromEntries(
+      Object.entries(submittedProfile).filter(
+        ([key, value]) => value !== (user[key] ?? "")
+      )
+    );
+
+    if (Object.keys(data).length > 0) {
+      const { success, error } = await System.updateUser(data);
+      if (!success) {
+        showToast(t("profile_settings.failed_update_user", { error }), "error");
+        return;
+      }
     }
 
-    const { success, error } = await System.updateUser(data);
-    if (success) {
-      let storedUser = safeJsonParse(localStorage.getItem(AUTH_USER), null);
-      if (storedUser) {
-        storedUser.username = data.username;
-        storedUser.email = data.email;
-        storedUser.bio = data.bio;
-        localStorage.setItem(AUTH_USER, JSON.stringify(storedUser));
+    if (pendingPfp) {
+      const formData = new FormData();
+      formData.append("file", pendingPfp);
+      const { success: uploaded, error: uploadError } =
+        await System.uploadPfp(formData);
+      if (!uploaded) {
+        showToast(
+          t("profile_settings.failed_upload", { error: uploadError }),
+          "error"
+        );
+        return;
       }
-      showToast(t("profile_settings.profile_updated"), "success", {
-        clear: true,
-      });
-      hideModal();
-    } else {
-      showToast(t("profile_settings.failed_update_user", { error }), "error");
+
+      const pfpUrl = await System.fetchPfp(user.id);
+      setPfp(pfpUrl);
+      showToast(t("profile_settings.upload_success"), "success");
     }
+
+    let storedUser = safeJsonParse(localStorage.getItem(AUTH_USER), null);
+    if (storedUser) {
+      Object.assign(storedUser, data);
+      localStorage.setItem(AUTH_USER, JSON.stringify(storedUser));
+    }
+    showToast(t("profile_settings.profile_updated"), "success", {
+      clear: true,
+    });
+    hideModal();
   };
   return (
     <>
@@ -92,7 +131,11 @@ export default function AccountModal({ user, hideModal }) {
           if (!open && !showChangePassword) hideModal();
         }}
       >
-        <DialogContent>
+        <DialogContent
+          onInteractOutside={() => {
+            if (!showChangePassword) hideModal();
+          }}
+        >
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
               {t("profile_settings.edit_account")}
@@ -101,30 +144,34 @@ export default function AccountModal({ user, hideModal }) {
           <form onSubmit={handleUpdate} className="space-y-4">
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex flex-col items-center">
-                <label className="group w-24 h-24 flex flex-col items-center justify-center bg-theme-bg-primary hover:bg-theme-bg-secondary transition-colors duration-300 rounded-full border-2 border-dashed border-white light:border-[#686C6F] light:bg-[#E0F2FE] light:hover:bg-transparent cursor-pointer hover:opacity-60">
+                <label className="group relative flex size-28 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-theme-modal-border bg-theme-bg-secondary shadow-sm transition-all duration-200 hover:ring-2 hover:ring-sky-400/60 light:bg-sky-50">
                   <input
                     id="logo-upload"
                     type="file"
                     accept="image/*"
                     className="hidden"
-                    onChange={handleFileUpload}
+                    onChange={handleFileSelection}
                   />
-                  {pfp ? (
+                  {profilePicture ? (
                     <img
-                      src={pfp}
+                      src={profilePicture}
                       alt="User profile picture"
-                      className="w-24 h-24 rounded-full object-cover bg-white"
+                      className="size-full object-cover"
                     />
                   ) : (
-                    <div className="flex flex-col items-center justify-center p-1">
-                      <Plus className="w-5 h-5 text-theme-text-secondary" />
-                      <span className="text-theme-text-secondary/80 text-xs font-semibold">
+                    <div className="flex flex-col items-center justify-center gap-1 p-2 text-center">
+                      <Camera className="size-5 text-sky-500" />
+                      <span className="text-theme-text-secondary text-xs font-medium">
                         {t("profile_settings.profile_picture")}
                       </span>
                     </div>
                   )}
+                  <span className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-black/55 text-xs font-medium text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
+                    <Camera className="size-5" />
+                    {t("profile_settings.profile_picture")}
+                  </span>
                 </label>
-                {pfp && (
+                {pfp && !pfpPreview && (
                   <button
                     type="button"
                     onClick={handleRemovePfp}

@@ -13,34 +13,6 @@ const { validApiKey } = require("../../../utils/middleware/validApiKey");
 function apiAdminEndpoints(app) {
   if (!app) return;
 
-  app.get("/v1/admin/is-multi-user-mode", [validApiKey], (_, response) => {
-    /*
-    #swagger.tags = ['Admin']
-    #swagger.deprecated = true
-    #swagger.description = 'Deprecated. Always returns true - authentication is always required, so there is no other mode to report. Kept so existing API clients keep working; do not use in new integrations.'
-    #swagger.responses[200] = {
-      content: {
-        "application/json": {
-          schema: {
-            type: 'object',
-            example: {
-             "isMultiUser": true
-            }
-          }
-        }
-      }
-    }
-    #swagger.responses[403] = {
-      schema: {
-        "$ref": "#/definitions/InvalidAPIKey"
-      }
-    }
-    */
-    // Deprecated. Retained only so existing API clients keep working - there is
-    // no mode to report, authentication is always required.
-    response.status(200).json({ isMultiUser: true });
-  });
-
   app.get("/v1/admin/users", [validApiKey], async (request, response) => {
     /*
     #swagger.tags = ['Admin']

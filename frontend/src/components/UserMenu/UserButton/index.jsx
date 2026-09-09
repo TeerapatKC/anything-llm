@@ -8,14 +8,16 @@ import {
   CircleQuestionMark,
   Languages,
   LogOut,
+  Brain,
   Mic,
-  Palette,
+  Moon,
   Plug,
+  Sun,
   User,
   Wrench,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AccountModal from "../AccountModal";
 import ConnectionsModal from "../ConnectionsModal";
 import Appearance from "@/models/appearance";
@@ -50,6 +52,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useTheme } from "@/hooks/useTheme";
 import { useLanguageOptions } from "@/hooks/useLanguageOptions";
+import { requestMemoriesSidebar } from "@/components/WorkspaceChat/ChatContainer/ChatSidebar";
 import {
   userIsChatOnly,
   clearPermissions,
@@ -71,7 +74,7 @@ import {
 export default function UserButton() {
   const { t } = useTranslation();
   const { user } = useUser();
-  const { theme, setTheme, availableThemes } = useTheme();
+  const { theme, setTheme, availableThemes, isLight } = useTheme();
   const {
     currentLanguage,
     supportedLanguages,
@@ -107,6 +110,15 @@ export default function UserButton() {
   if (!user) return null;
   const canSeeSettings = !userIsChatOnly(user);
   const displayName = user.username || t("profile_settings.account");
+  const languageLabel = (currentLanguage || "en").toLowerCase().startsWith("en")
+    ? "English"
+    : getLanguageName(currentLanguage || "en");
+  const themeLabels = Object.fromEntries(
+    Object.keys(availableThemes).map((value) => [
+      value,
+      t(`profile_settings.theme_options.${value}`),
+    ])
+  );
   // The role's label, e.g. "Content Editor" - never the raw identifier ("content-editor")
   // a role is stored and looked up by.
   const userRoleLabel = roleLabel(user);
@@ -189,20 +201,29 @@ export default function UserButton() {
             <Plug size={16} />
             {t("profile_settings.connections.title")}
           </DropdownMenuItem>
+          <MemoriesItem />
           <SpeechSubmenu />
           <PreferenceSubmenu
-            icon={<Palette size={16} className="light:text-slate-800" />}
+            icon={
+              isLight ? (
+                <Sun size={16} className="light:text-slate-800" />
+              ) : (
+                <Moon size={16} />
+              )
+            }
             label={t("profile_settings.theme")}
+            valueLabel={themeLabels[theme]}
             value={theme}
             onValueChange={setTheme}
             options={Object.entries(availableThemes).map(([value, label]) => ({
               value,
-              label,
+              label: themeLabels[value] || label,
             }))}
           />
           <PreferenceSubmenu
             icon={<Languages size={16} />}
             label={t("profile_settings.language")}
+            valueLabel={languageLabel}
             value={currentLanguage || "en"}
             onValueChange={changeLanguage}
             options={supportedLanguages.map((language) => ({
@@ -266,6 +287,41 @@ export default function UserButton() {
 }
 
 /**
+ * Opens the Memories panel of the workspace chat behind this menu.
+ *
+ * Shown purely on the instance policy an admin sets in Settings - there is no
+ * per-user switch to disagree with it any more, so the entry is present exactly
+ * when the feature is. It is hidden outside a workspace chat because the panel
+ * it opens is part of that chat and has nothing to show anywhere else.
+ */
+function MemoriesItem() {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
+  const [memoryEnabled, setMemoryEnabled] = useState(false);
+
+  useEffect(() => {
+    System.keys().then((settings) =>
+      setMemoryEnabled(!!settings?.MemoryEnabled)
+    );
+  }, []);
+
+  // `/workspace/:slug` and its thread routes render the chat; `/workspace/:slug/settings/*` does not.
+  const inWorkspaceChat =
+    /^\/workspace\/[^/]+/.test(pathname) && !pathname.includes("/settings/");
+
+  if (!memoryEnabled || !inWorkspaceChat) return null;
+  return (
+    <DropdownMenuItem
+      onClick={requestMemoriesSidebar}
+      className="text-theme-text-primary focus:bg-theme-action-menu-item-hover focus:text-theme-text-primary cursor-pointer"
+    >
+      <Brain size={16} />
+      {t("chat_window.memories.title")}
+    </DropdownMenuItem>
+  );
+}
+
+/**
  * Speech settings, in the same shape as theme and language: a submenu that
  * applies on click. They are browser-local appearance settings, so there is
  * nothing to save and nothing to cancel - a dialog would only add a step.
@@ -310,12 +366,24 @@ function SpeechSubmenu() {
   );
 }
 
-function PreferenceSubmenu({ icon, label, value, onValueChange, options }) {
+function PreferenceSubmenu({
+  icon,
+  label,
+  valueLabel,
+  value,
+  onValueChange,
+  options,
+}) {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger className="cursor-pointer text-theme-text-primary focus:bg-theme-action-menu-item-hover data-[state=open]:bg-theme-action-menu-item-hover">
         {icon}
-        {label}
+        <span className="inline-flex items-center gap-1.5 text-theme-text-primary">
+          <span>{label}:</span>
+          <span className="rounded-md border border-sky-400/40 bg-sky-400/10 px-1.5 py-0.5 text-xs font-medium text-sky-400">
+            {valueLabel}
+          </span>
+        </span>
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent className="min-w-48 bg-theme-action-menu-bg border-theme-modal-border">

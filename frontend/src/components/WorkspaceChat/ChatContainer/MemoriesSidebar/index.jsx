@@ -1,8 +1,7 @@
 import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import ChatSidebar from "../ChatSidebar";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { MemoriesProvider, useMemoriesContext } from "./MemoriesContext";
-import PersonalizationToggle from "./PersonalizationToggle";
 import MemoryTabs from "./MemoryTabs";
 import MemoryCard from "./MemoryCard";
 import MemoryModal from "./MemoryModal";
@@ -18,74 +17,58 @@ export default function MemoriesSidebar({ workspace }) {
 }
 
 function MemoriesSidebarContent() {
-  const { sidebarOpen, instance } = useMemoriesContext();
+  const { sidebarOpen, enabled, closeSidebar } = useMemoriesContext();
 
-  // Gated on the instance policy, not on the user's own switch: someone who
-  // turned personalization off for themselves still needs this panel to turn it
-  // back on. When an admin has switched the feature off for the deployment
-  // there is nothing actionable here for anyone, so it stays hidden.
-  if (!instance.memoryEnabled) return null;
+  // The instance policy is the only gate. It used to be one of two, with each
+  // user able to opt out of being remembered from switches at the top of this
+  // panel; those are gone, so the panel exists exactly when an admin says the
+  // feature does.
+  if (!enabled) return null;
   return (
     <>
-      <ChatSidebar isOpen={sidebarOpen}>
-        <SidebarPanel>
+      <Dialog open={sidebarOpen} onOpenChange={(open) => !open && closeSidebar()}>
+        <DialogContent
+          showCloseButton={false}
+          onInteractOutside={closeSidebar}
+          className="max-h-[80vh] w-[min(92vw,560px)] rounded-[16px] flex flex-col gap-5 overflow-hidden"
+        >
           <SidebarHeader />
-          <PersonalizationToggle />
           <MemoryList />
-        </SidebarPanel>
-      </ChatSidebar>
+        </DialogContent>
+      </Dialog>
       <MemoryModalWrapper />
     </>
   );
 }
 
-function SidebarPanel({ children }) {
-  return (
-    <div
-      className="w-[366px] shrink-0 flex flex-col gap-5 mt-[72px] px-5 overflow-y-auto no-scroll"
-      style={{ maxHeight: "calc(100% - 88px)" }}
-    >
-      {children}
-    </div>
-  );
-}
-
 function MemoryList() {
-  const { enabled, activeMemories } = useMemoriesContext();
+  const { activeMemories } = useMemoriesContext();
 
-  if (!enabled) return null;
   if (activeMemories.length === 0) {
     return (
-      <>
+      <div className="min-h-0 overflow-y-auto no-scroll">
         <MemoryTabs />
         <EmptyState />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="min-h-0 overflow-y-auto no-scroll">
       <MemoryTabs />
-      <div className="flex flex-col gap-1.5 pb-4">
+      <div className="mt-4 flex flex-col gap-1.5 pb-4">
         {activeMemories.map((memory) => (
           <MemoryCard key={memory.id} memory={memory} />
         ))}
       </div>
-    </>
+    </div>
   );
 }
 
 function MemoryModalWrapper() {
-  const {
-    enabled,
-    modalState,
-    editingMemory,
-    closeModal,
-    handleCreate,
-    handleUpdate,
-  } = useMemoriesContext();
+  const { modalState, editingMemory, closeModal, handleCreate, handleUpdate } =
+    useMemoriesContext();
 
-  if (!enabled) return null;
   return (
     <MemoryModal
       isOpen={modalState.open}
@@ -109,13 +92,14 @@ function SidebarHeader() {
 
   return (
     <div className="flex items-start justify-between shrink-0">
-      <p className="font-medium text-base leading-6 text-zinc-50 light:text-slate-900">
+      <DialogTitle className="font-medium text-base leading-6 text-zinc-50 light:text-slate-900">
         {t("chat_window.memories.title")}
-      </p>
+      </DialogTitle>
       <button
-        onClick={closeSidebar}
         type="button"
-        className="text-zinc-50 light:text-slate-900 hover:text-white light:hover:text-slate-400 transition-colors border-none bg-transparent cursor-pointer"
+        onClick={closeSidebar}
+        aria-label={t("chat_window.cancel")}
+        className="-mt-1 -mr-1 rounded-md p-1 text-zinc-400 hover:bg-white/10 hover:text-zinc-50 light:text-slate-500 light:hover:bg-black/5 light:hover:text-slate-900"
       >
         <X size={16} />
       </button>
@@ -127,7 +111,7 @@ function EmptyState() {
   const { t } = useTranslation();
   const { openCreateModal } = useMemoriesContext();
   return (
-    <p className="text-sm leading-5 text-zinc-400 light:text-slate-600 text-center">
+    <p className="mt-4 text-sm leading-5 text-zinc-400 light:text-slate-600 text-center">
       {t("chat_window.memories.empty")}{" "}
       <button
         type="button"

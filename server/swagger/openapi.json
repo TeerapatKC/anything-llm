@@ -50,46 +50,6 @@
         }
       }
     },
-    "/v1/admin/is-multi-user-mode": {
-      "get": {
-        "tags": [
-          "Admin"
-        ],
-        "description": "Deprecated. Always returns true - authentication is always required, so there is no other mode to report. Kept so existing API clients keep working; do not use in new integrations.",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "example": {
-                    "isMultiUser": true
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidAPIKey"
-                }
-              },
-              "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/InvalidAPIKey"
-                }
-              }
-            }
-          }
-        },
-        "deprecated": true
-      }
-    },
     "/v1/admin/users": {
       "get": {
         "tags": [

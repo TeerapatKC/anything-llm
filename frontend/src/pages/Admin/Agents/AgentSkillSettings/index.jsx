@@ -4,7 +4,7 @@ import MaxToolCallStack from "./MaxToolCallStack";
 import AgentClarifyingQuestions from "./AgentClarifyingQuestions";
 import AgentSkillReranker from "./AgentSkillReranker";
 
-export default function AgentSkillSettings() {
+export default function AgentSkillSettings({ setHasChanges }) {
   const { t } = useTranslation();
 
   return (
@@ -25,13 +25,13 @@ export default function AgentSkillSettings() {
 
       <div className="mt-2 w-full divide-y divide-theme-sidebar-border">
         <div className="py-3">
-          <MaxToolCallStack />
+          <MaxToolCallStack setHasChanges={setHasChanges} />
         </div>
         <div className="py-3">
-          <AgentSkillReranker />
+          <AgentSkillReranker setHasChanges={setHasChanges} />
         </div>
         <div className="py-3">
-          <AgentClarifyingQuestions />
+          <AgentClarifyingQuestions setHasChanges={setHasChanges} />
         </div>
       </div>
     </section>

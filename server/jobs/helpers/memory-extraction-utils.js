@@ -1,6 +1,6 @@
 const { WorkspaceChats } = require("../../models/workspaceChats.js");
 const { safeJsonParse } = require("../../utils/http/index.js");
-const { getBaseLLMProviderModel } = require("../../utils/helpers/index.js");
+const { resolveMemoryLLM } = require("../../utils/memories/llm.js");
 const AIbitat = require("../../utils/agents/aibitat/index.js");
 const truncate = require("truncate");
 
@@ -92,21 +92,6 @@ async function loadLatestChats(userId, workspaceId) {
       return typeof parsed?.text === "string" && parsed.text.length > 0;
     })
     .reverse();
-}
-
-/**
- * Pick a provider/model: workspace chat → workspace agent → system default.
- * @returns {{provider: string, model: string}|null}
- */
-function resolveLLM(workspace) {
-  if (workspace.chatProvider && workspace.chatModel)
-    return { provider: workspace.chatProvider, model: workspace.chatModel };
-  if (workspace.agentProvider && workspace.agentModel)
-    return { provider: workspace.agentProvider, model: workspace.agentModel };
-  const provider = process.env.LLM_PROVIDER;
-  const model = provider ? getBaseLLMProviderModel({ provider }) : null;
-  if (provider && model) return { provider, model };
-  return null;
 }
 
 // ── Phase 1: Observer ────────────────────────────────────────────────
@@ -358,7 +343,7 @@ async function runReflector({ provider, model, userMessage }) {
 module.exports = {
   groupByUserWorkspace,
   loadLatestChats,
-  resolveLLM,
+  resolveLLM: resolveMemoryLLM,
   buildObserverUserMessage,
   runObserver,
   buildReflectorUserMessage,

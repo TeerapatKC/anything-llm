@@ -66,10 +66,10 @@ const TRANSLATIONS = {
     "scheduled-jobs": "Scheduled Jobs",
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
+    agent: "Agent",
     "agent-skills": "Agent Skills",
     "agent-flow": "Agent Flow",
     "sql-connector": "SQL Connector",
-    "agent-skills-settings": "Agent Skills Settings",
     "default-system-prompt": "Default System Prompt",
     "instance-owner": "Instance Owner",
     "model-router": "Model Router",
@@ -514,6 +514,14 @@ const TRANSLATIONS = {
           description:
             "How many clarifying questions the agent may ask in a single survey.",
         },
+      },
+      personalization: {
+        label: "Personalization & Memories Enabled",
+        description:
+          "Lets your assistant remember facts about a user or workspace and use them in later conversations. This is an instance-wide policy: turning it off removes the feature for everyone. Each user still chooses whether to be remembered from the Memories panel in chat, and memories are never shared between users.",
+        auto_label: "Automatic Memory Extraction Enabled",
+        auto_description:
+          "Runs a background job that costs an LLM call per active user and workspace.",
       },
     },
   },
@@ -1027,12 +1035,6 @@ const TRANSLATIONS = {
     title: "Privacy & Data-Handling",
     description:
       "This is your configuration for how connected third party providers and Nexus AI handle your data.",
-    personalization: {
-      label: "Personalization & Memories Enabled",
-      auto_label: "Automatic Memory Extraction Enabled",
-      description:
-        "Lets your assistant remember facts about a user or workspace and use them in later conversations. This is an instance-wide policy: turning it off removes the feature for everyone. Each user still chooses whether to be remembered from the Memories panel in chat, and memories are never shared between users. Automatic extraction runs a background job that costs an LLM call per active user and workspace.",
-    },
   },
   connectors: {
     "search-placeholder": "Search data connectors",
@@ -1313,7 +1315,7 @@ const TRANSLATIONS = {
     edit_prompt: "Edit prompt",
     edit_response: "Edit response",
     edit_info_user:
-      '"Submit" regenerates the AI response. "Save" updates your message only.',
+      '"Submit" regenerates the AI response using your updated message.',
     edit_info_assistant:
       "Your changes will be saved directly to this response.",
     see_less: "See Less",
@@ -1370,18 +1372,6 @@ const TRANSLATIONS = {
       empty_cta: "create a new memory",
       tab_workspace: "Workspace",
       tab_global: "Global",
-      toggle: {
-        label: "Enable Personalization",
-        description:
-          "Allow your assistant to recall facts about you or this workspace and use them in conversations",
-      },
-      auto_extraction: {
-        label: "Automatic Memories",
-        description:
-          "Have your assistant automatically create memories in the background",
-      },
-      scope_hint:
-        "These settings apply to your account only. Your memories are never shared with other users.",
       menu: {
         edit: "Edit",
         delete: "Delete",
@@ -1419,8 +1409,13 @@ const TRANSLATIONS = {
     password_description: "Password must be at least 8 characters long",
     cancel: "Cancel",
     update_account: "Update Account",
-    theme: "Theme Preference",
-    language: "Preferred language",
+    theme: "Theme",
+    language: "Language",
+    theme_options: {
+      system: "System",
+      light: "Light",
+      dark: "Dark",
+    },
     failed_upload: "Failed to upload profile picture: {{error}}",
     upload_success: "Profile picture uploaded.",
     failed_remove: "Failed to remove profile picture: {{error}}",
@@ -2243,6 +2238,12 @@ const TRANSLATIONS = {
     on: "On",
     off: "Off",
     "skill-settings": "Agent Skill Settings",
+    "personalization-settings": "Personalization & Memories",
+    "personalization-description":
+      "Set the instance-wide policy for memories and personalization.",
+    "system-wide": "System-wide",
+    "system-wide-settings": "System-wide settings",
+    "workspace-defaults": "Workspace defaults",
     configure: "Configure",
     "agent-flows": "Agent Flows",
     back: "Back",
