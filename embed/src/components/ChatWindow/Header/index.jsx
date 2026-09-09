@@ -46,7 +46,7 @@ export default function ChatWindowHeader({
 
   return (
     <div
-      className="allm-relative allm-flex allm-h-16 allm-shrink-0 allm-items-center allm-border-b allm-border-slate-200 allm-bg-white allm-px-4"
+      className="allm-relative allm-flex allm-h-16 allm-shrink-0 allm-items-center allm-border-b allm-border-slate-200 allm-bg-white allm-px-4 allm-md:px-5"
       id="nexus-ai-header"
     >
       <div className="allm-flex allm-w-full allm-items-center allm-justify-start allm-pr-20">

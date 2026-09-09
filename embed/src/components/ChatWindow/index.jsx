@@ -23,7 +23,7 @@ export default function ChatWindow({ closeChat, settings, sessionId }) {
           setChatHistory={setChatHistory}
         />
         <ChatHistoryLoading />
-        <div className="allm-h-fit allm-space-y-1 allm-border-t allm-border-slate-200 allm-bg-white allm-px-4 allm-py-3">
+        <div className="allm-h-fit allm-space-y-1 allm-border-t allm-border-slate-200 allm-bg-white allm-px-4 allm-py-3 allm-md:px-5">
           <SessionId />
           <Sponsor settings={settings} />
         </div>
@@ -51,7 +51,7 @@ export default function ChatWindow({ closeChat, settings, sessionId }) {
           knownHistory={chatHistory}
         />
       </div>
-      <div className="allm-z-10 allm-h-fit allm-space-y-1 allm-border-t allm-border-slate-200 allm-bg-white allm-px-4 allm-py-3">
+      <div className="allm-z-10 allm-h-fit allm-space-y-1 allm-border-t allm-border-slate-200 allm-bg-white allm-px-4 allm-py-3 allm-md:px-5">
         <Sponsor settings={settings} />
         <ResetChat
           setChatHistory={setChatHistory}

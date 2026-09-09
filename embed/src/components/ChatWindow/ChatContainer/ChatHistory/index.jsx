@@ -47,7 +47,7 @@ export default function ChatHistory({ settings = {}, history = [] }) {
 
   if (history.length === 0) {
     return (
-      <div className="allm-no-scroll allm-flex allm-h-full allm-flex-col allm-justify-start allm-overflow-y-auto allm-bg-white allm-px-4 allm-py-6">
+      <div className="allm-no-scroll allm-flex allm-h-full allm-flex-col allm-justify-start allm-overflow-y-auto allm-bg-white allm-px-4 allm-py-6 allm-md:px-5">
         <div className="allm-flex allm-h-full allm-flex-col allm-items-center allm-justify-center">
           <p className="allm-max-w-[280px] allm-py-4 allm-text-center allm-font-sans allm-text-sm allm-leading-6 allm-text-slate-500">
             {settings?.greeting ?? "Send a chat to get started."}
@@ -60,7 +60,7 @@ export default function ChatHistory({ settings = {}, history = [] }) {
 
   return (
     <div
-      className="allm-no-scroll allm-flex allm-h-full allm-min-w-0 allm-flex-col allm-justify-start allm-overflow-x-hidden allm-overflow-y-auto allm-bg-white allm-px-4 allm-py-5"
+      className="allm-no-scroll allm-flex allm-h-full allm-min-w-0 allm-flex-col allm-justify-start allm-overflow-x-hidden allm-overflow-y-auto allm-bg-white allm-px-4 allm-py-5 allm-md:px-5"
       id="chat-history"
       ref={chatHistoryRef}
     >
@@ -123,7 +123,7 @@ export default function ChatHistory({ settings = {}, history = [] }) {
 export function ChatHistoryLoading() {
   return (
     <div className="allm-h-full allm-w-full allm-relative">
-      <div className="allm-no-scroll allm-flex allm-h-full allm-max-h-[82vh] allm-flex-col allm-justify-start allm-gap-y-2 allm-overflow-y-scroll allm-bg-white allm-px-4 allm-pb-[100px] allm-pt-2">
+      <div className="allm-no-scroll allm-flex allm-h-full allm-max-h-[82vh] allm-flex-col allm-justify-start allm-gap-y-2 allm-overflow-y-scroll allm-bg-white allm-px-4 allm-pb-[100px] allm-pt-2 allm-md:px-5">
         <div className="allm-flex allm-h-full allm-flex-col allm-items-center allm-justify-center">
           <CircleNotch
             size={14}
