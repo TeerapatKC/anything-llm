@@ -1,75 +1,23 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SplitLayout } from "@/components/layout/SettingsLayout";
-import { isMobile } from "react-device-detect";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import EmbedConfigsView from "./EmbedConfigs";
 import EmbedChatsView from "./EmbedChats";
 
 export default function ChatEmbedWidgets() {
+  const { t } = useTranslation();
   const [selectedView, setSelectedView] = useState("configs");
-  const [showViewModal, setShowViewModal] = useState(false);
-
-  if (isMobile) {
-    return (
-      <WidgetLayout>
-        <div className="flex flex-col w-full p-4 mt-10">
-          <div
-            hidden={showViewModal}
-            className="flex flex-col gap-y-[18px] overflow-y-scroll no-scroll"
-          >
-            <div className="text-theme-text-primary flex items-center gap-x-2">
-              <p className="text-lg font-medium">Chat Embed</p>
-            </div>
-            <WidgetList
-              selectedView={selectedView}
-              handleClick={(view) => {
-                setSelectedView(view);
-                setShowViewModal(true);
-              }}
-            />
-          </div>
-          {showViewModal && (
-            <div className="fixed top-0 left-0 w-full h-full bg-[#25272C] z-30">
-              <div className="flex flex-col h-full">
-                <div className="flex items-center p-4">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowViewModal(false);
-                      setSelectedView("");
-                    }}
-                    className="text-theme-text-secondary hover:text-white transition-colors duration-200"
-                  >
-                    <div className="flex items-center text-sky-400">
-                      <ChevronLeft size={24} />
-                      <div>Back</div>
-                    </div>
-                  </button>
-                </div>
-                <div className="flex-1 overflow-y-auto p-4">
-                  <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl p-4 overflow-y-scroll no-scroll">
-                    {selectedView === "configs" ? (
-                      <EmbedConfigsView />
-                    ) : (
-                      <EmbedChatsView />
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </WidgetLayout>
-    );
-  }
 
   return (
     <WidgetLayout>
-      <div className="flex-1 flex gap-x-6 p-4 mt-10">
-        <div className="flex flex-col min-w-[360px] h-[calc(100vh-90px)]">
+      <div className="thin-scrollbar mt-10 flex min-w-0 flex-1 flex-col gap-4 overflow-x-hidden overflow-y-auto p-4 min-[900px]:flex-row min-[900px]:gap-x-6">
+        <div className="flex w-full shrink-0 flex-col min-[900px]:h-[calc(100vh-90px)] min-[900px]:w-72">
           <div className="flex-none mb-4">
             <div className="text-theme-text-primary flex items-center gap-x-2">
-              <p className="text-lg font-medium">Chat Embed</p>
+              <p className="text-lg font-medium">
+                {t("embeddable.navigation.title")}
+              </p>
             </div>
           </div>
 
@@ -82,8 +30,8 @@ export default function ChatEmbedWidgets() {
             </div>
           </div>
         </div>
-        <div className="flex-2 flex flex-col gap-y-[18px] mt-10">
-          <div className="bg-theme-bg-secondary text-theme-text-primary rounded-xl flex-1 p-4 overflow-y-scroll no-scroll">
+        <div className="flex min-w-0 w-full flex-1 flex-col gap-y-[18px] min-[900px]:mt-10">
+          <div className="no-scroll min-w-0 flex-1 overflow-y-auto rounded-xl bg-theme-bg-secondary p-2 text-theme-text-primary sm:p-4">
             {selectedView === "configs" ? (
               <EmbedConfigsView />
             ) : (
@@ -105,19 +53,18 @@ function WidgetLayout({ children }) {
 }
 
 function WidgetList({ selectedView, handleClick }) {
+  const { t } = useTranslation();
   const views = {
     configs: {
-      title: "Widgets",
+      title: t("embeddable.navigation.widgets"),
     },
     chats: {
-      title: "History",
+      title: t("embeddable.navigation.history"),
     },
   };
 
   return (
-    <div
-      className={`bg-theme-bg-secondary text-theme-text-primary rounded-xl ${isMobile ? "w-full" : "min-w-[360px] w-fit"}`}
-    >
+    <div className="w-full rounded-xl bg-theme-bg-secondary text-theme-text-primary">
       {Object.entries(views).map(([view, settings], index) => (
         <div
           key={view}

@@ -14,7 +14,7 @@ export default function ChatWindow({ closeChat, settings, sessionId }) {
 
   if (loading) {
     return (
-      <div className="allm-flex allm-flex-col allm-h-full">
+      <div className="allm-flex allm-h-full allm-flex-col allm-overflow-x-hidden allm-bg-white allm-text-slate-950">
         <ChatWindowHeader
           sessionId={sessionId}
           settings={settings}
@@ -23,7 +23,7 @@ export default function ChatWindow({ closeChat, settings, sessionId }) {
           setChatHistory={setChatHistory}
         />
         <ChatHistoryLoading />
-        <div className="allm-pt-4 allm-pb-2 allm-h-fit allm-gap-y-1">
+        <div className="allm-h-fit allm-space-y-1 allm-border-t allm-border-slate-200 allm-bg-white allm-px-4 allm-py-3">
           <SessionId />
           <Sponsor settings={settings} />
         </div>
@@ -34,7 +34,7 @@ export default function ChatWindow({ closeChat, settings, sessionId }) {
   setEventDelegatorForCodeSnippets();
 
   return (
-    <div className="allm-flex allm-flex-col allm-h-full">
+    <div className="allm-flex allm-h-full allm-flex-col allm-overflow-x-hidden allm-bg-white allm-text-slate-950">
       {!settings.noHeader && (
         <ChatWindowHeader
           sessionId={sessionId}
@@ -44,14 +44,14 @@ export default function ChatWindow({ closeChat, settings, sessionId }) {
           setChatHistory={setChatHistory}
         />
       )}
-      <div className="allm-flex-grow allm-overflow-y-auto">
+      <div className="allm-min-h-0 allm-flex-grow allm-overflow-y-auto">
         <ChatContainer
           sessionId={sessionId}
           settings={settings}
           knownHistory={chatHistory}
         />
       </div>
-      <div className="allm-mt-4 allm-pb-4 allm-h-fit allm-gap-y-2 allm-z-10">
+      <div className="allm-z-10 allm-h-fit allm-space-y-1 allm-border-t allm-border-slate-200 allm-bg-white allm-px-4 allm-py-3">
         <Sponsor settings={settings} />
         <ResetChat
           setChatHistory={setChatHistory}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import MarkdownIt from "markdown-it";
 import hljs from "highlight.js";
 import { ChevronDown } from "lucide-react";
@@ -19,6 +20,7 @@ const md = new MarkdownIt({
 });
 
 const ThoughtBubble = ({ thought }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!thought) return null;
@@ -36,7 +38,9 @@ const ThoughtBubble = ({ thought }) => {
           size={14}
           className={`transition-transform ${isExpanded ? "rotate-180" : ""}`}
         />
-        <span className="text-xs font-medium">View thoughts</span>
+        <span className="text-xs font-medium">
+          {t("embed-chats.view-thoughts")}
+        </span>
       </div>
       {isExpanded && (
         <div className="bg-theme-bg-chat-input rounded-md p-3 border-l-2 border-theme-text-secondary/30">

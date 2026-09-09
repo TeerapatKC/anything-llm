@@ -41,8 +41,8 @@ export default function EmbedConfigsView() {
           </p>
         </div>
 
-        <div className="flex gap-x-10 mr-8">
-          <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <p className="mt-2 max-w-2xl text-xs leading-[18px] font-base text-theme-text-secondary">
             {t("embeddable.description")}
           </p>
 
@@ -61,7 +61,7 @@ export default function EmbedConfigsView() {
             >
               <Code className="h-4 w-4" /> {t("embeddable.create")}
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent size="xl">
               <NewEmbedModal />
             </DialogContent>
           </Dialog>

@@ -15,19 +15,18 @@ import {
 } from "@/components/ui/dialog";
 
 export default function CodeSnippetModal({ embed }) {
+  const { t } = useTranslation();
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-sm font-semibold">
-          Copy your embed code
-        </DialogTitle>
+        <DialogTitle>{t("embeddable.modal.code-title")}</DialogTitle>
       </DialogHeader>
-      <div className="space-y-4">
+      <div className="space-y-4 pb-2">
         <ScriptTag embed={embed} />
       </div>
       <DialogFooter>
         <DialogClose render={<Button variant="outline" type="button" />}>
-          Close
+          {t("embeddable.modal.close")}
         </DialogClose>
       </DialogFooter>
     </>
@@ -65,13 +64,15 @@ const ScriptTag = ({ embed }) => {
     setTimeout(() => {
       setCopied(false);
     }, 2500);
-    showToast("Snippet copied to clipboard!", "success", { clear: true });
+    showToast(t("embeddable.toast.snippet-copied"), "success", {
+      clear: true,
+    });
   };
 
   return (
     <div>
-      <div className="flex flex-col mb-2">
-        <Label className="block">HTML Script Tag Embed Code</Label>
+      <div className="mb-2 flex flex-col gap-1">
+        <Label className="block">{t("embeddable.modal.code-label")}</Label>
         <p className="text-theme-text-secondary text-xs">
           {t("help.code-snippet-modal")}
         </p>

@@ -15,23 +15,21 @@ export default function ResetChat({
   };
 
   return (
-    <div className="allm-w-full allm-flex allm-justify-center allm-gap-x-1 p-0">
+    <div className="allm-flex allm-w-full allm-justify-center allm-gap-x-1 allm-p-0">
       <button
-        style={{ color: "#7A7D7E" }}
-        className="allm-h-fit allm-px-0 hover:allm-cursor-pointer allm-border-none allm-text-sm allm-bg-transparent hover:allm-opacity-80 hover:allm-underline"
+        className="allm-h-fit allm-rounded-md allm-border-none allm-bg-transparent allm-px-2 allm-py-1 allm-text-xs allm-font-medium allm-text-slate-500 hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-900"
         onClick={() => handleChatReset()}
       >
         {settings.resetChatText || t("chat.reset-chat")}
       </button>
       {settings.noHeader && (
         <>
-          <p className="allm-m-0 allm-h-fit allm-text-sm allm-text-[#7A7D7E]">
+          <p className="allm-m-0 allm-h-fit allm-self-center allm-text-xs allm-text-slate-300">
             |
           </p>
           <button
             type="button"
-            style={{ color: "#7A7D7E" }}
-            className="allm-h-fit allm-px-0 hover:allm-cursor-pointer allm-border-none allm-text-sm allm-bg-transparent hover:allm-opacity-80 hover:allm-underline"
+            className="allm-h-fit allm-rounded-md allm-border-none allm-bg-transparent allm-px-2 allm-py-1 allm-text-xs allm-font-medium allm-text-slate-500 hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-900"
             onClick={closeChat}
           >
             {t("chat.close-chat")}

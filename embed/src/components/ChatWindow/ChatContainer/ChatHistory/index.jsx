@@ -2,7 +2,6 @@ import HistoricalMessage from "./HistoricalMessage";
 import PromptReply from "./PromptReply";
 import { useEffect, useRef, useState } from "react";
 import { ArrowDown, CircleNotch } from "@phosphor-icons/react";
-import { embedderSettings } from "@/main";
 import debounce from "lodash.debounce";
 import { SEND_TEXT_EVENT } from "..";
 
@@ -48,9 +47,9 @@ export default function ChatHistory({ settings = {}, history = [] }) {
 
   if (history.length === 0) {
     return (
-      <div className="allm-h-full allm-overflow-y-auto allm-px-2 allm-py-4 allm-flex allm-flex-col allm-justify-start allm-no-scroll">
+      <div className="allm-no-scroll allm-flex allm-h-full allm-flex-col allm-justify-start allm-overflow-y-auto allm-bg-white allm-px-4 allm-py-6">
         <div className="allm-flex allm-h-full allm-flex-col allm-items-center allm-justify-center">
-          <p className="allm-text-slate-400 allm-text-sm allm-font-sans allm-py-4 allm-text-center">
+          <p className="allm-max-w-[280px] allm-py-4 allm-text-center allm-font-sans allm-text-sm allm-leading-6 allm-text-slate-500">
             {settings?.greeting ?? "Send a chat to get started."}
           </p>
           <SuggestedMessages settings={settings} />
@@ -61,11 +60,11 @@ export default function ChatHistory({ settings = {}, history = [] }) {
 
   return (
     <div
-      className="allm-h-full allm-overflow-y-auto allm-px-2 allm-pt-4 allm-pb-8 allm-flex allm-flex-col allm-justify-start allm-no-scroll"
+      className="allm-no-scroll allm-flex allm-h-full allm-min-w-0 allm-flex-col allm-justify-start allm-overflow-x-hidden allm-overflow-y-auto allm-bg-white allm-px-4 allm-py-5"
       id="chat-history"
       ref={chatHistoryRef}
     >
-      <div className="allm-flex allm-flex-col allm-gap-y-4">
+      <div className="allm-flex allm-flex-col allm-gap-y-5">
         {history.map((props, index) => {
           const isLastMessage = index === history.length - 1;
           const isLastBotReply =
@@ -103,12 +102,12 @@ export default function ChatHistory({ settings = {}, history = [] }) {
         })}
       </div>
       {!isAtBottom && (
-        <div className="allm-fixed allm-bottom-[10rem] allm-right-[50px] allm-z-50 allm-cursor-pointer allm-animate-pulse">
+        <div className="allm-absolute allm-bottom-24 allm-right-5 allm-z-20 allm-cursor-pointer">
           <div className="allm-flex allm-flex-col allm-items-center">
-            <div className="allm-rounded-full allm-border allm-border-white/10 allm-bg-black/20 hover:allm-bg-black/50 allm-w-8 allm-h-8 allm-flex allm-items-center allm-justify-center">
+            <div className="allm-flex allm-h-8 allm-w-8 allm-items-center allm-justify-center allm-rounded-full allm-border allm-border-slate-200 allm-bg-white allm-text-slate-600 allm-shadow-md hover:allm-bg-slate-50 hover:allm-text-slate-950">
               <ArrowDown
                 weight="bold"
-                className="allm-text-white/50 allm-w-4 allm-h-4"
+                className="allm-h-4 allm-w-4"
                 onClick={scrollToBottom}
                 id="scroll-to-bottom-button"
                 aria-label="Scroll to bottom"
@@ -124,7 +123,7 @@ export default function ChatHistory({ settings = {}, history = [] }) {
 export function ChatHistoryLoading() {
   return (
     <div className="allm-h-full allm-w-full allm-relative">
-      <div className="allm-h-full allm-max-h-[82vh] allm-pb-[100px] allm-pt-[5px] allm-bg-gray-100 allm-rounded-lg allm-px-2 allm-h-full allm-mt-2 allm-gap-y-2 allm-overflow-y-scroll allm-flex allm-flex-col allm-justify-start allm-no-scroll">
+      <div className="allm-no-scroll allm-flex allm-h-full allm-max-h-[82vh] allm-flex-col allm-justify-start allm-gap-y-2 allm-overflow-y-scroll allm-bg-white allm-px-4 allm-pb-[100px] allm-pt-2">
         <div className="allm-flex allm-h-full allm-flex-col allm-items-center allm-justify-center">
           <CircleNotch
             size={14}
@@ -140,14 +139,13 @@ function SuggestedMessages({ settings }) {
   if (!settings?.defaultMessages?.length) return null;
 
   return (
-    <div className="allm-flex allm-flex-col allm-gap-y-2 allm-w-[75%]">
+    <div className="allm-flex allm-w-full allm-max-w-[300px] allm-flex-col allm-gap-y-2">
       {settings.defaultMessages.map((content, i) => (
         <button
           key={i}
           style={{
             opacity: 0,
             wordBreak: "break-word",
-            backgroundColor: embedderSettings.USER_STYLES.msgBg,
             fontSize: settings.textSize,
           }}
           type="button"
@@ -156,7 +154,7 @@ function SuggestedMessages({ settings }) {
               new CustomEvent(SEND_TEXT_EVENT, { detail: { command: content } })
             );
           }}
-          className={`msg-suggestion allm-border-none hover:allm-shadow-[0_4px_14px_rgba(0,0,0,0.5)] allm-cursor-pointer allm-px-2 allm-py-2 allm-rounded-lg allm-text-white allm-w-full allm-shadow-[0_4px_14px_rgba(0,0,0,0.25)]`}
+          className="msg-suggestion allm-w-full allm-cursor-pointer allm-rounded-lg allm-border allm-border-slate-200 allm-bg-white allm-px-3 allm-py-2 allm-text-sm allm-font-medium allm-text-slate-700 allm-shadow-sm allm-transition-colors hover:allm-bg-slate-50 hover:allm-text-slate-950 focus:allm-outline-none focus:allm-ring-2 focus:allm-ring-slate-300"
         >
           {content}
         </button>

@@ -74,9 +74,9 @@ export default function EmbedChatsView() {
         exportOptions[exportType];
       const blob = new Blob([chats], { type: mimeType });
       saveAs(blob, `${filenameFunc()}.${fileExtension}`);
-      showToast(`Embed chats exported successfully as ${name}.`, "success");
+      showToast(t("embed-chats.toast.exported", { name }), "success");
     } else {
-      showToast("Failed to export embed chats.", "error");
+      showToast(t("embed-chats.toast.export-failed"), "error");
     }
   };
 
@@ -165,7 +165,7 @@ export default function EmbedChatsView() {
               <TableLoadingRow colSpan={6} />
             ) : chats.length === 0 ? (
               <TableEmptyRow colSpan={6}>
-                {t("embed-chats.empty", "No chat logs found")}
+                {t("embed-chats.empty")}
               </TableEmptyRow>
             ) : (
               chats.map((chat) => (

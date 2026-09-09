@@ -30,7 +30,7 @@ export default function EditEmbedModal({ embed }) {
     const data = enforceSubmissionSchema(form);
     const { success, error } = await Embed.updateEmbed(embed.id, data);
     if (success) {
-      showToast("Embed updated successfully.", "success", { clear: true });
+      showToast(t("embeddable.toast.updated"), "success", { clear: true });
       setTimeout(() => {
         window.location.reload();
       }, 800);
@@ -41,12 +41,12 @@ export default function EditEmbedModal({ embed }) {
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-sm font-semibold">
-          Update embed #{embed.id}
+        <DialogTitle>
+          {t("embeddable.modal.update-title", { id: embed.id })}
         </DialogTitle>
       </DialogHeader>
-      <form onSubmit={handleUpdate}>
-        <div className="space-y-4">
+      <form onSubmit={handleUpdate} className="flex min-h-0 flex-col">
+        <div className="space-y-6 pb-2">
           <WorkspaceSelection defaultValue={embed.workspace.id} />
           <ChatModeSelection defaultValue={embed.chat_mode} />
           <PermittedDomains
@@ -99,15 +99,15 @@ export default function EditEmbedModal({ embed }) {
             <code className="border-none bg-theme-settings-input-bg text-theme-text-primary mx-1 px-1 rounded-sm">
               &lt;script&gt;
             </code>{" "}
-            tag.
+            {t("embeddable.modal.script-tag")}
           </p>
         </div>
-        <DialogFooter>
+        <DialogFooter className="mt-2">
           <DialogClose render={<Button variant="outline" type="button" />}>
-            Cancel
+            {t("embeddable.modal.cancel")}
           </DialogClose>
           <Button variant="default" type="submit">
-            Update embed
+            {t("embeddable.modal.update")}
           </Button>
         </DialogFooter>
       </form>

@@ -930,6 +930,59 @@ const TRANSLATIONS = {
     description:
       "Embeddable chat widgets are public facing chat interfaces that are tied to a single workspace. These allow you to build workspaces that then you can publish to the world.",
     create: "Create embed",
+    empty: "No embeddable widgets created yet",
+    navigation: {
+      title: "Chat Embed",
+      widgets: "Widgets",
+      history: "History",
+    },
+    modal: {
+      "create-title": "Create new embed for workspace",
+      "update-title": "Update embed #{{id}}",
+      workspace: "Workspace",
+      "chat-method": "Allowed chat method",
+      "chat-mode": "Chat: Respond to all questions regardless of context",
+      "query-mode":
+        "Query: Only respond to chats related to documents in workspace",
+      "restrict-domains": "Restrict requests from domains",
+      "empty-domains":
+        "Leaving this empty means anyone can use your embed on any site.",
+      "domains-placeholder":
+        "https://example.com, https://app.example.com (separate with commas)",
+      "script-tag": "tag.",
+      create: "Create embed",
+      update: "Update embed",
+      cancel: "Cancel",
+      close: "Close",
+      "code-title": "Copy your embed code",
+      "code-label": "HTML Script Tag Embed Code",
+    },
+    actions: {
+      settings: "Settings",
+      "code-snippet": "Code snippet",
+      enable: "Enable",
+      disable: "Disable",
+      delete: "Delete",
+      all: "All",
+    },
+    confirm: {
+      "enable-title": "Enable this embed?",
+      "disable-title": "Disable this embed?",
+      "enable-description":
+        "The embed will resume responding to chat requests.",
+      "disable-description":
+        "Once disabled, the embed will no longer respond to chat requests.",
+      "delete-title": "Delete this embed?",
+      "delete-description":
+        "Once deleted, this embed will no longer respond to chats or be active. This action is irreversible.",
+    },
+    toast: {
+      updated: "Embed updated successfully.",
+      enabled: "Embed is active.",
+      disabled: "Embed has been disabled.",
+      deleted: "Embed deleted from system.",
+      "snippet-copied": "Snippet copied to clipboard!",
+    },
     table: {
       workspace: "Workspace",
       chats: "Sent Chats",
@@ -942,6 +995,22 @@ const TRANSLATIONS = {
     export: "Export",
     description:
       "These are all the recorded chats and messages from any embed that you have published.",
+    empty: "No chat logs found",
+    "viewing-text": "Viewing text",
+    "connection-details": "Connection details",
+    "view-thoughts": "View thoughts",
+    "session-id": "Session ID",
+    username: "Username",
+    "client-ip": "Client IP address",
+    "client-host": "Client host URL",
+    confirm: {
+      "delete-title": "Delete this chat?",
+      "delete-description": "This action is irreversible.",
+    },
+    toast: {
+      exported: "Embed chats exported successfully as {{name}}.",
+      "export-failed": "Failed to export embed chats.",
+    },
     table: {
       embed: "Embed",
       sender: "Sender",

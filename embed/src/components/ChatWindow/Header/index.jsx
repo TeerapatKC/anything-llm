@@ -46,24 +46,24 @@ export default function ChatWindowHeader({
 
   return (
     <div
-      style={{ borderBottom: "1px solid #E9E9E9" }}
-      className="allm-flex allm-items-center allm-relative allm-rounded-t-2xl"
+      className="allm-relative allm-flex allm-h-16 allm-shrink-0 allm-items-center allm-border-b allm-border-slate-200 allm-bg-white allm-px-4"
       id="nexus-ai-header"
     >
-      <div className="allm-flex allm-justify-center allm-items-center allm-w-full allm-h-[76px]">
+      <div className="allm-flex allm-w-full allm-items-center allm-justify-start allm-pr-20">
         <img
-          style={{ maxWidth: 48, maxHeight: 48 }}
+          style={{ maxWidth: 28, maxHeight: 28 }}
           src={iconUrl ?? NexusAIIcon}
           alt={iconUrl ? "Brand" : "Nexus AI Logo"}
+          className="allm-block allm-rounded-md allm-object-contain"
         />
       </div>
-      <div className="allm-absolute allm-right-0 allm-flex allm-gap-x-1 allm-items-center allm-px-[22px]">
+      <div className="allm-absolute allm-right-3 allm-flex allm-items-center allm-gap-1">
         {settings.loaded && (
           <button
             ref={buttonRef}
             type="button"
             onClick={() => setShowOptions(!showingOptions)}
-            className="allm-bg-transparent hover:allm-cursor-pointer allm-border-none hover:allm-bg-gray-100 allm-rounded-sm allm-text-slate-800/60"
+            className="allm-inline-flex allm-h-8 allm-w-8 allm-items-center allm-justify-center allm-rounded-md allm-border-none allm-bg-transparent allm-text-slate-500 allm-transition-colors hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-900 focus:allm-outline-none focus:allm-ring-2 focus:allm-ring-slate-300"
             aria-label="Options"
           >
             <DotsThreeOutlineVertical size={20} weight="fill" />
@@ -72,7 +72,7 @@ export default function ChatWindowHeader({
         <button
           type="button"
           onClick={closeChat}
-          className="allm-bg-transparent hover:allm-cursor-pointer allm-border-none hover:allm-bg-gray-100 allm-rounded-sm allm-text-slate-800/60"
+          className="allm-inline-flex allm-h-8 allm-w-8 allm-items-center allm-justify-center allm-rounded-md allm-border-none allm-bg-transparent allm-text-slate-500 allm-transition-colors hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-900 focus:allm-outline-none focus:allm-ring-2 focus:allm-ring-slate-300"
           aria-label="Close"
         >
           <X size={20} weight="bold" />
@@ -96,14 +96,14 @@ function OptionsMenu({ settings, showing, resetChat, sessionId, menuRef }) {
   return (
     <div
       ref={menuRef}
-      className="allm-bg-white allm-absolute allm-z-10 allm-flex allm-flex-col allm-gap-y-1 allm-rounded-xl allm-shadow-lg allm-top-[64px] allm-right-[46px]"
+      className="allm-absolute allm-right-3 allm-top-14 allm-z-20 allm-flex allm-min-w-[190px] allm-flex-col allm-gap-1 allm-rounded-md allm-border allm-border-slate-200 allm-bg-white allm-p-1 allm-shadow-lg"
     >
       <button
         onClick={resetChat}
-        className="hover:allm-cursor-pointer allm-bg-white allm-gap-x-[12px] hover:allm-bg-gray-100 allm-rounded-lg allm-border-none allm-flex allm-items-center allm-text-base allm-text-[#7A7D7E] allm-font-bold allm-px-4"
+        className="allm-flex allm-w-full allm-items-center allm-gap-2 allm-rounded-sm allm-border-none allm-bg-white allm-px-2 allm-py-1.5 allm-text-left allm-text-sm allm-font-medium allm-text-slate-700 hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-950"
       >
         <ArrowCounterClockwise size={24} />
-        <p className="allm-text-[14px]">{t("chat.reset-chat")}</p>
+        <span>{t("chat.reset-chat")}</span>
       </button>
       <ContactSupport email={settings.supportEmail} />
       <SessionID sessionId={sessionId} />
@@ -124,11 +124,9 @@ function SessionID({ sessionId }) {
 
   if (sessionIdCopied) {
     return (
-      <div className="hover:allm-cursor-pointer allm-bg-white allm-gap-x-[12px] hover:allm-bg-gray-100 allm-rounded-lg allm-border-none allm-flex allm-items-center allm-text-base allm-text-[#7A7D7E] allm-font-bold allm-px-4">
+      <div className="allm-flex allm-w-full allm-items-center allm-gap-2 allm-rounded-sm allm-bg-slate-50 allm-px-2 allm-py-1.5 allm-text-sm allm-font-medium allm-text-slate-700">
         <Check size={24} />
-        <p className="allm-text-[14px] allm-font-sans">
-          {t("chat.message-copied")}
-        </p>
+        <span className="allm-font-sans">{t("chat.message-copied")}</span>
       </div>
     );
   }
@@ -136,10 +134,10 @@ function SessionID({ sessionId }) {
   return (
     <button
       onClick={copySessionId}
-      className="hover:allm-cursor-pointer allm-bg-white allm-gap-x-[12px] hover:allm-bg-gray-100 allm-rounded-lg allm-border-none allm-flex allm-items-center allm-text-base allm-text-[#7A7D7E] allm-font-bold allm-px-4"
+      className="allm-flex allm-w-full allm-items-center allm-gap-2 allm-rounded-sm allm-border-none allm-bg-white allm-px-2 allm-py-1.5 allm-text-left allm-text-sm allm-font-medium allm-text-slate-700 hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-950"
     >
       <Copy size={24} />
-      <p className="allm-text-[14px]">{t("chat.session-id")}</p>
+      <span>{t("chat.session-id")}</span>
     </button>
   );
 }
@@ -151,12 +149,10 @@ function ContactSupport({ email = null }) {
   return (
     <a
       href={`mailto:${email}?Subject=${encodeURIComponent(subject)}`}
-      className="allm-no-underline hover:allm-underline hover:allm-cursor-pointer allm-bg-white allm-gap-x-[12px] hover:allm-bg-gray-100 allm-rounded-lg allm-border-none allm-flex allm-items-center allm-text-base allm-text-[#7A7D7E] allm-font-bold allm-px-4"
+      className="allm-flex allm-w-full allm-items-center allm-gap-2 allm-rounded-sm allm-bg-white allm-px-2 allm-py-1.5 allm-text-sm allm-font-medium allm-text-slate-700 allm-no-underline hover:allm-cursor-pointer hover:allm-bg-slate-100 hover:allm-text-slate-950"
     >
       <Envelope size={24} />
-      <p className="allm-text-[14px] allm-font-sans">
-        {t("chat.email-support")}
-      </p>
+      <span className="allm-font-sans">{t("chat.email-support")}</span>
     </a>
   );
 }

@@ -14,8 +14,10 @@ import { safeJsonParse } from "@/utils/request";
 import { TableCell, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 export default function ChatRow({ chat, onDelete }) {
+  const { t } = useTranslation();
   const {
     isOpen: isPromptOpen,
     openModal: openPromptModal,
@@ -35,9 +37,9 @@ export default function ChatRow({ chat, onDelete }) {
 
   const handleDelete = async () => {
     setConfirm({
-      title: "Delete this chat?",
-      description: "This action is irreversible.",
-      confirmText: "Delete",
+      title: t("embed-chats.confirm.delete-title"),
+      description: t("embed-chats.confirm.delete-description"),
+      confirmText: t("embeddable.actions.delete"),
       variant: "destructive",
       onConfirm: async () => {
         await Embed.deleteChat(chat.id);
@@ -82,7 +84,7 @@ export default function ChatRow({ chat, onDelete }) {
         <TableCell>{chat.createdAt}</TableCell>
         <TableCell className="text-right">
           <Button variant="destructive" size="sm" onClick={handleDelete}>
-            Delete
+            {t("embeddable.actions.delete")}
           </Button>
         </TableCell>
       </TableRow>
@@ -90,7 +92,7 @@ export default function ChatRow({ chat, onDelete }) {
         open={isPromptOpen}
         onOpenChange={(open) => (open ? openPromptModal() : closePromptModal())}
       >
-        <TextPreview text={chat.prompt} />
+        <TextPreview text={chat.prompt} title={t("embed-chats.viewing-text")} />
       </Dialog>
       <Dialog
         open={isResponseOpen}
@@ -104,6 +106,7 @@ export default function ChatRow({ chat, onDelete }) {
               content={safeJsonParse(chat.response, {})?.text}
             />
           }
+          title={t("embed-chats.viewing-text")}
         />
       </Dialog>
       <Dialog
@@ -120,6 +123,7 @@ export default function ChatRow({ chat, onDelete }) {
               connection_information={chat.connection_information}
             />
           }
+          title={t("embed-chats.connection-details")}
         />
       </Dialog>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
@@ -127,13 +131,11 @@ export default function ChatRow({ chat, onDelete }) {
   );
 }
 
-const TextPreview = ({ text }) => {
+const TextPreview = ({ text, title }) => {
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle className="text-sm font-semibold">
-          Viewing Text
-        </DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
       <div className="w-full h-[60vh] py-2 px-4 whitespace-pre-line overflow-auto rounded-lg bg-zinc-900 light:bg-theme-bg-secondary border border-gray-500 text-theme-text-primary text-sm">
         {text}
@@ -147,6 +149,7 @@ const ConnectionDetails = ({
   verbose = false,
   connection_information,
 }) => {
+  const { t } = useTranslation();
   const details = safeJsonParse(connection_information, {});
   if (Object.keys(details).length === 0) return null;
 
@@ -154,21 +157,21 @@ const ConnectionDetails = ({
     return (
       <>
         <p className="text-xs text-theme-text-secondary">
-          sessionID: {sessionId}
+          {t("embed-chats.session-id")}: {sessionId}
         </p>
         {details.username && (
           <p className="text-xs text-theme-text-secondary">
-            username: {details.username}
+            {t("embed-chats.username")}: {details.username}
           </p>
         )}
         {details.ip && (
           <p className="text-xs text-theme-text-secondary">
-            client ip address: {details.ip}
+            {t("embed-chats.client-ip")}: {details.ip}
           </p>
         )}
         {details.host && (
           <p className="text-xs text-theme-text-secondary">
-            client host URL: {details.host}
+            {t("embed-chats.client-host")}: {details.host}
           </p>
         )}
       </>

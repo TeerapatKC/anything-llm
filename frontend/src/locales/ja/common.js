@@ -641,6 +641,59 @@ const TRANSLATIONS = {
     description:
       "埋め込みチャットウィジェットは、特定のワークスペースに紐付けられた公開用チャットインターフェースです。これにより、ワークスペースを構築し、そのチャットを外部に公開できます。",
     create: "埋め込みチャットウィジェットを作成",
+    empty: "埋め込みチャットウィジェットはまだありません",
+    navigation: {
+      title: "チャット埋め込み",
+      widgets: "ウィジェット",
+      history: "履歴",
+    },
+    modal: {
+      "create-title": "ワークスペース用の埋め込みを作成",
+      "update-title": "埋め込み #{{id}} を更新",
+      workspace: "ワークスペース",
+      "chat-method": "チャットの応答方法",
+      "chat-mode": "チャット: コンテキストに関係なくすべての質問に応答",
+      "query-mode":
+        "クエリ: ワークスペース内のドキュメントに関連する質問だけに応答",
+      "restrict-domains": "ドメインからのリクエストを制限",
+      "empty-domains":
+        "空欄にすると、どのサイトでもこの埋め込みを利用できます。",
+      "domains-placeholder":
+        "https://example.com, https://app.example.com（複数はカンマで区切る）",
+      "script-tag": "タグ。",
+      create: "埋め込みを作成",
+      update: "埋め込みを更新",
+      cancel: "キャンセル",
+      close: "閉じる",
+      "code-title": "埋め込みコードをコピー",
+      "code-label": "HTML Script Tag の埋め込みコード",
+    },
+    actions: {
+      settings: "設定",
+      "code-snippet": "コードスニペット",
+      enable: "有効にする",
+      disable: "無効にする",
+      delete: "削除",
+      all: "すべて",
+    },
+    confirm: {
+      "enable-title": "この埋め込みを有効にしますか？",
+      "disable-title": "この埋め込みを無効にしますか？",
+      "enable-description":
+        "この埋め込みはチャットリクエストへの応答を再開します。",
+      "disable-description":
+        "無効にすると、この埋め込みはチャットリクエストに応答しなくなります。",
+      "delete-title": "この埋め込みを削除しますか？",
+      "delete-description":
+        "削除すると、この埋め込みはチャットに応答できなくなります。この操作は元に戻せません。",
+    },
+    toast: {
+      updated: "埋め込みを更新しました。",
+      enabled: "埋め込みを有効にしました。",
+      disabled: "埋め込みを無効にしました。",
+      deleted: "埋め込みをシステムから削除しました。",
+      "snippet-copied": "コードスニペットをクリップボードにコピーしました。",
+    },
     table: {
       workspace: "ワークスペース",
       chats: "送信済みチャット",
@@ -653,6 +706,22 @@ const TRANSLATIONS = {
     export: "エクスポート",
     description:
       "これは、公開された埋め込みウィジェットから送信された全てのチャットとメッセージの記録です。",
+    empty: "チャットログがありません",
+    "viewing-text": "テキストを表示",
+    "connection-details": "接続の詳細",
+    "view-thoughts": "思考を見る",
+    "session-id": "セッション ID",
+    username: "ユーザー名",
+    "client-ip": "クライアント IP アドレス",
+    "client-host": "クライアントホスト URL",
+    confirm: {
+      "delete-title": "このチャットを削除しますか？",
+      "delete-description": "この操作は元に戻せません。",
+    },
+    toast: {
+      exported: "埋め込みチャットを {{name}} としてエクスポートしました。",
+      "export-failed": "埋め込みチャットのエクスポートに失敗しました。",
+    },
     table: {
       embed: "埋め込み",
       sender: "送信者",

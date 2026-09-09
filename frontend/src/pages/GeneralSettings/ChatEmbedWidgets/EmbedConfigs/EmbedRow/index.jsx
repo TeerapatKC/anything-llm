@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import showToast from "@/utils/toast";
 import { useModal } from "@/hooks/useModal";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function EmbedRow({ embed }) {
+  const { t } = useTranslation();
   const rowRef = useRef(null);
   const [enabled, setEnabled] = useState(Number(embed.enabled) === 1);
   const {
@@ -35,11 +37,15 @@ export default function EmbedRow({ embed }) {
 
   const handleSuspend = async () => {
     setConfirm({
-      title: enabled ? "Disable this embed?" : "Enable this embed?",
+      title: enabled
+        ? t("embeddable.confirm.disable-title")
+        : t("embeddable.confirm.enable-title"),
       description: enabled
-        ? "Once disabled the embed will no longer respond to any chat requests."
-        : "The embed will resume responding to chat requests.",
-      confirmText: enabled ? "Disable" : "Enable",
+        ? t("embeddable.confirm.disable-description")
+        : t("embeddable.confirm.enable-description"),
+      confirmText: enabled
+        ? t("embeddable.actions.disable")
+        : t("embeddable.actions.enable"),
       variant: enabled ? "destructive" : "default",
       onConfirm: async () => {
         const { success, error } = await Embed.updateEmbed(embed.id, {
@@ -48,7 +54,9 @@ export default function EmbedRow({ embed }) {
         if (!success) showToast(error, "error", { clear: true });
         if (success) {
           showToast(
-            `Embed ${enabled ? "has been disabled" : "is active"}.`,
+            enabled
+              ? t("embeddable.toast.disabled")
+              : t("embeddable.toast.enabled"),
             "success",
             { clear: true }
           );
@@ -60,17 +68,18 @@ export default function EmbedRow({ embed }) {
 
   const handleDelete = async () => {
     setConfirm({
-      title: "Delete this embed?",
-      description:
-        "Once deleted this embed will no longer respond to chats or be active. This action is irreversible.",
-      confirmText: "Delete",
+      title: t("embeddable.confirm.delete-title"),
+      description: t("embeddable.confirm.delete-description"),
+      confirmText: t("embeddable.actions.delete"),
       variant: "destructive",
       onConfirm: async () => {
         const { success, error } = await Embed.deleteEmbed(embed.id);
         if (!success) showToast(error, "error", { clear: true });
         if (success) {
           rowRef?.current?.remove();
-          showToast("Embed deleted from system.", "success", { clear: true });
+          showToast(t("embeddable.toast.deleted"), "success", {
+            clear: true,
+          });
         }
       },
     });
@@ -110,19 +119,21 @@ export default function EmbedRow({ embed }) {
           <TableRowActions>
             <DropdownMenuItem onClick={openSettingsModal}>
               <Settings />
-              Settings
+              {t("embeddable.actions.settings")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={openSnippetModal}>
               <Code />
-              Code snippet
+              {t("embeddable.actions.code-snippet")}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleSuspend}>
-              {enabled ? "Disable" : "Enable"}
+              {enabled
+                ? t("embeddable.actions.disable")
+                : t("embeddable.actions.enable")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={handleDelete}>
               <Trash2 />
-              Delete
+              {t("embeddable.actions.delete")}
             </DropdownMenuItem>
           </TableRowActions>
         </TableCell>
@@ -154,7 +165,8 @@ export default function EmbedRow({ embed }) {
 
 function ActiveDomains({ domainList }) {
   const domains = safeJsonParse(domainList, []);
-  if (domains.length === 0) return <p>all</p>;
+  const { t } = useTranslation();
+  if (domains.length === 0) return <p>{t("embeddable.actions.all")}</p>;
   return (
     <div className="flex flex-col gap-y-2">
       {domains.map((domain, index) => {

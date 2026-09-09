@@ -12,10 +12,10 @@ const ThoughtBubble = ({ thought }) => {
   if (!thought || !embedderSettings.settings.showThoughts) return null;
 
   return (
-    <div className="allm-mb-2">
+    <div className="allm-mb-2 allm-rounded-md allm-border allm-border-slate-200 allm-bg-white allm-p-2">
       <div
         onClick={() => setIsExpanded(!isExpanded)}
-        className="allm-cursor-pointer allm-flex allm-items-center allm-gap-x-1.5 allm-text-gray-400 hover:allm-text-gray-500"
+        className="allm-flex allm-cursor-pointer allm-items-center allm-gap-x-1.5 allm-text-slate-500 hover:allm-text-slate-900"
       >
         <CaretDown
           size={14}
@@ -25,8 +25,8 @@ const ThoughtBubble = ({ thought }) => {
         <span className="allm-text-xs allm-font-medium">View thoughts</span>
       </div>
       {isExpanded && (
-        <div className="allm-mt-2 allm-mb-3 allm-pl-0 allm-border-l-2 allm-border-gray-200">
-          <div className="allm-text-xs allm-text-gray-600 allm-font-mono allm-whitespace-pre-wrap">
+        <div className="allm-mt-2 allm-border-l-2 allm-border-slate-200 allm-pl-3">
+          <div className="allm-whitespace-pre-wrap allm-font-mono allm-text-xs allm-text-slate-600">
             {thought.trim()}
           </div>
         </div>
@@ -65,9 +65,9 @@ const HistoricalMessage = forwardRef(
       .trim();
 
     return (
-      <div className="allm-py-[5px]">
+      <div className="allm-py-1">
         {role === "assistant" && (
-          <div className="allm-text-[10px] allm-text-gray-400 allm-ml-[54px] allm-mr-6 allm-mb-2 allm-text-left allm-font-sans">
+          <div className="allm-mb-1.5 allm-ml-11 allm-mr-6 allm-text-left allm-font-sans allm-text-xs allm-font-medium allm-text-slate-500">
             {embedderSettings.settings.assistantName ||
               "Nexus AI Chat Assistant"}
           </div>
@@ -83,7 +83,7 @@ const HistoricalMessage = forwardRef(
             <img
               src={embedderSettings.settings.assistantIcon || NexusAIIcon}
               alt="Nexus AI Icon"
-              className="allm-w-9 allm-h-9 allm-flex-shrink-0 allm-ml-2"
+              className="allm-h-8 allm-w-8 allm-flex-shrink-0 allm-rounded-full allm-border-2 allm-border-slate-300 allm-bg-white allm-object-cover allm-p-0.5 allm-shadow-sm"
               id="nexus-ai-icon"
             />
           )}
@@ -95,22 +95,22 @@ const HistoricalMessage = forwardRef(
                   ? embedderSettings.USER_STYLES.msgBg
                   : embedderSettings.ASSISTANT_STYLES.msgBg,
             }}
-            className={`allm-py-[11px] allm-px-4 allm-flex allm-flex-col allm-font-sans ${
+            className={`allm-flex allm-flex-col allm-px-3 allm-py-2.5 allm-font-sans ${
               error
-                ? "allm-bg-red-200 allm-rounded-lg allm-mr-[37px] allm-ml-[9px]"
+                ? "allm-ml-2 allm-mr-10 allm-max-w-[calc(100%-3.5rem)] allm-rounded-xl allm-border allm-border-red-200 allm-bg-red-50 allm-text-red-700"
                 : role === "user"
                   ? `${embedderSettings.USER_STYLES.base} allm-nexus-ai-user-message`
-                  : `${embedderSettings.ASSISTANT_STYLES.base} allm-nexus-ai-assistant-message`
-            } allm-shadow-[0_4px_14px_rgba(0,0,0,0.25)]`}
+                  : `${embedderSettings.ASSISTANT_STYLES.base} allm-nexus-ai-assistant-message allm-border allm-border-slate-200`
+            } allm-shadow-sm`}
           >
             <div className="allm-flex allm-flex-col">
               {error ? (
-                <div className="allm-p-2 allm-rounded-lg allm-bg-red-50 allm-text-red-500">
+                <div className="allm-text-red-700">
                   <span className="allm-inline-block">
                     <Warning className="allm-h-4 allm-w-4 allm-mb-1 allm-inline-block" />{" "}
                     Could not respond to message.
                   </span>
-                  <p className="allm-text-xs allm-font-mono allm-mt-2 allm-border-l-2 allm-border-red-500 allm-pl-2 allm-bg-red-300 allm-p-2 allm-rounded-sm">
+                  <p className="allm-mt-2 allm-rounded-md allm-bg-red-100 allm-p-2 allm-font-mono allm-text-xs">
                     {errorMsg || "Server error"}
                   </p>
                 </div>
@@ -135,7 +135,7 @@ const HistoricalMessage = forwardRef(
 
         {sentAt && (
           <div
-            className={`allm-font-sans allm-text-[10px] allm-text-gray-400 allm-ml-[54px] allm-mr-6 allm-mt-2 ${role === "user" ? "allm-text-right" : "allm-text-left"}`}
+            className={`allm-mt-1.5 allm-font-sans allm-text-[10px] allm-text-slate-400 ${role === "user" ? "allm-mr-1 allm-text-right" : "allm-ml-11 allm-text-left"}`}
           >
             {formatDate(sentAt)}
           </div>

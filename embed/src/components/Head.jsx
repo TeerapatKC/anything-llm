@@ -24,9 +24,9 @@ const customCss = `
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #000000;
-    color: #5fa4fa;
-    box-shadow: 9999px 0 0 0 #000000;
+    background-color: #64748b;
+    color: #64748b;
+    box-shadow: 9999px 0 0 0 #64748b;
     animation: dot-falling 1.5s infinite linear;
     animation-delay: 0.1s;
   }
@@ -43,8 +43,8 @@ const customCss = `
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #000000;
-    color: #000000;
+    background-color: #64748b;
+    color: #64748b;
     animation: dot-falling-before 1.5s infinite linear;
     animation-delay: 0s;
   }
@@ -53,8 +53,8 @@ const customCss = `
     width: 10px;
     height: 10px;
     border-radius: 5px;
-    background-color: #000000;
-    color: #000000;
+    background-color: #64748b;
+    color: #64748b;
     animation: dot-falling-after 1.5s infinite linear;
     animation-delay: 0.2s;
   }
@@ -66,7 +66,7 @@ const customCss = `
     25%,
     50%,
     75% {
-      box-shadow: 9999px 0 0 0 #000000;
+      box-shadow: 9999px 0 0 0 #64748b;
     }
     100% {
       box-shadow: 9999px 15px 0 0 rgba(152, 128, 255, 0);
@@ -80,7 +80,7 @@ const customCss = `
     25%,
     50%,
     75% {
-      box-shadow: 9984px 0 0 0 #000000;
+      box-shadow: 9984px 0 0 0 #64748b;
     }
     100% {
       box-shadow: 9984px 15px 0 0 rgba(152, 128, 255, 0);
@@ -94,7 +94,7 @@ const customCss = `
     25%,
     50%,
     75% {
-      box-shadow: 10014px 0 0 0 #000000;
+      box-shadow: 10014px 0 0 0 #64748b;
     }
     100% {
       box-shadow: 10014px 15px 0 0 rgba(152, 128, 255, 0);
@@ -117,6 +117,54 @@ const customCss = `
 
   span.allm-whitespace-pre-line>p {
     margin: 0px;
+  }
+
+  #nexus-ai-chat,
+  #nexus-ai-chat *,
+  #nexus-ai-chat button,
+  #nexus-ai-chat textarea {
+    box-sizing: border-box;
+    font-family: plus-jakarta-sans, ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  #nexus-ai-chat {
+    overflow-x: hidden;
+  }
+
+  #nexus-ai-chat button,
+  #nexus-ai-embed-chat-button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #nexus-ai-chat button:focus-visible,
+  #nexus-ai-chat textarea:focus-visible,
+  #nexus-ai-embed-chat-button:focus-visible {
+    outline: none;
+  }
+
+  .allm-reply a,
+  #chat-history a {
+    color: #2563eb;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .allm-reply code,
+  #chat-history code:not(.hljs) {
+    border-radius: 4px;
+    background: #f1f5f9;
+    padding: 0.125rem 0.3rem;
+    color: #0f172a;
+    font-size: 0.875em;
+  }
+
+  .allm-reply pre,
+  #chat-history pre {
+    overflow-x: auto;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    background: #0f172a;
   }
 `;
 

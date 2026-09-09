@@ -13,7 +13,7 @@ export default function PromptInput({
   const { t } = useTranslation();
   const formRef = useRef(null);
   const textareaRef = useRef(null);
-  const [_, setFocused] = useState(false);
+  const [focused, setFocused] = useState(false);
 
   useEffect(() => {
     if (!inputDisabled && textareaRef.current) {
@@ -49,16 +49,19 @@ export default function PromptInput({
   };
 
   return (
-    <div className="allm-w-full allm-sticky allm-bottom-0 allm-z-10 allm-flex allm-justify-center allm-items-center allm-bg-white">
+    <div className="allm-sticky allm-bottom-0 allm-z-10 allm-flex allm-w-full allm-min-w-0 allm-items-center allm-justify-center allm-overflow-visible allm-bg-white allm-px-4 allm-py-2">
       <form
         onSubmit={handleSubmit}
-        className="allm-flex allm-flex-col allm-gap-y-1 allm-rounded-t-lg allm-w-full allm-items-center allm-justify-center"
+        className="allm-flex allm-w-full allm-min-w-0 allm-items-center allm-justify-center"
       >
-        <div className="allm-flex allm-items-center allm-w-full">
-          <div className="allm-bg-white allm-flex allm-flex-col allm-px-4 allm-overflow-hidden allm-w-full">
+        <div className="allm-flex allm-w-full allm-min-w-0 allm-items-center">
+          <div className="allm-flex allm-w-full allm-min-w-0 allm-flex-col">
             <div
-              style={{ border: "1.5px solid #22262833" }}
-              className="allm-flex allm-items-center allm-w-full allm-rounded-2xl"
+              className={`allm-flex allm-w-full allm-items-end allm-rounded-xl allm-border allm-bg-white allm-p-1 allm-shadow-sm allm-transition ${
+                focused
+                  ? "allm-border-slate-400 allm-ring-2 allm-ring-slate-200"
+                  : "allm-border-slate-200 hover:allm-border-slate-300"
+              }`}
             >
               <textarea
                 ref={textareaRef}
@@ -74,24 +77,24 @@ export default function PromptInput({
                   adjustTextArea(e);
                 }}
                 value={message}
-                className="allm-box-border allm-font-sans allm-border-none allm-cursor-text allm-max-h-[100px] allm-text-[14px] allm-leading-5 allm-mx-2 allm-py-2 allm-w-full allm-text-black allm-bg-transparent placeholder:allm-text-slate-800/60 allm-resize-none active:allm-outline-none focus:allm-outline-none allm-flex-grow"
+                className="allm-box-border allm-max-h-[100px] allm-min-h-[38px] allm-w-full allm-flex-grow allm-resize-none allm-border-none allm-bg-transparent allm-px-2 allm-py-2 allm-font-sans allm-text-sm allm-leading-5 allm-text-slate-950 placeholder:allm-text-slate-400 focus:allm-outline-none disabled:allm-cursor-not-allowed disabled:allm-opacity-50"
                 placeholder={settings.sendMessageText || t("chat.send-message")}
                 id="message-input"
               />
               <button
                 ref={formRef}
                 type="submit"
-                disabled={buttonDisabled}
-                className="allm-bg-transparent allm-border-none allm-inline-flex allm-justify-center allm-rounded-2xl allm-cursor-pointer allm-text-black group"
+                disabled={buttonDisabled || !message.trim()}
+                className="allm-group allm-inline-flex allm-h-8 allm-w-8 allm-shrink-0 allm-items-center allm-justify-center allm-rounded-lg allm-border-none allm-bg-slate-900 allm-text-white allm-transition-colors hover:allm-cursor-pointer hover:allm-bg-slate-800 focus:allm-outline-none focus:allm-ring-2 focus:allm-ring-slate-400 focus:allm-ring-offset-1 disabled:allm-cursor-not-allowed disabled:allm-bg-slate-100 disabled:allm-text-slate-400"
                 id="send-message-button"
                 aria-label="Send message"
               >
                 {buttonDisabled ? (
-                  <CircleNotch className="allm-w-4 allm-h-4 allm-animate-spin" />
+                  <CircleNotch className="allm-h-4 allm-w-4 allm-animate-spin" />
                 ) : (
                   <PaperPlaneRight
                     size={24}
-                    className="allm-my-3 allm-text-[#22262899]/60 group-hover:allm-text-[#22262899]/90"
+                    className="allm-text-current"
                     weight="fill"
                   />
                 )}

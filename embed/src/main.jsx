@@ -17,12 +17,12 @@ export const embedderSettings = {
   settings: scriptSettings,
   stylesSrc: parseStylesSrc(document?.currentScript?.src),
   USER_STYLES: {
-    msgBg: scriptSettings?.userBgColor ?? "#3DBEF5",
-    base: `allm-text-white allm-rounded-t-[18px] allm-rounded-bl-[18px] allm-rounded-br-[4px] allm-mx-[20px]`,
+    msgBg: scriptSettings?.userBgColor ?? "#0F172A",
+    base: `allm-text-white allm-rounded-xl allm-ml-12 allm-mr-1 allm-max-w-[80%]`,
   },
   ASSISTANT_STYLES: {
-    msgBg: scriptSettings?.assistantBgColor ?? "#FFFFFF",
-    base: `allm-text-[#222628] allm-rounded-t-[18px] allm-rounded-br-[18px] allm-rounded-bl-[4px] allm-mr-[37px] allm-ml-[9px]`,
+    msgBg: scriptSettings?.assistantBgColor ?? "#F8FAFC",
+    base: `allm-text-slate-900 allm-rounded-xl allm-mr-10 allm-ml-2 allm-max-w-[calc(100%-3.5rem)]`,
   },
 };
 

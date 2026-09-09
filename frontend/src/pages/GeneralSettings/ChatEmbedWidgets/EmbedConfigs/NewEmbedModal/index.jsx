@@ -57,12 +57,10 @@ export default function NewEmbedModal() {
   return (
     <>
       <DialogHeader>
-        <DialogTitle className="text-sm font-semibold">
-          Create new embed for workspace
-        </DialogTitle>
+        <DialogTitle>{t("embeddable.modal.create-title")}</DialogTitle>
       </DialogHeader>
-      <form onSubmit={handleCreate}>
-        <div className="space-y-4">
+      <form onSubmit={handleCreate} className="flex min-h-0 flex-col">
+        <div className="space-y-6 pb-2">
           <WorkspaceSelection />
           <ChatModeSelection />
           <PermittedDomains />
@@ -108,15 +106,15 @@ export default function NewEmbedModal() {
             <code className="light:bg-stone-300 bg-stone-900 text-theme-text-primary mx-1 px-1 rounded-sm">
               &lt;script&gt;
             </code>{" "}
-            tag.
+            {t("embeddable.modal.script-tag")}
           </p>
         </div>
-        <DialogFooter>
+        <DialogFooter className="mt-2">
           <DialogClose render={<Button variant="outline" type="button" />}>
-            Cancel
+            {t("embeddable.modal.cancel")}
           </DialogClose>
           <Button variant="default" type="submit">
-            Create embed
+            {t("embeddable.modal.create")}
           </Button>
         </DialogFooter>
       </form>
@@ -137,9 +135,9 @@ export const WorkspaceSelection = ({ defaultValue = null }) => {
 
   return (
     <div>
-      <div className="flex flex-col mb-2">
+      <div className="mb-2 flex flex-col gap-1">
         <Label htmlFor="workspace_id" className="block">
-          Workspace
+          {t("embeddable.modal.workspace")}
         </Label>
         <p className="text-theme-text-secondary text-xs">
           {t("help.new-embed-modal-2")}
@@ -184,9 +182,9 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
 
   return (
     <div>
-      <div className="flex flex-col mb-2">
+      <div className="mb-2 flex flex-col gap-1">
         <Label className="block" htmlFor="chat_mode">
-          Allowed chat method
+          {t("embeddable.modal.chat-method")}
         </Label>
         <p className="text-theme-text-secondary text-xs">
           {t("help.new-embed-modal-3")}
@@ -194,9 +192,9 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
           {t("help.new-embed-modal-4")}
         </p>
       </div>
-      <div className="mt-2 gap-y-3 flex flex-col">
+      <div className="mt-3 flex flex-col gap-y-3">
         <label
-          className={`transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
+          className={`transition-all duration-300 w-full min-h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
             chatMode === "chat"
               ? "border-theme-sidebar-item-workspace-active bg-theme-bg-secondary"
               : "border-theme-sidebar-border hover:border-theme-sidebar-border hover:bg-theme-bg-secondary"
@@ -218,11 +216,11 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
             }`}
           ></div>
           <div className="text-theme-text-primary text-sm font-medium font-['Plus Jakarta Sans'] leading-tight">
-            Chat: Respond to all questions regardless of context
+            {t("embeddable.modal.chat-mode")}
           </div>
         </label>
         <label
-          className={`transition-all duration-300 w-full h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
+          className={`transition-all duration-300 w-full min-h-11 p-2.5 rounded-lg flex justify-start items-center gap-2.5 cursor-pointer border ${
             chatMode === "query"
               ? "border-theme-sidebar-item-workspace-active bg-theme-bg-secondary"
               : "border-theme-sidebar-border hover:border-theme-sidebar-border hover:bg-theme-bg-secondary"
@@ -244,7 +242,7 @@ export const ChatModeSelection = ({ defaultValue = null }) => {
             }`}
           ></div>
           <div className="text-theme-text-primary text-sm font-medium font-['Plus Jakarta Sans'] leading-tight">
-            Query: Only respond to chats related to documents in workspace
+            {t("embeddable.modal.query-mode")}
           </div>
         </label>
       </div>
@@ -293,14 +291,14 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
 
   return (
     <div>
-      <div className="flex flex-col mb-2">
+      <div className="mb-2 flex flex-col gap-1">
         <Label htmlFor="allowlist_domains" className="block">
-          Restrict requests from domains
+          {t("embeddable.modal.restrict-domains")}
         </Label>
         <p className="text-theme-text-secondary text-xs">
           {t("help.new-embed-modal-5")}
           <br />
-          Leaving this empty means anyone can use your embed on any site.
+          {t("embeddable.modal.empty-domains")}
         </p>
       </div>
       <input type="hidden" name="allowlist_domains" value={domains.join(",")} />
@@ -308,11 +306,11 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
         value={domains}
         onChange={handleChange}
         onBlur={handleBlur}
-        placeholder="https://mysite.com, https://myothersite.com"
+        placeHolder={t("embeddable.modal.domains-placeholder")}
         classNames={{
           tag: "bg-theme-settings-input-bg light:bg-black/10 bg-blue-300/10 text-zinc-800",
           input:
-            "flex p-1 bg-theme-settings-input-bg! text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
+            "flex !w-full min-h-10 p-1 bg-theme-settings-input-bg! text-theme-text-primary placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none",
         }}
       />
     </div>
@@ -322,7 +320,7 @@ export const PermittedDomains = ({ defaultValue = [] }) => {
 export const NumberInput = ({ name, title, hint, defaultValue = 0 }) => {
   return (
     <div>
-      <div className="flex flex-col mb-2">
+      <div className="mb-2 flex flex-col gap-1">
         <Label htmlFor={name} className="block">
           {title}
         </Label>
