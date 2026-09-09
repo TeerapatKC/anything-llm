@@ -7,26 +7,12 @@ const {
 const { PERMISSIONS } = require("../utils/permissions");
 const { reqBody, safeJsonParse } = require("../utils/http");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
-const { isSendingEnabled } = require("../utils/smtp");
+const { isSendingEnabled, requireSmtpReady } = require("../utils/smtp");
 
 // BackgroundService is a singleton, so `new BackgroundService()` anywhere in
 // the codebase returns the same instance that `server/index.js` booted. We
 // grab that reference once and reuse it across handlers.
 const backgroundService = new BackgroundService();
-
-// Scheduled Jobs only exists to deliver results by email, so the whole feature
-// is gated on SMTP being configured AND turned on - every route below except
-// the status check itself requires this.
-function requireSmtpReady(_request, response, next) {
-  if (!isSendingEnabled()) {
-    return response.status(403).json({
-      error: "smtp_not_configured",
-      message:
-        "Scheduled Jobs requires SMTP email to be configured and enabled first.",
-    });
-  }
-  next();
-}
 
 function scheduledJobEndpoints(app) {
   if (!app) return;

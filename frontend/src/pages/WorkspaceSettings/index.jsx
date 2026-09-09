@@ -14,6 +14,7 @@ import WorkspaceAgentConfiguration from "./AgentConfig";
 import WorkspaceRoles from "./Roles";
 import WorkspaceDocuments from "./Documents";
 import WorkspaceSlashCommands from "./SlashCommands";
+import WorkspaceScheduledJobs from "./ScheduledJobs";
 import System from "@/models/system";
 
 const TABS = {
@@ -25,6 +26,7 @@ const TABS = {
   "agent-config": WorkspaceAgentConfiguration,
   documents: WorkspaceDocuments,
   "slash-commands": WorkspaceSlashCommands,
+  "scheduled-jobs": WorkspaceScheduledJobs,
 };
 
 export default function WorkspaceSettings() {

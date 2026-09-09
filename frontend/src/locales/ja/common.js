@@ -163,6 +163,7 @@ const TRANSLATIONS = {
     agent: "エージェント構成",
     "upload-documents": "ドキュメントをアップロード",
     "slash-commands": "スラッシュコマンド",
+    "scheduled-jobs": "予定されている作業",
   },
   general: {
     vector: {
@@ -1410,6 +1411,8 @@ const TRANSLATIONS = {
     loading: "読み込み中...",
     emptyTitle: "現時点で予定されている作業はありません。",
     emptySubtitle: "まずは、簡単なものから始めてみましょう。",
+    noWorkspacePermission:
+      "このワークスペースで予定されている作業を管理する権限がありません。",
     smtpRequiredTitle: "先にSMTPメールを設定する必要があります",
     smtpRequiredDescription:
       "予定されている作業は結果をメールで送信するため、送信用メールの設定と有効化が完了するまで利用できません。",
@@ -1474,6 +1477,7 @@ const TRANSLATIONS = {
       recipientsChangeType: "種類を変更",
       pickWorkspaces: "ワークスペースを選択",
       pickUsers: "ユーザーを選択",
+      selectAll: "すべて選択",
       recipientsDone: "完了",
       required: "必要",
       requiredFieldsBanner:

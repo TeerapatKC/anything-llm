@@ -138,6 +138,146 @@ const ScheduledJobs = {
       .then((res) => res.json())
       .catch((e) => ({ success: false, error: e.message }));
   },
+
+  // Jobs owned by a single workspace - managed from that workspace's own
+  // settings instead of the instance-wide GeneralSettings page. Mirrors
+  // AgentFlows.workspace.* / Workspace.slashCommands.*.
+  workspace: {
+    smtpStatus: async function (slug) {
+      return await fetch(
+        `${API_BASE}/scheduled-jobs/smtp-status`,
+        { headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ ready: false }));
+    },
+
+    list: async function (slug) {
+      return await fetch(`${API_BASE}/workspace/${slug}/scheduled-jobs`, {
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch(() => ({ jobs: [] }));
+    },
+
+    create: async function (slug, data) {
+      return await fetch(`${API_BASE}/workspace/${slug}/scheduled-jobs`, {
+        method: "POST",
+        headers: baseHeaders(),
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .catch(() => ({ job: null, error: "Failed to create scheduled job" }));
+    },
+
+    get: async function (slug, id) {
+      return await fetch(`${API_BASE}/workspace/${slug}/scheduled-jobs/${id}`, {
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch(() => ({ job: null }));
+    },
+
+    update: async function (slug, id, data) {
+      return await fetch(`${API_BASE}/workspace/${slug}/scheduled-jobs/${id}`, {
+        method: "POST",
+        headers: baseHeaders(),
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ job: null, error: e.message }));
+    },
+
+    delete: async function (slug, id) {
+      return await fetch(`${API_BASE}/workspace/${slug}/scheduled-jobs/${id}`, {
+        method: "DELETE",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch(() => ({ success: false }));
+    },
+
+    toggle: async function (slug, id) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/${id}/toggle`,
+        { method: "POST", headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ job: null }));
+    },
+
+    trigger: async function (slug, id) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/${id}/trigger`,
+        { method: "POST", headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    runs: async function (slug, id) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/${id}/runs`,
+        { headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ runs: [] }));
+    },
+
+    getRun: async function (slug, runId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}`,
+        { headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ run: null, job: null }));
+    },
+
+    markRunRead: async function (slug, runId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}/read`,
+        { method: "POST", headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ success: false }));
+    },
+
+    continueInThread: async function (slug, runId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}/continue`,
+        { method: "POST", headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ workspaceSlug: null, threadSlug: null, error: e.message }));
+    },
+
+    killRun: async function (slug, runId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}/kill`,
+        { method: "POST", headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    availableTools: async function (slug) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/available-tools`,
+        { headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ tools: [] }));
+    },
+
+    members: async function (slug) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/members`,
+        { headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ members: [] }));
+    },
+  },
 };
 
 export default ScheduledJobs;

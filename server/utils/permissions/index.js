@@ -176,6 +176,7 @@ const WORKSPACE_PERMISSIONS = {
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
   SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
+  SCHEDULED_JOBS_MANAGE: "workspace.scheduled_jobs.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",
@@ -920,6 +921,18 @@ const PERMISSION_CATALOG = [
     label: "Manage workspace SQL connections",
     description:
       "Add, edit and remove SQL database connections that belong to this workspace. Connections made here are usable only inside it.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    // Same reasoning as agent flows and SQL connectors: scheduled jobs run
+    // unattended and email their results out, which is a wider capability than
+    // editing this workspace's settings, so it is ticked on its own rather than
+    // riding on SETTINGS_MANAGE.
+    key: WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
+    label: "Manage workspace scheduled jobs",
+    description:
+      "Create, edit and delete scheduled jobs that belong to this workspace. Jobs made here are usable only inside it.",
     category: "workspace_admin",
     scope: SCOPES.WORKSPACE,
   },

@@ -29,7 +29,7 @@ import {
 
 export default function RunDetailPage() {
   const { t } = useTranslation();
-  const { id, runId } = useParams();
+  const { id, runId, slug = null } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [run, setRun] = useState(null);
@@ -39,16 +39,20 @@ export default function RunDetailPage() {
 
   useEffect(() => {
     fetchRun();
-  }, [runId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runId, slug]);
 
   const fetchRun = async () => {
-    const data = await ScheduledJobs.getRun(runId);
+    const data = slug
+      ? await ScheduledJobs.workspace.getRun(slug, runId)
+      : await ScheduledJobs.getRun(runId);
     setRun(data.run);
     setJob(data.job);
     setLoading(false);
 
     if (data.run && !data.run.readAt) {
-      ScheduledJobs.markRunRead(runId);
+      if (slug) ScheduledJobs.workspace.markRunRead(slug, runId);
+      else ScheduledJobs.markRunRead(runId);
     }
   };
 
@@ -59,8 +63,9 @@ export default function RunDetailPage() {
 
   const handleContinueInThread = async () => {
     setContinuing(true);
-    const { workspaceSlug, threadSlug, error } =
-      await ScheduledJobs.continueInThread(runId);
+    const { workspaceSlug, threadSlug, error } = slug
+      ? await ScheduledJobs.workspace.continueInThread(slug, runId)
+      : await ScheduledJobs.continueInThread(runId);
 
     if (error || !workspaceSlug || !threadSlug) {
       showToast(error || t("scheduledJobs.runDetail.threadFailed"), "error");
@@ -73,7 +78,9 @@ export default function RunDetailPage() {
 
   const handleKillRun = async () => {
     setKilling(true);
-    const { success, error } = await ScheduledJobs.killRun(runId);
+    const { success, error } = slug
+      ? await ScheduledJobs.workspace.killRun(slug, runId)
+      : await ScheduledJobs.killRun(runId);
     setKilling(false);
 
     if (!success) {
@@ -85,9 +92,13 @@ export default function RunDetailPage() {
     fetchRun();
   };
 
+  const backPath = slug
+    ? paths.workspace.settings.scheduledJobRuns(slug, id)
+    : paths.settings.scheduledJobRuns(id);
+
   if (loading) {
     return (
-      <RunDetailLayout>
+      <RunDetailLayout slug={slug}>
         <p className="text-zinc-400 light:text-slate-600 text-sm">
           {t("scheduledJobs.runDetail.loading")}
         </p>
@@ -97,7 +108,7 @@ export default function RunDetailPage() {
 
   if (!run) {
     return (
-      <RunDetailLayout>
+      <RunDetailLayout slug={slug}>
         <p className="text-zinc-400 light:text-slate-600 text-sm">
           {t("scheduledJobs.runDetail.notFound")}
         </p>
@@ -107,7 +118,7 @@ export default function RunDetailPage() {
 
   const result = run.result || {};
   return (
-    <RunDetailLayout>
+    <RunDetailLayout slug={slug}>
       <RunHeader
         t={t}
         job={job}
@@ -115,7 +126,7 @@ export default function RunDetailPage() {
         result={result}
         continuing={continuing}
         killing={killing}
-        onBack={() => navigate(paths.settings.scheduledJobRuns(id))}
+        onBack={() => navigate(backPath)}
         onContinueInThread={handleContinueInThread}
         onKillRun={handleKillRun}
       />
@@ -133,7 +144,11 @@ export default function RunDetailPage() {
   );
 }
 
-function RunDetailLayout({ children }) {
+function RunDetailLayout({ slug = null, children }) {
+  // Same reasoning as RunHistoryPage - a workspace-owned job's run detail
+  // renders as its own screen rather than pulling in the instance-wide admin
+  // sidebar, which would be the wrong navigation context here.
+  if (slug) return <div className="w-full max-w-5xl mx-auto px-4 py-10">{children}</div>;
   return <SettingsLayout>{children}</SettingsLayout>;
 }
 

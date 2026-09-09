@@ -27,10 +27,11 @@ function formatRunDuration(run) {
  * navigates to the run detail page.
  * @param {Object} run - The run object.
  * @param {string} jobId - The ID of the job.
+ * @param {string|null} slug - The owning workspace's slug, or null for a global job.
  * @param {function} onKilled - Callback when a run is killed (to refresh the list).
  * @returns {React.ReactNode} The rendered row.
  */
-export default function RunRow({ run, jobId, onKilled }) {
+export default function RunRow({ run, jobId, slug = null, onKilled }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [killing, setKilling] = useState(false);
@@ -41,7 +42,9 @@ export default function RunRow({ run, jobId, onKilled }) {
   const handleKill = async (e) => {
     e.stopPropagation();
     setKilling(true);
-    const { success, error } = await ScheduledJobs.killRun(run.id);
+    const { success, error } = slug
+      ? await ScheduledJobs.workspace.killRun(slug, run.id)
+      : await ScheduledJobs.killRun(run.id);
     setKilling(false);
 
     if (!success) {
@@ -53,12 +56,14 @@ export default function RunRow({ run, jobId, onKilled }) {
     onKilled?.();
   };
 
+  const detailPath = slug
+    ? paths.workspace.settings.scheduledJobRunDetail(slug, jobId, run.id)
+    : paths.settings.scheduledJobRunDetail(jobId, run.id);
+
   return (
     <button
       type="button"
-      onClick={() =>
-        navigate(paths.settings.scheduledJobRunDetail(jobId, run.id))
-      }
+      onClick={() => navigate(detailPath)}
       className="border-none flex items-center px-4 h-14 hover:bg-white/5 light:hover:bg-slate-200 transition-colors text-left w-full"
     >
       <div className="w-[200px] flex items-center gap-2 relative">

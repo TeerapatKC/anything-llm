@@ -264,6 +264,7 @@ model workspaces {
   telegram_users               telegram_users[]
   line_users                   line_users[]
   document_folders             document_folders[]
+  scheduled_jobs               scheduled_jobs[]
 }
 
 model workspace_threads {
@@ -566,11 +567,18 @@ model scheduled_jobs {
   recipientType         String               @default("none") // none | workspace | user - who gets emailed the result
   recipientWorkspaceIds String? // JSON array of workspace ids - notifies every member of each workspace
   recipientUserIds      String? // JSON array of user ids - notifies those users directly
+  // NULL = instance-wide (admin-managed, visible to every workspace manager on the
+  // global page). Non-null = owned by exactly one workspace, editable only from that
+  // workspace's own settings - same ownership model as agent flows / SQL connections.
+  workspaceId           Int?
+  workspace             workspaces?          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   lastRunAt             DateTime?
   nextRunAt             DateTime?
   createdAt             DateTime             @default(now())
   updatedAt             DateTime             @default(now())
   runs                  scheduled_job_runs[]
+
+  @@index([workspaceId])
 }
 
 model scheduled_job_runs {

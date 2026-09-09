@@ -77,6 +77,15 @@ export default {
       slashCommands: (slug) => {
         return `/workspace/${slug}/settings/slash-commands`;
       },
+      scheduledJobs: (slug) => {
+        return `/workspace/${slug}/settings/scheduled-jobs`;
+      },
+      scheduledJobRuns: (slug, jobId) => {
+        return `/workspace/${slug}/settings/scheduled-jobs/${jobId}/runs`;
+      },
+      scheduledJobRunDetail: (slug, jobId, runId) => {
+        return `/workspace/${slug}/settings/scheduled-jobs/${jobId}/runs/${runId}`;
+      },
     },
     thread: (wsSlug, threadSlug) => {
       return `/workspace/${wsSlug}/t/${threadSlug}`;

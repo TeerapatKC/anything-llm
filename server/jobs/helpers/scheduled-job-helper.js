@@ -85,10 +85,16 @@ async function sendScheduledJobResultEmails(job, textResponse, logFn) {
       sendScheduledJobResultEmail,
     } = require("../../utils/smtp/index.js");
     const resultText = stripThinkingFromText(textResponse);
+    const { workspaceName } = await ScheduledJob.sourceLabel(job);
 
     await Promise.all(
       emails.map((to) =>
-        sendScheduledJobResultEmail({ to, jobName: job.name, resultText })
+        sendScheduledJobResultEmail({
+          to,
+          jobName: job.name,
+          resultText,
+          workspaceName,
+        })
       )
     );
   } catch (emailError) {

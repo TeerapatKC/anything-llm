@@ -52,6 +52,11 @@ function bootSSL(app, port = 3001) {
           WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
           "backfill_workspace_manager_sql_connectors"
         );
+        await WorkspaceRole.grantOnce(
+          "workspace-manager",
+          WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
+          "backfill_workspace_manager_scheduled_jobs"
+        );
         // After role seeding - the owner role must exist before the account can be made.
         await bootstrapAdminFromEnv();
         // Instances created before the owner role existed have nobody holding it, and the
@@ -103,6 +108,11 @@ function bootHTTP(app, port = 3001) {
         "workspace-manager",
         WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
         "backfill_workspace_manager_sql_connectors"
+      );
+      await WorkspaceRole.grantOnce(
+        "workspace-manager",
+        WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
+        "backfill_workspace_manager_scheduled_jobs"
       );
       // After role seeding - the owner role must exist before the account can be made.
       await bootstrapAdminFromEnv();

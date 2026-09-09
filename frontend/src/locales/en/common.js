@@ -179,6 +179,7 @@ const TRANSLATIONS = {
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
     "slash-commands": "Slash Commands",
+    "scheduled-jobs": "Scheduled Jobs",
   },
   general: {
     vector: {
@@ -1591,6 +1592,8 @@ const TRANSLATIONS = {
     loading: "Loading...",
     emptyTitle: "No Scheduled Jobs yet",
     emptySubtitle: "Create one to get started.",
+    noWorkspacePermission:
+      "You don't have permission to manage scheduled jobs in this workspace.",
     smtpRequiredTitle: "SMTP email must be configured first",
     smtpRequiredDescription:
       "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
@@ -1663,6 +1666,7 @@ const TRANSLATIONS = {
       recipientsChangeType: "Change type",
       pickWorkspaces: "Select workspaces",
       pickUsers: "Select users",
+      selectAll: "Select all",
       recipientsDone: "Done",
       required: "Required",
       requiredFieldsBanner:

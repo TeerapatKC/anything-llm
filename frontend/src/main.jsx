@@ -63,6 +63,7 @@ const router = createBrowserRouter([
                   WORKSPACE_PERMISSIONS.ROLES_MANAGE,
                   WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
                   WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
+                  WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
                 ]}
               />
             ),
@@ -100,6 +101,40 @@ const router = createBrowserRouter([
               <WorkspacePermissionRoute
                 Component={AgentBuilder}
                 permissions={[WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        // Run history for a scheduled job owned by this workspace. Same screens
+        // as the instance-wide ones below, but gated on a workspace permission.
+        path: "/workspace/:slug/settings/scheduled-jobs/:id/runs",
+        lazy: async () => {
+          const { default: ScheduledJobRuns } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/RunHistoryPage"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={ScheduledJobRuns}
+                permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/workspace/:slug/settings/scheduled-jobs/:id/runs/:runId",
+        lazy: async () => {
+          const { default: ScheduledJobRunDetail } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/RunDetailPage"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={ScheduledJobRunDetail}
+                permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
               />
             ),
           };

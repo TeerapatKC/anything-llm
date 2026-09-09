@@ -209,22 +209,66 @@ function truncateJobResult(text = "") {
 }
 
 /**
+ * A greeting name for a recipient we only have an email address for - takes the
+ * part before the @, splits on the usual separators, and title-cases each word
+ * (e.g. "jane.doe" -> "Jane Doe").
+ * @param {string} email
+ * @returns {string}
+ */
+function displayNameFromEmail(email = "") {
+  const localPart = String(email).split("@")[0] || String(email);
+  const name = localPart
+    .split(/[._-]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  return name || email;
+}
+
+/**
  * Sent to a scheduled job's configured recipients (workspace members or specific
- * users) after a run completes successfully.
- * @param {{to: string, jobName: string, resultText: string}} params
+ * users) after a run completes successfully. Subject is just the job's name; the
+ * body greets the recipient, then the AI's answer, then which workspace (or the
+ * system, for an instance-wide job) the job runs under.
+ * @param {{to: string, jobName: string, resultText: string, workspaceName: string|null}} params
  * @returns {Promise<{sent: boolean, reason: string|null}>}
  */
-async function sendScheduledJobResultEmail({ to, jobName, resultText }) {
+async function sendScheduledJobResultEmail({
+  to,
+  jobName,
+  resultText,
+  workspaceName,
+}) {
+  const name = displayNameFromEmail(to);
   const body = truncateJobResult(resultText);
+  const fromLine = workspaceName
+    ? `From Workspace: ${workspaceName}`
+    : `From: System`;
   return sendSystemMail({
     to,
-    subject: `${jobName} completed`,
-    text: `Your scheduled job "${jobName}" has completed.\n\nResult:\n${body}`,
+    subject: jobName,
+    text: `Dear ${name},\n\n${body}\n\n${fromLine}`,
     html:
-      `<p>Your scheduled job <b>${escapeHtml(jobName)}</b> has completed.</p>` +
-      `<p><b>Result:</b></p>` +
-      `<pre style="white-space: pre-wrap; font-family: inherit;">${escapeHtml(body)}</pre>`,
+      `<p>Dear ${escapeHtml(name)},</p>` +
+      `<p style="white-space: pre-wrap;">${escapeHtml(body)}</p>` +
+      `<p style="color: #888888; font-size: 12px;">${escapeHtml(fromLine)}</p>`,
   });
+}
+
+/**
+ * Express middleware for the Scheduled Jobs routes (global and workspace-owned
+ * alike) - the whole feature only exists to deliver results by email, so every
+ * route is gated on SMTP being configured AND turned on.
+ */
+function requireSmtpReady(_request, response, next) {
+  if (!isSendingEnabled()) {
+    return response.status(403).json({
+      error: "smtp_not_configured",
+      message:
+        "Scheduled Jobs requires SMTP email to be configured and enabled first.",
+    });
+  }
+  next();
 }
 
 module.exports = {
@@ -232,6 +276,7 @@ module.exports = {
   resolvedConfig,
   isConfigured,
   isSendingEnabled,
+  requireSmtpReady,
   createTransport,
   sendMail,
   sendTestEmail,

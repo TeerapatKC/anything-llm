@@ -30,6 +30,10 @@ const { getAudioFileInfo } = require("../utils/TextToSpeech/audioFormat");
 const { WorkspaceThread } = require("../models/workspaceThread");
 const { SlashCommandPresets } = require("../models/slashCommandsPresets");
 const { VALID_COMMANDS } = require("../utils/chats");
+const { ScheduledJob } = require("../models/scheduledJob");
+const { ScheduledJobRun } = require("../models/scheduledJobRun");
+const { BackgroundService } = require("../utils/BackgroundWorkers");
+const { requireSmtpReady } = require("../utils/smtp");
 
 const truncate = require("truncate");
 const { purgeDocument } = require("../utils/files/purgeDocument");
@@ -38,6 +42,11 @@ const { workspaceParsedFilesEndpoints } = require("./workspacesParsedFiles");
 const {
   workspaceDeletionProtection,
 } = require("../utils/middleware/workspaceDeletionProtection");
+
+// BackgroundService is a singleton, so `new BackgroundService()` anywhere in
+// the codebase returns the same instance that `server/index.js` booted. We
+// grab that reference once and reuse it across handlers.
+const backgroundService = new BackgroundService();
 
 function workspaceEndpoints(app) {
   if (!app) return;
@@ -313,6 +322,12 @@ function workspaceEndpoints(app) {
           response.sendStatus(400).end();
           return;
         }
+
+        // The DB rows cascade-delete with the workspace, but the in-process cron
+        // timers for any jobs it owned do not - stop those first so nothing keeps
+        // firing for a job whose row is about to disappear out from under it.
+        const ownedJobs = await ScheduledJob.ownedByWorkspace(workspace.id);
+        for (const job of ownedJobs) backgroundService.removeScheduledJob(job.id);
 
         await WorkspaceChats.delete({ workspaceId: Number(workspace.id) });
         await DocumentVectors.deleteForWorkspace(workspace.id);
@@ -1752,6 +1767,483 @@ function workspaceEndpoints(app) {
       } catch (error) {
         console.error("Error deleting workspace SQL connection:", error);
         response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  /**
+   * Scheduled jobs a workspace owns.
+   *
+   * These are separate from the instance-wide jobs at /scheduled-jobs/*: a job
+   * created here belongs to this workspace, and can only email results to this
+   * workspace's own members (with a "select all"), not to arbitrary workspaces
+   * or users elsewhere on the instance.
+   */
+
+  /**
+   * Resolve a job this workspace is allowed to manage, or answer 404.
+   * 404 rather than 403 on a wrong owner is intentional - same reasoning as the
+   * agent flow / SQL connection routes above: a workspace manager should not be
+   * able to probe ids to learn which jobs exist elsewhere on the instance.
+   */
+  async function ownedJobOr404(id, workspace, response) {
+    const job = await ScheduledJob.get({ id: Number(id) });
+    if (!job || ScheduledJob.normalizeWorkspaceId(job.workspaceId) !== workspace.id) {
+      response.status(404).json({ job: null, error: "Job not found" });
+      return null;
+    }
+    return job;
+  }
+
+  async function ownedRunOr404(runId, workspace, response) {
+    const run = await ScheduledJobRun.get({ id: Number(runId) });
+    if (!run) {
+      response.status(404).json({ run: null, error: "Run not found" });
+      return null;
+    }
+    const job = await ScheduledJob.get({ id: run.jobId });
+    if (!job || ScheduledJob.normalizeWorkspaceId(job.workspaceId) !== workspace.id) {
+      response.status(404).json({ run: null, error: "Run not found" });
+      return null;
+    }
+    return { run, job };
+  }
+
+  /**
+   * Validate a create/update payload shared by both the create and update routes
+   * below. Unlike the instance-wide routes, recipientType here can only be "none"
+   * or "user" - a workspace-owned job cannot notify some other workspace, and its
+   * recipientUserIds must all be members of this workspace.
+   * @returns {Promise<string|null>} an error message, or null if valid
+   */
+  async function validateWorkspaceJobPayload(workspace, body, requireCore) {
+    const { name, prompt, schedule, tools, recipientType, recipientUserIds } =
+      body;
+
+    if (requireCore) {
+      if (!name?.trim()) return "Name is required";
+      if (!prompt?.trim()) return "Prompt is required";
+      if (!schedule?.trim()) return "Schedule is required";
+    }
+    if (schedule !== undefined && !ScheduledJob.isValidCron(schedule))
+      return "Invalid cron expression";
+    if (tools?.length > 0 && !Array.isArray(tools))
+      return "Tools must be an array";
+    if (recipientType !== undefined) {
+      if (!["none", "user"].includes(recipientType))
+        return "Invalid recipient type";
+      if (recipientType === "user") {
+        if (!Array.isArray(recipientUserIds))
+          return "Recipient users must be an array";
+        const members = await ScheduledJob.workspaceMembers(workspace.id);
+        const memberIds = new Set(members.map((m) => m.id));
+        if (recipientUserIds.some((id) => !memberIds.has(Number(id))))
+          return "Recipients must be members of this workspace";
+      }
+    }
+    return null;
+  }
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs/available-tools",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (_request, response) => {
+      try {
+        const tools = await ScheduledJob.availableTools();
+        response.status(200).json({ tools });
+      } catch (error) {
+        console.error("Error listing available tools:", error);
+        response.status(500).json({ tools: [] });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs/members",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (_request, response) => {
+      try {
+        const members = await ScheduledJob.workspaceMembers(
+          response.locals.workspace.id
+        );
+        response.status(200).json({ members });
+      } catch (error) {
+        console.error("Error listing workspace members:", error);
+        response.status(500).json({ members: [] });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (_request, response) => {
+      try {
+        const jobs = await ScheduledJob.ownedByWorkspace(
+          response.locals.workspace.id,
+          null,
+          null,
+          { runs: { take: 1, orderBy: { startedAt: "desc" } } }
+        );
+        const jobsWithStatus = jobs.map(({ runs, ...job }) => ({
+          ...job,
+          latestRun: runs[0] || null,
+        }));
+        response.status(200).json({ jobs: jobsWithStatus });
+      } catch (error) {
+        console.error("Error listing workspace scheduled jobs:", error);
+        response.status(500).json({ jobs: [] });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/scheduled-jobs",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const body = reqBody(request);
+        const errorMessage = await validateWorkspaceJobPayload(
+          workspace,
+          body,
+          true
+        );
+        if (errorMessage)
+          return response.status(400).json({ job: null, error: errorMessage });
+
+        const activation = await ScheduledJob.canActivate();
+        if (!activation.allowed) {
+          return response.status(400).json({
+            job: null,
+            error: `Cannot create: maximum of ${activation.limit} active scheduled jobs reached. Disable another job first.`,
+          });
+        }
+
+        // Ownership comes from the resolved workspace, never from the payload.
+        const { job, error } = await ScheduledJob.create({
+          name: body.name.trim(),
+          prompt: body.prompt.trim(),
+          tools: body.tools || null,
+          schedule: body.schedule.trim(),
+          recipientType: body.recipientType || "none",
+          recipientUserIds:
+            body.recipientType === "user" ? body.recipientUserIds : null,
+          workspaceId: workspace.id,
+        });
+        if (error) return response.status(400).json({ job: null, error });
+
+        backgroundService.addScheduledJob(job);
+        response.status(201).json({ job, error: null });
+      } catch (error) {
+        console.error("Error creating workspace scheduled job:", error);
+        response.status(500).json({ job: null, error: error.message });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs/:id",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const job = await ownedJobOr404(
+          request.params.id,
+          response.locals.workspace,
+          response
+        );
+        if (!job) return;
+        response.status(200).json({ job });
+      } catch (error) {
+        console.error("Error loading workspace scheduled job:", error);
+        response.status(500).json({ job: null, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/scheduled-jobs/:id",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        if (!(await ownedJobOr404(request.params.id, workspace, response)))
+          return;
+
+        const body = reqBody(request);
+        const errorMessage = await validateWorkspaceJobPayload(
+          workspace,
+          body,
+          false
+        );
+        if (errorMessage)
+          return response.status(400).json({ job: null, error: errorMessage });
+
+        const updates = {};
+        if (body.name !== undefined) updates.name = String(body.name).trim();
+        if (body.prompt !== undefined)
+          updates.prompt = String(body.prompt).trim();
+        if (body.tools !== undefined) updates.tools = body.tools;
+        if (body.enabled !== undefined) updates.enabled = Boolean(body.enabled);
+        if (body.schedule !== undefined)
+          updates.schedule = String(body.schedule).trim();
+        if (body.recipientType !== undefined) {
+          updates.recipientType = body.recipientType;
+          updates.recipientWorkspaceIds = null;
+          updates.recipientUserIds =
+            body.recipientType === "user" ? body.recipientUserIds : null;
+        }
+
+        if (updates.enabled === true) {
+          const activation = await ScheduledJob.canActivate({
+            excludeId: Number(request.params.id),
+          });
+          if (!activation.allowed) {
+            return response.status(400).json({
+              job: null,
+              error: `Cannot enable: maximum of ${activation.limit} active scheduled jobs reached. Disable another job first.`,
+            });
+          }
+        }
+
+        const { job, error } = await ScheduledJob.update(
+          Number(request.params.id),
+          updates
+        );
+        if (error) return response.status(400).json({ job: null, error });
+
+        await backgroundService.syncScheduledJob(job.id);
+        response.status(200).json({ job, error: null });
+      } catch (error) {
+        console.error("Error updating workspace scheduled job:", error);
+        response.status(500).json({ job: null, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/scheduled-jobs/:id",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        if (!(await ownedJobOr404(request.params.id, workspace, response)))
+          return;
+
+        backgroundService.removeScheduledJob(Number(request.params.id));
+        const success = await ScheduledJob.delete(Number(request.params.id));
+        response.status(200).json({ success });
+      } catch (error) {
+        console.error("Error deleting workspace scheduled job:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/scheduled-jobs/:id/toggle",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const job = await ownedJobOr404(request.params.id, workspace, response);
+        if (!job) return;
+
+        if (!job.enabled) {
+          const activation = await ScheduledJob.canActivate({
+            excludeId: job.id,
+          });
+          if (!activation.allowed) {
+            return response.status(400).json({
+              job: null,
+              error: `Cannot enable: maximum of ${activation.limit} active scheduled jobs reached. Disable another job first.`,
+            });
+          }
+        }
+
+        const { job: updated } = await ScheduledJob.update(job.id, {
+          enabled: !job.enabled,
+        });
+        await backgroundService.syncScheduledJob(job.id);
+        response.status(200).json({ job: updated });
+      } catch (error) {
+        console.error("Error toggling workspace scheduled job:", error);
+        response.status(500).json({ error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/scheduled-jobs/:id/trigger",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const job = await ownedJobOr404(
+          request.params.id,
+          response.locals.workspace,
+          response
+        );
+        if (!job) return;
+
+        const run = await backgroundService.enqueueScheduledJob(job.id);
+        response.status(200).json({ success: true, skipped: !run, error: null });
+      } catch (error) {
+        console.error("Error triggering workspace scheduled job:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs/:id/runs",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const job = await ownedJobOr404(
+          request.params.id,
+          response.locals.workspace,
+          response
+        );
+        if (!job) return;
+
+        const runs = await ScheduledJobRun.where(
+          { jobId: job.id },
+          50,
+          { startedAt: "desc" }
+        );
+        response.status(200).json({ runs });
+      } catch (error) {
+        console.error("Error listing workspace scheduled job runs:", error);
+        response.status(500).json({ runs: [] });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs/runs/:runId",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const owned = await ownedRunOr404(
+          request.params.runId,
+          response.locals.workspace,
+          response
+        );
+        if (!owned) return;
+        response.status(200).json({
+          run: { ...owned.run, result: safeJsonParse(owned.run.result, null) },
+          job: owned.job,
+        });
+      } catch (error) {
+        console.error("Error loading workspace scheduled job run:", error);
+        response.status(500).json({ run: null, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/scheduled-jobs/runs/:runId/:action",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const { action } = request.params;
+        if (!["read", "continue", "kill"].includes(action))
+          throw new Error("Invalid action");
+
+        const owned = await ownedRunOr404(
+          request.params.runId,
+          response.locals.workspace,
+          response
+        );
+        if (!owned) return;
+        const { run } = owned;
+
+        if (action === "read") {
+          await ScheduledJobRun.markRead(run.id);
+          return response.status(200).json({ success: true });
+        }
+
+        if (action === "continue") {
+          const { workspace: ws, thread, error } =
+            await ScheduledJobRun.continueInThread(run.id);
+          if (error) return response.status(500).json({ error });
+          return response
+            .status(200)
+            .json({ workspaceSlug: ws.slug, threadSlug: thread.slug });
+        }
+
+        if (action === "kill") {
+          if (!["queued", "running"].includes(run.status)) {
+            return response
+              .status(400)
+              .json({ error: "Only running or queued jobs can be killed" });
+          }
+          const killed = backgroundService.killRun(run.jobId, run.id);
+          if (!killed) await ScheduledJobRun.kill(run.id);
+          return response.status(200).json({ success: true });
+        }
+      } catch {
+        response.sendStatus(500);
       }
     }
   );

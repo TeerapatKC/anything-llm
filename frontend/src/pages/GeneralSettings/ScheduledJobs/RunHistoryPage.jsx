@@ -12,7 +12,7 @@ import { humanizeCron } from "./utils/cron";
 
 export default function RunHistoryPage() {
   const { t } = useTranslation();
-  const { id } = useParams();
+  const { id, slug = null } = useParams();
   const [job, setJob] = useState(null);
   const [runs, setRuns] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,22 +22,30 @@ export default function RunHistoryPage() {
   );
 
   const fetchRuns = async () => {
-    const { runs: foundRuns } = await ScheduledJobs.runs(id);
+    const { runs: foundRuns } = slug
+      ? await ScheduledJobs.workspace.runs(slug, id)
+      : await ScheduledJobs.runs(id);
     setRuns(foundRuns || []);
     setLoading(false);
   };
 
   useEffect(() => {
-    ScheduledJobs.get(id).then(({ job }) => setJob(job));
+    const getJob = slug
+      ? ScheduledJobs.workspace.get(slug, id)
+      : ScheduledJobs.get(id);
+    getJob.then(({ job }) => setJob(job));
     fetchRuns();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, slug]);
 
   // Poll every 5s while visible so new runs appear and running statuses update.
   usePolling(fetchRuns, 5000);
 
   const handleRunNow = async () => {
     setTriggering(true);
-    const { success, skipped, error } = await ScheduledJobs.trigger(id);
+    const { success, skipped, error } = slug
+      ? await ScheduledJobs.workspace.trigger(slug, id)
+      : await ScheduledJobs.trigger(id);
     setTriggering(false);
     if (!success) {
       showToast(error || t("scheduledJobs.toast.triggerFailed"), "error");
@@ -60,7 +68,7 @@ export default function RunHistoryPage() {
 
   if (loading) {
     return (
-      <RunHistoryLayout job={job}>
+      <RunHistoryLayout job={job} slug={slug}>
         <div className="flex flex-col items-center justify-center gap-8 py-24 text-center">
           <p className="text-zinc-400 light:text-slate-600 text-sm">
             {t("scheduledJobs.loading")}
@@ -71,7 +79,7 @@ export default function RunHistoryPage() {
   }
 
   return (
-    <RunHistoryLayout job={job}>
+    <RunHistoryLayout job={job} slug={slug}>
       <div className="pt-8">
         <div className="flex items-center px-4 pb-[18px] text-xs font-semibold uppercase tracking-[1.4px] text-zinc-400 light:text-slate-600">
           <span className="w-[200px]">
@@ -115,6 +123,7 @@ export default function RunHistoryPage() {
                 key={run.id}
                 run={run}
                 jobId={job?.id}
+                slug={slug}
                 onKilled={fetchRuns}
               />
             ))}
@@ -125,16 +134,19 @@ export default function RunHistoryPage() {
   );
 }
 
-function RunHistoryLayout({ job, children }) {
+function RunHistoryLayout({ job, slug = null, children }) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const backPath = slug
+    ? paths.workspace.settings.scheduledJobs(slug)
+    : paths.settings.scheduledJobs();
 
-  return (
-    <SettingsLayout>
+  const body = (
+    <>
       <div className="w-full flex flex-col gap-y-2 pb-6 border-theme-sidebar-border light:border-slate-300 border-b-2">
         <button
           type="button"
-          onClick={() => navigate(paths.settings.scheduledJobs())}
+          onClick={() => navigate(backPath)}
           className="border-none flex items-center gap-2 text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 text-sm transition-colors w-fit"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -151,6 +163,13 @@ function RunHistoryLayout({ job, children }) {
         </p>
       </div>
       {children}
-    </SettingsLayout>
+    </>
   );
+
+  // A workspace-owned job's run history isn't nested in the workspace settings
+  // shell (same reasoning as the agent flow builder route) - it renders as its
+  // own screen rather than pulling in the instance-wide admin sidebar, which
+  // would be the wrong navigation context for a workspace manager.
+  if (slug) return <div className="w-full max-w-5xl mx-auto px-4 py-10">{body}</div>;
+  return <SettingsLayout>{body}</SettingsLayout>;
 }

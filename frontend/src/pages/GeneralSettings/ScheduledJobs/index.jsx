@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
@@ -23,8 +23,51 @@ import {
 } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
 
-export default function ScheduledJobsPage() {
+/**
+ * Builds the set of API calls this page and its children use, bound to either
+ * the instance-wide endpoints or the ones owned by a single workspace -
+ * mirrors AgentBuilder's `flowsApi` split on the presence of a workspace.
+ * @param {{slug: string}|null} workspace
+ */
+function buildJobsApi(workspace) {
+  const slug = workspace?.slug || null;
+  if (!slug) {
+    return {
+      smtpStatus: () => ScheduledJobs.smtpStatus(),
+      list: () => ScheduledJobs.list(),
+      create: (data) => ScheduledJobs.create(data),
+      update: (id, data) => ScheduledJobs.update(id, data),
+      delete: (id) => ScheduledJobs.delete(id),
+      toggle: (id) => ScheduledJobs.toggle(id),
+      trigger: (id) => ScheduledJobs.trigger(id),
+      availableTools: () => ScheduledJobs.availableTools(),
+      availableRecipients: () => ScheduledJobs.availableRecipients(),
+      runsPath: (jobId) => paths.settings.scheduledJobRuns(jobId),
+    };
+  }
+  return {
+    smtpStatus: () => ScheduledJobs.workspace.smtpStatus(slug),
+    list: () => ScheduledJobs.workspace.list(slug),
+    create: (data) => ScheduledJobs.workspace.create(slug, data),
+    update: (id, data) => ScheduledJobs.workspace.update(slug, id, data),
+    delete: (id) => ScheduledJobs.workspace.delete(slug, id),
+    toggle: (id) => ScheduledJobs.workspace.toggle(slug, id),
+    trigger: (id) => ScheduledJobs.workspace.trigger(slug, id),
+    availableTools: () => ScheduledJobs.workspace.availableTools(slug),
+    // Adapted to the same {workspaces, users} shape as the global endpoint so
+    // RecipientsSelector doesn't need to know which scope it's in.
+    availableRecipients: () =>
+      ScheduledJobs.workspace
+        .members(slug)
+        .then(({ members }) => ({ workspaces: [], users: members || [] })),
+    runsPath: (jobId) => paths.workspace.settings.scheduledJobRuns(slug, jobId),
+  };
+}
+
+export default function ScheduledJobsPage({ workspace = null }) {
   const { t } = useTranslation();
+  const isWorkspaceScoped = !!workspace?.slug;
+  const jobsApi = useMemo(() => buildJobsApi(workspace), [workspace?.slug]);
   const { isOpen, openModal, closeModal } = useModal();
   // null = still checking, true/false = known
   const [smtpReady, setSmtpReady] = useState(null);
@@ -34,19 +77,21 @@ export default function ScheduledJobsPage() {
   const [confirm, setConfirm] = useState(null);
 
   const fetchJobs = async () => {
-    const { jobs: foundJobs } = await ScheduledJobs.list();
+    const { jobs: foundJobs } = await jobsApi.list();
     setJobs(foundJobs || []);
     setLoading(false);
   };
 
   useEffect(() => {
-    ScheduledJobs.smtpStatus().then(({ ready }) => setSmtpReady(!!ready));
-  }, []);
+    jobsApi.smtpStatus().then(({ ready }) => setSmtpReady(!!ready));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobsApi]);
 
   useEffect(() => {
     if (!smtpReady) return;
     fetchJobs();
-  }, [smtpReady]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [smtpReady, jobsApi]);
 
   // Poll every 5s while tab is visible so status badges and run timestamps stay in sync.
   usePolling(fetchJobs, 5000, !!smtpReady);
@@ -57,7 +102,7 @@ export default function ScheduledJobsPage() {
       confirmText: t("common.delete", "Delete"),
       variant: "destructive",
       onConfirm: async () => {
-        await ScheduledJobs.delete(id);
+        await jobsApi.delete(id);
         showToast(t("scheduledJobs.toast.deleted"), "success", { clear: true });
         fetchJobs();
       },
@@ -65,13 +110,13 @@ export default function ScheduledJobsPage() {
   };
 
   const handleToggle = async (id) => {
-    const result = await ScheduledJobs.toggle(id);
+    const result = await jobsApi.toggle(id);
     if (result?.error) showToast(result.error, "error", { clear: true });
     fetchJobs();
   };
 
   const handleTrigger = async (id) => {
-    const { success, skipped, error } = await ScheduledJobs.trigger(id);
+    const { success, skipped, error } = await jobsApi.trigger(id);
     if (!success) {
       showToast(error || t("scheduledJobs.toast.triggerFailed"), "error", {
         clear: true,
@@ -101,8 +146,8 @@ export default function ScheduledJobsPage() {
     openModal();
   };
 
-  return (
-    <SettingsLayout>
+  const content = (
+    <>
       <PageHeader
         title={t("scheduledJobs.title")}
         description={t("scheduledJobs.description")}
@@ -154,6 +199,7 @@ export default function ScheduledJobsPage() {
                   <JobRow
                     key={job.id}
                     job={job}
+                    runsPath={jobsApi.runsPath(job.id)}
                     onTrigger={handleTrigger}
                     onToggle={handleToggle}
                     onEdit={handleEdit}
@@ -173,6 +219,8 @@ export default function ScheduledJobsPage() {
         <DialogContent>
           <JobFormModal
             job={editingJob}
+            jobsApi={jobsApi}
+            workspaceSlug={workspace?.slug || null}
             onSaved={() => {
               closeModal();
               fetchJobs();
@@ -181,8 +229,11 @@ export default function ScheduledJobsPage() {
         </DialogContent>
       </Dialog>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </SettingsLayout>
+    </>
   );
+
+  if (isWorkspaceScoped) return content;
+  return <SettingsLayout>{content}</SettingsLayout>;
 }
 
 function SmtpRequiredNotice() {

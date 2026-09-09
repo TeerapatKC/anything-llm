@@ -2,6 +2,7 @@ import React from "react";
 import { Link, NavLink, useMatch, useParams } from "react-router-dom";
 import {
   Bot,
+  CalendarClock,
   Database,
   MessageSquareText,
   ShieldCheck,
@@ -82,6 +83,12 @@ export default function WorkspaceSettingsSidebar({ workspace }) {
       icon: SlashSquare,
       to: paths.workspace.settings.slashCommands(slug),
       visible: workspaceCan(WS.SETTINGS_MANAGE, slug, user),
+    },
+    {
+      title: t("workspaces—settings.scheduled-jobs"),
+      icon: CalendarClock,
+      to: paths.workspace.settings.scheduledJobs(slug),
+      visible: workspaceCan(WS.SCHEDULED_JOBS_MANAGE, slug, user),
     },
   ];
 

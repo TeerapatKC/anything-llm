@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft, Building2, User as UserIcon, X } from "lucide-react";
-import ScheduledJobs from "@/models/scheduledJobs";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,6 +12,8 @@ import {
 } from "@/components/ui/dialog";
 
 export default function RecipientsSelector({
+  jobsApi,
+  workspaceScoped = false,
   recipientType,
   selectedWorkspaceIds,
   selectedUserIds,
@@ -27,18 +28,28 @@ export default function RecipientsSelector({
   const [pickerDialogOpen, setPickerDialogOpen] = useState(false);
 
   useEffect(() => {
-    ScheduledJobs.availableRecipients().then(
-      ({ workspaces = [], users = [] }) => {
-        setWorkspaces(workspaces);
-        setUsers(users);
-      }
-    );
+    jobsApi.availableRecipients().then(({ workspaces = [], users = [] }) => {
+      setWorkspaces(workspaces);
+      setUsers(users);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const chooseType = (type) => {
     onTypeChange(type);
     setTypeDialogOpen(false);
     if (type !== "none") setPickerDialogOpen(true);
+  };
+
+  // A workspace-owned job can only notify this workspace's own members, so
+  // there is nothing to choose between - the button goes straight to the
+  // member picker instead of the type-choice dialog.
+  const openPicker = () => {
+    if (workspaceScoped) {
+      chooseType("user");
+    } else {
+      setTypeDialogOpen(true);
+    }
   };
 
   const backToTypeDialog = () => {
@@ -94,6 +105,14 @@ export default function RecipientsSelector({
     recipientType === "workspace" ? selectedWorkspaceIds : selectedUserIds;
   const togglePickerItem =
     recipientType === "workspace" ? toggleWorkspace : toggleUser;
+  const setPickerSelectedIds =
+    recipientType === "workspace" ? onWorkspaceIdsChange : onUserIdsChange;
+
+  const allSelected =
+    pickerItems.length > 0 && pickerSelectedIds.length === pickerItems.length;
+  const toggleSelectAll = () => {
+    setPickerSelectedIds(allSelected ? [] : pickerItems.map((item) => item.id));
+  };
 
   return (
     <div>
@@ -108,21 +127,21 @@ export default function RecipientsSelector({
       </p>
 
       <div className="flex items-center gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setTypeDialogOpen(true)}
-        >
+        <Button type="button" variant="outline" size="sm" onClick={openPicker}>
           {t("scheduledJobs.modal.chooseRecipients", "Choose recipients")}
         </Button>
         <span className="text-xs text-zinc-400 light:text-slate-500">
           {recipientType === "none"
             ? t("scheduledJobs.modal.recipientType.none")
-            : `${t(`scheduledJobs.modal.recipientType.${recipientType}`)} — ${t(
-                "scheduledJobs.modal.recipientsSelected",
-                { count: selectedEntries.length, total: pickerItems.length }
-              )}`}
+            : workspaceScoped
+              ? t("scheduledJobs.modal.recipientsSelected", {
+                  count: selectedEntries.length,
+                  total: pickerItems.length,
+                })
+              : `${t(`scheduledJobs.modal.recipientType.${recipientType}`)} — ${t(
+                  "scheduledJobs.modal.recipientsSelected",
+                  { count: selectedEntries.length, total: pickerItems.length }
+                )}`}
         </span>
       </div>
 
@@ -147,64 +166,78 @@ export default function RecipientsSelector({
         </div>
       )}
 
-      {/* Dialog 1: pick Workspace vs User */}
-      <Dialog open={typeDialogOpen} onOpenChange={setTypeDialogOpen}>
-        <DialogContent size="sm">
-          <DialogHeader>
-            <DialogTitle>
-              {t("scheduledJobs.modal.recipientsLabel", "Email results to")}
-            </DialogTitle>
-          </DialogHeader>
+      {/* Dialog 1: pick Workspace vs User - skipped entirely when workspaceScoped */}
+      {!workspaceScoped && (
+        <Dialog open={typeDialogOpen} onOpenChange={setTypeDialogOpen}>
+          <DialogContent size="sm">
+            <DialogHeader>
+              <DialogTitle>
+                {t("scheduledJobs.modal.recipientsLabel", "Email results to")}
+              </DialogTitle>
+            </DialogHeader>
 
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => chooseType("workspace")}
-              className="border-none flex flex-col items-center gap-2 rounded-lg bg-theme-settings-input-bg px-4 py-5 text-sm text-zinc-50 light:text-slate-700 hover:bg-zinc-700/60 light:hover:bg-slate-200 transition-colors"
-            >
-              <Building2 size={22} />
-              {t("scheduledJobs.modal.recipientType.workspace")}
-            </button>
-            <button
-              type="button"
-              onClick={() => chooseType("user")}
-              className="border-none flex flex-col items-center gap-2 rounded-lg bg-theme-settings-input-bg px-4 py-5 text-sm text-zinc-50 light:text-slate-700 hover:bg-zinc-700/60 light:hover:bg-slate-200 transition-colors"
-            >
-              <UserIcon size={22} />
-              {t("scheduledJobs.modal.recipientType.user")}
-            </button>
-          </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => chooseType("workspace")}
+                className="border-none flex flex-col items-center gap-2 rounded-lg bg-theme-settings-input-bg px-4 py-5 text-sm text-zinc-50 light:text-slate-700 hover:bg-zinc-700/60 light:hover:bg-slate-200 transition-colors"
+              >
+                <Building2 size={22} />
+                {t("scheduledJobs.modal.recipientType.workspace")}
+              </button>
+              <button
+                type="button"
+                onClick={() => chooseType("user")}
+                className="border-none flex flex-col items-center gap-2 rounded-lg bg-theme-settings-input-bg px-4 py-5 text-sm text-zinc-50 light:text-slate-700 hover:bg-zinc-700/60 light:hover:bg-slate-200 transition-colors"
+              >
+                <UserIcon size={22} />
+                {t("scheduledJobs.modal.recipientType.user")}
+              </button>
+            </div>
 
-          {recipientType !== "none" && (
-            <button
-              type="button"
-              onClick={() => chooseType("none")}
-              className="border-none text-xs text-zinc-400 light:text-slate-500 hover:text-zinc-50 light:hover:text-slate-900 underline text-center mt-1"
-            >
-              {t("scheduledJobs.modal.recipientsTurnOff", "Turn off emailing results")}
-            </button>
-          )}
-        </DialogContent>
-      </Dialog>
+            {recipientType !== "none" && (
+              <button
+                type="button"
+                onClick={() => chooseType("none")}
+                className="border-none text-xs text-zinc-400 light:text-slate-500 hover:text-zinc-50 light:hover:text-slate-900 underline text-center mt-1"
+              >
+                {t(
+                  "scheduledJobs.modal.recipientsTurnOff",
+                  "Turn off emailing results"
+                )}
+              </button>
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
 
-      {/* Dialog 2: pick which workspaces/users, shown after Dialog 1 */}
+      {/* Dialog 2: pick which workspaces/users, shown after Dialog 1 (or directly, when workspaceScoped) */}
       <Dialog open={pickerDialogOpen} onOpenChange={setPickerDialogOpen}>
         <DialogContent size="sm">
           <DialogHeader>
-            <button
-              type="button"
-              onClick={backToTypeDialog}
-              className="border-none inline-flex items-center gap-1 text-xs text-zinc-400 light:text-slate-500 hover:text-zinc-50 light:hover:text-slate-900 mb-1 self-start"
-            >
-              <ArrowLeft size={12} />
-              {t("scheduledJobs.modal.recipientsChangeType", "Change type")}
-            </button>
+            {!workspaceScoped && (
+              <button
+                type="button"
+                onClick={backToTypeDialog}
+                className="border-none inline-flex items-center gap-1 text-xs text-zinc-400 light:text-slate-500 hover:text-zinc-50 light:hover:text-slate-900 mb-1 self-start"
+              >
+                <ArrowLeft size={12} />
+                {t("scheduledJobs.modal.recipientsChangeType", "Change type")}
+              </button>
+            )}
             <DialogTitle>
               {recipientType === "workspace"
                 ? t("scheduledJobs.modal.pickWorkspaces", "Select workspaces")
                 : t("scheduledJobs.modal.pickUsers", "Select users")}
             </DialogTitle>
           </DialogHeader>
+
+          {pickerItems.length > 0 && (
+            <label className="flex cursor-pointer items-center gap-2 self-start text-xs text-zinc-400 light:text-slate-500 hover:text-zinc-50 light:hover:text-slate-900">
+              <Checkbox checked={allSelected} onCheckedChange={toggleSelectAll} />
+              {t("scheduledJobs.modal.selectAll", "Select all")}
+            </label>
+          )}
 
           <div className="max-h-72 overflow-y-auto rounded-lg border border-zinc-700 light:border-slate-200">
             {pickerItems.length === 0 ? (

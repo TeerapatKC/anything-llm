@@ -178,6 +178,7 @@ const TRANSLATIONS = {
     agent: "การกำหนดค่าเอเจนต์",
     "upload-documents": "อัปโหลดเอกสาร",
     "slash-commands": "คำสั่งสแลช",
+    "scheduled-jobs": "งานตามกำหนดเวลา",
   },
   general: {
     vector: {
@@ -1556,6 +1557,7 @@ const TRANSLATIONS = {
     loading: "กำลังโหลด...",
     emptyTitle: "ยังไม่มีงานตามกำหนดเวลา",
     emptySubtitle: "สร้างหนึ่งรายการเพื่อเริ่มต้น",
+    noWorkspacePermission: "คุณไม่มีสิทธิ์จัดการงานตามกำหนดเวลาใน workspace นี้",
     smtpRequiredTitle: "ต้องตั้งค่าอีเมล SMTP ก่อน",
     smtpRequiredDescription:
       "งานตามกำหนดเวลาส่งผลลัพธ์ทางอีเมล จึงยังใช้งานไม่ได้จนกว่าจะตั้งค่าและเปิดใช้งานอีเมลขาออก",
@@ -1627,6 +1629,7 @@ const TRANSLATIONS = {
       recipientsChangeType: "เปลี่ยนประเภท",
       pickWorkspaces: "เลือก Workspace",
       pickUsers: "เลือกผู้ใช้",
+      selectAll: "เลือกทั้งหมด",
       recipientsDone: "เสร็จสิ้น",
       required: "จำเป็น",
       requiredFieldsBanner: "โปรดกรอกข้อมูลที่จำเป็นทั้งหมดเพื่อสร้างงาน",
