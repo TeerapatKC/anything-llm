@@ -4,6 +4,8 @@ import GenericSkillPanel from "./GenericSkillPanel";
 import DefaultSkillPanel from "./DefaultSkillPanel";
 import FileSystemSkillPanel from "./FileSystemSkillPanel";
 import CreateFileSkillPanel from "./CreateFileSkillPanel";
+import { Link } from "react-router-dom";
+import paths from "@/utils/paths";
 import {
   AppWindow,
   Brain,
@@ -14,6 +16,7 @@ import {
   FilePlus,
   FolderOpen,
   ListFilter,
+  Mail,
 } from "lucide-react";
 import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";
@@ -63,7 +66,11 @@ export const getDefaultSkills = (t) => ({
  */
 export const getConfigurableSkills = (
   t,
-  { fileSystemAgentAvailable = true, createFilesAgentAvailable = true } = {}
+  {
+    fileSystemAgentAvailable = true,
+    createFilesAgentAvailable = true,
+    smtpReady = true,
+  } = {}
 ) => ({
   ...(fileSystemAgentAvailable && {
     "filesystem-agent": {
@@ -121,5 +128,24 @@ export const getConfigurableSkills = (
     icon: CalendarCheck,
     image: ScheduledJobsImage,
     mode: ["adminOnly"],
+  },
+  "send-email": {
+    title: t("agent.skill.sendEmail.title"),
+    description: t("agent.skill.sendEmail.description"),
+    component: GenericSkillPanel,
+    skill: "send-email",
+    icon: Mail,
+    disabled: !smtpReady,
+    disabledHint: !smtpReady ? (
+      <span>
+        {t("agent.skill.sendEmail.needsSmtp")}{" "}
+        <Link
+          to={paths.settings.smtp()}
+          className="text-cta-button underline"
+        >
+          {t("agent.skill.sendEmail.needsSmtpLink")}
+        </Link>
+      </span>
+    ) : null,
   },
 });

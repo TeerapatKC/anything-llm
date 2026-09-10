@@ -1,5 +1,6 @@
 const { ScheduledJob } = require("../models/scheduledJob");
 const { ScheduledJobRun } = require("../models/scheduledJobRun");
+const { ScheduledJobLog } = require("../models/scheduledJobLog");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
   userPermissionValid,
@@ -8,26 +9,12 @@ const { PERMISSIONS } = require("../utils/permissions");
 const { reqBody, safeJsonParse, userFromSession } = require("../utils/http");
 const { EventLogs } = require("../models/eventLogs");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
-const { isSendingEnabled } = require("../utils/smtp");
+const { isSendingEnabled, requireSmtpReady } = require("../utils/smtp");
 
 // BackgroundService is a singleton, so `new BackgroundService()` anywhere in
 // the codebase returns the same instance that `server/index.js` booted. We
 // grab that reference once and reuse it across handlers.
 const backgroundService = new BackgroundService();
-
-// Scheduled Jobs only exists to deliver results by email, so the whole feature
-// is gated on SMTP being configured AND turned on - every route below except
-// the status check itself requires this.
-function requireSmtpReady(_request, response, next) {
-  if (!isSendingEnabled()) {
-    return response.status(403).json({
-      error: "smtp_not_configured",
-      message:
-        "Scheduled Jobs requires SMTP email to be configured and enabled first.",
-    });
-  }
-  next();
-}
 
 function scheduledJobEndpoints(app) {
   if (!app) return;
@@ -122,7 +109,36 @@ function scheduledJobEndpoints(app) {
     }
   );
 
-  // Mark a run as read or continue in thread, or kill a running or queued job run
+  // Email delivery log for a single run - who the result was sent to, and
+  // whether each send succeeded.
+  app.get(
+    "/scheduled-jobs/runs/:runId/email-logs",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const logs = await ScheduledJobLog.where(
+          { runId: Number(request.params.runId) },
+          50,
+          { occurredAt: "desc" }
+        );
+        return response.status(200).json({
+          logs: logs.map((l) => ({
+            ...l,
+            metadata: safeJsonParse(l.metadata, {}),
+          })),
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  // Mark a run as read, or kill a running or queued job run
   app.post(
     "/scheduled-jobs/runs/:runId/:action",
     [
@@ -134,25 +150,12 @@ function scheduledJobEndpoints(app) {
       try {
         const { action } = request.params;
 
-        if (!["read", "continue", "kill"].includes(action))
+        if (!["read", "kill"].includes(action))
           throw new Error("Invalid action");
 
         if (action === "read") {
           await ScheduledJobRun.markRead(Number(request.params.runId));
           return response.status(200).json({ success: true });
-        }
-
-        if (action === "continue") {
-          const { workspace, thread, error } =
-            await ScheduledJobRun.continueInThread(
-              Number(request.params.runId)
-            );
-          if (error) return response.status(500).json({ error });
-
-          return response.status(200).json({
-            workspaceSlug: workspace.slug,
-            threadSlug: thread.slug,
-          });
         }
 
         if (action === "kill") {
@@ -551,9 +554,12 @@ function scheduledJobEndpoints(app) {
     }
   );
 
-  // List runs for a job
-  app.get(
-    "/scheduled-jobs/:id/runs",
+  // Instance-wide schedule log - every run (status/duration/error), across every
+  // job (system + workspace-owned), newest first, each with its result-email
+  // delivery attempts attached. Replaces the old per-job "Run History" page -
+  // pass jobId to filter down to a single job's runs. Mirrors /system/event-logs.
+  app.post(
+    "/scheduled-jobs/logs",
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
@@ -561,12 +567,61 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const { offset = 0, limit = 10, jobId = null } = reqBody(request);
+        const clause = jobId ? { jobId: Number(jobId) } : {};
+
         const runs = await ScheduledJobRun.where(
-          { jobId: Number(request.params.id) },
-          50,
-          { startedAt: "desc" }
+          clause,
+          limit,
+          { startedAt: "desc" },
+          { job: { include: { workspace: { select: { name: true, slug: true } } } } },
+          offset * limit
         );
-        return response.status(200).json({ runs });
+        const totalLogs = await ScheduledJobRun.count(clause);
+        const hasPages = totalLogs > (offset + 1) * limit;
+
+        const emailLogsByRun = await ScheduledJobLog.groupByRunId(
+          runs.map((r) => r.id)
+        );
+
+        return response.status(200).json({
+          logs: runs.map((run) => ({
+            id: run.id,
+            jobId: run.jobId,
+            jobName: run.job?.name || "Unknown Job",
+            workspaceName: run.job?.workspace?.name || null,
+            workspaceSlug: run.job?.workspace?.slug || null,
+            status: run.status,
+            error: run.error,
+            startedAt: run.startedAt,
+            completedAt: run.completedAt,
+            readAt: run.readAt,
+            emailLogs: emailLogsByRun[run.id] || [],
+          })),
+          hasPages,
+          totalLogs,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  // Clears both halves of the merged view - the run rows and their attached
+  // email delivery logs - since that's what the page actually shows.
+  app.delete(
+    "/scheduled-jobs/logs",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (_request, response) => {
+      try {
+        const success =
+          (await ScheduledJobRun.delete()) && (await ScheduledJobLog.delete());
+        return response.status(200).json({ success });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500);

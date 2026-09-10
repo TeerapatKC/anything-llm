@@ -34,6 +34,8 @@ export const PERMISSIONS = {
   SYSTEM_EVENT_LOGS_VIEW: "system.event_logs.view",
   SYSTEM_EVENT_LOGS_CLEAR: "system.event_logs.clear",
 
+  SYSTEM_MONITORING: "system.monitoring",
+
   SYSTEM_API_KEYS: "system.api_keys",
   SYSTEM_MOBILE: "system.mobile",
 
@@ -411,6 +413,7 @@ export function userIsChatOnly(user) {
       PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_SETTINGS,
       PERMISSIONS.SYSTEM_APPEARANCE,
+      PERMISSIONS.SYSTEM_MONITORING,
     ],
     user
   );

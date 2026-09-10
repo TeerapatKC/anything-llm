@@ -263,6 +263,7 @@ model workspaces {
   telegram_users               telegram_users[]
   line_users                   line_users[]
   document_folders             document_folders[]
+  scheduled_jobs               scheduled_jobs[]
 }
 
 model workspace_threads {
@@ -554,11 +555,18 @@ model scheduled_jobs {
   recipientType         String               @default("none") // none | workspace | user - who gets emailed the result
   recipientWorkspaceIds String? // JSON array of workspace ids - notifies every member of each workspace
   recipientUserIds      String? // JSON array of user ids - notifies those users directly
+  // NULL = instance-wide (admin-managed, visible to every workspace manager on the
+  // global page). Non-null = owned by exactly one workspace, editable only from that
+  // workspace's own settings - same ownership model as agent flows / SQL connections.
+  workspaceId           Int?
+  workspace             workspaces?          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   lastRunAt             DateTime?
   nextRunAt             DateTime?
   createdAt             DateTime             @default(now())
   updatedAt             DateTime             @default(now())
   runs                  scheduled_job_runs[]
+
+  @@index([workspaceId])
 }
 
 model scheduled_job_runs {
@@ -573,6 +581,23 @@ model scheduled_job_runs {
   job         scheduled_jobs @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   @@index([jobId])
+}
+
+// Audit trail for a scheduled job's result-email deliveries (sent/failed, per
+// recipient). Deliberately not FK'd to scheduled_jobs/scheduled_job_runs, same
+// as event_logs - jobId/runId are denormalized ids so a log entry survives the
+// job or run being deleted later, and jobName/to/reason live in metadata.
+model scheduled_job_logs {
+  id         Int      @id @default(autoincrement())
+  event      String // scheduled_job_email_sent | scheduled_job_email_failed
+  metadata   String?
+  jobId      Int?
+  runId      Int?
+  occurredAt DateTime @default(now())
+
+  @@index([event])
+  @@index([jobId])
+  @@index([runId])
 }
 
 model memories {

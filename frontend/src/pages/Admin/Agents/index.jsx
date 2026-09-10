@@ -65,11 +65,13 @@ export default function AdminAgents() {
     useState(false);
   const [createFilesAgentAvailable, setCreateFilesAgentAvailable] =
     useState(false);
+  const [smtpReady, setSmtpReady] = useState(false);
 
   const defaultSkills = getDefaultSkills(t);
   const allConfigurableSkills = getConfigurableSkills(t, {
     fileSystemAgentAvailable,
     createFilesAgentAvailable,
+    smtpReady,
   });
   // Skills marked `adminOnly` change behaviour for the whole instance, so only a
   // system administrator may configure them.
@@ -114,6 +116,7 @@ export default function AdminAgents() {
         flowsRes,
         fsAgentAvailable,
         createFilesAvailable,
+        sendEmailAvailable,
       ] = await Promise.all([
         System.keys(),
         Admin.systemPreferencesByFields([
@@ -124,6 +127,7 @@ export default function AdminAgents() {
         AgentFlows.listFlows(),
         System.isFileSystemAgentAvailable(),
         System.isCreateFilesAgentAvailable(),
+        System.isSendEmailAvailable(),
       ]);
 
       const { flows = [] } = flowsRes;
@@ -136,6 +140,7 @@ export default function AdminAgents() {
       setAgentFlows(flows);
       setFileSystemAgentAvailable(fsAgentAvailable);
       setCreateFilesAgentAvailable(createFilesAvailable);
+      setSmtpReady(sendEmailAvailable);
       setLoading(false);
     }
     fetchSettings();

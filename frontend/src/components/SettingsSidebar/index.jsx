@@ -391,8 +391,18 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW],
             },
             {
+              btnText: t("settings.monitoring"),
+              href: paths.settings.monitoring(),
+              permissions: [PERMISSIONS.SYSTEM_MONITORING],
+            },
+            {
               btnText: t("settings.scheduled-jobs"),
               href: paths.settings.scheduledJobs(),
+              permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
+            },
+            {
+              btnText: t("settings.scheduled-jobs-logs"),
+              href: paths.settings.scheduledJobLogs(),
               permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
             },
             {

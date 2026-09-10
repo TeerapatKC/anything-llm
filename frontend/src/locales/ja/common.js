@@ -51,6 +51,7 @@ const TRANSLATIONS = {
     "vector-database": "ベクターデータベース",
     embeds: "チャット埋め込み",
     "event-logs": "イベントログ",
+    monitoring: "モニタリング",
     privacy: "プライバシーとデータ",
     "ai-providers": "AIプロバイダー",
     agent: "代理",
@@ -74,6 +75,7 @@ const TRANSLATIONS = {
       line: "LINE",
     },
     "scheduled-jobs": "計画された作業",
+    "scheduled-jobs-logs": "スケジュールログ",
     "model-router": "モデルルーター",
     "image-generation": "画像生成",
   },
@@ -157,6 +159,7 @@ const TRANSLATIONS = {
     agent: "エージェント構成",
     "upload-documents": "ドキュメントをアップロード",
     "slash-commands": "スラッシュコマンド",
+    "scheduled-jobs": "予定されている作業",
   },
   general: {
     vector: {
@@ -441,6 +444,13 @@ const TRANSLATIONS = {
         title: "計画されたタスクを作成する",
         description:
           "エージェントがチャットから繰り返し実行されるタスク（例：「毎日午前9時に、私のインボックスとメールを要約してメールで通知する」）を作成できるようにします。この機能はシングルユーザーモードでのみ利用可能です。",
+      },
+      sendEmail: {
+        title: "メール送信",
+        description:
+          "エージェントがインスタンスのSMTPサーバーを通じてユーザーの代わりにメールを送信できるようにします。",
+        needsSmtp: "この機能を使うには先にSMTPを設定して有効にする必要があります。",
+        needsSmtpLink: "SMTP設定に移動",
       },
     },
     mcp: {
@@ -734,6 +744,14 @@ const TRANSLATIONS = {
       user: "ユーザー",
       occurred: "発生日時",
     },
+  },
+  monitoring: {
+    title: "モニタリング",
+    description: "このインスタンスの Grafana ダッシュボードです。",
+    "open-grafana": "Grafana で開く",
+    unavailable: "このインスタンスでは Grafana が設定されていません。",
+    "unavailable-hint":
+      "ダッシュボードを埋め込むには GRAFANA_PUBLIC_URL を設定してください。",
   },
   privacy: {
     title: "プライバシーとデータ処理",
@@ -1404,10 +1422,37 @@ const TRANSLATIONS = {
     loading: "読み込み中...",
     emptyTitle: "現時点で予定されている作業はありません。",
     emptySubtitle: "まずは、簡単なものから始めてみましょう。",
+    noWorkspacePermission:
+      "このワークスペースで予定されている作業を管理する権限がありません。",
     smtpRequiredTitle: "先にSMTPメールを設定する必要があります",
     smtpRequiredDescription:
       "予定されている作業は結果をメールで送信するため、送信用メールの設定と有効化が完了するまで利用できません。",
     smtpRequiredCta: "SMTP設定に移動",
+    logs: {
+      title: "スケジュールログ",
+      description: "すべての予定作業の実行状況・実行時間・メール送信結果です。",
+      clear: "ログを消去",
+      clearTitle: "すべてのスケジュールログを消去しますか?",
+      clearDescription: "この操作は元に戻せません。",
+      clearConfirm: "ログを消去",
+      clearSuccess: "スケジュールログを消去しました。",
+      clearFailed: "ログの消去に失敗しました: {{error}}",
+      empty: "スケジュールログはまだありません。",
+      backToJobs: "作業一覧に戻る",
+      sourceSystem: "System",
+      sourceWorkspace: "Workspace: {{name}}",
+      emailSentCount: "{{count}}件送信済み",
+      emailFailedCount: "{{count}}/{{total}}件送信失敗",
+      table: {
+        status: "状態",
+        job: "作業",
+        source: "送信元",
+        started: "開始日時",
+        duration: "実行時間",
+        error: "エラー",
+        email: "メール",
+      },
+    },
     table: {
       name: "名前",
       schedule: "スケジュール",
@@ -1469,6 +1514,7 @@ const TRANSLATIONS = {
       recipientsChangeType: "種類を変更",
       pickWorkspaces: "ワークスペースを選択",
       pickUsers: "ユーザーを選択",
+      selectAll: "すべて選択",
       recipientsDone: "完了",
       required: "必要",
       requiredFieldsBanner:
@@ -1510,21 +1556,6 @@ const TRANSLATIONS = {
         sat: "土曜日",
       },
     },
-    runHistory: {
-      back: "求人情報に戻る",
-      title: "実行履歴: {{name}}",
-      schedule: "スケジュール：",
-      emptyTitle: "現時点では、この仕事に対してまだ成果は出ていません。",
-      emptySubtitle: "現在ジョブを実行し、その結果を確認してください。",
-      runNow: "今すぐ実行",
-      table: {
-        status: "ステータス",
-        started: "開始",
-        duration: "期間",
-        error: "エラー",
-      },
-      stopJob: "仕事の停止",
-    },
     runDetail: {
       loading: "ロード実行の詳細を読み込んでいます...",
       notFound: "指定されたプログラムが見つかりませんでした。",
@@ -1532,8 +1563,6 @@ const TRANSLATIONS = {
       unknownJob: "不明な職種",
       runHeading: "{{name}} — 実行: #{{id}}",
       duration: "期間: {{value}}",
-      creating: "作成中...",
-      threadFailed: "スレッドの作成に失敗しました",
       sections: {
         prompt: "指示",
         error: "エラー",
@@ -1542,14 +1571,22 @@ const TRANSLATIONS = {
         files: "ファイル ({{count}})",
         response: "返答",
         metrics: "指標",
+        emailLog: "メール送信ログ ({{count}})",
       },
       metrics: {
         promptTokens: "プロンプトトークン:",
         completionTokens: "完了トークン：",
       },
+      emailLog: {
+        sent: "送信済み",
+        failed: "送信失敗",
+        to: "宛先:",
+        reason: "理由:",
+        sourceSystem: "送信元: System",
+        sourceWorkspace: "送信元 Workspace: {{name}}",
+      },
       stopJob: "求人停止",
       killing: "停止…",
-      continueInThread: "チャットを続ける",
     },
     toolCall: {
       arguments: "主張：",

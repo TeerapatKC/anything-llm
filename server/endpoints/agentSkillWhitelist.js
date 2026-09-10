@@ -46,6 +46,22 @@ function agentSkillWhitelistEndpoints(app) {
     }
   );
 
+  app.get(
+    "/agent-skills/send-email/is-available",
+    [validatedRequest],
+    async (_request, response) => {
+      try {
+        const { isSendingEnabled } = require("../utils/smtp");
+        return response.status(200).json({ available: isSendingEnabled() });
+      } catch (e) {
+        console.error(e);
+        return response
+          .status(500)
+          .json({ available: false, error: e.message });
+      }
+    }
+  );
+
   app.post(
     "/agent-skills/whitelist/add",
     [validatedRequest, userPermissionValid(PERMISSIONS.ANY)],

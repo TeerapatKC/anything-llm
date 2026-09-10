@@ -77,6 +77,16 @@ export default {
       slashCommands: (slug) => {
         return `/workspace/${slug}/settings/slash-commands`;
       },
+      scheduledJobs: (slug) => {
+        return `/workspace/${slug}/settings/scheduled-jobs`;
+      },
+      scheduledJobRunDetail: (slug, jobId, runId) => {
+        return `/workspace/${slug}/settings/scheduled-jobs/${jobId}/runs/${runId}`;
+      },
+      scheduledJobLogs: (slug, jobId = null) => {
+        const base = `/workspace/${slug}/settings/scheduled-jobs-logs`;
+        return jobId ? `${base}?jobId=${jobId}` : base;
+      },
     },
     thread: (wsSlug, threadSlug) => {
       return `/workspace/${wsSlug}/t/${threadSlug}`;
@@ -176,6 +186,9 @@ export default {
     logs: () => {
       return "/settings/event-logs";
     },
+    monitoring: () => {
+      return "/settings/monitoring";
+    },
     privacy: () => {
       return "/settings/privacy";
     },
@@ -191,11 +204,12 @@ export default {
     scheduledJobs: () => {
       return `/settings/scheduled-jobs`;
     },
-    scheduledJobRuns: (jobId) => {
-      return `/settings/scheduled-jobs/${jobId}/runs`;
-    },
     scheduledJobRunDetail: (jobId, runId) => {
       return `/settings/scheduled-jobs/${jobId}/runs/${runId}`;
+    },
+    scheduledJobLogs: (jobId = null) => {
+      const base = `/settings/scheduled-jobs-logs`;
+      return jobId ? `${base}?jobId=${jobId}` : base;
     },
   },
   agents: {

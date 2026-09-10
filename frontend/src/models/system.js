@@ -577,6 +577,19 @@ const System = {
         return [];
       });
   },
+  monitoring: async () => {
+    return await fetch(`${API_BASE}/system/monitoring`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not load monitoring dashboards.");
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { enabled: false, publicUrl: "", dashboards: [] };
+      });
+  },
   clearEventLogs: async () => {
     return await fetch(`${API_BASE}/system/event-logs`, {
       method: "DELETE",
@@ -897,6 +910,21 @@ const System = {
    */
   isCreateFilesAgentAvailable: async function () {
     return fetch(`${API_BASE}/agent-skills/create-files-agent/is-available`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res?.available ?? false)
+      .catch(() => false);
+  },
+
+  /**
+   * Checks if the send-email skill is available - true only once SMTP has
+   * been configured and enabled for this instance.
+   * @returns {Promise<boolean>}
+   */
+  isSendEmailAvailable: async function () {
+    return fetch(`${API_BASE}/agent-skills/send-email/is-available`, {
       method: "GET",
       headers: baseHeaders(),
     })

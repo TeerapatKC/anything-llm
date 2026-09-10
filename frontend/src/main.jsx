@@ -63,6 +63,7 @@ const router = createBrowserRouter([
                   WORKSPACE_PERMISSIONS.ROLES_MANAGE,
                   WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
                   WORKSPACE_PERMISSIONS.DOCUMENTS_MANAGE,
+                  WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
                 ]}
               />
             ),
@@ -100,6 +101,40 @@ const router = createBrowserRouter([
               <WorkspacePermissionRoute
                 Component={AgentBuilder}
                 permissions={[WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/workspace/:slug/settings/scheduled-jobs/:id/runs/:runId",
+        lazy: async () => {
+          const { default: ScheduledJobRunDetail } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/RunDetailPage"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={ScheduledJobRunDetail}
+                permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        // Merged run+email schedule log for jobs owned by this workspace. Same
+        // screen as the instance-wide one below, gated on a workspace permission.
+        path: "/workspace/:slug/settings/scheduled-jobs-logs",
+        lazy: async () => {
+          const { default: ScheduledJobLogs } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/LogsPage"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={ScheduledJobLogs}
+                permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
               />
             ),
           };
@@ -312,6 +347,22 @@ const router = createBrowserRouter([
               <PermissionRoute
                 Component={AdminLogs}
                 permissions={[PERMISSIONS.SYSTEM_EVENT_LOGS]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/settings/monitoring",
+        lazy: async () => {
+          const { default: Monitoring } = await import(
+            "@/pages/GeneralSettings/Monitoring"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={Monitoring}
+                permissions={[PERMISSIONS.SYSTEM_MONITORING]}
               />
             ),
           };
@@ -642,15 +693,15 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/scheduled-jobs/:id/runs",
+        path: "/settings/scheduled-jobs-logs",
         lazy: async () => {
-          const { default: ScheduledJobRuns } = await import(
-            "@/pages/GeneralSettings/ScheduledJobs/RunHistoryPage"
+          const { default: ScheduledJobLogs } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/LogsPage"
           );
           return {
             element: (
               <PermissionRoute
-                Component={ScheduledJobRuns}
+                Component={ScheduledJobLogs}
                 permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
               />
             ),

@@ -1,51 +1,64 @@
 import { useTranslation } from "react-i18next";
 
 /**
- * Per-status text styling per the run history figma:
- * - non-terminal (queued, running) → italic zinc-400
- * - completed → white medium
- * - failed / timed_out → red-400
- * @param {string} status - The status of the run.
- * @returns {string} The styled status text.
+ * Per-status pill coloring - each of the 5 run statuses gets its own
+ * background/border/text tint so they're distinguishable at a glance in the
+ * Schedule Job Logs table:
+ * - queued → zinc (waiting, neutral)
+ * - running → blue (active)
+ * - completed → emerald (success)
+ * - failed → red (error)
+ * - timed_out → amber (distinct from failed - it didn't error, it ran out of time)
+ * @param {Function} t - The i18next translation function.
  */
 function getStatusesMap(t) {
   return {
-    completed: {
-      text: t("scheduledJobs.status.completed"),
-      style: "font-medium text-theme-text-primary light:text-slate-950",
-    },
-    failed: {
-      text: t("scheduledJobs.status.failed"),
-      style: "text-red-400 light:text-red-600",
-    },
-    timed_out: {
-      text: t("scheduledJobs.status.timed_out"),
-      style: "text-red-400 light:text-red-600",
+    queued: {
+      text: t("scheduledJobs.status.queued"),
+      style:
+        "bg-zinc-500/15 border-zinc-500/30 text-zinc-400 light:bg-slate-200 light:border-slate-300 light:text-slate-600",
     },
     running: {
       text: t("scheduledJobs.status.running"),
-      style: "italic text-zinc-400 light:text-slate-600",
+      style:
+        "bg-blue-500/15 border-blue-500/30 text-blue-400 light:bg-blue-100 light:border-blue-300 light:text-blue-600",
     },
-    queued: {
-      text: t("scheduledJobs.status.queued"),
-      style: "italic text-zinc-400 light:text-slate-600",
+    completed: {
+      text: t("scheduledJobs.status.completed"),
+      style:
+        "bg-emerald-500/15 border-emerald-500/30 text-emerald-400 light:bg-emerald-100 light:border-emerald-300 light:text-emerald-600",
+    },
+    failed: {
+      text: t("scheduledJobs.status.failed"),
+      style:
+        "bg-red-500/15 border-red-500/30 text-red-400 light:bg-red-100 light:border-red-300 light:text-red-600",
+    },
+    timed_out: {
+      text: t("scheduledJobs.status.timed_out"),
+      style:
+        "bg-amber-500/15 border-amber-500/30 text-amber-400 light:bg-amber-100 light:border-amber-300 light:text-amber-600",
     },
     default: {
       text: "—",
-      style: "text-zinc-400 light:text-slate-600",
+      style:
+        "bg-zinc-500/15 border-zinc-500/30 text-zinc-400 light:bg-slate-200 light:border-slate-300 light:text-slate-600",
     },
   };
 }
 
 /**
- * Status text shown in the run history table. Plain text — no pill — to
- * match the run history figma.
+ * Colored, bordered status pill shown in the Schedule Job Logs table.
  * @param {string} status - The status of the run.
- * @returns {string} The status text.
  */
 export default function StatusBadge({ status }) {
   const { t } = useTranslation();
   const statusesMap = getStatusesMap(t);
   const { text, style } = statusesMap[status] || statusesMap.default;
-  return <span className={`text-sm ${style}`}>{text}</span>;
+  return (
+    <span
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${style}`}
+    >
+      {text}
+    </span>
+  );
 }

@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Brain,
   File,
+  Mail,
   MessageSquareText,
   Square,
   Wrench,
@@ -29,27 +30,39 @@ import {
 
 export default function RunDetailPage() {
   const { t } = useTranslation();
-  const { id, runId } = useParams();
+  const { id, runId, slug = null } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [run, setRun] = useState(null);
   const [job, setJob] = useState(null);
-  const [continuing, setContinuing] = useState(false);
+  const [emailLogs, setEmailLogs] = useState([]);
   const [killing, setKilling] = useState(false);
 
   useEffect(() => {
     fetchRun();
-  }, [runId]);
+    fetchEmailLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runId, slug]);
 
   const fetchRun = async () => {
-    const data = await ScheduledJobs.getRun(runId);
+    const data = slug
+      ? await ScheduledJobs.workspace.getRun(slug, runId)
+      : await ScheduledJobs.getRun(runId);
     setRun(data.run);
     setJob(data.job);
     setLoading(false);
 
     if (data.run && !data.run.readAt) {
-      ScheduledJobs.markRunRead(runId);
+      if (slug) ScheduledJobs.workspace.markRunRead(slug, runId);
+      else ScheduledJobs.markRunRead(runId);
     }
+  };
+
+  const fetchEmailLogs = async () => {
+    const { logs } = slug
+      ? await ScheduledJobs.workspace.emailLogs(slug, runId)
+      : await ScheduledJobs.emailLogs(runId);
+    setEmailLogs(logs || []);
   };
 
   const isNonTerminal = run?.status === "running" || run?.status === "queued";
@@ -57,23 +70,21 @@ export default function RunDetailPage() {
   // Stops automatically once the run reaches a terminal state.
   usePolling(fetchRun, 3000, isNonTerminal);
 
-  const handleContinueInThread = async () => {
-    setContinuing(true);
-    const { workspaceSlug, threadSlug, error } =
-      await ScheduledJobs.continueInThread(runId);
-
-    if (error || !workspaceSlug || !threadSlug) {
-      showToast(error || t("scheduledJobs.runDetail.threadFailed"), "error");
-      setContinuing(false);
-      return;
-    }
-
-    navigate(paths.workspace.thread(workspaceSlug, threadSlug));
-  };
+  // The result email is sent just after the run completes, not before - refetch
+  // the email log shortly after the run turns terminal so a just-arrived send
+  // shows up without the user having to leave and come back.
+  useEffect(() => {
+    if (isNonTerminal || !run?.status) return;
+    const timeoutId = setTimeout(fetchEmailLogs, 2000);
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [run?.status]);
 
   const handleKillRun = async () => {
     setKilling(true);
-    const { success, error } = await ScheduledJobs.killRun(runId);
+    const { success, error } = slug
+      ? await ScheduledJobs.workspace.killRun(slug, runId)
+      : await ScheduledJobs.killRun(runId);
     setKilling(false);
 
     if (!success) {
@@ -85,9 +96,13 @@ export default function RunDetailPage() {
     fetchRun();
   };
 
+  const backPath = slug
+    ? paths.workspace.settings.scheduledJobLogs(slug, id)
+    : paths.settings.scheduledJobLogs(id);
+
   if (loading) {
     return (
-      <RunDetailLayout>
+      <RunDetailLayout slug={slug}>
         <p className="text-zinc-400 light:text-slate-600 text-sm">
           {t("scheduledJobs.runDetail.loading")}
         </p>
@@ -97,7 +112,7 @@ export default function RunDetailPage() {
 
   if (!run) {
     return (
-      <RunDetailLayout>
+      <RunDetailLayout slug={slug}>
         <p className="text-zinc-400 light:text-slate-600 text-sm">
           {t("scheduledJobs.runDetail.notFound")}
         </p>
@@ -107,16 +122,14 @@ export default function RunDetailPage() {
 
   const result = run.result || {};
   return (
-    <RunDetailLayout>
+    <RunDetailLayout slug={slug}>
       <RunHeader
         t={t}
         job={job}
         run={run}
         result={result}
-        continuing={continuing}
         killing={killing}
-        onBack={() => navigate(paths.settings.scheduledJobRuns(id))}
-        onContinueInThread={handleContinueInThread}
+        onBack={() => navigate(backPath)}
         onKillRun={handleKillRun}
       />
 
@@ -128,26 +141,21 @@ export default function RunDetailPage() {
         <GeneratedFilesSection t={t} result={result} />
         <FinalResponseSection t={t} result={result} />
         <MetricsSection t={t} metrics={result?.metrics} />
+        <EmailLogSection t={t} logs={emailLogs} />
       </div>
     </RunDetailLayout>
   );
 }
 
-function RunDetailLayout({ children }) {
+function RunDetailLayout({ slug = null, children }) {
+  // Same reasoning as RunHistoryPage - a workspace-owned job's run detail
+  // renders as its own screen rather than pulling in the instance-wide admin
+  // sidebar, which would be the wrong navigation context here.
+  if (slug) return <div className="w-full max-w-5xl mx-auto px-4 py-10">{children}</div>;
   return <SettingsLayout>{children}</SettingsLayout>;
 }
 
-function RunHeader({
-  t,
-  job,
-  run,
-  result,
-  continuing,
-  killing,
-  onBack,
-  onContinueInThread,
-  onKillRun,
-}) {
+function RunHeader({ t, job, run, result, killing, onBack, onKillRun }) {
   function getStatusInfo() {
     return {
       completed: {
@@ -224,18 +232,6 @@ function RunHeader({
             {killing
               ? t("scheduledJobs.runDetail.killing")
               : t("scheduledJobs.runDetail.stopJob")}
-          </button>
-        )}
-        {run.status === "completed" && (
-          <button
-            type="button"
-            onClick={onContinueInThread}
-            disabled={continuing}
-            className="border-none h-9 px-5 rounded-lg bg-zinc-50 text-zinc-950 light:bg-slate-900 light:text-white text-sm font-medium hover:bg-zinc-200 light:hover:bg-slate-800 transition-colors disabled:opacity-50 shrink-0"
-          >
-            {continuing
-              ? t("scheduledJobs.runDetail.creating")
-              : t("scheduledJobs.runDetail.continueInThread")}
           </button>
         )}
       </div>
@@ -417,5 +413,61 @@ function MetricsSection({ t, metrics }) {
         )}
       </div>
     </div>
+  );
+}
+
+function EmailLogSection({ t, logs }) {
+  if (!logs || logs.length === 0) return null;
+
+  return (
+    <CollapsibleSection
+      title={t("scheduledJobs.runDetail.sections.emailLog", {
+        count: logs.length,
+      })}
+      icon={Mail}
+    >
+      <p className="text-xs text-zinc-400 light:text-slate-600 mb-3">
+        {logs[0]?.metadata?.workspaceName
+          ? t("scheduledJobs.runDetail.emailLog.sourceWorkspace", {
+              name: logs[0].metadata.workspaceName,
+            })
+          : t("scheduledJobs.runDetail.emailLog.sourceSystem")}
+      </p>
+      <div className="space-y-2">
+        {logs.map((log) => {
+          const sent = log.event === "scheduled_job_email_sent";
+          return (
+            <div
+              key={log.id}
+              className="flex items-start justify-between gap-4 text-sm"
+            >
+              <div className="flex flex-col">
+                <span className="text-zinc-50 light:text-slate-950">
+                  {t("scheduledJobs.runDetail.emailLog.to")}{" "}
+                  {log.metadata?.to || "—"}
+                </span>
+                {!sent && log.metadata?.reason && (
+                  <span className="text-red-400 light:text-red-600 text-xs">
+                    {t("scheduledJobs.runDetail.emailLog.reason")}{" "}
+                    {log.metadata.reason}
+                  </span>
+                )}
+              </div>
+              <span
+                className={
+                  sent
+                    ? "text-green-400 light:text-green-600 text-xs shrink-0"
+                    : "text-red-400 light:text-red-600 text-xs shrink-0"
+                }
+              >
+                {sent
+                  ? t("scheduledJobs.runDetail.emailLog.sent")
+                  : t("scheduledJobs.runDetail.emailLog.failed")}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </CollapsibleSection>
   );
 }
