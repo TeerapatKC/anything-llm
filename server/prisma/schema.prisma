@@ -583,6 +583,23 @@ model scheduled_job_runs {
   @@index([jobId])
 }
 
+// Audit trail for a scheduled job's result-email deliveries (sent/failed, per
+// recipient). Deliberately not FK'd to scheduled_jobs/scheduled_job_runs, same
+// as event_logs - jobId/runId are denormalized ids so a log entry survives the
+// job or run being deleted later, and jobName/to/reason live in metadata.
+model scheduled_job_logs {
+  id         Int      @id @default(autoincrement())
+  event      String // scheduled_job_email_sent | scheduled_job_email_failed
+  metadata   String?
+  jobId      Int?
+  runId      Int?
+  occurredAt DateTime @default(now())
+
+  @@index([event])
+  @@index([jobId])
+  @@index([runId])
+}
+
 model memories {
   id          Int       @id @default(autoincrement())
   userId      Int?      @map("user_id")

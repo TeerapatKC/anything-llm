@@ -139,6 +139,36 @@ const ScheduledJobs = {
       .catch((e) => ({ success: false, error: e.message }));
   },
 
+  emailLogs: async function (runId) {
+    return await fetch(
+      `${API_BASE}/scheduled-jobs/runs/${runId}/email-logs`,
+      { headers: baseHeaders() }
+    )
+      .then((res) => res.json())
+      .catch(() => ({ logs: [] }));
+  },
+
+  // Instance-wide schedule log page - every result-email delivery attempt
+  // across every job, paginated. Mirrors System.eventLogs/clearEventLogs.
+  allLogs: async function (offset = 0) {
+    return await fetch(`${API_BASE}/scheduled-jobs/logs`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ offset }),
+    })
+      .then((res) => res.json())
+      .catch(() => ({ logs: [], hasPages: false }));
+  },
+
+  clearLogs: async function () {
+    return await fetch(`${API_BASE}/scheduled-jobs/logs`, {
+      method: "DELETE",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({ success: false, error: e.message }));
+  },
+
   // Jobs owned by a single workspace - managed from that workspace's own
   // settings instead of the instance-wide GeneralSettings page. Mirrors
   // AgentFlows.workspace.* / Workspace.slashCommands.*.
@@ -276,6 +306,15 @@ const ScheduledJobs = {
       )
         .then((res) => res.json())
         .catch(() => ({ members: [] }));
+    },
+
+    emailLogs: async function (slug, runId) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}/email-logs`,
+        { headers: baseHeaders() }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ logs: [] }));
     },
   },
 };

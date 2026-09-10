@@ -32,6 +32,7 @@ const { SlashCommandPresets } = require("../models/slashCommandsPresets");
 const { VALID_COMMANDS } = require("../utils/chats");
 const { ScheduledJob } = require("../models/scheduledJob");
 const { ScheduledJobRun } = require("../models/scheduledJobRun");
+const { ScheduledJobLog } = require("../models/scheduledJobLog");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
 const { requireSmtpReady } = require("../utils/smtp");
 
@@ -1922,6 +1923,7 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const workspace = response.locals.workspace;
         const body = reqBody(request);
         const errorMessage = await validateWorkspaceJobPayload(
@@ -1954,6 +1956,16 @@ function workspaceEndpoints(app) {
         if (error) return response.status(400).json({ job: null, error });
 
         backgroundService.addScheduledJob(job);
+        await EventLogs.logEvent(
+          "scheduled_job_created",
+          {
+            jobName: job.name,
+            jobId: job.id,
+            schedule: job.schedule,
+            workspaceName: workspace.name,
+          },
+          user?.id
+        );
         response.status(201).json({ job, error: null });
       } catch (error) {
         console.error("Error creating workspace scheduled job:", error);
@@ -1996,6 +2008,7 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const workspace = response.locals.workspace;
         if (!(await ownedJobOr404(request.params.id, workspace, response)))
           return;
@@ -2043,6 +2056,16 @@ function workspaceEndpoints(app) {
         if (error) return response.status(400).json({ job: null, error });
 
         await backgroundService.syncScheduledJob(job.id);
+        await EventLogs.logEvent(
+          "scheduled_job_updated",
+          {
+            jobName: job.name,
+            jobId: job.id,
+            fields: Object.keys(updates).sort(),
+            workspaceName: workspace.name,
+          },
+          user?.id
+        );
         response.status(200).json({ job, error: null });
       } catch (error) {
         console.error("Error updating workspace scheduled job:", error);
@@ -2061,12 +2084,23 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const workspace = response.locals.workspace;
-        if (!(await ownedJobOr404(request.params.id, workspace, response)))
-          return;
+        const job = await ownedJobOr404(request.params.id, workspace, response);
+        if (!job) return;
 
         backgroundService.removeScheduledJob(Number(request.params.id));
         const success = await ScheduledJob.delete(Number(request.params.id));
+        if (success)
+          await EventLogs.logEvent(
+            "scheduled_job_deleted",
+            {
+              jobName: job.name,
+              jobId: job.id,
+              workspaceName: workspace.name,
+            },
+            user?.id
+          );
         response.status(200).json({ success });
       } catch (error) {
         console.error("Error deleting workspace scheduled job:", error);
@@ -2085,6 +2119,7 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const workspace = response.locals.workspace;
         const job = await ownedJobOr404(request.params.id, workspace, response);
         if (!job) return;
@@ -2105,6 +2140,16 @@ function workspaceEndpoints(app) {
           enabled: !job.enabled,
         });
         await backgroundService.syncScheduledJob(job.id);
+        await EventLogs.logEvent(
+          "scheduled_job_toggled",
+          {
+            jobName: job.name,
+            jobId: job.id,
+            enabled: !job.enabled,
+            workspaceName: workspace.name,
+          },
+          user?.id
+        );
         response.status(200).json({ job: updated });
       } catch (error) {
         console.error("Error toggling workspace scheduled job:", error);
@@ -2123,14 +2168,25 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const job = await ownedJobOr404(
-          request.params.id,
-          response.locals.workspace,
-          response
-        );
+        const user = await userFromSession(request, response);
+        const workspace = response.locals.workspace;
+        const job = await ownedJobOr404(request.params.id, workspace, response);
         if (!job) return;
 
         const run = await backgroundService.enqueueScheduledJob(job.id);
+
+        // Recorded even when the run is skipped, because "somebody pressed run" is
+        // the fact being audited - a queue that refused it is part of that story.
+        await EventLogs.logEvent(
+          "scheduled_job_triggered",
+          {
+            jobName: job.name,
+            jobId: job.id,
+            skipped: !run,
+            workspaceName: workspace.name,
+          },
+          user?.id
+        );
         response.status(200).json({ success: true, skipped: !run, error: null });
       } catch (error) {
         console.error("Error triggering workspace scheduled job:", error);
@@ -2192,6 +2248,41 @@ function workspaceEndpoints(app) {
       } catch (error) {
         console.error("Error loading workspace scheduled job run:", error);
         response.status(500).json({ run: null, error: error.message });
+      }
+    }
+  );
+
+  app.get(
+    "/workspace/:slug/scheduled-jobs/runs/:runId/email-logs",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const owned = await ownedRunOr404(
+          request.params.runId,
+          response.locals.workspace,
+          response
+        );
+        if (!owned) return;
+
+        const logs = await ScheduledJobLog.where(
+          { runId: owned.run.id },
+          50,
+          { occurredAt: "desc" }
+        );
+        response.status(200).json({
+          logs: logs.map((l) => ({
+            ...l,
+            metadata: safeJsonParse(l.metadata, {}),
+          })),
+        });
+      } catch (error) {
+        console.error("Error loading workspace scheduled job email logs:", error);
+        response.status(500).json({ logs: [], error: error.message });
       }
     }
   );

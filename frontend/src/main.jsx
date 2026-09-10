@@ -677,6 +677,22 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/settings/scheduled-jobs-logs",
+        lazy: async () => {
+          const { default: ScheduledJobLogs } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/LogsPage"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={ScheduledJobLogs}
+                permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
+              />
+            ),
+          };
+        },
+      },
+      {
         path: "/settings/scheduled-jobs/:id/runs",
         lazy: async () => {
           const { default: ScheduledJobRuns } = await import(

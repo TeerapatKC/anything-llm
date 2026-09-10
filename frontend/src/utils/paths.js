@@ -206,6 +206,9 @@ export default {
     scheduledJobRunDetail: (jobId, runId) => {
       return `/settings/scheduled-jobs/${jobId}/runs/${runId}`;
     },
+    scheduledJobLogs: () => {
+      return `/settings/scheduled-jobs-logs`;
+    },
   },
   agents: {
     builder: () => {

@@ -67,17 +67,21 @@ function agentActionCb() {
 /**
  * Email every configured recipient (workspace members or specific users) once a
  * scheduled job run completes successfully. Never throws - a failed notification
- * email should never fail the run it's reporting on.
+ * email should never fail the run it's reporting on. Every delivery attempt (sent
+ * or failed), per recipient, is written to the scheduled job log so it can be
+ * reviewed later from the run's detail page.
  * @param {object} job - The scheduled job object.
  * @param {string} textResponse - The text response from the agent.
  * @param {function} logFn - The function to log errors.
+ * @param {number} runId - The scheduled_job_runs id this send belongs to.
  * @returns {Promise<void>}
  */
-async function sendScheduledJobResultEmails(job, textResponse, logFn) {
+async function sendScheduledJobResultEmails(job, textResponse, logFn, runId) {
   try {
     if (!job.recipientType || job.recipientType === "none") return;
 
     const { ScheduledJob } = require("../../models/scheduledJob.js");
+    const { ScheduledJobLog } = require("../../models/scheduledJobLog.js");
     const emails = await ScheduledJob.resolveRecipientEmails(job);
     if (emails.length === 0) return;
 
@@ -88,14 +92,21 @@ async function sendScheduledJobResultEmails(job, textResponse, logFn) {
     const { workspaceName } = await ScheduledJob.sourceLabel(job);
 
     await Promise.all(
-      emails.map((to) =>
-        sendScheduledJobResultEmail({
+      emails.map(async (to) => {
+        const { sent, reason } = await sendScheduledJobResultEmail({
           to,
           jobName: job.name,
           resultText,
           workspaceName,
-        })
-      )
+        });
+        await ScheduledJobLog.logEvent(
+          sent ? "scheduled_job_email_sent" : "scheduled_job_email_failed",
+          { jobName: job.name, to, reason: reason || null, workspaceName },
+          job.id,
+          runId
+        );
+        if (!sent) logFn(`Failed to send result email to ${to}: ${reason}`);
+      })
     );
   } catch (emailError) {
     logFn(`Failed to send result email: ${emailError.message}`);

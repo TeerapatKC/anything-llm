@@ -1,5 +1,6 @@
 const { ScheduledJob } = require("../models/scheduledJob");
 const { ScheduledJobRun } = require("../models/scheduledJobRun");
+const { ScheduledJobLog } = require("../models/scheduledJobLog");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const {
   userPermissionValid,
@@ -100,6 +101,35 @@ function scheduledJobEndpoints(app) {
             result: safeJsonParse(run.result, null),
           },
           job,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  // Email delivery log for a single run - who the result was sent to, and
+  // whether each send succeeded.
+  app.get(
+    "/scheduled-jobs/runs/:runId/email-logs",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const logs = await ScheduledJobLog.where(
+          { runId: Number(request.params.runId) },
+          50,
+          { occurredAt: "desc" }
+        );
+        return response.status(200).json({
+          logs: logs.map((l) => ({
+            ...l,
+            metadata: safeJsonParse(l.metadata, {}),
+          })),
         });
       } catch (e) {
         console.error(e.message, e);
@@ -553,6 +583,52 @@ function scheduledJobEndpoints(app) {
           { startedAt: "desc" }
         );
         return response.status(200).json({ runs });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  // Instance-wide schedule log - every result-email delivery attempt (sent or
+  // failed) across every job, newest first. Mirrors /system/event-logs.
+  app.post(
+    "/scheduled-jobs/logs",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const { offset = 0, limit = 10 } = reqBody(request);
+        const logs = await ScheduledJobLog.where({}, limit, { id: "desc" }, offset * limit);
+        const totalLogs = await ScheduledJobLog.count();
+        const hasPages = totalLogs > (offset + 1) * limit;
+
+        return response.status(200).json({
+          logs: logs.map((l) => ({ ...l, metadata: safeJsonParse(l.metadata, {}) })),
+          hasPages,
+          totalLogs,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  app.delete(
+    "/scheduled-jobs/logs",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (_request, response) => {
+      try {
+        const success = await ScheduledJobLog.delete();
+        return response.status(200).json({ success });
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500);

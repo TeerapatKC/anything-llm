@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   Brain,
   File,
+  Mail,
   MessageSquareText,
   Square,
   Wrench,
@@ -34,11 +35,13 @@ export default function RunDetailPage() {
   const [loading, setLoading] = useState(true);
   const [run, setRun] = useState(null);
   const [job, setJob] = useState(null);
+  const [emailLogs, setEmailLogs] = useState([]);
   const [continuing, setContinuing] = useState(false);
   const [killing, setKilling] = useState(false);
 
   useEffect(() => {
     fetchRun();
+    fetchEmailLogs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId, slug]);
 
@@ -56,10 +59,27 @@ export default function RunDetailPage() {
     }
   };
 
+  const fetchEmailLogs = async () => {
+    const { logs } = slug
+      ? await ScheduledJobs.workspace.emailLogs(slug, runId)
+      : await ScheduledJobs.emailLogs(runId);
+    setEmailLogs(logs || []);
+  };
+
   const isNonTerminal = run?.status === "running" || run?.status === "queued";
   // Poll every 3s while a run is in progress so the trace/status updates live.
   // Stops automatically once the run reaches a terminal state.
   usePolling(fetchRun, 3000, isNonTerminal);
+
+  // The result email is sent just after the run completes, not before - refetch
+  // the email log shortly after the run turns terminal so a just-arrived send
+  // shows up without the user having to leave and come back.
+  useEffect(() => {
+    if (isNonTerminal || !run?.status) return;
+    const timeoutId = setTimeout(fetchEmailLogs, 2000);
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [run?.status]);
 
   const handleContinueInThread = async () => {
     setContinuing(true);
@@ -139,6 +159,7 @@ export default function RunDetailPage() {
         <GeneratedFilesSection t={t} result={result} />
         <FinalResponseSection t={t} result={result} />
         <MetricsSection t={t} metrics={result?.metrics} />
+        <EmailLogSection t={t} logs={emailLogs} />
       </div>
     </RunDetailLayout>
   );
@@ -432,5 +453,61 @@ function MetricsSection({ t, metrics }) {
         )}
       </div>
     </div>
+  );
+}
+
+function EmailLogSection({ t, logs }) {
+  if (!logs || logs.length === 0) return null;
+
+  return (
+    <CollapsibleSection
+      title={t("scheduledJobs.runDetail.sections.emailLog", {
+        count: logs.length,
+      })}
+      icon={Mail}
+    >
+      <p className="text-xs text-zinc-400 light:text-slate-600 mb-3">
+        {logs[0]?.metadata?.workspaceName
+          ? t("scheduledJobs.runDetail.emailLog.sourceWorkspace", {
+              name: logs[0].metadata.workspaceName,
+            })
+          : t("scheduledJobs.runDetail.emailLog.sourceSystem")}
+      </p>
+      <div className="space-y-2">
+        {logs.map((log) => {
+          const sent = log.event === "scheduled_job_email_sent";
+          return (
+            <div
+              key={log.id}
+              className="flex items-start justify-between gap-4 text-sm"
+            >
+              <div className="flex flex-col">
+                <span className="text-zinc-50 light:text-slate-950">
+                  {t("scheduledJobs.runDetail.emailLog.to")}{" "}
+                  {log.metadata?.to || "—"}
+                </span>
+                {!sent && log.metadata?.reason && (
+                  <span className="text-red-400 light:text-red-600 text-xs">
+                    {t("scheduledJobs.runDetail.emailLog.reason")}{" "}
+                    {log.metadata.reason}
+                  </span>
+                )}
+              </div>
+              <span
+                className={
+                  sent
+                    ? "text-green-400 light:text-green-600 text-xs shrink-0"
+                    : "text-red-400 light:text-red-600 text-xs shrink-0"
+                }
+              >
+                {sent
+                  ? t("scheduledJobs.runDetail.emailLog.sent")
+                  : t("scheduledJobs.runDetail.emailLog.failed")}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </CollapsibleSection>
   );
 }

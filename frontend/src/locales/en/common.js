@@ -64,6 +64,7 @@ const TRANSLATIONS = {
     embeds: "Chat Embed",
     "event-logs": "Event Logs",
     "scheduled-jobs": "Scheduled Jobs",
+    "scheduled-jobs-logs": "Schedule Job Logs",
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
     agent: "Agent",
@@ -1592,6 +1593,29 @@ const TRANSLATIONS = {
     smtpRequiredDescription:
       "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
     smtpRequiredCta: "Go to SMTP settings",
+    logs: {
+      title: "Schedule Job Logs",
+      description:
+        "Every result-email delivery attempt for your scheduled jobs, across every job.",
+      clear: "Clear logs",
+      clearTitle: "Clear all schedule logs?",
+      clearDescription: "This action is irreversible.",
+      clearConfirm: "Clear logs",
+      clearSuccess: "Schedule logs cleared successfully.",
+      clearFailed: "Failed to clear logs: {{error}}",
+      empty: "No schedule logs yet.",
+      sent: "Sent",
+      failed: "Failed",
+      sourceSystem: "System",
+      sourceWorkspace: "Workspace: {{name}}",
+      table: {
+        status: "Status",
+        job: "Job",
+        source: "Source",
+        recipient: "Recipient",
+        occurred: "Occurred",
+      },
+    },
     table: {
       name: "Name",
       schedule: "Schedule",
@@ -1737,10 +1761,19 @@ const TRANSLATIONS = {
         files: "Files ({{count}})",
         response: "Response",
         metrics: "Metrics",
+        emailLog: "Email Log ({{count}})",
       },
       metrics: {
         promptTokens: "Prompt tokens:",
         completionTokens: "Completion tokens:",
+      },
+      emailLog: {
+        sent: "Sent",
+        failed: "Failed",
+        to: "To:",
+        reason: "Reason:",
+        sourceSystem: "Sent from: System",
+        sourceWorkspace: "Sent from Workspace: {{name}}",
       },
     },
     toolCall: {
