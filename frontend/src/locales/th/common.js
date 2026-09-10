@@ -63,6 +63,7 @@ const TRANSLATIONS = {
     embeds: "ฝังหน้าต่างสนทนา",
     "event-logs": "บันทึกเหตุการณ์",
     "scheduled-jobs": "งานตามกำหนดเวลา",
+    "scheduled-jobs-logs": "บันทึกการส่งอีเมลของ Schedule",
     privacy: "ความเป็นส่วนตัวและข้อมูล",
     "ai-providers": "ผู้ให้บริการ AI",
     agent: "Agent",
@@ -172,6 +173,7 @@ const TRANSLATIONS = {
     agent: "การกำหนดค่าเอเจนต์",
     "upload-documents": "อัปโหลดเอกสาร",
     "slash-commands": "คำสั่งสแลช",
+    "scheduled-jobs": "งานตามกำหนดเวลา",
   },
   general: {
     vector: {
@@ -366,6 +368,12 @@ const TRANSLATIONS = {
         title: "สร้างงานตามกำหนดเวลา",
         description:
           'อนุญาตให้เอเจนต์สร้างงานตามกำหนดเวลาแบบทำซ้ำจากการสนทนา (เช่น "ทุกวันทำการเวลา 9 โมงเช้า ให้สรุปกล่องจดหมายและส่งอีเมลถึงฉัน")',
+      },
+      sendEmail: {
+        title: "ส่งอีเมล",
+        description: "อนุญาตให้เอเจนต์ส่งอีเมลผ่าน SMTP ของระบบแทนผู้ใช้",
+        needsSmtp: "ฟีเจอร์นี้ต้องตั้งค่าและเปิดใช้งาน SMTP ก่อน",
+        needsSmtpLink: "ไปที่การตั้งค่า SMTP",
       },
       filesystem: {
         title: "การเข้าถึงระบบไฟล์",
@@ -1550,10 +1558,37 @@ const TRANSLATIONS = {
     loading: "กำลังโหลด...",
     emptyTitle: "ยังไม่มีงานตามกำหนดเวลา",
     emptySubtitle: "สร้างหนึ่งรายการเพื่อเริ่มต้น",
+    noWorkspacePermission: "คุณไม่มีสิทธิ์จัดการงานตามกำหนดเวลาใน workspace นี้",
     smtpRequiredTitle: "ต้องตั้งค่าอีเมล SMTP ก่อน",
     smtpRequiredDescription:
       "งานตามกำหนดเวลาส่งผลลัพธ์ทางอีเมล จึงยังใช้งานไม่ได้จนกว่าจะตั้งค่าและเปิดใช้งานอีเมลขาออก",
     smtpRequiredCta: "ไปที่การตั้งค่า SMTP",
+    logs: {
+      title: "บันทึกการส่งอีเมลของ Schedule",
+      description:
+        "การทำงานทุกครั้งของงานตามกำหนดเวลา - สถานะ ระยะเวลา และการส่งอีเมลผลลัพธ์ - ทุกงาน",
+      clear: "ล้างบันทึก",
+      clearTitle: "ล้างบันทึกทั้งหมดหรือไม่?",
+      clearDescription: "การกระทำนี้ไม่สามารถย้อนกลับได้",
+      clearConfirm: "ล้างบันทึก",
+      clearSuccess: "ล้างบันทึกสำเร็จแล้ว",
+      clearFailed: "ล้างบันทึกไม่สำเร็จ: {{error}}",
+      empty: "ยังไม่มีบันทึกการส่งอีเมล",
+      backToJobs: "กลับไปหน้างาน",
+      sourceSystem: "System",
+      sourceWorkspace: "Workspace: {{name}}",
+      emailSentCount: "ส่งสำเร็จ {{count}}",
+      emailFailedCount: "ส่งไม่สำเร็จ {{count}}/{{total}}",
+      table: {
+        status: "สถานะ",
+        job: "งาน",
+        source: "แหล่งที่มา",
+        started: "เริ่มเมื่อ",
+        duration: "ระยะเวลา",
+        error: "ข้อผิดพลาด",
+        email: "อีเมล",
+      },
+    },
     table: {
       name: "ชื่อ",
       schedule: "กำหนดเวลา",
@@ -1621,6 +1656,7 @@ const TRANSLATIONS = {
       recipientsChangeType: "เปลี่ยนประเภท",
       pickWorkspaces: "เลือก Workspace",
       pickUsers: "เลือกผู้ใช้",
+      selectAll: "เลือกทั้งหมด",
       recipientsDone: "เสร็จสิ้น",
       required: "จำเป็น",
       requiredFieldsBanner: "โปรดกรอกข้อมูลที่จำเป็นทั้งหมดเพื่อสร้างงาน",
@@ -1661,21 +1697,6 @@ const TRANSLATIONS = {
         sat: "ส.",
       },
     },
-    runHistory: {
-      back: "กลับไปยังรายการงาน",
-      title: "ประวัติการทำงาน: {{name}}",
-      schedule: "กำหนดเวลา:",
-      emptyTitle: "ยังไม่มีการทำงานสำหรับงานนี้",
-      emptySubtitle: "สั่งให้งานทำงานทันทีแล้วดูผลลัพธ์",
-      runNow: "ทำงานทันที",
-      stopJob: "หยุดงาน",
-      table: {
-        status: "สถานะ",
-        started: "เริ่มเมื่อ",
-        duration: "ระยะเวลา",
-        error: "ข้อผิดพลาด",
-      },
-    },
     runDetail: {
       loading: "กำลังโหลดรายละเอียดการทำงาน...",
       notFound: "ไม่พบการทำงานนี้",
@@ -1683,9 +1704,6 @@ const TRANSLATIONS = {
       unknownJob: "งานที่ไม่รู้จัก",
       runHeading: "{{name}} — การทำงานครั้งที่ #{{id}}",
       duration: "ระยะเวลา: {{value}}",
-      continueInThread: "ทำต่อในการสนทนา",
-      creating: "กำลังสร้าง...",
-      threadFailed: "สร้างเธรดไม่สำเร็จ",
       stopJob: "หยุดงาน",
       killing: "กำลังหยุด...",
       sections: {
@@ -1696,10 +1714,19 @@ const TRANSLATIONS = {
         files: "ไฟล์ ({{count}})",
         response: "คำตอบ",
         metrics: "ตัวชี้วัด",
+        emailLog: "บันทึกการส่งอีเมล ({{count}})",
       },
       metrics: {
         promptTokens: "โทเคนของพรอมต์:",
         completionTokens: "โทเคนของคำตอบ:",
+      },
+      emailLog: {
+        sent: "ส่งสำเร็จ",
+        failed: "ส่งไม่สำเร็จ",
+        to: "ถึง:",
+        reason: "สาเหตุ:",
+        sourceSystem: "ส่งจาก: System",
+        sourceWorkspace: "ส่งจาก Workspace: {{name}}",
       },
     },
     toolCall: {

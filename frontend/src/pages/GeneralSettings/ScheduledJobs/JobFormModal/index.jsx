@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { CircleAlert } from "lucide-react";
-import ScheduledJobs from "@/models/scheduledJobs";
 import showToast from "@/utils/toast";
 import { safeJsonParse } from "@/utils/request";
 import { useTranslation } from "react-i18next";
@@ -28,7 +27,12 @@ function setDefaultFormState(job) {
   };
 }
 
-export default function JobFormModal({ job = null, onSaved }) {
+export default function JobFormModal({
+  job = null,
+  jobsApi,
+  workspaceSlug = null,
+  onSaved,
+}) {
   const { t } = useTranslation();
   const isEditing = !!job;
   const [form, setForm] = useState(setDefaultFormState(job));
@@ -46,9 +50,10 @@ export default function JobFormModal({ job = null, onSaved }) {
   };
 
   useEffect(() => {
-    ScheduledJobs.availableTools().then(({ tools }) => {
+    jobsApi.availableTools().then(({ tools }) => {
       setAvailableTools(tools || []);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleChange = (e) => {
@@ -106,8 +111,8 @@ export default function JobFormModal({ job = null, onSaved }) {
     };
 
     const result = isEditing
-      ? await ScheduledJobs.update(job.id, data)
-      : await ScheduledJobs.create(data);
+      ? await jobsApi.update(job.id, data)
+      : await jobsApi.create(data);
 
     setSaving(false);
 
@@ -166,6 +171,8 @@ export default function JobFormModal({ job = null, onSaved }) {
         )}
 
         <RecipientsSelector
+          jobsApi={jobsApi}
+          workspaceScoped={!!workspaceSlug}
           recipientType={form.recipientType}
           selectedWorkspaceIds={form.selectedRecipientWorkspaceIds}
           selectedUserIds={form.selectedRecipientUserIds}

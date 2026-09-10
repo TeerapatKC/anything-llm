@@ -906,6 +906,21 @@ const System = {
   },
 
   /**
+   * Checks if the send-email skill is available - true only once SMTP has
+   * been configured and enabled for this instance.
+   * @returns {Promise<boolean>}
+   */
+  isSendEmailAvailable: async function () {
+    return fetch(`${API_BASE}/agent-skills/send-email/is-available`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res?.available ?? false)
+      .catch(() => false);
+  },
+
+  /**
    * Send a recorded audio blob to the configured server-side STT provider
    * for transcription. Returns the transcribed text or an error string.
    * @param {Blob} audioBlob - Recorded audio (e.g., audio/webm) to transcribe.

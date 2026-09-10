@@ -164,9 +164,9 @@ async function wipeCollectorStorage() {
   const cleanHotDir = new Promise((resolve) => {
     const directory = path.resolve(__dirname, "../../hotdir");
 
-    if (!fs.existsSync(directory)) resolve();
+    if (!fs.existsSync(directory)) return resolve();
     fs.readdir(directory, (err, files) => {
-      if (err) resolve();
+      if (err) return resolve();
 
       for (const file of files) {
         if (file === "__HOTDIR__.md") continue;
@@ -180,8 +180,9 @@ async function wipeCollectorStorage() {
 
   const cleanTmpDir = new Promise((resolve) => {
     const directory = path.resolve(__dirname, "../../storage/tmp");
+    if (!fs.existsSync(directory)) return resolve();
     fs.readdir(directory, (err, files) => {
-      if (err) resolve();
+      if (err) return resolve();
 
       for (const file of files) {
         if (file === ".placeholder") continue;

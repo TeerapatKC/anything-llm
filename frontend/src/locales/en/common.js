@@ -64,6 +64,7 @@ const TRANSLATIONS = {
     embeds: "Chat Embed",
     "event-logs": "Event Logs",
     "scheduled-jobs": "Scheduled Jobs",
+    "scheduled-jobs-logs": "Schedule Job Logs",
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
     agent: "Agent",
@@ -173,6 +174,7 @@ const TRANSLATIONS = {
     agent: "Agent Configuration",
     "upload-documents": "Upload Documents",
     "slash-commands": "Slash Commands",
+    "scheduled-jobs": "Scheduled Jobs",
   },
   general: {
     vector: {
@@ -369,6 +371,14 @@ const TRANSLATIONS = {
         title: "Create scheduled jobs",
         description:
           'Allow the agent to create recurring Scheduled Jobs from chat (e.g. "every weekday at 9am summarize my inbox and email me").',
+      },
+      sendEmail: {
+        title: "Send Email",
+        description:
+          "Allow the agent to send an email through the instance's SMTP server on the user's behalf.",
+        needsSmtp:
+          "This skill requires SMTP to be configured and enabled first.",
+        needsSmtpLink: "Go to SMTP settings",
       },
       filesystem: {
         title: "File System Access",
@@ -1585,10 +1595,38 @@ const TRANSLATIONS = {
     loading: "Loading...",
     emptyTitle: "No Scheduled Jobs yet",
     emptySubtitle: "Create one to get started.",
+    noWorkspacePermission:
+      "You don't have permission to manage scheduled jobs in this workspace.",
     smtpRequiredTitle: "SMTP email must be configured first",
     smtpRequiredDescription:
       "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
     smtpRequiredCta: "Go to SMTP settings",
+    logs: {
+      title: "Schedule Job Logs",
+      description:
+        "Every run of your scheduled jobs - status, duration, and result-email delivery - across every job.",
+      clear: "Clear logs",
+      clearTitle: "Clear all schedule logs?",
+      clearDescription: "This action is irreversible.",
+      clearConfirm: "Clear logs",
+      clearSuccess: "Schedule logs cleared successfully.",
+      clearFailed: "Failed to clear logs: {{error}}",
+      empty: "No schedule logs yet.",
+      backToJobs: "Back to jobs",
+      sourceSystem: "System",
+      sourceWorkspace: "Workspace: {{name}}",
+      emailSentCount: "{{count}} sent",
+      emailFailedCount: "{{count}}/{{total}} failed",
+      table: {
+        status: "Status",
+        job: "Job",
+        source: "Source",
+        started: "Started",
+        duration: "Duration",
+        error: "Error",
+        email: "Email",
+      },
+    },
     table: {
       name: "Name",
       schedule: "Schedule",
@@ -1657,6 +1695,7 @@ const TRANSLATIONS = {
       recipientsChangeType: "Change type",
       pickWorkspaces: "Select workspaces",
       pickUsers: "Select users",
+      selectAll: "Select all",
       recipientsDone: "Done",
       required: "Required",
       requiredFieldsBanner:
@@ -1698,21 +1737,6 @@ const TRANSLATIONS = {
         sat: "Sat",
       },
     },
-    runHistory: {
-      back: "Back to jobs",
-      title: "Run History: {{name}}",
-      schedule: "Schedule:",
-      emptyTitle: "No runs yet for this job",
-      emptySubtitle: "Run the job now and view its results.",
-      runNow: "Run Now",
-      stopJob: "Stop job",
-      table: {
-        status: "Status",
-        started: "Started",
-        duration: "Duration",
-        error: "Error",
-      },
-    },
     runDetail: {
       loading: "Loading run details...",
       notFound: "Run not found.",
@@ -1720,9 +1744,6 @@ const TRANSLATIONS = {
       unknownJob: "Unknown Job",
       runHeading: "{{name}} — Run #{{id}}",
       duration: "Duration: {{value}}",
-      continueInThread: "Continue in Chat",
-      creating: "Creating...",
-      threadFailed: "Failed to create thread",
       stopJob: "Stop Job",
       killing: "Stopping...",
       sections: {
@@ -1733,10 +1754,19 @@ const TRANSLATIONS = {
         files: "Files ({{count}})",
         response: "Response",
         metrics: "Metrics",
+        emailLog: "Email Log ({{count}})",
       },
       metrics: {
         promptTokens: "Prompt tokens:",
         completionTokens: "Completion tokens:",
+      },
+      emailLog: {
+        sent: "Sent",
+        failed: "Failed",
+        to: "To:",
+        reason: "Reason:",
+        sourceSystem: "Sent from: System",
+        sourceWorkspace: "Sent from Workspace: {{name}}",
       },
     },
     toolCall: {

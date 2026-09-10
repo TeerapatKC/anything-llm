@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { Pencil, Play, X } from "lucide-react";
-import paths from "@/utils/paths";
 import { humanizeCron } from "../utils/cron";
 import { useTranslation } from "react-i18next";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
@@ -8,8 +7,16 @@ import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
 // One row of the scheduled-jobs list. Clicking the name navigates to the
-// run history; CRUD callbacks come from the parent.
-export default function JobRow({ job, onTrigger, onToggle, onEdit, onDelete }) {
+// run history (global or workspace-scoped, per `runsPath`); CRUD callbacks
+// come from the parent.
+export default function JobRow({
+  job,
+  runsPath,
+  onTrigger,
+  onToggle,
+  onEdit,
+  onDelete,
+}) {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   // A job has at most one in-flight run; disable "Run now" while it's queued
@@ -31,11 +38,11 @@ export default function JobRow({ job, onTrigger, onToggle, onEdit, onDelete }) {
     <TableRow
       role="button"
       tabIndex={0}
-      onClick={() => navigate(paths.settings.scheduledJobRuns(job.id))}
+      onClick={() => navigate(runsPath)}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          navigate(paths.settings.scheduledJobRuns(job.id));
+          navigate(runsPath);
         }
       }}
       className="cursor-pointer"

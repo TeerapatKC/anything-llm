@@ -126,7 +126,7 @@ process.on("message", async (payload) => {
       },
     });
     log(`Scheduled job "${job.name}" completed in ${duration}ms)`);
-    await sendScheduledJobResultEmails(job, state.textResponse, log);
+    await sendScheduledJobResultEmails(job, state.textResponse, log, runId);
   } catch (error) {
     if (error.message === "SCHEDULED_JOB_TIMEOUT") {
       status = "timed_out";

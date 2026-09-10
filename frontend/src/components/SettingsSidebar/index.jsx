@@ -396,6 +396,11 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
             },
             {
+              btnText: t("settings.scheduled-jobs-logs"),
+              href: paths.settings.scheduledJobLogs(),
+              permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
+            },
+            {
               btnText: t("settings.api-keys"),
               href: paths.settings.apiKeys(),
               permissions: [PERMISSIONS.SYSTEM_API_KEYS],

@@ -8,6 +8,7 @@ export default function GenericSkillPanel({
   toggleSkill,
   enabled = false,
   disabled = false,
+  disabledHint = null,
   image,
   icon,
 }) {
@@ -35,10 +36,15 @@ export default function GenericSkillPanel({
             onChange={() => toggleSkill(skill)}
           />
         </div>
-        <img src={image} alt={title} className="w-full rounded-md" />
+        {image && (
+          <img src={image} alt={title} className="w-full rounded-md" />
+        )}
         <p className="text-theme-text-secondary/60 text-xs font-medium py-1.5">
           {description}
         </p>
+        {disabled && disabledHint && (
+          <p className="text-amber-500 text-xs font-medium">{disabledHint}</p>
+        )}
       </div>
     </div>
   );

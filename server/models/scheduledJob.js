@@ -71,6 +71,18 @@ const ScheduledJob = {
     return RECIPIENT_TYPES.includes(recipientType);
   },
 
+  /**
+   * Collapse a workspace id to a positive integer, or null for "instance-wide".
+   * The single chokepoint every ownership-aware method below routes through -
+   * mirrors AgentFlows.normalizeWorkspaceId.
+   * @param {*} workspaceId
+   * @returns {number|null}
+   */
+  normalizeWorkspaceId: function (workspaceId) {
+    const id = Number(workspaceId);
+    return Number.isInteger(id) && id > 0 ? id : null;
+  },
+
   create: async function ({
     name,
     prompt,
@@ -79,6 +91,7 @@ const ScheduledJob = {
     recipientType = "none",
     recipientWorkspaceIds = null,
     recipientUserIds = null,
+    workspaceId = null,
   } = {}) {
     try {
       const nextRunAt = this.computeNextRunAt(schedule);
@@ -95,6 +108,7 @@ const ScheduledJob = {
           recipientUserIds: recipientUserIds
             ? JSON.stringify(recipientUserIds)
             : null,
+          workspaceId: this.normalizeWorkspaceId(workspaceId),
           nextRunAt,
         },
       });
@@ -176,6 +190,66 @@ const ScheduledJob = {
     } catch (error) {
       console.error("Failed to delete scheduled job:", error.message);
       return false;
+    }
+  },
+
+  /** Instance-wide jobs (workspaceId is null), as shown on the global settings page. */
+  globalJobs: async function (limit = null, orderBy = null, include = {}) {
+    return this.where({ workspaceId: null }, limit, orderBy, include);
+  },
+
+  /** Jobs owned by exactly one workspace, as shown on that workspace's own settings page. */
+  ownedByWorkspace: async function (
+    workspaceId,
+    limit = null,
+    orderBy = null,
+    include = {}
+  ) {
+    const id = this.normalizeWorkspaceId(workspaceId);
+    if (id === null) return [];
+    return this.where({ workspaceId: id }, limit, orderBy, include);
+  },
+
+  /**
+   * That workspace's own members who have an email on file - the pool a
+   * workspace-owned job's recipient picker offers (with a "select all").
+   * @param {number} workspaceId
+   * @returns {Promise<Array<{id: number, username: string, email: string}>>}
+   */
+  workspaceMembers: async function (workspaceId) {
+    const id = this.normalizeWorkspaceId(workspaceId);
+    if (id === null) return [];
+    try {
+      const members = await prisma.workspace_users.findMany({
+        where: { workspace_id: id, users: { email: { not: null } } },
+        select: { users: { select: { id: true, username: true, email: true } } },
+        orderBy: { users: { username: "asc" } },
+      });
+      return members.map((m) => m.users);
+    } catch (error) {
+      console.error("Failed to load workspace members:", error.message);
+      return [];
+    }
+  },
+
+  /**
+   * Where a job runs, used in the "From ..." line of its result emails - the
+   * owning workspace's name, or nothing for an instance-wide (System) job.
+   * @param {object} job - A scheduled_jobs record.
+   * @returns {Promise<{workspaceName: string|null}>}
+   */
+  sourceLabel: async function (job) {
+    const id = this.normalizeWorkspaceId(job?.workspaceId);
+    if (id === null) return { workspaceName: null };
+    try {
+      const workspace = await prisma.workspaces.findFirst({
+        where: { id },
+        select: { name: true },
+      });
+      return { workspaceName: workspace?.name || "Workspace" };
+    } catch (error) {
+      console.error("Failed to load job's workspace name:", error.message);
+      return { workspaceName: "Workspace" };
     }
   },
 
