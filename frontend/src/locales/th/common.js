@@ -62,6 +62,7 @@ const TRANSLATIONS = {
     "vector-database": "ฐานข้อมูลเวกเตอร์",
     embeds: "ฝังหน้าต่างสนทนา",
     "event-logs": "บันทึกเหตุการณ์",
+    monitoring: "แดชบอร์ด",
     "scheduled-jobs": "งานตามกำหนดเวลา",
     "scheduled-jobs-logs": "บันทึกการส่งอีเมลของ Schedule",
     privacy: "ความเป็นส่วนตัวและข้อมูล",
@@ -1082,6 +1083,13 @@ const TRANSLATIONS = {
       user: "ผู้ใช้",
       occurred: "เกิดขึ้นเมื่อ",
     },
+  },
+  monitoring: {
+    title: "แดชบอร์ด",
+    description: "แดชบอร์ด Grafana ของอินสแตนซ์นี้",
+    "open-grafana": "เปิดใน Grafana",
+    unavailable: "ยังไม่ได้ตั้งค่า Grafana สำหรับอินสแตนซ์นี้",
+    "unavailable-hint": "ตั้งค่า GRAFANA_PUBLIC_URL เพื่อฝังแดชบอร์ดที่นี่",
   },
   privacy: {
     title: "ความเป็นส่วนตัวและการจัดการข้อมูล",

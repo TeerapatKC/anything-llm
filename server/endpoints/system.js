@@ -56,6 +56,7 @@ const {
   permissionForEnvKey,
 } = require("../utils/permissions");
 const { Role } = require("../models/role");
+const { monitoringConfig } = require("../utils/grafana");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { EventLogs } = require("../models/eventLogs");
@@ -956,6 +957,22 @@ function systemEndpoints(app) {
       } catch (error) {
         console.error(error);
         response.status(500).end();
+      }
+    }
+  );
+
+  app.get(
+    "/system/monitoring",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.SYSTEM_MONITORING]),
+    ],
+    async (_, response) => {
+      try {
+        response.status(200).json(monitoringConfig());
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
       }
     }
   );

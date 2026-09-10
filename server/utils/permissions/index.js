@@ -67,6 +67,8 @@ const PERMISSIONS = {
   SYSTEM_EVENT_LOGS_VIEW: "system.event_logs.view",
   SYSTEM_EVENT_LOGS_CLEAR: "system.event_logs.clear",
 
+  SYSTEM_MONITORING: "system.monitoring",
+
   SYSTEM_API_KEYS: "system.api_keys",
   SYSTEM_MOBILE: "system.mobile",
 
@@ -353,6 +355,13 @@ const PERMISSION_CATALOG = [
     description: "Wipe the instance audit log.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_EVENT_LOGS,
+  },
+  {
+    key: PERMISSIONS.SYSTEM_MONITORING,
+    label: "View monitoring dashboards",
+    description:
+      "Open the Grafana dashboards under Instance Settings. Does not grant Grafana admin access.",
+    category: "system",
   },
   {
     key: PERMISSIONS.SYSTEM_API_KEYS,
