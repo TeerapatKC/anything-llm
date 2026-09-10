@@ -358,9 +358,9 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_MONITORING,
-    label: "View monitoring dashboards",
+    label: "Dashboards",
     description:
-      "Open the Grafana dashboards under Instance Settings. Does not grant Grafana admin access.",
+      "Open Instance Settings → Dashboards (Grafana). Does not grant Grafana admin access.",
     category: "system",
   },
   {

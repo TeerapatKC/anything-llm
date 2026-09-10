@@ -48,6 +48,7 @@ const TRANSLATIONS = {
     users: "Users",
     roles: "Roles & Permissions",
     workspaces: "Workspaces",
+    "instance-workspaces": "Instance Workspaces",
     "workspace-chats": "Workspace Chats",
     customization: "Customization",
     interface: "UI Preferences",
@@ -62,10 +63,12 @@ const TRANSLATIONS = {
     "voice-speech": "Voice & Speech",
     "vector-database": "Vector Database",
     embeds: "Chat Embed",
+    logs: "Logs",
     "event-logs": "Event Logs",
-    monitoring: "Monitoring",
+    dashboards: "Dashboards",
+    monitoring: "Dashboards",
     "scheduled-jobs": "Scheduled Jobs",
-    "scheduled-jobs-logs": "Schedule Job Logs",
+    "scheduled-jobs-logs": "Scheduled Job Logs",
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
     agent: "Agent",
@@ -1096,8 +1099,7 @@ const TRANSLATIONS = {
   },
   event: {
     title: "Event Logs",
-    description:
-      "View all actions and events happening on this instance for monitoring.",
+    description: "Audit trail of actions taken on this instance.",
     clear: "Clear Event Logs",
     table: {
       type: "Event Type",
@@ -1106,12 +1108,12 @@ const TRANSLATIONS = {
     },
   },
   monitoring: {
-    title: "Monitoring",
+    title: "Dashboards",
     description: "Live Grafana dashboards for this instance.",
     "open-grafana": "Open in Grafana",
-    unavailable: "Grafana is not configured for this instance.",
+    unavailable: "Dashboards are not configured for this instance.",
     "unavailable-hint":
-      "Set GRAFANA_PUBLIC_URL so dashboards can be embedded here.",
+      "Set GRAFANA_PUBLIC_URL so Dashboards can be shown here.",
   },
   privacy: {
     title: "Privacy & Data-Handling",
@@ -1611,9 +1613,9 @@ const TRANSLATIONS = {
       "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
     smtpRequiredCta: "Go to SMTP settings",
     logs: {
-      title: "Schedule Job Logs",
+      title: "Scheduled Job Logs",
       description:
-        "Every run of your scheduled jobs - status, duration, and result-email delivery - across every job.",
+        "Every run of your scheduled jobs — status, duration, and result-email delivery — across every job.",
       clear: "Clear logs",
       clearTitle: "Clear all schedule logs?",
       clearDescription: "This action is irreversible.",
