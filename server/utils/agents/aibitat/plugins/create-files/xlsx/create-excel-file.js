@@ -334,7 +334,7 @@ module.exports.CreateExcelFile = {
                 `${this.caller}: Successfully created Excel file "${displayFilename}"`
               );
 
-              let result = `Successfully created Excel spreadsheet "${displayFilename}" (${bufferSizeKB}KB) with ${sheetDefinitions.length} sheet(s).`;
+              let result = `Successfully created Excel spreadsheet "${displayFilename}" (${bufferSizeKB}KB) with ${sheetDefinitions.length} sheet(s). To attach this file to an email, pass "${savedFile.filename}" as an attachment reference to the send-email tool.`;
 
               if (allWarnings.length > 0) {
                 result += `\n\nWarnings:\n${allWarnings.map((w) => `- ${w}`).join("\n")}`;

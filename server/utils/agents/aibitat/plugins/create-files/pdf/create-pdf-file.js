@@ -115,7 +115,7 @@ module.exports.CreatePdfFile = {
                 `${this.caller}: Successfully created PDF document "${displayFilename}"`
               );
 
-              return `Successfully created PDF document "${displayFilename}" (${bufferSizeKB}KB).`;
+              return `Successfully created PDF document "${displayFilename}" (${bufferSizeKB}KB). To attach this file to an email, pass "${savedFile.filename}" as an attachment reference to the send-email tool.`;
             } catch (e) {
               this.super.handlerProps.log(
                 `create-pdf-file error: ${e.message}`

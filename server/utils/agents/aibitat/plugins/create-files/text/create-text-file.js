@@ -135,7 +135,7 @@ module.exports.CreateTextFile = {
                 `${this.caller}: Successfully created text file "${displayFilename}"`
               );
 
-              return `Successfully created text file "${displayFilename}" (${bufferSizeKB}KB).`;
+              return `Successfully created text file "${displayFilename}" (${bufferSizeKB}KB). To attach this file to an email, pass "${savedFile.filename}" as an attachment reference to the send-email tool.`;
             } catch (e) {
               this.super.handlerProps.log(
                 `create-text-file error: ${e.message}`
