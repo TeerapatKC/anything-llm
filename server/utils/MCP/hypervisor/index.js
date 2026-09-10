@@ -86,7 +86,37 @@ class MCPHypervisor {
       );
     }
 
+    this.#removeLegacyTestServer();
+
     this.log(`MCP Config File: ${this.mcpServerJSONPath}`);
+  }
+
+  /**
+   * Remove the temporary MCP test server shipped during development. Its
+   * definition may survive image upgrades because the config lives in the
+   * persistent storage volume, while the referenced script no longer exists.
+   * Only the exact legacy definition is removed so user-created servers are
+   * never affected.
+   */
+  #removeLegacyTestServer() {
+    const config = safeJsonParse(
+      fs.readFileSync(this.mcpServerJSONPath, "utf8"),
+      null
+    );
+    const legacyServer = config?.mcpServers?.["nexusai-test"];
+    const referencesRemovedScript = legacyServer?.args?.some((arg) =>
+      /(?:^|[\\/])utils[\\/]MCP[\\/]test-server\.js$/i.test(String(arg))
+    );
+
+    if (!referencesRemovedScript) return;
+
+    delete config.mcpServers["nexusai-test"];
+    fs.writeFileSync(
+      this.mcpServerJSONPath,
+      JSON.stringify(config, null, 2),
+      "utf8"
+    );
+    this.log("Removed legacy nexusai-test MCP server from persistent config");
   }
 
   log(text, ...args) {
