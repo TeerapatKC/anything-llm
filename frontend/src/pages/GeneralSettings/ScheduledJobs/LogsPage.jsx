@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
+import { ArrowLeft, Circle, Square } from "lucide-react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import useQuery from "@/hooks/useQuery";
 import ScheduledJobs from "@/models/scheduledJobs";
+import usePolling from "@/hooks/usePolling";
 import showToast from "@/utils/toast";
+import paths from "@/utils/paths";
+import { formatDuration } from "@/utils/numbers";
+import StatusBadge from "./components/StatusBadge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -18,26 +24,53 @@ import {
   TableLoadingRow,
 } from "@/components/ui/table";
 
+function formatRunDuration(run) {
+  if (!run.completedAt || !run.startedAt) return "—";
+  const duration = moment.duration(
+    moment(run.completedAt).diff(moment(run.startedAt))
+  );
+  return formatDuration(duration.asSeconds());
+}
+
+// The merged run + email delivery log - replaces the old per-job "Run History"
+// page. Every scheduled job run (status/duration/error) is listed here, each
+// with its result-email delivery attempts summarized; pass ?jobId= to filter
+// to a single job (used by the "View Runs" link from the jobs list). Slug-aware
+// so the same component serves both the instance-wide and workspace-owned pages.
 export default function ScheduledJobLogsPage() {
   const { t } = useTranslation();
-  const query = useQuery();
+  const { slug = null } = useParams();
+  const [searchParams] = useSearchParams();
+  const jobId = searchParams.get("jobId");
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(true);
   const [logs, setLogs] = useState([]);
-  const [offset, setOffset] = useState(Number(query.get("offset") || 0));
+  const [offset, setOffset] = useState(0);
   const [canNext, setCanNext] = useState(false);
   const [confirm, setConfirm] = useState(null);
 
+  const hasInFlight = logs.some(
+    (l) => l.status === "queued" || l.status === "running"
+  );
+
+  const fetchLogs = async () => {
+    const { logs: _logs, hasPages = false } = slug
+      ? await ScheduledJobs.workspace.allLogs(slug, offset, jobId)
+      : await ScheduledJobs.allLogs(offset, jobId);
+    setLogs(_logs || []);
+    setCanNext(hasPages);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    async function fetchLogs() {
-      setLoading(true);
-      const { logs: _logs, hasPages = false } =
-        await ScheduledJobs.allLogs(offset);
-      setLogs(_logs || []);
-      setCanNext(hasPages);
-      setLoading(false);
-    }
+    setLoading(true);
     fetchLogs();
-  }, [offset]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [offset, jobId, slug]);
+
+  // Poll while any listed run is still in flight so status/duration update live.
+  usePolling(fetchLogs, 5000, hasInFlight);
 
   const handleClearLogs = () => {
     setConfirm({
@@ -62,23 +95,40 @@ export default function ScheduledJobLogsPage() {
     });
   };
 
-  return (
-    <SettingsLayout>
+  const jobsPath = slug
+    ? paths.workspace.settings.scheduledJobs(slug)
+    : paths.settings.scheduledJobs();
+
+  const content = (
+    <>
       <PageHeader
         title={t("scheduledJobs.logs.title")}
         description={t("scheduledJobs.logs.description")}
         actions={
-          <Button
-            type="button"
-            size="lg"
-            variant="destructive"
-            disabled={loading || logs.length === 0}
-            onClick={handleClearLogs}
-          >
-            {t("scheduledJobs.logs.clear")}
-          </Button>
+          !slug ? (
+            <Button
+              type="button"
+              size="lg"
+              variant="destructive"
+              disabled={loading || logs.length === 0}
+              onClick={handleClearLogs}
+            >
+              {t("scheduledJobs.logs.clear")}
+            </Button>
+          ) : null
         }
-      />
+      >
+        {jobId ? (
+          <button
+            type="button"
+            onClick={() => navigate(jobsPath)}
+            className="border-none flex items-center gap-2 text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 text-sm transition-colors w-fit"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            {t("scheduledJobs.logs.backToJobs")}
+          </button>
+        ) : null}
+      </PageHeader>
       <div className="overflow-x-auto mt-6">
         <Table>
           <TableHeader>
@@ -93,22 +143,36 @@ export default function ScheduledJobLogsPage() {
                 {t("scheduledJobs.logs.table.source")}
               </TableHead>
               <TableHead scope="col">
-                {t("scheduledJobs.logs.table.recipient")}
+                {t("scheduledJobs.logs.table.started")}
               </TableHead>
               <TableHead scope="col">
-                {t("scheduledJobs.logs.table.occurred")}
+                {t("scheduledJobs.logs.table.duration")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("scheduledJobs.logs.table.error")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("scheduledJobs.logs.table.email")}
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
-              <TableLoadingRow colSpan={5} />
+              <TableLoadingRow colSpan={7} />
             ) : logs.length === 0 ? (
-              <TableEmptyRow colSpan={5}>
+              <TableEmptyRow colSpan={7}>
                 {t("scheduledJobs.logs.empty")}
               </TableEmptyRow>
             ) : (
-              logs.map((log) => <LogRow key={log.id} log={log} t={t} />)
+              logs.map((log) => (
+                <LogRow
+                  key={log.id}
+                  log={log}
+                  slug={slug}
+                  t={t}
+                  onKilled={fetchLogs}
+                />
+              ))
             )}
           </TableBody>
         </Table>
@@ -138,49 +202,106 @@ export default function ScheduledJobLogsPage() {
         )}
       </div>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
-    </SettingsLayout>
+    </>
   );
+
+  if (slug) return <div className="w-full max-w-5xl mx-auto px-4 py-10">{content}</div>;
+  return <SettingsLayout>{content}</SettingsLayout>;
 }
 
-function LogRow({ log, t }) {
-  const sent = log.event === "scheduled_job_email_sent";
-  const colorTheme = sent
-    ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
-    : "bg-red-500/15 text-red-700 dark:text-red-300";
+function LogRow({ log, slug, t, onKilled }) {
+  const navigate = useNavigate();
+  const [killing, setKilling] = useState(false);
+  const isKillable = ["running", "queued"].includes(log.status);
+  const unreadAndTerminal = !log.readAt && !isKillable;
+
+  const detailPath = slug
+    ? paths.workspace.settings.scheduledJobRunDetail(slug, log.jobId, log.id)
+    : paths.settings.scheduledJobRunDetail(log.jobId, log.id);
+
+  const handleKill = async (e) => {
+    e.stopPropagation();
+    setKilling(true);
+    const { success, error } = slug
+      ? await ScheduledJobs.workspace.killRun(slug, log.id)
+      : await ScheduledJobs.killRun(log.id);
+    setKilling(false);
+
+    if (!success) {
+      showToast(error || t("scheduledJobs.toast.killFailed"), "error");
+      return;
+    }
+    showToast(t("scheduledJobs.toast.killed"), "success");
+    onKilled?.();
+  };
+
+  const emailLogs = log.emailLogs || [];
+  const failedCount = emailLogs.filter(
+    (l) => l.event === "scheduled_job_email_failed"
+  ).length;
+  const sentCount = emailLogs.length - failedCount;
 
   return (
-    <TableRow>
-      <TableCell className="font-medium">
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${colorTheme}`}
-        >
-          {sent
-            ? t("scheduledJobs.logs.sent")
-            : t("scheduledJobs.logs.failed")}
-        </span>
+    <TableRow className="cursor-pointer" onClick={() => navigate(detailPath)}>
+      <TableCell>
+        <div className="flex items-center gap-2">
+          {unreadAndTerminal && (
+            <Circle className="h-2 w-2 text-blue-400 light:text-blue-600 fill-current shrink-0" />
+          )}
+          {isKillable && (
+            <button
+              type="button"
+              onClick={handleKill}
+              disabled={killing}
+              title={t("scheduledJobs.runDetail.stopJob")}
+              className="border-none p-1 rounded bg-red-500/20 text-red-400 light:bg-red-100 light:text-red-600 hover:bg-red-500/30 light:hover:bg-red-200 transition-colors disabled:opacity-50 shrink-0"
+            >
+              <Square className="h-3 w-3" />
+            </button>
+          )}
+          <StatusBadge status={log.status} />
+        </div>
       </TableCell>
       <TableCell className="text-theme-text-primary">
-        {log.metadata?.jobName || "--"}
+        {log.jobName || "--"}
       </TableCell>
       <TableCell className="text-theme-text-secondary">
-        {log.metadata?.workspaceName
+        {log.workspaceName
           ? t("scheduledJobs.logs.sourceWorkspace", {
-              name: log.metadata.workspaceName,
+              name: log.workspaceName,
             })
           : t("scheduledJobs.logs.sourceSystem")}
       </TableCell>
       <TableCell className="text-theme-text-secondary">
-        <div className="flex flex-col">
-          <span>{log.metadata?.to || "--"}</span>
-          {!sent && log.metadata?.reason && (
-            <span className="text-xs text-red-400 light:text-red-600">
-              {log.metadata.reason}
-            </span>
-          )}
-        </div>
+        {new Date(log.startedAt).toLocaleString()}
       </TableCell>
       <TableCell className="text-theme-text-secondary">
-        {log.occurredAt}
+        {formatRunDuration(log)}
+      </TableCell>
+      <TableCell
+        className={
+          log.error
+            ? "text-red-400 light:text-red-600 italic"
+            : "text-theme-text-secondary"
+        }
+      >
+        {log.error || "—"}
+      </TableCell>
+      <TableCell>
+        {emailLogs.length === 0 ? (
+          <span className="text-theme-text-secondary text-xs">—</span>
+        ) : failedCount > 0 ? (
+          <span className="text-red-400 light:text-red-600 text-xs">
+            {t("scheduledJobs.logs.emailFailedCount", {
+              count: failedCount,
+              total: emailLogs.length,
+            })}
+          </span>
+        ) : (
+          <span className="text-emerald-400 light:text-emerald-600 text-xs">
+            {t("scheduledJobs.logs.emailSentCount", { count: sentCount })}
+          </span>
+        )}
       </TableCell>
     </TableRow>
   );

@@ -36,7 +36,6 @@ export default function RunDetailPage() {
   const [run, setRun] = useState(null);
   const [job, setJob] = useState(null);
   const [emailLogs, setEmailLogs] = useState([]);
-  const [continuing, setContinuing] = useState(false);
   const [killing, setKilling] = useState(false);
 
   useEffect(() => {
@@ -81,21 +80,6 @@ export default function RunDetailPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run?.status]);
 
-  const handleContinueInThread = async () => {
-    setContinuing(true);
-    const { workspaceSlug, threadSlug, error } = slug
-      ? await ScheduledJobs.workspace.continueInThread(slug, runId)
-      : await ScheduledJobs.continueInThread(runId);
-
-    if (error || !workspaceSlug || !threadSlug) {
-      showToast(error || t("scheduledJobs.runDetail.threadFailed"), "error");
-      setContinuing(false);
-      return;
-    }
-
-    navigate(paths.workspace.thread(workspaceSlug, threadSlug));
-  };
-
   const handleKillRun = async () => {
     setKilling(true);
     const { success, error } = slug
@@ -113,8 +97,8 @@ export default function RunDetailPage() {
   };
 
   const backPath = slug
-    ? paths.workspace.settings.scheduledJobRuns(slug, id)
-    : paths.settings.scheduledJobRuns(id);
+    ? paths.workspace.settings.scheduledJobLogs(slug, id)
+    : paths.settings.scheduledJobLogs(id);
 
   if (loading) {
     return (
@@ -144,10 +128,8 @@ export default function RunDetailPage() {
         job={job}
         run={run}
         result={result}
-        continuing={continuing}
         killing={killing}
         onBack={() => navigate(backPath)}
-        onContinueInThread={handleContinueInThread}
         onKillRun={handleKillRun}
       />
 
@@ -173,17 +155,7 @@ function RunDetailLayout({ slug = null, children }) {
   return <SettingsLayout>{children}</SettingsLayout>;
 }
 
-function RunHeader({
-  t,
-  job,
-  run,
-  result,
-  continuing,
-  killing,
-  onBack,
-  onContinueInThread,
-  onKillRun,
-}) {
+function RunHeader({ t, job, run, result, killing, onBack, onKillRun }) {
   function getStatusInfo() {
     return {
       completed: {
@@ -260,18 +232,6 @@ function RunHeader({
             {killing
               ? t("scheduledJobs.runDetail.killing")
               : t("scheduledJobs.runDetail.stopJob")}
-          </button>
-        )}
-        {run.status === "completed" && (
-          <button
-            type="button"
-            onClick={onContinueInThread}
-            disabled={continuing}
-            className="border-none h-9 px-5 rounded-lg bg-zinc-50 text-zinc-950 light:bg-slate-900 light:text-white text-sm font-medium hover:bg-zinc-200 light:hover:bg-slate-800 transition-colors disabled:opacity-50 shrink-0"
-          >
-            {continuing
-              ? t("scheduledJobs.runDetail.creating")
-              : t("scheduledJobs.runDetail.continueInThread")}
           </button>
         )}
       </div>

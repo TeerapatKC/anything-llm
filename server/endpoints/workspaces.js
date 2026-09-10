@@ -2195,8 +2195,11 @@ function workspaceEndpoints(app) {
     }
   );
 
-  app.get(
-    "/workspace/:slug/scheduled-jobs/:id/runs",
+  // Merged run+email schedule log for jobs owned by this workspace - every run
+  // (status/duration/error) with its result-email delivery attempts attached.
+  // Replaces the old per-job "Run History" list. Pass jobId to filter to one job.
+  app.post(
+    "/workspace/:slug/scheduled-jobs/logs",
     [
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
@@ -2205,22 +2208,50 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const job = await ownedJobOr404(
-          request.params.id,
-          response.locals.workspace,
-          response
-        );
-        if (!job) return;
+        const workspace = response.locals.workspace;
+        const { offset = 0, limit = 10, jobId = null } = reqBody(request);
+
+        let clause = { job: { workspaceId: workspace.id } };
+        if (jobId) {
+          const job = await ownedJobOr404(jobId, workspace, response);
+          if (!job) return;
+          clause = { jobId: job.id };
+        }
 
         const runs = await ScheduledJobRun.where(
-          { jobId: job.id },
-          50,
-          { startedAt: "desc" }
+          clause,
+          limit,
+          { startedAt: "desc" },
+          { job: true },
+          offset * limit
         );
-        response.status(200).json({ runs });
+        const totalLogs = await ScheduledJobRun.count(clause);
+        const hasPages = totalLogs > (offset + 1) * limit;
+
+        const emailLogsByRun = await ScheduledJobLog.groupByRunId(
+          runs.map((r) => r.id)
+        );
+
+        response.status(200).json({
+          logs: runs.map((run) => ({
+            id: run.id,
+            jobId: run.jobId,
+            jobName: run.job?.name || "Unknown Job",
+            workspaceName: workspace.name,
+            workspaceSlug: workspace.slug,
+            status: run.status,
+            error: run.error,
+            startedAt: run.startedAt,
+            completedAt: run.completedAt,
+            readAt: run.readAt,
+            emailLogs: emailLogsByRun[run.id] || [],
+          })),
+          hasPages,
+          totalLogs,
+        });
       } catch (error) {
-        console.error("Error listing workspace scheduled job runs:", error);
-        response.status(500).json({ runs: [] });
+        console.error("Error listing workspace scheduled job logs:", error);
+        response.status(500).json({ logs: [], error: error.message });
       }
     }
   );
@@ -2298,7 +2329,7 @@ function workspaceEndpoints(app) {
     async (request, response) => {
       try {
         const { action } = request.params;
-        if (!["read", "continue", "kill"].includes(action))
+        if (!["read", "kill"].includes(action))
           throw new Error("Invalid action");
 
         const owned = await ownedRunOr404(
@@ -2312,15 +2343,6 @@ function workspaceEndpoints(app) {
         if (action === "read") {
           await ScheduledJobRun.markRead(run.id);
           return response.status(200).json({ success: true });
-        }
-
-        if (action === "continue") {
-          const { workspace: ws, thread, error } =
-            await ScheduledJobRun.continueInThread(run.id);
-          if (error) return response.status(500).json({ error });
-          return response
-            .status(200)
-            .json({ workspaceSlug: ws.slug, threadSlug: thread.slug });
         }
 
         if (action === "kill") {

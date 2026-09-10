@@ -14,7 +14,7 @@ function ScheduledJobCreatedCard({ props }) {
 
   const goToJob = () => {
     if (!jobId) return;
-    navigate(paths.settings.scheduledJobRuns(jobId));
+    navigate(paths.settings.scheduledJobLogs(jobId));
   };
 
   return (

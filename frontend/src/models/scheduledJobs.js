@@ -76,14 +76,6 @@ const ScheduledJobs = {
       .catch((e) => ({ success: false, error: e.message }));
   },
 
-  runs: async function (id) {
-    return await fetch(`${API_BASE}/scheduled-jobs/${id}/runs`, {
-      headers: baseHeaders(),
-    })
-      .then((res) => res.json())
-      .catch(() => ({ runs: [] }));
-  },
-
   getRun: async function (runId) {
     return await fetch(`${API_BASE}/scheduled-jobs/runs/${runId}`, {
       headers: baseHeaders(),
@@ -99,19 +91,6 @@ const ScheduledJobs = {
     })
       .then((res) => res.json())
       .catch(() => ({ success: false }));
-  },
-
-  continueInThread: async function (runId) {
-    return await fetch(`${API_BASE}/scheduled-jobs/runs/${runId}/continue`, {
-      method: "POST",
-      headers: baseHeaders(),
-    })
-      .then((res) => res.json())
-      .catch((e) => ({
-        workspaceSlug: null,
-        threadSlug: null,
-        error: e.message,
-      }));
   },
 
   availableTools: async function () {
@@ -148,13 +127,14 @@ const ScheduledJobs = {
       .catch(() => ({ logs: [] }));
   },
 
-  // Instance-wide schedule log page - every result-email delivery attempt
-  // across every job, paginated. Mirrors System.eventLogs/clearEventLogs.
-  allLogs: async function (offset = 0) {
+  // Instance-wide schedule log page - every run (status/duration/error) across
+  // every job, each with its result-email delivery attempts attached, paginated.
+  // Pass jobId to filter to a single job's runs. Mirrors System.eventLogs.
+  allLogs: async function (offset = 0, jobId = null) {
     return await fetch(`${API_BASE}/scheduled-jobs/logs`, {
       method: "POST",
       headers: baseHeaders(),
-      body: JSON.stringify({ offset }),
+      body: JSON.stringify({ offset, jobId }),
     })
       .then((res) => res.json())
       .catch(() => ({ logs: [], hasPages: false }));
@@ -245,15 +225,6 @@ const ScheduledJobs = {
         .catch((e) => ({ success: false, error: e.message }));
     },
 
-    runs: async function (slug, id) {
-      return await fetch(
-        `${API_BASE}/workspace/${slug}/scheduled-jobs/${id}/runs`,
-        { headers: baseHeaders() }
-      )
-        .then((res) => res.json())
-        .catch(() => ({ runs: [] }));
-    },
-
     getRun: async function (slug, runId) {
       return await fetch(
         `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}`,
@@ -270,15 +241,6 @@ const ScheduledJobs = {
       )
         .then((res) => res.json())
         .catch(() => ({ success: false }));
-    },
-
-    continueInThread: async function (slug, runId) {
-      return await fetch(
-        `${API_BASE}/workspace/${slug}/scheduled-jobs/runs/${runId}/continue`,
-        { method: "POST", headers: baseHeaders() }
-      )
-        .then((res) => res.json())
-        .catch((e) => ({ workspaceSlug: null, threadSlug: null, error: e.message }));
     },
 
     killRun: async function (slug, runId) {
@@ -315,6 +277,19 @@ const ScheduledJobs = {
       )
         .then((res) => res.json())
         .catch(() => ({ logs: [] }));
+    },
+
+    allLogs: async function (slug, offset = 0, jobId = null) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/scheduled-jobs/logs`,
+        {
+          method: "POST",
+          headers: baseHeaders(),
+          body: JSON.stringify({ offset, jobId }),
+        }
+      )
+        .then((res) => res.json())
+        .catch(() => ({ logs: [], hasPages: false }));
     },
   },
 };

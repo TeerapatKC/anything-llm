@@ -42,7 +42,7 @@ function buildJobsApi(workspace) {
       trigger: (id) => ScheduledJobs.trigger(id),
       availableTools: () => ScheduledJobs.availableTools(),
       availableRecipients: () => ScheduledJobs.availableRecipients(),
-      runsPath: (jobId) => paths.settings.scheduledJobRuns(jobId),
+      runsPath: (jobId) => paths.settings.scheduledJobLogs(jobId),
     };
   }
   return {
@@ -60,7 +60,7 @@ function buildJobsApi(workspace) {
       ScheduledJobs.workspace
         .members(slug)
         .then(({ members }) => ({ workspaces: [], users: members || [] })),
-    runsPath: (jobId) => paths.workspace.settings.scheduledJobRuns(slug, jobId),
+    runsPath: (jobId) => paths.workspace.settings.scheduledJobLogs(slug, jobId),
   };
 }
 

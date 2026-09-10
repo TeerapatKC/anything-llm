@@ -107,24 +107,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        // Run history for a scheduled job owned by this workspace. Same screens
-        // as the instance-wide ones below, but gated on a workspace permission.
-        path: "/workspace/:slug/settings/scheduled-jobs/:id/runs",
-        lazy: async () => {
-          const { default: ScheduledJobRuns } = await import(
-            "@/pages/GeneralSettings/ScheduledJobs/RunHistoryPage"
-          );
-          return {
-            element: (
-              <WorkspacePermissionRoute
-                Component={ScheduledJobRuns}
-                permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/workspace/:slug/settings/scheduled-jobs/:id/runs/:runId",
         lazy: async () => {
           const { default: ScheduledJobRunDetail } = await import(
@@ -134,6 +116,24 @@ const router = createBrowserRouter([
             element: (
               <WorkspacePermissionRoute
                 Component={ScheduledJobRunDetail}
+                permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        // Merged run+email schedule log for jobs owned by this workspace. Same
+        // screen as the instance-wide one below, gated on a workspace permission.
+        path: "/workspace/:slug/settings/scheduled-jobs-logs",
+        lazy: async () => {
+          const { default: ScheduledJobLogs } = await import(
+            "@/pages/GeneralSettings/ScheduledJobs/LogsPage"
+          );
+          return {
+            element: (
+              <WorkspacePermissionRoute
+                Component={ScheduledJobLogs}
                 permissions={[WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE]}
               />
             ),
@@ -686,22 +686,6 @@ const router = createBrowserRouter([
             element: (
               <PermissionRoute
                 Component={ScheduledJobLogs}
-                permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
-              />
-            ),
-          };
-        },
-      },
-      {
-        path: "/settings/scheduled-jobs/:id/runs",
-        lazy: async () => {
-          const { default: ScheduledJobRuns } = await import(
-            "@/pages/GeneralSettings/ScheduledJobs/RunHistoryPage"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={ScheduledJobRuns}
                 permissions={[PERMISSIONS.AGENTS_SCHEDULED_JOBS]}
               />
             ),

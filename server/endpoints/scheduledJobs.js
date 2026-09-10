@@ -138,7 +138,7 @@ function scheduledJobEndpoints(app) {
     }
   );
 
-  // Mark a run as read or continue in thread, or kill a running or queued job run
+  // Mark a run as read, or kill a running or queued job run
   app.post(
     "/scheduled-jobs/runs/:runId/:action",
     [
@@ -150,25 +150,12 @@ function scheduledJobEndpoints(app) {
       try {
         const { action } = request.params;
 
-        if (!["read", "continue", "kill"].includes(action))
+        if (!["read", "kill"].includes(action))
           throw new Error("Invalid action");
 
         if (action === "read") {
           await ScheduledJobRun.markRead(Number(request.params.runId));
           return response.status(200).json({ success: true });
-        }
-
-        if (action === "continue") {
-          const { workspace, thread, error } =
-            await ScheduledJobRun.continueInThread(
-              Number(request.params.runId)
-            );
-          if (error) return response.status(500).json({ error });
-
-          return response.status(200).json({
-            workspaceSlug: workspace.slug,
-            threadSlug: thread.slug,
-          });
         }
 
         if (action === "kill") {
@@ -567,31 +554,10 @@ function scheduledJobEndpoints(app) {
     }
   );
 
-  // List runs for a job
-  app.get(
-    "/scheduled-jobs/:id/runs",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
-    ],
-    async (request, response) => {
-      try {
-        const runs = await ScheduledJobRun.where(
-          { jobId: Number(request.params.id) },
-          50,
-          { startedAt: "desc" }
-        );
-        return response.status(200).json({ runs });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500);
-      }
-    }
-  );
-
-  // Instance-wide schedule log - every result-email delivery attempt (sent or
-  // failed) across every job, newest first. Mirrors /system/event-logs.
+  // Instance-wide schedule log - every run (status/duration/error), across every
+  // job (system + workspace-owned), newest first, each with its result-email
+  // delivery attempts attached. Replaces the old per-job "Run History" page -
+  // pass jobId to filter down to a single job's runs. Mirrors /system/event-logs.
   app.post(
     "/scheduled-jobs/logs",
     [
@@ -601,13 +567,37 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const { offset = 0, limit = 10 } = reqBody(request);
-        const logs = await ScheduledJobLog.where({}, limit, { id: "desc" }, offset * limit);
-        const totalLogs = await ScheduledJobLog.count();
+        const { offset = 0, limit = 10, jobId = null } = reqBody(request);
+        const clause = jobId ? { jobId: Number(jobId) } : {};
+
+        const runs = await ScheduledJobRun.where(
+          clause,
+          limit,
+          { startedAt: "desc" },
+          { job: { include: { workspace: { select: { name: true, slug: true } } } } },
+          offset * limit
+        );
+        const totalLogs = await ScheduledJobRun.count(clause);
         const hasPages = totalLogs > (offset + 1) * limit;
 
+        const emailLogsByRun = await ScheduledJobLog.groupByRunId(
+          runs.map((r) => r.id)
+        );
+
         return response.status(200).json({
-          logs: logs.map((l) => ({ ...l, metadata: safeJsonParse(l.metadata, {}) })),
+          logs: runs.map((run) => ({
+            id: run.id,
+            jobId: run.jobId,
+            jobName: run.job?.name || "Unknown Job",
+            workspaceName: run.job?.workspace?.name || null,
+            workspaceSlug: run.job?.workspace?.slug || null,
+            status: run.status,
+            error: run.error,
+            startedAt: run.startedAt,
+            completedAt: run.completedAt,
+            readAt: run.readAt,
+            emailLogs: emailLogsByRun[run.id] || [],
+          })),
           hasPages,
           totalLogs,
         });
@@ -618,6 +608,8 @@ function scheduledJobEndpoints(app) {
     }
   );
 
+  // Clears both halves of the merged view - the run rows and their attached
+  // email delivery logs - since that's what the page actually shows.
   app.delete(
     "/scheduled-jobs/logs",
     [
@@ -627,7 +619,8 @@ function scheduledJobEndpoints(app) {
     ],
     async (_request, response) => {
       try {
-        const success = await ScheduledJobLog.delete();
+        const success =
+          (await ScheduledJobRun.delete()) && (await ScheduledJobLog.delete());
         return response.status(200).json({ success });
       } catch (e) {
         console.error(e.message, e);

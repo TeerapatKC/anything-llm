@@ -65,6 +65,34 @@ const ScheduledJobLog = {
       return false;
     }
   },
+
+  /**
+   * Email log entries for a batch of runs, grouped by runId - used to attach
+   * each run's delivery attempts when listing runs (the merged run+email log view).
+   * @param {number[]} runIds
+   * @returns {Promise<Record<number, object[]>>}
+   */
+  groupByRunId: async function (runIds = []) {
+    if (!runIds.length) return {};
+    try {
+      const { safeJsonParse } = require("../utils/http");
+      const logs = await prisma.scheduled_job_logs.findMany({
+        where: { runId: { in: runIds } },
+        orderBy: { occurredAt: "asc" },
+      });
+      const grouped = {};
+      for (const log of logs) {
+        (grouped[log.runId] ||= []).push({
+          ...log,
+          metadata: safeJsonParse(log.metadata, {}),
+        });
+      }
+      return grouped;
+    } catch (error) {
+      console.error("Failed to group scheduled job logs by run:", error.message);
+      return {};
+    }
+  },
 };
 
 module.exports = { ScheduledJobLog };

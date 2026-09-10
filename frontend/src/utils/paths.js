@@ -80,11 +80,12 @@ export default {
       scheduledJobs: (slug) => {
         return `/workspace/${slug}/settings/scheduled-jobs`;
       },
-      scheduledJobRuns: (slug, jobId) => {
-        return `/workspace/${slug}/settings/scheduled-jobs/${jobId}/runs`;
-      },
       scheduledJobRunDetail: (slug, jobId, runId) => {
         return `/workspace/${slug}/settings/scheduled-jobs/${jobId}/runs/${runId}`;
+      },
+      scheduledJobLogs: (slug, jobId = null) => {
+        const base = `/workspace/${slug}/settings/scheduled-jobs-logs`;
+        return jobId ? `${base}?jobId=${jobId}` : base;
       },
     },
     thread: (wsSlug, threadSlug) => {
@@ -200,14 +201,12 @@ export default {
     scheduledJobs: () => {
       return `/settings/scheduled-jobs`;
     },
-    scheduledJobRuns: (jobId) => {
-      return `/settings/scheduled-jobs/${jobId}/runs`;
-    },
     scheduledJobRunDetail: (jobId, runId) => {
       return `/settings/scheduled-jobs/${jobId}/runs/${runId}`;
     },
-    scheduledJobLogs: () => {
-      return `/settings/scheduled-jobs-logs`;
+    scheduledJobLogs: (jobId = null) => {
+      const base = `/settings/scheduled-jobs-logs`;
+      return jobId ? `${base}?jobId=${jobId}` : base;
     },
   },
   agents: {
