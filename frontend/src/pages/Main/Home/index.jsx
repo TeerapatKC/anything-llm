@@ -27,6 +27,7 @@ import MemoriesSidebar from "@/components/WorkspaceChat/ChatContainer/MemoriesSi
 import {
   userIsChatOnly,
   workspaceCan,
+  refreshSessionPermissions,
   WORKSPACE_PERMISSIONS as WS,
 } from "@/utils/permissions";
 import NotAMemberNotice from "@/components/WorkspaceChat/ChatContainer/NotAMemberNotice";
@@ -179,7 +180,26 @@ function HomeContent({ workspace, threadSlug, setThreadSlug }) {
 
   // Home writes into a workspace, so it inherits that workspace's chat permission -
   // which an instance operator only holds where they are an actual member.
-  const canChat = workspaceCan(WS.CHAT, workspace?.slug, user);
+  const [canChat, setCanChat] = useState(() =>
+    workspaceCan(WS.CHAT, workspace?.slug, user)
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    async function syncChatAccess() {
+      const slug = workspace?.slug;
+      if (workspaceCan(WS.CHAT, slug, user)) {
+        if (!cancelled) setCanChat(true);
+        return;
+      }
+      await refreshSessionPermissions();
+      if (!cancelled) setCanChat(workspaceCan(WS.CHAT, slug, user));
+    }
+    syncChatAccess();
+    return () => {
+      cancelled = true;
+    };
+  }, [workspace?.slug, user]);
 
   useEffect(() => {
     if (!threadSlug) {

@@ -190,7 +190,10 @@ export default {
       return "/settings/event-logs";
     },
     monitoring: () => {
-      return "/settings/monitoring";
+      return "/settings/dashboards";
+    },
+    dashboards: () => {
+      return "/settings/dashboards";
     },
     privacy: () => {
       return "/settings/privacy";

@@ -748,6 +748,12 @@ const TRANSLATIONS = {
       occurred: "発生日時",
     },
   },
+  unauthorized: {
+    title: "401 - 権限がありません",
+    description: "このページを表示する権限がありません。",
+    "go-settings": "設定へ移動",
+    "go-home": "ホームへ戻る",
+  },
   monitoring: {
     title: "ダッシュボード",
     description: "このインスタンスの Grafana ダッシュボードです。",

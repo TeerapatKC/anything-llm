@@ -4,6 +4,7 @@ import paths from "@/utils/paths";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { REFETCH_WORKSPACES_EVENT } from "@/components/Sidebar/ActiveWorkspaces";
+import { refreshSessionPermissions } from "@/utils/permissions";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,9 @@ export default function NewWorkspaceModal({ hideModal = noop }) {
     for (var [key, value] of form.entries()) data[key] = value;
     const { workspace, message } = await Workspace.new(data);
     if (!!workspace) {
+      // Creator is a member on the server, but chat gating reads a local
+      // workspace-permission cache that PrivateRoute only hydrates on load.
+      await refreshSessionPermissions();
       // Refresh the sidebar list and navigate via the router so
       // ActiveGenerationGuard can intercept if a response is generating.
       // If the user cancels the navigation, the workspace still exists and

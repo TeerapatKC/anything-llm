@@ -215,7 +215,7 @@ const SidebarOptions = ({ user = null, t }) => (
         <Option
           btnText={t("settings.dashboards")}
           icon={<LayoutDashboard className="h-5 w-5 shrink-0" />}
-          href={paths.settings.monitoring()}
+          href={paths.settings.dashboards()}
           user={user}
           permissions={[PERMISSIONS.SYSTEM_MONITORING]}
         />

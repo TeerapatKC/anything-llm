@@ -1108,6 +1108,12 @@ const TRANSLATIONS = {
       occurred: "Occurred At",
     },
   },
+  unauthorized: {
+    title: "401 - Unauthorized",
+    description: "You do not have permission to view this page.",
+    "go-settings": "Go to Settings",
+    "go-home": "Go Home",
+  },
   monitoring: {
     title: "Dashboards",
     description: "Live Grafana dashboards for this instance.",

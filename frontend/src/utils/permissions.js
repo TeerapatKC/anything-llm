@@ -182,6 +182,30 @@ export function storeWorkspacePermissions(byWorkspaceId = {}) {
 }
 
 /**
+ * Re-fetches and caches instance + workspace permissions for the signed-in user.
+ * Call after creating a workspace or changing memberships: those flows do not remount
+ * PrivateRoute, so the local cache would otherwise omit the new slug and the chat UI
+ * would treat a real member as a non-member until a full reload.
+ * @returns {Promise<{permissions: string[], workspacePermissions: Record<string, string[]>, roleDisplayName: string|null}>}
+ */
+export async function refreshSessionPermissions() {
+  if (!userFromStorage()) {
+    return {
+      permissions: [],
+      workspacePermissions: {},
+      roleDisplayName: null,
+    };
+  }
+  const { default: Role } = await import("@/models/role");
+  const { permissions, workspacePermissions, roleDisplayName } =
+    await Role.myPermissions();
+  storePermissions(permissions);
+  storeWorkspacePermissions(workspacePermissions);
+  storeRoleLabel(roleDisplayName);
+  return { permissions, workspacePermissions, roleDisplayName };
+}
+
+/**
  * Using a workspace, as opposed to running it: holding a conversation and owning
  * the threads it lives in. Mirrors `WORKSPACE_USAGE_PERMISSION_KEYS` on the
  * server - an instance operator is granted every *other* workspace permission
@@ -395,6 +419,52 @@ export function assignableRoles(roles = [], actor) {
 }
 
 /**
+ * Permissions that unlock at least one Instance Settings screen. Used to hide
+ * the Settings menu entry when the user would land nowhere useful.
+ */
+export const INSTANCE_SETTINGS_PERMISSIONS = [
+  PERMISSIONS.SYSTEM_APPEARANCE,
+  PERMISSIONS.SYSTEM_SETTINGS,
+  PERMISSIONS.SYSTEM_SETTINGS_LLM,
+  PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB,
+  PERMISSIONS.SYSTEM_SETTINGS_EMBEDDER,
+  PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
+  PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
+  PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION,
+  PERMISSIONS.SYSTEM_MODEL_ROUTING,
+  PERMISSIONS.SYSTEM_PROMPTS,
+  PERMISSIONS.SYSTEM_API_KEYS,
+  PERMISSIONS.SYSTEM_EVENT_LOGS,
+  PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW,
+  PERMISSIONS.SYSTEM_MONITORING,
+  PERMISSIONS.USERS_VIEW,
+  PERMISSIONS.USERS_MANAGE,
+  PERMISSIONS.ROLES_MANAGE,
+  PERMISSIONS.INVITES_MANAGE,
+  PERMISSIONS.WORKSPACES_VIEW_ALL,
+  PERMISSIONS.WORKSPACES_CREATE,
+  PERMISSIONS.WORKSPACES_MANAGE_ALL,
+  PERMISSIONS.CHATS_VIEW_ALL,
+  PERMISSIONS.AGENTS_MANAGE_SKILLS,
+  PERMISSIONS.AGENTS_FLOWS,
+  PERMISSIONS.AGENTS_SCHEDULED_JOBS,
+  PERMISSIONS.EMBEDS_MANAGE,
+  PERMISSIONS.INTEGRATIONS_TELEGRAM,
+  PERMISSIONS.INTEGRATIONS_LINE,
+  PERMISSIONS.DOCUMENTS_MANAGE,
+  PERMISSIONS.WORKSPACE_ROLES_MANAGE,
+];
+
+/**
+ * Whether the signed-in user can open any Instance Settings page.
+ * @param {Object|null} [user]
+ * @returns {boolean}
+ */
+export function canAccessInstanceSettings(user) {
+  return userCanAny(INSTANCE_SETTINGS_PERMISSIONS, user);
+}
+
+/**
  * True when the user holds no instance-wide powers at all, so nothing under Settings is
  * worth showing them. What they can do inside individual workspaces is a separate
  * question answered by `workspaceCan`.
@@ -402,22 +472,5 @@ export function assignableRoles(roles = [], actor) {
  * @returns {boolean}
  */
 export function userIsChatOnly(user) {
-  return !userCanAny(
-    [
-      PERMISSIONS.WORKSPACES_CREATE,
-      PERMISSIONS.WORKSPACES_VIEW_ALL,
-      PERMISSIONS.WORKSPACES_MANAGE_ALL,
-      PERMISSIONS.DOCUMENTS_MANAGE,
-      PERMISSIONS.USERS_VIEW,
-      PERMISSIONS.USERS_MANAGE,
-      PERMISSIONS.INVITES_MANAGE,
-      PERMISSIONS.ROLES_MANAGE,
-      PERMISSIONS.WORKSPACE_ROLES_MANAGE,
-      PERMISSIONS.CHATS_VIEW_ALL,
-      PERMISSIONS.SYSTEM_SETTINGS,
-      PERMISSIONS.SYSTEM_APPEARANCE,
-      PERMISSIONS.SYSTEM_MONITORING,
-    ],
-    user
-  );
+  return !canAccessInstanceSettings(user);
 }

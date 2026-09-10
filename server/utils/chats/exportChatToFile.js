@@ -207,10 +207,12 @@ function chatHistoryToHTML(history = [], { workspaceName, threadName }) {
  */
 async function chatHistoryToPDF(history = [], meta = {}) {
   const markdown = chatHistoryToMarkdown(history, meta);
-  const { markdownToPdf } = await import("@mintplex-labs/mdpdf");
+  const { markdownToPdfBuffer } = require("../pdf/markdownToPdf");
   const { PDFDocument, rgb, StandardFonts } = await import("pdf-lib");
 
-  const pdfDoc = await PDFDocument.load(await markdownToPdf(markdown));
+  // Chromium + embedded Sarabun so Thai (and other Unicode) survives export;
+  // mdpdf's bundled fonts cover Latin/CJK only and render Thai as missing glyphs.
+  const pdfDoc = await PDFDocument.load(await markdownToPdfBuffer(markdown));
   await applyBranding(pdfDoc, { rgb, StandardFonts });
 
   return Buffer.from(await pdfDoc.save());

@@ -1087,6 +1087,12 @@ const TRANSLATIONS = {
       occurred: "เกิดขึ้นเมื่อ",
     },
   },
+  unauthorized: {
+    title: "401 - ไม่มีสิทธิ์เข้าถึง",
+    description: "คุณไม่มีสิทธิ์ดูหน้านี้",
+    "go-settings": "ไปที่การตั้งค่า",
+    "go-home": "กลับหน้าหลัก",
+  },
   monitoring: {
     title: "แดชบอร์ด",
     description: "แดชบอร์ด Grafana ของอินสแตนซ์นี้",
