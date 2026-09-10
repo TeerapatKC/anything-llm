@@ -56,6 +56,8 @@ module.exports = {
   "menu.tab_new_thread": "🆕 เธรดใหม่",
   "menu.tab_status": "ℹ️ สถานะ",
   "menu.tab_language": "🌐 ภาษาที่ตอบ",
+  "menu.tab_link": "🔗 เชื่อมบัญชีของฉัน",
+  "menu.link_placeholder": "แตะปุ่มเพื่อเชื่อมบัญชีของคุณ",
 
   // ---------------------------------------------------------- workspaces
   "workspaces.none":

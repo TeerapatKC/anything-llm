@@ -13,7 +13,7 @@ function ImageGenerationPending({ aborted = false }) {
 
   if (aborted) {
     return (
-      <div className="my-2">
+      <div className="my-2 px-4 md:pl-0">
         <div className="w-full max-w-[280px]">
           <div className="relative rounded-xl overflow-hidden aspect-square">
             <div className="absolute inset-0 bg-linear-to-br from-zinc-700 via-zinc-800 to-zinc-900 light:from-slate-200 light:via-slate-300 light:to-slate-100" />
@@ -33,7 +33,7 @@ function ImageGenerationPending({ aborted = false }) {
   }
 
   return (
-    <div className="my-2">
+    <div className="my-2 px-4 md:pl-0">
       <div className="w-full max-w-[280px]">
         <div className="relative rounded-xl overflow-hidden aspect-square">
           <div className="absolute inset-0 bg-linear-to-br from-zinc-600 via-zinc-800 to-zinc-900 light:from-slate-200 light:via-slate-300 light:to-slate-100 blur-2xl animate-pulse" />

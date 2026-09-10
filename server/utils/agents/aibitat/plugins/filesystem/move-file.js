@@ -61,20 +61,6 @@ module.exports.FilesystemMoveFile = {
                 `${this.caller}: Moving ${source} to ${destination}`
               );
 
-              if (this.super.requestToolApproval) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: { source, destination },
-                  description: "Move a file or directory to a new location",
-                });
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               await fs.rename(validSourcePath, validDestPath);
               this.super.introspect(
                 `Successfully moved ${source} to ${destination}`

@@ -14,7 +14,7 @@ const {
 const { TelegramUser } = require("../../models/telegramUser");
 const { resolveSession } = require("./utils/access");
 const { sendLinkInstructions } = require("./utils/linking");
-const { resolveTabAction, removeTabKeyboard } = require("./utils/keyboard");
+const { resolveTabAction, linkKeyboard } = require("./utils/keyboard");
 const { translatorFor, t, CATALOGS } = require("./utils/i18n");
 const { BOT_COMMANDS } = require("./utils/commands");
 const { handleKeyboardQueryCallback } = require("./utils/navigation");
@@ -460,13 +460,14 @@ class TelegramBotService {
     this.abortChat(Number(chatId));
     if (this.#bot && notice) {
       try {
-        // The button bar goes with the link - it would only lead to commands
-        // this chat can no longer run.
+        // The tab bar goes with the link - it would only lead to commands this
+        // chat can no longer run - and is replaced by the button that offers the
+        // one thing left to do.
         await this.#bot.sendMessage(
           chatId,
           translatorFor(session)(notice.key),
           {
-            reply_markup: removeTabKeyboard(),
+            reply_markup: linkKeyboard(session?.language),
           }
         );
       } catch {

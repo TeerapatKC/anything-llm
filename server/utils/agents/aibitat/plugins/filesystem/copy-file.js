@@ -84,20 +84,6 @@ module.exports.FilesystemCopyFile = {
                 `${this.caller}: Copying ${source} to ${destination}`
               );
 
-              if (this.super.requestToolApproval) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: { source, destination },
-                  description: "Copy a file or directory to a new location",
-                });
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               const destExists = await fs
                 .access(validDestPath)
                 .then(() => true)

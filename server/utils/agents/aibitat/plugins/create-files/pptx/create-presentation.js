@@ -184,26 +184,6 @@ module.exports.CreatePptxPresentation = {
                 `${this.caller}: Planning presentation "${title}" — ${totalSections} section${totalSections !== 1 ? "s" : ""}, ${theme.name} theme`
               );
 
-              // Ask for approval BEFORE kicking off the expensive sub-agent work
-              if (this.super.requestToolApproval) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: {
-                    filename,
-                    title,
-                    sectionCount: totalSections,
-                    sectionTitles: sections.map((s) => s.title),
-                  },
-                  description: `Create PowerPoint presentation "${title}" with ${totalSections} sections`,
-                });
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               const conversationContext = extractConversationContext(
                 this.super._chats
               );
@@ -321,13 +301,20 @@ module.exports.CreatePptxPresentation = {
                 displayFilename,
               });
 
-              this.super.socket.send("fileDownloadCard", {
-                filename: savedFile.displayFilename,
-                storageFilename: savedFile.filename,
-                fileSize: savedFile.fileSize,
-              });
+              // Awaited, and ahead of the socket event: the download button this
+              // sends reaches the browser enabled, so the row that authorizes the
+              // file it names has to exist first.
+              await createFilesLib.registerOutput(
+                this.super,
+                "PptxFileDownload",
+                {
+                  filename: savedFile.displayFilename,
+                  storageFilename: savedFile.filename,
+                  fileSize: savedFile.fileSize,
+                }
+              );
 
-              createFilesLib.registerOutput(this.super, "PptxFileDownload", {
+              this.super.socket.send("fileDownloadCard", {
                 filename: savedFile.displayFilename,
                 storageFilename: savedFile.filename,
                 fileSize: savedFile.fileSize,

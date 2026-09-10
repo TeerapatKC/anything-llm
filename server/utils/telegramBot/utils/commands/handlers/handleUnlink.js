@@ -1,6 +1,6 @@
 const { TelegramUser } = require("../../../../../models/telegramUser");
 const { revokeCodesForUser } = require("../../pairing");
-const { removeTabKeyboard } = require("../../keyboard");
+const { linkKeyboard } = require("../../keyboard");
 const { translatorFor } = require("../../i18n");
 
 /**
@@ -19,8 +19,10 @@ async function handleUnlink(ctx, chatId) {
   revokeCodesForUser(session.user.id);
   ctx.forgetSession(chatId);
 
+  // Back to the link button rather than no bar at all: the chat can still do
+  // one thing, and this is it.
   await ctx.bot.sendMessage(chatId, t("unlink.done"), {
-    reply_markup: removeTabKeyboard(),
+    reply_markup: linkKeyboard(session.language),
   });
 }
 
