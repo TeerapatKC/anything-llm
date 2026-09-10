@@ -372,6 +372,14 @@ const TRANSLATIONS = {
         description:
           'Allow the agent to create recurring Scheduled Jobs from chat (e.g. "every weekday at 9am summarize my inbox and email me").',
       },
+      sendEmail: {
+        title: "Send Email",
+        description:
+          "Allow the agent to send an email through the instance's SMTP server on the user's behalf.",
+        needsSmtp:
+          "This skill requires SMTP to be configured and enabled first.",
+        needsSmtpLink: "Go to SMTP settings",
+      },
       filesystem: {
         title: "File System Access",
         description:

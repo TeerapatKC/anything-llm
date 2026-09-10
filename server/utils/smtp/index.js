@@ -279,6 +279,7 @@ module.exports = {
   requireSmtpReady,
   createTransport,
   sendMail,
+  sendSystemMail,
   sendTestEmail,
   sendWelcomeEmail,
   sendInviteEmail,

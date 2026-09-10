@@ -23,6 +23,11 @@ const SKILL_FILTER_CONFIG = {
       require("./aibitat/plugins/create-files/lib").isToolAvailable(),
     disabledSettingKey: "disabled_create_files_skills",
   },
+  // Single-stage skill (no sub-skills) - only `available` is read for these,
+  // see the "normal single-stage plugin" branch below.
+  "send-email": {
+    getAvailability: () => require("../smtp").isSendingEnabled(),
+  },
 };
 
 const USER_AGENT = {
@@ -160,7 +165,10 @@ async function agentSkillsFromSystemSettings(
       continue;
     }
 
-    // This is normal single-stage plugin
+    // This is normal single-stage plugin - still respects an availability
+    // check if one is configured (e.g. send-email requires SMTP to be ready).
+    const filterState = skillFilterState[skillName];
+    if (filterState && !filterState.available) continue;
     systemFunctions.push(AgentPlugins[skillName].name);
   }
   return systemFunctions;

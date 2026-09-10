@@ -82,6 +82,7 @@ async function skillCredentialStatus(workspaceId = null) {
   };
 
   const sql = await safely(() => hasSQLConnections(workspaceId));
+  const smtp = await safely(() => require("../smtp").isSendingEnabled());
 
   return {
     "web-browsing": {
@@ -93,6 +94,10 @@ async function skillCredentialStatus(workspaceId = null) {
     "sql-agent": {
       configured: sql,
       hint: "No SQL connections have been added for this instance.",
+    },
+    "send-email": {
+      configured: smtp,
+      hint: "SMTP has not been configured and enabled for this instance.",
     },
   };
 }
