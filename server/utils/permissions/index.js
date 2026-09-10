@@ -116,6 +116,11 @@ const PERMISSIONS = {
 
   // Chats across the whole instance
   CHATS_VIEW_ALL: "chats.view_all",
+  // Deliberately NOT a child of CHATS_VIEW_ALL: a parent implies its children, so
+  // hanging it there would hand every existing chat auditor the contents of everyone's
+  // private workspace. The `system.admin` wildcard still passes, so instance owners
+  // keep the access; anyone else has to be ticked in explicitly.
+  CHATS_VIEW_PERSONAL: "chats.view_personal",
   CHATS_EXPORT: "chats.export",
   CHATS_DELETE_ANY: "chats.delete_any",
   CHATS_UNLIMITED: "chats.unlimited",
@@ -166,6 +171,12 @@ const WORKSPACE_PERMISSIONS = {
   DOCUMENTS_PIN: "workspace.documents.pin",
   DOCUMENTS_WATCH: "workspace.documents.watch",
   DATA_CONNECTORS: "workspace.data_connectors",
+
+  // Renaming only. A child of SETTINGS_GENERAL so every role that can already edit the
+  // general settings keeps it for free, while a role can be handed the rename on its
+  // own - which is exactly what a private workspace owner gets, since the settings
+  // screens stay closed to them.
+  RENAME: "workspace.rename",
 
   SETTINGS_MANAGE: "workspace.settings.manage",
   SETTINGS_GENERAL: "workspace.settings.general",
@@ -590,6 +601,13 @@ const PERMISSION_CATALOG = [
     category: "chats",
   },
   {
+    key: PERMISSIONS.CHATS_VIEW_PERSONAL,
+    label: "View private workspace chats",
+    description:
+      "Read chat history inside users' private workspaces. Read only - it never allows chatting, uploading or changing anything in someone else's private workspace, and every read is written to the event log.",
+    category: "chats",
+  },
+  {
     key: PERMISSIONS.CHATS_EXPORT,
     label: "Export chats",
     description:
@@ -852,6 +870,15 @@ const PERMISSION_CATALOG = [
       "Full control of this workspace's configuration. Tick the sections below to hand out only part of it.",
     category: "workspace_admin",
     scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.RENAME,
+    label: "Rename the workspace",
+    description:
+      "Change the workspace name, without access to any other setting. Included in 'Edit general settings'.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+    parent: WORKSPACE_PERMISSIONS.SETTINGS_GENERAL,
   },
   {
     key: WORKSPACE_PERMISSIONS.SETTINGS_GENERAL,
@@ -1223,6 +1250,28 @@ const WORKSPACE_ROLES = [
     ],
   },
   {
+    // The role every private workspace owner is given in their own workspace. It is the
+    // switch an operator flips to decide what people may do in their private space -
+    // most importantly whether they may upload documents. It deliberately holds no
+    // `workspace.settings.*` permission, which is what closes the settings screens; the
+    // rename button on the sidebar is powered by RENAME instead.
+    name: "personal-owner",
+    displayName: "Private Workspace Owner",
+    description:
+      "Assigned automatically to the owner of a private workspace. Edit it to change what everyone may do inside their own private workspace.",
+    isDefault: false,
+    permissions: [
+      WORKSPACE_PERMISSIONS.VIEW,
+      WORKSPACE_PERMISSIONS.CHAT,
+      WORKSPACE_PERMISSIONS.THREADS_MANAGE,
+      WORKSPACE_PERMISSIONS.RENAME,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_UPLOAD,
+      WORKSPACE_PERMISSIONS.DOCUMENTS_REMOVE,
+      WORKSPACE_PERMISSIONS.CHATS_DELETE,
+    ],
+  },
+  {
     name: "workspace-manager",
     displayName: "Workspace Manager",
     description:
@@ -1321,6 +1370,26 @@ const RESERVED_PERMISSIONS_SETTING = "reserved_permissions";
 
 /** The workspace role given to a member when none is specified. */
 const FALLBACK_WORKSPACE_ROLE = "member";
+
+/**
+ * The workspace role a private workspace's owner is given inside it. Named here because
+ * the provisioner has to look it up, but nothing branches on the name for access: what
+ * the owner may do is whatever an operator has ticked on the role.
+ */
+const PERSONAL_OWNER_WORKSPACE_ROLE = "personal-owner";
+
+/**
+ * Everything anyone other than the owner may ever hold inside a private workspace, no
+ * matter what instance role they carry. Reading chat history for audit is the whole of
+ * it - an operator never chats, uploads, renames or configures in someone else's
+ * private space. Enforced in WorkspaceRole.permissionsForUserInWorkspace, so every
+ * route and every client-side gate inherits it.
+ */
+const PERSONAL_WORKSPACE_AUDIT_PERMISSION_KEYS = [
+  WORKSPACE_PERMISSIONS.VIEW,
+  WORKSPACE_PERMISSIONS.CHATS_VIEW_ALL,
+  WORKSPACE_PERMISSIONS.CHATS_EXPORT,
+];
 
 /**
  * Maps each system setting label to the permission needed to read or write it.
@@ -1457,6 +1526,8 @@ module.exports = {
   DEFAULT_RESERVED_PERMISSIONS,
   RESERVED_PERMISSIONS_SETTING,
   FALLBACK_WORKSPACE_ROLE,
+  PERSONAL_OWNER_WORKSPACE_ROLE,
+  PERSONAL_WORKSPACE_AUDIT_PERMISSION_KEYS,
   SETTINGS_ROUTE_PERMISSIONS,
   expandPermissions,
   ancestorsOf,

@@ -85,12 +85,17 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </button>
           </div>
 
-          {workspaceCan(WS.DOCUMENTS_UPLOAD, workspace?.slug, user) && (
-            <ModalTabSwitcher
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-            />
-          )}
+          {/* The switcher is only worth showing when there is somewhere else to
+              switch to. A private workspace's owner can upload but not attach data
+              connectors, so they would otherwise be offered a tab whose every action
+              the server refuses. */}
+          {workspaceCan(WS.DOCUMENTS_UPLOAD, workspace?.slug, user) &&
+            workspaceCan(WS.DATA_CONNECTORS, workspace?.slug, user) && (
+              <ModalTabSwitcher
+                selectedTab={selectedTab}
+                setSelectedTab={setSelectedTab}
+              />
+            )}
 
           {selectedTab === "documents" ? (
             <EmbeddingProgressProvider>

@@ -245,6 +245,15 @@ model workspaces {
   queryRefusalResponse         String?
   vectorSearchMode             String?                        @default("default")
   router_id                    Int? // No relation to prevent whole table migration (SQLite limitation)
+  // "shared" is the ordinary workspace anyone can be invited into. "personal" is a
+  // private workspace provisioned for exactly one user - it has no settings screen,
+  // is invisible to everyone but its owner, and is governed by the instance-wide
+  // personal workspace profile. See models/personalWorkspace.js.
+  type                         String                         @default("shared")
+  // The owner of a `personal` workspace, NULL on every shared one. Deliberately not a
+  // relation to prevent a whole table migration (SQLite limitation) - User.delete
+  // removes the rows this points at explicitly.
+  ownerId                      Int?
   // Per-workspace agent skill configuration (JSON). NULL means this workspace has
   // never been configured and falls back to the instance-wide defaults.
   // See WorkspaceAgentSkills in utils/agents/workspaceSkills.js for the shape.
@@ -264,6 +273,8 @@ model workspaces {
   line_users                   line_users[]
   document_folders             document_folders[]
   scheduled_jobs               scheduled_jobs[]
+
+  @@index([ownerId])
 }
 
 model workspace_threads {

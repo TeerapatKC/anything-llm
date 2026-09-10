@@ -42,13 +42,24 @@ async function convertToJSONL(workspaceChatsMap) {
     .join("\n");
 }
 
-async function prepareChatsForExport(format = "jsonl", chatType = "workspace") {
+/**
+ * @param {string} format
+ * @param {string} chatType
+ * @param {Object} clause - narrows which chats are exported at all. The chat screens
+ * pass what the caller is allowed to see, so an export can never hand back rows the
+ * list on screen was hiding.
+ */
+async function prepareChatsForExport(
+  format = "jsonl",
+  chatType = "workspace",
+  clause = {}
+) {
   if (!exportMap.hasOwnProperty(format))
     throw new Error(`Invalid export type: ${format}`);
 
   let chats;
   if (chatType === "workspace") {
-    chats = await WorkspaceChats.whereWithData({}, null, null, {
+    chats = await WorkspaceChats.whereWithData(clause, null, null, {
       id: "asc",
     });
   } else if (chatType === "embed") {
@@ -213,11 +224,15 @@ function escapeCsv(str) {
   return `"${str.replace(/"/g, '""').replace(/\n/g, " ")}"`;
 }
 
-async function exportChatsAsType(format = "jsonl", chatType = "workspace") {
+async function exportChatsAsType(
+  format = "jsonl",
+  chatType = "workspace",
+  clause = {}
+) {
   const { contentType, func } = exportMap.hasOwnProperty(format)
     ? exportMap[format]
     : exportMap.jsonl;
-  const chats = await prepareChatsForExport(format, chatType);
+  const chats = await prepareChatsForExport(format, chatType, clause);
   return {
     contentType,
     data: await func(chats),

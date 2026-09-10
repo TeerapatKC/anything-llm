@@ -244,6 +244,59 @@ const Admin = {
         return { apiKey: null, error: e.message };
       });
   },
+  /**
+   * The default profiles for both kinds of workspace, plus how many private workspaces
+   * currently exist.
+   * @returns {Promise<{profiles: object|null, personal: object|null, error: string|null}>}
+   */
+  workspaceDefaults: async function () {
+    return fetch(`${API_BASE}/admin/workspace-defaults`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { profiles: null, personal: null, error: e.message };
+      });
+  },
+  /**
+   * Save one profile.
+   *
+   * A private profile change that would put existing private workspaces outside the
+   * policy comes back with `requiresReview: true` and the list of what it affects,
+   * *without* having saved anything. Answer it with `reconcilePersonalWorkspaces`.
+   * @param {"shared"|"personal"} type
+   * @param {object} updates
+   */
+  updateWorkspaceDefaults: async function (type, updates = {}) {
+    return fetch(`${API_BASE}/admin/workspace-defaults/${type}`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(updates),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
+  /**
+   * Answer a held-back private workspace policy change.
+   * @param {{token: string, action: "skip"|"deactivate"|"delete", workspaceIds?: number[]}} answer
+   */
+  reconcilePersonalWorkspaces: async function (answer = {}) {
+    return fetch(`${API_BASE}/admin/workspace-defaults/personal/reconcile`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(answer),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
   deleteApiKey: async function (apiKeyId = "") {
     return fetch(`${API_BASE}/admin/delete-api-key/${apiKeyId}`, {
       method: "DELETE",

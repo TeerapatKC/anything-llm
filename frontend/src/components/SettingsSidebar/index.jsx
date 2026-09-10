@@ -316,6 +316,11 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.WORKSPACES_VIEW_ALL],
             },
             {
+              btnText: t("settings.workspace-defaults"),
+              href: paths.settings.workspaceDefaults(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+            },
+            {
               hidden: !canViewChatHistory,
               btnText: t("settings.workspace-chats"),
               href: paths.settings.chats(),

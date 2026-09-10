@@ -74,6 +74,7 @@ export const PERMISSIONS = {
   DOCUMENTS_DELETE: "documents.delete",
 
   CHATS_VIEW_ALL: "chats.view_all",
+  CHATS_VIEW_PERSONAL: "chats.view_personal",
   CHATS_EXPORT: "chats.export",
   CHATS_DELETE_ANY: "chats.delete_any",
   CHATS_UNLIMITED: "chats.unlimited",
@@ -128,6 +129,8 @@ export const WORKSPACE_PERMISSIONS = {
   DOCUMENTS_PIN: "workspace.documents.pin",
   DOCUMENTS_WATCH: "workspace.documents.watch",
   DATA_CONNECTORS: "workspace.data_connectors",
+
+  RENAME: "workspace.rename",
 
   SETTINGS_MANAGE: "workspace.settings.manage",
   SETTINGS_GENERAL: "workspace.settings.general",

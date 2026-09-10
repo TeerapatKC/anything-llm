@@ -7,6 +7,8 @@ const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
 const { DocumentVectors } = require("../models/vectors");
 const { Workspace } = require("../models/workspace");
+const { WorkspaceDefaults } = require("../models/workspaceDefaults");
+const { PersonalWorkspace } = require("../models/personalWorkspace");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   getVectorDbClass,
@@ -725,6 +727,124 @@ function adminEndpoints(app) {
           response?.locals?.user?.id
         );
         return response.status(200).end();
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  // --------------------------------------------------- workspace defaults & privacy
+
+  /**
+   * The two workspace profiles side by side, plus what private workspaces currently
+   * exist. The admin screen shows them as two tabs with the same fields, so an operator
+   * can see that private and shared workspaces differ in their values rather than in
+   * which settings they have at all.
+   */
+  app.get(
+    "/admin/workspace-defaults",
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.SYSTEM_SETTINGS,
+        PERMISSIONS.WORKSPACES_MANAGE_ALL,
+      ]),
+    ],
+    async (_request, response) => {
+      try {
+        const profiles = await WorkspaceDefaults.all();
+        const personalWorkspaces = await PersonalWorkspace.all();
+        response.status(200).json({
+          profiles,
+          personal: {
+            workspaceCount: personalWorkspaces.length,
+            ownerCount: new Set(
+              personalWorkspaces.map((workspace) => workspace.ownerId)
+            ).size,
+          },
+        });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Save one profile.
+   *
+   * Saving the private profile never destroys anything by itself. When the change would
+   * put existing private workspaces outside the policy - the feature turned off, or the
+   * quota lowered - the save is held and the affected workspaces are returned for the
+   * operator to decide about. `requiresReview` in the response is the client's cue to
+   * open that dialog and answer through the reconcile route below.
+   */
+  app.post(
+    "/admin/workspace-defaults/:type",
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { type } = request.params;
+        if (!Object.values(WorkspaceDefaults.TYPES).includes(type))
+          return response.status(400).json({
+            success: false,
+            error: `Unknown workspace type "${type}".`,
+          });
+
+        const updates = reqBody(request);
+        if (type === WorkspaceDefaults.TYPES.PERSONAL) {
+          const review = await PersonalWorkspace.openReview(user, updates);
+          if (review)
+            return response.status(200).json({
+              success: false,
+              requiresReview: true,
+              error: null,
+              ...review,
+            });
+        }
+
+        const { profile, error } = await WorkspaceDefaults.update(
+          type,
+          updates
+        );
+        if (error) return response.status(500).json({ success: false, error });
+
+        await EventLogs.logEvent(
+          "workspace_defaults_updated",
+          { type },
+          user?.id
+        );
+        response.status(200).json({ success: true, error: null, profile });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Answer a held-back private workspace policy change: skip, deactivate or delete the
+   * workspaces the operator picked, and only then save the change.
+   */
+  app.post(
+    "/admin/workspace-defaults/personal/reconcile",
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const {
+          token = null,
+          action = null,
+          workspaceIds = [],
+        } = reqBody(request);
+        const result = await PersonalWorkspace.resolveReview(user, {
+          token,
+          action,
+          workspaceIds,
+        });
+        response.status(result.success ? 200 : 400).json(result);
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

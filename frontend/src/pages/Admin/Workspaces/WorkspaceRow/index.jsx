@@ -4,8 +4,9 @@ import Admin from "@/models/admin";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
-import { Settings, Link2, Trash2 } from "lucide-react";
+import { Settings, Link2, Lock, Trash2 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { TableCell, TableHead, TableRow } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import TableRowActions from "@/components/lib/TableRowActions";
@@ -26,6 +27,10 @@ export default function WorkspaceRow({
   // column (or an API response that omits it) is treated as active.
   const [active, setActive] = useState(workspace.active !== false);
   const [saving, setSaving] = useState(false);
+  // A private workspace belongs to one person: it has no settings screen, and an
+  // operator reaches it through the private workspace policy rather than through this
+  // row. Its lifecycle controls are therefore not offered here.
+  const isPrivate = workspace.type === "personal";
 
   const handleDelete = async () => {
     setConfirm({
@@ -81,7 +86,17 @@ export default function WorkspaceRow({
   return (
     <>
       <TableRow ref={rowRef} className={`${active ? "" : "opacity-60"}`}>
-        <TableHead scope="row">{workspace.name}</TableHead>
+        <TableHead scope="row">
+          <span className="flex items-center gap-x-2">
+            {workspace.name}
+            {isPrivate && (
+              <Badge variant="outline" className="gap-1 text-[10px]">
+                <Lock className="size-3" />
+                Private
+              </Badge>
+            )}
+          </span>
+        </TableHead>
         <TableCell>
           <a
             href={paths.workspace.chat(workspace.slug)}
@@ -104,7 +119,7 @@ export default function WorkspaceRow({
           <div className="flex items-center gap-x-2">
             <Switch
               checked={active}
-              disabled={saving}
+              disabled={saving || isPrivate}
               onCheckedChange={handleToggleActive}
               aria-label={`${active ? "Deactivate" : "Activate"} ${workspace.name}`}
               size="lg"
@@ -117,18 +132,20 @@ export default function WorkspaceRow({
         <TableCell>{workspace.createdAt}</TableCell>
         <TableCell className="text-right">
           <TableRowActions>
-            <DropdownMenuItem
-              render={
-                <a
-                  href={paths.workspace.settings.generalAppearance(
-                    workspace.slug
-                  )}
-                />
-              }
-            >
-              <Settings />
-              {t("workspaces—settings.title")}
-            </DropdownMenuItem>
+            {!isPrivate && (
+              <DropdownMenuItem
+                render={
+                  <a
+                    href={paths.workspace.settings.generalAppearance(
+                      workspace.slug
+                    )}
+                  />
+                }
+              >
+                <Settings />
+                {t("workspaces—settings.title")}
+              </DropdownMenuItem>
+            )}
             {!deletionProtected && (
               <>
                 <DropdownMenuSeparator />

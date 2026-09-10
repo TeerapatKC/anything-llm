@@ -635,6 +635,22 @@ const router = createBrowserRouter([
           };
         },
       },
+      {
+        path: "/settings/workspace-defaults",
+        lazy: async () => {
+          const { default: WorkspaceDefaults } = await import(
+            "@/pages/Admin/WorkspaceDefaults"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={WorkspaceDefaults}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
+              />
+            ),
+          };
+        },
+      },
       // Onboarding Flow
       {
         path: "/onboarding",

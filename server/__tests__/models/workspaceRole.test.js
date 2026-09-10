@@ -14,6 +14,10 @@ const mockDb = {
   wsGrants: [],
   members: [],
   users: [],
+  // Resolution now depends on what kind of workspace is being asked about: a private
+  // one belongs to one person and clamps what everybody else holds inside it. A
+  // workspace with no row here behaves like an ordinary shared one.
+  workspaces: [],
 };
 let mockNextId = {
   permissions: 1,
@@ -31,6 +35,7 @@ function mockReset() {
   mockDb.wsGrants = [];
   mockDb.members = [];
   mockDb.users = [];
+  mockDb.workspaces = [];
   mockNextId = {
     permissions: 1,
     roles: 1,
@@ -206,6 +211,10 @@ jest.mock("../../utils/prisma", () => ({
       return row;
     },
   },
+  workspaces: {
+    findFirst: async ({ where }) =>
+      mockDb.workspaces.find((w) => w.id === where.id) ?? null,
+  },
   workspace_users: {
     findFirst: async ({ where }) =>
       mockDb.members.find(
@@ -276,6 +285,7 @@ describe("WorkspaceRole.seed", () => {
     expect(roles.map((r) => r.name).sort()).toEqual([
       "contributor",
       "member",
+      "personal-owner",
       "workspace-manager",
     ]);
     expect(roles.filter((r) => r.isDefault)).toHaveLength(1);
@@ -382,6 +392,68 @@ describe("per-workspace resolution", () => {
         WORKSPACE_PERMISSIONS.CHAT
       )
     ).toBe(true);
+  });
+});
+
+describe("private workspaces", () => {
+  const PRIVATE = 3;
+
+  beforeEach(() => {
+    // Owned by user 7, who also holds the workspace-manager role inside it - the
+    // strongest membership there is, so the clamp is not passing by default.
+    mockDb.workspaces.push({ id: PRIVATE, type: "personal", ownerId: 7 });
+  });
+
+  it("leaves the owner's own permissions alone", async () => {
+    await join(7, PRIVATE, "workspace-manager");
+    expect(
+      await WorkspaceRole.userCanInWorkspace(
+        { id: 7, role: "default" },
+        PRIVATE,
+        WORKSPACE_PERMISSIONS.CHAT
+      )
+    ).toBe(true);
+  });
+
+  it("gives an instance operator read-only audit access, nothing more", async () => {
+    const admin = { id: 1, role: "admin" };
+    const granted = await WorkspaceRole.permissionsForUserInWorkspace(
+      admin,
+      PRIVATE
+    );
+
+    expect(granted).toEqual(
+      expect.arrayContaining([
+        WORKSPACE_PERMISSIONS.VIEW,
+        WORKSPACE_PERMISSIONS.CHATS_VIEW_ALL,
+      ])
+    );
+    expect(granted).not.toContain(WORKSPACE_PERMISSIONS.CHAT);
+    expect(granted).not.toContain(WORKSPACE_PERMISSIONS.DOCUMENTS_UPLOAD);
+    expect(granted).not.toContain(WORKSPACE_PERMISSIONS.SETTINGS_MANAGE);
+    expect(granted).not.toContain(WORKSPACE_PERMISSIONS.RENAME);
+    expect(granted).not.toContain(WORKSPACE_PERMISSIONS.DELETE);
+  });
+
+  it("gives an operator without chats.view_personal nothing at all", async () => {
+    // The manager role runs every workspace and reads every chat, but reading
+    // somebody's private workspace is a separate grant it does not hold.
+    const manager = { id: 2, role: "manager" };
+    expect(await Role.userCan(manager, PERMISSIONS.WORKSPACES_MANAGE_ALL)).toBe(
+      true
+    );
+    expect(
+      await WorkspaceRole.permissionsForUserInWorkspace(manager, PRIVATE)
+    ).toEqual([]);
+  });
+
+  it("gives an ordinary member of nothing nothing", async () => {
+    expect(
+      await WorkspaceRole.permissionsForUserInWorkspace(
+        { id: 9, role: "default" },
+        PRIVATE
+      )
+    ).toEqual([]);
   });
 });
 

@@ -7,8 +7,10 @@ const {
   WORKSPACE_USAGE_PERMISSION_KEYS,
   WORKSPACE_ROLES,
   FALLBACK_WORKSPACE_ROLE,
+  PERSONAL_WORKSPACE_AUDIT_PERMISSION_KEYS,
   expandPermissions,
 } = require("../utils/permissions");
+const { WORKSPACE_TYPES } = require("./workspaceDefaults");
 
 /**
  * @typedef {Object} WorkspaceRoleRecord
@@ -301,6 +303,14 @@ const WorkspaceRole = {
       PERMISSIONS.WORKSPACES_MANAGE_ALL,
     ]);
 
+    // A private workspace belongs to one person. For everybody else it is at most
+    // readable, for audit, and only with `chats.view_personal` - no operator role makes
+    // it chattable, uploadable or configurable. This is the single choke point every
+    // route gate and the client's own permission map go through, so the rule holds
+    // without each of them having to know about private workspaces at all.
+    const clamp = await this._personalWorkspaceClamp(user, workspaceId);
+    if (clamp !== null) return clamp;
+
     try {
       const membership = await prisma.workspace_users.findFirst({
         where: { user_id: Number(user.id), workspace_id: Number(workspaceId) },
@@ -331,6 +341,29 @@ const WorkspaceRole = {
       console.error(error.message);
       return [];
     }
+  },
+
+  /**
+   * What a user may do inside somebody else's private workspace, or `null` when the
+   * workspace is not private or the user is its owner - in which case the ordinary
+   * membership rules apply.
+   * @private
+   * @param {{id?: number}} user
+   * @param {number} workspaceId
+   * @returns {Promise<string[]|null>}
+   */
+  _personalWorkspaceClamp: async function (user, workspaceId) {
+    const workspace = await prisma.workspaces.findFirst({
+      where: { id: Number(workspaceId) },
+      select: { type: true, ownerId: true },
+    });
+    if (workspace?.type !== WORKSPACE_TYPES.PERSONAL) return null;
+    if (Number(workspace.ownerId) === Number(user.id)) return null;
+
+    const { Role } = require("./role");
+    if (await Role.userCan(user, PERMISSIONS.CHATS_VIEW_PERSONAL))
+      return [...PERSONAL_WORKSPACE_AUDIT_PERMISSION_KEYS];
+    return [];
   },
 
   /**

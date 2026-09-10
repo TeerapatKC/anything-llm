@@ -83,10 +83,7 @@ export default function CustomLogo() {
       {isDefaultLogo ? (
         <div className="flex flex-col items-start md:flex-row md:items-center">
           <div className="flex flex-row gap-x-8">
-            <label
-              className="mt-3 transition-all duration-300 hover:opacity-80"
-              hidden={!isDefaultLogo}
-            >
+            <label className="mt-3" hidden={!isDefaultLogo}>
               <input
                 id="logo-upload"
                 type="file"
@@ -95,7 +92,7 @@ export default function CustomLogo() {
                 onChange={handleFileUpload}
               />
               <div
-                className="w-80 py-4 bg-theme-settings-input-bg rounded-2xl border-2 border-dashed border-theme-sidebar-border justify-center items-center inline-flex cursor-pointer hover:border-theme-text-secondary transition-colors"
+                className="inline-flex w-80 cursor-pointer items-center justify-center rounded-2xl border-2 border-dashed border-theme-sidebar-border bg-theme-settings-input-bg py-4 transition-colors duration-300 hover:border-primary-button focus-within:border-primary-button"
                 htmlFor="logo-upload"
               >
                 <div className="flex flex-col items-center justify-center">

@@ -70,6 +70,12 @@ function ShowWorkspaceChat() {
 
   if (loading) return <FullScreenLoader />;
 
+  // A private workspace has no settings, so there is nothing here to show its owner or
+  // anyone else. The server refuses the writes either way; this keeps a typed URL from
+  // rendering screens whose every save would come back refused.
+  if (workspace?.type === "personal")
+    return <Navigate to={paths.workspace.chat(slug)} replace />;
+
   const TabContent = TABS[tab];
   // An unknown tab used to render `undefined` as a component, which throws and takes
   // the whole page down with a React error rather than showing anything useful. A

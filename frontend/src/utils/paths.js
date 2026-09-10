@@ -129,6 +129,9 @@ export default {
     workspaces: () => {
       return `/settings/workspaces`;
     },
+    workspaceDefaults: () => {
+      return `/settings/workspace-defaults`;
+    },
     chats: () => {
       return "/settings/workspace-chats";
     },

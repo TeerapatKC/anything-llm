@@ -1,6 +1,7 @@
 const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const { moveProcessedDocsToFolder } = require("../utils/files");
 const { Workspace } = require("../models/workspace");
+const { PersonalWorkspace } = require("../models/personalWorkspace");
 const { Document } = require("../models/documents");
 const { DocumentFolder } = require("../models/documentFolders");
 const { DocumentVectors } = require("../models/vectors");
@@ -67,6 +68,97 @@ function workspaceEndpoints(app) {
           {
             workspaceName: workspace?.name || "Unknown Workspace",
           },
+          user?.id
+        );
+        response.status(200).json({ workspace, message });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * What the caller may do about private workspaces: whether the instance hands them
+   * out at all, how many they may have, and how many they already own. The sidebar
+   * needs this to decide whether to offer a "new private workspace" button.
+   */
+  app.get(
+    "/workspace/personal/policy",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const profile = await PersonalWorkspace.profile();
+        const owned = await PersonalWorkspace.countFor(user?.id);
+        response.status(200).json({
+          enabled: profile.enabled,
+          quotaPerUser: profile.quotaPerUser,
+          owned,
+          canCreate: profile.enabled && owned < profile.quotaPerUser,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Create a private workspace for the caller. Deliberately not the `/workspace/new`
+   * route: that one creates shared workspaces and is gated on `workspaces.create`,
+   * while this one is available to anyone the instance's private workspace policy
+   * allows, and refuses once they are at their quota.
+   */
+  app.post(
+    "/workspace/personal/new",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { name = null } = reqBody(request);
+        const { workspace, message } = await PersonalWorkspace.create(
+          user,
+          name
+        );
+        response.status(workspace ? 200 : 400).json({ workspace, message });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Rename a workspace, and nothing else.
+   *
+   * A private workspace has no settings screen, so this is how its owner names it -
+   * which is why the gate is the narrow `workspace.rename` rather than the settings
+   * permission that would open every other screen with it. Anyone who can edit the
+   * general settings holds this too, by implication.
+   */
+  app.post(
+    "/workspace/:slug/rename",
+    [validatedRequest, workspacePermissionValid([WS_PERMISSIONS.RENAME])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { slug = null } = request.params;
+        const { name = null } = reqBody(request);
+        const currWorkspace = await Workspace.getWithUser(user, { slug });
+        if (!currWorkspace) return response.sendStatus(404).end();
+        if (!name || !String(name).trim())
+          return response
+            .status(400)
+            .json({ workspace: null, message: "A name is required." });
+
+        const { workspace, message } = await Workspace.update(
+          currWorkspace.id,
+          { name: String(name) }
+        );
+        await EventLogs.logEvent(
+          "workspace_renamed",
+          { from: currWorkspace.name, to: workspace?.name ?? name },
           user?.id
         );
         response.status(200).json({ workspace, message });
@@ -316,7 +408,6 @@ function workspaceEndpoints(app) {
       try {
         const { slug = "" } = request.params;
         const user = await userFromSession(request, response);
-        const VectorDb = getVectorDbClass();
         const workspace = await Workspace.getWithUser(user, { slug });
 
         if (!workspace) {
@@ -324,16 +415,7 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        // The DB rows cascade-delete with the workspace, but the in-process cron
-        // timers for any jobs it owned do not - stop those first so nothing keeps
-        // firing for a job whose row is about to disappear out from under it.
-        const ownedJobs = await ScheduledJob.ownedByWorkspace(workspace.id);
-        for (const job of ownedJobs) backgroundService.removeScheduledJob(job.id);
-
-        await WorkspaceChats.delete({ workspaceId: Number(workspace.id) });
-        await DocumentVectors.deleteForWorkspace(workspace.id);
-        await Document.delete({ workspaceId: Number(workspace.id) });
-        await Workspace.delete({ id: Number(workspace.id) });
+        await Workspace.purge(workspace);
 
         await EventLogs.logEvent(
           "workspace_deleted",
@@ -343,11 +425,6 @@ function workspaceEndpoints(app) {
           response.locals?.user?.id
         );
 
-        try {
-          await VectorDb["delete-namespace"]({ namespace: slug });
-        } catch (e) {
-          console.error(e.message);
-        }
         response.sendStatus(200).end();
       } catch (e) {
         console.error(e.message, e);
@@ -401,6 +478,12 @@ function workspaceEndpoints(app) {
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
+        // Where everyone gets the private workspace the instance policy entitles them
+        // to. Doing it on the listing rather than only at sign-up means accounts that
+        // predate the feature - and ones created through SSO, an invite or the
+        // developer API - are covered too, without a migration or a boot-time sweep.
+        // It is a no-op once they have one.
+        await PersonalWorkspace.provisionFor(user);
         const workspaces = await Workspace.whereWithUser(user);
 
         response.status(200).json({ workspaces });

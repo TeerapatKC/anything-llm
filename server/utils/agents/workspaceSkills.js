@@ -315,7 +315,7 @@ async function instanceRuntimeConfig() {
  */
 async function resolveRuntimeForWorkspace(workspace = null) {
   const resolved = await instanceRuntimeConfig();
-  const stored = normalizeConfig(workspace?.agentSkillConfig ?? null);
+  const stored = await storedConfigForWorkspace(workspace);
   if (!stored?.runtime) return resolved;
 
   for (const field of Object.keys(RUNTIME_FIELDS)) {
@@ -348,8 +348,30 @@ async function resolveSearchProviderForWorkspace(workspaceId = null) {
   // validation, so importing it at the top would be a cycle.
   const { Workspace } = require("../../models/workspace");
   const workspace = await Workspace.get({ id: Number(workspaceId) });
-  const stored = normalizeConfig(workspace?.agentSkillConfig ?? null);
+  const stored = await storedConfigForWorkspace(workspace);
   return stored?.searchProvider || instanceProvider;
+}
+
+/**
+ * The config a workspace is governed by before the instance-wide defaults are reached:
+ * its own if it has one, otherwise the profile for its kind.
+ *
+ * The profile layer is what lets an operator say "the agent may do this much inside
+ * people's private workspaces" once, and have it apply to every private workspace
+ * there is - including the ones provisioned before the decision was made. A profile
+ * that sets nothing (how every instance starts) resolves to null here and the
+ * instance-wide settings are used, exactly as before profiles existed.
+ * @param {import("@prisma/client").workspaces | null} workspace
+ * @returns {Promise<object|null>}
+ */
+async function storedConfigForWorkspace(workspace = null) {
+  const own = normalizeConfig(workspace?.agentSkillConfig ?? null);
+  if (own) return own;
+  // Required lazily: the model pulls this module in for its own normalization.
+  const { WorkspaceDefaults } = require("../../models/workspaceDefaults");
+  return await WorkspaceDefaults.agentSkillConfigFor(
+    workspace?.type ?? "shared"
+  );
 }
 
 /**
@@ -358,7 +380,7 @@ async function resolveSearchProviderForWorkspace(workspaceId = null) {
  * @returns {Promise<object>}
  */
 async function resolveConfigForWorkspace(workspace = null) {
-  const stored = normalizeConfig(workspace?.agentSkillConfig ?? null);
+  const stored = await storedConfigForWorkspace(workspace);
   if (stored) return stored;
   return await instanceDefaultConfig();
 }
@@ -374,6 +396,7 @@ module.exports = {
   normalizeRuntime,
   instanceDefaultConfig,
   instanceRuntimeConfig,
+  storedConfigForWorkspace,
   resolveConfigForWorkspace,
   resolveRuntimeForWorkspace,
   resolveSearchProviderForWorkspace,
