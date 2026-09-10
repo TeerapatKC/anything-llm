@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { titleCase } from "text-case";
-import { RotateCw, TriangleAlert } from "lucide-react";
+import { Plus, RotateCw, TriangleAlert } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -11,6 +11,9 @@ import MCPServers from "@/models/mcpServers";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import AddServerModal from "./AddServerModal";
 
 export function MCPServerHeader({
   setMcpServers,
@@ -20,6 +23,7 @@ export function MCPServerHeader({
   const { t } = useTranslation();
   const [loadingMcpServers, setLoadingMcpServers] = useState(false);
   const [confirm, setConfirm] = useState(null);
+  const [showAddServer, setShowAddServer] = useState(false);
   useEffect(() => {
     async function fetchMCPServers() {
       setLoadingMcpServers(true);
@@ -57,6 +61,21 @@ export function MCPServerHeader({
     });
   };
 
+  const handleCreated = (server, warning) => {
+    if (server) {
+      setMcpServers((current) => [
+        ...current.filter((item) => item.name !== server.name),
+        server,
+      ]);
+      setSelectedMcpServer(server);
+    }
+    showToast(
+      warning || "MCP server added and connected successfully.",
+      warning ? "warning" : "success",
+      { clear: true }
+    );
+  };
+
   return (
     <>
       <div className="text-theme-text-primary flex items-center justify-between gap-x-2 mt-4">
@@ -65,6 +84,14 @@ export function MCPServerHeader({
           <p className="text-lg font-medium">{t("agent.mcp.title")}</p>
         </div>
         <div className="flex items-center gap-x-3">
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => setShowAddServer(true)}
+          >
+            <Plus size={16} />
+            Add server
+          </Button>
           <button
             type="button"
             onClick={refreshMCPServers}
@@ -85,6 +112,17 @@ export function MCPServerHeader({
       </div>
       {children({ loadingMcpServers })}
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      <Dialog
+        open={showAddServer}
+        onOpenChange={(open) => setShowAddServer(open)}
+      >
+        <DialogContent size="md">
+          <AddServerModal
+            closeModal={() => setShowAddServer(false)}
+            onCreated={handleCreated}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

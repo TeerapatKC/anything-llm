@@ -6,16 +6,14 @@ const {
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
 const { EventLogs } = require("../models/eventLogs");
+const { normalizeRemoteMCPServer } = require("../utils/MCP/remoteServerConfig");
 
 function mcpServersEndpoints(app) {
   if (!app) return;
 
   app.get(
     "/mcp-servers/force-reload",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
     async (_request, response) => {
       try {
         const mcp = new MCPCompatibilityLayer();
@@ -36,12 +34,44 @@ function mcpServersEndpoints(app) {
     }
   );
 
+  app.post(
+    "/mcp-servers/create",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { name, server } = normalizeRemoteMCPServer(reqBody(request));
+        const result = await new MCPCompatibilityLayer().createRemoteServer(
+          name,
+          server
+        );
+
+        if (!result.success)
+          return response.status(409).json({
+            success: false,
+            error: result.error,
+            server: null,
+          });
+
+        await EventLogs.logEvent(
+          "mcp_server_created",
+          { serverName: name, type: server.type, url: server.url },
+          user?.id
+        );
+        return response.status(201).json(result);
+      } catch (error) {
+        return response.status(400).json({
+          success: false,
+          error: error.message,
+          server: null,
+        });
+      }
+    }
+  );
+
   app.get(
     "/mcp-servers/list",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
     async (_request, response) => {
       try {
         const servers = await new MCPCompatibilityLayer().servers();
@@ -61,10 +91,7 @@ function mcpServersEndpoints(app) {
 
   app.post(
     "/mcp-servers/toggle",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -99,10 +126,7 @@ function mcpServersEndpoints(app) {
 
   app.post(
     "/mcp-servers/delete",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -131,10 +155,7 @@ function mcpServersEndpoints(app) {
 
   app.post(
     "/mcp-servers/toggle-tool",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);

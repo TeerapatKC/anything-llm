@@ -68,14 +68,14 @@ class MCPHypervisor {
     this.mcpServerJSONPath =
       process.env.NODE_ENV === "development"
         ? path.resolve(
-          __dirname,
-          `../../../storage/plugins/nexusai_mcp_servers.json`
-        )
+            __dirname,
+            `../../../storage/plugins/nexusai_mcp_servers.json`
+          )
         : path.resolve(
-          process.env.STORAGE_DIR ??
-          path.resolve(__dirname, `../../../storage`),
-          `plugins/nexusai_mcp_servers.json`
-        );
+            process.env.STORAGE_DIR ??
+              path.resolve(__dirname, `../../../storage`),
+            `plugins/nexusai_mcp_servers.json`
+          );
 
     if (!fs.existsSync(this.mcpServerJSONPath)) {
       fs.mkdirSync(path.dirname(this.mcpServerJSONPath), { recursive: true });
@@ -128,6 +128,43 @@ class MCPHypervisor {
     );
     this.log(`MCP server ${name} removed from config file`);
     return true;
+  }
+
+  /**
+   * Add a server definition to the persistent MCP configuration.
+   * Existing entries are never overwritten by this method.
+   * @param {string} name - Unique MCP server name
+   * @param {object} server - Validated MCP server definition
+   * @returns {{success: boolean, error: string|null}}
+   */
+  addMCPServerToConfig(name, server) {
+    let config;
+    try {
+      config = JSON.parse(fs.readFileSync(this.mcpServerJSONPath, "utf8"));
+    } catch {
+      return {
+        success: false,
+        error: "MCP configuration file contains invalid JSON.",
+      };
+    }
+    if (!config.mcpServers || typeof config.mcpServers !== "object")
+      config.mcpServers = {};
+
+    if (config.mcpServers[name]) {
+      return {
+        success: false,
+        error: `MCP server ${name} already exists.`,
+      };
+    }
+
+    config.mcpServers[name] = server;
+    fs.writeFileSync(
+      this.mcpServerJSONPath,
+      JSON.stringify(config, null, 2),
+      "utf8"
+    );
+    this.log(`MCP server ${name} added to config file`);
+    return { success: true, error: null };
   }
 
   /**

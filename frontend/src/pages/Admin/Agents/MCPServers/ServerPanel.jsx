@@ -181,6 +181,22 @@ function ToolCountWarningBanner({ server, enabledToolCount }) {
 function RenderServerConfig({ config = null }) {
   const { t } = useTranslation();
   if (!config) return null;
+  if (config.url) {
+    return (
+      <div className="flex flex-col gap-y-2">
+        <p className="text-theme-text-primary text-sm">Remote endpoint</p>
+        <div className="bg-theme-bg-primary rounded-lg p-4">
+          <p className="text-theme-text-secondary text-sm text-left break-all">
+            <span className="font-bold">Transport:</span>{" "}
+            {config.type === "sse" ? "SSE" : "Streamable HTTP"}
+          </p>
+          <p className="text-theme-text-secondary text-sm text-left break-all">
+            <span className="font-bold">URL:</span> {config.url}
+          </p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-y-2">
       <p className="text-theme-text-primary text-sm">

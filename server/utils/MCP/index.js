@@ -232,6 +232,38 @@ class MCPCompatibilityLayer extends MCPHypervisor {
   }
 
   /**
+   * Persist and immediately connect a new remote MCP server.
+   * A failed connection leaves the definition in place so its error is visible
+   * in the management UI and the operator can retry after fixing the service.
+   * @param {string} name
+   * @param {object} server
+   * @returns {Promise<{success: boolean, error: string|null, server?: object}>}
+   */
+  async createRemoteServer(name, server) {
+    const saved = this.addMCPServerToConfig(name, server);
+    if (!saved.success) return saved;
+
+    const startup = await this.startMCPServer(name);
+    if (!startup.success) {
+      return {
+        success: true,
+        error: this.mcpLoadingResults[name]?.message || startup.error,
+        server: {
+          name,
+          config: server,
+          running: false,
+          tools: [],
+          error: this.mcpLoadingResults[name]?.message || startup.error,
+          process: null,
+        },
+      };
+    }
+
+    const created = (await this.servers()).find((item) => item.name === name);
+    return { success: true, error: null, server: created };
+  }
+
+  /**
    * Delete the MCP server - will also remove it from the config file
    * @param {string} name - The name of the MCP server to delete
    * @returns {Promise<{success: boolean, error: string | null}>}

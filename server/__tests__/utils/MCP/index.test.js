@@ -191,4 +191,36 @@ describe("MCPCompatibilityLayer.servers", () => {
     expect(alive.running).toBe(true);
     expect(alive.tools.map((t) => t.name)).toEqual(["echo"]);
   });
+
+  it("creates and immediately connects a remote MCP server", async () => {
+    const remoteServer = await startSSETestServer([GOOD_TOOL]);
+    writeMCPConfig({});
+    mcpLayer = new MCPCompatibilityLayer();
+
+    try {
+      const result = await mcpLayer.createRemoteServer("external-test", {
+        type: "sse",
+        url: `http://localhost:${remoteServer.address().port}`,
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.error).toBeNull();
+      expect(result.server.running).toBe(true);
+      expect(result.server.tools.map((tool) => tool.name)).toEqual(["echo"]);
+
+      const saved = JSON.parse(
+        fs.readFileSync(
+          path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+          "utf8"
+        )
+      );
+      expect(saved.mcpServers["external-test"]).toEqual({
+        type: "sse",
+        url: `http://localhost:${remoteServer.address().port}`,
+      });
+    } finally {
+      stopSSETestServer(remoteServer);
+    }
+  });
+
 });

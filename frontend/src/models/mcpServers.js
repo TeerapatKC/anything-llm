@@ -3,6 +3,20 @@ import { baseHeaders } from "@/utils/request";
 
 const MCPServers = {
   /**
+   * Add and connect a remote MCP server.
+   * @param {{name: string, type: 'streamable'|'sse', url: string, headers?: Object}} config
+   */
+  createRemote: async (config) => {
+    return await fetch(`${API_BASE}/mcp-servers/create`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(config),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({ success: false, error: e.message, server: null }));
+  },
+
+  /**
    * Forces a reload of the MCP Hypervisor and its servers
    * @returns {Promise<{success: boolean, error: string | null, servers: Array<{name: string, running: boolean, tools: Array<{name: string, description: string, inputSchema: Object}>, error: string | null, process: {pid: number, cmd: string} | null}>}>}
    */

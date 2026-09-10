@@ -62,8 +62,10 @@ function bootSSL(app, port = 3001) {
         new EncryptionManager();
         new BackgroundService().boot();
         await eagerLoadContextWindows();
-        await TelegramBotService.bootIfActive();
         console.log(`Primary server in HTTPS mode listening on port ${port}`);
+        // Telegram is an optional integration. A slow API or duplicate poller
+        // must never hold the primary application startup path open.
+        TelegramBotService.bootIfActive();
       })
       .on("error", catchSigTerms);
 
@@ -114,8 +116,10 @@ function bootHTTP(app, port = 3001) {
       new EncryptionManager();
       new BackgroundService().boot();
       await eagerLoadContextWindows();
-      await TelegramBotService.bootIfActive();
       console.log(`Primary server in HTTP mode listening on port ${port}`);
+      // Telegram is an optional integration. A slow API or duplicate poller
+      // must never hold the primary application startup path open.
+      TelegramBotService.bootIfActive();
     })
     .on("error", catchSigTerms);
 

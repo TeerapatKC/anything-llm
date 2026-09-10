@@ -153,4 +153,44 @@ describe("MCPHypervisor server definition parsing & validation", () => {
     expect(results["bad-args"].status).toBe("failed");
     expect(results["bad-args"].message).toMatch(/args must be an array/);
   });
+
+  it("adds a server definition without overwriting an existing server", () => {
+    hypervisor = new MCPHypervisor();
+    const first = hypervisor.addMCPServerToConfig("external", {
+      type: "streamable",
+      url: "https://mcp.example.com/mcp",
+    });
+    const duplicate = hypervisor.addMCPServerToConfig("external", {
+      type: "sse",
+      url: "https://other.example.com/sse",
+    });
+
+    expect(first).toEqual({ success: true, error: null });
+    expect(duplicate.success).toBe(false);
+    expect(hypervisor.mcpServerConfigs).toEqual([
+      {
+        name: "external",
+        server: {
+          type: "streamable",
+          url: "https://mcp.example.com/mcp",
+        },
+      },
+    ]);
+  });
+
+  it("does not overwrite an invalid configuration file", () => {
+    hypervisor = new MCPHypervisor();
+    fs.writeFileSync(hypervisor.mcpServerJSONPath, "{invalid", "utf8");
+
+    const result = hypervisor.addMCPServerToConfig("external", {
+      type: "streamable",
+      url: "https://mcp.example.com/mcp",
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.error).toMatch(/invalid JSON/);
+    expect(fs.readFileSync(hypervisor.mcpServerJSONPath, "utf8")).toBe(
+      "{invalid"
+    );
+  });
 });

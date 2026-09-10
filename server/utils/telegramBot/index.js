@@ -24,6 +24,7 @@ const {
   documentToText,
   photoToAttachment,
 } = require("./utils/media");
+const { isTelegramPollingConflict } = require("./pollingErrors");
 
 class TelegramBotService {
   static _instance = null;
@@ -54,7 +55,6 @@ class TelegramBotService {
     "bad gateway",
     "flood",
     "429",
-    "409",
     "500",
     "501",
     "502",
@@ -226,6 +226,16 @@ class TelegramBotService {
     // Ignore errors while already waiting to retry
     if (this.#pollingRetry.timer) return;
     this.#log("Polling error:", error.message);
+
+    // Telegram allows exactly one getUpdates consumer for a bot token. Retrying
+    // this as a network outage creates an endless backoff loop and noisy deploys;
+    // stop only this integration and leave the primary NexusAI server healthy.
+    if (isTelegramPollingConflict(error)) {
+      this.#log(
+        "Another instance is already polling this bot token. Telegram polling is disabled on this instance; NexusAI will continue running."
+      );
+      return await this.stop();
+    }
 
     // 401 = invalid token, cleanup and stop
     if (error.message?.includes("401")) {
