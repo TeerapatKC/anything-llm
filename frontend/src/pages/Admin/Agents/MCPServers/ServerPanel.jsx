@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import showToast from "@/utils/toast";
 import {
   ChevronDown,
+  Pencil,
   Play,
   Settings,
   Square,
@@ -22,8 +23,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import AddServerModal from "./AddServerModal";
 
-function ManageServerMenu({ server, toggleServer, onDelete }) {
+function ManageServerMenu({ server, toggleServer, onDelete, onEdit }) {
   const { t } = useTranslation();
   const [running, setRunning] = useState(server.running);
   const [confirm, setConfirm] = useState(null);
@@ -87,6 +90,12 @@ function ManageServerMenu({ server, toggleServer, onDelete }) {
           <Settings />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-44">
+          {server.config?.url && (
+            <DropdownMenuItem onClick={onEdit}>
+              <Pencil />
+              Edit server
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={handleToggleServer}>
             {running ? <Square /> : <Play />}
             {running ? t("agent.mcp.stop-server") : t("agent.mcp.start-server")}
@@ -107,9 +116,11 @@ export default function ServerPanel({
   server,
   toggleServer,
   onDelete,
+  onUpdated,
   onToggleTool,
 }) {
   const { t } = useTranslation();
+  const [showEditServer, setShowEditServer] = useState(false);
   const suppressedTools = server.config?.nexusai?.suppressedTools || [];
   const enabledToolCount = server.tools.filter(
     (tool) => !suppressedTools.includes(tool.name)
@@ -117,8 +128,8 @@ export default function ServerPanel({
 
   return (
     <>
-      <div className="p-2">
-        <div className="flex flex-col gap-y-[18px] max-w-[800px]">
+      <div className="w-full min-w-0 max-w-full overflow-hidden p-2">
+        <div className="flex w-full min-w-0 max-w-[800px] flex-col gap-y-[18px]">
           <ToolCountWarningBanner
             server={server}
             enabledToolCount={enabledToolCount}
@@ -144,6 +155,7 @@ export default function ServerPanel({
               server={server}
               toggleServer={toggleServer}
               onDelete={onDelete}
+              onEdit={() => setShowEditServer(true)}
             />
           </div>
           <RenderServerConfig config={server.config} />
@@ -156,6 +168,27 @@ export default function ServerPanel({
           />
         </div>
       </div>
+      <Dialog
+        open={showEditServer}
+        onOpenChange={(open) => setShowEditServer(open)}
+      >
+        <DialogContent size="md">
+          <AddServerModal
+            server={server}
+            closeModal={() => setShowEditServer(false)}
+            onSaved={(updatedServer) => {
+              onUpdated(updatedServer, server.name);
+              showToast(
+                "MCP server updated and connected successfully.",
+                "success",
+                {
+                  clear: true,
+                }
+              );
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
@@ -239,8 +272,8 @@ function RenderServerTools({
 }) {
   if (tools.length === 0) return null;
   return (
-    <div className="flex flex-col gap-y-2">
-      <div className="flex flex-col gap-y-2">
+    <div className="flex w-full min-w-0 flex-col gap-y-2 overflow-hidden">
+      <div className="flex w-full min-w-0 flex-col gap-y-2">
         {tools.map((tool) => (
           <ServerTool
             key={tool.name}
@@ -263,14 +296,14 @@ function ServerTool({ serverName, tool, enabled, onToggle }) {
     <button
       type="button"
       onClick={() => setOpen(!open)}
-      className={`flex flex-col gap-y-2 px-4 py-2 rounded-lg border ${
+      className={`flex w-full min-w-0 max-w-full flex-col gap-y-2 overflow-hidden rounded-lg border px-4 py-2 ${
         enabled
           ? "border-theme-text-secondary"
           : "border-theme-text-secondary/50 opacity-60"
       }`}
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-x-2 min-w-0 flex-1">
+      <div className="flex w-full min-w-0 items-center justify-between">
+        <div className="flex min-w-0 flex-1 items-center gap-x-2 overflow-hidden">
           <SimpleToggleSwitch
             size="md"
             enabled={enabled}
@@ -278,16 +311,16 @@ function ServerTool({ serverName, tool, enabled, onToggle }) {
               onToggle?.(serverName, tool.name, newEnabled)
             }
           />
-          <p className="text-theme-text-primary font-mono font-bold text-sm shrink-0">
+          <p className="max-w-[45%] shrink-0 truncate text-left font-mono text-sm font-bold text-theme-text-primary">
             {tool.name}
           </p>
           {!open && (
-            <p className="text-theme-text-secondary text-sm truncate">
+            <p className="min-w-0 flex-1 truncate text-left text-sm text-theme-text-secondary">
               {tool.description}
             </p>
           )}
         </div>
-        <div className="flex items-center gap-x-3">
+        <div className="ml-2 flex shrink-0 items-center gap-x-3">
           <div
             className={`border-none text-theme-text-secondary hover:text-cta-button transition-transform duration-200 ${
               open ? "rotate-180" : ""
@@ -298,9 +331,9 @@ function ServerTool({ serverName, tool, enabled, onToggle }) {
         </div>
       </div>
       {open && (
-        <div className="flex flex-col gap-y-2">
+        <div className="flex w-full min-w-0 flex-col gap-y-2 overflow-hidden">
           <div className="flex flex-col gap-y-2">
-            <p className="text-theme-text-secondary text-sm text-left">
+            <p className="break-words text-left text-sm text-theme-text-secondary [overflow-wrap:anywhere]">
               {tool.description}
             </p>
           </div>

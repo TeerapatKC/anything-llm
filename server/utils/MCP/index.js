@@ -264,6 +264,63 @@ class MCPCompatibilityLayer extends MCPHypervisor {
   }
 
   /**
+   * Update and reconnect a remote MCP server. If the replacement cannot
+   * connect, restore the previous persistent definition and runtime state.
+   * @param {string} currentName
+   * @param {string} name
+   * @param {object} server
+   * @returns {Promise<{success: boolean, error: string|null, server?: object}>}
+   */
+  async updateRemoteServer(currentName, name, server) {
+    const current = this.mcpServerConfigs.find(
+      (item) => item.name === currentName
+    );
+    if (!current)
+      return {
+        success: false,
+        error: `MCP server ${currentName} not found in config file.`,
+      };
+    if (!current.server?.url)
+      return {
+        success: false,
+        error: "Only external HTTP MCP servers can be edited here.",
+      };
+
+    const previousServer = JSON.parse(JSON.stringify(current.server));
+    const previousResult = this.mcpLoadingResults[currentName];
+    const wasRunning = !!this.mcps[currentName];
+    const replacement = {
+      ...server,
+      ...(current.server.nexusai ? { nexusai: current.server.nexusai } : {}),
+    };
+
+    this.pruneMCPServer(currentName);
+    const saved = this.updateMCPServerInConfig(currentName, name, replacement);
+    if (!saved.success) {
+      if (wasRunning) await this.startMCPServer(currentName);
+      return saved;
+    }
+
+    delete this.mcpLoadingResults[currentName];
+    const startup = await this.startMCPServer(name);
+    if (!startup.success) {
+      this.updateMCPServerInConfig(name, currentName, previousServer);
+      delete this.mcps[name];
+      delete this.mcpLoadingResults[name];
+      if (wasRunning) await this.startMCPServer(currentName);
+      else if (previousResult)
+        this.mcpLoadingResults[currentName] = previousResult;
+      return {
+        success: false,
+        error: `Updated server could not connect: ${startup.error}`,
+      };
+    }
+
+    const updated = (await this.servers()).find((item) => item.name === name);
+    return { success: true, error: null, server: updated };
+  }
+
+  /**
    * Delete the MCP server - will also remove it from the config file
    * @param {string} name - The name of the MCP server to delete
    * @returns {Promise<{success: boolean, error: string | null}>}

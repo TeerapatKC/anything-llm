@@ -13,7 +13,7 @@ export function AppShell({ className, children, ...props }) {
   return (
     <div
       className={cn(
-        "w-screen h-screen overflow-hidden bg-theme-bg-container flex",
+        "h-screen w-full max-w-full overflow-hidden bg-theme-bg-container flex",
         className
       )}
       {...props}

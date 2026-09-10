@@ -92,22 +92,30 @@ export function MCPServerHeader({
             <Plus size={16} />
             Add server
           </Button>
-          <button
-            type="button"
-            onClick={refreshMCPServers}
-            disabled={loadingMcpServers}
-            className="border-none text-theme-text-secondary hover:text-cta-button flex items-center gap-x-1"
-          >
-            <RotateCw
-              size={16}
-              className={loadingMcpServers ? "animate-spin" : ""}
-            />
-            <p className="text-sm">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={refreshMCPServers}
+                  disabled={loadingMcpServers}
+                  aria-label={t("common.refresh")}
+                />
+              }
+            >
+              <RotateCw
+                size={16}
+                className={loadingMcpServers ? "animate-spin" : ""}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
               {loadingMcpServers
                 ? `${t("common.loading")}...`
                 : t("common.refresh")}
-            </p>
-          </button>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
       {children({ loadingMcpServers })}
@@ -119,7 +127,7 @@ export function MCPServerHeader({
         <DialogContent size="md">
           <AddServerModal
             closeModal={() => setShowAddServer(false)}
-            onCreated={handleCreated}
+            onSaved={handleCreated}
           />
         </DialogContent>
       </Dialog>

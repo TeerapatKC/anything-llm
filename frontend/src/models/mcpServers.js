@@ -17,6 +17,21 @@ const MCPServers = {
   },
 
   /**
+   * Update and reconnect an existing remote MCP server.
+   * @param {string} currentName
+   * @param {{name: string, type: 'streamable'|'sse', url: string, headers?: Object}} config
+   */
+  updateRemote: async (currentName, config) => {
+    return await fetch(`${API_BASE}/mcp-servers/update`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ currentName, ...config }),
+    })
+      .then((res) => res.json())
+      .catch((e) => ({ success: false, error: e.message, server: null }));
+  },
+
+  /**
    * Forces a reload of the MCP Hypervisor and its servers
    * @returns {Promise<{success: boolean, error: string | null, servers: Array<{name: string, running: boolean, tools: Array<{name: string, description: string, inputSchema: Object}>, error: string | null, process: {pid: number, cmd: string} | null}>}>}
    */

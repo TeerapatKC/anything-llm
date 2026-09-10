@@ -69,6 +69,51 @@ function mcpServersEndpoints(app) {
     }
   );
 
+  app.post(
+    "/mcp-servers/update",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const body = reqBody(request);
+        const currentName = String(body.currentName || "").trim();
+        const { name, server } = normalizeRemoteMCPServer(body);
+        if (!currentName)
+          return response.status(400).json({
+            success: false,
+            error: "Current MCP server name is required.",
+            server: null,
+          });
+
+        const result = await new MCPCompatibilityLayer().updateRemoteServer(
+          currentName,
+          name,
+          server
+        );
+        if (!result.success)
+          return response.status(409).json({ ...result, server: null });
+
+        await EventLogs.logEvent(
+          "mcp_server_updated",
+          {
+            previousName: currentName,
+            serverName: name,
+            type: server.type,
+            url: server.url,
+          },
+          user?.id
+        );
+        return response.status(200).json(result);
+      } catch (error) {
+        return response.status(400).json({
+          success: false,
+          error: error.message,
+          server: null,
+        });
+      }
+    }
+  );
+
   app.get(
     "/mcp-servers/list",
     [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],

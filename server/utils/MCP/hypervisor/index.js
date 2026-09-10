@@ -198,6 +198,47 @@ class MCPHypervisor {
   }
 
   /**
+   * Replace an existing MCP server definition, optionally renaming it.
+   * @param {string} currentName
+   * @param {string} name
+   * @param {object} server
+   * @returns {{success: boolean, error: string|null}}
+   */
+  updateMCPServerInConfig(currentName, name, server) {
+    let config;
+    try {
+      config = JSON.parse(fs.readFileSync(this.mcpServerJSONPath, "utf8"));
+    } catch {
+      return {
+        success: false,
+        error: "MCP configuration file contains invalid JSON.",
+      };
+    }
+
+    if (!config.mcpServers?.[currentName]) {
+      return {
+        success: false,
+        error: `MCP server ${currentName} not found in config file.`,
+      };
+    }
+    if (name !== currentName && config.mcpServers[name]) {
+      return { success: false, error: `MCP server ${name} already exists.` };
+    }
+
+    delete config.mcpServers[currentName];
+    config.mcpServers[name] = server;
+    fs.writeFileSync(
+      this.mcpServerJSONPath,
+      JSON.stringify(config, null, 2),
+      "utf8"
+    );
+    this.log(
+      `MCP server ${currentName} updated${name !== currentName ? ` as ${name}` : ""}`
+    );
+    return { success: true, error: null };
+  }
+
+  /**
    * Update the suppressed tools for an MCP server
    * @param {string} serverName - The name of the MCP server
    * @param {string} toolName - The name of the tool to toggle
