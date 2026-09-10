@@ -176,6 +176,9 @@ export default {
     logs: () => {
       return "/settings/event-logs";
     },
+    monitoring: () => {
+      return "/settings/monitoring";
+    },
     privacy: () => {
       return "/settings/privacy";
     },

@@ -58,6 +58,10 @@ const DESTINATIONS = [
     needs: [PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW],
   },
   {
+    path: () => paths.settings.monitoring(),
+    needs: [PERMISSIONS.SYSTEM_MONITORING],
+  },
+  {
     path: () => paths.settings.embedChatWidgets(),
     needs: [PERMISSIONS.EMBEDS_MANAGE],
   },

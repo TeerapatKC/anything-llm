@@ -577,6 +577,19 @@ const System = {
         return [];
       });
   },
+  monitoring: async () => {
+    return await fetch(`${API_BASE}/system/monitoring`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not load monitoring dashboards.");
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { enabled: false, publicUrl: "", dashboards: [] };
+      });
+  },
   clearEventLogs: async () => {
     return await fetch(`${API_BASE}/system/event-logs`, {
       method: "DELETE",

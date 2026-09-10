@@ -318,6 +318,22 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/settings/monitoring",
+        lazy: async () => {
+          const { default: Monitoring } = await import(
+            "@/pages/GeneralSettings/Monitoring"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={Monitoring}
+                permissions={[PERMISSIONS.SYSTEM_MONITORING]}
+              />
+            ),
+          };
+        },
+      },
+      {
         path: "/settings/embed-chat-widgets",
         lazy: async () => {
           const { default: ChatEmbedWidgets } = await import(

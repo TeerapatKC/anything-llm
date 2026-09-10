@@ -51,6 +51,7 @@ const TRANSLATIONS = {
     "vector-database": "ベクターデータベース",
     embeds: "チャット埋め込み",
     "event-logs": "イベントログ",
+    monitoring: "モニタリング",
     privacy: "プライバシーとデータ",
     "ai-providers": "AIプロバイダー",
     agent: "代理",
@@ -734,6 +735,14 @@ const TRANSLATIONS = {
       user: "ユーザー",
       occurred: "発生日時",
     },
+  },
+  monitoring: {
+    title: "モニタリング",
+    description: "このインスタンスの Grafana ダッシュボードです。",
+    "open-grafana": "Grafana で開く",
+    unavailable: "このインスタンスでは Grafana が設定されていません。",
+    "unavailable-hint":
+      "ダッシュボードを埋め込むには GRAFANA_PUBLIC_URL を設定してください。",
   },
   privacy: {
     title: "プライバシーとデータ処理",

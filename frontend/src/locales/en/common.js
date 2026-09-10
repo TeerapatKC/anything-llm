@@ -63,6 +63,7 @@ const TRANSLATIONS = {
     "vector-database": "Vector Database",
     embeds: "Chat Embed",
     "event-logs": "Event Logs",
+    monitoring: "Monitoring",
     "scheduled-jobs": "Scheduled Jobs",
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
@@ -1093,6 +1094,14 @@ const TRANSLATIONS = {
       user: "User",
       occurred: "Occurred At",
     },
+  },
+  monitoring: {
+    title: "Monitoring",
+    description: "Live Grafana dashboards for this instance.",
+    "open-grafana": "Open in Grafana",
+    unavailable: "Grafana is not configured for this instance.",
+    "unavailable-hint":
+      "Set GRAFANA_PUBLIC_URL so dashboards can be embedded here.",
   },
   privacy: {
     title: "Privacy & Data-Handling",
