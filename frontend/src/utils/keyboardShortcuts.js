@@ -2,7 +2,7 @@ import paths from "./paths";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { userFromStorage } from "./request";
-import { PERMISSIONS, userCan } from "@/utils/permissions";
+import { PERMISSIONS, userCan, canAccessInstanceSettings } from "@/utils/permissions";
 
 export const KEYBOARD_SHORTCUTS_HELP_EVENT = "keyboard-shortcuts-help";
 export const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
@@ -20,7 +20,10 @@ export const isMac = navigator.platform.toUpperCase().indexOf("MAC") >= 0;
 export const SHORTCUTS = {
   "⌘ + ,": {
     translationKey: "settings",
-    action: ({ navigate }) => navigate(paths.settings.landing()),
+    action: ({ navigate }) => {
+      if (!canAccessInstanceSettings(userFromStorage())) return;
+      navigate(paths.settings.landing());
+    },
   },
   "⌘ + H": {
     translationKey: "home",
