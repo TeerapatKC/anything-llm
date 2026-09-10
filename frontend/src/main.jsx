@@ -353,7 +353,7 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/monitoring",
+        path: "/settings/dashboards",
         lazy: async () => {
           const { default: Monitoring } = await import(
             "@/pages/GeneralSettings/Monitoring"
@@ -365,6 +365,16 @@ const router = createBrowserRouter([
                 permissions={[PERMISSIONS.SYSTEM_MONITORING]}
               />
             ),
+          };
+        },
+      },
+      {
+        path: "/settings/monitoring",
+        lazy: async () => {
+          const { Navigate } = await import("react-router-dom");
+          const paths = (await import("@/utils/paths")).default;
+          return {
+            element: <Navigate to={paths.settings.dashboards()} replace />,
           };
         },
       },

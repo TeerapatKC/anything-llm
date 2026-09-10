@@ -18,6 +18,10 @@ import { PERMISSIONS, userCanAny } from "@/utils/permissions";
  */
 const DESTINATIONS = [
   {
+    path: () => paths.settings.dashboards(),
+    needs: [PERMISSIONS.SYSTEM_MONITORING],
+  },
+  {
     path: () => paths.settings.branding(),
     needs: [PERMISSIONS.SYSTEM_APPEARANCE],
   },
@@ -56,10 +60,6 @@ const DESTINATIONS = [
   {
     path: () => paths.settings.logs(),
     needs: [PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW],
-  },
-  {
-    path: () => paths.settings.monitoring(),
-    needs: [PERMISSIONS.SYSTEM_MONITORING],
   },
   {
     path: () => paths.settings.embedChatWidgets(),

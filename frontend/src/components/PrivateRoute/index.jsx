@@ -19,6 +19,7 @@ import {
 } from "@/utils/permissions";
 import UserMenu from "../UserMenu";
 import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
+import Unauthorized from "@/pages/401";
 
 /**
  * Refreshes the cached permission list before any gated UI renders. This runs on every
@@ -114,7 +115,8 @@ export function PermissionRoute({
 
   const user = userFromStorage();
   const allowed = userCanAny(permissions, user);
-  if (!isAuthd || !allowed) return <Navigate to={paths.home()} />;
+  if (!isAuthd) return <Navigate to={paths.login(true)} />;
+  if (!allowed) return <Unauthorized />;
 
   return hideUserMenu ? (
     <KeyboardShortcutWrapper>
@@ -148,8 +150,8 @@ export function SuperAdminRoute({ Component, hideUserMenu = false }) {
 
   if (requiresPasswordChange) return <Navigate to={paths.changePassword()} />;
 
-  if (!isAuthd || !isSuperAdmin(userFromStorage()))
-    return <Navigate to={paths.home()} />;
+  if (!isAuthd) return <Navigate to={paths.login(true)} />;
+  if (!isSuperAdmin(userFromStorage())) return <Unauthorized />;
 
   return hideUserMenu ? (
     <KeyboardShortcutWrapper>
