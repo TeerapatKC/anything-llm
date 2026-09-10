@@ -30,7 +30,6 @@ const {
   agentSkillWhitelistEndpoints,
 } = require("./endpoints/agentSkillWhitelist");
 const { agentFileServerEndpoints } = require("./endpoints/agentFileServer");
-const { browserExtensionEndpoints } = require("./endpoints/browserExtension");
 const { agentFlowEndpoints } = require("./endpoints/agentFlows");
 const { mcpServersEndpoints } = require("./endpoints/mcpServers");
 const { mobileEndpoints } = require("./endpoints/mobile");
@@ -121,9 +120,6 @@ smtpEndpoints(apiRouter);
 usecaseDataEndpoints(apiRouter);
 // Externally facing embedder endpoints
 embeddedEndpoints(apiRouter);
-
-// Externally facing browser extension endpoints
-browserExtensionEndpoints(apiRouter);
 
 if (process.env.NODE_ENV !== "development") {
   const { MetaGenerator } = require("./utils/boot/MetaGenerator");

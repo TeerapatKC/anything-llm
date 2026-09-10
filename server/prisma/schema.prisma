@@ -113,7 +113,6 @@ model users {
   password_reset_tokens        password_reset_tokens[]
   workspace_agent_invocations  workspace_agent_invocations[]
   slash_command_presets        slash_command_presets[]
-  browser_extension_api_keys   browser_extension_api_keys[]
   temporary_auth_tokens        temporary_auth_tokens[]
   system_prompt_variables      system_prompt_variables[]
   prompt_history               prompt_history[]
@@ -421,17 +420,6 @@ model slash_command_presets {
 
   @@unique([workspaceId, command])
   @@index([workspaceId])
-}
-
-model browser_extension_api_keys {
-  id            Int      @id @default(autoincrement())
-  key           String   @unique
-  user_id       Int?
-  createdAt     DateTime @default(now())
-  lastUpdatedAt DateTime @updatedAt
-  user          users?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
 }
 
 model temporary_auth_tokens {

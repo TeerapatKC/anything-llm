@@ -410,11 +410,6 @@ const SidebarOptions = ({ user = null, t }) => (
               href: paths.settings.slashCommands(),
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
-            {
-              btnText: t("settings.browser-extension"),
-              href: paths.settings.browserExtension(),
-              permissions: [PERMISSIONS.SYSTEM_BROWSER_EXTENSION],
-            },
           ]}
         />
       </>

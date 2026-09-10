@@ -64,7 +64,6 @@ const TRANSLATIONS = {
     "system-prompt-variables": "システムプロンプト変数",
     "slash-commands": "スラッシュコマンド",
     contact: "サポートに連絡",
-    "browser-extension": "ブラウザ拡張",
     smtp: "SMTP",
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
@@ -87,11 +86,6 @@ const TRANSLATIONS = {
       "tts-title": "テキスト読み上げ設定",
       "tts-description":
         "Nexus AI で使用するテキスト読み上げプロバイダーを選択します。対応している場合は、デフォルトでブラウザ内蔵サービスを使用します。",
-    },
-    "browser-extension": {
-      title: "ブラウザ拡張機能の API キー",
-      description:
-        "Nexus AI インスタンスに接続するブラウザ拡張機能の API キーを管理します。",
     },
     workspaces: {
       title: "インスタンスのワークスペース",
@@ -1463,7 +1457,8 @@ const TRANSLATIONS = {
       needsSetupLabel: "設定が必要",
       toolsNoResults: "該当するツールは見つかりませんでした。",
       recipientsLabel: "結果をメールで送信",
-      recipientsDescription: "ジョブが正常に完了したら結果をメールで送信します。",
+      recipientsDescription:
+        "ジョブが正常に完了したら結果をメールで送信します。",
       recipientType: {
         none: "オフ",
         workspace: "ワークスペース",
@@ -2268,18 +2263,6 @@ const TRANSLATIONS = {
       '"{{workspace}}" にアクセスできるユーザーを管理し、ワークスペースのロールを割り当てます。',
     "manage-users": "ユーザーを管理",
   },
-  "browser-extension-keys": {
-    table: {
-      "connection-string": "拡張機能の接続文字列",
-      "created-by": "作成者",
-      "created-at": "作成日時",
-      actions: "操作",
-    },
-    "empty-description":
-      "ブラウザ拡張機能をこのインスタンスに接続するためのキーを生成します。",
-    empty: "API キーはまだありません",
-    error: "エラー: {{error}}",
-  },
   sidebar: {
     workspaces: "ワークスペース",
     "new-workspace": "新しいワークスペース",
@@ -2542,12 +2525,6 @@ const TRANSLATIONS = {
       "このインスタンスを引き継げる相手がまだいません。所有権は有効な別のアカウントにのみ移譲できるため、まずアカウントを作成してください。",
     "new-workspace-modal":
       "このワークスペースを作成した直後は管理者のみが閲覧できます。作成後にユーザーを追加できます。",
-    "new-browser-extension-api-key-modal-3":
-      "拡張機能に「Connected to Nexus AI」と表示されれば接続成功です。表示されない場合は、接続文字列をコピーして拡張機能に手動で貼り付けてください。",
-    "new-browser-extension-api-key-modal-2":
-      "「API キーを作成」をクリックすると、Nexus AI がブラウザ拡張機能への自動接続を試みます。",
-    "new-browser-extension-api-key-modal":
-      "警告: この API キーはアカウントに紐づくすべてのワークスペースへのアクセスを許可します。共有には十分ご注意ください。",
     "code-snippet-modal":
       "ワークスペースの埋め込みチャットを、ウェブサイトの隅に表示されるヘルプデスクチャットのように動作させます。",
     "edit-embed-modal":

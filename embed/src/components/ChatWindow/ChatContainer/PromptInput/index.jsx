@@ -49,7 +49,7 @@ export default function PromptInput({
   };
 
   return (
-    <div className="allm-sticky allm-bottom-0 allm-z-10 allm-flex allm-w-full allm-min-w-0 allm-items-center allm-justify-center allm-overflow-visible allm-bg-white allm-px-4 allm-py-2">
+    <div className="allm-sticky allm-bottom-0 allm-z-10 allm-flex allm-w-full allm-min-w-0 allm-items-center allm-justify-center allm-overflow-visible allm-bg-white allm-px-4 allm-py-2 allm-md:px-5">
       <form
         onSubmit={handleSubmit}
         className="allm-flex allm-w-full allm-min-w-0 allm-items-center allm-justify-center"

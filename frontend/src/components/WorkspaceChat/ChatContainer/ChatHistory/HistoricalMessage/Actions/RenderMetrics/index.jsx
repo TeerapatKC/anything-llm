@@ -146,11 +146,6 @@ export default function RenderMetrics({ metrics = {} }) {
       <TooltipContent side="bottom" className="max-w-[250px] text-xs">
         {/* Repeated here because the line itself may be truncated. */}
         <span className="block font-mono break-words">{metricsString}</span>
-        <span className="mt-1 block">
-          {showMetricsAutomatically
-            ? "Click to only show metrics when hovering"
-            : "Click to show metrics as soon as they are available"}
-        </span>
       </TooltipContent>
     </Tooltip>
   );

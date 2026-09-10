@@ -68,7 +68,6 @@ const PERMISSIONS = {
   SYSTEM_EVENT_LOGS_CLEAR: "system.event_logs.clear",
 
   SYSTEM_API_KEYS: "system.api_keys",
-  SYSTEM_BROWSER_EXTENSION: "system.browser_extension",
   SYSTEM_MOBILE: "system.mobile",
 
   // People
@@ -359,12 +358,6 @@ const PERMISSION_CATALOG = [
     key: PERMISSIONS.SYSTEM_API_KEYS,
     label: "Manage developer API keys",
     description: "Issue and revoke instance-wide developer API keys.",
-    category: "system",
-  },
-  {
-    key: PERMISSIONS.SYSTEM_BROWSER_EXTENSION,
-    label: "Manage browser extension keys",
-    description: "Issue and revoke browser extension connection keys.",
     category: "system",
   },
   {
@@ -1162,7 +1155,6 @@ const SYSTEM_ROLES = [
       PERMISSIONS.DOCUMENTS_VIEW_ALL,
       PERMISSIONS.CHATS_VIEW_ALL,
       PERMISSIONS.SYSTEM_APPEARANCE,
-      PERMISSIONS.SYSTEM_BROWSER_EXTENSION,
     ],
     singleton: false,
     immutable: false,

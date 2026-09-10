@@ -514,22 +514,6 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/browser-extension",
-        lazy: async () => {
-          const { default: GeneralBrowserExtension } = await import(
-            "@/pages/GeneralSettings/BrowserExtensionApiKey"
-          );
-          return {
-            element: (
-              <PermissionRoute
-                Component={GeneralBrowserExtension}
-                permissions={[PERMISSIONS.SYSTEM_BROWSER_EXTENSION]}
-              />
-            ),
-          };
-        },
-      },
-      {
         path: "/settings/workspace-chats",
         lazy: async () => {
           const { default: GeneralChats } = await import(

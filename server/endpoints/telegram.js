@@ -112,9 +112,11 @@ function telegramEndpoints(app) {
         const service = new TelegramBotService();
         await service.start({ ...storedConfig, bot_token: String(bot_token) });
 
-        await EventLogs.logEvent("telegram_bot_connected", {
-          bot_username: verification.username,
-        });
+        await EventLogs.logEvent(
+          "telegram_bot_connected",
+          { bot_username: verification.username },
+          (await userFromSession(request, response))?.id
+        );
         return response.status(200).json({
           success: true,
           bot_username: verification.username,
@@ -132,7 +134,7 @@ function telegramEndpoints(app) {
       validatedRequest,
       userPermissionValid([PERMISSIONS.INTEGRATIONS_TELEGRAM]),
     ],
-    async (_request, response) => {
+    async (request, response) => {
       try {
         const service = new TelegramBotService();
         await service.stop();
@@ -140,7 +142,11 @@ function telegramEndpoints(app) {
         // Links are bound to a bot that no longer exists. Leaving them behind
         // would silently re-admit every chat the moment a new bot is connected.
         await TelegramUser.deleteAll();
-        await EventLogs.logEvent("telegram_bot_disconnected");
+        await EventLogs.logEvent(
+          "telegram_bot_disconnected",
+          {},
+          (await userFromSession(request, response))?.id
+        );
         return response.status(200).json({ success: true });
       } catch (e) {
         console.error(e.message, e);
@@ -233,10 +239,13 @@ function telegramEndpoints(app) {
           key: "unlink.by_admin",
         });
 
-        await EventLogs.logEvent("telegram_user_unlinked", {
-          chatId: String(chatId),
-          username: link.user?.username || null,
-        });
+        // The admin who cut the link, not the person whose chat was unlinked -
+        // that one is already named in the metadata.
+        await EventLogs.logEvent(
+          "telegram_user_unlinked",
+          { chatId: String(chatId), username: link.user?.username || null },
+          (await userFromSession(request, response))?.id
+        );
         return response.status(200).json({ success: true });
       } catch (e) {
         console.error(e.message, e);

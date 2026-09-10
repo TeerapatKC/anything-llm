@@ -140,10 +140,14 @@ function apiOpenAICompatibleEndpoints(app) {
             temperature: Number(temperature),
           });
 
-          await EventLogs.logEvent("api_sent_chat", {
-            workspaceName: workspace?.name,
-            chatModel: workspace?.chatModel || "System Default",
-          });
+          await EventLogs.logEvent(
+            "api_sent_chat",
+            {
+              workspaceName: workspace?.name,
+              chatModel: workspace?.chatModel || "System Default",
+            },
+            response.locals.apiKeyOwner?.id
+          );
           return response.status(200).json(chatResult);
         }
 
@@ -162,10 +166,14 @@ function apiOpenAICompatibleEndpoints(app) {
           temperature: Number(temperature),
           response,
         });
-        await EventLogs.logEvent("api_sent_chat", {
-          workspaceName: workspace?.name,
-          chatModel: workspace?.chatModel || "System Default",
-        });
+        await EventLogs.logEvent(
+          "api_sent_chat",
+          {
+            workspaceName: workspace?.name,
+            chatModel: workspace?.chatModel || "System Default",
+          },
+          response.locals.apiKeyOwner?.id
+        );
         response.end();
       } catch (e) {
         console.error(e.message, e);

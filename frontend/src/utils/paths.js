@@ -191,9 +191,6 @@ export default {
     embedChatWidgets: () => {
       return `/settings/embed-chat-widgets`;
     },
-    browserExtension: () => {
-      return `/settings/browser-extension`;
-    },
     telegram: () => {
       return `/settings/external-connections/telegram`;
     },

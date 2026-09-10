@@ -4,6 +4,8 @@ const {
 } = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
+const { EventLogs } = require("../models/eventLogs");
+const { userFromSession } = require("../utils/http");
 const { Workspace } = require("../models/workspace");
 const {
   resolveConfigForWorkspace,
@@ -18,6 +20,7 @@ function agentFlowEndpoints(app) {
     [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const { name, config, uuid } = request.body;
 
         if (!name || !config) {
@@ -33,6 +36,14 @@ function agentFlowEndpoints(app) {
             .status(200)
             .json({ flow: null, error: flow.error || "Failed to save flow" });
 
+        // One route serves both cases; an incoming uuid is what separates editing an
+        // existing flow from creating one. A flow runs agent steps on its own, so
+        // both are worth telling apart in the log.
+        await EventLogs.logEvent(
+          uuid ? "agent_flow_updated" : "agent_flow_created",
+          { flowName: name, uuid: uuid || flow.uuid || null },
+          user?.id
+        );
         return response.status(200).json({
           success: true,
           flow,
@@ -133,7 +144,9 @@ function agentFlowEndpoints(app) {
     [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const { uuid } = request.params;
+        const flow = AgentFlows.loadFlow(uuid);
         const { success } = AgentFlows.deleteFlow(uuid);
 
         if (!success) {
@@ -143,6 +156,11 @@ function agentFlowEndpoints(app) {
           });
         }
 
+        await EventLogs.logEvent(
+          "agent_flow_deleted",
+          { flowName: flow?.name || "Unknown Flow", uuid },
+          user?.id
+        );
         return response.status(200).json({
           success,
         });
@@ -262,6 +280,7 @@ function agentFlowEndpoints(app) {
     [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const { uuid } = request.params;
         const { active } = request.body;
 
@@ -281,6 +300,11 @@ function agentFlowEndpoints(app) {
             .json({ success: false, error: "Failed to update flow" });
         }
 
+        await EventLogs.logEvent(
+          "agent_flow_toggled",
+          { flowName: flow.name, uuid, active: !!active },
+          user?.id
+        );
         return response.json({ success: true, flow });
       } catch (error) {
         console.error("Error toggling flow:", error);

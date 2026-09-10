@@ -7,6 +7,7 @@ const {
 } = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
+const { EventLogs } = require("../models/eventLogs");
 
 function modelRouterEndpoints(app) {
   if (!app) return;
@@ -61,6 +62,17 @@ function modelRouterEndpoints(app) {
         );
 
         if (error) return response.status(400).json({ router, error });
+
+        // A router decides which model answers a given chat, so changing one moves
+        // spend and data between providers without anyone touching a workspace.
+        await EventLogs.logEvent(
+          "model_router_created",
+          {
+            routerName: router?.name || "Unknown Router",
+            routerId: router?.id,
+          },
+          user?.id
+        );
         return response.status(200).json({ router });
       } catch (e) {
         console.error(e);
@@ -74,11 +86,22 @@ function modelRouterEndpoints(app) {
     [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const { id } = request.params;
         const data = reqBody(request);
         const { router, error } = await ModelRouter.update(Number(id), data);
         if (error) return response.status(400).json({ router, error });
         ModelRouterService.invalidateRouter(Number(id));
+
+        await EventLogs.logEvent(
+          "model_router_updated",
+          {
+            routerName: router?.name || "Unknown Router",
+            routerId: Number(id),
+            fields: Object.keys(data).sort(),
+          },
+          user?.id
+        );
         return response.status(200).json({ router });
       } catch (e) {
         console.error(e);
@@ -92,13 +115,24 @@ function modelRouterEndpoints(app) {
     [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const { id } = request.params;
+        const router = await ModelRouter.get({ id: Number(id) });
         const success = await ModelRouter.delete(Number(id));
         if (!success)
           return response
             .status(400)
             .json({ success: false, error: "Failed to delete router." });
         ModelRouterService.invalidateRouter(Number(id));
+
+        await EventLogs.logEvent(
+          "model_router_deleted",
+          {
+            routerName: router?.name || "Unknown Router",
+            routerId: Number(id),
+          },
+          user?.id
+        );
         return response.status(200).json({ success: true });
       } catch (e) {
         console.error(e);

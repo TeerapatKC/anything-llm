@@ -130,7 +130,6 @@ const FACTORY_WIPE_TABLES = [
   "recovery_codes",
   "password_reset_tokens",
   "temporary_auth_tokens",
-  "browser_extension_api_keys",
   "desktop_mobile_devices",
   "api_keys",
   "users",

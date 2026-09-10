@@ -219,9 +219,11 @@ function apiAdminEndpoints(app) {
             .status(400)
             .json({ success: false, error: "Failed to delete the user." });
 
-        await EventLogs.logEvent("api_user_deleted", {
-          userName: user.username,
-        });
+        await EventLogs.logEvent(
+          "api_user_deleted",
+          { userName: user.username },
+          response.locals.apiKeyOwner?.id
+        );
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.error(e);

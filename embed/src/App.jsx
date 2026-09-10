@@ -43,9 +43,10 @@ export default function App() {
           style={{
             maxWidth: windowWidth,
             maxHeight: windowHeight,
-            height: "100%",
+            width: "calc(100% - 2rem)",
+            height: "calc(100% - 2rem)",
           }}
-          className={`allm-pointer-events-auto allm-h-full allm-w-full allm-overflow-hidden allm-bg-white allm-fixed allm-bottom-0 allm-right-0 allm-mb-4 allm-md:mr-4 allm-rounded-xl allm-border allm-border-slate-200 allm-shadow-[0_20px_50px_rgba(15,23,42,0.18)] allm-flex allm-flex-col ${positionClasses[position]}`}
+          className={`allm-pointer-events-auto allm-overflow-hidden allm-bg-white allm-fixed allm-bottom-0 allm-right-0 allm-mb-4 allm-md:mr-4 allm-rounded-xl allm-border allm-border-slate-200 allm-shadow-[0_20px_50px_rgba(15,23,42,0.18)] allm-flex allm-flex-col ${positionClasses[position]}`}
           id="nexus-ai-chat"
         >
           {isChatOpen && (

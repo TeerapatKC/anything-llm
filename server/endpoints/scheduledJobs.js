@@ -5,7 +5,8 @@ const {
   userPermissionValid,
 } = require("../utils/middleware/authorizedRequest");
 const { PERMISSIONS } = require("../utils/permissions");
-const { reqBody, safeJsonParse } = require("../utils/http");
+const { reqBody, safeJsonParse, userFromSession } = require("../utils/http");
+const { EventLogs } = require("../models/eventLogs");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
 const { isSendingEnabled, requireSmtpReady } = require("../utils/smtp");
 
@@ -202,6 +203,7 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const {
           name,
           prompt,
@@ -271,6 +273,15 @@ function scheduledJobEndpoints(app) {
         }
 
         backgroundService.addScheduledJob(job);
+
+        // A scheduled job runs an agent prompt unattended and emails the result, so
+        // its whole lifecycle belongs in the audit trail. The prompt itself is left
+        // out; the job id is enough to look it up, and prompts can be long.
+        await EventLogs.logEvent(
+          "scheduled_job_created",
+          { jobName: job.name, jobId: job.id, schedule: job.schedule },
+          user?.id
+        );
         return response.status(201).json({ job, error: null });
       } catch (e) {
         console.error(e.message, e);
@@ -315,6 +326,7 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const {
           name,
           prompt,
@@ -388,6 +400,15 @@ function scheduledJobEndpoints(app) {
 
         await backgroundService.syncScheduledJob(job.id);
 
+        await EventLogs.logEvent(
+          "scheduled_job_updated",
+          {
+            jobName: job.name,
+            jobId: job.id,
+            fields: Object.keys(updates).sort(),
+          },
+          user?.id
+        );
         return response.status(200).json({ job, error: null });
       } catch (e) {
         console.error(e.message, e);
@@ -406,9 +427,20 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
+        const job = await ScheduledJob.get({ id: Number(request.params.id) });
         backgroundService.removeScheduledJob(Number(request.params.id));
 
         const success = await ScheduledJob.delete(Number(request.params.id));
+        if (success)
+          await EventLogs.logEvent(
+            "scheduled_job_deleted",
+            {
+              jobName: job?.name || "Unknown Job",
+              jobId: Number(request.params.id),
+            },
+            user?.id
+          );
         return response.status(200).json({ success });
       } catch (e) {
         console.error(e.message, e);
@@ -427,6 +459,7 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const job = await ScheduledJob.get({
           id: Number(request.params.id),
         });
@@ -454,6 +487,11 @@ function scheduledJobEndpoints(app) {
 
         await backgroundService.syncScheduledJob(job.id);
 
+        await EventLogs.logEvent(
+          "scheduled_job_toggled",
+          { jobName: job.name, jobId: job.id, enabled: !job.enabled },
+          user?.id
+        );
         return response.status(200).json({ job: updated });
       } catch (e) {
         console.error(e.message, e);
@@ -472,6 +510,7 @@ function scheduledJobEndpoints(app) {
     ],
     async (request, response) => {
       try {
+        const user = await userFromSession(request, response);
         const job = await ScheduledJob.get({
           id: Number(request.params.id),
         });
@@ -480,6 +519,14 @@ function scheduledJobEndpoints(app) {
         }
 
         const run = await backgroundService.enqueueScheduledJob(job.id);
+
+        // Recorded even when the run is skipped, because "somebody pressed run" is
+        // the fact being audited - a queue that refused it is part of that story.
+        await EventLogs.logEvent(
+          "scheduled_job_triggered",
+          { jobName: job.name, jobId: job.id, skipped: !run },
+          user?.id
+        );
         return response
           .status(200)
           .json({ success: true, skipped: !run, error: null });
