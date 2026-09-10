@@ -6,16 +6,13 @@ import paths from "@/utils/paths";
 import { AUTH_TIMESTAMP, AUTH_TOKEN, AUTH_USER } from "@/utils/constants";
 import { userFromStorage } from "@/utils/request";
 import System from "@/models/system";
-import Role from "@/models/role";
 import {
   userCanAny,
   workspaceCanAny,
-  storePermissions,
-  storeWorkspacePermissions,
   clearPermissions,
-  storeRoleLabel,
   clearRoleLabel,
   isSuperAdmin,
+  refreshSessionPermissions,
 } from "@/utils/permissions";
 import UserMenu from "../UserMenu";
 import { KeyboardShortcutWrapper } from "@/utils/keyboardShortcuts";
@@ -27,12 +24,7 @@ import Unauthorized from "@/pages/401";
  * and so sessions predating the permission system are not left denied everything.
  */
 async function hydratePermissions() {
-  if (!userFromStorage()) return;
-  const { permissions, workspacePermissions, roleDisplayName } =
-    await Role.myPermissions();
-  storePermissions(permissions);
-  storeWorkspacePermissions(workspacePermissions);
-  storeRoleLabel(roleDisplayName);
+  await refreshSessionPermissions();
 }
 
 // Every page is permissioned off the signed-in user's role - there is no unauthenticated

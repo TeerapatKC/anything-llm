@@ -179,6 +179,30 @@ export function storeWorkspacePermissions(byWorkspaceId = {}) {
 }
 
 /**
+ * Re-fetches and caches instance + workspace permissions for the signed-in user.
+ * Call after creating a workspace or changing memberships: those flows do not remount
+ * PrivateRoute, so the local cache would otherwise omit the new slug and the chat UI
+ * would treat a real member as a non-member until a full reload.
+ * @returns {Promise<{permissions: string[], workspacePermissions: Record<string, string[]>, roleDisplayName: string|null}>}
+ */
+export async function refreshSessionPermissions() {
+  if (!userFromStorage()) {
+    return {
+      permissions: [],
+      workspacePermissions: {},
+      roleDisplayName: null,
+    };
+  }
+  const { default: Role } = await import("@/models/role");
+  const { permissions, workspacePermissions, roleDisplayName } =
+    await Role.myPermissions();
+  storePermissions(permissions);
+  storeWorkspacePermissions(workspacePermissions);
+  storeRoleLabel(roleDisplayName);
+  return { permissions, workspacePermissions, roleDisplayName };
+}
+
+/**
  * Using a workspace, as opposed to running it: holding a conversation and owning
  * the threads it lives in. Mirrors `WORKSPACE_USAGE_PERMISSION_KEYS` on the
  * server - an instance operator is granted every *other* workspace permission
