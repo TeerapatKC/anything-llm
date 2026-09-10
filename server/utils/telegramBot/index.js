@@ -14,7 +14,7 @@ const {
 const { TelegramUser } = require("../../models/telegramUser");
 const { resolveSession } = require("./utils/access");
 const { sendLinkInstructions } = require("./utils/linking");
-const { resolveTabAction, removeTabKeyboard } = require("./utils/keyboard");
+const { resolveTabAction, linkKeyboard } = require("./utils/keyboard");
 const { translatorFor, t, CATALOGS } = require("./utils/i18n");
 const { BOT_COMMANDS } = require("./utils/commands");
 const { handleKeyboardQueryCallback } = require("./utils/navigation");
@@ -24,6 +24,7 @@ const {
   documentToText,
   photoToAttachment,
 } = require("./utils/media");
+const { isTelegramPollingConflict } = require("./pollingErrors");
 
 class TelegramBotService {
   static _instance = null;
@@ -54,7 +55,6 @@ class TelegramBotService {
     "bad gateway",
     "flood",
     "429",
-    "409",
     "500",
     "501",
     "502",
@@ -226,6 +226,16 @@ class TelegramBotService {
     // Ignore errors while already waiting to retry
     if (this.#pollingRetry.timer) return;
     this.#log("Polling error:", error.message);
+
+    // Telegram allows exactly one getUpdates consumer for a bot token. Retrying
+    // this as a network outage creates an endless backoff loop and noisy deploys;
+    // stop only this integration and leave the primary NexusAI server healthy.
+    if (isTelegramPollingConflict(error)) {
+      this.#log(
+        "Another instance is already polling this bot token. Telegram polling is disabled on this instance; NexusAI will continue running."
+      );
+      return await this.stop();
+    }
 
     // 401 = invalid token, cleanup and stop
     if (error.message?.includes("401")) {
@@ -460,13 +470,14 @@ class TelegramBotService {
     this.abortChat(Number(chatId));
     if (this.#bot && notice) {
       try {
-        // The button bar goes with the link - it would only lead to commands
-        // this chat can no longer run.
+        // The tab bar goes with the link - it would only lead to commands this
+        // chat can no longer run - and is replaced by the button that offers the
+        // one thing left to do.
         await this.#bot.sendMessage(
           chatId,
           translatorFor(session)(notice.key),
           {
-            reply_markup: removeTabKeyboard(),
+            reply_markup: linkKeyboard(session?.language),
           }
         );
       } catch {

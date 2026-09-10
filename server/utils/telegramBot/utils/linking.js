@@ -42,7 +42,13 @@ async function sendLinkInstructions(bot, msg) {
   ].join("\n");
 
   try {
-    await bot.sendMessage(msg.chat.id, text, { parse_mode: "HTML" });
+    // Carries the one-button bar so the instructions are not the only way back -
+    // a tap re-sends them without anyone having to remember the command.
+    const { linkKeyboard } = require("./keyboard");
+    await bot.sendMessage(msg.chat.id, text, {
+      parse_mode: "HTML",
+      reply_markup: linkKeyboard(),
+    });
   } catch {
     // User may have blocked the bot
   }

@@ -61,6 +61,8 @@ module.exports = {
   "menu.tab_new_thread": "🆕 New thread",
   "menu.tab_status": "ℹ️ Status",
   "menu.tab_language": "🌐 Reply language",
+  "menu.tab_link": "🔗 Link my account",
+  "menu.link_placeholder": "Tap the button to link your account",
 
   // ---------------------------------------------------------- workspaces
   "workspaces.none":

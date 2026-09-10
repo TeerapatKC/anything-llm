@@ -57,7 +57,7 @@ export default function ToolApprovalRequest({
   }
 
   return (
-    <div className="flex justify-center w-full my-1 pr-4">
+    <div className="flex justify-center w-full my-1 px-4 md:pl-0">
       <div className="w-full flex flex-col">
         <div className="w-full">
           <div

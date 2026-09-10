@@ -37,6 +37,10 @@ services:
       - "3001:3001"
     env_file:
       - .env
+    environment:
+      # This deployment is intended to run unattended. Keep this overrideable from
+      # docker/.env, while allowing all agent skills by default as requested.
+      AGENT_AUTO_APPROVED_SKILLS: "${AGENT_AUTO_APPROVED_SKILLS:-<all>}"
     networks:
       - nexusai
     extra_hosts:

@@ -200,24 +200,6 @@ module.exports.CreateExcelFile = {
                 `${this.caller}: Creating Excel file "${filename}" with ${sheetCount} sheet(s)`
               );
 
-              if (this.super.requestToolApproval) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: {
-                    filename,
-                    sheetCount,
-                    sheetNames: sheetDefinitions.map((s) => s.name),
-                  },
-                  description: `Create Excel spreadsheet "${filename}" with ${sheetCount} sheet(s)`,
-                });
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               const ExcelJS = await import("exceljs");
               const workbook = new ExcelJS.default.Workbook();
 
@@ -329,13 +311,20 @@ module.exports.CreateExcelFile = {
                 displayFilename,
               });
 
-              this.super.socket.send("fileDownloadCard", {
-                filename: savedFile.displayFilename,
-                storageFilename: savedFile.filename,
-                fileSize: savedFile.fileSize,
-              });
+              // Awaited, and ahead of the socket event: the download button this
+              // sends reaches the browser enabled, so the row that authorizes the
+              // file it names has to exist first.
+              await createFilesLib.registerOutput(
+                this.super,
+                "ExcelFileDownload",
+                {
+                  filename: savedFile.displayFilename,
+                  storageFilename: savedFile.filename,
+                  fileSize: savedFile.fileSize,
+                }
+              );
 
-              createFilesLib.registerOutput(this.super, "ExcelFileDownload", {
+              this.super.socket.send("fileDownloadCard", {
                 filename: savedFile.displayFilename,
                 storageFilename: savedFile.filename,
                 fileSize: savedFile.fileSize,

@@ -68,20 +68,6 @@ module.exports.CreatePdfFile = {
               const hasExtension = /\.pdf$/i.test(filename);
               if (!hasExtension) filename = `${filename}.pdf`;
 
-              if (this.super.requestToolApproval) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: { filename },
-                  description: `Create PDF document "${filename}"`,
-                });
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               this.super.introspect(
                 `${this.caller}: Creating PDF document "${filename}"`
               );
@@ -106,13 +92,20 @@ module.exports.CreatePdfFile = {
                 displayFilename,
               });
 
-              this.super.socket.send("fileDownloadCard", {
-                filename: savedFile.displayFilename,
-                storageFilename: savedFile.filename,
-                fileSize: savedFile.fileSize,
-              });
+              // Awaited, and ahead of the socket event: the download button this
+              // sends reaches the browser enabled, so the row that authorizes the
+              // file it names has to exist first.
+              await createFilesLib.registerOutput(
+                this.super,
+                "PdfFileDownload",
+                {
+                  filename: savedFile.displayFilename,
+                  storageFilename: savedFile.filename,
+                  fileSize: savedFile.fileSize,
+                }
+              );
 
-              createFilesLib.registerOutput(this.super, "PdfFileDownload", {
+              this.super.socket.send("fileDownloadCard", {
                 filename: savedFile.displayFilename,
                 storageFilename: savedFile.filename,
                 fileSize: savedFile.fileSize,

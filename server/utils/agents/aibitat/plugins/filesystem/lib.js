@@ -8,6 +8,13 @@ const { humanFileSize } = require("../../../../helpers");
 /**
  * Manages filesystem operations with security constraints.
  * Ensures all file operations stay within allowed directories.
+ *
+ * The skills built on this no longer ask for tool approval before writing.
+ * What keeps them safe is the allow-list below, not a prompt: every path the
+ * model supplies goes through `validatePath`, which resolves it and throws
+ * unless it lands inside `storage/nexusai-fs`. Nothing configures that list to
+ * anything wider, so the agent cannot reach the rest of the machine whether a
+ * person is watching or not.
  */
 class FilesystemManager {
   static FILE_READ_CHUNK_SIZE = 1024;

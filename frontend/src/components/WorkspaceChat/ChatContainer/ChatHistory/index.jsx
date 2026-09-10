@@ -391,9 +391,20 @@ function buildMessages({
     if (props.type === "rechartVisualize" && !!props.content) {
       acc.push(<Chartable key={props.uuid} props={props} />);
     } else if (props.type === "fileDownloadCard" && !!props.content) {
-      acc.push(<FileDownloadCard key={props.uuid} props={props} />);
+      // Padded here rather than inside the card: replayed from history it is
+      // nested in a wrapper that already insets it, and would end up twice
+      // indented.
+      acc.push(
+        <div key={props.uuid} className="px-4 md:pl-0">
+          <FileDownloadCard props={props} />
+        </div>
+      );
     } else if (props.type === "scheduledJobCreated" && !!props.content) {
-      acc.push(<ScheduledJobCreatedCard key={props.uuid} props={props} />);
+      acc.push(
+        <div key={props.uuid} className="px-4 md:pl-0">
+          <ScheduledJobCreatedCard props={props} />
+        </div>
+      );
     } else if (props.type === "imageGenerationPending") {
       acc.push(
         <ImageGenerationPending

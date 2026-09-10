@@ -138,20 +138,6 @@ module.exports.CreateDocxFile = {
                 content.match(/^#\s+(.+)$/m)?.[1] ||
                 displayFilename.replace(/\.docx$/i, "");
 
-              if (this.super.requestToolApproval) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: { filename: displayFilename, title: documentTitle },
-                  description: `Create Word document "${displayFilename}"`,
-                });
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               this.super.introspect(
                 `${this.caller}: Creating Word document "${displayFilename}"${includeTitlePage ? " with title page" : ""}`
               );
@@ -267,13 +253,20 @@ module.exports.CreateDocxFile = {
                 displayFilename,
               });
 
-              this.super.socket.send("fileDownloadCard", {
-                filename: savedFile.displayFilename,
-                storageFilename: savedFile.filename,
-                fileSize: savedFile.fileSize,
-              });
+              // Awaited, and ahead of the socket event: the download button this
+              // sends reaches the browser enabled, so the row that authorizes the
+              // file it names has to exist first.
+              await createFilesLib.registerOutput(
+                this.super,
+                "DocxFileDownload",
+                {
+                  filename: savedFile.displayFilename,
+                  storageFilename: savedFile.filename,
+                  fileSize: savedFile.fileSize,
+                }
+              );
 
-              createFilesLib.registerOutput(this.super, "DocxFileDownload", {
+              this.super.socket.send("fileDownloadCard", {
                 filename: savedFile.displayFilename,
                 storageFilename: savedFile.filename,
                 fileSize: savedFile.fileSize,

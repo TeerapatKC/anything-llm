@@ -92,21 +92,6 @@ module.exports.FilesystemEditFile = {
                 `${this.caller}: ${dryRun ? "Previewing" : "Applying"} ${edits.length} edit(s) to ${filePath}`
               );
 
-              if (this.super.requestToolApproval && !dryRun) {
-                const approval = await this.super.requestToolApproval({
-                  skillName: this.name,
-                  payload: { path: filePath, edits, dryRun },
-                  description: "Edit a file",
-                });
-
-                if (!approval.approved) {
-                  this.super.introspect(
-                    `${this.caller}: User rejected the ${this.name} request.`
-                  );
-                  return approval.message;
-                }
-              }
-
               const result = await filesystem.applyFileEdits(
                 validPath,
                 edits,

@@ -7,6 +7,13 @@ const { v4: uuidv4 } = require("uuid");
  * Manages file creation operations for binary document formats.
  * Handles both browser download and filesystem write modes.
  * All generated files are saved to storage/generated-files directory.
+ *
+ * The skills built on this do not ask for tool approval, unlike the filesystem
+ * skills. Nothing here touches a path the caller chose: the name the model
+ * supplies is only a download label, and the file itself is written as
+ * `{type}-{uuid}.{ext}` inside the directory above. Producing a file the person
+ * can then choose to download is the thing they asked for, so a prompt in front
+ * of it only adds a click.
  */
 class CreateFilesManager {
   #outputDirectory = null;
@@ -151,11 +158,19 @@ class CreateFilesManager {
   /**
    * Registers an output to be persisted in the chat history.
    * This allows files and other outputs to be re-rendered when viewing historical messages.
+   *
+   * Also writes the output to the chat's DB row immediately, awaited, rather
+   * than leaving it to whichever code eventually saves the finished turn. A
+   * caller should await this and only send the "fileDownloadCard" (or
+   * equivalent) socket event afterward - otherwise the download button can
+   * reach the browser before the row that authorizes it exists, and a chat
+   * that errors before it finishes never saves it at all.
    * @param {object} aibitat - The aibitat instance to register the output on
    * @param {string} type - The type of output (e.g., "PptxFileDownload")
    * @param {object} payload - The output payload data
+   * @returns {Promise<void>}
    */
-  registerOutput(aibitat, type, payload) {
+  async registerOutput(aibitat, type, payload) {
     if (!aibitat) {
       console.warn(
         "[CreateFilesManager] Cannot register output - aibitat instance not provided"
@@ -171,6 +186,16 @@ class CreateFilesManager {
     console.log(
       `[CreateFilesManager] Registered output: type=${type}, total pending=${aibitat._pendingOutputs.length}`
     );
+
+    if (aibitat.trackedChatId) {
+      const {
+        WorkspaceChats,
+      } = require("../../../../../models/workspaceChats");
+      await WorkspaceChats.appendOutput(aibitat.trackedChatId, {
+        type,
+        payload,
+      });
+    }
   }
 
   /**

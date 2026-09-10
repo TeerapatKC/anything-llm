@@ -1,5 +1,6 @@
 const prisma = require("../utils/prisma");
 const { safeJSONStringify } = require("../utils/helpers/chat/responses");
+const { safeJsonParse } = require("../utils/http");
 
 const WorkspaceChats = {
   new: async function ({
@@ -344,6 +345,60 @@ const WorkspaceChats = {
       return { chats: null, message: error.message };
     }
   },
+  /**
+   * Attach a generated-file (or similar) output to a chat as soon as it exists,
+   * rather than waiting for the turn's closing text to finish. The download
+   * endpoints authorize a file by finding it inside a chat's persisted
+   * `response.outputs` - previously that only happened once the whole reply
+   * was saved, so a card shown while the model was still writing its closing
+   * remarks pointed at a file the server could not yet find, and one shown on a
+   * turn that was aborted or errored right after the tool ran never got saved
+   * at all. This lets the reference exist the moment the file does.
+   *
+   * `include` is set true here too: the search these outputs are found by
+   * filters on it, and it otherwise stays false until the same reveal that
+   * currently never runs when a turn simply finishes normally with a file in
+   * it.
+   * @param {number|null} chatId
+   * @param {{type: string, payload: object}} output
+   * @returns {Promise<boolean>}
+   */
+  appendOutput: async function (chatId, output) {
+    if (!chatId || !output?.payload?.storageFilename) return false;
+    try {
+      const existing = await prisma.workspace_chats.findUnique({
+        where: { id: Number(chatId) },
+      });
+      if (!existing) return false;
+
+      const response = safeJsonParse(existing.response, {});
+      const outputs = Array.isArray(response.outputs) ? response.outputs : [];
+      // Idempotent: a retried tool call (or the plugin being invoked twice)
+      // must not pile up duplicate references to the same file.
+      if (
+        outputs.some(
+          (o) => o?.payload?.storageFilename === output.payload.storageFilename
+        )
+      )
+        return true;
+
+      await prisma.workspace_chats.update({
+        where: { id: Number(chatId) },
+        data: {
+          response: safeJSONStringify({
+            ...response,
+            outputs: [...outputs, output],
+          }),
+          include: true,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error(error.message);
+      return false;
+    }
+  },
+
   upsert: async function (
     chatId = null,
     data = {

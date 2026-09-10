@@ -13,7 +13,7 @@ export default function ModelRouteNotification({ routedTo, isStreaming }) {
   if (!routedTo) return null;
 
   return (
-    <div className="flex w-full my-2">
+    <div className="flex w-full my-2 px-4 md:pl-0">
       <div className="rounded-[20px] border border-zinc-700 light:border-slate-300 px-4 py-2 flex items-center gap-2">
         <RouterIcon isStreaming={isStreaming} />
         <span className="text-sm text-zinc-400 light:text-slate-600 whitespace-nowrap">

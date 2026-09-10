@@ -27,6 +27,15 @@ const TAB_ROWS = [
 ];
 
 /**
+ * What an unlinked chat sees instead.
+ *
+ * The four tabs all lead to commands that need an account behind them, so
+ * showing them before a link exists offers four ways to be told no. This is the
+ * only thing such a chat can usefully do, so it is the only button it gets.
+ */
+const LINK_ROWS = [[{ key: "menu.tab_link", command: "link" }]];
+
+/**
  * Every label in every language, mapped to the command it stands for.
  *
  * A bar drawn in Thai is still sitting in the chat after someone switches to
@@ -36,7 +45,7 @@ const TAB_ROWS = [
  */
 const LABELS_TO_COMMAND = new Map();
 for (const lang of Object.keys(CATALOGS)) {
-  for (const button of TAB_ROWS.flat())
+  for (const button of [...TAB_ROWS.flat(), ...LINK_ROWS.flat()])
     LABELS_TO_COMMAND.set(t(lang, button.key), button.command);
 }
 
@@ -58,7 +67,29 @@ function tabKeyboard(lang = null) {
 }
 
 /**
+ * The reply_markup for a chat with no account behind it: one button, which asks
+ * how to link. Sent wherever the link is missing or has just been taken away, so
+ * the bar always matches what the chat can actually do.
+ * @param {string|null} [lang]
+ * @returns {object}
+ */
+function linkKeyboard(lang = null) {
+  return {
+    keyboard: LINK_ROWS.map((row) =>
+      row.map((button) => ({ text: t(lang, button.key) }))
+    ),
+    resize_keyboard: true,
+    is_persistent: true,
+    one_time_keyboard: false,
+    input_field_placeholder: t(lang, "menu.link_placeholder"),
+  };
+}
+
+/**
  * The reply_markup that takes the tab bar away again.
+ *
+ * Only `/menu off` still wants this - losing the link swaps the bar for
+ * `linkKeyboard` rather than leaving the chat with nothing to tap.
  * @returns {object}
  */
 function removeTabKeyboard() {
@@ -83,8 +114,10 @@ function resolveTabAction(text) {
 
 module.exports = {
   TAB_ROWS,
+  LINK_ROWS,
   LABELS_TO_COMMAND,
   tabKeyboard,
+  linkKeyboard,
   removeTabKeyboard,
   resolveTabAction,
 };

@@ -205,6 +205,11 @@ const chatHistory = {
         const partialReply = [...(aibitat.chats ?? [])]
           .reverse()
           .find((chat) => chat.from !== "USER" && !!chat.content);
+        // A file a tool already finished writing is real regardless of whether
+        // the reply that was going to describe it ever got there. Carried over
+        // here too, or this overwrite would erase what `registerOutput` already
+        // saved for a turn that errors or is aborted right after the tool runs.
+        const outputs = aibitat._pendingOutputs ?? [];
 
         try {
           await WorkspaceChats.upsert(chatId, {
@@ -215,6 +220,7 @@ const chatHistory = {
               type: "chat",
               attachments: [],
               metrics: aibitat.providerInstance?.getCumulativeUsage?.() ?? {},
+              ...(outputs.length > 0 ? { outputs } : {}),
             },
             user: { id: invocation?.user_id || null },
             threadId: invocation?.thread_id || null,

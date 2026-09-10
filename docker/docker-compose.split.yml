@@ -47,6 +47,10 @@ services:
       - "${BACKEND_PUBLISH_PORT:-3001}:3001"
     env_file:
       - .env
+    environment:
+      # Keep unattended agent skills enabled by default, with a deployment-level
+      # override available through docker/.env.
+      AGENT_AUTO_APPROVED_SKILLS: "${AGENT_AUTO_APPROVED_SKILLS:-<all>}"
     networks:
       - nexusai
     extra_hosts:

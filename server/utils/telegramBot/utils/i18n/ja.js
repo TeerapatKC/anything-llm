@@ -58,6 +58,8 @@ module.exports = {
   "menu.tab_new_thread": "🆕 新しいスレッド",
   "menu.tab_status": "ℹ️ ステータス",
   "menu.tab_language": "🌐 返答の言語",
+  "menu.tab_link": "🔗 アカウントを連携",
+  "menu.link_placeholder": "ボタンをタップしてアカウントを連携",
 
   // ---------------------------------------------------------- workspaces
   "workspaces.none":
