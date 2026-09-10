@@ -37,7 +37,11 @@ import SourcesSidebar from "./SourcesSidebar";
 import MemoriesSidebar from "./MemoriesSidebar";
 import ActiveGenerationGuard from "./ActiveGenerationGuard";
 import useUser from "@/hooks/useUser";
-import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
+import {
+  WORKSPACE_PERMISSIONS as WS,
+  workspaceCan,
+  refreshSessionPermissions,
+} from "@/utils/permissions";
 
 export default function ChatContainer({
   workspace,
@@ -64,7 +68,28 @@ export default function ChatContainer({
   // Chatting is a membership permission, never granted to an operator by their
   // instance role alone, so someone can be able to open and administer this
   // workspace while the server would still refuse every message they sent.
-  const canChat = workspaceCan(WS.CHAT, workspace?.slug, user);
+  // After create/membership changes the local cache can lag; refresh once when
+  // the cache says no so a real member is not stuck behind NotAMemberNotice.
+  const [canChat, setCanChat] = useState(() =>
+    workspaceCan(WS.CHAT, workspace?.slug, user)
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    async function syncChatAccess() {
+      const slug = workspace?.slug;
+      if (workspaceCan(WS.CHAT, slug, user)) {
+        if (!cancelled) setCanChat(true);
+        return;
+      }
+      await refreshSessionPermissions();
+      if (!cancelled) setCanChat(workspaceCan(WS.CHAT, slug, user));
+    }
+    syncChatAccess();
+    return () => {
+      cancelled = true;
+    };
+  }, [workspace?.slug, user]);
 
   /**
    * Keep chat history bottom-padding in sync with the prompt input's

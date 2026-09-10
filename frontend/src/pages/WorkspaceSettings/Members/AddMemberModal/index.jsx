@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Search, Users } from "lucide-react";
 import Admin from "@/models/admin";
 import showToast from "@/utils/toast";
+import { refreshSessionPermissions } from "@/utils/permissions";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -65,6 +66,9 @@ export default function AddMemberModal({ workspace, users = [], onSaved }) {
       return;
     }
 
+    // Membership is what unlocks chat; refresh so the signed-in user can talk
+    // immediately if they just added themselves (or lose the prompt if removed).
+    await refreshSessionPermissions();
     showToast("Users updated successfully.", "success", { clear: true });
     onSaved?.();
   };
