@@ -2,10 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
+import { saveAs } from "file-saver";
 import { ArrowLeft, Circle, Square } from "lucide-react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import ExportLogsControl from "@/components/ExportLogsControl";
 import ScheduledJobs from "@/models/scheduledJobs";
 import usePolling from "@/hooks/usePolling";
 import showToast from "@/utils/toast";
@@ -95,6 +97,32 @@ export default function ScheduledJobLogsPage() {
     });
   };
 
+  const handleExportLogs = async (format, startDate, endDate) => {
+    const data = slug
+      ? await ScheduledJobs.workspace.exportLogs(
+          slug,
+          format,
+          startDate,
+          endDate,
+          jobId
+        )
+      : await ScheduledJobs.exportLogs(format, startDate, endDate, jobId);
+    if (!data) {
+      showToast(t("scheduledJobs.logs.exportFailed"), "error");
+      return;
+    }
+    const mimeType = format === "json" ? "application/json" : "text/csv";
+    const blob = new Blob([data], { type: mimeType });
+    saveAs(
+      blob,
+      `nexusai-schedule-logs-${new Date().toISOString().slice(0, 10)}.${format}`
+    );
+    showToast(
+      t("scheduledJobs.logs.exportSuccess", { format: format.toUpperCase() }),
+      "success"
+    );
+  };
+
   const jobsPath = slug
     ? paths.workspace.settings.scheduledJobs(slug)
     : paths.settings.scheduledJobs();
@@ -129,7 +157,18 @@ export default function ScheduledJobLogsPage() {
           </button>
         ) : null}
       </PageHeader>
-      <div className="overflow-x-auto mt-6">
+      <div className="mt-3 flex w-full flex-wrap justify-end gap-2">
+        <ExportLogsControl
+          onExport={handleExportLogs}
+          disabled={loading}
+          labels={{
+            from: t("scheduledJobs.logs.exportFrom"),
+            to: t("scheduledJobs.logs.exportTo"),
+            export: t("scheduledJobs.logs.export"),
+          }}
+        />
+      </div>
+      <div className="overflow-x-auto mt-3">
         <Table>
           <TableHeader>
             <TableRow>

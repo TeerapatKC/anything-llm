@@ -10,6 +10,11 @@ const { reqBody, safeJsonParse, userFromSession } = require("../utils/http");
 const { EventLogs } = require("../models/eventLogs");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
 const { isSendingEnabled, requireSmtpReady } = require("../utils/smtp");
+const { exportRows, dateRangeClause } = require("../utils/helpers/exportTable");
+const {
+  scheduledJobRunToRow,
+  SCHEDULED_JOB_LOG_HEADERS,
+} = require("../utils/helpers/scheduledJobExport");
 
 // BackgroundService is a singleton, so `new BackgroundService()` anywhere in
 // the codebase returns the same instance that `server/index.js` booted. We
@@ -601,6 +606,58 @@ function scheduledJobEndpoints(app) {
           hasPages,
           totalLogs,
         });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500);
+      }
+    }
+  );
+
+  // Exports the full schedule log (or a date-bounded slice of it), unpaginated -
+  // pass jobId to export only one job's runs. Mirrors /system/event-logs/export.
+  app.get(
+    "/scheduled-jobs/logs/export",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const {
+          format = "csv",
+          startDate = null,
+          endDate = null,
+          jobId = null,
+        } = request.query;
+        const clause = {
+          ...(jobId ? { jobId: Number(jobId) } : {}),
+          ...dateRangeClause("startedAt", startDate, endDate),
+        };
+
+        const runs = await ScheduledJobRun.where(
+          clause,
+          null,
+          { startedAt: "desc" },
+          { job: { include: { workspace: { select: { name: true, slug: true } } } } }
+        );
+        const emailLogsByRun = await ScheduledJobLog.groupByRunId(
+          runs.map((r) => r.id)
+        );
+        const rows = runs.map((run) => scheduledJobRunToRow(run, emailLogsByRun));
+        const { contentType, data } = exportRows(
+          format,
+          rows,
+          SCHEDULED_JOB_LOG_HEADERS
+        );
+
+        await EventLogs.logEvent(
+          "exported_scheduled_job_logs",
+          { format, startDate, endDate, jobId, count: rows.length },
+          response.locals?.user?.id
+        );
+        response.setHeader("Content-Type", contentType);
+        response.status(200).send(data);
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500);

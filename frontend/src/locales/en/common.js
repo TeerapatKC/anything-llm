@@ -548,6 +548,8 @@ const TRANSLATIONS = {
     description:
       "These are all the recorded chats and messages that have been sent by users ordered by their creation date.",
     export: "Export",
+    exportFrom: "From",
+    exportTo: "To",
     table: {
       id: "ID",
       by: "Sent By",
@@ -1111,6 +1113,11 @@ const TRANSLATIONS = {
     title: "User Event Logs",
     description: "Audit trail of actions taken on this instance.",
     clear: "Clear User Event Logs",
+    export: "Export",
+    exportFrom: "From",
+    exportTo: "To",
+    exportSuccess: "Event logs exported successfully as {{format}}.",
+    exportFailed: "Failed to export event logs.",
     table: {
       type: "Event Type",
       user: "User",
@@ -1644,6 +1651,11 @@ const TRANSLATIONS = {
       clearConfirm: "Clear logs",
       clearSuccess: "Schedule logs cleared successfully.",
       clearFailed: "Failed to clear logs: {{error}}",
+      export: "Export",
+      exportFrom: "From",
+      exportTo: "To",
+      exportSuccess: "Schedule logs exported successfully as {{format}}.",
+      exportFailed: "Failed to export schedule logs.",
       empty: "No schedule logs yet.",
       backToJobs: "Back to jobs",
       sourceSystem: "System",

@@ -531,6 +531,8 @@ const TRANSLATIONS = {
     description:
       "ユーザーが送信したすべてのチャットとメッセージの履歴です。作成日時順に表示されます。",
     export: "エクスポート",
+    exportFrom: "開始日",
+    exportTo: "終了日",
     table: {
       id: "ID",
       by: "送信者",
@@ -752,6 +754,11 @@ const TRANSLATIONS = {
     title: "ユーザーイベントログ",
     description: "このインスタンスで行われた操作の監査ログです。",
     clear: "ユーザーイベントログをクリア",
+    export: "エクスポート",
+    exportFrom: "開始日",
+    exportTo: "終了日",
+    exportSuccess: "イベントログを{{format}}としてエクスポートしました。",
+    exportFailed: "イベントログのエクスポートに失敗しました。",
     table: {
       type: "イベントタイプ",
       user: "ユーザー",
@@ -1463,6 +1470,11 @@ const TRANSLATIONS = {
       clearConfirm: "ログを消去",
       clearSuccess: "スケジュールジョブのログを消去しました。",
       clearFailed: "ログの消去に失敗しました: {{error}}",
+      export: "エクスポート",
+      exportFrom: "開始日",
+      exportTo: "終了日",
+      exportSuccess: "スケジュールジョブのログを{{format}}としてエクスポートしました。",
+      exportFailed: "スケジュールジョブのログのエクスポートに失敗しました。",
       empty: "スケジュールジョブのログはまだありません。",
       backToJobs: "ジョブ一覧に戻る",
       sourceSystem: "System",

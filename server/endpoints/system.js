@@ -59,6 +59,7 @@ const { Role } = require("../models/role");
 const { monitoringConfig } = require("../utils/grafana");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
+const { exportRows, dateRangeClause } = require("../utils/helpers/exportTable");
 const { EventLogs } = require("../models/eventLogs");
 const { CollectorApi } = require("../utils/collectorApi");
 const { SlashCommandPresets } = require("../models/slashCommandsPresets");
@@ -997,6 +998,51 @@ function systemEndpoints(app) {
     }
   );
 
+  // Exports the full audit trail (or a date-bounded slice of it) in one shot -
+  // unlike the paginated GET above, this is not capped to a page size.
+  app.get(
+    "/system/event-logs/export",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW]),
+    ],
+    async (request, response) => {
+      try {
+        const { format = "csv", startDate = null, endDate = null } =
+          request.query;
+        const clause = dateRangeClause("occurredAt", startDate, endDate);
+        const logs = await EventLogs.whereWithData(clause, null, null, {
+          occurredAt: "desc",
+        });
+        const rows = logs.map((log) => ({
+          id: log.id,
+          event: log.event,
+          user: log.user?.username || "unknown user",
+          metadata: log.metadata || "",
+          occurred_at: log.occurredAt,
+        }));
+        const { contentType, data } = exportRows(format, rows, [
+          "id",
+          "event",
+          "user",
+          "metadata",
+          "occurred_at",
+        ]);
+
+        await EventLogs.logEvent(
+          "exported_event_logs",
+          { format, startDate, endDate, count: rows.length },
+          response.locals.user?.id
+        );
+        response.setHeader("Content-Type", contentType);
+        response.status(200).send(data);
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
   app.delete(
     "/system/event-logs",
     [
@@ -1089,19 +1135,32 @@ function systemEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const { type = "jsonl", chatType = "workspace" } = request.query;
+        const {
+          type = "jsonl",
+          chatType = "workspace",
+          startDate = null,
+          endDate = null,
+        } = request.query;
         const user =
           response.locals?.user ?? (await userFromSession(request, response));
+        // Date filter only narrows the "workspace" chatType - "embed" chats are
+        // exported unfiltered today regardless of clause (see prepareChatsForExport).
+        const clause = {
+          ...(await WorkspaceChats.visibilityClauseFor(user)),
+          ...dateRangeClause("createdAt", startDate, endDate),
+        };
         const { contentType, data } = await exportChatsAsType(
           type,
           chatType,
-          await WorkspaceChats.visibilityClauseFor(user)
+          clause
         );
         await EventLogs.logEvent(
           "exported_chats",
           {
             type,
             chatType,
+            startDate,
+            endDate,
           },
           response.locals.user?.id
         );
