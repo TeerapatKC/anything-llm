@@ -13,7 +13,7 @@ module.exports.SqlAgentQuery = {
           super: aibitat,
           name: this.name,
           description:
-            "Run a read-only SQL query on a `database_id` which will return up rows of data related to the query. The query must only be SELECT statements which do not modify the table data. There should be a reasonable LIMIT on the return quantity to prevent long-running or queries which crash the db.",
+            "Run a read-only SQL query on a `database_id` which will return up rows of data related to the query. The query must only be SELECT statements which do not modify the table data. There should be a reasonable LIMIT on the return quantity to prevent long-running or queries which crash the db. Before calling this, use sql-get-table-schema on every table the query references - including every table on both sides of a JOIN - and use only the exact column names it returns. A guessed column name (e.g. assuming `first_name` instead of checking whether it's actually `first_name_th`) fails the whole query and wastes a call.",
           examples: [
             {
               prompt: "How many customers are in dvd-rentals?",
