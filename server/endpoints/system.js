@@ -56,6 +56,7 @@ const {
   permissionForEnvKey,
 } = require("../utils/permissions");
 const { Role } = require("../models/role");
+const { monitoringConfig } = require("../utils/grafana");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { EventLogs } = require("../models/eventLogs");
@@ -960,6 +961,22 @@ function systemEndpoints(app) {
     }
   );
 
+  app.get(
+    "/system/monitoring",
+    [
+      validatedRequest,
+      userPermissionValid([PERMISSIONS.SYSTEM_MONITORING]),
+    ],
+    async (_, response) => {
+      try {
+        response.status(200).json(monitoringConfig());
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
   app.post(
     "/system/event-logs",
     [
@@ -1015,10 +1032,14 @@ function systemEndpoints(app) {
     async (request, response) => {
       try {
         const { offset = 0, limit = 20, feedback = null } = reqBody(request);
+        const user =
+          response.locals?.user ?? (await userFromSession(request, response));
 
         // Paging happens in the database, so the filter has to as well - a page
         // filtered after the fact would be mostly empty and count wrongly.
-        const clause = {};
+        // Chats from other people's private workspaces are filtered the same way, and
+        // for the same reason.
+        const clause = { ...(await WorkspaceChats.visibilityClauseFor(user)) };
         if (feedback === "up") clause.feedbackScore = true;
         if (feedback === "down") clause.feedbackScore = false;
         if (feedback === "none") clause.feedbackScore = null;
@@ -1032,6 +1053,11 @@ function systemEndpoints(app) {
         const totalChats = await WorkspaceChats.count(clause);
         const hasPages = totalChats > (offset + 1) * limit;
 
+        await WorkspaceChats.auditPersonalAccess(
+          user,
+          chats,
+          "admin chat history"
+        );
         response.status(200).json({ chats: chats, hasPages, totalChats });
       } catch (e) {
         console.error(e);
@@ -1067,7 +1093,13 @@ function systemEndpoints(app) {
     async (request, response) => {
       try {
         const { type = "jsonl", chatType = "workspace" } = request.query;
-        const { contentType, data } = await exportChatsAsType(type, chatType);
+        const user =
+          response.locals?.user ?? (await userFromSession(request, response));
+        const { contentType, data } = await exportChatsAsType(
+          type,
+          chatType,
+          await WorkspaceChats.visibilityClauseFor(user)
+        );
         await EventLogs.logEvent(
           "exported_chats",
           {

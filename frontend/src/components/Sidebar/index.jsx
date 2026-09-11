@@ -123,7 +123,7 @@ export default function Sidebar() {
           </Tooltip>
         )}
       </SidebarHeader>
-      <SidebarContent className="px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
+      <SidebarContent className="overflow-hidden px-2 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <ActiveWorkspaces
           canCreateWorkspace={canCreateWorkspace}
           showNewWsModal={showNewWsModal}

@@ -48,7 +48,9 @@ const TRANSLATIONS = {
     users: "Users",
     roles: "Roles & Permissions",
     workspaces: "Workspaces",
-    "workspace-chats": "Workspace Chats",
+    "instance-workspaces": "Instance Workspaces",
+    "private-workspaces": "Private Workspaces",
+    "workspace-chats": "Workspace Chat Logs",
     customization: "Customization",
     interface: "UI Preferences",
     branding: "Branding & Whitelabeling",
@@ -62,9 +64,12 @@ const TRANSLATIONS = {
     "voice-speech": "Voice & Speech",
     "vector-database": "Vector Database",
     embeds: "Chat Embed",
-    "event-logs": "Event Logs",
+    logs: "Logs",
+    "event-logs": "User Event Logs",
+    dashboards: "Dashboards",
+    monitoring: "Dashboards",
     "scheduled-jobs": "Scheduled Jobs",
-    "scheduled-jobs-logs": "Schedule Job Logs",
+    "scheduled-jobs-logs": "Scheduled Job Logs",
     privacy: "Privacy & Data",
     "ai-providers": "AI Providers",
     agent: "Agent",
@@ -80,7 +85,7 @@ const TRANSLATIONS = {
     "slash-commands": "Slash Commands",
     contact: "Contact Support",
     smtp: "SMTP",
-    channels: "Channels",
+    channels: "Connected Apps",
     "available-channels": {
       telegram: "Telegram",
       line: "LINE",
@@ -530,7 +535,7 @@ const TRANSLATIONS = {
     },
   },
   recorded: {
-    title: "Workspace Chats",
+    title: "Workspace Chat Logs",
     description:
       "These are all the recorded chats and messages that have been sent by users ordered by their creation date.",
     export: "Export",
@@ -1094,15 +1099,28 @@ const TRANSLATIONS = {
     },
   },
   event: {
-    title: "Event Logs",
-    description:
-      "View all actions and events happening on this instance for monitoring.",
-    clear: "Clear Event Logs",
+    title: "User Event Logs",
+    description: "Audit trail of actions taken on this instance.",
+    clear: "Clear User Event Logs",
     table: {
       type: "Event Type",
       user: "User",
       occurred: "Occurred At",
     },
+  },
+  unauthorized: {
+    title: "401 - Unauthorized",
+    description: "You do not have permission to view this page.",
+    "go-settings": "Go to Settings",
+    "go-home": "Go Home",
+  },
+  monitoring: {
+    title: "Dashboards",
+    description: "Live Grafana dashboards for this instance.",
+    "open-grafana": "Open in Grafana",
+    unavailable: "Dashboards are not configured for this instance.",
+    "unavailable-hint":
+      "Set GRAFANA_PUBLIC_URL so Dashboards can be shown here.",
   },
   privacy: {
     title: "Privacy & Data-Handling",
@@ -1602,9 +1620,9 @@ const TRANSLATIONS = {
       "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
     smtpRequiredCta: "Go to SMTP settings",
     logs: {
-      title: "Schedule Job Logs",
+      title: "Scheduled Job Logs",
       description:
-        "Every run of your scheduled jobs - status, duration, and result-email delivery - across every job.",
+        "Every run of your scheduled jobs — status, duration, and result-email delivery — across every job.",
       clear: "Clear logs",
       clearTitle: "Clear all schedule logs?",
       clearDescription: "This action is irreversible.",
@@ -2290,6 +2308,12 @@ const TRANSLATIONS = {
     logo: "Logo",
     "toggle-sidebar": "Toggle Sidebar",
     "general-appearance": "General appearance settings",
+    private: "Private",
+    "private-description": "Only you can see these workspaces.",
+    "new-private-workspace": "New private workspace",
+    "no-private-workspaces": "No private workspaces yet.",
+    "rename-workspace": "Rename workspace",
+    "upload-documents": "Upload documents",
   },
   "agent-panel": {
     "sql-connections": "SQL connections",

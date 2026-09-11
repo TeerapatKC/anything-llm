@@ -5,23 +5,13 @@ import { useParams } from "react-router-dom";
 import Workspace from "../../../models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import System from "../../../models/system";
-import { isMobileOnly } from "react-device-detect";
 import useUser from "../../../hooks/useUser";
 import DocumentSettings from "./Documents";
 import DataConnectors from "./DataConnectors";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
-import { Button } from "@/components/ui/button";
 
 const noop = () => {};
 const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
-  const { t } = useTranslation();
   const { slug } = useParams();
   const { user } = useUser();
   const [workspace, setWorkspace] = useState(null);
@@ -46,36 +36,12 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
 
   if (!workspace) return null;
 
-  if (isMobileOnly) {
-    return (
-      <Dialog open={true} onOpenChange={(open) => !open && hideModal()}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="text-sm font-semibold">
-              {t("connectors.manage.editing")} "{workspace.name}"
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-2 flex-col">
-            <p className="text-theme-text-primary">
-              {t("connectors.manage.desktop-only")}
-            </p>
-          </div>
-          <DialogFooter>
-            <Button variant="default" onClick={hideModal} type="button">
-              {t("connectors.manage.dismiss")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
   return (
-    <div className="w-screen h-screen fixed top-0 left-0 flex justify-center items-center z-99">
+    <div className="fixed inset-0 z-99 flex h-screen w-screen items-center justify-center overflow-hidden p-2 sm:p-4">
       <div className="backdrop h-full w-full absolute top-0 z-10" />
-      <div className="absolute max-h-full w-[90vw] max-w-[1100px] transition duration-300 z-20 md:overflow-y-auto py-10">
-        <div className="relative bg-theme-bg-secondary rounded-[12px] shadow border-2 border-theme-modal-border">
-          <div className="flex items-start justify-between p-2 rounded-t border-theme-modal-border relative">
+      <div className="relative z-20 flex h-full max-h-[calc(100vh-1rem)] w-full max-w-[1100px] flex-col transition duration-300 sm:max-h-[calc(100vh-2rem)]">
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden rounded-[12px] border-2 border-theme-modal-border bg-theme-bg-secondary shadow">
+          <div className="flex shrink-0 items-start justify-between rounded-t border-theme-modal-border p-2">
             <button
               onClick={hideModal}
               type="button"
@@ -85,16 +51,21 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </button>
           </div>
 
-          {workspaceCan(WS.DOCUMENTS_UPLOAD, workspace?.slug, user) && (
-            <ModalTabSwitcher
-              selectedTab={selectedTab}
-              setSelectedTab={setSelectedTab}
-            />
-          )}
+          {/* The switcher is only worth showing when there is somewhere else to
+              switch to. A private workspace's owner can upload but not attach data
+              connectors, so they would otherwise be offered a tab whose every action
+              the server refuses. */}
+          {workspaceCan(WS.DOCUMENTS_UPLOAD, workspace?.slug, user) &&
+            workspaceCan(WS.DATA_CONNECTORS, workspace?.slug, user) && (
+              <ModalTabSwitcher
+                selectedTab={selectedTab}
+                setSelectedTab={setSelectedTab}
+              />
+            )}
 
           {selectedTab === "documents" ? (
             <EmbeddingProgressProvider>
-              <div className="px-8 pb-8">
+              <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-3 sm:px-8 sm:pb-8">
                 <DocumentSettings workspace={workspace} />
               </div>
             </EmbeddingProgressProvider>
@@ -112,11 +83,11 @@ export default memo(ManageWorkspace);
 const ModalTabSwitcher = ({ selectedTab, setSelectedTab }) => {
   const { t } = useTranslation();
   return (
-    <div className="w-full flex justify-center z-10 relative">
-      <div className="gap-x-2 flex justify-center mt-[-68px] mb-10 bg-theme-bg-secondary p-1 rounded-xl ring-1 ring-foreground/10 w-fit">
+    <div className="relative z-10 flex w-full shrink-0 justify-center">
+      <div className="mt-1 mb-3 flex w-fit justify-center gap-x-1 rounded-lg bg-theme-bg-secondary p-0.5 ring-1 ring-foreground/10">
         <button
           onClick={() => setSelectedTab("documents")}
-          className={`border-none px-4 py-2 rounded-[8px] font-semibold hover:bg-theme-modal-border/60 ${
+          className={`border-none px-3 py-1.5 text-xs rounded-md font-semibold hover:bg-theme-modal-border/60 ${
             selectedTab === "documents"
               ? "bg-theme-modal-border font-bold text-theme-text-primary light:bg-[#E0F2FE] light:text-[#026AA2]"
               : "text-white/20 font-medium hover:text-white light:bg-white light:text-[#535862] light:hover:bg-[#E0F2FE]"
@@ -126,7 +97,7 @@ const ModalTabSwitcher = ({ selectedTab, setSelectedTab }) => {
         </button>
         <button
           onClick={() => setSelectedTab("dataConnectors")}
-          className={`border-none px-4 py-2 rounded-[8px] font-semibold hover:bg-theme-modal-border/60 ${
+          className={`border-none px-3 py-1.5 text-xs rounded-md font-semibold hover:bg-theme-modal-border/60 ${
             selectedTab === "dataConnectors"
               ? "bg-theme-modal-border font-bold text-theme-text-primary light:bg-[#E0F2FE] light:text-[#026AA2]"
               : "text-white/20 font-medium hover:text-white light:bg-white light:text-[#535862] light:hover:bg-[#E0F2FE]"

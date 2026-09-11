@@ -41,6 +41,9 @@ services:
       # This deployment is intended to run unattended. Keep this overrideable from
       # docker/.env, while allowing all agent skills by default as requested.
       AGENT_AUTO_APPROVED_SKILLS: "${AGENT_AUTO_APPROVED_SKILLS:-<all>}"
+      # The backend uses this browser-facing port to expose the built-in Grafana
+      # dashboard link when GRAFANA_PUBLIC_URL is not explicitly configured.
+      GRAFANA_PUBLISH_PORT: "${GRAFANA_PUBLISH_PORT:-3300}"
     networks:
       - nexusai
     extra_hosts:
@@ -96,6 +99,10 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: "${GRAFANA_ADMIN_USER:-admin}"
       GF_SECURITY_ADMIN_PASSWORD: "${GRAFANA_ADMIN_PASSWORD:-admin}"
+      GF_SECURITY_ALLOW_EMBEDDING: "true"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_ANONYMOUS_ORG_NAME: "Main Org."
     volumes:
       - "grafana-data:/var/lib/grafana"
       - "./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro"

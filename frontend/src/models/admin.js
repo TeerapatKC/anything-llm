@@ -244,6 +244,93 @@ const Admin = {
         return { apiKey: null, error: e.message };
       });
   },
+  /**
+   * The instance's private workspace profile - how private workspaces are handed out
+   * and what each one is created with - plus how many exist right now.
+   * @returns {Promise<{profile: object|null, stats: object|null, error?: string}>}
+   */
+  privateWorkspaceProfile: async function () {
+    return fetch(`${API_BASE}/admin/private-workspaces/profile`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { profile: null, stats: null, error: e.message };
+      });
+  },
+  /**
+   * Save the private workspace profile.
+   *
+   * A change that would put existing private workspaces outside the policy comes back
+   * with `requiresReview: true` and the list of what it affects, *without* having saved
+   * anything. Answer it with `reconcilePrivateWorkspaces`.
+   * @param {object} updates
+   */
+  updatePrivateWorkspaceProfile: async function (updates = {}) {
+    return fetch(`${API_BASE}/admin/private-workspaces/profile`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(updates),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
+  /**
+   * Answer a held-back private workspace policy change.
+   * @param {{token: string, action: "skip"|"deactivate"|"delete", workspaceIds?: number[]}} answer
+   */
+  reconcilePrivateWorkspaces: async function (answer = {}) {
+    return fetch(`${API_BASE}/admin/private-workspaces/reconcile`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify(answer),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
+  /**
+   * The agent skill catalog and selection for private workspaces, in the same shape a
+   * single workspace's agent configuration screen receives.
+   */
+  privateWorkspaceAgentSkills: async function () {
+    return fetch(`${API_BASE}/admin/private-workspaces/agent-skills`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not fetch agent skills.");
+        return res.json();
+      })
+      .catch((e) => {
+        console.error(e);
+        return { configured: false, config: null, catalog: null };
+      });
+  },
+  /**
+   * Save the agent skill selection for private workspaces. Pass null to put them back
+   * on the instance-wide agent settings.
+   * @param {object|null} config
+   */
+  updatePrivateWorkspaceAgentSkills: async function (config = null) {
+    return fetch(`${API_BASE}/admin/private-workspaces/agent-skills`, {
+      method: "POST",
+      headers: baseHeaders(),
+      body: JSON.stringify({ config }),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error(e);
+        return { success: false, error: e.message };
+      });
+  },
   deleteApiKey: async function (apiKeyId = "") {
     return fetch(`${API_BASE}/admin/delete-api-key/${apiKeyId}`, {
       method: "DELETE",

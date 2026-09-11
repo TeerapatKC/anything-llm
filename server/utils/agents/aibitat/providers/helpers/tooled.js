@@ -23,6 +23,44 @@ const {
  */
 
 /**
+ * JSON Schema keywords stripped from a tool's parameters before the tool is sent.
+ *
+ * A self-hosted backend (llama.cpp and everything built on it, vLLM, TGI) does not
+ * merely read the schema - it compiles the whole tool list into a decoding grammar
+ * before it will answer at all. `pattern` is the keyword that breaks that: each regex
+ * becomes grammar rules, and a regex the converter cannot express makes the *entire*
+ * request fail with a 400 ("failed to parse grammar"), taking every other tool in the
+ * payload down with it. One MCP server shipping an email regex is enough to leave a
+ * workspace unable to use the agent at all.
+ *
+ * Dropping it costs nothing: no provider holds the model to a regex when tools are sent
+ * non-strict, so `pattern` was never more than a hint here. The description beside it
+ * still tells the model what the value should look like, and whatever receives the call
+ * - an MCP server, a skill handler - validates its own input regardless.
+ * @type {string[]}
+ */
+const UNCOMPILABLE_SCHEMA_KEYWORDS = ["pattern"];
+
+/**
+ * Deep-copy a tool's parameter schema without the keywords above. Copies rather than
+ * mutates: the schema belongs to the plugin (or to the MCP server that declared it) and
+ * is reused across requests and providers.
+ * @param {any} schema
+ * @returns {any}
+ */
+function stripUncompilableConstraints(schema) {
+  if (Array.isArray(schema)) return schema.map(stripUncompilableConstraints);
+  if (!schema || typeof schema !== "object") return schema;
+
+  const copy = {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (UNCOMPILABLE_SCHEMA_KEYWORDS.includes(key)) continue;
+    copy[key] = stripUncompilableConstraints(value);
+  }
+  return copy;
+}
+
+/**
  * Convert aibitat function definitions to the OpenAI tools format.
  * @param {Array<{name: string, description: string, parameters: object}>} functions
  * @returns {Array<{type: "function", function: {name: string, description: string, parameters: object}}>}
@@ -34,7 +72,7 @@ function formatFunctionsToTools(functions) {
     function: {
       name: func.name,
       description: func.description,
-      parameters: func.parameters,
+      parameters: stripUncompilableConstraints(func.parameters),
     },
   }));
 }

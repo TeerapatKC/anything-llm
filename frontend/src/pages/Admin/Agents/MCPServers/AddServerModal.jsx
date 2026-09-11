@@ -25,8 +25,11 @@ function parseHeaders(value) {
   return headers;
 }
 
-export default function AddServerModal({ closeModal, onCreated }) {
-  const [transport, setTransport] = useState("streamable");
+export default function AddServerModal({ closeModal, onSaved, server = null }) {
+  const isEditing = !!server;
+  const [transport, setTransport] = useState(
+    server?.config?.type === "sse" ? "sse" : "streamable"
+  );
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
 
@@ -37,15 +40,18 @@ export default function AddServerModal({ closeModal, onCreated }) {
 
     try {
       const form = new FormData(event.currentTarget);
-      const result = await MCPServers.createRemote({
+      const config = {
         name: String(form.get("name") || "").trim(),
         type: transport,
         url: String(form.get("url") || "").trim(),
         headers: parseHeaders(String(form.get("headers") || "")),
-      });
+      };
+      const result = isEditing
+        ? await MCPServers.updateRemote(server.name, config)
+        : await MCPServers.createRemote(config);
       if (!result.success)
-        throw new Error(result.error || "Unable to add server.");
-      onCreated(result.server, result.error);
+        throw new Error(result.error || "Unable to save server.");
+      onSaved(result.server, result.error);
       closeModal();
     } catch (error) {
       setError(error.message);
@@ -57,7 +63,9 @@ export default function AddServerModal({ closeModal, onCreated }) {
   return (
     <>
       <DialogHeader>
-        <DialogTitle>Add external MCP server</DialogTitle>
+        <DialogTitle>
+          {isEditing ? "Edit external MCP server" : "Add external MCP server"}
+        </DialogTitle>
       </DialogHeader>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -68,6 +76,7 @@ export default function AddServerModal({ closeModal, onCreated }) {
             id="mcp-name"
             name="name"
             placeholder="company-mcp"
+            defaultValue={server?.name || ""}
             pattern="[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}"
             maxLength={64}
             required
@@ -97,6 +106,7 @@ export default function AddServerModal({ closeModal, onCreated }) {
             name="url"
             type="url"
             placeholder="https://mcp.example.com/mcp"
+            defaultValue={server?.config?.url || ""}
             required
             autoComplete="off"
           />
@@ -114,6 +124,9 @@ export default function AddServerModal({ closeModal, onCreated }) {
             name="headers"
             rows={3}
             placeholder={"Authorization: Bearer token\nX-API-Key: value"}
+            defaultValue={Object.entries(server?.config?.headers || {})
+              .map(([key, value]) => `${key}: ${value}`)
+              .join("\n")}
           />
           <p className="mt-2 text-xs text-theme-text-secondary">
             Enter one header per line. Credentials are stored in the server's
@@ -126,7 +139,11 @@ export default function AddServerModal({ closeModal, onCreated }) {
             Cancel
           </DialogClose>
           <Button type="submit" disabled={saving}>
-            {saving ? "Connecting..." : "Add server"}
+            {saving
+              ? "Connecting..."
+              : isEditing
+                ? "Save changes"
+                : "Add server"}
           </Button>
         </DialogFooter>
       </form>

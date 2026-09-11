@@ -7,6 +7,10 @@ const { SystemSettings } = require("../models/systemSettings");
 const { User } = require("../models/user");
 const { DocumentVectors } = require("../models/vectors");
 const { Workspace } = require("../models/workspace");
+const {
+  PrivateWorkspaceProfile,
+} = require("../models/privateWorkspaceProfile");
+const { PersonalWorkspace } = require("../models/personalWorkspace");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   getVectorDbClass,
@@ -725,6 +729,185 @@ function adminEndpoints(app) {
           response?.locals?.user?.id
         );
         return response.status(200).end();
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  // ------------------------------------------------------------ private workspaces
+
+  /**
+   * The instance's private workspace profile: how they are handed out, and what each
+   * one is created with. This is the only place private workspaces can be configured -
+   * they have no settings screens of their own, which is the whole point of them.
+   */
+  app.get(
+    "/admin/private-workspaces/profile",
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.SYSTEM_SETTINGS,
+        PERMISSIONS.WORKSPACES_MANAGE_ALL,
+      ]),
+    ],
+    async (_request, response) => {
+      try {
+        const profile = await PrivateWorkspaceProfile.get();
+        const workspaces = await PersonalWorkspace.all();
+        response.status(200).json({
+          profile,
+          stats: {
+            workspaceCount: workspaces.length,
+            ownerCount: new Set(workspaces.map((w) => w.ownerId)).size,
+          },
+        });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Save the profile.
+   *
+   * Saving never destroys anything by itself. When the change would put existing
+   * private workspaces outside the policy - the feature turned off, or the quota
+   * lowered - the save is held and the affected workspaces come back for the operator
+   * to decide about. `requiresReview` in the response is the client's cue to open that
+   * dialog and answer through the reconcile route below.
+   */
+  app.post(
+    "/admin/private-workspaces/profile",
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const updates = reqBody(request);
+
+        const review = await PersonalWorkspace.openReview(user, updates);
+        if (review)
+          return response.status(200).json({
+            success: false,
+            requiresReview: true,
+            error: null,
+            ...review,
+          });
+
+        const { profile, error } =
+          await PrivateWorkspaceProfile.update(updates);
+        if (error) return response.status(500).json({ success: false, error });
+
+        await EventLogs.logEvent(
+          "private_workspace_profile_updated",
+          { fields: Object.keys(updates) },
+          user?.id
+        );
+        response.status(200).json({ success: true, error: null, profile });
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Answer a held-back profile change: skip, deactivate or delete the workspaces the
+   * operator picked, and only then save the change.
+   */
+  app.post(
+    "/admin/private-workspaces/reconcile",
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const {
+          token = null,
+          action = null,
+          workspaceIds = [],
+        } = reqBody(request);
+        const result = await PersonalWorkspace.resolveReview(user, {
+          token,
+          action,
+          workspaceIds,
+        });
+        response.status(result.success ? 200 : 400).json(result);
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * The agent skill catalog and the profile's effective selection, in exactly the shape
+   * a workspace's own agent configuration screen receives - the two screens render the
+   * same component, so they have to be handed the same thing.
+   */
+  app.get(
+    "/admin/private-workspaces/agent-skills",
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.SYSTEM_SETTINGS,
+        PERMISSIONS.AGENTS_MANAGE_SKILLS,
+      ]),
+    ],
+    async (_request, response) => {
+      try {
+        const {
+          agentSkillsPayload,
+        } = require("../utils/agents/agentSkillsPayload");
+        const profile = await PrivateWorkspaceProfile.get();
+        // A stand-in for "every private workspace at once": no id, so the catalog holds
+        // only the instance-wide flows and connections, which are the only ones a
+        // workspace that does not exist yet could possibly be given.
+        response.status(200).json(
+          await agentSkillsPayload({
+            id: null,
+            type: "personal",
+            agentSkillConfig: profile.agentSkillConfig
+              ? JSON.stringify(profile.agentSkillConfig)
+              : null,
+          })
+        );
+      } catch (e) {
+        console.error(e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Save the profile's agent skill selection. A null config reverts private workspaces
+   * to following the instance-wide agent settings.
+   */
+  app.post(
+    "/admin/private-workspaces/agent-skills",
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.SYSTEM_SETTINGS,
+        PERMISSIONS.AGENTS_MANAGE_SKILLS,
+      ]),
+    ],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { config = null } = reqBody(request);
+        const { profile, error } = await PrivateWorkspaceProfile.update({
+          agentSkillConfig: config,
+        });
+        if (error) return response.status(500).json({ success: false, error });
+
+        await EventLogs.logEvent(
+          "private_workspace_agent_skills_updated",
+          { reverted: config === null },
+          user?.id
+        );
+        response.status(200).json({ success: true, error: null, profile });
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

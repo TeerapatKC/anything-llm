@@ -40,20 +40,6 @@ export default function AccountModal({ user, hideModal }) {
     [pfpPreview]
   );
 
-  useEffect(() => {
-    if (showChangePassword) return;
-    const handleOutsidePress = (event) => {
-      if (!event.target.closest('[data-slot="dialog-content"]')) {
-        event.preventDefault();
-        event.stopPropagation();
-        hideModal();
-      }
-    };
-    document.addEventListener("pointerdown", handleOutsidePress, true);
-    return () =>
-      document.removeEventListener("pointerdown", handleOutsidePress, true);
-  }, [hideModal, showChangePassword]);
-
   const handleFileSelection = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -131,11 +117,7 @@ export default function AccountModal({ user, hideModal }) {
           if (!open && !showChangePassword) hideModal();
         }}
       >
-        <DialogContent
-          onInteractOutside={() => {
-            if (!showChangePassword) hideModal();
-          }}
-        >
+        <DialogContent onInteractOutside={(event) => event.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
               {t("profile_settings.edit_account")}
@@ -144,7 +126,10 @@ export default function AccountModal({ user, hideModal }) {
           <form onSubmit={handleUpdate} className="space-y-4">
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
               <div className="flex flex-col items-center">
-                <label className="group relative flex size-28 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-theme-modal-border bg-theme-bg-secondary shadow-sm transition-all duration-200 hover:ring-2 hover:ring-sky-400/60 light:bg-sky-50">
+                <label
+                  className="group relative flex size-28 cursor-pointer items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-sky-400/70 bg-theme-bg-secondary shadow-sm transition-all duration-200 hover:ring-2 hover:ring-sky-400/60 light:bg-sky-50"
+                  style={{ borderStyle: "dashed" }}
+                >
                   <input
                     id="logo-upload"
                     type="file"

@@ -3,6 +3,82 @@ const { safeJSONStringify } = require("../utils/helpers/chat/responses");
 const { safeJsonParse } = require("../utils/http");
 
 const WorkspaceChats = {
+  /**
+   * A clause fragment for the instance-wide chat screens that hides chats belonging to
+   * other people's private workspaces.
+   *
+   * Reading them is a permission of its own (`chats.view_personal`) rather than part of
+   * `chats.view_all`, so an operator who audits chat quality does not silently acquire
+   * everyone's private conversations along with it. Expressed as a clause rather than a
+   * filter applied afterwards so paging and totals stay correct.
+   *
+   * @param {{id?: number, role?: string}|null} user
+   * @returns {Promise<Object>}
+   */
+  visibilityClauseFor: async function (user = null) {
+    const { Role } = require("./role");
+    const { PERMISSIONS } = require("../utils/permissions");
+    const { WORKSPACE_TYPES } = require("./privateWorkspaceProfile");
+    if (await Role.userCan(user, PERMISSIONS.CHATS_VIEW_PERSONAL)) return {};
+
+    try {
+      const hidden = await prisma.workspaces.findMany({
+        where: {
+          type: WORKSPACE_TYPES.PERSONAL,
+          NOT: { ownerId: Number(user?.id) || -1 },
+        },
+        select: { id: true },
+      });
+      if (hidden.length === 0) return {};
+      return { workspaceId: { notIn: hidden.map((w) => w.id) } };
+    } catch (error) {
+      console.error("WorkspaceChats.visibilityClauseFor error:", error.message);
+      // Fail closed: an error resolving what to hide must not end up showing it.
+      return { workspaceId: { in: [] } };
+    }
+  },
+
+  /**
+   * Record that someone read chats from private workspaces that are not theirs. Called
+   * with whatever a screen actually returned, so the log names the workspaces that were
+   * really exposed rather than the ones that could have been.
+   * @param {{id?: number}|null} user
+   * @param {Array<{workspaceId: number}>} chats
+   * @param {string} context - which screen did the reading
+   */
+  auditPersonalAccess: async function (user = null, chats = [], context = "") {
+    try {
+      if (!user?.id || chats.length === 0) return;
+      const { WORKSPACE_TYPES } = require("./privateWorkspaceProfile");
+      const ids = [...new Set(chats.map((chat) => chat.workspaceId))];
+      const personal = await prisma.workspaces.findMany({
+        where: {
+          id: { in: ids },
+          type: WORKSPACE_TYPES.PERSONAL,
+          NOT: { ownerId: Number(user.id) },
+        },
+        select: { id: true, name: true, ownerId: true },
+      });
+      if (personal.length === 0) return;
+
+      const { EventLogs } = require("./eventLogs");
+      await EventLogs.logEvent(
+        "personal_workspace_chats_viewed",
+        {
+          context,
+          workspaces: personal.map((workspace) => ({
+            id: workspace.id,
+            name: workspace.name,
+            ownerId: workspace.ownerId,
+          })),
+        },
+        user.id
+      );
+    } catch (error) {
+      console.error("WorkspaceChats.auditPersonalAccess error:", error.message);
+    }
+  },
+
   new: async function ({
     workspaceId,
     prompt,
@@ -421,7 +497,7 @@ const WorkspaceChats = {
         include: data.include,
       };
 
-      const { chat } = await prisma.workspace_chats.upsert({
+      const chat = await prisma.workspace_chats.upsert({
         where: {
           id: Number(chatId),
           user_id: data.user?.id || null,
@@ -430,7 +506,16 @@ const WorkspaceChats = {
         update: { ...payload, lastUpdatedAt: new Date() },
 
         // On creates, we need to set the prompt or else record will fail.
-        create: { ...payload, prompt: data.prompt },
+        //
+        // Prisma validates this branch even when the row exists and only `update`
+        // will run, so a caller with no prompt to hand had the entire call
+        // rejected before it reached the database. That is the case whenever a
+        // turn ends without an answer: the row holding the prompt was written
+        // ahead of time behind `include: false`, and the update that was meant to
+        // reveal it never landed, so the question the person asked disappeared
+        // from the thread. Fall back to an empty prompt to keep the create branch
+        // valid - only a row that no longer exists can ever be written with it.
+        create: { ...payload, prompt: data.prompt ?? "" },
       });
       return { chat, message: null };
     } catch (error) {

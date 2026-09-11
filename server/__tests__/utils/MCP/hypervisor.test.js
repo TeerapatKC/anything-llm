@@ -178,6 +178,56 @@ describe("MCPHypervisor server definition parsing & validation", () => {
     ]);
   });
 
+  it("removes the legacy built-in test server from persistent config", () => {
+    fs.mkdirSync(path.join(storageDir, "plugins"), { recursive: true });
+    fs.writeFileSync(
+      path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+      JSON.stringify({
+        mcpServers: {
+          "nexusai-test": {
+            command: "node",
+            args: ["/app/server/utils/MCP/test-server.js"],
+          },
+          external: {
+            type: "streamable",
+            url: "https://mcp.example.com/mcp",
+          },
+        },
+      })
+    );
+
+    hypervisor = new MCPHypervisor();
+
+    expect(hypervisor.mcpServerConfigs).toEqual([
+      {
+        name: "external",
+        server: {
+          type: "streamable",
+          url: "https://mcp.example.com/mcp",
+        },
+      },
+    ]);
+  });
+
+  it("keeps a user server that only reuses the legacy test name", () => {
+    fs.mkdirSync(path.join(storageDir, "plugins"), { recursive: true });
+    fs.writeFileSync(
+      path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+      JSON.stringify({
+        mcpServers: {
+          "nexusai-test": {
+            type: "sse",
+            url: "https://mcp.example.com/sse",
+          },
+        },
+      })
+    );
+
+    hypervisor = new MCPHypervisor();
+
+    expect(hypervisor.mcpServerConfigs).toHaveLength(1);
+  });
+
   it("does not overwrite an invalid configuration file", () => {
     hypervisor = new MCPHypervisor();
     fs.writeFileSync(hypervisor.mcpServerJSONPath, "{invalid", "utf8");

@@ -10,7 +10,10 @@ import { useWorkspaceEmbeddingProgress } from "@/EmbeddingProgressContext";
 // Both panels share this height so the two sides of the picker read as one
 // balanced layout instead of two boxes sized to whatever their old modal
 // context happened to need.
-export const PANEL_HEIGHT = "h-[420px]";
+// Keep the picker usable at every viewport size. The panels own their scroll,
+// while the modal itself remains fixed inside the viewport.
+export const PANEL_HEIGHT =
+  "h-[clamp(210px,32vh,420px)] lg:h-[clamp(280px,60vh,420px)]";
 
 export default function DocumentSettings({ workspace }) {
   const [highlightWorkspace, setHighlightWorkspace] = useState(false);
@@ -103,7 +106,7 @@ export default function DocumentSettings({ workspace }) {
   const initializing = picker.status === "initializing";
 
   return (
-    <div className="w-full grid grid-cols-1 lg:grid-cols-[1fr_auto_1fr] gap-6 items-start">
+    <div className="grid min-h-0 w-full grid-cols-1 items-start gap-4 lg:grid-cols-[1fr_auto_1fr] lg:gap-6">
       <Directory
         picker={picker}
         workspace={workspace}

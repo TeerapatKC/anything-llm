@@ -353,6 +353,32 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "/settings/dashboards",
+        lazy: async () => {
+          const { default: Monitoring } = await import(
+            "@/pages/GeneralSettings/Monitoring"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={Monitoring}
+                permissions={[PERMISSIONS.SYSTEM_MONITORING]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/settings/monitoring",
+        lazy: async () => {
+          const { Navigate } = await import("react-router-dom");
+          const paths = (await import("@/utils/paths")).default;
+          return {
+            element: <Navigate to={paths.settings.dashboards()} replace />,
+          };
+        },
+      },
+      {
         path: "/settings/embed-chat-widgets",
         lazy: async () => {
           const { default: ChatEmbedWidgets } = await import(
@@ -614,6 +640,22 @@ const router = createBrowserRouter([
               <PermissionRoute
                 Component={AdminWorkspaces}
                 permissions={[PERMISSIONS.WORKSPACES_VIEW_ALL]}
+              />
+            ),
+          };
+        },
+      },
+      {
+        path: "/settings/private-workspaces",
+        lazy: async () => {
+          const { default: PrivateWorkspaces } = await import(
+            "@/pages/Admin/PrivateWorkspaces"
+          );
+          return {
+            element: (
+              <PermissionRoute
+                Component={PrivateWorkspaces}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
               />
             ),
           };

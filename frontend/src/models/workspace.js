@@ -24,6 +24,58 @@ const Workspace = {
     return { workspace, message };
   },
   /**
+   * Create a private workspace for the signed-in user. Separate from `new`, which
+   * creates the shared kind: this one is bounded by the instance's private workspace
+   * quota rather than by the `workspaces.create` permission.
+   * @param {string|null} name - omit to use the instance's name template
+   * @returns {Promise<{workspace: object|null, message: string|null}>}
+   */
+  newPersonal: async function (name = null) {
+    return await fetch(`${API_BASE}/workspace/personal/new`, {
+      method: "POST",
+      body: JSON.stringify({ name }),
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        return { workspace: null, message: e.message };
+      });
+  },
+  /**
+   * The instance's private workspace policy as it applies to the signed-in user.
+   * @returns {Promise<{enabled: boolean, quotaPerUser: number, owned: number, canCreate: boolean}>}
+   */
+  personalPolicy: async function () {
+    return await fetch(`${API_BASE}/workspace/personal/policy`, {
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch(() => ({
+        enabled: false,
+        quotaPerUser: 0,
+        owned: 0,
+        canCreate: false,
+      }));
+  },
+  /**
+   * Rename a workspace and change nothing else. This is how a private workspace is
+   * named, since it has no settings screen to do it from.
+   * @param {string} slug
+   * @param {string} name
+   * @returns {Promise<{workspace: object|null, message: string|null}>}
+   */
+  rename: async function (slug, name) {
+    return await fetch(`${API_BASE}/workspace/${slug}/rename`, {
+      method: "POST",
+      body: JSON.stringify({ name }),
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        return { workspace: null, message: e.message };
+      });
+  },
+  /**
    * Fetch the agent skill catalog and this workspace's effective skill config.
    * A workspace that has never been configured resolves to the instance-wide
    * defaults, so the returned `config` is always concrete.

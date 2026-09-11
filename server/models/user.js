@@ -517,6 +517,17 @@ const User = {
         }
       }
 
+      // Private workspaces hang off `ownerId`, which is deliberately not a foreign key
+      // (see the schema), so nothing cascades them away. Purge them - with their
+      // documents, chats and embeddings - before the accounts that owned them go.
+      const { PersonalWorkspace } = require("./personalWorkspace");
+      const targets = await prisma.users.findMany({
+        where: clause,
+        select: { id: true },
+      });
+      for (const target of targets)
+        await PersonalWorkspace.purgeForUser(target.id);
+
       await prisma.users.deleteMany({ where: clause });
       return true;
     } catch (error) {

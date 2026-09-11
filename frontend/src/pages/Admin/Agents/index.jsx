@@ -313,6 +313,15 @@ export default function AdminAgents() {
     );
   };
 
+  const handleMCPServerUpdate = (updatedServer, previousName) => {
+    setMcpServers((prev) =>
+      prev.map((server) =>
+        server.name === previousName ? updatedServer : server
+      )
+    );
+    setSelectedMcpServer(updatedServer);
+  };
+
   const handleMCPToolToggle = async (serverName, toolName, enabled) => {
     const { success, error, suppressedTools } = await MCPServers.toggleTool(
       serverName,
@@ -447,7 +456,7 @@ export default function AdminAgents() {
                 </button>
               </div>
 
-              <div className="w-full overflow-x-visible rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10">
+              <div className="w-full min-w-0 overflow-x-hidden rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10">
                 {selectedSkill === AGENT_SKILL_SETTINGS_KEY ? (
                   <AgentSkillSettings setHasChanges={setHasChanges} />
                 ) : selectedSkill === PERSONALIZATION_SETTINGS_KEY ? (
@@ -457,6 +466,7 @@ export default function AdminAgents() {
                     server={selectedMcpServer}
                     toggleServer={toggleMCP}
                     onDelete={handleMCPServerDelete}
+                    onUpdated={handleMCPServerUpdate}
                     onToggleTool={handleMCPToolToggle}
                   />
                 ) : selectedFlow ? (
@@ -640,7 +650,7 @@ export default function AdminAgents() {
           if (!selectedFlow) setHasChanges(true);
         }}
         ref={formEl}
-        className="flex min-h-0 flex-1 flex-col gap-5 p-6"
+        className="flex min-h-0 min-w-0 flex-1 flex-col gap-5 overflow-hidden p-6"
       >
         <input
           name="system::default_agent_skills"
@@ -677,7 +687,7 @@ export default function AdminAgents() {
           </div>
         </header>
 
-        <div className="flex min-h-0 flex-1 gap-6">
+        <div className="flex min-h-0 min-w-0 flex-1 gap-6 overflow-hidden">
           {/* Skill settings nav - Make this section scrollable */}
           <div className="flex min-h-0 w-[400px] shrink-0 flex-col overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
             <div className="flex-none border-b border-theme-sidebar-border bg-sidebar-accent/40 px-5 py-4">
@@ -789,7 +799,7 @@ export default function AdminAgents() {
 
           {/* Selected agent skill setting panel */}
           <div className="flex min-w-0 flex-1 flex-col">
-            <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-visible rounded-xl bg-card ring-1 ring-foreground/10 p-5 text-theme-text-primary">
+            <div className="thin-scrollbar min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto rounded-xl bg-card p-5 text-theme-text-primary ring-1 ring-foreground/10">
               {SelectedSkillComponent ? (
                 <>
                   {selectedSkill === AGENT_SKILL_SETTINGS_KEY ? (
@@ -801,6 +811,7 @@ export default function AdminAgents() {
                       server={selectedMcpServer}
                       toggleServer={toggleMCP}
                       onDelete={handleMCPServerDelete}
+                      onUpdated={handleMCPServerUpdate}
                       onToggleTool={handleMCPToolToggle}
                     />
                   ) : selectedFlow ? (

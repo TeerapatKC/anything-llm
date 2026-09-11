@@ -129,6 +129,9 @@ export default {
     workspaces: () => {
       return `/settings/workspaces`;
     },
+    privateWorkspaces: () => {
+      return `/settings/private-workspaces`;
+    },
     chats: () => {
       return "/settings/workspace-chats";
     },
@@ -185,6 +188,12 @@ export default {
     slashCommands: () => "/settings/slash-commands",
     logs: () => {
       return "/settings/event-logs";
+    },
+    monitoring: () => {
+      return "/settings/dashboards";
+    },
+    dashboards: () => {
+      return "/settings/dashboards";
     },
     privacy: () => {
       return "/settings/privacy";

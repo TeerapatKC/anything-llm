@@ -72,12 +72,14 @@ module.exports.CreatePdfFile = {
                 `${this.caller}: Creating PDF document "${filename}"`
               );
 
-              const { markdownToPdf } = await import("@mintplex-labs/mdpdf");
+              const {
+                markdownToPdfBuffer,
+              } = require("../../../../../pdf/markdownToPdf");
               const { PDFDocument, rgb, StandardFonts } = await import(
                 "pdf-lib"
               );
 
-              const rawBuffer = await markdownToPdf(content);
+              const rawBuffer = await markdownToPdfBuffer(content);
               const pdfDoc = await PDFDocument.load(rawBuffer);
               await applyBranding(pdfDoc, { rgb, StandardFonts });
 

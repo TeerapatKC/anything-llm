@@ -25,7 +25,26 @@ const CONFIG_SECTIONS = {
   MODEL: "model",
 };
 
-export default function WorkspaceAgentConfiguration({ workspace }) {
+/**
+ * @param {object} props
+ * @param {object} props.workspace - the workspace being configured, or a stand-in
+ *  describing the defaults every private workspace is created with.
+ * @param {object|null} [props.skillsDataSource] - where the skill selection reads and
+ *  writes. Defaults to this workspace's own agent skills.
+ * @param {function|null} [props.onSaveAgentModel] - what to do with the provider/model
+ *  form. Defaults to saving it onto this workspace.
+ * @param {{manageSkills?: boolean, setModel?: boolean}|null} [props.permissions] -
+ *  overrides the per-workspace permission checks, for screens that are gated on an
+ *  instance permission instead.
+ * @param {{title?: string, description?: string, modelDescription?: string}|null} [props.copy]
+ */
+export default function WorkspaceAgentConfiguration({
+  workspace,
+  skillsDataSource = null,
+  onSaveAgentModel = null,
+  permissions = null,
+  copy = null,
+}) {
   const { user } = useUser();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -43,18 +62,14 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
   // workspace managers whose requests the server would have happily served.
   // Instance operators still pass: workspaceCan lets WORKSPACES_MANAGE_ALL
   // through everywhere, mirroring the server.
-  const canManageSkills = workspaceCan(
-    WORKSPACE_PERMISSIONS.AGENTS_MANAGE,
-    workspace?.slug,
-    user
-  );
+  const canManageSkills =
+    permissions?.manageSkills ??
+    workspaceCan(WORKSPACE_PERMISSIONS.AGENTS_MANAGE, workspace?.slug, user);
   // Picking the agent's provider/model is the same capability as choosing the
   // workspace's chat LLM, so it rides on that permission rather than a role check.
-  const canSetAgentModel = workspaceCan(
-    WORKSPACE_PERMISSIONS.SETTINGS_LLM,
-    workspace?.slug,
-    user
-  );
+  const canSetAgentModel =
+    permissions?.setModel ??
+    workspaceCan(WORKSPACE_PERMISSIONS.SETTINGS_LLM, workspace?.slug, user);
   const handleSkillNavigation = useCallback((items) => {
     setSkillNavigation(items);
   }, []);
@@ -103,17 +118,27 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
       data.workspace[key] = castToType(key, value);
     }
 
-    const { workspace: updatedWorkspace, message } = await Workspace.update(
-      workspace.slug,
-      data.workspace
-    );
+    // The instance-wide halves of this form are the same wherever it is rendered; only
+    // the workspace half has somewhere different to go.
     await Admin.updateSystemPreferences(data.system);
     await System.updateSystem(data.env);
 
-    if (!!updatedWorkspace) {
-      showToast("Workspace updated!", "success", { clear: true });
+    if (onSaveAgentModel) {
+      const saved = await onSaveAgentModel(data.workspace);
+      if (!saved) {
+        setSaving(false);
+        return;
+      }
     } else {
-      showToast(`Error: ${message}`, "error", { clear: true });
+      const { workspace: updatedWorkspace, message } = await Workspace.update(
+        workspace.slug,
+        data.workspace
+      );
+      if (!!updatedWorkspace) {
+        showToast("Workspace updated!", "success", { clear: true });
+      } else {
+        showToast(`Error: ${message}`, "error", { clear: true });
+      }
     }
 
     setSaving(false);
@@ -133,10 +158,11 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
           </span>
           <div className="min-w-0">
             <h1 className="text-xl font-semibold text-theme-text-primary">
-              Agent configuration
+              {copy?.title ?? "Agent configuration"}
             </h1>
             <p className="mt-0.5 text-sm text-theme-text-secondary">
-              Configure the model and capabilities available to this workspace.
+              {copy?.description ??
+                "Configure the model and capabilities available to this workspace."}
             </p>
           </div>
         </header>
@@ -238,7 +264,8 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
                   Model &amp; provider
                 </h2>
                 <p className="mt-1 text-sm text-theme-text-secondary">
-                  Select the provider and model used by this workspace's agent.
+                  {copy?.modelDescription ??
+                    "Select the provider and model used by this workspace's agent."}
                 </p>
               </div>
               <form
@@ -272,6 +299,7 @@ export default function WorkspaceAgentConfiguration({ workspace }) {
               <div hidden={selectedSection === CONFIG_SECTIONS.MODEL}>
                 <AgentSkillSelection
                   workspace={workspace}
+                  dataSource={skillsDataSource}
                   focusSkillId={selectedSection}
                   onNavigationChange={handleSkillNavigation}
                   onItemStatusChange={handleSkillStatusChange}

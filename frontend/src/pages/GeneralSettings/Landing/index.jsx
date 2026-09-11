@@ -18,6 +18,10 @@ import { PERMISSIONS, userCanAny } from "@/utils/permissions";
  */
 const DESTINATIONS = [
   {
+    path: () => paths.settings.dashboards(),
+    needs: [PERMISSIONS.SYSTEM_MONITORING],
+  },
+  {
     path: () => paths.settings.branding(),
     needs: [PERMISSIONS.SYSTEM_APPEARANCE],
   },

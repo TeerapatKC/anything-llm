@@ -8,6 +8,10 @@ const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
+const {
+  PrivateWorkspaceProfile,
+  WORKSPACE_TYPES,
+} = require("./privateWorkspaceProfile");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
@@ -216,7 +220,21 @@ const Workspace = {
    * @param {Object} additionalFields - Additional fields to apply to the workspace - will be validated.
    * @returns {Promise<{workspace: Object | null, message: string | null}>} A promise that resolves to an object containing the created workspace and an error message if applicable.
    */
-  new: async function (name = null, creatorId = null, additionalFields = {}) {
+  /**
+   * @param {string|null} name
+   * @param {number|null} creatorId - the user the first membership is created for
+   * @param {Object} additionalFields - writable workspace fields the caller chose
+   * @param {{type?: string, ownerId?: number|null, workspaceRoleId?: number|null}} [options]
+   *  - `type`/`ownerId` are NOT writable fields: what kind of workspace this is decides
+   *    who may ever configure it, so it is set here and never from a request body.
+   *    Only PersonalWorkspace passes them.
+   */
+  new: async function (
+    name = null,
+    creatorId = null,
+    additionalFields = {},
+    options = {}
+  ) {
     if (!name) return { workspace: null, message: "name cannot be null" };
     var slug = this.slugify(name, { lower: true });
     slug = slug || uuidv4();
@@ -226,6 +244,21 @@ const Workspace = {
       const slugSeed = Math.floor(10000000 + Math.random() * 90000000);
       slug = this.slugify(`${name}-${slugSeed}`, { lower: true });
     }
+
+    const type =
+      options.type === WORKSPACE_TYPES.PERSONAL
+        ? WORKSPACE_TYPES.PERSONAL
+        : WORKSPACE_TYPES.SHARED;
+
+    // A private workspace has no settings screen, so whatever the caller did not choose
+    // comes from the instance's private workspace profile. Shared workspaces are
+    // untouched by it: they are configured where they always were, on the instance
+    // settings pages and then their own.
+    if (type === WORKSPACE_TYPES.PERSONAL)
+      additionalFields = {
+        ...(await PrivateWorkspaceProfile.newWorkspaceFields()),
+        ...additionalFields,
+      };
 
     // If system prompt wasn't sent, apply the system default system prompt
     if (!additionalFields.openAiPrompt) {
@@ -244,13 +277,23 @@ const Workspace = {
           chatMode: "automatic",
           ...this.validateFields(additionalFields),
           slug,
+          type,
+          ownerId:
+            type === WORKSPACE_TYPES.PERSONAL && options.ownerId
+              ? Number(options.ownerId)
+              : null,
         },
       });
 
       // If created with a user then we need to create the relationship as well.
       // If creating with an admin User it wont change anything because admins can
       // view all workspaces anyway.
-      if (!!creatorId) await WorkspaceUser.create(creatorId, workspace.id);
+      if (!!creatorId)
+        await WorkspaceUser.create(
+          creatorId,
+          workspace.id,
+          options.workspaceRoleId ?? null
+        );
       return { workspace, message: null };
     } catch (error) {
       console.error(error.message);
@@ -266,6 +309,25 @@ const Workspace = {
    */
   update: async function (id = null, updates = {}) {
     if (!id) throw new Error("No workspace id provided for update");
+
+    // A private workspace has no settings - only its name can change, and only through
+    // the rename route. Enforced here rather than at the routes so it holds for the
+    // developer API, for instance operators, and for any route added later.
+    // Read the one column the guard needs rather than the whole workspace: `get`
+    // computes a context window and counts tokens, which is a lot of work to do on
+    // every settings save just to learn what kind of workspace this is.
+    const target = await prisma.workspaces.findFirst({
+      where: { id: Number(id) },
+      select: { type: true },
+    });
+    if (target?.type === WORKSPACE_TYPES.PERSONAL) {
+      const attempted = Object.keys(updates).filter((key) => key !== "name");
+      if (attempted.length > 0)
+        return {
+          workspace: null,
+          message: `A private workspace has no settings to change (refused: ${attempted.join(", ")}).`,
+        };
+    }
 
     const validatedUpdates = this.validateFields(updates);
     if (Object.keys(validatedUpdates).length === 0)
@@ -315,13 +377,18 @@ const Workspace = {
   },
 
   getWithUser: async function (user = null, clause = {}) {
+    // See whereWithUser: an operator reads a private workspace only for audit, and the
+    // audit screens ask for it by id through `get`, never through this.
+    const mine = this._ownPersonalWorkspacesOnly(user);
+
     if (await Role.userCan(user, PERMISSIONS.WORKSPACES_VIEW_ALL))
-      return this.get(clause);
+      return this.get({ ...clause, ...mine });
 
     try {
       const workspace = await prisma.workspaces.findFirst({
         where: {
           ...clause,
+          ...mine,
           workspace_users: {
             some: {
               user_id: user?.id,
@@ -386,6 +453,29 @@ const Workspace = {
     return LLMProvider?.promptWindowLimit?.(model) || null;
   },
 
+  /**
+   * Private workspaces have no individual settings screens, so their chat mode is
+   * governed by the private-workspace profile even when the workspace was created
+   * before that profile existed. This keeps older private workspaces aligned with
+   * the Chat default shown in the profile and avoids routing ordinary messages into
+   * an agent/tool call unless an administrator explicitly selects automatic mode.
+   */
+  _applyPrivateWorkspaceDefaults: async function (workspace) {
+    if (workspace?.type !== WORKSPACE_TYPES.PERSONAL) return workspace;
+
+    const profile = await PrivateWorkspaceProfile.get();
+    const configuredFields = Object.fromEntries(
+      Object.entries(profile.workspace).filter(
+        ([, value]) => value !== null && value !== undefined && value !== ""
+      )
+    );
+    return {
+      ...workspace,
+      ...configuredFields,
+      chatMode: profile.workspace.chatMode ?? "chat",
+    };
+  },
+
   get: async function (clause = {}) {
     try {
       const workspace = await prisma.workspaces.findFirst({
@@ -396,9 +486,11 @@ const Workspace = {
       });
 
       if (!workspace) return null;
+      const effectiveWorkspace =
+        await this._applyPrivateWorkspaceDefaults(workspace);
       return {
-        ...workspace,
-        contextWindow: this._getContextWindow(workspace),
+        ...effectiveWorkspace,
+        contextWindow: this._getContextWindow(effectiveWorkspace),
         currentContextTokenCount: await this._getCurrentContextTokenCount(
           workspace.id
         ),
@@ -433,6 +525,67 @@ const Workspace = {
     }
   },
 
+  /**
+   * A prisma clause fragment that hides every private workspace except the caller's
+   * own. Written as a fragment rather than a filter applied afterwards so paging and
+   * counting stay correct.
+   * @param {{id?: number}|null} user
+   * @returns {Object}
+   */
+  _ownPersonalWorkspacesOnly: function (user = null) {
+    return {
+      OR: [
+        { type: { not: WORKSPACE_TYPES.PERSONAL } },
+        { type: WORKSPACE_TYPES.PERSONAL, ownerId: Number(user?.id) || -1 },
+      ],
+    };
+  },
+
+  /**
+   * Delete a workspace and everything that belongs to it: chat history, documents,
+   * embeddings, the vector namespace and any scheduled jobs still ticking for it.
+   *
+   * `delete` only removes the row - this is the whole teardown, and it is what both the
+   * delete route and the private workspace policy review use so a workspace can never
+   * be half-removed by one path and fully by another.
+   * @param {{id: number, slug: string}} workspace
+   * @returns {Promise<boolean>}
+   */
+  purge: async function (workspace = null) {
+    if (!workspace?.id) return false;
+    const { WorkspaceChats } = require("./workspaceChats");
+    const { DocumentVectors } = require("./vectors");
+    const { ScheduledJob } = require("./scheduledJob");
+    const { getVectorDbClass } = require("../utils/helpers");
+    const { BackgroundService } = require("../utils/BackgroundWorkers");
+
+    try {
+      // The DB rows cascade-delete with the workspace, but the in-process cron timers
+      // for any jobs it owned do not - stop those first so nothing keeps firing for a
+      // job whose row is about to disappear out from under it.
+      const backgroundService = new BackgroundService();
+      for (const job of await ScheduledJob.ownedByWorkspace(workspace.id))
+        backgroundService.removeScheduledJob(job.id);
+
+      await WorkspaceChats.delete({ workspaceId: Number(workspace.id) });
+      await DocumentVectors.deleteForWorkspace(workspace.id);
+      await Document.delete({ workspaceId: Number(workspace.id) });
+      await this.delete({ id: Number(workspace.id) });
+
+      try {
+        await getVectorDbClass()["delete-namespace"]({
+          namespace: workspace.slug,
+        });
+      } catch (e) {
+        console.error(e.message);
+      }
+      return true;
+    } catch (error) {
+      console.error("Workspace.purge error:", error.message);
+      return false;
+    }
+  },
+
   where: async function (clause = {}, limit = null, orderBy = null) {
     try {
       const results = await prisma.workspaces.findMany({
@@ -453,13 +606,20 @@ const Workspace = {
     limit = null,
     orderBy = null
   ) {
+    // Someone else's private workspace is never "a workspace you can see", however
+    // wide your instance role is. `workspaces.view_all` means every shared workspace on
+    // the instance; reading a private one is a separate, audited permission and happens
+    // through the admin chat screens, not through anybody's sidebar.
+    const mine = this._ownPersonalWorkspacesOnly(user);
+
     if (await Role.userCan(user, PERMISSIONS.WORKSPACES_VIEW_ALL))
-      return await this.where(clause, limit, orderBy);
+      return await this.where({ ...clause, ...mine }, limit, orderBy);
 
     try {
       const workspaces = await prisma.workspaces.findMany({
         where: {
           ...clause,
+          ...mine,
           workspace_users: {
             some: {
               user_id: user.id,

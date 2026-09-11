@@ -1,6 +1,7 @@
 const { reqBody, userFromSession, safeJsonParse } = require("../utils/http");
 const { moveProcessedDocsToFolder } = require("../utils/files");
 const { Workspace } = require("../models/workspace");
+const { PersonalWorkspace } = require("../models/personalWorkspace");
 const { Document } = require("../models/documents");
 const { DocumentFolder } = require("../models/documentFolders");
 const { DocumentVectors } = require("../models/vectors");
@@ -67,6 +68,97 @@ function workspaceEndpoints(app) {
           {
             workspaceName: workspace?.name || "Unknown Workspace",
           },
+          user?.id
+        );
+        response.status(200).json({ workspace, message });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * What the caller may do about private workspaces: whether the instance hands them
+   * out at all, how many they may have, and how many they already own. The sidebar
+   * needs this to decide whether to offer a "new private workspace" button.
+   */
+  app.get(
+    "/workspace/personal/policy",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const profile = await PersonalWorkspace.profile();
+        const owned = await PersonalWorkspace.countFor(user?.id);
+        response.status(200).json({
+          enabled: profile.enabled,
+          quotaPerUser: profile.quotaPerUser,
+          owned,
+          canCreate: profile.enabled && owned < profile.quotaPerUser,
+        });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Create a private workspace for the caller. Deliberately not the `/workspace/new`
+   * route: that one creates shared workspaces and is gated on `workspaces.create`,
+   * while this one is available to anyone the instance's private workspace policy
+   * allows, and refuses once they are at their quota.
+   */
+  app.post(
+    "/workspace/personal/new",
+    [validatedRequest, userPermissionValid([PERMISSIONS.ANY])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { name = null } = reqBody(request);
+        const { workspace, message } = await PersonalWorkspace.create(
+          user,
+          name
+        );
+        response.status(workspace ? 200 : 400).json({ workspace, message });
+      } catch (e) {
+        console.error(e.message, e);
+        response.sendStatus(500).end();
+      }
+    }
+  );
+
+  /**
+   * Rename a workspace, and nothing else.
+   *
+   * A private workspace has no settings screen, so this is how its owner names it -
+   * which is why the gate is the narrow `workspace.rename` rather than the settings
+   * permission that would open every other screen with it. Anyone who can edit the
+   * general settings holds this too, by implication.
+   */
+  app.post(
+    "/workspace/:slug/rename",
+    [validatedRequest, workspacePermissionValid([WS_PERMISSIONS.RENAME])],
+    async (request, response) => {
+      try {
+        const user = await userFromSession(request, response);
+        const { slug = null } = request.params;
+        const { name = null } = reqBody(request);
+        const currWorkspace = await Workspace.getWithUser(user, { slug });
+        if (!currWorkspace) return response.sendStatus(404).end();
+        if (!name || !String(name).trim())
+          return response
+            .status(400)
+            .json({ workspace: null, message: "A name is required." });
+
+        const { workspace, message } = await Workspace.update(
+          currWorkspace.id,
+          { name: String(name) }
+        );
+        await EventLogs.logEvent(
+          "workspace_renamed",
+          { from: currWorkspace.name, to: workspace?.name ?? name },
           user?.id
         );
         response.status(200).json({ workspace, message });
@@ -316,7 +408,6 @@ function workspaceEndpoints(app) {
       try {
         const { slug = "" } = request.params;
         const user = await userFromSession(request, response);
-        const VectorDb = getVectorDbClass();
         const workspace = await Workspace.getWithUser(user, { slug });
 
         if (!workspace) {
@@ -324,16 +415,7 @@ function workspaceEndpoints(app) {
           return;
         }
 
-        // The DB rows cascade-delete with the workspace, but the in-process cron
-        // timers for any jobs it owned do not - stop those first so nothing keeps
-        // firing for a job whose row is about to disappear out from under it.
-        const ownedJobs = await ScheduledJob.ownedByWorkspace(workspace.id);
-        for (const job of ownedJobs) backgroundService.removeScheduledJob(job.id);
-
-        await WorkspaceChats.delete({ workspaceId: Number(workspace.id) });
-        await DocumentVectors.deleteForWorkspace(workspace.id);
-        await Document.delete({ workspaceId: Number(workspace.id) });
-        await Workspace.delete({ id: Number(workspace.id) });
+        await Workspace.purge(workspace);
 
         await EventLogs.logEvent(
           "workspace_deleted",
@@ -343,11 +425,6 @@ function workspaceEndpoints(app) {
           response.locals?.user?.id
         );
 
-        try {
-          await VectorDb["delete-namespace"]({ namespace: slug });
-        } catch (e) {
-          console.error(e.message);
-        }
         response.sendStatus(200).end();
       } catch (e) {
         console.error(e.message, e);
@@ -401,6 +478,12 @@ function workspaceEndpoints(app) {
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
+        // Where everyone gets the private workspace the instance policy entitles them
+        // to. Doing it on the listing rather than only at sign-up means accounts that
+        // predate the feature - and ones created through SSO, an invite or the
+        // developer API - are covered too, without a migration or a boot-time sweep.
+        // It is a no-op once they have one.
+        await PersonalWorkspace.provisionFor(user);
         const workspaces = await Workspace.whereWithUser(user);
 
         response.status(200).json({ workspaces });
@@ -471,83 +554,12 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const workspace = response.locals.workspace;
         const {
-          resolveConfigForWorkspace,
-          instanceRuntimeConfig,
-        } = require("../utils/agents/workspaceSkills");
-        const {
-          skillCredentialStatus,
-          configuredSearchProviders,
-        } = require("../utils/agents/skillCredentials");
-        const { AgentFlows } = require("../utils/agentFlows");
-        const MCPCompatibilityLayer = require("../utils/MCP");
-        const { SystemSettings } = require("../models/systemSettings");
-        const {
-          sqlConnectionsAvailableTo,
-          toPublic: sqlConnectionToPublic,
-        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
-
-        const config = await resolveConfigForWorkspace(workspace);
-        const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
-        const [instanceRuntime, skillCredentials] = await Promise.all([
-          instanceRuntimeConfig(),
-          skillCredentialStatus(workspace.id),
-        ]);
-
-        response.status(200).json({
-          // `configured` tells the UI whether this workspace is still inheriting
-          // the instance-wide defaults or has its own saved copy.
-          configured: !!workspace.agentSkillConfig,
-          config,
-          // The engine this instance is configured for, so the UI can label the
-          // "inherit" option. Engine API keys stay instance-wide.
-          instanceSearchProvider:
-            (await SystemSettings.getValueOrFallback(
-              { label: "agent_search_provider" },
-              null
-            )) ?? null,
-          // Resolved instance-wide value of every runtime knob, so the UI can
-          // show what "inherit" currently means for each one.
-          instanceRuntime,
-          // Per-skill credential readiness. Skills whose credential an admin has
-          // not supplied are hidden here rather than offered as a toggle that
-          // would produce a tool failing at call time.
-          skillCredentials,
-          // Search engines this instance holds a usable key for (or that need
-          // none) - the only engines a workspace may pick between.
-          availableSearchProviders: configuredSearchProviders(),
-          catalog: {
-            // Global flows plus the ones this workspace owns - never another
-            // workspace's, which would otherwise be offered as a toggle here.
-            flows: AgentFlows.listFlowsForWorkspace(workspace.id)
-              .filter((flow) => flow.active)
-              .map((flow) => ({
-                id: flow.uuid,
-                name: flow.name || flow.uuid,
-                scope: flow.scope,
-              })),
-            // Global connections plus the ones this workspace owns. Deliberately
-            // shaped by `toPublic`, which withholds the connection string (and the
-            // credentials inside it) for anything the workspace does not own.
-            sqlConnections: (await sqlConnectionsAvailableTo(workspace.id)).map(
-              (conn) => {
-                const summary = sqlConnectionToPublic(conn, workspace.id);
-                return {
-                  id: summary.database_id,
-                  name: summary.database_id,
-                  engine: summary.engine,
-                  scope: summary.scope,
-                  active: summary.active,
-                };
-              }
-            ),
-            mcpServers: mcpServers.map((id) => {
-              const name = id.replace(/^@@mcp_/, "");
-              return { id: name, name };
-            }),
-          },
-        });
+          agentSkillsPayload,
+        } = require("../utils/agents/agentSkillsPayload");
+        response
+          .status(200)
+          .json(await agentSkillsPayload(response.locals.workspace));
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();

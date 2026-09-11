@@ -223,4 +223,77 @@ describe("MCPCompatibilityLayer.servers", () => {
     }
   });
 
+  it("updates, renames, and reconnects a remote MCP server", async () => {
+    const originalServer = await startSSETestServer([GOOD_TOOL]);
+    const replacementServer = await startSSETestServer([GOOD_TOOL]);
+    writeMCPConfig({
+      original: {
+        type: "sse",
+        url: `http://localhost:${originalServer.address().port}`,
+        nexusai: { suppressedTools: ["echo"] },
+      },
+    });
+    mcpLayer = new MCPCompatibilityLayer();
+
+    try {
+      await mcpLayer.servers();
+      const result = await mcpLayer.updateRemoteServer(
+        "original",
+        "replacement",
+        {
+          type: "sse",
+          url: `http://localhost:${replacementServer.address().port}`,
+        }
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.server.name).toBe("replacement");
+      expect(result.server.running).toBe(true);
+      expect(mcpLayer.mcps.original).toBeUndefined();
+
+      const saved = JSON.parse(
+        fs.readFileSync(
+          path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+          "utf8"
+        )
+      );
+      expect(saved.mcpServers.original).toBeUndefined();
+      expect(saved.mcpServers.replacement.nexusai.suppressedTools).toEqual([
+        "echo",
+      ]);
+    } finally {
+      stopSSETestServer(originalServer);
+      stopSSETestServer(replacementServer);
+    }
+  });
+
+  it("restores the previous server when an update cannot connect", async () => {
+    const originalServer = await startSSETestServer([GOOD_TOOL]);
+    const originalUrl = `http://localhost:${originalServer.address().port}`;
+    writeMCPConfig({ original: { type: "sse", url: originalUrl } });
+    mcpLayer = new MCPCompatibilityLayer();
+
+    try {
+      await mcpLayer.servers();
+      const result = await mcpLayer.updateRemoteServer("original", "broken", {
+        type: "streamable",
+        url: "http://127.0.0.1:1/mcp",
+      });
+
+      expect(result.success).toBe(false);
+      const saved = JSON.parse(
+        fs.readFileSync(
+          path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+          "utf8"
+        )
+      );
+      expect(saved.mcpServers).toEqual({
+        original: { type: "sse", url: originalUrl },
+      });
+      expect(mcpLayer.mcps.original).toBeDefined();
+      expect(mcpLayer.mcps.broken).toBeUndefined();
+    } finally {
+      stopSSETestServer(originalServer);
+    }
+  });
 });
