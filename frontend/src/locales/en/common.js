@@ -326,6 +326,14 @@ const TRANSLATIONS = {
   agent: {
     "performance-warning":
       "Performance of LLMs that do not explicitly support tool-calling is highly dependent on the model's capabilities and accuracy. Some abilities may be limited or non-functional.",
+    chatModeWarning: {
+      text: "This workspace's Chat Mode is set to <b>{{mode}}</b>, not <b>Agent</b>, so the skills configured below will not run on their own - people must type <code>@agent</code> before a message to use any of them.",
+      modeChat: "Chat",
+      modeQuery: "Query",
+      goToChatSettings: "Go to Chat settings",
+      switchTabInstruction:
+        "Switch to the Chat settings tab above and set Chat Mode to Agent.",
+    },
     provider: {
       title: "Workspace Agent LLM Provider",
       description:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useNavigate, Link } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
 import System from "@/models/system";
 import AgentFlows from "@/models/agentFlows";
@@ -49,6 +49,7 @@ import {
   SlidersHorizontal,
   Pencil,
   Plus,
+  TriangleAlert,
   Trash2,
   Workflow,
   Wrench,
@@ -1556,6 +1557,48 @@ export default function AgentSkillSelection({
       </div>
 
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+    </div>
+  );
+}
+
+/**
+ * Every skill configured on this page is a tool the agent calls, and tool calls only
+ * happen in the agent execution loop - which a message only enters on its own when Chat
+ * Mode is "Agent" (`chatMode === "automatic"`). In "Chat" or "Query" mode, none of these
+ * skills fire unless someone types `@agent` first, which is easy to configure and
+ * forget: the toggle turns green, nothing errors, and the skill just silently never runs.
+ * @param {{slug?: string|null, chatMode?: string|null}|null} workspace
+ */
+export function ChatModeWarning({ workspace }) {
+  const { t } = useTranslation();
+  const chatMode = workspace?.chatMode || "chat";
+  if (chatMode === "automatic") return null;
+  const modeLabel = t(
+    chatMode === "query"
+      ? "agent.chatModeWarning.modeQuery"
+      : "agent.chatModeWarning.modeChat"
+  );
+
+  return (
+    <div className="flex items-start gap-x-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-amber-500">
+      <TriangleAlert size={18} className="mt-0.5 shrink-0" />
+      <p className="text-sm">
+        <Trans
+          i18nKey="agent.chatModeWarning.text"
+          values={{ mode: modeLabel }}
+          components={{ b: <b />, code: <code /> }}
+        />{" "}
+        {workspace?.slug ? (
+          <Link
+            to={paths.workspace.settings.chatSettings(workspace.slug)}
+            className="font-medium underline"
+          >
+            {t("agent.chatModeWarning.goToChatSettings")}
+          </Link>
+        ) : (
+          t("agent.chatModeWarning.switchTabInstruction")
+        )}
+      </p>
     </div>
   );
 }

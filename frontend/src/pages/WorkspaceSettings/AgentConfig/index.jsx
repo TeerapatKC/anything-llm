@@ -9,7 +9,9 @@ import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
 import useUser from "@/hooks/useUser";
 import { useIsMobile } from "@/hooks/use-mobile";
-import AgentSkillSelection from "./AgentSkillSelection";
+import AgentSkillSelection, {
+  ChatModeWarning,
+} from "./AgentSkillSelection";
 import { WORKSPACE_PERMISSIONS, workspaceCan } from "@/utils/permissions";
 import {
   Bot,
@@ -152,20 +154,23 @@ export default function WorkspaceAgentConfiguration({
       className="flex min-h-0 flex-col gap-5 min-[1100px]:h-[calc(100vh-48px)]"
     >
       {(!isMobile || !selectedSection) && (
-        <header className="flex flex-none items-start gap-3">
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
-            <Bot size={21} />
-          </span>
-          <div className="min-w-0">
-            <h1 className="text-xl font-semibold text-theme-text-primary">
-              {copy?.title ?? "Agent configuration"}
-            </h1>
-            <p className="mt-0.5 text-sm text-theme-text-secondary">
-              {copy?.description ??
-                "Configure the model and capabilities available to this workspace."}
-            </p>
-          </div>
-        </header>
+        <>
+          <header className="flex flex-none items-start gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+              <Bot size={21} />
+            </span>
+            <div className="min-w-0">
+              <h1 className="text-xl font-semibold text-theme-text-primary">
+                {copy?.title ?? "Agent configuration"}
+              </h1>
+              <p className="mt-0.5 text-sm text-theme-text-secondary">
+                {copy?.description ??
+                  "Configure the model and capabilities available to this workspace."}
+              </p>
+            </div>
+          </header>
+          <ChatModeWarning workspace={workspace} />
+        </>
       )}
 
       <div className="flex min-h-0 flex-1 flex-col gap-4 min-[1100px]:flex-row min-[1100px]:gap-6">
