@@ -8,6 +8,8 @@ import showToast from "@/utils/toast";
 import paths from "@/utils/paths";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import SQLConnectionModal from "@/pages/Admin/Agents/SQLConnectorSelection/SQLConnectionModal";
+import AddServerModal from "@/pages/Admin/Agents/MCPServers/AddServerModal";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   userCan,
   workspaceCan,
@@ -54,6 +56,50 @@ import {
 
 /** Nav key for the panel that manages this workspace's SQL connections. */
 const SQL_MANAGER_KEY = "workspace-sql-connections";
+
+/** Nav key for the panel that manages this workspace's own MCP servers. */
+const MCP_MANAGER_KEY = "workspace-mcp-servers";
+
+/**
+ * The admin screen's MCP server form, pointed at this workspace's own routes.
+ *
+ * It takes a server the way the admin list holds one (`{name, config}`), so a catalog
+ * entry - which is flatter - is reshaped here rather than teaching the form a second
+ * shape. Mounted only while open so the form's uncontrolled fields start from whatever
+ * is being edited.
+ */
+function WorkspaceMCPServerModal({
+  isOpen,
+  close,
+  server = null,
+  workspaceSlug,
+  onSaved,
+}) {
+  if (!isOpen) return null;
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
+      <DialogContent size="md">
+        <AddServerModal
+          closeModal={close}
+          onSaved={onSaved}
+          workspaceSlug={workspaceSlug}
+          server={
+            server
+              ? {
+                  name: server.name,
+                  config: {
+                    type: server.type,
+                    url: server.url,
+                    headers: server.headers,
+                  },
+                }
+              : null
+          }
+        />
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 /** Nav key for the panel that builds and removes this workspace's agent flows. */
 const FLOW_MANAGER_KEY = "workspace-agent-flows";
@@ -165,6 +211,8 @@ export default function AgentSkillSelection({
   const [refreshKey, setRefreshKey] = useState(0);
   const [sqlModalOpen, setSqlModalOpen] = useState(false);
   const [editingConnection, setEditingConnection] = useState(null);
+  const [mcpModalOpen, setMcpModalOpen] = useState(false);
+  const [editingServer, setEditingServer] = useState(null);
   const currentUser = userFromStorage();
   const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
   // Toggling a flow on for this workspace is part of managing agent skills; building
@@ -183,6 +231,16 @@ export default function AgentSkillSelection({
     io.ownsEntities !== false &&
     workspaceCan(
       WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+      workspace?.slug,
+      currentUser
+    );
+  // Same split for MCP: switching an already-configured server on for this workspace
+  // is part of managing skills, while supplying the URL and token for a new one is a
+  // capability of its own.
+  const canManageMcpServers =
+    io.ownsEntities !== false &&
+    workspaceCan(
+      WORKSPACE_PERMISSIONS.MCP_SERVERS_MANAGE,
       workspace?.slug,
       currentUser
     );
@@ -256,21 +314,44 @@ export default function AgentSkillSelection({
       const withEmptyState = (items, category, text) =>
         items.length > 0 ? items : [emptyNavItem(category, text)];
 
+      // MCP servers follow the same shape as agent flows and SQL connections: a
+      // create action at the top, then this workspace's own servers and the shared
+      // ones, each badged so it is obvious which can be edited here.
+      const mcpCatalog = skills?.catalog?.mcpServers ?? [];
+      const mcpCategory = t("agent-panel.mcp-servers");
+      const mcpNavItem = (item) => ({
+        key: `mcp:${item.id}`,
+        category: mcpCategory,
+        title: item.name,
+        badge:
+          item.scope === "workspace"
+            ? t("agent-flow.workspace-owned")
+            : t("agent-flow.shared"),
+        icon: Server,
+        status:
+          resolvedConfig.activeMcpServers == null ||
+          resolvedConfig.activeMcpServers?.includes(item.id)
+            ? "On"
+            : "Off",
+      });
+
       const advancedNavItems = [
+        ...(canManageMcpServers
+          ? [
+              {
+                key: MCP_MANAGER_KEY,
+                category: mcpCategory,
+                title: t("agent-panel.new-mcp-server"),
+                icon: Plus,
+                status: null,
+                accent: true,
+              },
+            ]
+          : []),
         ...withEmptyState(
-          (skills?.catalog?.mcpServers ?? []).map((item) => ({
-            key: `mcp:${item.id}`,
-            category: "MCP servers",
-            title: item.name,
-            icon: Server,
-            status:
-              resolvedConfig.activeMcpServers == null ||
-              resolvedConfig.activeMcpServers?.includes(item.id)
-                ? "On"
-                : "Off",
-          })),
-          "MCP servers",
-          "No MCP servers running on this instance."
+          mcpCatalog.map(mcpNavItem),
+          mcpCategory,
+          t("agent-panel.no-mcp-servers")
         ),
       ];
 
@@ -384,6 +465,7 @@ export default function AgentSkillSelection({
   }, [
     canManageFlows,
     canManageSqlConnections,
+    canManageMcpServers,
     isSystemAdmin,
     onNavigationChange,
     t,
@@ -442,6 +524,36 @@ export default function AgentSkillSelection({
     setSqlModalOpen(false);
     setEditingConnection(null);
     setRefreshKey((key) => key + 1);
+  }
+
+  /**
+   * Persist a server from the shared MCP modal. The modal writes through this
+   * workspace's own routes, so what it creates belongs here and nowhere else.
+   */
+  function saveMcpServer() {
+    setMcpModalOpen(false);
+    setEditingServer(null);
+    setRefreshKey((key) => key + 1);
+  }
+
+  /** Remove an MCP server this workspace owns. */
+  function deleteMcpServer(server) {
+    setConfirm({
+      title: t("agent-flow.delete"),
+      description: `"${server.name}" will be removed from this workspace. Agents here will no longer be able to use its tools.`,
+      confirmText: t("agent-flow.delete"),
+      variant: "destructive",
+      onConfirm: async () => {
+        const { success, error } = await Workspace.mcpServers.delete(
+          workspace.slug,
+          server.id
+        );
+        if (!success)
+          return showToast(error || "Failed to delete server", "error");
+        showToast("Server deleted", "success");
+        setRefreshKey((key) => key + 1);
+      },
+    });
   }
 
   /** Remove a connection this workspace owns. */
@@ -845,6 +957,114 @@ export default function AgentSkillSelection({
     );
   }
 
+  // Add/edit/remove the MCP servers this workspace owns. Servers an admin configured
+  // instance-wide are listed read-only: their credentials belong to the instance.
+  if (focusSkillId === MCP_MANAGER_KEY) {
+    const servers = catalog?.mcpServers ?? [];
+    const owned = servers.filter((server) => server.scope === "workspace");
+    const shared = servers.filter((server) => server.scope !== "workspace");
+    return (
+      <div className="flex w-full flex-col gap-y-5 min-[1100px]:max-w-[720px]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-accent text-theme-text-primary">
+              <Server size={21} />
+            </span>
+            <div>
+              <h2 className="text-base font-semibold text-theme-text-primary">
+                {t("agent-panel.mcp-servers")}
+              </h2>
+              <p className="mt-1 text-xs text-theme-text-secondary">
+                {t("agent-panel.mcp-servers-description")}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="default"
+            className="shrink-0"
+            onClick={() => {
+              setEditingServer(null);
+              setMcpModalOpen(true);
+            }}
+          >
+            <Plus />
+            {t("agent-panel.new-mcp-server")}
+          </Button>
+        </div>
+
+        {owned.length === 0 ? (
+          <div className="flex flex-col items-center gap-y-2 rounded-xl border border-dashed border-theme-sidebar-border py-10 text-center">
+            <Server size={20} className="text-theme-text-secondary" />
+            <p className="text-sm text-theme-text-primary">
+              {t("agent-panel.no-mcp-servers")}
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-hidden rounded-xl bg-card ring-1 ring-foreground/10">
+            {owned.map((server, index) => (
+              <div
+                key={server.id}
+                className={`flex items-center justify-between gap-4 px-4 py-3 ${
+                  index === owned.length - 1
+                    ? ""
+                    : "border-b border-theme-sidebar-border"
+                }`}
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-theme-text-primary">
+                    {server.name}
+                  </p>
+                  <p className="truncate text-xs text-theme-text-secondary">
+                    {server.url ?? server.type}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setEditingServer(server);
+                      setMcpModalOpen(true);
+                    }}
+                  >
+                    <Pencil />
+                    {t("agent-flow.edit")}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={t("agent-flow.delete")}
+                    onClick={() => deleteMcpServer(server)}
+                  >
+                    <Trash2 />
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {shared.length > 0 && (
+          <p className="text-xs text-theme-text-secondary">
+            {t("agent-panel.mcp-servers-shared", { count: shared.length })}
+          </p>
+        )}
+
+        <WorkspaceMCPServerModal
+          isOpen={mcpModalOpen}
+          close={() => {
+            setMcpModalOpen(false);
+            setEditingServer(null);
+          }}
+          server={editingServer}
+          workspaceSlug={workspace?.slug}
+          onSaved={saveMcpServer}
+        />
+        <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
+      </div>
+    );
+  }
+
   if (focusSkillId === FLOW_MANAGER_KEY) {
     const flows = catalog?.flows ?? [];
     const owned = flows.filter((flow) => flow.scope === "workspace");
@@ -979,6 +1199,12 @@ export default function AgentSkillSelection({
       focusedEntityType === "sql" &&
       canManageSqlConnections &&
       focusedEntity.scope === "workspace";
+    // And the same rule again for MCP servers: an instance-wide one is edited from
+    // /settings/mcp-servers, because every workspace it is shared with runs it.
+    const canEditThisServer =
+      focusedEntityType === "mcp" &&
+      canManageMcpServers &&
+      focusedEntity.scope === "workspace";
     const handleEntityToggle = (checked) => {
       if (focusedEntityType !== "mcp") {
         toggleInList(entityConfig.field, focusedEntity.id, checked);
@@ -1059,6 +1285,40 @@ export default function AgentSkillSelection({
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
+              {canEditThisServer && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={t("agent-flow.manage")}
+                      />
+                    }
+                  >
+                    <Settings />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-40">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setEditingServer(focusedEntity);
+                        setMcpModalOpen(true);
+                      }}
+                    >
+                      <Pencil />
+                      {t("agent-flow.edit")}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => deleteMcpServer(focusedEntity)}
+                    >
+                      <Trash2 />
+                      {t("agent-flow.delete")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               {canEditThisConnection && (
                 <DropdownMenu>
                   <DropdownMenuTrigger
@@ -1106,6 +1366,18 @@ export default function AgentSkillSelection({
             onReset={handleReset}
           />
         </div>
+        {focusedEntityType === "mcp" && (
+          <WorkspaceMCPServerModal
+            isOpen={mcpModalOpen}
+            close={() => {
+              setMcpModalOpen(false);
+              setEditingServer(null);
+            }}
+            server={editingServer}
+            workspaceSlug={workspace?.slug}
+            onSaved={saveMcpServer}
+          />
+        )}
         {focusedEntityType === "sql" && (
           <SQLConnectionModal
             isOpen={sqlModalOpen}

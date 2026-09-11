@@ -33,7 +33,7 @@ export default function ConnectionsList({
             index === connections.length - 1
               ? "rounded-b-xl"
               : "border-b border-theme-sidebar-border"
-          } cursor-pointer transition-all duration-300 hover:bg-theme-bg-primary ${
+          } cursor-pointer transition-colors duration-150 ease-out motion-reduce:transition-none hover:bg-theme-bg-primary ${
             selectedId === connection.database_id
               ? "bg-white/10 light:bg-theme-bg-sidebar"
               : ""

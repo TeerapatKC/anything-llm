@@ -963,10 +963,7 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/monitoring",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.SYSTEM_MONITORING]),
-    ],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MONITORING])],
     async (_, response) => {
       try {
         response.status(200).json(monitoringConfig());
@@ -1696,6 +1693,106 @@ function systemEndpoints(app) {
         return response.status(200).json({ success: true });
       } catch (error) {
         console.error("Error updating SQL connection workspaces:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  // Which workspaces can currently see/use this MCP server, and which cannot.
+  // Mirrors the equivalent SQL connection and agent-flow endpoints.
+  //
+  // A workspace-owned server is deliberately absent from this screen: it is visible
+  // to exactly one workspace by construction, and there is nothing to hand out.
+  app.get(
+    "/system/mcp-servers/:name/workspaces",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
+    async (request, response) => {
+      try {
+        const { name } = request.params;
+        const { globalMCPServers } = require("../utils/MCP/scope");
+        if (!globalMCPServers().some((entry) => entry.name === name))
+          return response
+            .status(404)
+            .json({ success: false, error: "Server not found" });
+
+        const workspaces = await Workspace.where({});
+        const results = await Promise.all(
+          workspaces.map(async (workspace) => {
+            const config = await resolveConfigForWorkspace(workspace);
+            return {
+              id: workspace.id,
+              name: workspace.name,
+              slug: workspace.slug,
+              // A null list means "every server this workspace may see", which is
+              // what an unconfigured workspace resolves to - so this one has it on.
+              enabled:
+                !Array.isArray(config.activeMcpServers) ||
+                config.activeMcpServers.includes(name),
+            };
+          })
+        );
+
+        return response
+          .status(200)
+          .json({ success: true, workspaces: results });
+      } catch (error) {
+        console.error("Error listing MCP server workspaces:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  // Set the exact list of workspaces that can see/use this MCP server. Only
+  // workspaces whose membership actually changes are written, so an untouched
+  // workspace's other agent skill settings are never disturbed.
+  app.post(
+    "/system/mcp-servers/:name/workspaces",
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MCP_SERVERS])],
+    async (request, response) => {
+      try {
+        const { name } = request.params;
+        const { workspaceIds } = reqBody(request);
+        const {
+          globalMCPServers,
+          mcpServersAvailableTo,
+        } = require("../utils/MCP/scope");
+        if (!globalMCPServers().some((entry) => entry.name === name))
+          return response
+            .status(404)
+            .json({ success: false, error: "Server not found" });
+        if (!Array.isArray(workspaceIds))
+          return response
+            .status(400)
+            .json({ success: false, error: "workspaceIds must be an array" });
+
+        const desired = new Set(workspaceIds.map((id) => Number(id)));
+        const workspaces = await Workspace.where({});
+
+        for (const workspace of workspaces) {
+          const config = await resolveConfigForWorkspace(workspace);
+          // An unconfigured workspace has no list at all, so turning this server off
+          // for it means writing out the list it was implicitly running with, minus
+          // this server - otherwise the write would also silently switch off every
+          // other server it had by default.
+          const current = Array.isArray(config.activeMcpServers)
+            ? config.activeMcpServers
+            : mcpServersAvailableTo(workspace.id).map((entry) => entry.name);
+          const isEnabled = current.includes(name);
+          const shouldBeEnabled = desired.has(workspace.id);
+          if (isEnabled === shouldBeEnabled) continue;
+
+          const activeMcpServers = shouldBeEnabled
+            ? [...new Set([...current, name])]
+            : current.filter((item) => item !== name);
+
+          await Workspace.update(workspace.id, {
+            agentSkillConfig: JSON.stringify({ ...config, activeMcpServers }),
+          });
+        }
+
+        return response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error updating MCP server workspaces:", error);
         response.status(500).json({ success: false, error: error.message });
       }
     }

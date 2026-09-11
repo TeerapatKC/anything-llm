@@ -54,6 +54,11 @@ function bootSSL(app, port = 3001) {
         );
         await WorkspaceRole.grantOnce(
           "workspace-manager",
+          WORKSPACE_PERMISSIONS.MCP_SERVERS_MANAGE,
+          "backfill_workspace_manager_mcp_servers"
+        );
+        await WorkspaceRole.grantOnce(
+          "workspace-manager",
           WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
           "backfill_workspace_manager_scheduled_jobs"
         );
@@ -110,6 +115,11 @@ function bootHTTP(app, port = 3001) {
         "workspace-manager",
         WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
         "backfill_workspace_manager_sql_connectors"
+      );
+      await WorkspaceRole.grantOnce(
+        "workspace-manager",
+        WORKSPACE_PERMISSIONS.MCP_SERVERS_MANAGE,
+        "backfill_workspace_manager_mcp_servers"
       );
       await WorkspaceRole.grantOnce(
         "workspace-manager",

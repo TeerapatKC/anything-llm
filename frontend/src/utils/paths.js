@@ -172,6 +172,9 @@ export default {
     sqlConnector: () => {
       return "/settings/sql-connector";
     },
+    mcpServers: () => {
+      return "/settings/mcp-servers";
+    },
     chat: () => {
       return "/settings/chat";
     },

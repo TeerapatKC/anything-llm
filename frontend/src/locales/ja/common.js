@@ -62,6 +62,7 @@ const TRANSLATIONS = {
     "agent-skills": "エージェントスキル",
     "agent-flow": "エージェントフロー",
     "sql-connector": "SQL接続",
+    "mcp-servers": "MCPサーバー",
     "default-system-prompt": "デフォルトシステムプロンプト",
     "instance-owner": "インスタンス所有者",
     admin: "管理者",
@@ -453,7 +454,8 @@ const TRANSLATIONS = {
         title: "メール送信",
         description:
           "エージェントがインスタンスのSMTPサーバーを通じてユーザーの代わりにメールを送信できるようにします。",
-        needsSmtp: "この機能を使うには先にSMTPを設定して有効にする必要があります。",
+        needsSmtp:
+          "この機能を使うには先にSMTPを設定して有効にする必要があります。",
         needsSmtpLink: "SMTP設定に移動",
       },
     },
@@ -1439,7 +1441,8 @@ const TRANSLATIONS = {
     smtpRequiredCta: "SMTP設定に移動",
     logs: {
       title: "スケジュールジョブのログ",
-      description: "すべてのスケジュールジョブの実行状況・実行時間・メール送信結果です。",
+      description:
+        "すべてのスケジュールジョブの実行状況・実行時間・メール送信結果です。",
       clear: "ログを消去",
       clearTitle: "すべてのスケジュールジョブのログを消去しますか?",
       clearDescription: "この操作は元に戻せません。",
@@ -2201,6 +2204,40 @@ const TRANSLATIONS = {
       "coming-soon": "設定オプションは近日公開予定です...",
     },
   },
+  "mcp-servers": {
+    title: "MCPサーバー",
+    "page-description": "エージェントが利用できるMCPサーバーを管理します。",
+    "list-description":
+      "このインスタンスに設定されたMCPサーバーを一覧表示します。",
+    "servers-heading": "MCPサーバー",
+    "tools-heading": "MCPツール",
+    "new-server": "新しいサーバー",
+    "empty-list": "MCPサーバーはまだありません。",
+    "select-server": "サーバーを選択",
+    "select-server-description":
+      "設定するMCPサーバーをリストから選択してください。",
+    "workspace-owned": "ワークスペース",
+    shared: "共有",
+    "refresh-title": "MCPサーバーの一覧を更新しますか?",
+    "refresh-description":
+      "すべてのMCPサーバーを再起動し、ツールを読み込み直します。",
+    "refresh-confirm": "更新",
+    "refresh-failed": "MCPサーバーの更新に失敗しました。",
+    created: "MCPサーバーを追加して接続しました。",
+    updated: "MCPサーバーを更新して接続しました。",
+    visibility: {
+      title: "利用できるワークスペース",
+      description:
+        "このサーバーのツールを利用できるワークスペースを選択します。",
+      "select-all": "すべて選択",
+      "clear-all": "すべて解除",
+      loading: "ワークスペースを読み込み中...",
+      empty: "このインスタンスにワークスペースはまだありません。",
+      failed: "ワークスペースの可視性を更新できませんでした。",
+      "workspace-owned":
+        "このサーバーは1つのワークスペースに属しているため、そのワークスペースのエージェントだけが利用できます。",
+    },
+  },
   "sql-connector": {
     title: "SQL コネクタ",
     "page-description":
@@ -2323,6 +2360,13 @@ const TRANSLATIONS = {
     "upload-documents": "ドキュメントをアップロード",
   },
   "agent-panel": {
+    "mcp-servers": "MCPサーバー",
+    "mcp-servers-description":
+      "ここで追加したサーバーはこのワークスペースに属し、そのエージェントだけが利用できます。",
+    "new-mcp-server": "新しいサーバー",
+    "no-mcp-servers": "このワークスペースのMCPサーバーはまだありません。",
+    "mcp-servers-shared":
+      "管理者が共有したサーバーが{{count}}件あります。認証情報はインスタンス全体で管理されます。",
     "sql-connections": "SQL接続",
     "sql-connections-description":
       "ここで追加した接続はこのワークスペースに属し、そのエージェントだけが利用できます。",

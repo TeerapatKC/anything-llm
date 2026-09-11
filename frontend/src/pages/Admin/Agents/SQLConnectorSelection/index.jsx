@@ -199,7 +199,7 @@ export default function AgentSQLConnectorSelection({
 
         {/* Selected connection detail */}
         <div className="flex w-full flex-col min-[1100px]:min-w-0 min-[1100px]:flex-1">
-          <div className="thin-scrollbar min-h-64 overflow-x-visible rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10 min-[1100px]:min-h-0 min-[1100px]:flex-1 min-[1100px]:overflow-y-auto min-[1100px]:p-5">
+          <div className="thin-scrollbar min-h-64 overflow-x-visible rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10 [overflow-anchor:none] min-[1100px]:min-h-0 min-[1100px]:flex-1 min-[1100px]:overflow-y-auto min-[1100px]:p-5">
             {enabled && selectedConnection ? (
               <DBConnection
                 key={`${selectedConnection.database_id}:${connectionVersion}`}

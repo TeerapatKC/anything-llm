@@ -25,6 +25,7 @@ import {
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import AddServerModal from "./AddServerModal";
+import ServerWorkspaceVisibility from "./ServerWorkspaceVisibility";
 
 function ManageServerMenu({ server, toggleServer, onDelete, onEdit }) {
   const { t } = useTranslation();
@@ -118,6 +119,7 @@ export default function ServerPanel({
   onDelete,
   onUpdated,
   onToggleTool,
+  showWorkspaceVisibility = false,
 }) {
   const { t } = useTranslation();
   const [showEditServer, setShowEditServer] = useState(false);
@@ -143,6 +145,11 @@ export default function ServerPanel({
               >
                 {titleCase(server.name.replace(/[_-]/g, " "))}
               </label>
+              <span className="rounded-full bg-muted/40 px-2 py-0.5 text-[11px] font-medium text-theme-text-secondary">
+                {server.scope === "workspace"
+                  ? t("mcp-servers.workspace-owned")
+                  : t("mcp-servers.shared")}
+              </span>
               {server.tools.length > 0 && (
                 <p className="text-theme-text-secondary text-sm">
                   {enabledToolCount}/{server.tools.length}{" "}
@@ -166,6 +173,12 @@ export default function ServerPanel({
             suppressedTools={suppressedTools}
             onToggleTool={onToggleTool}
           />
+          {showWorkspaceVisibility && (
+            <ServerWorkspaceVisibility
+              serverName={server.name}
+              scope={server.scope}
+            />
+          )}
         </div>
       </div>
       <Dialog
@@ -270,9 +283,13 @@ function RenderServerTools({
   suppressedTools = [],
   onToggleTool,
 }) {
+  const { t } = useTranslation();
   if (tools.length === 0) return null;
   return (
     <div className="flex w-full min-w-0 flex-col gap-y-2 overflow-hidden">
+      <h3 className="text-sm font-semibold text-theme-text-primary">
+        {t("mcp-servers.tools-heading")}
+      </h3>
       <div className="flex w-full min-w-0 flex-col gap-y-2">
         {tools.map((tool) => (
           <ServerTool

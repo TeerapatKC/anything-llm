@@ -889,6 +889,45 @@ const System = {
   },
 
   /**
+   * Which workspaces can currently see/use an instance-wide MCP server.
+   * @param {string} name
+   * @returns {Promise<{success: boolean, error: string | null, workspaces: {id: number, name: string, slug: string, enabled: boolean}[]}>}
+   */
+  getMCPServerWorkspaces: async function (name) {
+    return fetch(`${API_BASE}/system/mcp-servers/${name}/workspaces`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error("Failed to fetch MCP server workspaces:", e);
+        return { success: false, error: e.message, workspaces: [] };
+      });
+  },
+
+  /**
+   * Set the exact list of workspaces that can see/use this MCP server.
+   * @param {string} name
+   * @param {number[]} workspaceIds
+   * @returns {Promise<{success: boolean, error: string | null}>}
+   */
+  updateMCPServerWorkspaces: async function (name, workspaceIds = []) {
+    return fetch(`${API_BASE}/system/mcp-servers/${name}/workspaces`, {
+      method: "POST",
+      headers: {
+        ...baseHeaders(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ workspaceIds }),
+    })
+      .then((res) => res.json())
+      .catch((e) => {
+        console.error("Failed to update MCP server workspaces:", e);
+        return { success: false, error: e.message };
+      });
+  },
+
+  /**
    * Checks if the filesystem-agent skill is available.
    * The filesystem-agent skill is only available when running in a Docker container.
    * @returns {Promise<boolean>}

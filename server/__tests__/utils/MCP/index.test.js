@@ -296,4 +296,128 @@ describe("MCPCompatibilityLayer.servers", () => {
       stopSSETestServer(originalServer);
     }
   });
+
+  it("records the owning workspace on a server created inside one", async () => {
+    const remote = await startSSETestServer([GOOD_TOOL]);
+    writeMCPConfig({});
+    mcpLayer = new MCPCompatibilityLayer();
+
+    try {
+      const result = await mcpLayer.createRemoteServer(
+        "owned",
+        { type: "sse", url: `http://localhost:${remote.address().port}` },
+        7
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.server.scope).toBe("workspace");
+      expect(result.server.workspaceId).toBe(7);
+
+      const saved = JSON.parse(
+        fs.readFileSync(
+          path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+          "utf8"
+        )
+      );
+      expect(saved.mcpServers.owned.nexusai.workspaceId).toBe(7);
+    } finally {
+      stopSSETestServer(remote);
+    }
+  });
+
+  it("leaves a server added by an administrator instance-wide", async () => {
+    const remote = await startSSETestServer([GOOD_TOOL]);
+    writeMCPConfig({});
+    mcpLayer = new MCPCompatibilityLayer();
+
+    try {
+      const result = await mcpLayer.createRemoteServer("shared", {
+        type: "sse",
+        url: `http://localhost:${remote.address().port}`,
+      });
+
+      expect(result.server.scope).toBe("global");
+      expect(result.server.workspaceId).toBeNull();
+      const saved = JSON.parse(
+        fs.readFileSync(
+          path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+          "utf8"
+        )
+      );
+      expect(saved.mcpServers.shared.nexusai).toBeUndefined();
+    } finally {
+      stopSSETestServer(remote);
+    }
+  });
+
+  it("hides another workspace's server from the one asking", async () => {
+    const shared = await startSSETestServer([GOOD_TOOL]);
+    const owned = await startSSETestServer([GOOD_TOOL]);
+
+    try {
+      writeMCPConfig({
+        shared: {
+          type: "sse",
+          url: `http://localhost:${shared.address().port}`,
+        },
+        "nine-own": {
+          type: "sse",
+          url: `http://localhost:${owned.address().port}`,
+          nexusai: { workspaceId: 9 },
+        },
+      });
+      mcpLayer = new MCPCompatibilityLayer();
+
+      const asNine = await mcpLayer.servers({ workspaceId: 9 });
+      expect(asNine.map((s) => s.name).sort()).toEqual(["nine-own", "shared"]);
+
+      const asFive = await mcpLayer.servers({ workspaceId: 5 });
+      expect(asFive.map((s) => s.name)).toEqual(["shared"]);
+
+      // An administrator still sees everything, with each server's owner on it.
+      const all = await mcpLayer.servers();
+      expect(all.map((s) => s.name).sort()).toEqual(["nine-own", "shared"]);
+      expect(all.find((s) => s.name === "nine-own").workspaceId).toBe(9);
+      expect(all.find((s) => s.name === "shared").scope).toBe("global");
+    } finally {
+      stopSSETestServer(shared);
+      stopSSETestServer(owned);
+    }
+  });
+
+  it("keeps the owner when the server is edited", async () => {
+    const first = await startSSETestServer([GOOD_TOOL]);
+    const second = await startSSETestServer([GOOD_TOOL]);
+
+    try {
+      writeMCPConfig({
+        owned: {
+          type: "sse",
+          url: `http://localhost:${first.address().port}`,
+          nexusai: { workspaceId: 4 },
+        },
+      });
+      mcpLayer = new MCPCompatibilityLayer();
+      await mcpLayer.servers();
+
+      const result = await mcpLayer.updateRemoteServer("owned", "renamed", {
+        type: "sse",
+        url: `http://localhost:${second.address().port}`,
+        // A caller cannot hand ownership to someone else by asking.
+        nexusai: { workspaceId: 99 },
+      });
+
+      expect(result.success).toBe(true);
+      const saved = JSON.parse(
+        fs.readFileSync(
+          path.join(storageDir, "plugins", "nexusai_mcp_servers.json"),
+          "utf8"
+        )
+      );
+      expect(saved.mcpServers.renamed.nexusai.workspaceId).toBe(4);
+    } finally {
+      stopSSETestServer(first);
+      stopSSETestServer(second);
+    }
+  });
 });

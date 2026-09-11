@@ -31,9 +31,20 @@ async function agentSkillsPayload(workspace) {
     sqlConnectionsAvailableTo,
     toPublic: sqlConnectionToPublic,
   } = require("./aibitat/plugins/sql-agent/SQLConnectors");
+  const {
+    mcpServersAvailableTo,
+    toPublic: toPublicMCPServer,
+  } = require("../MCP/scope");
 
   const config = await resolveConfigForWorkspace(workspace);
-  const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
+  // Booted servers decide what the `running` badge says; the catalog itself comes
+  // from the config, so a workspace's own server is still listed - and still
+  // editable - on a day the service behind it is down.
+  const bootedServers = new Set(
+    (await new MCPCompatibilityLayer().activeMCPServers()).map((id) =>
+      id.replace(/^@@mcp_/, "")
+    )
+  );
   const [instanceRuntime, skillCredentials] = await Promise.all([
     instanceRuntimeConfig(),
     skillCredentialStatus(workspace.id),
@@ -86,9 +97,21 @@ async function agentSkillsPayload(workspace) {
           };
         }
       ),
-      mcpServers: mcpServers.map((id) => {
-        const name = id.replace(/^@@mcp_/, "");
-        return { id: name, name };
+      // Instance-wide servers plus the ones this workspace owns - never another
+      // workspace's, which would otherwise be offered as a toggle here. Shaped by
+      // `toPublic`, which withholds the HTTP headers (and the tokens inside them)
+      // for anything the workspace does not own.
+      mcpServers: mcpServersAvailableTo(workspace.id).map((entry) => {
+        const summary = toPublicMCPServer(entry, workspace.id);
+        return {
+          id: summary.name,
+          name: summary.name,
+          scope: summary.scope,
+          type: summary.type,
+          ...(summary.url ? { url: summary.url } : {}),
+          ...(summary.headers ? { headers: summary.headers } : {}),
+          running: bootedServers.has(summary.name),
+        };
       }),
     },
   };

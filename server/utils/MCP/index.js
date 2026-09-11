@@ -137,23 +137,41 @@ class MCPCompatibilityLayer extends MCPHypervisor {
   /**
    * Returns the MCP servers that were loaded or attempted to be loaded
    * so that we can display them in the frontend for review or error logging.
+   *
+   * Every entry carries its owner, so a screen can tell an instance-wide server from
+   * one a single workspace added. Pass `workspaceId` to narrow the list to what that
+   * workspace may see at all - the global pool plus its own - the same way
+   * `sqlConnectionsAvailableTo` narrows connections.
+   * @param {{workspaceId?: number|null}} [options]
    * @returns {Promise<{
    *   name: string,
+   *   scope: 'global'|'workspace',
+   *   workspaceId: number|null,
    *   running: boolean,
    *   tools: {name: string, description: string, inputSchema: Object}[],
    *   process: {pid: number, cmd: string}|null,
    *   error: string|null
    * }[]>} - The active MCP servers
    */
-  async servers() {
+  async servers({ workspaceId = null } = {}) {
+    const { serverOwner, normalizeWorkspaceId } = require("./scope");
+    const asking = normalizeWorkspaceId(workspaceId);
     await this.bootMCPServers();
     const servers = [];
     for (const [name, result] of Object.entries(this.mcpLoadingResults)) {
       const config = this.mcpServerConfigs.find((s) => s.name === name);
+      const owner = serverOwner(config);
+      // A server another workspace created is not this one's to know about at all.
+      if (asking !== null && owner !== null && owner !== asking) continue;
+      const scope = {
+        scope: owner === null ? "global" : "workspace",
+        workspaceId: owner,
+      };
 
       if (result.status === "failed") {
         servers.push({
           name,
+          ...scope,
           config: config?.server || null,
           running: false,
           tools: [],
@@ -181,6 +199,7 @@ class MCPCompatibilityLayer extends MCPHypervisor {
         );
         servers.push({
           name,
+          ...scope,
           config: config?.server || null,
           running: online,
           tools,
@@ -193,6 +212,7 @@ class MCPCompatibilityLayer extends MCPHypervisor {
         this.log(`Failed to list tools for MCP server ${name}:`, error);
         servers.push({
           name,
+          ...scope,
           config: config?.server || null,
           running: false,
           tools: [],
@@ -237,10 +257,14 @@ class MCPCompatibilityLayer extends MCPHypervisor {
    * in the management UI and the operator can retry after fixing the service.
    * @param {string} name
    * @param {object} server
+   * @param {number|null} workspaceId - the workspace that owns it; null is instance-wide
    * @returns {Promise<{success: boolean, error: string|null, server?: object}>}
    */
-  async createRemoteServer(name, server) {
-    const saved = this.addMCPServerToConfig(name, server);
+  async createRemoteServer(name, server, workspaceId = null) {
+    const { withOwner, normalizeWorkspaceId } = require("./scope");
+    const owner = normalizeWorkspaceId(workspaceId);
+    const definition = withOwner(server, owner);
+    const saved = this.addMCPServerToConfig(name, definition);
     if (!saved.success) return saved;
 
     const startup = await this.startMCPServer(name);
@@ -250,7 +274,9 @@ class MCPCompatibilityLayer extends MCPHypervisor {
         error: this.mcpLoadingResults[name]?.message || startup.error,
         server: {
           name,
-          config: server,
+          scope: owner === null ? "global" : "workspace",
+          workspaceId: owner,
+          config: definition,
           running: false,
           tools: [],
           error: this.mcpLoadingResults[name]?.message || startup.error,
@@ -289,6 +315,10 @@ class MCPCompatibilityLayer extends MCPHypervisor {
     const previousServer = JSON.parse(JSON.stringify(current.server));
     const previousResult = this.mcpLoadingResults[currentName];
     const wasRunning = !!this.mcps[currentName];
+    // The stored `nexusai` block is carried over rather than taken from the caller,
+    // which is what keeps both the suppressed-tool list and the owning workspace
+    // attached to the server: an update can change where a server points, never who
+    // it belongs to.
     const replacement = {
       ...server,
       ...(current.server.nexusai ? { nexusai: current.server.nexusai } : {}),

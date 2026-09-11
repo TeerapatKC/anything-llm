@@ -76,6 +76,7 @@ const TRANSLATIONS = {
     "agent-skills": "Agent Skills",
     "agent-flow": "Agent Flow",
     "sql-connector": "SQL Connector",
+    "mcp-servers": "MCP Servers",
     "default-system-prompt": "Default System Prompt",
     "instance-owner": "Instance Owner",
     "model-router": "Model Router",
@@ -2196,6 +2197,39 @@ const TRANSLATIONS = {
       "coming-soon": "Configuration options coming soon...",
     },
   },
+  "mcp-servers": {
+    title: "MCP Servers",
+    "page-description": "Manage the MCP servers available to your agents.",
+    "list-description": "Browse the MCP servers configured for this instance.",
+    "servers-heading": "MCP Servers",
+    "tools-heading": "MCP Tools",
+    "new-server": "New server",
+    "empty-list": "No MCP servers yet.",
+    "select-server": "Select a server",
+    "select-server-description":
+      "Choose an MCP server from the list to configure it.",
+    "workspace-owned": "Workspace",
+    shared: "Shared",
+    "refresh-title": "Refresh the list of MCP servers?",
+    "refresh-description":
+      "This will restart all MCP servers and reload their tools.",
+    "refresh-confirm": "Refresh",
+    "refresh-failed": "Failed to refresh MCP servers.",
+    created: "MCP server added and connected successfully.",
+    updated: "MCP server updated and connected successfully.",
+    visibility: {
+      title: "Visible to workspaces",
+      description:
+        "Choose which workspaces' agents can use the tools on this server.",
+      "select-all": "Select all",
+      "clear-all": "Clear all",
+      loading: "Loading workspaces...",
+      empty: "No workspaces on this instance yet.",
+      failed: "Failed to update workspace visibility.",
+      "workspace-owned":
+        "This server belongs to one workspace, so only that workspace's agent can use it.",
+    },
+  },
   "sql-connector": {
     title: "SQL Connector",
     "page-description":
@@ -2316,6 +2350,13 @@ const TRANSLATIONS = {
     "upload-documents": "Upload documents",
   },
   "agent-panel": {
+    "mcp-servers": "MCP servers",
+    "mcp-servers-description":
+      "Servers added here belong to this workspace and are usable only by its agent.",
+    "new-mcp-server": "New server",
+    "no-mcp-servers": "No MCP servers for this workspace yet.",
+    "mcp-servers-shared":
+      "{{count}} server(s) shared with this workspace by an administrator. Switch them on from the list; their credentials stay instance-wide.",
     "sql-connections": "SQL connections",
     "sql-connections-description":
       "Connections added here belong to this workspace and are usable only by its agent.",

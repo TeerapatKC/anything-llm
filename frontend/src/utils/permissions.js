@@ -69,6 +69,7 @@ export const PERMISSIONS = {
 
   DOCUMENTS_MANAGE: "documents.manage",
   DOCUMENTS_VIEW: "documents.view",
+  DOCUMENTS_VIEW_ALL: "documents.view_all",
   DOCUMENTS_UPLOAD: "documents.upload",
   DOCUMENTS_ORGANIZE: "documents.organize",
   DOCUMENTS_DELETE: "documents.delete",
@@ -142,6 +143,8 @@ export const WORKSPACE_PERMISSIONS = {
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
   SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
+  MCP_SERVERS_MANAGE: "workspace.mcp_servers.manage",
+  SCHEDULED_JOBS_MANAGE: "workspace.scheduled_jobs.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
   MEMBERS_ADD: "workspace.members.add",

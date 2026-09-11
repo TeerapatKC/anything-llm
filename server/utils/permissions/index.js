@@ -188,6 +188,7 @@ const WORKSPACE_PERMISSIONS = {
   AGENTS_MANAGE: "workspace.agents.manage",
   AGENT_FLOWS_MANAGE: "workspace.agent_flows.manage",
   SQL_CONNECTORS_MANAGE: "workspace.sql_connectors.manage",
+  MCP_SERVERS_MANAGE: "workspace.mcp_servers.manage",
   SCHEDULED_JOBS_MANAGE: "workspace.scheduled_jobs.manage",
 
   MEMBERS_MANAGE: "workspace.members.manage",
@@ -950,6 +951,19 @@ const PERMISSION_CATALOG = [
     label: "Manage workspace SQL connections",
     description:
       "Add, edit and remove SQL database connections that belong to this workspace. Connections made here are usable only inside it.",
+    category: "workspace_admin",
+    scope: SCOPES.WORKSPACE,
+  },
+  {
+    // Same reasoning again: an MCP server hands the agent tools that reach out to a
+    // third-party service under credentials somebody supplies here, which is wider
+    // than editing this workspace's settings. Only network servers can be added with
+    // it - a command-line one runs a process inside the application container, so
+    // those stay with the instance administrator.
+    key: WORKSPACE_PERMISSIONS.MCP_SERVERS_MANAGE,
+    label: "Manage workspace MCP servers",
+    description:
+      "Add, edit and remove remote MCP servers that belong to this workspace. Servers added here are usable only inside it.",
     category: "workspace_admin",
     scope: SCOPES.WORKSPACE,
   },

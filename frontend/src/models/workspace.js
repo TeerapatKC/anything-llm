@@ -853,6 +853,60 @@ const Workspace = {
     },
   },
 
+  mcpServers: {
+    /** Instance-wide servers plus this workspace's own. */
+    all: async function (slug) {
+      return await fetch(`${API_BASE}/workspace/${slug}/mcp-servers`, {
+        method: "GET",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, servers: [] }));
+    },
+
+    create: async function (slug, server = {}) {
+      return await fetch(`${API_BASE}/workspace/${slug}/mcp-servers`, {
+        method: "POST",
+        headers: { ...baseHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify(server),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, server: null }));
+    },
+
+    update: async function (slug, name, server = {}) {
+      return await fetch(`${API_BASE}/workspace/${slug}/mcp-servers/${name}`, {
+        method: "POST",
+        headers: { ...baseHeaders(), "Content-Type": "application/json" },
+        body: JSON.stringify(server),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message, server: null }));
+    },
+
+    /** Start or stop a server this workspace owns. */
+    toggle: async function (slug, name) {
+      return await fetch(
+        `${API_BASE}/workspace/${slug}/mcp-servers/${name}/toggle`,
+        {
+          method: "POST",
+          headers: { ...baseHeaders(), "Content-Type": "application/json" },
+        }
+      )
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+
+    delete: async function (slug, name) {
+      return await fetch(`${API_BASE}/workspace/${slug}/mcp-servers/${name}`, {
+        method: "DELETE",
+        headers: baseHeaders(),
+      })
+        .then((res) => res.json())
+        .catch((e) => ({ success: false, error: e.message }));
+    },
+  },
+
   threads: WorkspaceThread,
 };
 

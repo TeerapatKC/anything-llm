@@ -1,5 +1,6 @@
 import { useState } from "react";
 import MCPServers from "@/models/mcpServers";
+import Workspace from "@/models/workspace";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,7 +26,21 @@ function parseHeaders(value) {
   return headers;
 }
 
-export default function AddServerModal({ closeModal, onSaved, server = null }) {
+/**
+ * Add or edit a remote MCP server.
+ *
+ * The same form serves both owners a server can have. With no `workspaceSlug` it
+ * writes through the instance-wide routes, which is the admin screen; with one it
+ * writes through that workspace's own routes, so the server it creates belongs to
+ * the workspace and is visible nowhere else - exactly how the SQL connection modal
+ * is shared between the two screens.
+ */
+export default function AddServerModal({
+  closeModal,
+  onSaved,
+  server = null,
+  workspaceSlug = null,
+}) {
   const isEditing = !!server;
   const [transport, setTransport] = useState(
     server?.config?.type === "sse" ? "sse" : "streamable"
@@ -46,9 +61,17 @@ export default function AddServerModal({ closeModal, onSaved, server = null }) {
         url: String(form.get("url") || "").trim(),
         headers: parseHeaders(String(form.get("headers") || "")),
       };
-      const result = isEditing
-        ? await MCPServers.updateRemote(server.name, config)
-        : await MCPServers.createRemote(config);
+      const result = workspaceSlug
+        ? isEditing
+          ? await Workspace.mcpServers.update(
+              workspaceSlug,
+              server.name,
+              config
+            )
+          : await Workspace.mcpServers.create(workspaceSlug, config)
+        : isEditing
+          ? await MCPServers.updateRemote(server.name, config)
+          : await MCPServers.createRemote(config);
       if (!result.success)
         throw new Error(result.error || "Unable to save server.");
       onSaved(result.server, result.error);

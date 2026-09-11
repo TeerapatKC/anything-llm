@@ -315,6 +315,14 @@ const SidebarOptions = ({ user = null, t }) => (
               href: paths.settings.sqlConnector(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
             },
+            {
+              // Same treatment again - a server added here is an instance-wide
+              // credential pointed at an outside service.
+              hidden: !isSuperAdmin(user),
+              btnText: t("settings.mcp-servers"),
+              href: paths.settings.mcpServers(),
+              permissions: [PERMISSIONS.AGENTS_MCP_SERVERS],
+            },
           ]}
         />
         <Option

@@ -313,6 +313,19 @@ const router = createBrowserRouter([
         },
       },
       {
+        // Same treatment again - an MCP server added here is an instance-wide
+        // credential pointed at an outside service, so this is a role check rather
+        // than a permission. A workspace's own servers are managed from that
+        // workspace's agent settings instead.
+        path: "/settings/mcp-servers",
+        lazy: async () => {
+          const { default: AdminAgents } = await import("@/pages/Admin/Agents");
+          return {
+            element: <SuperAdminRoute Component={AdminAgents} />,
+          };
+        },
+      },
+      {
         path: "/settings/agents/builder",
         lazy: async () => {
           const { default: AgentBuilder } = await import(

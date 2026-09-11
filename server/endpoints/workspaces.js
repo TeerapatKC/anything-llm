@@ -1785,6 +1785,230 @@ function workspaceEndpoints(app) {
   );
 
   /**
+   * MCP servers a workspace owns.
+   *
+   * Mirrors the SQL connection routes above, and for the same reason: a server added
+   * here belongs to this workspace, is usable by nobody else, and its HTTP headers -
+   * which carry the bearer token for the service behind it - never reach a screen
+   * outside it. Servers an admin shared in instance-wide are listed so they can be
+   * switched on, but are not editable here.
+   *
+   * Only network servers can be managed from a workspace. A command-line (stdio)
+   * server starts a process inside the application container, so adding one of those
+   * stays with the instance administrator.
+   */
+
+  /**
+   * Resolve an MCP server this workspace owns, or answer 404. Same reasoning as the
+   * flow and SQL connection guards: a wrong owner is indistinguishable from "does not
+   * exist", so a workspace manager cannot probe for servers configured elsewhere.
+   */
+  function ownedMCPServerOr404(name, workspace, response) {
+    const { mcpServersOwnedByWorkspace } = require("../utils/MCP/scope");
+    const server = mcpServersOwnedByWorkspace(workspace.id).find(
+      (entry) => entry.name === name
+    );
+    if (!server) {
+      response.status(404).json({ success: false, error: "Server not found" });
+      return null;
+    }
+    return server;
+  }
+
+  app.get(
+    "/workspace/:slug/mcp-servers",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.MCP_SERVERS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (_request, response) => {
+      try {
+        const MCPCompatibilityLayer = require("../utils/MCP");
+        const { serverOwner } = require("../utils/MCP/scope");
+        const workspace = response.locals.workspace;
+        const servers = await new MCPCompatibilityLayer().servers({
+          workspaceId: workspace.id,
+        });
+        response.status(200).json({
+          success: true,
+          servers: servers.map((server) => ({
+            ...server,
+            // Only the owning workspace gets the definition back - it holds the
+            // credentials somebody there typed in.
+            config:
+              serverOwner({ server: server.config }) === null
+                ? null
+                : server.config,
+          })),
+        });
+      } catch (error) {
+        console.error("Error listing workspace MCP servers:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/mcp-servers",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.MCP_SERVERS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const MCPCompatibilityLayer = require("../utils/MCP");
+        const {
+          normalizeRemoteMCPServer,
+        } = require("../utils/MCP/remoteServerConfig");
+        const user = await userFromSession(request, response);
+        const workspace = response.locals.workspace;
+        const { name, server } = normalizeRemoteMCPServer(reqBody(request));
+
+        // The owner comes from the resolved workspace, never the payload.
+        const result = await new MCPCompatibilityLayer().createRemoteServer(
+          name,
+          server,
+          workspace.id
+        );
+        if (!result.success)
+          return response
+            .status(409)
+            .json({ success: false, error: result.error, server: null });
+
+        await EventLogs.logEvent(
+          "mcp_server_created",
+          {
+            serverName: name,
+            type: server.type,
+            url: server.url,
+            workspaceId: workspace.id,
+          },
+          user?.id
+        );
+        response.status(201).json(result);
+      } catch (error) {
+        console.error("Error creating workspace MCP server:", error);
+        response
+          .status(400)
+          .json({ success: false, error: error.message, server: null });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/mcp-servers/:name",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.MCP_SERVERS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const MCPCompatibilityLayer = require("../utils/MCP");
+        const {
+          normalizeRemoteMCPServer,
+        } = require("../utils/MCP/remoteServerConfig");
+        const user = await userFromSession(request, response);
+        const workspace = response.locals.workspace;
+        const currentName = request.params.name;
+        if (!ownedMCPServerOr404(currentName, workspace, response)) return;
+
+        const { name, server } = normalizeRemoteMCPServer(reqBody(request));
+        // updateRemoteServer carries the stored owner over, so this can change where
+        // the server points but never which workspace it belongs to.
+        const result = await new MCPCompatibilityLayer().updateRemoteServer(
+          currentName,
+          name,
+          server
+        );
+        if (!result.success)
+          return response
+            .status(409)
+            .json({ success: false, error: result.error, server: null });
+
+        await EventLogs.logEvent(
+          "mcp_server_updated",
+          {
+            previousName: currentName,
+            serverName: name,
+            workspaceId: workspace.id,
+          },
+          user?.id
+        );
+        response.status(200).json(result);
+      } catch (error) {
+        console.error("Error updating workspace MCP server:", error);
+        response
+          .status(400)
+          .json({ success: false, error: error.message, server: null });
+      }
+    }
+  );
+
+  app.post(
+    "/workspace/:slug/mcp-servers/:name/toggle",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.MCP_SERVERS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const MCPCompatibilityLayer = require("../utils/MCP");
+        const workspace = response.locals.workspace;
+        const { name } = request.params;
+        if (!ownedMCPServerOr404(name, workspace, response)) return;
+
+        const result = await new MCPCompatibilityLayer().toggleServerStatus(
+          name
+        );
+        response
+          .status(200)
+          .json({ success: result.success, error: result.error });
+      } catch (error) {
+        console.error("Error toggling workspace MCP server:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  app.delete(
+    "/workspace/:slug/mcp-servers/:name",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.MCP_SERVERS_MANAGE]),
+      validWorkspaceSlug,
+    ],
+    async (request, response) => {
+      try {
+        const MCPCompatibilityLayer = require("../utils/MCP");
+        const user = await userFromSession(request, response);
+        const workspace = response.locals.workspace;
+        const { name } = request.params;
+        if (!ownedMCPServerOr404(name, workspace, response)) return;
+
+        const result = await new MCPCompatibilityLayer().deleteServer(name);
+        if (!result.success)
+          return response
+            .status(500)
+            .json({ success: false, error: result.error });
+
+        await EventLogs.logEvent(
+          "mcp_server_deleted",
+          { serverName: name, workspaceId: workspace.id },
+          user?.id
+        );
+        response.status(200).json({ success: true });
+      } catch (error) {
+        console.error("Error deleting workspace MCP server:", error);
+        response.status(500).json({ success: false, error: error.message });
+      }
+    }
+  );
+
+  /**
    * Scheduled jobs a workspace owns.
    *
    * These are separate from the instance-wide jobs at /scheduled-jobs/*: a job
@@ -1801,7 +2025,10 @@ function workspaceEndpoints(app) {
    */
   async function ownedJobOr404(id, workspace, response) {
     const job = await ScheduledJob.get({ id: Number(id) });
-    if (!job || ScheduledJob.normalizeWorkspaceId(job.workspaceId) !== workspace.id) {
+    if (
+      !job ||
+      ScheduledJob.normalizeWorkspaceId(job.workspaceId) !== workspace.id
+    ) {
       response.status(404).json({ job: null, error: "Job not found" });
       return null;
     }
@@ -1815,7 +2042,10 @@ function workspaceEndpoints(app) {
       return null;
     }
     const job = await ScheduledJob.get({ id: run.jobId });
-    if (!job || ScheduledJob.normalizeWorkspaceId(job.workspaceId) !== workspace.id) {
+    if (
+      !job ||
+      ScheduledJob.normalizeWorkspaceId(job.workspaceId) !== workspace.id
+    ) {
       response.status(404).json({ run: null, error: "Run not found" });
       return null;
     }
@@ -2199,7 +2429,9 @@ function workspaceEndpoints(app) {
           },
           user?.id
         );
-        response.status(200).json({ success: true, skipped: !run, error: null });
+        response
+          .status(200)
+          .json({ success: true, skipped: !run, error: null });
       } catch (error) {
         console.error("Error triggering workspace scheduled job:", error);
         response.status(500).json({ success: false, error: error.message });
@@ -2312,11 +2544,9 @@ function workspaceEndpoints(app) {
         );
         if (!owned) return;
 
-        const logs = await ScheduledJobLog.where(
-          { runId: owned.run.id },
-          50,
-          { occurredAt: "desc" }
-        );
+        const logs = await ScheduledJobLog.where({ runId: owned.run.id }, 50, {
+          occurredAt: "desc",
+        });
         response.status(200).json({
           logs: logs.map((l) => ({
             ...l,
@@ -2324,7 +2554,10 @@ function workspaceEndpoints(app) {
           })),
         });
       } catch (error) {
-        console.error("Error loading workspace scheduled job email logs:", error);
+        console.error(
+          "Error loading workspace scheduled job email logs:",
+          error
+        );
         response.status(500).json({ logs: [], error: error.message });
       }
     }

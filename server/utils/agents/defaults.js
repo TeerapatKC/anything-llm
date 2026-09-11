@@ -77,7 +77,7 @@ const WORKSPACE_AGENT = {
         ...(await agentSkillsFromSystemSettings(workspace, skillConfig)),
         ...clarifyingQuestionsSkills,
         ...flowPluginsForConfig(skillConfig, workspace),
-        ...(await mcpServersForConfig(skillConfig)),
+        ...(await mcpServersForConfig(skillConfig, workspace)),
       ],
     };
   },
@@ -192,18 +192,26 @@ function flowPluginsForConfig(config, workspace = null) {
 }
 
 /**
- * MCP servers enabled for this workspace, intersected with the servers that
- * actually booted. A null `activeMcpServers` means "every booted server", which
- * is the pre-feature behaviour used by unconfigured workspaces.
+ * MCP servers enabled for this workspace, intersected with the servers that actually
+ * booted and with the ones this workspace is allowed to reference at all.
+ *
+ * Ownership is applied here rather than left to `activeMcpServers`, for the same
+ * reason agent flows and SQL connections apply it: a server another workspace added
+ * carries that workspace's credentials, so a stale name sitting in a saved config
+ * must not be able to hand this agent a tool that talks to it. A null
+ * `activeMcpServers` still means "every server this workspace may see", which is the
+ * pre-feature behaviour used by unconfigured workspaces.
  * @param {object} config - resolved workspace skill config
+ * @param {object|null} workspace - the workspace the agent is running in
  * @returns {Promise<string[]>}
  */
-async function mcpServersForConfig(config) {
-  const available = await new MCPCompatibilityLayer().activeMCPServers();
-  if (!Array.isArray(config?.activeMcpServers)) return available;
-  return available.filter((id) =>
-    config.activeMcpServers.includes(id.replace(/^@@mcp_/, ""))
+async function mcpServersForConfig(config, workspace = null) {
+  const { mcpServerNamesForWorkspace } = require("../MCP/scope");
+  const booted = await new MCPCompatibilityLayer().activeMCPServers();
+  const permitted = new Set(
+    await mcpServerNamesForWorkspace(workspace, config)
   );
+  return booted.filter((id) => permitted.has(id.replace(/^@@mcp_/, "")));
 }
 
 /**

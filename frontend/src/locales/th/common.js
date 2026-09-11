@@ -75,6 +75,7 @@ const TRANSLATIONS = {
     "agent-skills": "ทักษะเอเจนต์",
     "agent-flow": "โฟลว์เอเจนต์",
     "sql-connector": "การเชื่อมต่อ SQL",
+    "mcp-servers": "MCP Servers",
     "default-system-prompt": "พรอมต์ระบบเริ่มต้น",
     "instance-owner": "เจ้าของอินสแตนซ์",
     "model-router": "ตัวจัดเส้นทางโมเดล",
@@ -1575,7 +1576,8 @@ const TRANSLATIONS = {
     loading: "กำลังโหลด...",
     emptyTitle: "ยังไม่มีงานตามกำหนดเวลา",
     emptySubtitle: "สร้างหนึ่งรายการเพื่อเริ่มต้น",
-    noWorkspacePermission: "คุณไม่มีสิทธิ์จัดการงานตามกำหนดเวลาใน workspace นี้",
+    noWorkspacePermission:
+      "คุณไม่มีสิทธิ์จัดการงานตามกำหนดเวลาใน workspace นี้",
     smtpRequiredTitle: "ต้องตั้งค่าอีเมล SMTP ก่อน",
     smtpRequiredDescription:
       "งานตามกำหนดเวลาส่งผลลัพธ์ทางอีเมล จึงยังใช้งานไม่ได้จนกว่าจะตั้งค่าและเปิดใช้งานอีเมลขาออก",
@@ -2151,6 +2153,38 @@ const TRANSLATIONS = {
       "coming-soon": "ตัวเลือกการกำหนดค่ากำลังจะมาเร็ว ๆ นี้...",
     },
   },
+  "mcp-servers": {
+    title: "MCP Servers",
+    "page-description": "จัดการ MCP server ที่เอเจนต์ของคุณเรียกใช้ได้",
+    "list-description": "ดูรายการ MCP server ที่ตั้งค่าไว้สำหรับอินสแตนซ์นี้",
+    "servers-heading": "MCP Servers",
+    "tools-heading": "เครื่องมือ MCP",
+    "new-server": "เพิ่มเซิร์ฟเวอร์",
+    "empty-list": "ยังไม่มี MCP server",
+    "select-server": "เลือกเซิร์ฟเวอร์",
+    "select-server-description": "เลือก MCP server จากรายการเพื่อตั้งค่า",
+    "workspace-owned": "เวิร์กสเปซ",
+    shared: "แชร์",
+    "refresh-title": "รีเฟรชรายการ MCP server?",
+    "refresh-description":
+      "ระบบจะรีสตาร์ท MCP server ทั้งหมดและโหลดเครื่องมือใหม่",
+    "refresh-confirm": "รีเฟรช",
+    "refresh-failed": "รีเฟรช MCP server ไม่สำเร็จ",
+    created: "เพิ่มและเชื่อมต่อ MCP server สำเร็จแล้ว",
+    updated: "อัปเดตและเชื่อมต่อ MCP server สำเร็จแล้ว",
+    visibility: {
+      title: "มองเห็นได้จากเวิร์กสเปซ",
+      description:
+        "เลือกว่าเอเจนต์ของเวิร์กสเปซใดใช้เครื่องมือบนเซิร์ฟเวอร์นี้ได้",
+      "select-all": "เลือกทั้งหมด",
+      "clear-all": "ล้างทั้งหมด",
+      loading: "กำลังโหลดเวิร์กสเปซ...",
+      empty: "ยังไม่มีเวิร์กสเปซในอินสแตนซ์นี้",
+      failed: "อัปเดตการมองเห็นของเวิร์กสเปซไม่สำเร็จ",
+      "workspace-owned":
+        "เซิร์ฟเวอร์นี้เป็นของเวิร์กสเปซเดียว จึงใช้ได้เฉพาะเอเจนต์ของเวิร์กสเปซนั้น",
+    },
+  },
   "sql-connector": {
     title: "การเชื่อมต่อ SQL",
     "page-description": "จัดการการเชื่อมต่อฐานข้อมูลที่เอเจนต์สามารถใช้งานได้",
@@ -2272,6 +2306,12 @@ const TRANSLATIONS = {
     "upload-documents": "อัปโหลดเอกสาร",
   },
   "agent-panel": {
+    "mcp-servers": "MCP servers",
+    "mcp-servers-description":
+      "เซิร์ฟเวอร์ที่เพิ่มที่นี่เป็นของเวิร์กสเปซนี้เท่านั้น",
+    "new-mcp-server": "เพิ่มเซิร์ฟเวอร์",
+    "no-mcp-servers": "ยังไม่มี MCP server สำหรับเวิร์กสเปซนี้",
+    "mcp-servers-shared": "มีเซิร์ฟเวอร์ {{count}} รายการที่แอดมินแชร์มาให้",
     "sql-connections": "การเชื่อมต่อ SQL",
     "sql-connections-description":
       "การเชื่อมต่อที่เพิ่มที่นี่เป็นของเวิร์กสเปซนี้เท่านั้น",
