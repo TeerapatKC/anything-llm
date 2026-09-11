@@ -554,83 +554,12 @@ function workspaceEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const workspace = response.locals.workspace;
         const {
-          resolveConfigForWorkspace,
-          instanceRuntimeConfig,
-        } = require("../utils/agents/workspaceSkills");
-        const {
-          skillCredentialStatus,
-          configuredSearchProviders,
-        } = require("../utils/agents/skillCredentials");
-        const { AgentFlows } = require("../utils/agentFlows");
-        const MCPCompatibilityLayer = require("../utils/MCP");
-        const { SystemSettings } = require("../models/systemSettings");
-        const {
-          sqlConnectionsAvailableTo,
-          toPublic: sqlConnectionToPublic,
-        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
-
-        const config = await resolveConfigForWorkspace(workspace);
-        const mcpServers = await new MCPCompatibilityLayer().activeMCPServers();
-        const [instanceRuntime, skillCredentials] = await Promise.all([
-          instanceRuntimeConfig(),
-          skillCredentialStatus(workspace.id),
-        ]);
-
-        response.status(200).json({
-          // `configured` tells the UI whether this workspace is still inheriting
-          // the instance-wide defaults or has its own saved copy.
-          configured: !!workspace.agentSkillConfig,
-          config,
-          // The engine this instance is configured for, so the UI can label the
-          // "inherit" option. Engine API keys stay instance-wide.
-          instanceSearchProvider:
-            (await SystemSettings.getValueOrFallback(
-              { label: "agent_search_provider" },
-              null
-            )) ?? null,
-          // Resolved instance-wide value of every runtime knob, so the UI can
-          // show what "inherit" currently means for each one.
-          instanceRuntime,
-          // Per-skill credential readiness. Skills whose credential an admin has
-          // not supplied are hidden here rather than offered as a toggle that
-          // would produce a tool failing at call time.
-          skillCredentials,
-          // Search engines this instance holds a usable key for (or that need
-          // none) - the only engines a workspace may pick between.
-          availableSearchProviders: configuredSearchProviders(),
-          catalog: {
-            // Global flows plus the ones this workspace owns - never another
-            // workspace's, which would otherwise be offered as a toggle here.
-            flows: AgentFlows.listFlowsForWorkspace(workspace.id)
-              .filter((flow) => flow.active)
-              .map((flow) => ({
-                id: flow.uuid,
-                name: flow.name || flow.uuid,
-                scope: flow.scope,
-              })),
-            // Global connections plus the ones this workspace owns. Deliberately
-            // shaped by `toPublic`, which withholds the connection string (and the
-            // credentials inside it) for anything the workspace does not own.
-            sqlConnections: (await sqlConnectionsAvailableTo(workspace.id)).map(
-              (conn) => {
-                const summary = sqlConnectionToPublic(conn, workspace.id);
-                return {
-                  id: summary.database_id,
-                  name: summary.database_id,
-                  engine: summary.engine,
-                  scope: summary.scope,
-                  active: summary.active,
-                };
-              }
-            ),
-            mcpServers: mcpServers.map((id) => {
-              const name = id.replace(/^@@mcp_/, "");
-              return { id: name, name };
-            }),
-          },
-        });
+          agentSkillsPayload,
+        } = require("../utils/agents/agentSkillsPayload");
+        response
+          .status(200)
+          .json(await agentSkillsPayload(response.locals.workspace));
       } catch (e) {
         console.error(e.message, e);
         response.sendStatus(500).end();

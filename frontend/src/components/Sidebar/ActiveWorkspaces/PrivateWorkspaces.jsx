@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Lock, Pencil, Plus, Upload } from "lucide-react";
+import { ChevronDown, Lock, Pencil, Plus, Upload } from "lucide-react";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
@@ -26,7 +26,6 @@ import {
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
@@ -52,6 +51,8 @@ export default function PrivateWorkspaces({
   virtualActiveSlug = null,
   policy = null,
   onCreated = null,
+  expanded = true,
+  onExpandedChange = null,
 }) {
   const { t } = useTranslation();
   const { user } = useUser();
@@ -74,51 +75,78 @@ export default function PrivateWorkspaces({
   }
 
   return (
-    <SidebarGroup className="p-0">
-      <SidebarGroupLabel className="flex items-center gap-1.5 text-sm">
+    <SidebarGroup className="shrink-0 border-t border-sidebar-border bg-sidebar/80 pt-2">
+      <button
+        type="button"
+        onClick={() => onExpandedChange?.(!expanded)}
+        aria-expanded={expanded}
+        className="flex h-8 w-full items-center gap-1.5 rounded-md px-2 text-left text-sm font-medium text-sidebar-foreground/70 outline-hidden transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+      >
+        <ChevronDown
+          className={cn(
+            "size-4 shrink-0 transition-transform duration-200",
+            !expanded && "-rotate-90"
+          )}
+        />
         <Lock className="size-3.5" />
         {t("sidebar.private")}
-      </SidebarGroupLabel>
-      <SidebarGroupContent>
-        {workspaces.length === 0 && (
-          <p className="px-2 pb-2 text-xs text-sidebar-foreground/60">
-            {t("sidebar.no-private-workspaces")}
-          </p>
+      </button>
+      <div
+        aria-hidden={!expanded}
+        inert={expanded ? undefined : ""}
+        className={cn(
+          "grid overflow-hidden transition-[grid-template-rows] duration-200 ease-out",
+          expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         )}
-        <SidebarMenu aria-label={t("sidebar.private")} className="gap-0">
-          {workspaces.map((workspace) => (
-            <PrivateWorkspaceRow
-              key={workspace.id}
-              workspace={workspace}
-              isActive={
-                workspace.slug === activeSlug ||
-                workspace.slug === virtualActiveSlug
-              }
-              isVirtualThread={workspace.slug === virtualActiveSlug}
-              canUpload={workspaceCan(
-                WS.DOCUMENTS_UPLOAD,
-                workspace.slug,
-                user
-              )}
-              canRename={workspaceCan(WS.RENAME, workspace.slug, user)}
-              onRename={() => setRenaming(workspace)}
-              onUpload={() => setUploadingTo(workspace)}
-            />
-          ))}
-        </SidebarMenu>
-        {policy?.canCreate && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={createWorkspace}
-            disabled={creating}
-            className="mt-1 w-full justify-start gap-2 text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden hover:text-sidebar-foreground"
-          >
-            <Plus className="size-4" />
-            {t("sidebar.new-private-workspace")}
-          </Button>
-        )}
-      </SidebarGroupContent>
+      >
+        <div
+          className={cn(
+            "min-h-0 overflow-hidden transition-opacity duration-150 ease-out",
+            expanded ? "opacity-100" : "pointer-events-none opacity-0"
+          )}
+        >
+          <SidebarGroupContent className="thin-scrollbar max-h-48 overflow-x-hidden overflow-y-auto">
+            {workspaces.length === 0 && (
+              <p className="px-2 pb-2 text-xs text-sidebar-foreground/60">
+                {t("sidebar.no-private-workspaces")}
+              </p>
+            )}
+            <SidebarMenu aria-label={t("sidebar.private")} className="gap-0">
+              {workspaces.map((workspace) => (
+                <PrivateWorkspaceRow
+                  key={workspace.id}
+                  workspace={workspace}
+                  isActive={
+                    workspace.slug === activeSlug ||
+                    workspace.slug === virtualActiveSlug
+                  }
+                  isVirtualThread={workspace.slug === virtualActiveSlug}
+                  canUpload={workspaceCan(
+                    WS.DOCUMENTS_UPLOAD,
+                    workspace.slug,
+                    user
+                  )}
+                  canRename={workspaceCan(WS.RENAME, workspace.slug, user)}
+                  onRename={() => setRenaming(workspace)}
+                  onUpload={() => setUploadingTo(workspace)}
+                />
+              ))}
+            </SidebarMenu>
+            {policy?.canCreate && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={createWorkspace}
+                disabled={creating}
+                className="mt-1 w-full justify-start gap-2 text-sidebar-foreground/70 group-data-[collapsible=icon]:hidden hover:text-sidebar-foreground"
+              >
+                <Plus className="size-4" />
+                {t("sidebar.new-private-workspace")}
+              </Button>
+            )}
+          </SidebarGroupContent>
+        </div>
+      </div>
 
       {renaming && (
         <RenameWorkspaceDialog

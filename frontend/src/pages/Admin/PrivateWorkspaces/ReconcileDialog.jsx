@@ -57,7 +57,7 @@ export default function ReconcileDialog({ review, onClose, onResolved }) {
 
   async function resolve(action) {
     setWorking(true);
-    const result = await Admin.reconcilePersonalWorkspaces({
+    const result = await Admin.reconcilePrivateWorkspaces({
       token: review.token,
       action,
       workspaceIds: [...selected],
@@ -87,10 +87,10 @@ export default function ReconcileDialog({ review, onClose, onResolved }) {
               : "Lowering the private workspace quota"}
           </DialogTitle>
           <DialogDescription>
-            {affected.length} private workspace(s) belonging to other people
-            fall outside the new policy. Nothing has been saved yet, and nothing
-            happens to any of them unless you say so. Ticked below are the ones
-            the new policy no longer covers.
+            {affected.length} private workspace(s) fall outside the new policy.
+            Nothing has been saved yet, and nothing happens to any of them
+            unless you say so. Ticked below are the ones the new policy no
+            longer covers.
           </DialogDescription>
         </DialogHeader>
 

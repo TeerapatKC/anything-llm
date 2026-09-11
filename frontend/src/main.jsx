@@ -646,15 +646,15 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "/settings/workspace-defaults",
+        path: "/settings/private-workspaces",
         lazy: async () => {
-          const { default: WorkspaceDefaults } = await import(
-            "@/pages/Admin/WorkspaceDefaults"
+          const { default: PrivateWorkspaces } = await import(
+            "@/pages/Admin/PrivateWorkspaces"
           );
           return {
             element: (
               <PermissionRoute
-                Component={WorkspaceDefaults}
+                Component={PrivateWorkspaces}
                 permissions={[PERMISSIONS.SYSTEM_SETTINGS]}
               />
             ),

@@ -7,7 +7,17 @@ import paths from "@/utils/paths";
 import ChatPromptHistory from "./ChatPromptHistory";
 import System from "@/models/system";
 
-export default function ChatPromptSettings({ workspace, setHasChanges }) {
+/**
+ * @param {object} props
+ * @param {boolean} [props.showHistory] - whether to offer the prompt's revision history.
+ *  There is none to show when this edits the prompt every private workspace *starts*
+ *  with rather than the prompt of one workspace that has been chatted in.
+ */
+export default function ChatPromptSettings({
+  workspace,
+  setHasChanges,
+  showHistory = true,
+}) {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
 
@@ -84,13 +94,15 @@ export default function ChatPromptSettings({ workspace, setHasChanges }) {
 
   return (
     <>
-      <ChatPromptHistory
-        ref={promptHistoryRef}
-        workspaceSlug={workspace.slug}
-        show={showPromptHistory}
-        onRestore={handleRestoreFromHistory}
-        onClose={() => setShowPromptHistory(false)}
-      />
+      {showHistory && (
+        <ChatPromptHistory
+          ref={promptHistoryRef}
+          workspaceSlug={workspace.slug}
+          show={showPromptHistory}
+          onRestore={handleRestoreFromHistory}
+          onClose={() => setShowPromptHistory(false)}
+        />
+      )}
       <div className="flex flex-col gap-y-[8px]">
         <div className="flex flex-col gap-y-[8px]">
           <div className="flex items-center justify-between">
@@ -129,17 +141,19 @@ export default function ChatPromptSettings({ workspace, setHasChanges }) {
                 </Link>
               )}
             </p>
-            <button
-              ref={historyButtonRef}
-              type="button"
-              className="text-theme-text-secondary hover:text-white light:hover:text-black text-xs font-medium"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowPromptHistory(!showPromptHistory);
-              }}
-            >
-              {showPromptHistory ? "Hide History" : "View History"}
-            </button>
+            {showHistory && (
+              <button
+                ref={historyButtonRef}
+                type="button"
+                className="text-theme-text-secondary hover:text-white light:hover:text-black text-xs font-medium"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowPromptHistory(!showPromptHistory);
+                }}
+              >
+                {showPromptHistory ? "Hide History" : "View History"}
+              </button>
+            )}
           </div>
         </div>
 

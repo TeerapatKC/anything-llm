@@ -97,7 +97,9 @@ jest.mock("../../models/eventLogs", () => ({
 }));
 
 const { PersonalWorkspace } = require("../../models/personalWorkspace");
-const { WorkspaceDefaults } = require("../../models/workspaceDefaults");
+const {
+  PrivateWorkspaceProfile,
+} = require("../../models/privateWorkspaceProfile");
 
 /** @param {number} id @param {number} ownerId @param {number} day */
 function personalWorkspace(id, ownerId, day) {
@@ -113,7 +115,7 @@ function personalWorkspace(id, ownerId, day) {
 }
 
 async function setPolicy(profile) {
-  await WorkspaceDefaults.update("personal", profile);
+  await PrivateWorkspaceProfile.update(profile);
 }
 
 beforeEach(async () => {

@@ -5,7 +5,7 @@ import Workspace from "@/models/workspace";
 import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
 import paths from "@/utils/paths";
 import { Link, useParams, useNavigate, useMatch } from "react-router-dom";
-import { GripVertical, Plus, Settings } from "lucide-react";
+import { ChevronDown, GripVertical, Plus, Settings } from "lucide-react";
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -20,7 +20,6 @@ import {
 import {
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
@@ -87,6 +86,8 @@ export default function ActiveWorkspaces({
   const [loading, setLoading] = useState(true);
   const [workspaces, setWorkspaces] = useState([]);
   const [personalPolicy, setPersonalPolicy] = useState(null);
+  const [sharedExpanded, setSharedExpanded] = useState(true);
+  const [privateExpanded, setPrivateExpanded] = useState(true);
   const { user } = useUser();
   const { state: sidebarState } = useSidebar();
   const isCollapsed = sidebarState === "collapsed";
@@ -226,6 +227,8 @@ export default function ActiveWorkspaces({
       activeSlug={slug}
       virtualActiveSlug={virtualActiveSlug}
       policy={personalPolicy}
+      expanded={privateExpanded}
+      onExpandedChange={setPrivateExpanded}
       onCreated={() =>
         window.dispatchEvent(new Event(REFETCH_WORKSPACES_EVENT))
       }
@@ -234,209 +237,277 @@ export default function ActiveWorkspaces({
 
   if (sharedWorkspaces.length === 0) {
     return (
-      <>
-        <SidebarGroup className="p-0">
-          <SidebarGroupLabel className="text-sm">
-            {t("sidebar.workspaces")}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            {canCreateWorkspace && (
-              <NewWorkspaceButton onClick={showNewWsModal} />
-            )}
-            <Empty className="border border-dashed border-sidebar-border px-3 py-4">
-              <EmptyHeader>
-                <EmptyDescription className="text-sidebar-foreground/60">
-                  {t("sidebar.no-workspaces")}
-                </EmptyDescription>
-              </EmptyHeader>
-            </Empty>
-          </SidebarGroupContent>
+      <div className="flex min-h-0 flex-1 flex-col">
+        <SidebarGroup
+          className={cn(
+            "flex min-h-0 flex-col p-0 transition-[flex-grow] duration-200 ease-out",
+            sharedExpanded ? "grow" : "grow-0"
+          )}
+        >
+          <SectionToggle
+            label={t("sidebar.workspaces")}
+            expanded={sharedExpanded}
+            onClick={() => setSharedExpanded((expanded) => !expanded)}
+          />
+          <CollapsibleContent
+            expanded={sharedExpanded}
+            className={cn(sharedExpanded && "min-h-0 flex-1")}
+          >
+            <SidebarGroupContent className="flex min-h-0 flex-1 flex-col">
+              {canCreateWorkspace && (
+                <NewWorkspaceButton onClick={showNewWsModal} />
+              )}
+              <Empty className="shrink-0 border border-dashed border-sidebar-border px-3 py-4">
+                <EmptyHeader>
+                  <EmptyDescription className="text-sidebar-foreground/60">
+                    {t("sidebar.no-workspaces")}
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            </SidebarGroupContent>
+          </CollapsibleContent>
         </SidebarGroup>
         {privateSection}
-      </>
+      </div>
     );
   }
 
   return (
-    <>
-      <SidebarGroup className="p-0">
-        <SidebarGroupLabel className="text-sm">
-          {t("sidebar.workspaces")}
-        </SidebarGroupLabel>
-        <SidebarGroupContent>
-          {canCreateWorkspace && (
-            <NewWorkspaceButton onClick={showNewWsModal} />
-          )}
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="workspaces">
-              {(provided) => (
-                <SidebarMenu
-                  aria-label={t("sidebar.workspaces")}
-                  ref={provided.innerRef}
-                  {...provided.droppableProps}
-                  // react-beautiful-dnd measures rows by their margin box and
-                  // knows nothing about flexbox `gap`, so a gapped list displaces
-                  // rows by the wrong amount mid-drag. Space them with margins.
-                  className="gap-0"
-                >
-                  {sharedWorkspaces.map((workspace, index) => {
-                    const isVirtuallyActive =
-                      workspace.slug === virtualActiveSlug;
-                    const isActive =
-                      workspace.slug === slug || isVirtuallyActive;
-                    const isInactive = workspace.active === false;
-                    const canManage = workspaceCan(
-                      WS.SETTINGS_MANAGE,
-                      workspace.slug,
-                      user
-                    );
-                    return (
-                      <Draggable
-                        key={workspace.id}
-                        draggableId={workspace.id.toString()}
-                        index={index}
-                        // The row is a link, and dnd refuses to start a drag on an
-                        // interactive element unless this is set. Without it only
-                        // the grip could start a drag, and a press anywhere else
-                        // did nothing — which read as the row snapping back.
-                        disableInteractiveElementBlocking
-                      >
-                        {(provided, snapshot) => (
-                          <SidebarMenuItem
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            aria-label={`${workspace.name} — drag to reorder`}
-                            className={cn(
-                              "group/workspace mb-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-                              snapshot.isDragging &&
-                                "rounded-md bg-sidebar shadow-lg ring-1 ring-sidebar-border"
-                            )}
+    <div className="flex min-h-0 flex-1 flex-col">
+      <SidebarGroup
+        className={cn(
+          "flex min-h-0 flex-col p-0 transition-[flex-grow] duration-200 ease-out",
+          sharedExpanded ? "grow" : "grow-0"
+        )}
+      >
+        <SectionToggle
+          label={t("sidebar.workspaces")}
+          expanded={sharedExpanded}
+          onClick={() => setSharedExpanded((expanded) => !expanded)}
+        />
+        <CollapsibleContent
+          expanded={sharedExpanded}
+          className={cn(sharedExpanded && "min-h-0 flex-1")}
+        >
+          <SidebarGroupContent className="flex min-h-0 flex-1 flex-col">
+            {canCreateWorkspace && (
+              <NewWorkspaceButton onClick={showNewWsModal} />
+            )}
+            <div className="thin-scrollbar min-h-0 flex-1 overflow-x-hidden overflow-y-auto pr-1">
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="workspaces">
+                  {(provided) => (
+                    <SidebarMenu
+                      aria-label={t("sidebar.workspaces")}
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      // react-beautiful-dnd measures rows by their margin box and
+                      // knows nothing about flexbox `gap`, so a gapped list displaces
+                      // rows by the wrong amount mid-drag. Space them with margins.
+                      className="gap-0"
+                    >
+                      {sharedWorkspaces.map((workspace, index) => {
+                        const isVirtuallyActive =
+                          workspace.slug === virtualActiveSlug;
+                        const isActive =
+                          workspace.slug === slug || isVirtuallyActive;
+                        const isInactive = workspace.active === false;
+                        const canManage = workspaceCan(
+                          WS.SETTINGS_MANAGE,
+                          workspace.slug,
+                          user
+                        );
+                        return (
+                          <Draggable
+                            key={workspace.id}
+                            draggableId={workspace.id.toString()}
+                            index={index}
+                            // The row is a link, and dnd refuses to start a drag on an
+                            // interactive element unless this is set. Without it only
+                            // the grip could start a drag, and a press anywhere else
+                            // did nothing — which read as the row snapping back.
+                            disableInteractiveElementBlocking
                           >
-                            {/* Affordance only — the whole row is the drag handle.
+                            {(provided, snapshot) => (
+                              <SidebarMenuItem
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                aria-label={`${workspace.name} — drag to reorder`}
+                                className={cn(
+                                  "group/workspace mb-1 outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+                                  snapshot.isDragging &&
+                                    "rounded-md bg-sidebar shadow-lg ring-1 ring-sidebar-border"
+                                )}
+                              >
+                                {/* Affordance only — the whole row is the drag handle.
                               Sits over the monogram, which fades out on hover, so
                               the row never shifts as you reach for it. */}
-                            <span
-                              aria-hidden="true"
-                              className="pointer-events-none absolute left-[7px] top-2 z-10 flex size-6 items-center justify-center text-sidebar-foreground/50 opacity-0 transition-opacity group-hover/workspace:opacity-100"
-                            >
-                              <GripVertical className="size-4" />
-                            </span>
-                            <SidebarMenuButton
-                              isActive={isActive}
-                              className="h-10 text-[15px]"
-                              render={
-                                <Link
-                                  to={paths.workspace.chat(workspace.slug)}
-                                  aria-current={isActive ? "page" : ""}
-                                  // An anchor is natively draggable, and the browser
-                                  // firing `dragstart` aborts an in-flight dnd drag,
-                                  // which is what made rows snap back to their old
-                                  // position mid-reorder.
-                                  draggable={false}
-                                />
-                              }
-                            >
-                              <WorkspaceMonogram
-                                name={workspace.name}
-                                isActive={isActive}
-                                className={cn(
-                                  "size-[22px] transition-opacity group-hover/workspace:opacity-0",
-                                  isInactive && "opacity-50"
-                                )}
-                              />
-                              <Tooltip>
-                                <TooltipTrigger
+                                <span
+                                  aria-hidden="true"
+                                  className="pointer-events-none absolute left-[7px] top-2 z-10 flex size-6 items-center justify-center text-sidebar-foreground/50 opacity-0 transition-opacity group-hover/workspace:opacity-100"
+                                >
+                                  <GripVertical className="size-4" />
+                                </span>
+                                <SidebarMenuButton
+                                  isActive={isActive}
+                                  className="h-10 text-[15px]"
                                   render={
-                                    <span
+                                    <Link
+                                      to={paths.workspace.chat(workspace.slug)}
+                                      aria-current={isActive ? "page" : ""}
+                                      // An anchor is natively draggable, and the browser
+                                      // firing `dragstart` aborts an in-flight dnd drag,
+                                      // which is what made rows snap back to their old
+                                      // position mid-reorder.
+                                      draggable={false}
+                                    />
+                                  }
+                                >
+                                  <WorkspaceMonogram
+                                    name={workspace.name}
+                                    isActive={isActive}
+                                    className={cn(
+                                      "size-[22px] transition-opacity group-hover/workspace:opacity-0",
+                                      isInactive && "opacity-50"
+                                    )}
+                                  />
+                                  <Tooltip>
+                                    <TooltipTrigger
+                                      render={
+                                        <span
+                                          className={cn(
+                                            "truncate",
+                                            isInactive &&
+                                              "text-sidebar-foreground/50"
+                                          )}
+                                        />
+                                      }
+                                    >
+                                      {workspace.name}
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="right"
+                                      className="max-w-[250px] text-xs"
+                                    >
+                                      {isInactive
+                                        ? `${workspace.name} — inactive`
+                                        : workspace.name}
+                                    </TooltipContent>
+                                  </Tooltip>
+                                  {isInactive && (
+                                    <Badge
+                                      variant="outline"
                                       className={cn(
-                                        "truncate",
-                                        isInactive &&
-                                          "text-sidebar-foreground/50"
+                                        "ml-auto h-[18px] shrink-0 rounded-sm border-sidebar-border px-1 text-[10px] font-medium text-sidebar-foreground/60",
+                                        canManage &&
+                                          "transition-opacity group-hover/workspace:opacity-0"
                                       )}
-                                    />
-                                  }
-                                >
-                                  {workspace.name}
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  side="right"
-                                  className="max-w-[250px] text-xs"
-                                >
-                                  {isInactive
-                                    ? `${workspace.name} — inactive`
-                                    : workspace.name}
-                                </TooltipContent>
-                              </Tooltip>
-                              {isInactive && (
-                                <Badge
-                                  variant="outline"
-                                  className={cn(
-                                    "ml-auto h-[18px] shrink-0 rounded-sm border-sidebar-border px-1 text-[10px] font-medium text-sidebar-foreground/60",
-                                    canManage &&
-                                      "transition-opacity group-hover/workspace:opacity-0"
+                                    >
+                                      Inactive
+                                    </Badge>
                                   )}
-                                >
-                                  Inactive
-                                </Badge>
-                              )}
-                            </SidebarMenuButton>
-                            {canManage && (
-                              <Tooltip>
-                                <TooltipTrigger
-                                  render={
-                                    <SidebarMenuAction
-                                      showOnHover={!isActive}
-                                      className="top-2.5! text-sidebar-foreground/60 peer-hover/menu-button:text-sidebar-foreground/60"
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        navigate(
-                                          isInWorkspaceSettings
-                                            ? paths.workspace.chat(
-                                                workspace.slug
-                                              )
-                                            : paths.workspace.settings.generalAppearance(
-                                                workspace.slug
-                                              )
-                                        );
-                                      }}
-                                      aria-label={t(
-                                        "sidebar.general-appearance"
-                                      )}
-                                    />
-                                  }
-                                >
-                                  <Settings className="size-4" />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  side="top"
-                                  className="max-w-[250px] text-xs"
-                                >
-                                  General appearance settings
-                                </TooltipContent>
-                              </Tooltip>
+                                </SidebarMenuButton>
+                                {canManage && (
+                                  <Tooltip>
+                                    <TooltipTrigger
+                                      render={
+                                        <SidebarMenuAction
+                                          showOnHover={!isActive}
+                                          className="top-2.5! text-sidebar-foreground/60 peer-hover/menu-button:text-sidebar-foreground/60"
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            navigate(
+                                              isInWorkspaceSettings
+                                                ? paths.workspace.chat(
+                                                    workspace.slug
+                                                  )
+                                                : paths.workspace.settings.generalAppearance(
+                                                    workspace.slug
+                                                  )
+                                            );
+                                          }}
+                                          aria-label={t(
+                                            "sidebar.general-appearance"
+                                          )}
+                                        />
+                                      }
+                                    >
+                                      <Settings className="size-4" />
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                      side="top"
+                                      className="max-w-[250px] text-xs"
+                                    >
+                                      General appearance settings
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                                {isActive && (
+                                  <ThreadContainer
+                                    workspace={workspace}
+                                    isActive={isActive}
+                                    isVirtualThread={isVirtuallyActive}
+                                  />
+                                )}
+                              </SidebarMenuItem>
                             )}
-                            {isActive && (
-                              <ThreadContainer
-                                workspace={workspace}
-                                isActive={isActive}
-                                isVirtualThread={isVirtuallyActive}
-                              />
-                            )}
-                          </SidebarMenuItem>
-                        )}
-                      </Draggable>
-                    );
-                  })}
-                  {provided.placeholder}
-                </SidebarMenu>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </SidebarGroupContent>
+                          </Draggable>
+                        );
+                      })}
+                      {provided.placeholder}
+                    </SidebarMenu>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
+          </SidebarGroupContent>
+        </CollapsibleContent>
       </SidebarGroup>
       {privateSection}
-    </>
+    </div>
+  );
+}
+
+function SectionToggle({ label, expanded, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-expanded={expanded}
+      className="flex h-8 w-full shrink-0 items-center gap-2 rounded-md px-2 text-left text-sm font-medium text-sidebar-foreground/70 outline-hidden transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring"
+    >
+      <ChevronDown
+        className={cn(
+          "size-4 shrink-0 transition-transform duration-200",
+          !expanded && "-rotate-90"
+        )}
+      />
+      <span className="truncate">{label}</span>
+    </button>
+  );
+}
+
+function CollapsibleContent({ expanded, className, children }) {
+  return (
+    <div
+      aria-hidden={!expanded}
+      inert={expanded ? undefined : ""}
+      className={cn(
+        "grid overflow-hidden transition-[grid-template-rows] duration-200 ease-out",
+        expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        className
+      )}
+    >
+      <div
+        className={cn(
+          "min-h-0 overflow-hidden transition-opacity duration-150 ease-out",
+          expanded ? "opacity-100" : "pointer-events-none opacity-0"
+        )}
+      >
+        {children}
+      </div>
+    </div>
   );
 }

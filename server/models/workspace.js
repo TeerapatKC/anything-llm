@@ -8,7 +8,10 @@ const { v4: uuidv4 } = require("uuid");
 const { User } = require("./user");
 const { PromptHistory } = require("./promptHistory");
 const { SystemSettings } = require("./systemSettings");
-const { WorkspaceDefaults, WORKSPACE_TYPES } = require("./workspaceDefaults");
+const {
+  PrivateWorkspaceProfile,
+  WORKSPACE_TYPES,
+} = require("./privateWorkspaceProfile");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
@@ -247,14 +250,15 @@ const Workspace = {
         ? WORKSPACE_TYPES.PERSONAL
         : WORKSPACE_TYPES.SHARED;
 
-    // Whatever the caller did not choose comes from this workspace type's profile, so
-    // private and shared workspaces can start life configured differently. A profile
-    // that sets nothing - which is how every instance starts - leaves this exactly as
-    // it was before profiles existed.
-    additionalFields = {
-      ...(await WorkspaceDefaults.newWorkspaceFields(type)),
-      ...additionalFields,
-    };
+    // A private workspace has no settings screen, so whatever the caller did not choose
+    // comes from the instance's private workspace profile. Shared workspaces are
+    // untouched by it: they are configured where they always were, on the instance
+    // settings pages and then their own.
+    if (type === WORKSPACE_TYPES.PERSONAL)
+      additionalFields = {
+        ...(await PrivateWorkspaceProfile.newWorkspaceFields()),
+        ...additionalFields,
+      };
 
     // If system prompt wasn't sent, apply the system default system prompt
     if (!additionalFields.openAiPrompt) {
@@ -449,6 +453,29 @@ const Workspace = {
     return LLMProvider?.promptWindowLimit?.(model) || null;
   },
 
+  /**
+   * Private workspaces have no individual settings screens, so their chat mode is
+   * governed by the private-workspace profile even when the workspace was created
+   * before that profile existed. This keeps older private workspaces aligned with
+   * the Chat default shown in the profile and avoids routing ordinary messages into
+   * an agent/tool call unless an administrator explicitly selects automatic mode.
+   */
+  _applyPrivateWorkspaceDefaults: async function (workspace) {
+    if (workspace?.type !== WORKSPACE_TYPES.PERSONAL) return workspace;
+
+    const profile = await PrivateWorkspaceProfile.get();
+    const configuredFields = Object.fromEntries(
+      Object.entries(profile.workspace).filter(
+        ([, value]) => value !== null && value !== undefined && value !== ""
+      )
+    );
+    return {
+      ...workspace,
+      ...configuredFields,
+      chatMode: profile.workspace.chatMode ?? "chat",
+    };
+  },
+
   get: async function (clause = {}) {
     try {
       const workspace = await prisma.workspaces.findFirst({
@@ -459,9 +486,11 @@ const Workspace = {
       });
 
       if (!workspace) return null;
+      const effectiveWorkspace =
+        await this._applyPrivateWorkspaceDefaults(workspace);
       return {
-        ...workspace,
-        contextWindow: this._getContextWindow(workspace),
+        ...effectiveWorkspace,
+        contextWindow: this._getContextWindow(effectiveWorkspace),
         currentContextTokenCount: await this._getCurrentContextTokenCount(
           workspace.id
         ),

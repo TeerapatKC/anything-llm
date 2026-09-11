@@ -2,7 +2,10 @@ const crypto = require("crypto");
 const prisma = require("../utils/prisma");
 const { Workspace } = require("./workspace");
 const { WorkspaceRole } = require("./workspaceRole");
-const { WorkspaceDefaults, WORKSPACE_TYPES } = require("./workspaceDefaults");
+const {
+  PrivateWorkspaceProfile,
+  WORKSPACE_TYPES,
+} = require("./privateWorkspaceProfile");
 const { EventLogs } = require("./eventLogs");
 const { PERSONAL_OWNER_WORKSPACE_ROLE } = require("../utils/permissions");
 
@@ -26,7 +29,7 @@ const REVIEW_TTL_MS = 15 * 60 * 1000;
  * sidebar, it has no settings screen, and what its owner may do inside it comes from
  * one workspace role an operator controls (`personal-owner` by default). Everything
  * about how they are handed out - whether at all, how many, what they are called, what
- * the agent may do in them - lives in the `personal` profile of WorkspaceDefaults.
+ * the agent may do in them - lives in the instance's private workspace profile.
  *
  * The one rule worth stating plainly: **changing the policy never destroys anything on
  * its own.** Turning the feature off, or lowering the quota, opens a review the
@@ -56,7 +59,7 @@ const PersonalWorkspace = {
 
   /** The instance's private workspace policy. */
   profile: async function () {
-    return await WorkspaceDefaults.get(WORKSPACE_TYPES.PERSONAL);
+    return await PrivateWorkspaceProfile.get();
   },
 
   /**
@@ -228,7 +231,7 @@ const PersonalWorkspace = {
     return await Workspace.new(
       resolvedName,
       user.id,
-      await WorkspaceDefaults.newWorkspaceFields(WORKSPACE_TYPES.PERSONAL),
+      await PrivateWorkspaceProfile.newWorkspaceFields(),
       {
         type: WORKSPACE_TYPES.PERSONAL,
         ownerId: user.id,
@@ -262,10 +265,10 @@ const PersonalWorkspace = {
    */
   impactOf: async function (updates = {}) {
     const current = await this.profile();
-    const next = WorkspaceDefaults.normalize(
-      { ...current, ...updates },
-      WORKSPACE_TYPES.PERSONAL
-    );
+    const next = PrivateWorkspaceProfile.normalize({
+      ...current,
+      ...updates,
+    });
 
     const disabling = current.enabled && !next.enabled;
     const quotaReduced = next.quotaPerUser < current.quotaPerUser;
@@ -431,8 +434,7 @@ const PersonalWorkspace = {
       );
     }
 
-    const { profile, error } = await WorkspaceDefaults.update(
-      WORKSPACE_TYPES.PERSONAL,
+    const { profile, error } = await PrivateWorkspaceProfile.update(
       review.pending
     );
     this._reviews.delete(token);

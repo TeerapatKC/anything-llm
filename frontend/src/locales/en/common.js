@@ -49,8 +49,8 @@ const TRANSLATIONS = {
     roles: "Roles & Permissions",
     workspaces: "Workspaces",
     "instance-workspaces": "Instance Workspaces",
-    "workspace-defaults": "Workspace Defaults",
-    "workspace-chats": "Workspace Chats",
+    "private-workspaces": "Private Workspaces",
+    "workspace-chats": "Workspace Chat Logs",
     customization: "Customization",
     interface: "UI Preferences",
     branding: "Branding & Whitelabeling",
@@ -65,7 +65,7 @@ const TRANSLATIONS = {
     "vector-database": "Vector Database",
     embeds: "Chat Embed",
     logs: "Logs",
-    "event-logs": "Event Logs",
+    "event-logs": "User Event Logs",
     dashboards: "Dashboards",
     monitoring: "Dashboards",
     "scheduled-jobs": "Scheduled Jobs",
@@ -85,7 +85,7 @@ const TRANSLATIONS = {
     "slash-commands": "Slash Commands",
     contact: "Contact Support",
     smtp: "SMTP",
-    channels: "Channels",
+    channels: "Connected Apps",
     "available-channels": {
       telegram: "Telegram",
       line: "LINE",
@@ -535,7 +535,7 @@ const TRANSLATIONS = {
     },
   },
   recorded: {
-    title: "Workspace Chats",
+    title: "Workspace Chat Logs",
     description:
       "These are all the recorded chats and messages that have been sent by users ordered by their creation date.",
     export: "Export",
@@ -1099,9 +1099,9 @@ const TRANSLATIONS = {
     },
   },
   event: {
-    title: "Event Logs",
+    title: "User Event Logs",
     description: "Audit trail of actions taken on this instance.",
-    clear: "Clear Event Logs",
+    clear: "Clear User Event Logs",
     table: {
       type: "Event Type",
       user: "User",

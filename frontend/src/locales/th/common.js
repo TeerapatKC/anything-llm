@@ -48,8 +48,8 @@ const TRANSLATIONS = {
     roles: "บทบาทและสิทธิ์",
     workspaces: "พื้นที่ทำงาน",
     "instance-workspaces": "พื้นที่ทำงานของอินสแตนซ์",
-    "workspace-defaults": "ค่าเริ่มต้นของพื้นที่ทำงาน",
-    "workspace-chats": "การสนทนาในพื้นที่ทำงาน",
+    "private-workspaces": "พื้นที่ทำงานส่วนตัว",
+    "workspace-chats": "บันทึกการสนทนาในพื้นที่ทำงาน",
     customization: "การปรับแต่ง",
     interface: "การตั้งค่าอินเทอร์เฟซ",
     branding: "แบรนด์และไวท์เลเบล",
@@ -64,7 +64,7 @@ const TRANSLATIONS = {
     "vector-database": "ฐานข้อมูลเวกเตอร์",
     embeds: "ฝังแชท",
     logs: "บันทึก",
-    "event-logs": "บันทึกเหตุการณ์",
+    "event-logs": "บันทึกเหตุการณ์ผู้ใช้",
     dashboards: "แดชบอร์ด",
     monitoring: "แดชบอร์ด",
     "scheduled-jobs": "งานตามกำหนดเวลา",
@@ -84,7 +84,7 @@ const TRANSLATIONS = {
     "slash-commands": "คำสั่งสแลช",
     contact: "ติดต่อฝ่ายสนับสนุน",
     smtp: "SMTP",
-    channels: "ช่องทาง",
+    channels: "แอปที่เชื่อมต่อ",
     "available-channels": {
       telegram: "Telegram",
       line: "LINE",
@@ -527,7 +527,7 @@ const TRANSLATIONS = {
     },
   },
   recorded: {
-    title: "การสนทนาในพื้นที่ทำงาน",
+    title: "บันทึกการสนทนาในพื้นที่ทำงาน",
     description:
       "นี่คือการสนทนาและข้อความทั้งหมดที่ถูกบันทึกไว้ซึ่งผู้ใช้ส่งมา เรียงตามวันที่สร้าง",
     export: "ส่งออก",
@@ -1078,9 +1078,9 @@ const TRANSLATIONS = {
     },
   },
   event: {
-    title: "บันทึกเหตุการณ์",
+    title: "บันทึกเหตุการณ์ผู้ใช้",
     description: "ประวัติการกระทำทั้งหมดที่เกิดขึ้นในอินสแตนซ์นี้",
-    clear: "ล้างบันทึกเหตุการณ์",
+    clear: "ล้างบันทึกเหตุการณ์ผู้ใช้",
     table: {
       type: "ประเภทเหตุการณ์",
       user: "ผู้ใช้",

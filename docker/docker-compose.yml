@@ -41,6 +41,9 @@ services:
       # This deployment is intended to run unattended. Keep this overrideable from
       # docker/.env, while allowing all agent skills by default as requested.
       AGENT_AUTO_APPROVED_SKILLS: "${AGENT_AUTO_APPROVED_SKILLS:-<all>}"
+      # The backend uses this browser-facing port to expose the built-in Grafana
+      # dashboard link when GRAFANA_PUBLIC_URL is not explicitly configured.
+      GRAFANA_PUBLISH_PORT: "${GRAFANA_PUBLISH_PORT:-3300}"
     networks:
       - nexusai
     extra_hosts:

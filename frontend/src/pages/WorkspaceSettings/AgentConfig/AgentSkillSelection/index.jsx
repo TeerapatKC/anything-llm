@@ -120,8 +120,24 @@ export default function AgentSkillSelection({
   focusSkillId = null,
   onNavigationChange,
   onItemStatusChange,
+  dataSource = null,
 }) {
   const { t } = useTranslation();
+  // Where this screen reads and writes its selection. The default is the workspace in
+  // front of us; the private workspace profile passes its own, because it configures
+  // every private workspace at once rather than any single one. Everything else on this
+  // screen is identical either way, which is the point - one agent configuration UI,
+  // not two that drift apart.
+  const io = dataSource ?? {
+    load: () => Workspace.agentSkills(workspace?.slug),
+    save: (config) => Workspace.updateAgentSkills(workspace?.slug, config),
+    savedMessage: "Workspace agent skills updated!",
+    revertedMessage: "Reverted to the instance default skills.",
+    // A workspace owns flows and SQL connections of its own, so it may create and edit
+    // them here. A profile owns none - it is a template - so it can only switch the
+    // instance-wide ones on and off.
+    ownsEntities: true,
+  };
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -154,22 +170,26 @@ export default function AgentSkillSelection({
   // Toggling a flow on for this workspace is part of managing agent skills; building
   // one is a separate, wider capability, so the build/edit/delete affordances below
   // are gated on their own permission.
-  const canManageFlows = workspaceCan(
-    WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
-    workspace?.slug,
-    currentUser
-  );
+  const canManageFlows =
+    io.ownsEntities !== false &&
+    workspaceCan(
+      WORKSPACE_PERMISSIONS.AGENT_FLOWS_MANAGE,
+      workspace?.slug,
+      currentUser
+    );
   // Supplying a database credential is its own capability, separate from switching an
   // already-configured connection on for this workspace.
-  const canManageSqlConnections = workspaceCan(
-    WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
-    workspace?.slug,
-    currentUser
-  );
+  const canManageSqlConnections =
+    io.ownsEntities !== false &&
+    workspaceCan(
+      WORKSPACE_PERMISSIONS.SQL_CONNECTORS_MANAGE,
+      workspace?.slug,
+      currentUser
+    );
 
   useEffect(() => {
     async function fetchSkills() {
-      if (!workspace?.slug) return;
+      if (!dataSource && !workspace?.slug) return;
       // These two only decide whether a single host-dependent skill is offered, but
       // they used to sit in a `Promise.all` with the catalog fetch - so whenever one of
       // the availability probes failed or hung, the whole screen came up empty and no
@@ -177,7 +197,7 @@ export default function AgentSkillSelection({
       // treat a failure as "not available".
       const [skillsResult, fsResult, createFilesResult] =
         await Promise.allSettled([
-          Workspace.agentSkills(workspace.slug),
+          io.load(),
           System.isFileSystemAgentAvailable(),
           System.isCreateFilesAgentAvailable(),
         ]);
@@ -500,36 +520,32 @@ export default function AgentSkillSelection({
 
   async function handleSave() {
     setSaving(true);
-    const { workspace: updated, message } = await Workspace.updateAgentSkills(
-      workspace.slug,
-      config
-    );
-    if (updated) {
-      showToast("Workspace agent skills updated!", "success", { clear: true });
+    const result = await io.save(config);
+    if (result?.workspace || result?.success) {
+      showToast(io.savedMessage, "success", { clear: true });
       setConfigured(true);
       setHasChanges(false);
     } else {
-      showToast(`Error: ${message}`, "error", { clear: true });
+      showToast(`Error: ${result?.message ?? result?.error}`, "error", {
+        clear: true,
+      });
     }
     setSaving(false);
   }
 
   async function handleReset() {
     setSaving(true);
-    const { workspace: updated, message } = await Workspace.updateAgentSkills(
-      workspace.slug,
-      null
-    );
-    if (updated) {
-      const skills = await Workspace.agentSkills(workspace.slug);
+    const result = await io.save(null);
+    if (result?.workspace || result?.success) {
+      const skills = await io.load();
       setConfig(skills?.config ?? null);
       setConfigured(false);
       setHasChanges(false);
-      showToast("Reverted to the instance default skills.", "success", {
+      showToast(io.revertedMessage, "success", { clear: true });
+    } else {
+      showToast(`Error: ${result?.message ?? result?.error}`, "error", {
         clear: true,
       });
-    } else {
-      showToast(`Error: ${message}`, "error", { clear: true });
     }
     setSaving(false);
   }

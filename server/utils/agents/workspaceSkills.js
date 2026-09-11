@@ -354,24 +354,29 @@ async function resolveSearchProviderForWorkspace(workspaceId = null) {
 
 /**
  * The config a workspace is governed by before the instance-wide defaults are reached:
- * its own if it has one, otherwise the profile for its kind.
+ * its own if it has one, and for a private workspace the instance's private workspace
+ * profile.
  *
- * The profile layer is what lets an operator say "the agent may do this much inside
- * people's private workspaces" once, and have it apply to every private workspace
- * there is - including the ones provisioned before the decision was made. A profile
- * that sets nothing (how every instance starts) resolves to null here and the
- * instance-wide settings are used, exactly as before profiles existed.
+ * That profile is what lets an operator say "the agent may do this much inside people's
+ * private workspaces" once and have it apply to every private workspace there is,
+ * including ones provisioned before the decision was made. A profile that sets nothing
+ * (how every instance starts) resolves to null here and the instance-wide settings are
+ * used, exactly as before it existed.
  * @param {import("@prisma/client").workspaces | null} workspace
  * @returns {Promise<object|null>}
  */
 async function storedConfigForWorkspace(workspace = null) {
   const own = normalizeConfig(workspace?.agentSkillConfig ?? null);
   if (own) return own;
+  // Shared workspaces go straight to the instance-wide agent settings, as they always
+  // have. Only a private workspace has a profile between the two, because only it has
+  // no settings screen of its own to hold a config.
+  if (workspace?.type !== "personal") return null;
   // Required lazily: the model pulls this module in for its own normalization.
-  const { WorkspaceDefaults } = require("../../models/workspaceDefaults");
-  return await WorkspaceDefaults.agentSkillConfigFor(
-    workspace?.type ?? "shared"
-  );
+  const {
+    PrivateWorkspaceProfile,
+  } = require("../../models/privateWorkspaceProfile");
+  return await PrivateWorkspaceProfile.agentSkillConfig();
 }
 
 /**

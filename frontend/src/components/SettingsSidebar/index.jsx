@@ -220,6 +220,28 @@ const SidebarOptions = ({ user = null, t }) => (
           permissions={[PERMISSIONS.SYSTEM_MONITORING]}
         />
         <Option
+          btnText={t("settings.workspaces")}
+          icon={<Layers className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
+            {
+              btnText: t("settings.instance-workspaces"),
+              href: paths.settings.workspaces(),
+              permissions: [PERMISSIONS.WORKSPACES_VIEW_ALL],
+            },
+            {
+              btnText: t("settings.private-workspaces"),
+              href: paths.settings.privateWorkspaces(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+            },
+            {
+              btnText: t("settings.default-system-prompt"),
+              href: paths.settings.defaultSystemPrompt(),
+              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
+            },
+          ]}
+        />
+        <Option
           btnText={t("settings.ai-providers")}
           icon={<Settings className="h-5 w-5 shrink-0" />}
           user={user}
@@ -266,73 +288,6 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
-        {isSuperAdmin(user) && (
-          <Option
-            btnText={t("settings.smtp")}
-            icon={<Mail className="h-5 w-5 shrink-0" />}
-            href={paths.settings.smtp()}
-            user={user}
-            permissions={[PERMISSIONS.SYSTEM_ADMIN]}
-          />
-        )}
-        <Option
-          btnText={t("settings.admin")}
-          icon={<UserCog className="h-5 w-5 shrink-0" />}
-          user={user}
-          childOptions={[
-            {
-              btnText: t("settings.users"),
-              href: paths.settings.users(),
-              permissions: [PERMISSIONS.USERS_VIEW],
-            },
-            {
-              btnText: t("settings.roles"),
-              href: paths.settings.roles(),
-              permissions: [PERMISSIONS.ROLES_MANAGE],
-            },
-            {
-              btnText: t("settings.invites"),
-              href: paths.settings.invites(),
-              permissions: [PERMISSIONS.INVITES_MANAGE],
-            },
-            {
-              // Role-gated, not permission-gated - ownership transfer and instance
-              // reset can never be handed to a custom role.
-              hidden: !isSuperAdmin(user),
-              btnText: t("settings.instance-owner"),
-              href: paths.settings.superAdmin(),
-              permissions: [PERMISSIONS.SYSTEM_ADMIN],
-            },
-          ]}
-        />
-        <Option
-          btnText={t("settings.workspaces")}
-          icon={<Layers className="h-5 w-5 shrink-0" />}
-          user={user}
-          childOptions={[
-            {
-              btnText: t("settings.instance-workspaces"),
-              href: paths.settings.workspaces(),
-              permissions: [PERMISSIONS.WORKSPACES_VIEW_ALL],
-            },
-            {
-              btnText: t("settings.workspace-defaults"),
-              href: paths.settings.workspaceDefaults(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
-            },
-            {
-              hidden: !canViewChatHistory,
-              btnText: t("settings.workspace-chats"),
-              href: paths.settings.chats(),
-              permissions: [PERMISSIONS.CHATS_VIEW_ALL],
-            },
-            {
-              btnText: t("settings.default-system-prompt"),
-              href: paths.settings.defaultSystemPrompt(),
-              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
-            },
-          ]}
-        />
         <Option
           btnText={t("settings.agent")}
           icon={<Bot className="h-5 w-5 shrink-0" />}
@@ -359,6 +314,39 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.sql-connector"),
               href: paths.settings.sqlConnector(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
+            },
+          ]}
+        />
+        <Option
+          btnText={t("settings.tools")}
+          icon={<Briefcase className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
+            {
+              hidden: !canViewChatHistory,
+              btnText: t("settings.embeds"),
+              href: paths.settings.embedChatWidgets(),
+              permissions: [PERMISSIONS.EMBEDS_MANAGE],
+            },
+            {
+              btnText: t("settings.scheduled-jobs"),
+              href: paths.settings.scheduledJobs(),
+              permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
+            },
+            {
+              btnText: t("settings.api-keys"),
+              href: paths.settings.apiKeys(),
+              permissions: [PERMISSIONS.SYSTEM_API_KEYS],
+            },
+            {
+              btnText: t("settings.system-prompt-variables"),
+              href: paths.settings.systemPromptVariables(),
+              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
+            },
+            {
+              btnText: t("settings.slash-commands"),
+              href: paths.settings.slashCommands(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
           ]}
         />
@@ -397,38 +385,42 @@ const SidebarOptions = ({ user = null, t }) => (
           ]}
         />
         <Option
-          btnText={t("settings.tools")}
-          icon={<Briefcase className="h-5 w-5 shrink-0" />}
+          btnText={t("settings.admin")}
+          icon={<UserCog className="h-5 w-5 shrink-0" />}
           user={user}
           childOptions={[
             {
-              hidden: !canViewChatHistory,
-              btnText: t("settings.embeds"),
-              href: paths.settings.embedChatWidgets(),
-              permissions: [PERMISSIONS.EMBEDS_MANAGE],
+              btnText: t("settings.users"),
+              href: paths.settings.users(),
+              permissions: [PERMISSIONS.USERS_VIEW],
             },
             {
-              btnText: t("settings.scheduled-jobs"),
-              href: paths.settings.scheduledJobs(),
-              permissions: [PERMISSIONS.AGENTS_SCHEDULED_JOBS],
+              btnText: t("settings.roles"),
+              href: paths.settings.roles(),
+              permissions: [PERMISSIONS.ROLES_MANAGE],
             },
             {
-              btnText: t("settings.api-keys"),
-              href: paths.settings.apiKeys(),
-              permissions: [PERMISSIONS.SYSTEM_API_KEYS],
+              btnText: t("settings.invites"),
+              href: paths.settings.invites(),
+              permissions: [PERMISSIONS.INVITES_MANAGE],
             },
             {
-              btnText: t("settings.system-prompt-variables"),
-              href: paths.settings.systemPromptVariables(),
-              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
-            },
-            {
-              btnText: t("settings.slash-commands"),
-              href: paths.settings.slashCommands(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+              hidden: !isSuperAdmin(user),
+              btnText: t("settings.instance-owner"),
+              href: paths.settings.superAdmin(),
+              permissions: [PERMISSIONS.SYSTEM_ADMIN],
             },
           ]}
         />
+        {isSuperAdmin(user) && (
+          <Option
+            btnText={t("settings.smtp")}
+            icon={<Mail className="h-5 w-5 shrink-0" />}
+            href={paths.settings.smtp()}
+            user={user}
+            permissions={[PERMISSIONS.SYSTEM_ADMIN]}
+          />
+        )}
         <Option
           btnText={t("settings.logs")}
           icon={<ScrollText className="h-5 w-5 shrink-0" />}
@@ -438,6 +430,12 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.event-logs"),
               href: paths.settings.logs(),
               permissions: [PERMISSIONS.SYSTEM_EVENT_LOGS_VIEW],
+            },
+            {
+              hidden: !canViewChatHistory,
+              btnText: t("settings.workspace-chats"),
+              href: paths.settings.chats(),
+              permissions: [PERMISSIONS.CHATS_VIEW_ALL],
             },
             {
               btnText: t("settings.scheduled-jobs-logs"),

@@ -10,7 +10,7 @@ const {
   PERSONAL_WORKSPACE_AUDIT_PERMISSION_KEYS,
   expandPermissions,
 } = require("../utils/permissions");
-const { WORKSPACE_TYPES } = require("./workspaceDefaults");
+const { WORKSPACE_TYPES } = require("./privateWorkspaceProfile");
 
 /**
  * @typedef {Object} WorkspaceRoleRecord

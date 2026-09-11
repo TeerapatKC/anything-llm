@@ -41,8 +41,8 @@ const TRANSLATIONS = {
     roles: "ロールと権限",
     workspaces: "ワークスペース",
     "instance-workspaces": "インスタンスワークスペース",
-    "workspace-defaults": "ワークスペースの既定値",
-    "workspace-chats": "ワークスペースチャット",
+    "private-workspaces": "プライベートワークスペース",
+    "workspace-chats": "ワークスペースチャットログ",
     customization: "カスタマイズ",
     "api-keys": "開発者API",
     llm: "LLM",
@@ -53,7 +53,7 @@ const TRANSLATIONS = {
     "vector-database": "ベクターデータベース",
     embeds: "チャット埋め込み",
     logs: "ログ",
-    "event-logs": "イベントログ",
+    "event-logs": "ユーザーイベントログ",
     dashboards: "ダッシュボード",
     monitoring: "ダッシュボード",
     privacy: "プライバシーとデータ",
@@ -73,7 +73,7 @@ const TRANSLATIONS = {
     interface: "UI設定",
     branding: "ブランディングとホワイトレーベル化",
     chat: "チャット",
-    channels: "チャンネル",
+    channels: "接続済みアプリ",
     "available-channels": {
       telegram: "テレグラム",
       line: "LINE",
@@ -517,7 +517,7 @@ const TRANSLATIONS = {
     },
   },
   recorded: {
-    title: "ワークスペースチャット履歴",
+    title: "ワークスペースチャットログ",
     description:
       "ユーザーが送信したすべてのチャットとメッセージの履歴です。作成日時順に表示されます。",
     export: "エクスポート",
@@ -739,9 +739,9 @@ const TRANSLATIONS = {
     },
   },
   event: {
-    title: "イベントログ",
+    title: "ユーザーイベントログ",
     description: "このインスタンスで行われた操作の監査ログです。",
-    clear: "イベントログをクリア",
+    clear: "ユーザーイベントログをクリア",
     table: {
       type: "イベントタイプ",
       user: "ユーザー",

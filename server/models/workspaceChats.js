@@ -18,7 +18,7 @@ const WorkspaceChats = {
   visibilityClauseFor: async function (user = null) {
     const { Role } = require("./role");
     const { PERMISSIONS } = require("../utils/permissions");
-    const { WORKSPACE_TYPES } = require("./workspaceDefaults");
+    const { WORKSPACE_TYPES } = require("./privateWorkspaceProfile");
     if (await Role.userCan(user, PERMISSIONS.CHATS_VIEW_PERSONAL)) return {};
 
     try {
@@ -49,7 +49,7 @@ const WorkspaceChats = {
   auditPersonalAccess: async function (user = null, chats = [], context = "") {
     try {
       if (!user?.id || chats.length === 0) return;
-      const { WORKSPACE_TYPES } = require("./workspaceDefaults");
+      const { WORKSPACE_TYPES } = require("./privateWorkspaceProfile");
       const ids = [...new Set(chats.map((chat) => chat.workspaceId))];
       const personal = await prisma.workspaces.findMany({
         where: {
@@ -497,7 +497,7 @@ const WorkspaceChats = {
         include: data.include,
       };
 
-      const { chat } = await prisma.workspace_chats.upsert({
+      const chat = await prisma.workspace_chats.upsert({
         where: {
           id: Number(chatId),
           user_id: data.user?.id || null,
@@ -506,7 +506,16 @@ const WorkspaceChats = {
         update: { ...payload, lastUpdatedAt: new Date() },
 
         // On creates, we need to set the prompt or else record will fail.
-        create: { ...payload, prompt: data.prompt },
+        //
+        // Prisma validates this branch even when the row exists and only `update`
+        // will run, so a caller with no prompt to hand had the entire call
+        // rejected before it reached the database. That is the case whenever a
+        // turn ends without an answer: the row holding the prompt was written
+        // ahead of time behind `include: false`, and the update that was meant to
+        // reveal it never landed, so the question the person asked disappeared
+        // from the thread. Fall back to an empty prompt to keep the create branch
+        // valid - only a row that no longer exists can ever be written with it.
+        create: { ...payload, prompt: data.prompt ?? "" },
       });
       return { chat, message: null };
     } catch (error) {
