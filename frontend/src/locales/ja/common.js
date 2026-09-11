@@ -763,6 +763,12 @@ const TRANSLATIONS = {
     unavailable: "このインスタンスではダッシュボードが設定されていません。",
     "unavailable-hint":
       "ダッシュボードを表示するには GRAFANA_PUBLIC_URL を設定してください。",
+    checking: "Grafana を確認しています…",
+    "checking-hint": "ダッシュボードサービスに到達できるか確認しています。",
+    "load-error": "Grafana を利用できません",
+    "load-error-hint":
+      "Grafana サービスに接続できませんでした。サービスが起動していることと GRAFANA_PUBLIC_URL が正しいことを確認してから、もう一度お試しください。",
+    retry: "再試行",
   },
   privacy: {
     title: "プライバシーとデータ処理",
@@ -1947,6 +1953,8 @@ const TRANSLATIONS = {
     "enable-title": "送信メールを有効にする",
     "enable-description":
       "オフの場合、以下の項目が入力されていても Nexus AI はメールを送信しません。",
+    "enable-off-hint":
+      "オンにすると、パスワードリセット・招待・通知に使うメールボックスを設定できます。",
     "service-label": "メールサービス",
     "service-placeholder": "サービスを選択",
     providers: {
@@ -2108,8 +2116,18 @@ const TRANSLATIONS = {
     start: {
       "variable-name": "変数名",
       "initial-value": "初期値",
+      value: "値",
       "delete-variable": "変数を削除",
       "add-variable": "変数を追加",
+      required: "必須",
+      "required-hint": "このフローの実行時に LLM が値を指定する必要があります。",
+      optional: "任意",
+      "optional-hint": "LLM が上書きできる初期値を持ちます。",
+      static: "固定",
+      "static-hint": "LLM には表示されない固定値です。",
+      "categories-help":
+        "必須変数と任意変数は LLM が設定できます。固定変数は LLM には表示されません。",
+      "description-placeholder": "この値の用途を LLM に説明します",
     },
     llmInstruction: {
       instruction: "指示",

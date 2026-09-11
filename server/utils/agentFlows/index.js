@@ -19,7 +19,7 @@ class AgentFlows {
     ? path.join(process.env.STORAGE_DIR, "plugins", "agent-flows")
     : path.join(process.cwd(), "storage", "plugins", "agent-flows");
 
-  constructor() { }
+  constructor() {}
 
   /**
    * Ensure flows directory exists
@@ -347,6 +347,16 @@ class AgentFlows {
     const variables = startBlock?.config?.variables || [];
     const toolName = AgentFlows.sanitizeToolName(flow.name) || `flow_${uuid}`;
 
+    // Variables without a type predate categories and retain their original
+    // optional behavior. Static values stay inside the flow and are never
+    // exposed to, or accepted from, the LLM.
+    const llmVariables = variables.filter(
+      (variable) => variable.name && (variable.type || "optional") !== "static"
+    );
+    const requiredNames = llmVariables
+      .filter((variable) => variable.type === "required")
+      .map((variable) => variable.name);
+
     return {
       name: toolName,
       description: `Execute agent flow: ${flow.name}`,
@@ -361,20 +371,38 @@ class AgentFlows {
               flow.config.description || `Execute agent flow: ${flow.name}`,
             parameters: {
               type: "object",
-              properties: variables.reduce((acc, v) => {
-                if (v.name) {
-                  acc[v.name] = {
-                    type: "string",
-                    description:
-                      v.description || `Value for variable ${v.name}`,
-                  };
-                }
+              properties: llmVariables.reduce((acc, variable) => {
+                acc[variable.name] = {
+                  type: "string",
+                  description:
+                    variable.description ||
+                    `Value for variable ${variable.name}`,
+                };
                 return acc;
               }, {}),
+              required: requiredNames,
             },
-            handler: async (args) => {
+            handler: async (args = {}) => {
+              // Provider implementations do not all enforce JSON Schema in the
+              // same way, so validate required values here as well. Filtering
+              // also prevents hallucinated keys from overriding static values.
+              const flowArgs = Object.fromEntries(
+                Object.entries(args).filter(([key]) =>
+                  llmVariables.some((variable) => variable.name === key)
+                )
+              );
+              const missing = requiredNames.filter(
+                (name) => flowArgs[name] === undefined || flowArgs[name] === ""
+              );
+              if (missing.length > 0)
+                return `Flow execution failed: missing required parameter(s): ${missing.join(", ")}`;
+
               aibitat.introspect(`Executing flow: ${flow.name}`);
-              const result = await AgentFlows.executeFlow(uuid, args, aibitat);
+              const result = await AgentFlows.executeFlow(
+                uuid,
+                flowArgs,
+                aibitat
+              );
               if (!result.success) {
                 aibitat.introspect(
                   `Flow failed: ${result.results[0]?.error || "Unknown error"}`

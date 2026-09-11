@@ -7,6 +7,7 @@ const {
   WORKSPACE_TYPES,
 } = require("./privateWorkspaceProfile");
 const { EventLogs } = require("./eventLogs");
+const { SystemPromptVariables } = require("./systemPromptVariables");
 const { PERSONAL_OWNER_WORKSPACE_ROLE } = require("../utils/permissions");
 
 /** What an operator may do with the private workspaces a policy change puts over quota. */
@@ -129,18 +130,33 @@ const PersonalWorkspace = {
   },
 
   /**
-   * Render the configured name template for a user. `{username}`, `{email}` and
-   * `{name}` are substituted; anything else is left alone.
-   * @param {{username?: string, email?: string}} user
+   * Render the configured name template through the shared system-prompt variable
+   * resolver. The old `{username}`, `{email}` and `{name}` aliases remain valid.
+   * @param {{id?: number, username?: string, email?: string}} user
    * @param {string} template
-   * @returns {string}
+   * @returns {Promise<string>}
    */
-  nameFor: function (user, template) {
+  nameFor: async function (user, template) {
     const username = user?.username || user?.email?.split("@")[0] || "user";
-    return String(template)
-      .replaceAll("{username}", username)
-      .replaceAll("{email}", user?.email ?? username)
-      .replaceAll("{name}", username)
+    const source = String(template);
+
+    // Keep this helper useful in isolated callers and tests that only have user
+    // fields. Real provisioning always has an ID and uses the shared resolver.
+    if (!user?.id)
+      return source
+        .replaceAll("{username}", username)
+        .replaceAll("{email}", user?.email ?? username)
+        .replaceAll("{name}", username)
+        .trim()
+        .slice(0, 255);
+
+    return String(
+      await SystemPromptVariables.expandSystemPromptVariables(
+        source,
+        user.id,
+        null
+      )
+    )
       .trim()
       .slice(0, 255);
   },
@@ -223,7 +239,7 @@ const PersonalWorkspace = {
    */
   _create: async function (user, profile, name = null) {
     const owned = await this.countFor(user.id);
-    const base = this.nameFor(user, profile.nameTemplate);
+    const base = await this.nameFor(user, profile.nameTemplate);
     const resolvedName =
       (typeof name === "string" && name.trim()) ||
       (owned > 0 ? `${base} ${owned + 1}` : base);

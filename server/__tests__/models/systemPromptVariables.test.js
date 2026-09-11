@@ -4,6 +4,7 @@ const prisma = require("../../utils/prisma");
 const mockUser = {
   id: 1,
   username: "john.doe",
+  email: "john.doe@example.com",
   bio: "I am a test user",
 };
 
@@ -52,6 +53,17 @@ describe("SystemPromptVariables.expandSystemPromptVariables", () => {
   it("should expand user-defined system prompt variables", async () => {
     const variables = await SystemPromptVariables.expandSystemPromptVariables("Hello {user.name}", mockUser.id);
     expect(variables).toBe(`Hello ${mockUser.username}`);
+  });
+
+  it("should expand private-workspace user aliases through the shared resolver", async () => {
+    const variables =
+      await SystemPromptVariables.expandSystemPromptVariables(
+        "{username} {name} {email} {user.email}",
+        mockUser.id
+      );
+    expect(variables).toBe(
+      `${mockUser.username} ${mockUser.username} ${mockUser.email} ${mockUser.email}`
+    );
   });
 
   it("should work with any combination of variables", async () => {

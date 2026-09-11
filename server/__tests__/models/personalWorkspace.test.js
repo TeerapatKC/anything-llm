@@ -339,9 +339,12 @@ describe("the policy profile", () => {
     expect((await PersonalWorkspace.profile()).quotaPerUser).toBe(0);
   });
 
-  it("renders the name template", () => {
+  it("renders the name template", async () => {
     expect(
-      PersonalWorkspace.nameFor({ username: "ada" }, "{username}'s Space")
+      await PersonalWorkspace.nameFor(
+        { username: "ada" },
+        "{username}'s Space"
+      )
     ).toBe("ada's Space");
   });
 });

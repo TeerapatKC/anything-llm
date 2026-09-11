@@ -502,7 +502,7 @@ function CollapsibleContent({ expanded, className, children }) {
     >
       <div
         className={cn(
-          "min-h-0 overflow-hidden transition-opacity duration-150 ease-out",
+          "flex min-h-0 flex-col overflow-hidden transition-opacity duration-150 ease-out",
           expanded ? "opacity-100" : "pointer-events-none opacity-0"
         )}
       >

@@ -1122,6 +1122,12 @@ const TRANSLATIONS = {
     unavailable: "Dashboards are not configured for this instance.",
     "unavailable-hint":
       "Set GRAFANA_PUBLIC_URL so Dashboards can be shown here.",
+    checking: "Checking Grafana…",
+    "checking-hint": "Verifying that the dashboard service is reachable.",
+    "load-error": "Grafana is unavailable",
+    "load-error-hint":
+      "Could not reach the Grafana service. Confirm it is running and that GRAFANA_PUBLIC_URL is correct, then try again.",
+    retry: "Try again",
   },
   privacy: {
     title: "Privacy & Data-Handling",
@@ -1939,6 +1945,8 @@ const TRANSLATIONS = {
     "enable-title": "Enable outbound email",
     "enable-description":
       "When off, Nexus AI will not attempt to send any email even if the fields below are filled in.",
+    "enable-off-hint":
+      "Turn this on to configure the mailbox used for password resets, invitations, and notifications.",
     "service-label": "Email service",
     "service-placeholder": "Choose a service",
     providers: {
@@ -2101,8 +2109,19 @@ const TRANSLATIONS = {
     start: {
       "variable-name": "Variable name",
       "initial-value": "Initial value",
+      value: "Value",
       "delete-variable": "Delete variable",
       "add-variable": "Add variable",
+      required: "Required",
+      "required-hint": "The LLM must provide a value when it runs this flow.",
+      optional: "Optional",
+      "optional-hint": "Has an initial value the LLM can override.",
+      static: "Static",
+      "static-hint": "Fixed value, hidden from the LLM entirely.",
+      "categories-help":
+        "Required and Optional variables can be set by the LLM. Static variables are fixed and never shown to the LLM.",
+      "description-placeholder":
+        "Description for the LLM (what this value is for)",
     },
     llmInstruction: {
       instruction: "Instruction",

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import Highlighter from "react-highlight-words";
+import SystemPromptVariable from "@/models/systemPromptVariable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -14,15 +15,17 @@ import {
 /** The select's "not chosen" value has to be a non-empty string. */
 const DEFAULT_ROLE = "__default__";
 const DEFAULT_ROLE_LABEL = "Private Workspace Owner (default)";
+const LEGACY_NAME_VARIABLES = ["username", "email", "name"];
 
 /**
- * How private workspaces are handed out: to whom, how many, called what, and with what
- * the owner may do inside their own.
+ * How private workspaces are handed out: how many, called what, and with what the
+ * owner may do inside their own.
  *
- * The last of those is a workspace role rather than a set of checkboxes on purpose - it
- * is the same role machinery every other membership uses, so an operator can see and
- * edit it beside the others rather than learning a second permission system that exists
- * only here.
+ * Whether the feature is on at all is decided above the tabs - this screen only
+ * configures what happens once it is. The owner role is a workspace role rather than
+ * a set of checkboxes on purpose: it is the same role machinery every other membership
+ * uses, so an operator can see and edit it beside the others rather than learning a
+ * second permission system that exists only here.
  */
 export default function Provisioning({
   profile,
@@ -32,15 +35,38 @@ export default function Provisioning({
 }) {
   const [form, setForm] = useState(() => structuredClone(profile));
   const [saving, setSaving] = useState(false);
+  const [availableVariables, setAvailableVariables] = useState(
+    LEGACY_NAME_VARIABLES
+  );
 
   useEffect(() => setForm(structuredClone(profile)), [profile]);
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadVariables() {
+      const { variables = [] } = await SystemPromptVariable.getAll();
+      if (cancelled) return;
+      setAvailableVariables([
+        ...new Set([
+          ...LEGACY_NAME_VARIABLES,
+          ...variables
+            .filter((variable) => variable.type !== "workspace")
+            .map((variable) => variable.key),
+        ]),
+      ]);
+    }
+
+    loadVariables();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   if (!form) return null;
 
   async function submit(e) {
     e.preventDefault();
     setSaving(true);
     await onSave({
-      enabled: form.enabled,
       quotaPerUser: form.quotaPerUser,
       nameTemplate: form.nameTemplate,
       ownerRoleId: form.ownerRoleId,
@@ -50,22 +76,6 @@ export default function Provisioning({
 
   return (
     <form onSubmit={submit} className="flex max-w-2xl flex-col gap-y-6">
-      <div className="flex items-center justify-between rounded-lg border border-border p-4">
-        <div>
-          <Label>Give every user a private workspace</Label>
-          <p className="text-xs text-muted-foreground">
-            Created the first time they load their workspaces, which covers
-            accounts that already exist as well as new ones.
-          </p>
-        </div>
-        <Switch
-          checked={form.enabled}
-          onCheckedChange={(enabled) =>
-            setForm((prev) => ({ ...prev, enabled }))
-          }
-        />
-      </div>
-
       <Field
         label="Private workspaces per user"
         hint="Zero stops anyone creating a new one without touching what already exists."
@@ -83,13 +93,13 @@ export default function Provisioning({
 
       <Field
         label="Name template"
-        hint="{username}, {email} and {name} are replaced when the workspace is created. Owners can rename it afterwards."
+        hint="Variables from System Prompt Variables are replaced when the workspace is created. Workspace variables are excluded because the workspace does not exist yet."
       >
-        <Input
+        <TemplateInput
           value={form.nameTemplate}
-          maxLength={255}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, nameTemplate: e.target.value }))
+          variables={availableVariables}
+          onChange={(nameTemplate) =>
+            setForm((prev) => ({ ...prev, nameTemplate }))
           }
         />
       </Field>
@@ -161,6 +171,51 @@ function Field({ label, hint, children }) {
       <Label>{label}</Label>
       {children}
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+/**
+ * Mirrors the read-mode treatment used by the system-prompt editor, so template
+ * variables remain easy to scan without sacrificing a normal text input when
+ * the operator needs to edit the value.
+ */
+function TemplateInput({ value, variables, onChange }) {
+  const [editing, setEditing] = useState(false);
+
+  if (editing) {
+    return (
+      <Input
+        autoFocus
+        value={value}
+        maxLength={255}
+        onBlur={() => setEditing(false)}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    );
+  }
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => setEditing(true)}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          setEditing(true);
+        }
+      }}
+      className="flex min-h-9 w-full cursor-text items-center rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none transition-[color,box-shadow] hover:bg-accent/30 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+    >
+      <Highlighter
+        className="min-w-0 truncate whitespace-pre"
+        highlightClassName="rounded-md bg-cta-button p-0.5"
+        searchWords={variables.map((variable) => `{${variable}}`)}
+        autoEscape={true}
+        caseSensitive={true}
+        textToHighlight={value || ""}
+      />
     </div>
   );
 }
