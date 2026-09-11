@@ -113,7 +113,7 @@ export const AVAILABLE_LLM_PROVIDERS = [
     value: "openai",
     logo: OpenAiLogo,
     options: (settings) => <OpenAiOptions settings={settings} />,
-    description: "The standard option for most non-commercial use.",
+    description: "Use OpenAI's hosted models through the OpenAI API.",
     requiredConfig: ["OpenAiKey"],
   },
   {

@@ -1,0 +1,74 @@
+# Optional overlay on top of the llama.cpp overlay: serve several models at once
+# instead of one.
+#
+#   qwen3.8-27b    unsloth/Qwen3.8-27B-GGUF, UD-Q4_K_XL      17.6GB
+#   gpt-oss-20b    ggml-org/gpt-oss-20b-GGUF, MXFP4          12.1GB
+#   gemma-4-12b    google/gemma-4-12B-it-qat-q4_0-gguf        7.2GB, sees images
+#
+# llama-server has a router mode: point it at a preset file and it advertises
+# every model in it, loading one on demand when a request names it. So all three
+# show up in the model dropdown in Nexus AI, and a workspace picks its own.
+#
+# Layer it after docker-compose.llamacpp.yml, whose service it reconfigures:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml \
+#     -f docker-compose.llamacpp-models.yml up -d
+#
+# Roughly 37GB of weights at the defaults. LLAMACPP_MODELS in docker/.env picks a
+# subset, e.g. LLAMACPP_MODELS='gemma-4-12b' for the small one on its own.
+#
+# See docker/llamacpp/README.md for the quantizations and what each model is for.
+
+services:
+  # Router mode advertises each model under its own name, so the alias the
+  # single-model setup uses does not exist any more. Point the LLM preference at
+  # one of the three instead - the smallest by default, since it is the quickest
+  # to load. Any workspace can still pick another from the dropdown.
+  nexusai:
+    environment:
+      GENERIC_OPEN_AI_MODEL_PREF: ${GENERIC_OPEN_AI_MODEL_PREF:-gemma-4-12b}
+
+  # Downloads the weights and generates the preset file. A one-shot job rather
+  # than a step inside the server image: the weights dwarf the image, they change
+  # independently of it, and a failed download should be retryable on its own.
+  llamacpp-models:
+    image: curlimages/curl:latest
+    container_name: nexusai-llamacpp-models
+    # The named volume is created root-owned, and the curl image's own user
+    # cannot write to it.
+    user: "0:0"
+    entrypoint: ["sh", "/fetch-models.sh"]
+    environment:
+      # `-` rather than `:-`: an empty value means no models, and only an
+      # absent one falls back to the catalogue. Setting LLAMACPP_MODELS=''
+      # brings the router up serving nothing, which is how you check the
+      # stack works before spending 37GB on weights.
+      LLAMACPP_MODELS: ${LLAMACPP_MODELS-qwen3.8-27b,gpt-oss-20b,gemma-4-12b}
+      LLAMACPP_CTX: ${LLAMACPP_CTX:-8192}
+      # Swap in another quantization from the same repository. The README lists
+      # what each one costs.
+      LLAMACPP_QWEN_FILE: ${LLAMACPP_QWEN_FILE:-}
+      LLAMACPP_GPTOSS_FILE: ${LLAMACPP_GPTOSS_FILE:-}
+      LLAMACPP_GEMMA_FILE: ${LLAMACPP_GEMMA_FILE:-}
+    volumes:
+      - "${LLAMACPP_MODELS_DIR:-llamacpp-models}:/models"
+      - "./llamacpp/fetch-models.sh:/fetch-models.sh:ro"
+    networks:
+      - nexusai
+    restart: "no"
+
+  llamacpp:
+    environment:
+      # Router mode. Blanking the other two matters: given a single model to
+      # load, llama-server takes it and ignores the preset entirely.
+      LLAMA_ARG_MODELS_PRESET: /models/models.ini
+      LLAMA_ARG_HF_REPO: ""
+      LLAMA_ARG_MODEL: ""
+      # How many of them may be resident at the same time. One is the safe
+      # default: these models are large, and a second one loading while the first
+      # is still in memory is how a card runs out of it. Raise it if you have the
+      # memory and want to avoid the reload pause when switching.
+      LLAMA_ARG_MODELS_MAX: ${LLAMACPP_MODELS_MAX:-1}
+    depends_on:
+      llamacpp-models:
+        condition: service_completed_successfully

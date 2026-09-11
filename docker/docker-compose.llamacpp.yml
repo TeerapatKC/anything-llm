@@ -1,0 +1,123 @@
+# Optional overlay: a local LLM served by llama.cpp.
+#
+# An overlay rather than another service in docker-compose.yml because it wants a
+# GPU and a multi-gigabyte model, and nobody without the hardware should pay for
+# that just by running `up`.
+#
+# llama-server speaks the OpenAI chat API, so nothing sits between it and Nexus
+# AI - the Generic OpenAI provider talks to it directly.
+#
+# Layer it over either base file, on its own or alongside the image generator:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml -f docker-compose.sdcpp.yml up -d
+#
+# Deliberately no `name:` here - the project name comes from whichever base file
+# it is layered onto, so the service joins that project's network.
+#
+# Nexus AI is pointed at it automatically: the service block below fills in the
+# LLM Preference settings, so the page comes up on Generic OpenAI with this
+# service already selected. Anything you set in docker/.env wins over these, and
+# so does anything you save in Settings, because saving writes the value into
+# docker/.env and compose reads that file on the next `up`.
+#
+# See docker/llamacpp/README.md for the image tags, choosing a model, using GGUF
+# files you already have, and running a second instance for embeddings.
+
+volumes:
+  # Hugging Face cache for models pulled by name. Unused when LLAMACPP_MODELS_DIR
+  # points the mount at a directory of your own instead.
+  llamacpp-models:
+
+networks:
+  nexusai:
+    driver: bridge
+
+services:
+  # Defaults for /settings/llm-preference. `:-` means these apply only when the
+  # key is absent from docker/.env, so an explicit choice - yours by hand, or the
+  # one Settings wrote when you last saved - always takes precedence.
+  #
+  # `nexusai` is the app service in both base files - docker-compose.split.yml
+  # names its backend that too, for exactly this reason.
+  nexusai:
+    environment:
+      LLM_PROVIDER: ${LLM_PROVIDER:-generic-openai}
+      GENERIC_OPEN_AI_BASE_PATH: ${GENERIC_OPEN_AI_BASE_PATH:-http://llamacpp:8080/v1}
+      GENERIC_OPEN_AI_MODEL_PREF: ${GENERIC_OPEN_AI_MODEL_PREF:-nexus-llm}
+      # Nexus AI sizes its history and context off this, and a value larger than
+      # the server's own window gets requests truncated on arrival. It therefore
+      # follows LLAMACPP_CTX rather than carrying a number of its own: the two
+      # were previously independent, and raising the context window without
+      # remembering to raise this one silently left the extra window unused.
+      GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT: ${GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT:-${LLAMACPP_CTX:-8192}}
+      # How long an answer may be. The app's own fallback is 1024 tokens, which
+      # is short enough to cut off a detailed reply mid-sentence - the models
+      # here are large enough to be asked for more than that.
+      GENERIC_OPEN_AI_MAX_TOKENS: ${GENERIC_OPEN_AI_MAX_TOKENS:-4096}
+
+  llamacpp:
+    # server-cuda    NVIDIA, both x86_64 and arm64
+    # server-vulkan  AMD, Intel
+    # server         CPU only
+    image: ghcr.io/ggml-org/llama.cpp:${LLAMACPP_IMAGE_TAG:-server-cuda}
+    container_name: nexusai-llamacpp
+    # Configured through environment rather than flags because it lets the model
+    # come from either source without two versions of the command: every
+    # llama-server flag has an LLAMA_ARG_* equivalent, and an empty one is
+    # ignored exactly as if it had not been passed.
+    environment:
+      # Pull by name from Hugging Face. The plain `-` in the interpolation is
+      # deliberate: it lets LLAMACPP_MODEL='' in docker/.env mean "no download"
+      # rather than "use the default", which is what the local-file mode needs.
+      # Set both and the download wins, so pick one.
+      LLAMA_ARG_HF_REPO: ${LLAMACPP_MODEL-unsloth/Qwen3-4B-Instruct-2507-GGUF:Q4_K_M}
+      # Or load a GGUF already on disk, as a path inside the container. Pair it
+      # with LLAMACPP_MODELS_DIR below and LLAMACPP_MODEL='' above.
+      LLAMA_ARG_MODEL: ${LLAMACPP_MODEL_FILE-}
+      # Where pulled models land. Without it they go somewhere inside the
+      # container and are lost on every recreate.
+      LLAMA_CACHE: /models
+      # Fixes the name the API reports, so GENERIC_OPEN_AI_MODEL_PREF stays valid
+      # when you swap the underlying GGUF for another one.
+      LLAMA_ARG_ALIAS: nexus-llm
+      LLAMA_ARG_CTX_SIZE: ${LLAMACPP_CTX:-8192}
+      LLAMA_ARG_N_GPU_LAYERS: ${LLAMACPP_GPU_LAYERS:-999}
+      # Explicit because llama-server has announced a move of its default port to
+      # 9931; the published mapping below would break the day that lands. The
+      # image already sets LLAMA_ARG_HOST=0.0.0.0, so there is no host setting.
+      LLAMA_ARG_PORT: "8080"
+      # Empty means no authentication, which is right while the service is only
+      # reachable on the compose network. Set it, and GENERIC_OPEN_AI_API_KEY to
+      # match, if you publish the port.
+      LLAMA_ARG_API_KEY: ${LLAMACPP_API_KEY:-}
+      # Only needed for gated model repositories. Most GGUF mirrors are open.
+      HF_TOKEN: ${HF_TOKEN:-}
+    volumes:
+      # A docker volume by default, or a host directory when LLAMACPP_MODELS_DIR
+      # names one - compose reads a value that looks like a path as a bind mount
+      # and anything else as a reference to the volume declared above.
+      - "${LLAMACPP_MODELS_DIR:-llamacpp-models}:/models"
+    ports:
+      # Nexus AI does not go through this port - it reaches the service across the
+      # compose network. Useful for curl, and for llama.cpp's own web UI.
+      - "${LLAMACPP_PUBLISH_PORT:-8082}:8080"
+    networks:
+      - nexusai
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      # Half an hour of grace covers a first model download on a cold volume.
+      start_period: 1800s
+    # Needs the NVIDIA container toolkit on the host. Drop this whole block when
+    # running the vulkan or CPU image.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

@@ -61,7 +61,7 @@ const EMBEDDERS = [
     value: "openai",
     logo: OpenAiLogo,
     options: (settings) => <OpenAiOptions settings={settings} />,
-    description: "The standard option for most non-commercial use.",
+    description: "Use OpenAI's hosted embedding models through the OpenAI API.",
   },
   {
     name: "Azure OpenAI",

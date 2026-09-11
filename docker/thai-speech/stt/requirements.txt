@@ -1,0 +1,14 @@
+# torch is deliberately absent - the Dockerfile installs it from the CUDA index
+# chosen by a build arg, and a pin here would fetch the CPU-only wheel instead.
+#
+# Floors rather than exact pins, so they cannot contradict whatever torch that
+# index serves.
+transformers>=4.46.0
+accelerate>=1.1.0
+safetensors>=0.4.5
+librosa>=0.10.0
+soundfile>=0.12.1
+fastapi>=0.115.0
+uvicorn>=0.32.0
+python-multipart>=0.0.9
+pydantic>=2.9.0

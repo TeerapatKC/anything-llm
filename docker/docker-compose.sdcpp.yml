@@ -1,0 +1,127 @@
+# Optional overlay: FLUX.1-schnell served by stable-diffusion.cpp.
+#
+# An overlay rather than another service in docker-compose.yml because it wants a
+# GPU and ~17GB of weights, and nobody without the hardware should pay for that
+# just by running `up`.
+#
+# sd-server already speaks the OpenAI image API, so nothing sits between it and
+# Nexus AI - the LocalAI provider talks to it directly.
+#
+# Layer it over either base file:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.sdcpp.yml up -d
+#   docker compose -f docker-compose.split.yml -f docker-compose.sdcpp.yml up -d
+#
+# Deliberately no `name:` here - the project name comes from whichever base file
+# it is layered onto, so the services join that project's network.
+#
+# Nexus AI is pointed at it automatically: the service block below fills in the
+# Image Generation settings, so the page comes up on LocalAI with this service
+# already selected. Anything you set in docker/.env wins over these, and so does
+# anything you save in Settings, because saving writes the value into docker/.env
+# and compose reads that file on the next `up`.
+#
+# sd-server does not implement LocalAI's /v1/models/capabilities, so the model
+# dropdown in Settings falls back to a free-text box. The name you type is not
+# checked against anything - sd-server serves whatever model it was started with.
+#
+# See docker/sdcpp/README.md for the image tags, the memory table and the
+# quantization choices.
+
+volumes:
+  # The GGUF transformer, the VAE and both text encoders. ~17GB at the defaults.
+  # Unused when SDCPP_MODELS_DIR points the mounts at a directory of your own -
+  # which is how an air-gapped install runs, off weights that arrived on a disk.
+  sdcpp-models:
+
+networks:
+  nexusai:
+    driver: bridge
+
+services:
+  # Defaults for /settings/image-generation-preference. `:-` means these apply
+  # only when the key is absent from docker/.env, so an explicit choice - yours by
+  # hand, or the one Settings wrote when you last saved - always takes precedence.
+  #
+  # `nexusai` is the app service in both base files - docker-compose.split.yml
+  # names its backend that too, for exactly this reason.
+  nexusai:
+    environment:
+      IMAGE_GEN_PROVIDER: ${IMAGE_GEN_PROVIDER:-localai}
+      IMAGE_GEN_MODEL_PREF: ${IMAGE_GEN_MODEL_PREF:-flux.1-schnell}
+      IMAGE_GEN_LOCALAI_BASE_PATH: ${IMAGE_GEN_LOCALAI_BASE_PATH:-http://sdcpp:8080/v1}
+
+  # A one-shot downloader rather than a step baked into the server image: the
+  # weights are far larger than the image, change independently of it, and a
+  # failed download should be retryable without a rebuild.
+  sdcpp-models:
+    image: curlimages/curl:latest
+    container_name: nexusai-sdcpp-models
+    # The named volume is created root-owned, and the curl image's own user
+    # cannot write to it.
+    user: "0:0"
+    entrypoint: ["sh", "/fetch-models.sh"]
+    environment:
+      SDCPP_MODEL_REPO: ${SDCPP_MODEL_REPO:-second-state/FLUX.1-schnell-GGUF}
+      SDCPP_DIFFUSION_MODEL: ${SDCPP_DIFFUSION_MODEL:-flux1-schnell-Q4_0.gguf}
+      SDCPP_T5XXL: ${SDCPP_T5XXL:-t5xxl_fp16.safetensors}
+    volumes:
+      # A docker volume by default, or a host directory when SDCPP_MODELS_DIR
+      # names one - compose reads a value that looks like a path as a bind mount
+      # and anything else as a reference to the volume declared above. A
+      # pre-seeded directory makes this job a no-op: the fetcher leaves a file
+      # that is already there alone and never opens a connection.
+      - "${SDCPP_MODELS_DIR:-sdcpp-models}:/models"
+      - "./sdcpp/fetch-models.sh:/fetch-models.sh:ro"
+    networks:
+      - nexusai
+    restart: "no"
+
+  sdcpp:
+    # master-cuda      x86_64 NVIDIA
+    # master-cuda-spark arm64, built for the GB10 in a DGX Spark
+    # master-vulkan    everything else, including AMD and Intel
+    image: ghcr.io/leejet/stable-diffusion.cpp:${SDCPP_IMAGE_TAG:-master-cuda}
+    container_name: nexusai-sdcpp
+    entrypoint: ["/sd-server"]
+    # --cfg-scale 1.0 and four steps are what schnell is distilled for; the
+    # server's own defaults are 7.0 and twenty, which would be both slower and
+    # wrong for this model. The OpenAI request body has no field for either, so
+    # they have to be set here.
+    #
+    # -l 0.0.0.0 matters: sd-server listens on 127.0.0.1 by default, which inside
+    # a container means nothing else can reach it.
+    command: >
+      --diffusion-model /models/${SDCPP_DIFFUSION_MODEL:-flux1-schnell-Q4_0.gguf}
+      --vae /models/ae.safetensors
+      --clip_l /models/clip_l.safetensors
+      --t5xxl /models/${SDCPP_T5XXL:-t5xxl_fp16.safetensors}
+      --cfg-scale 1.0
+      --sampling-method euler
+      --steps ${SDCPP_STEPS:-4}
+      -W 1024 -H 1024
+      --diffusion-fa
+      -l 0.0.0.0
+      --listen-port 8080
+    volumes:
+      - "${SDCPP_MODELS_DIR:-sdcpp-models}:/models:ro"
+    depends_on:
+      sdcpp-models:
+        condition: service_completed_successfully
+    ports:
+      # Only for poking at the service directly - Nexus AI does not go through
+      # this port. `curl localhost:7861/v1/models` is the readiness check, since
+      # sd-server has no health endpoint.
+      - "${SDCPP_PUBLISH_PORT:-7861}:8080"
+    networks:
+      - nexusai
+    restart: unless-stopped
+    # Needs the NVIDIA container toolkit on the host. Drop this whole block when
+    # running the vulkan image, which reaches the GPU another way.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

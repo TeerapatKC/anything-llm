@@ -1,0 +1,7 @@
+# The HTTP layer and the commercially licensed multilingual model runtime.
+# Torch is installed from the selected CUDA index by the Dockerfile.
+fastapi>=0.115.0
+uvicorn>=0.32.0
+pydantic>=2.9.0
+voxcpm>=2.0.0,<3
+soundfile>=0.12.1

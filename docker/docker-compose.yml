@@ -15,6 +15,12 @@ networks:
 services:
   nexusai:
     container_name: nexusai
+    # Naming the image explicitly is what lets a prebuilt one be used instead of
+    # a local build: with both `image` and `build` set, compose builds only when
+    # the image is absent. Load a tarball from docker/build-arm64.sh, point
+    # NEXUSAI_IMAGE at its tag, and `up` runs it as-is. The default is the name
+    # compose would have generated anyway, so nothing changes without it.
+    image: ${NEXUSAI_IMAGE:-nexusai-nexusai}
     build:
       context: ../.
       dockerfile: ./docker/Dockerfile

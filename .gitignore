@@ -32,3 +32,22 @@ yarn.lock
 # Machine-local working area: generated documents, decks, screenshots, scratch build
 # output and env backups. Nothing in here is part of the deployable source.
 .local/
+
+# Image tarballs produced by docker/build-arm64.sh - multi-gigabyte build output
+# meant to be copied to another machine, never committed.
+/docker/out/
+
+# Transfer tarballs staged at the repository root on the way to another machine.
+# Generated from tracked sources, and large enough that committing one is always
+# a mistake.
+/*.tgz
+/*.tar
+
+# Offline bundle: image tarballs and model weights staged for an air-gapped
+# deployment. Tens of gigabytes, all of it downloaded rather than authored.
+/docker/bundle/
+/docker/models/
+
+# Interrupted downloads. The model fetchers write to <name>.part and rename on
+# success, so one of these means a transfer that never finished.
+*.part

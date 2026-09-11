@@ -20,8 +20,17 @@ networks:
     driver: bridge
 
 services:
-  backend:
+  # Named `nexusai` rather than `backend` so that it matches the service name in
+  # docker-compose.yml. The optional overlays - llamacpp, sdcpp, thai-speech -
+  # fill in provider defaults by patching that name, and a compose overlay cannot
+  # name a service its base file does not have. The container is still
+  # nexusai-backend, and `-f docker-compose.split.yml up -d nexusai` is how you
+  # address it on its own.
+  nexusai:
     container_name: nexusai-backend
+    # See the note in docker-compose.yml: an explicit image name is what lets a
+    # prebuilt image be used in place of a local build.
+    image: ${NEXUSAI_IMAGE:-nexusai-split-nexusai}
     build:
       context: ../.
       dockerfile: ./docker/Dockerfile
@@ -71,12 +80,12 @@ services:
         # Only change this if the browser must call the backend on another origin.
         VITE_API_BASE: ${VITE_API_BASE:-/api}
     environment:
-      BACKEND_HOST: backend
+      BACKEND_HOST: nexusai
       BACKEND_PORT: 3001
     ports:
       - "${FRONTEND_PUBLISH_PORT:-3000}:80"
     depends_on:
-      - backend
+      - nexusai
     networks:
       - nexusai
     restart: unless-stopped
