@@ -1,11 +1,13 @@
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import ExportLogsControl from "@/components/ExportLogsControl";
 import useQuery from "@/hooks/useQuery";
 import System from "@/models/system";
 import { useEffect, useState } from "react";
 import LogRow from "./LogRow";
 import showToast from "@/utils/toast";
+import { saveAs } from "file-saver";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import {
@@ -58,6 +60,21 @@ export default function AdminLogs() {
     });
   };
 
+  const handleExportLogs = async (format, startDate, endDate) => {
+    const data = await System.exportEventLogs(format, startDate, endDate);
+    if (!data) {
+      showToast(t("event.exportFailed"), "error");
+      return;
+    }
+    const mimeType = format === "json" ? "application/json" : "text/csv";
+    const blob = new Blob([data], { type: mimeType });
+    saveAs(
+      blob,
+      `nexusai-event-logs-${new Date().toISOString().slice(0, 10)}.${format}`
+    );
+    showToast(t("event.exportSuccess", { format: format.toUpperCase() }), "success");
+  };
+
   const handlePrevious = () => {
     setOffset(Math.max(offset - 1, 0));
   };
@@ -83,7 +100,18 @@ export default function AdminLogs() {
           </Button>
         }
       />
-      <div className="overflow-x-auto mt-6">
+      <div className="mt-3 flex w-full flex-wrap justify-end gap-2">
+        <ExportLogsControl
+          onExport={handleExportLogs}
+          disabled={loading}
+          labels={{
+            from: t("event.exportFrom"),
+            to: t("event.exportTo"),
+            export: t("event.export"),
+          }}
+        />
+      </div>
+      <div className="overflow-x-auto mt-3">
         <LogsContainer
           loading={loading}
           logs={logs}

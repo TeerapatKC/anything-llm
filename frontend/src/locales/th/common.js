@@ -540,6 +540,8 @@ const TRANSLATIONS = {
     description:
       "นี่คือการสนทนาและข้อความทั้งหมดที่ถูกบันทึกไว้ซึ่งผู้ใช้ส่งมา เรียงตามวันที่สร้าง",
     export: "ส่งออก",
+    exportFrom: "จาก",
+    exportTo: "ถึง",
     table: {
       id: "ID",
       by: "ส่งโดย",
@@ -1090,6 +1092,11 @@ const TRANSLATIONS = {
     title: "บันทึกเหตุการณ์ผู้ใช้",
     description: "ประวัติการกระทำทั้งหมดที่เกิดขึ้นในอินสแตนซ์นี้",
     clear: "ล้างบันทึกเหตุการณ์ผู้ใช้",
+    export: "ส่งออก",
+    exportFrom: "จาก",
+    exportTo: "ถึง",
+    exportSuccess: "ส่งออกบันทึกเหตุการณ์เป็น {{format}} สำเร็จ",
+    exportFailed: "ส่งออกบันทึกเหตุการณ์ไม่สำเร็จ",
     table: {
       type: "ประเภทเหตุการณ์",
       user: "ผู้ใช้",
@@ -1606,6 +1613,11 @@ const TRANSLATIONS = {
       clearConfirm: "ล้างบันทึก",
       clearSuccess: "ล้างบันทึกสำเร็จแล้ว",
       clearFailed: "ล้างบันทึกไม่สำเร็จ: {{error}}",
+      export: "ส่งออก",
+      exportFrom: "จาก",
+      exportTo: "ถึง",
+      exportSuccess: "ส่งออกบันทึกงานตามกำหนดเวลาเป็น {{format}} สำเร็จ",
+      exportFailed: "ส่งออกบันทึกงานตามกำหนดเวลาไม่สำเร็จ",
       empty: "ยังไม่มีบันทึกงานตามกำหนดเวลา",
       backToJobs: "กลับไปหน้างาน",
       sourceSystem: "System",

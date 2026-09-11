@@ -601,6 +601,25 @@ const System = {
         return { success: false, error: e.message };
       });
   },
+  // startDate/endDate are "YYYY-MM-DD" strings, or null to export everything.
+  exportEventLogs: async (format = "csv", startDate = null, endDate = null) => {
+    const url = new URL(`${fullApiUrl()}/system/event-logs/export`);
+    url.searchParams.append("format", format);
+    if (startDate) url.searchParams.append("startDate", startDate);
+    if (endDate) url.searchParams.append("endDate", endDate);
+    return await fetch(url, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => {
+        if (res.ok) return res.text();
+        throw new Error(res.statusText);
+      })
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
+  },
   deleteChat: async (chatId) => {
     return await fetch(`${API_BASE}/system/workspace-chats/${chatId}`, {
       method: "DELETE",
@@ -612,10 +631,18 @@ const System = {
         return { success: false, error: e.message };
       });
   },
-  exportChats: async (type = "csv", chatType = "workspace") => {
+  // startDate/endDate are "YYYY-MM-DD" strings, or null to export everything.
+  exportChats: async (
+    type = "csv",
+    chatType = "workspace",
+    startDate = null,
+    endDate = null
+  ) => {
     const url = new URL(`${fullApiUrl()}/system/export-chats`);
     url.searchParams.append("type", encodeURIComponent(type));
     url.searchParams.append("chatType", encodeURIComponent(chatType));
+    if (startDate) url.searchParams.append("startDate", startDate);
+    if (endDate) url.searchParams.append("endDate", endDate);
     return await fetch(url, {
       method: "GET",
       headers: baseHeaders(),

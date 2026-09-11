@@ -1,4 +1,4 @@
-import { API_BASE } from "@/utils/constants";
+import { API_BASE, fullApiUrl } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 
 const ScheduledJobs = {
@@ -149,6 +149,30 @@ const ScheduledJobs = {
       .catch((e) => ({ success: false, error: e.message }));
   },
 
+  // startDate/endDate are "YYYY-MM-DD" strings, or null to export everything.
+  // Mirrors System.exportEventLogs. Returns the raw file text, or null on failure.
+  exportLogs: async function (
+    format = "csv",
+    startDate = null,
+    endDate = null,
+    jobId = null
+  ) {
+    const url = new URL(`${fullApiUrl()}/scheduled-jobs/logs/export`);
+    url.searchParams.append("format", format);
+    if (startDate) url.searchParams.append("startDate", startDate);
+    if (endDate) url.searchParams.append("endDate", endDate);
+    if (jobId) url.searchParams.append("jobId", jobId);
+    return await fetch(url, { method: "GET", headers: baseHeaders() })
+      .then((res) => {
+        if (res.ok) return res.text();
+        throw new Error(res.statusText);
+      })
+      .catch((e) => {
+        console.error(e);
+        return null;
+      });
+  },
+
   // Jobs owned by a single workspace - managed from that workspace's own
   // settings instead of the instance-wide GeneralSettings page. Mirrors
   // AgentFlows.workspace.* / Workspace.slashCommands.*.
@@ -290,6 +314,31 @@ const ScheduledJobs = {
       )
         .then((res) => res.json())
         .catch(() => ({ logs: [], hasPages: false }));
+    },
+
+    exportLogs: async function (
+      slug,
+      format = "csv",
+      startDate = null,
+      endDate = null,
+      jobId = null
+    ) {
+      const url = new URL(
+        `${fullApiUrl()}/workspace/${slug}/scheduled-jobs/logs/export`
+      );
+      url.searchParams.append("format", format);
+      if (startDate) url.searchParams.append("startDate", startDate);
+      if (endDate) url.searchParams.append("endDate", endDate);
+      if (jobId) url.searchParams.append("jobId", jobId);
+      return await fetch(url, { method: "GET", headers: baseHeaders() })
+        .then((res) => {
+          if (res.ok) return res.text();
+          throw new Error(res.statusText);
+        })
+        .catch((e) => {
+          console.error(e);
+          return null;
+        });
     },
   },
 };

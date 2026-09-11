@@ -36,6 +36,11 @@ const { ScheduledJobRun } = require("../models/scheduledJobRun");
 const { ScheduledJobLog } = require("../models/scheduledJobLog");
 const { BackgroundService } = require("../utils/BackgroundWorkers");
 const { requireSmtpReady } = require("../utils/smtp");
+const { exportRows, dateRangeClause } = require("../utils/helpers/exportTable");
+const {
+  scheduledJobRunToRow,
+  SCHEDULED_JOB_LOG_HEADERS,
+} = require("../utils/helpers/scheduledJobExport");
 
 const truncate = require("truncate");
 const { purgeDocument } = require("../utils/files/purgeDocument");
@@ -2496,6 +2501,59 @@ function workspaceEndpoints(app) {
       } catch (error) {
         console.error("Error listing workspace scheduled job logs:", error);
         response.status(500).json({ logs: [], error: error.message });
+      }
+    }
+  );
+
+  // Exports this workspace's schedule log (or a date-bounded slice of it),
+  // unpaginated. Mirrors the instance-wide /scheduled-jobs/logs/export.
+  app.get(
+    "/workspace/:slug/scheduled-jobs/logs/export",
+    [
+      validatedRequest,
+      workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
+      validWorkspaceSlug,
+      requireSmtpReady,
+    ],
+    async (request, response) => {
+      try {
+        const workspace = response.locals.workspace;
+        const {
+          format = "csv",
+          startDate = null,
+          endDate = null,
+          jobId = null,
+        } = request.query;
+
+        let clause = { job: { workspaceId: workspace.id } };
+        if (jobId) {
+          const job = await ownedJobOr404(jobId, workspace, response);
+          if (!job) return;
+          clause = { jobId: job.id };
+        }
+        clause = { ...clause, ...dateRangeClause("startedAt", startDate, endDate) };
+
+        const runs = await ScheduledJobRun.where(
+          clause,
+          null,
+          { startedAt: "desc" },
+          { job: { include: { workspace: { select: { name: true, slug: true } } } } }
+        );
+        const emailLogsByRun = await ScheduledJobLog.groupByRunId(
+          runs.map((r) => r.id)
+        );
+        const rows = runs.map((run) => scheduledJobRunToRow(run, emailLogsByRun));
+        const { contentType, data } = exportRows(
+          format,
+          rows,
+          SCHEDULED_JOB_LOG_HEADERS
+        );
+
+        response.setHeader("Content-Type", contentType);
+        response.status(200).send(data);
+      } catch (error) {
+        console.error("Error exporting workspace scheduled job logs:", error);
+        response.status(500).json({ success: false, error: error.message });
       }
     }
   );

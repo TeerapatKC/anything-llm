@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
+import ExportLogsControl from "@/components/ExportLogsControl";
 import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
-import { ChevronDown, Download, ListFilter, Trash2 } from "lucide-react";
+import { ChevronDown, ListFilter, Trash2 } from "lucide-react";
 import { saveAs } from "file-saver";
 import { useTranslation } from "react-i18next";
 import { CanViewChatHistory } from "@/components/CanViewChatHistory";
@@ -29,6 +30,7 @@ import {
 
 const FEEDBACK_FILTERS = ["all", "up", "down", "none"];
 
+// Also used to build the format list for ExportLogsControl.
 const exportOptions = {
   csv: {
     name: "CSV",
@@ -74,8 +76,13 @@ export default function WorkspaceChats() {
   const { t } = useTranslation();
   const [confirm, setConfirm] = useState(null);
 
-  const handleDumpChats = async (exportType) => {
-    const chats = await System.exportChats(exportType, "workspace");
+  const handleDumpChats = async (exportType, startDate, endDate) => {
+    const chats = await System.exportChats(
+      exportType,
+      "workspace",
+      startDate,
+      endDate
+    );
     if (!!chats) {
       const { name, mimeType, fileExtension, filenameFunc } =
         exportOptions[exportType];
@@ -155,31 +162,19 @@ export default function WorkspaceChats() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    type="button"
-                    size="lg"
-                    disabled={loading || chats.length === 0}
-                  />
-                }
-              >
-                <Download />
-                {t("recorded.export")}
-                <ChevronDown className="transition-transform group-aria-expanded/button:rotate-180" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="min-w-40">
-                {Object.entries(exportOptions).map(([key, data]) => (
-                  <DropdownMenuItem
-                    key={key}
-                    onClick={() => handleDumpChats(key)}
-                  >
-                    {data.name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <ExportLogsControl
+              onExport={handleDumpChats}
+              disabled={loading}
+              labels={{
+                from: t("recorded.exportFrom"),
+                to: t("recorded.exportTo"),
+                export: t("recorded.export"),
+              }}
+              formats={Object.entries(exportOptions).map(([key, data]) => ({
+                key,
+                label: data.name,
+              }))}
+            />
             {chats.length > 0 && (
               <Button
                 type="button"
