@@ -343,7 +343,7 @@ describe("the policy profile", () => {
     expect(
       await PersonalWorkspace.nameFor(
         { username: "ada" },
-        "{username}'s Space"
+        "{user.name}'s Space"
       )
     ).toBe("ada's Space");
   });

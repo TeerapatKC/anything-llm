@@ -1,6 +1,7 @@
 jest.mock("../../utils/prisma", () => ({
   workspace_chats: {
     upsert: jest.fn(),
+    update: jest.fn(),
   },
 }));
 
@@ -55,5 +56,42 @@ describe("WorkspaceChats.upsert", () => {
 
     const { chat } = await WorkspaceChats.upsert(51, revealArgs);
     expect(chat.id).toBe(51);
+  });
+});
+
+describe("WorkspaceChats._update", () => {
+  it("stamps the edit time alongside the caller's fields", async () => {
+    prisma.workspace_chats.update.mockResolvedValue({});
+
+    const before = Date.now();
+    const result = await WorkspaceChats._update(7, { prompt: "edited" });
+    const after = Date.now();
+
+    expect(result).toBe(true);
+    const [args] = prisma.workspace_chats.update.mock.calls[0];
+    expect(args.where).toEqual({ id: 7 });
+    expect(args.data.prompt).toBe("edited");
+    // The column is a plain default, not @updatedAt, so an edit that does not set it
+    // leaves the chat reporting its creation time as the last time it changed.
+    expect(args.data.lastUpdatedAt).toBeInstanceOf(Date);
+    expect(args.data.lastUpdatedAt.getTime()).toBeGreaterThanOrEqual(before);
+    expect(args.data.lastUpdatedAt.getTime()).toBeLessThanOrEqual(after);
+  });
+
+  it("refuses an update with no chat id", async () => {
+    await expect(WorkspaceChats._update(null, { prompt: "x" })).rejects.toThrow(
+      /no workspace chat id/i
+    );
+    expect(prisma.workspace_chats.update).not.toHaveBeenCalled();
+  });
+
+  it("reports a failed write rather than throwing", async () => {
+    prisma.workspace_chats.update.mockRejectedValue(new Error("db error"));
+    jest.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(WorkspaceChats._update(7, { include: false })).resolves.toBe(
+      false
+    );
+    console.error.mockRestore();
   });
 });

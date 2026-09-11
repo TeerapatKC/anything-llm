@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import Highlighter from "react-highlight-words";
 import SystemPromptVariable from "@/models/systemPromptVariable";
+import { Link } from "react-router-dom";
+import paths from "@/utils/paths";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +17,20 @@ import {
 /** The select's "not chosen" value has to be a non-empty string. */
 const DEFAULT_ROLE = "__default__";
 const DEFAULT_ROLE_LABEL = "Private Workspace Owner (default)";
-const LEGACY_NAME_VARIABLES = ["username", "email", "name"];
+const NAME_TEMPLATE_FALLBACK_VARIABLES = ["user.name", "user.email"];
+
+function normalizeNameTemplate(value = "") {
+  return String(value)
+    .replaceAll("{username}", "{user.name}")
+    .replaceAll("{name}", "{user.name}")
+    .replaceAll("{email}", "{user.email}");
+}
+
+function profileForm(profile) {
+  const value = structuredClone(profile);
+  if (value) value.nameTemplate = normalizeNameTemplate(value.nameTemplate);
+  return value;
+}
 
 /**
  * How private workspaces are handed out: how many, called what, and with what the
@@ -33,13 +48,13 @@ export default function Provisioning({
   workspaceRoles = [],
   onSave,
 }) {
-  const [form, setForm] = useState(() => structuredClone(profile));
+  const [form, setForm] = useState(() => profileForm(profile));
   const [saving, setSaving] = useState(false);
   const [availableVariables, setAvailableVariables] = useState(
-    LEGACY_NAME_VARIABLES
+    NAME_TEMPLATE_FALLBACK_VARIABLES
   );
 
-  useEffect(() => setForm(structuredClone(profile)), [profile]);
+  useEffect(() => setForm(profileForm(profile)), [profile]);
   useEffect(() => {
     let cancelled = false;
 
@@ -48,7 +63,7 @@ export default function Provisioning({
       if (cancelled) return;
       setAvailableVariables([
         ...new Set([
-          ...LEGACY_NAME_VARIABLES,
+          ...NAME_TEMPLATE_FALLBACK_VARIABLES,
           ...variables
             .filter((variable) => variable.type !== "workspace")
             .map((variable) => variable.key),
@@ -93,7 +108,7 @@ export default function Provisioning({
 
       <Field
         label="Name template"
-        hint="Variables from System Prompt Variables are replaced when the workspace is created. Workspace variables are excluded because the workspace does not exist yet."
+        hint={<NameTemplateHelp availableVariables={availableVariables} />}
       >
         <TemplateInput
           value={form.nameTemplate}
@@ -172,6 +187,41 @@ function Field({ label, hint, children }) {
       {children}
       {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
     </div>
+  );
+}
+
+function NameTemplateHelp({ availableVariables }) {
+  const examples = availableVariables.slice(0, 3);
+  const remainingCount = availableVariables.length - examples.length;
+
+  return (
+    <>
+      <span>Use System Prompt Variables such as: </span>
+      {examples.map((variable, index) => (
+        <span key={variable}>
+          <span className="rounded-[3px] bg-sky-300/30 px-1 py-0.5 text-foreground light:bg-sky-500/30">
+            {`{${variable}}`}
+          </span>
+          {index < examples.length - 1 && ", "}
+        </span>
+      ))}
+      {remainingCount > 0 && (
+        <>
+          {examples.length > 0 && ", "}
+          <Link
+            to={paths.settings.systemPromptVariables()}
+            className="font-medium text-cta-button hover:underline"
+          >
+            +{remainingCount} more...
+          </Link>
+        </>
+      )}
+      <span className="mt-1 block">
+        Values are resolved when the private workspace is created. Variables
+        beginning with <code>{"{workspace.*}"}</code> are unavailable because
+        the workspace does not exist yet; its owner can rename it afterwards.
+      </span>
+    </>
   );
 }
 

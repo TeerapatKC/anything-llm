@@ -14,6 +14,13 @@ const moment = require("moment");
 
 const SystemPromptVariables = {
   VALID_TYPES: ["user", "workspace", "system", "static"],
+  // Kept for saved prompts and private-workspace profiles created before user.*
+  // became the canonical namespace. These aliases resolve but are not displayed.
+  LEGACY_ALIASES: {
+    username: "user.name",
+    name: "user.name",
+    email: "user.email",
+  },
   DEFAULT_VARIABLES: [
     {
       key: "time",
@@ -95,48 +102,6 @@ const SystemPromptVariables = {
         }
       },
       description: "Current user's email address",
-      type: "user",
-      requiresUser: true,
-    },
-    {
-      key: "username",
-      value: async (userId = null) => {
-        if (!userId) return "[User name]";
-        const user = await prisma.users.findUnique({
-          where: { id: Number(userId) },
-          select: { username: true },
-        });
-        return user?.username || "[User name is empty or unknown]";
-      },
-      description: "Alias for the current user's username",
-      type: "user",
-      requiresUser: true,
-    },
-    {
-      key: "name",
-      value: async (userId = null) => {
-        if (!userId) return "[User name]";
-        const user = await prisma.users.findUnique({
-          where: { id: Number(userId) },
-          select: { username: true },
-        });
-        return user?.username || "[User name is empty or unknown]";
-      },
-      description: "Alias for the current user's username",
-      type: "user",
-      requiresUser: true,
-    },
-    {
-      key: "email",
-      value: async (userId = null) => {
-        if (!userId) return "[User email]";
-        const user = await prisma.users.findUnique({
-          where: { id: Number(userId) },
-          select: { email: true },
-        });
-        return user?.email || "[User email is empty or unknown]";
-      },
-      description: "Alias for the current user's email address",
       type: "user",
       requiresUser: true,
     },
@@ -314,7 +279,8 @@ const SystemPromptVariables = {
 
       // Process each match
       for (const match of matches) {
-        const key = match.substring(1, match.length - 1); // Remove { and }
+        const requestedKey = match.substring(1, match.length - 1);
+        const key = this.LEGACY_ALIASES[requestedKey] ?? requestedKey;
 
         // Determine if the variable is a class-based variable (workspace.X or user.X)
         const isWorkspaceOrUserVariable = ["workspace.", "user."].some(
@@ -427,6 +393,8 @@ const SystemPromptVariables = {
       throw new Error("Key cannot start with 'system.'");
     if (this.DEFAULT_VARIABLES.some((variable) => variable.key === key))
       throw new Error("Key is reserved by a built-in system prompt variable");
+    if (Object.hasOwn(this.LEGACY_ALIASES, key))
+      throw new Error("Key is reserved by a legacy system prompt variable");
     if (checkExisting && (await this.get(key)) !== null)
       throw new Error("System prompt variable with this key already exists");
 

@@ -382,7 +382,10 @@ const WorkspaceChats = {
     try {
       await prisma.workspace_chats.update({
         where: { id },
-        data,
+        data: {
+          ...data,
+          lastUpdatedAt: new Date(),
+        },
       });
       return true;
     } catch (error) {

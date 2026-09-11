@@ -57,7 +57,7 @@ const PrivateWorkspaceProfile = {
     // workspace for every account on the instance.
     enabled: false,
     quotaPerUser: 1,
-    nameTemplate: "{username}'s Space",
+    nameTemplate: "{user.name}'s Space",
     // The workspace role each owner is given inside their own private workspace. NULL
     // resolves to the `personal-owner` system role at provisioning time.
     ownerRoleId: null,
@@ -114,15 +114,25 @@ const PrivateWorkspaceProfile = {
       agentSkillConfig: this._normalizeSkillConfig(parsed.agentSkillConfig),
       enabled: parsed.enabled === true,
       quotaPerUser: this._quota(parsed.quotaPerUser, defaults.quotaPerUser),
-      nameTemplate:
+      nameTemplate: this._normalizeNameTemplate(
         typeof parsed.nameTemplate === "string" && parsed.nameTemplate.trim()
-          ? parsed.nameTemplate.trim().slice(0, 255)
-          : defaults.nameTemplate,
+          ? parsed.nameTemplate
+          : defaults.nameTemplate
+      ),
       ownerRoleId:
         parsed.ownerRoleId === null || parsed.ownerRoleId === undefined
           ? null
           : Number(parsed.ownerRoleId) || null,
     };
+  },
+
+  _normalizeNameTemplate: function (value) {
+    return String(value)
+      .replaceAll("{username}", "{user.name}")
+      .replaceAll("{name}", "{user.name}")
+      .replaceAll("{email}", "{user.email}")
+      .trim()
+      .slice(0, 255);
   },
 
   _normalizeSkillConfig: function (value) {
