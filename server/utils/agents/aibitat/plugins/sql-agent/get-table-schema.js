@@ -25,7 +25,7 @@ module.exports.SqlAgentGetTableSchema = {
           super: aibitat,
           name: this.name,
           description:
-            "Gets the table schema in SQL for a given `table` and `database_id`",
+            "Gets the table schema in SQL for a given `table` and `database_id`. Call this for every table you plan to reference in a sql-query - including every table on both sides of a JOIN - before writing that query. Never guess a column name from a table you have not fetched the schema for.",
           examples: [
             {
               prompt: "What does the customers table in access-logs look like?",

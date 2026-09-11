@@ -309,6 +309,14 @@ const TRANSLATIONS = {
   agent: {
     "performance-warning":
       "ツール呼び出しに対応していないLLMの性能は、モデルの能力や精度に大きく依存します。一部の機能が制限されたり、正しく動作しない場合があります。",
+    chatModeWarning: {
+      text: "このワークスペースのChat Modeは<b>{{mode}}</b>に設定されており、<b>Agent</b>ではありません。そのため、以下で設定したスキルは自動では実行されません — 使用するにはメッセージの前に毎回<code>@agent</code>と入力する必要があります。",
+      modeChat: "Chat",
+      modeQuery: "Query",
+      goToChatSettings: "チャット設定に移動",
+      switchTabInstruction:
+        "上の「Chat settings」タブに切り替えて、Chat ModeをAgentに設定してください。",
+    },
     provider: {
       title: "ワークスペースエージェントのLLMプロバイダー",
       description:

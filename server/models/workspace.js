@@ -860,9 +860,17 @@ const Workspace = {
     if (!workspace) return false;
     const { getBaseLLMProviderModel } = require("../utils/helpers");
     const AIbitat = require("../utils/agents/aibitat");
+    // "none"/"default" are the LLM pickers' sentinel values for "inherit" - normally
+    // stripped to null by validateFields() on save, but a workspace whose provider
+    // fields were written outside that path (e.g. the private workspace profile,
+    // before it gained the same normalization) can still carry the literal string.
+    // Left as-is, it reaches AIbitat.getProviderForConfig() unresolved, which has no
+    // provider registered under either name and throws "Unknown provider: default."
+    const normalize = (value) =>
+      value === "none" || value === "default" ? null : value;
     const provider =
-      workspace?.agentProvider ??
-      workspace?.chatProvider ??
+      normalize(workspace?.agentProvider) ??
+      normalize(workspace?.chatProvider) ??
       process.env.LLM_PROVIDER;
 
     // Model router delegates to a resolved provider at chat time.

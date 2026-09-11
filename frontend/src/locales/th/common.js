@@ -325,6 +325,14 @@ const TRANSLATIONS = {
   agent: {
     "performance-warning":
       "ประสิทธิภาพของ LLM ที่ไม่รองรับการเรียกใช้เครื่องมือโดยตรงขึ้นอยู่กับความสามารถและความแม่นยำของโมเดลเป็นอย่างมาก ความสามารถบางอย่างอาจถูกจำกัดหรือใช้งานไม่ได้",
+    chatModeWarning: {
+      text: "Chat Mode ของพื้นที่ทำงานนี้ตั้งไว้เป็น <b>{{mode}}</b> ไม่ใช่ <b>Agent</b> ดังนั้น skill ที่ตั้งค่าไว้ด้านล่างจะไม่ทำงานเองโดยอัตโนมัติ — ต้องพิมพ์ <code>@agent</code> นำหน้าข้อความก่อนทุกครั้งถึงจะใช้ skill เหล่านี้ได้",
+      modeChat: "Chat",
+      modeQuery: "Query",
+      goToChatSettings: "ไปที่การตั้งค่า Chat",
+      switchTabInstruction:
+        "สลับไปที่แท็บ Chat settings ด้านบน แล้วตั้งค่า Chat Mode เป็น Agent",
+    },
     provider: {
       title: "ผู้ให้บริการ LLM ของเอเจนต์ในพื้นที่ทำงาน",
       description:
