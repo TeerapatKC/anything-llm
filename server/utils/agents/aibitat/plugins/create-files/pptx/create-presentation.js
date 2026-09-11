@@ -324,7 +324,7 @@ module.exports.CreatePptxPresentation = {
                 `${this.caller}: Successfully created presentation "${title}"`
               );
 
-              return `Successfully created presentation "${title}" with ${totalSlideCount} slides across ${totalSections} sections using the ${theme.name} theme.`;
+              return `Successfully created presentation "${title}" with ${totalSlideCount} slides across ${totalSections} sections using the ${theme.name} theme. To attach this file to an email, pass "${savedFile.filename}" as an attachment reference to the send-email tool.`;
             } catch (e) {
               this.super.handlerProps.log(
                 `create-pptx-presentation error: ${e.message}`

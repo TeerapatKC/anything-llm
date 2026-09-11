@@ -285,7 +285,7 @@ module.exports.CreateDocxFile = {
               const styleDesc =
                 styleInfo.length > 0 ? ` with ${styleInfo.join(", ")}` : "";
 
-              return `Successfully created Word document "${displayFilename}" (${bufferSizeKB}KB)${styleDesc}. The document includes formatted content with tables, images, Page X of Y footer, and professional styling.`;
+              return `Successfully created Word document "${displayFilename}" (${bufferSizeKB}KB)${styleDesc}. The document includes formatted content with tables, images, Page X of Y footer, and professional styling. To attach this file to an email, pass "${savedFile.filename}" as an attachment reference to the send-email tool.`;
             } catch (e) {
               this.super.handlerProps.log(
                 `create-docx-file error: ${e.message}`
