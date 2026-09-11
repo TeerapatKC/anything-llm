@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" fill="#ffffff">
-  <g id="Layer_1">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <!-- Adapts to the browser chrome theme so the mark stays visible on light and dark tabs. -->
+  <style>
+    .mark { fill: #111111; }
+    @media (prefers-color-scheme: dark) {
+      .mark { fill: #ffffff; }
+    }
+  </style>
+  <g class="mark">
     <rect x="11.04" y="36.43" width="200" height="323.73" />
-  </g>
-  <g id="Layer_2">
     <polygon points="288.19 160.11 288.19 483.71 488.19 483.71 488.19 208.17 288.21 160.11 288.19 160.11" />
   </g>
 </svg>

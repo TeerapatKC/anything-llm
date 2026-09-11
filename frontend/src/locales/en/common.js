@@ -1122,6 +1122,12 @@ const TRANSLATIONS = {
     unavailable: "Dashboards are not configured for this instance.",
     "unavailable-hint":
       "Set GRAFANA_PUBLIC_URL so Dashboards can be shown here.",
+    checking: "Checking Grafana…",
+    "checking-hint": "Verifying that the dashboard service is reachable.",
+    "load-error": "Grafana is unavailable",
+    "load-error-hint":
+      "Could not reach the Grafana service. Confirm it is running and that GRAFANA_PUBLIC_URL is correct, then try again.",
+    retry: "Try again",
   },
   privacy: {
     title: "Privacy & Data-Handling",
