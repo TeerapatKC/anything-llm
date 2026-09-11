@@ -2101,8 +2101,19 @@ const TRANSLATIONS = {
     start: {
       "variable-name": "Variable name",
       "initial-value": "Initial value",
+      value: "Value",
       "delete-variable": "Delete variable",
       "add-variable": "Add variable",
+      required: "Required",
+      "required-hint": "The LLM must provide a value when it runs this flow.",
+      optional: "Optional",
+      "optional-hint": "Has an initial value the LLM can override.",
+      static: "Static",
+      "static-hint": "Fixed value, hidden from the LLM entirely.",
+      "categories-help":
+        "Required and Optional variables can be set by the LLM. Static variables are fixed and never shown to the LLM.",
+      "description-placeholder":
+        "Description for the LLM (what this value is for)",
     },
     llmInstruction: {
       instruction: "Instruction",

@@ -2108,8 +2108,18 @@ const TRANSLATIONS = {
     start: {
       "variable-name": "変数名",
       "initial-value": "初期値",
+      value: "値",
       "delete-variable": "変数を削除",
       "add-variable": "変数を追加",
+      required: "必須",
+      "required-hint": "このフローの実行時に LLM が値を指定する必要があります。",
+      optional: "任意",
+      "optional-hint": "LLM が上書きできる初期値を持ちます。",
+      static: "固定",
+      "static-hint": "LLM には表示されない固定値です。",
+      "categories-help":
+        "必須変数と任意変数は LLM が設定できます。固定変数は LLM には表示されません。",
+      "description-placeholder": "この値の用途を LLM に説明します",
     },
     llmInstruction: {
       instruction: "指示",

@@ -2057,8 +2057,19 @@ const TRANSLATIONS = {
     start: {
       "variable-name": "ชื่อตัวแปร",
       "initial-value": "ค่าเริ่มต้น",
+      value: "ค่า",
       "delete-variable": "ลบตัวแปร",
       "add-variable": "เพิ่มตัวแปร",
+      required: "จำเป็น",
+      "required-hint": "LLM ต้องระบุค่าเมื่อเรียกใช้ Flow นี้",
+      optional: "ไม่บังคับ",
+      "optional-hint": "มีค่าเริ่มต้นที่ LLM สามารถเปลี่ยนได้",
+      static: "ค่าคงที่",
+      "static-hint": "ค่าตายตัวที่ไม่เปิดเผยให้ LLM เห็น",
+      "categories-help":
+        "LLM สามารถกำหนดตัวแปรแบบจำเป็นและไม่บังคับได้ ส่วนค่าคงที่จะไม่ถูกเปิดเผยให้ LLM เห็น",
+      "description-placeholder":
+        "คำอธิบายสำหรับ LLM ว่าค่านี้ใช้ทำอะไร",
     },
     llmInstruction: {
       instruction: "คำสั่ง",

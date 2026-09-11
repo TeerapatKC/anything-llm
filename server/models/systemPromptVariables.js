@@ -80,6 +80,67 @@ const SystemPromptVariables = {
       requiresUser: true,
     },
     {
+      key: "user.email",
+      value: async (userId = null) => {
+        if (!userId) return "[User email]";
+        try {
+          const user = await prisma.users.findUnique({
+            where: { id: Number(userId) },
+            select: { email: true },
+          });
+          return user?.email || "[User email is empty or unknown]";
+        } catch (error) {
+          console.error("Error fetching user email:", error);
+          return "[User email is empty or unknown]";
+        }
+      },
+      description: "Current user's email address",
+      type: "user",
+      requiresUser: true,
+    },
+    {
+      key: "username",
+      value: async (userId = null) => {
+        if (!userId) return "[User name]";
+        const user = await prisma.users.findUnique({
+          where: { id: Number(userId) },
+          select: { username: true },
+        });
+        return user?.username || "[User name is empty or unknown]";
+      },
+      description: "Alias for the current user's username",
+      type: "user",
+      requiresUser: true,
+    },
+    {
+      key: "name",
+      value: async (userId = null) => {
+        if (!userId) return "[User name]";
+        const user = await prisma.users.findUnique({
+          where: { id: Number(userId) },
+          select: { username: true },
+        });
+        return user?.username || "[User name is empty or unknown]";
+      },
+      description: "Alias for the current user's username",
+      type: "user",
+      requiresUser: true,
+    },
+    {
+      key: "email",
+      value: async (userId = null) => {
+        if (!userId) return "[User email]";
+        const user = await prisma.users.findUnique({
+          where: { id: Number(userId) },
+          select: { email: true },
+        });
+        return user?.email || "[User email is empty or unknown]";
+      },
+      description: "Alias for the current user's email address",
+      type: "user",
+      requiresUser: true,
+    },
+    {
       key: "user.bio",
       value: async (userId = null) => {
         if (!userId) return "[User bio]";
@@ -319,19 +380,18 @@ const SystemPromptVariables = {
         const variable = allVariables.find((v) => v.key === key);
         if (!variable) continue;
 
-        // For dynamic and system variables, call the function to get the current value
-        if (
-          ["system"].includes(variable.type) &&
-          typeof variable.value === "function"
-        ) {
+        // Resolve every function-backed variable through the same path. User and
+        // workspace aliases need their matching context ID; system variables do not.
+        if (typeof variable.value === "function") {
           try {
-            if (variable.value.constructor.name === "AsyncFunction") {
-              const value = await variable.value(userId);
-              result = result.replace(match, value);
-            } else {
-              const value = variable.value();
-              result = result.replace(match, value);
-            }
+            const contextId =
+              variable.type === "user"
+                ? userId
+                : variable.type === "workspace"
+                  ? workspaceId
+                  : undefined;
+            const value = await variable.value(contextId);
+            result = result.replace(match, value);
           } catch (error) {
             console.error(`Error processing dynamic variable ${key}:`, error);
             result = result.replace(match, match);
@@ -365,6 +425,8 @@ const SystemPromptVariables = {
       throw new Error("Key cannot start with 'user.'");
     if (key.startsWith("system."))
       throw new Error("Key cannot start with 'system.'");
+    if (this.DEFAULT_VARIABLES.some((variable) => variable.key === key))
+      throw new Error("Key is reserved by a built-in system prompt variable");
     if (checkExisting && (await this.get(key)) !== null)
       throw new Error("System prompt variable with this key already exists");
 
