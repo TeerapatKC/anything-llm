@@ -92,6 +92,19 @@ const PrivateWorkspaceProfile = {
       const raw = source[field];
       workspace[field] = raw === undefined || raw === "" ? null : raw;
     }
+    // The Chat/Agent LLM pickers submit a sentinel value for "inherit" rather than
+    // omitting the field - "default" for chatProvider, "none" for agentProvider -
+    // because the form always posts every one of its inputs, including the one nobody
+    // touched. Workspace.validateFields() strips these for an ordinary workspace save;
+    // this model writes straight to system_settings with no such pass, so without this
+    // the literal string "default"/"none" was persisted as the provider id, copied onto
+    // every new private workspace, and reached getLLMProvider() unresolved - which has no
+    // provider registered under either name and throws "Unknown provider: default/none."
+    if (workspace.chatProvider === "default" || workspace.chatProvider === "none") {
+      workspace.chatProvider = null;
+      workspace.chatModel = null;
+    }
+    if (workspace.agentProvider === "none") workspace.agentProvider = null;
 
     const defaults = this.PROVISIONING_DEFAULTS;
     return {
