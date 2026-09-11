@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   Select,
   SelectContent,
@@ -16,13 +15,14 @@ const DEFAULT_ROLE = "__default__";
 const DEFAULT_ROLE_LABEL = "Private Workspace Owner (default)";
 
 /**
- * How private workspaces are handed out: to whom, how many, called what, and with what
- * the owner may do inside their own.
+ * How private workspaces are handed out: how many, called what, and with what the
+ * owner may do inside their own.
  *
- * The last of those is a workspace role rather than a set of checkboxes on purpose - it
- * is the same role machinery every other membership uses, so an operator can see and
- * edit it beside the others rather than learning a second permission system that exists
- * only here.
+ * Whether the feature is on at all is decided above the tabs - this screen only
+ * configures what happens once it is. The owner role is a workspace role rather than
+ * a set of checkboxes on purpose: it is the same role machinery every other membership
+ * uses, so an operator can see and edit it beside the others rather than learning a
+ * second permission system that exists only here.
  */
 export default function Provisioning({
   profile,
@@ -40,7 +40,6 @@ export default function Provisioning({
     e.preventDefault();
     setSaving(true);
     await onSave({
-      enabled: form.enabled,
       quotaPerUser: form.quotaPerUser,
       nameTemplate: form.nameTemplate,
       ownerRoleId: form.ownerRoleId,
@@ -50,22 +49,6 @@ export default function Provisioning({
 
   return (
     <form onSubmit={submit} className="flex max-w-2xl flex-col gap-y-6">
-      <div className="flex items-center justify-between rounded-lg border border-border p-4">
-        <div>
-          <Label>Give every user a private workspace</Label>
-          <p className="text-xs text-muted-foreground">
-            Created the first time they load their workspaces, which covers
-            accounts that already exist as well as new ones.
-          </p>
-        </div>
-        <Switch
-          checked={form.enabled}
-          onCheckedChange={(enabled) =>
-            setForm((prev) => ({ ...prev, enabled }))
-          }
-        />
-      </div>
-
       <Field
         label="Private workspaces per user"
         hint="Zero stops anyone creating a new one without touching what already exists."

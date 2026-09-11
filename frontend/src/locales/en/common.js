@@ -1945,6 +1945,8 @@ const TRANSLATIONS = {
     "enable-title": "Enable outbound email",
     "enable-description":
       "When off, Nexus AI will not attempt to send any email even if the fields below are filled in.",
+    "enable-off-hint":
+      "Turn this on to configure the mailbox used for password resets, invitations, and notifications.",
     "service-label": "Email service",
     "service-placeholder": "Choose a service",
     providers: {

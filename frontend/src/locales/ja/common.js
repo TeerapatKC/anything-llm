@@ -1953,6 +1953,8 @@ const TRANSLATIONS = {
     "enable-title": "送信メールを有効にする",
     "enable-description":
       "オフの場合、以下の項目が入力されていても Nexus AI はメールを送信しません。",
+    "enable-off-hint":
+      "オンにすると、パスワードリセット・招待・通知に使うメールボックスを設定できます。",
     "service-label": "メールサービス",
     "service-placeholder": "サービスを選択",
     providers: {
