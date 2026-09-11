@@ -124,6 +124,7 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
       model: this.model,
       stream: true,
       messages,
+      max_tokens: this.maxTokens,
     });
   }
 
@@ -155,7 +156,7 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
         messages,
         functions,
         this.#filterToolCallMarkup(eventHandler),
-        { provider: this }
+        { provider: this, maxTokens: this.maxTokens }
       );
     } catch (error) {
       console.error(error.message, error);
@@ -194,7 +195,7 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
         messages,
         functions,
         this.getCost.bind(this),
-        { provider: this }
+        { provider: this, maxTokens: this.maxTokens }
       );
 
       if (result.retryWithError) {

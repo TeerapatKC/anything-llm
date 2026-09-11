@@ -144,6 +144,8 @@ const PersonalWorkspace = {
     // fields. Real provisioning always has an ID and uses the shared resolver.
     if (!user?.id)
       return source
+        .replaceAll("{user.name}", username)
+        .replaceAll("{user.email}", user?.email ?? username)
         .replaceAll("{username}", username)
         .replaceAll("{email}", user?.email ?? username)
         .replaceAll("{name}", username)
