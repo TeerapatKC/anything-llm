@@ -1100,6 +1100,12 @@ const TRANSLATIONS = {
     "open-grafana": "เปิดใน Grafana",
     unavailable: "ยังไม่ได้ตั้งค่าแดชบอร์ดสำหรับอินสแตนซ์นี้",
     "unavailable-hint": "ตั้งค่า GRAFANA_PUBLIC_URL เพื่อแสดงแดชบอร์ดที่นี่",
+    checking: "กำลังตรวจสอบ Grafana…",
+    "checking-hint": "กำลังยืนยันว่าบริการแดชบอร์ดเข้าถึงได้",
+    "load-error": "Grafana ไม่พร้อมใช้งาน",
+    "load-error-hint":
+      "เชื่อมต่อบริการ Grafana ไม่ได้ ตรวจสอบว่าบริการทำงานอยู่และ GRAFANA_PUBLIC_URL ถูกต้อง แล้วลองอีกครั้ง",
+    retry: "ลองอีกครั้ง",
   },
   privacy: {
     title: "ความเป็นส่วนตัวและการจัดการข้อมูล",
@@ -1899,6 +1905,8 @@ const TRANSLATIONS = {
     "enable-title": "เปิดใช้งานอีเมลขาออก",
     "enable-description":
       "เมื่อปิดอยู่ Nexus AI จะไม่พยายามส่งอีเมลใด ๆ แม้ว่าจะกรอกข้อมูลด้านล่างครบแล้วก็ตาม",
+    "enable-off-hint":
+      "เปิดสวิตนี้เพื่อตั้งค่ากล่องจดหมายสำหรับรีเซ็ตรหัสผ่าน คำเชิญ และการแจ้งเตือน",
     "service-label": "บริการอีเมล",
     "service-placeholder": "เลือกบริการ",
     providers: {

@@ -763,6 +763,12 @@ const TRANSLATIONS = {
     unavailable: "このインスタンスではダッシュボードが設定されていません。",
     "unavailable-hint":
       "ダッシュボードを表示するには GRAFANA_PUBLIC_URL を設定してください。",
+    checking: "Grafana を確認しています…",
+    "checking-hint": "ダッシュボードサービスに到達できるか確認しています。",
+    "load-error": "Grafana を利用できません",
+    "load-error-hint":
+      "Grafana サービスに接続できませんでした。サービスが起動していることと GRAFANA_PUBLIC_URL が正しいことを確認してから、もう一度お試しください。",
+    retry: "再試行",
   },
   privacy: {
     title: "プライバシーとデータ処理",
@@ -1947,6 +1953,8 @@ const TRANSLATIONS = {
     "enable-title": "送信メールを有効にする",
     "enable-description":
       "オフの場合、以下の項目が入力されていても Nexus AI はメールを送信しません。",
+    "enable-off-hint":
+      "オンにすると、パスワードリセット・招待・通知に使うメールボックスを設定できます。",
     "service-label": "メールサービス",
     "service-placeholder": "サービスを選択",
     providers: {

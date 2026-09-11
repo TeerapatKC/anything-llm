@@ -53,7 +53,27 @@ class MetaGenerator {
     return [
       {
         tag: "link",
-        props: { type: "image/svg+xml", href: "/favicon.svg" },
+        props: {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/favicon-light.svg",
+          media: "(prefers-color-scheme: light)",
+        },
+        content: null,
+      },
+      {
+        tag: "link",
+        props: {
+          rel: "icon",
+          type: "image/svg+xml",
+          href: "/favicon-dark.svg",
+          media: "(prefers-color-scheme: dark)",
+        },
+        content: null,
+      },
+      {
+        tag: "link",
+        props: { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
         content: null,
       },
       {
@@ -128,10 +148,6 @@ class MetaGenerator {
         },
       },
 
-      {
-        tag: "link",
-        props: { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
-      },
       { tag: "link", props: { rel: "apple-touch-icon", href: "/favicon.png" } },
 
       // PWA specific tags
@@ -208,8 +224,15 @@ class MetaGenerator {
     } else {
       // When custom settings exist, include all default meta tags but override specific ones
       this.#customConfig = this.#defaultMeta().map((tag) => {
-        // Override favicon link
-        if (tag.tag === "link" && tag.props?.rel === "icon") {
+        // Override favicon link(s) only when a custom favicon is configured —
+        // otherwise keep the light/dark media-query pair from #defaultMeta.
+        if (
+          faviconURL &&
+          tag.tag === "link" &&
+          tag.props?.rel === "icon"
+        ) {
+          // Collapse theme-specific icon links into a single custom favicon.
+          if (tag.props?.media) return null;
           return {
             tag: "link",
             props: { rel: "icon", href: this.#validUrl(faviconURL) },
@@ -277,7 +300,7 @@ class MetaGenerator {
         }
         // Return original tag for everything else (including PWA tags)
         return tag;
-      });
+      }).filter(Boolean);
     }
 
     return this.#customConfig;
