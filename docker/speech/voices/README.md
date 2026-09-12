@@ -1,6 +1,6 @@
 # Reference voices for VoxCPM2
 
-This directory is mounted read-only into the `thai-tts` container. Until it holds
+This directory is mounted read-only into the `tts` container. Until it holds
 at least one pair of files, the service starts but reports `no-voices` and every
 synthesis request fails with a message saying so.
 
@@ -12,7 +12,7 @@ default.txt   exactly what that clip says, in any supported language
 ```
 
 This project includes `female` and `male` sample pairs from Google FLEURS, with
-`female` selected by default. Set `THAI_TTS_DEFAULT_VOICE=male` to use the other
+`female` selected by default. Set `TTS_DEFAULT_VOICE=male` to use the other
 pair, or set it to the filename stem of a pair you add.
 
 The included samples come from the `en_us` validation split of Google FLEURS by
@@ -26,7 +26,7 @@ fidelity cloning mode, so a transcript that disagrees with the recording degrade
 everything it then says. A reference may be in one supported language while the
 target text uses another, including Thai, English, or Japanese.
 
-Other names work too - put the stem in `THAI_TTS_DEFAULT_VOICE` so the Settings
+Other names work too - put the stem in `TTS_DEFAULT_VOICE` so the Settings
 page agrees with what is actually here. Several pairs can live here at once, and
 the service picks up a new one without a restart.
 

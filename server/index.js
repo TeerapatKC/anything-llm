@@ -1,6 +1,13 @@
-process.env.NODE_ENV === "development"
-  ? require("dotenv").config({ path: `.env.${process.env.NODE_ENV}` })
-  : require("dotenv").config();
+// Layered rather than either/or. dotenv never overwrites a key that is already
+// set, so the file read first wins: .env.development is the override and .env is
+// the base holding everything the two modes share. Reading only one of them is
+// what made the same twenty keys live in both files, and drift apart.
+//
+// Outside development this is unchanged - .env alone, which in the container is
+// the bind-mounted docker/.env.
+if (process.env.NODE_ENV === "development")
+  require("dotenv").config({ path: ".env.development" });
+require("dotenv").config();
 
 require("./utils/logger")();
 require("./utils/boot/patchSdkTimeouts")();

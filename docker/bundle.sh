@@ -44,8 +44,8 @@ SKIP_MODELS=false
 CHECKSUMS=false
 DRY_RUN=false
 APP_IMAGE_REF="nexusai:arm64"
-STT_IMAGE_REF="nexusai-thai-stt:arm64"
-TTS_IMAGE_REF="nexusai-thai-tts:arm64"
+STT_IMAGE_REF="nexusai-stt:arm64"
+TTS_IMAGE_REF="nexusai-tts:arm64"
 
 usage() {
   cat <<'USAGE'
@@ -118,7 +118,7 @@ if [[ "$DRY_RUN" == true ]]; then
   if [[ "$SKIP_BUILD" == true ]]; then
     say "Would build:  nothing (--skip-build)"
   elif want speech; then
-    say "Would build:  nexusai, thai-stt, thai-tts"
+    say "Would build:  nexusai, stt, tts"
   else
     say "Would build:  nexusai"
   fi
@@ -162,8 +162,8 @@ if [[ "$SKIP_IMAGES" == false ]]; then
     }
     save_existing "$APP_IMAGE_REF" "${IMAGES_DIR}/nexusai-arm64.tar"
     if want speech; then
-      save_existing "$STT_IMAGE_REF" "${IMAGES_DIR}/nexusai-thai-stt-arm64.tar"
-      save_existing "$TTS_IMAGE_REF" "${IMAGES_DIR}/nexusai-thai-tts-arm64.tar"
+      save_existing "$STT_IMAGE_REF" "${IMAGES_DIR}/nexusai-stt-arm64.tar"
+      save_existing "$TTS_IMAGE_REF" "${IMAGES_DIR}/nexusai-tts-arm64.tar"
     fi
   fi
 
@@ -263,8 +263,8 @@ if [[ "$SKIP_MODELS" == false ]]; then
       -e HF_HOME=/cache \
       -e HF_XET_CACHE=/tmp/xet \
       -e "HF_TOKEN=${HF_TOKEN:-}" \
-      -e "STT_REPO=${THAI_STT_MODEL_ID:-typhoon-ai/typhoon-whisper-large-v3}" \
-      -e "TTS_REPO=${THAI_TTS_MODEL_ID:-openbmb/VoxCPM2}" \
+      -e "STT_REPO=${STT_MODEL_ID:-typhoon-ai/typhoon-whisper-large-v3}" \
+      -e "TTS_REPO=${TTS_MODEL_ID:-openbmb/VoxCPM2}" \
       -v "$(docker_path "${MODELS_DIR}/hf"):/cache" \
       python:3.11-slim sh -c '
         set -e
@@ -329,9 +329,9 @@ fi
   echo
   echo "NEXUSAI_IMAGE='${APP_IMAGE_REF}'"
   if want speech; then
-    echo "THAI_STT_IMAGE='${STT_IMAGE_REF}'"
-    echo "THAI_TTS_IMAGE='${TTS_IMAGE_REF}'"
-    echo "THAI_SPEECH_MODELS_DIR='__BUNDLE__/models/hf'"
+    echo "STT_IMAGE='${STT_IMAGE_REF}'"
+    echo "TTS_IMAGE='${TTS_IMAGE_REF}'"
+    echo "SPEECH_MODELS_DIR='__BUNDLE__/models/hf'"
     echo "HF_HUB_OFFLINE='1'"
   fi
   if want llm; then

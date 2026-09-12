@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-# Thai speech-to-text: a Whisper fine-tune behind the OpenAI transcription API.
+# Speech-to-text: a Whisper fine-tune behind the OpenAI transcription API.
 #
 # The CUDA build of torch is selected here rather than fixed, because the right
 # one depends on the GPU this runs on:

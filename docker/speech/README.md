@@ -1,12 +1,12 @@
-# Thai speech recognition and multilingual speech synthesis
+# speech recognition and multilingual speech synthesis
 
-Two services that let Nexus AI listen and talk in Thai, both wired in through the
+Two services that let Nexus AI listen and talk, both wired in through the
 generic OpenAI providers the backend already has:
 
 | | Model | Licence | Route it serves |
 | --- | --- | --- | --- |
-| `thai-stt` | `typhoon-ai/typhoon-whisper-large-v3` | MIT | `/v1/audio/transcriptions` |
-| `thai-tts` | `openbmb/VoxCPM2` | Apache-2.0 | `/v1/audio/speech` |
+| `stt` | `typhoon-ai/typhoon-whisper-large-v3` | MIT | `/v1/audio/transcriptions` |
+| `tts` | `openbmb/VoxCPM2` | Apache-2.0 | `/v1/audio/speech` |
 
 They are independent. Run one, the other, or both.
 
@@ -25,24 +25,24 @@ recording plus an exact transcript before it can say anything. See
 
 ```bash
 cd docker
-docker compose -f docker-compose.yml -f docker-compose.thai-speech.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.speech.yml up -d
 ```
 
-Add `thai-stt` or `thai-tts` to that command to bring up only one. First start
-downloads the weights into the `thai-speech-models` volume, which survives
+Add `stt` or `tts` to that command to bring up only one. First start
+downloads the weights into the `speech-models` volume, which survives
 rebuilds. Readiness is `curl localhost:7871/health` and `curl localhost:7872/health`.
 
 On a DGX Spark or anything else on CUDA 13, build against that index:
 
 ```bash
-THAI_SPEECH_TORCH_INDEX_URL=https://download.pytorch.org/whl/cu130 docker compose -f docker-compose.yml -f docker-compose.thai-speech.yml build
+SPEECH_TORCH_INDEX_URL=https://download.pytorch.org/whl/cu130 docker compose -f docker-compose.yml -f docker-compose.speech.yml build
 ```
 
 ## Nexus AI is pointed at them for you
 
 The overlay fills in `/settings/audio-preference`, so the page comes up with both
-halves on Generic OpenAI and the endpoints `http://thai-stt:8000/v1` and
-`http://thai-tts:8000/v1` already set. The host names are the compose services,
+halves on Generic OpenAI and the endpoints `http://stt:8000/v1` and
+`http://tts:8000/v1` already set. The host names are the compose services,
 not localhost, because the backend reaches them across the compose network.
 
 These are defaults, not overrides: anything set for the same key in `docker/.env`
@@ -51,7 +51,7 @@ in the UI survives the next `up`. Delete the key from `docker/.env` to go back t
 the default.
 
 The included FLEURS reference pairs are named `female` and `male`, with `female`
-selected by default. Set `THAI_TTS_DEFAULT_VOICE=male` to switch it, or add a
+selected by default. Set `TTS_DEFAULT_VOICE=male` to switch it, or add a
 different WAV/TXT pair and set the variable to that filename stem.
 
 This works with either base file. `docker-compose.split.yml` calls its backend
@@ -60,7 +60,7 @@ This works with either base file. `docker-compose.split.yml` calls its backend
 ## Transcription
 
 The default model is Whisper large-v3 fine-tuned on Thai, about 3GB and roughly
-1.5GB of GPU memory in fp16. `THAI_STT_MODEL_ID` takes any Whisper checkpoint:
+1.5GB of GPU memory in fp16. `STT_MODEL_ID` takes any Whisper checkpoint:
 
 | Model | Size | Trade |
 | --- | --- | --- |
@@ -70,7 +70,7 @@ The default model is Whisper large-v3 fine-tuned on Thai, about 3GB and roughly
 
 The language is pinned to Thai by default. Whisper can detect it on its own, but
 on the short clips a chat recording produces it sometimes guesses wrong and
-transcribes into the wrong language entirely. Set `THAI_STT_LANGUAGE` empty to
+transcribes into the wrong language entirely. Set `STT_LANGUAGE` empty to
 let it decide, or to another language code to pin that one instead.
 
 Audio arrives in whatever container the browser recorded. The collector converts
@@ -80,7 +80,7 @@ decoded here, which is why the image installs ffmpeg of its own.
 ## Synthesis
 
 Beyond the voices themselves, the knobs worth touching are in
-`docker-compose.thai-speech.yml` and the service's own environment:
+`docker-compose.speech.yml` and the service's own environment:
 
 - `TTS_CFG_VALUE`, 2.0 by default. Higher follows the reference more closely,
   while lower allows more variation.
@@ -98,4 +98,4 @@ to ignore for want of a transcript.
 ## Both models are ungated
 
 Neither needs a Hugging Face token. `HF_TOKEN` is passed through only so that
-`THAI_STT_MODEL_ID` can point at a gated checkpoint if you ever want it to.
+`STT_MODEL_ID` can point at a gated checkpoint if you ever want it to.

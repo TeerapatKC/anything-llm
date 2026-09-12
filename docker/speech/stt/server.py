@@ -1,5 +1,5 @@
 """
-Thai speech-to-text behind the OpenAI transcription API.
+Speech-to-text behind the OpenAI transcription API.
 
 Nexus AI's generic OpenAI STT provider (server/utils/speechToText/openAiGeneric)
 posts multipart audio to /v1/audio/transcriptions and reads `text` off the reply.
@@ -56,11 +56,11 @@ async def lifespan(_app):
     yield
 
 
-app = FastAPI(title="Thai speech-to-text", lifespan=lifespan)
+app = FastAPI(title="Speech-to-text", lifespan=lifespan)
 
 
 def log(message):
-    print(f"[thai-stt] {message}", flush=True)
+    print(f"[stt] {message}", flush=True)
 
 
 def load_pipeline():

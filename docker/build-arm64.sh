@@ -18,7 +18,7 @@
 #
 # This builds the app image only. The local model services are not in it:
 # llama.cpp and stable-diffusion.cpp are prebuilt arm64 images that `up` pulls,
-# and the two Thai speech images are built on the Spark itself by
+# and the two speech images are built on the Spark itself by
 # docker/install.sh - cross-building a CUDA torch stack under emulation is not
 # worth the hours it would take. So the sequence for a Spark is:
 #
@@ -64,7 +64,7 @@ Usage: bash docker/build-arm64.sh [options] [IMAGE_REF]
                    e.g. registry.example.com/nexusai:demo
 
 Options:
-  --with-speech    Also build the two Thai speech images for arm64, so the
+  --with-speech    Also build the two speech images for arm64, so the
                    target needs no compiler at all. They carry a CUDA torch
                    stack; cross-building them here runs pip under emulation
                    and takes hours. Native on the Spark it is minutes.
@@ -210,27 +210,27 @@ docker "${BUILD_ARGS[@]}"
 # The speech services build from their own small contexts under docker/, and take
 # the same CUDA index the installer would have chosen on the target.
 if [[ "$WITH_SPEECH" == true ]]; then
-  SPEECH_TORCH_INDEX="${THAI_SPEECH_TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu130}"
+  SPEECH_TORCH_INDEX="${SPEECH_TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu130}"
   for svc in stt tts; do
-    tag="nexusai-thai-${svc}:arm64"
+    tag="nexusai-${svc}:arm64"
     echo
     echo "Building ${tag} - this is the slow one under emulation."
     args=(
       buildx build
       --builder "$BUILDER"
       --platform linux/arm64
-      --file "./docker/thai-speech/${svc}/Dockerfile"
+      --file "./docker/speech/${svc}/Dockerfile"
       --build-arg "TORCH_INDEX_URL=${SPEECH_TORCH_INDEX}"
       --tag "$tag"
     )
     if [[ "$PUSH" == true ]]; then
       args+=(--push)
     else
-      out="${OUT_DIR}/nexusai-thai-${svc}-arm64.tar"
+      out="${OUT_DIR}/nexusai-${svc}-arm64.tar"
       mkdir -p "$OUT_DIR"
       args+=(--output "type=docker,dest=${out}")
     fi
-    args+=("./docker/thai-speech/${svc}")
+    args+=("./docker/speech/${svc}")
     docker "${args[@]}"
   done
 fi
@@ -249,5 +249,5 @@ echo "the CUDA 13 torch build, and brings everything up on the image you just lo
 echo
 echo "  docker/install.sh --app-image ${IMAGE_REF}"
 echo
-echo "It builds the Thai speech images natively there, which is why they are not in"
+echo "It builds the speech images natively there, which is why they are not in"
 echo "this tarball. Pass --services none if all you want is the app."

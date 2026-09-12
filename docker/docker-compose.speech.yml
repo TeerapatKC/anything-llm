@@ -1,17 +1,17 @@
-# Optional overlay: Thai speech-to-text and text-to-speech.
+# Optional overlay: Speech-to-text and text-to-speech.
 #
-#   thai-stt   typhoon-ai/typhoon-whisper-large-v3, MIT
-#   thai-tts   openbmb/VoxCPM2, Apache-2.0 - commercial use permitted
+#   stt   typhoon-ai/typhoon-whisper-large-v3, MIT
+#   tts   openbmb/VoxCPM2, Apache-2.0 - commercial use permitted
 #
 # Both services use commercially permissive licences and are independent: run
-# either on its own with `up -d thai-stt` or `up -d thai-tts`.
+# either on its own with `up -d stt` or `up -d tts`.
 #
 # An overlay rather than services in docker-compose.yml because both want a GPU
 # and several gigabytes of weights.
 #
 # Layer it over either base file, alongside the other overlays if you like:
 #
-#   docker compose -f docker-compose.yml -f docker-compose.thai-speech.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.speech.yml up -d
 #
 # Deliberately no `name:` here - the project name comes from whichever base file
 # it is layered onto, so the services join that project's network.
@@ -24,15 +24,15 @@
 # in Settings, because saving writes the value into docker/.env and compose reads
 # that file on the next `up`.
 #
-# See docker/thai-speech/README.md, particularly for the reference clip the TTS
+# See docker/speech/README.md, particularly for the reference clip the TTS
 # side needs before it can say anything at all.
 
 volumes:
   # Shared by both services: the same Hugging Face cache layout, and neither
-  # writes anything the other reads. Unused when THAI_SPEECH_MODELS_DIR points
+  # writes anything the other reads. Unused when SPEECH_MODELS_DIR points
   # the mounts at a directory of your own, which is how an air-gapped install
   # runs - off a cache that arrived on a disk rather than over the network.
-  thai-speech-models:
+  speech-models:
 
 networks:
   nexusai:
@@ -48,41 +48,41 @@ services:
   nexusai:
     environment:
       STT_PROVIDER: ${STT_PROVIDER:-generic-openai}
-      STT_OPEN_AI_COMPATIBLE_ENDPOINT: ${STT_OPEN_AI_COMPATIBLE_ENDPOINT:-http://thai-stt:8000/v1}
+      STT_OPEN_AI_COMPATIBLE_ENDPOINT: ${STT_OPEN_AI_COMPATIBLE_ENDPOINT:-http://stt:8000/v1}
       STT_OPEN_AI_COMPATIBLE_MODEL: ${STT_OPEN_AI_COMPATIBLE_MODEL:-typhoon-whisper}
       TTS_PROVIDER: ${TTS_PROVIDER:-generic-openai}
-      TTS_OPEN_AI_COMPATIBLE_ENDPOINT: ${TTS_OPEN_AI_COMPATIBLE_ENDPOINT:-http://thai-tts:8000/v1}
+      TTS_OPEN_AI_COMPATIBLE_ENDPOINT: ${TTS_OPEN_AI_COMPATIBLE_ENDPOINT:-http://tts:8000/v1}
       TTS_OPEN_AI_COMPATIBLE_MODEL: ${TTS_OPEN_AI_COMPATIBLE_MODEL:-voxcpm2}
       # A voice is a file you supply, so the only way to have this filled in
       # rather than blank is a naming convention: the included pairs are male
       # and female, with female selected by default. Another name works too - the
       # service ignores a voice it does not have and falls back to the first clip
       # it does - but then this field and reality disagree, so set
-      # THAI_TTS_DEFAULT_VOICE to match.
-      TTS_OPEN_AI_COMPATIBLE_VOICE_MODEL: ${TTS_OPEN_AI_COMPATIBLE_VOICE_MODEL:-${THAI_TTS_DEFAULT_VOICE:-female}}
+      # TTS_DEFAULT_VOICE to match.
+      TTS_OPEN_AI_COMPATIBLE_VOICE_MODEL: ${TTS_OPEN_AI_COMPATIBLE_VOICE_MODEL:-${TTS_DEFAULT_VOICE:-female}}
 
-  thai-stt:
-    container_name: nexusai-thai-stt
+  stt:
+    container_name: nexusai-stt
     # An explicit image name is what lets a prebuilt one be used instead of a
     # local build: with both `image` and `build` set, compose builds only when
     # the image is absent. That is how a DGX Spark can run these without a
     # compiler ever touching it - see docker/build-arm64.sh --with-speech.
-    image: ${THAI_STT_IMAGE:-nexusai-thai-stt}
+    image: ${STT_IMAGE:-nexusai-stt}
     build:
-      context: ./thai-speech/stt
+      context: ./speech/stt
       args:
         # cu128 by default. A DGX Spark (GB10) or anything else on CUDA 13 wants
         # https://download.pytorch.org/whl/cu130 instead.
-        TORCH_INDEX_URL: ${THAI_SPEECH_TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu128}
+        TORCH_INDEX_URL: ${SPEECH_TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu128}
     environment:
       # typhoon-whisper-turbo is a third of the size and much faster, at some
       # cost in accuracy. Any Whisper checkpoint on Hugging Face works here.
-      STT_MODEL_ID: ${THAI_STT_MODEL_ID:-typhoon-ai/typhoon-whisper-large-v3}
-      STT_MODEL_NAME: ${THAI_STT_MODEL_NAME:-typhoon-whisper}
+      STT_MODEL_ID: ${STT_MODEL_ID:-typhoon-ai/typhoon-whisper-large-v3}
+      STT_MODEL_NAME: ${STT_MODEL_NAME:-typhoon-whisper}
       # Naming the language stops short clips being detected as something else
       # and transcribed into nonsense. Set it empty to auto-detect instead.
-      STT_LANGUAGE: ${THAI_STT_LANGUAGE-th}
-      STT_API_KEY: ${THAI_STT_API_KEY:-}
+      STT_LANGUAGE: ${STT_LANGUAGE-th}
+      STT_API_KEY: ${STT_API_KEY:-}
       HF_TOKEN: ${HF_TOKEN:-}
       # Set to 1 for an air-gapped host. The hub libraries then read the cache
       # and never open a connection, which turns a silent 30-second DNS timeout
@@ -91,14 +91,14 @@ services:
       TRANSFORMERS_OFFLINE: ${HF_HUB_OFFLINE:-}
     volumes:
       # A docker volume by default, or a host directory when
-      # THAI_SPEECH_MODELS_DIR names one. Mounted read-write either way: the
+      # SPEECH_MODELS_DIR names one. Mounted read-write either way: the
       # hub libraries take lock files inside the cache even when they are only
       # reading from it.
-      - "${THAI_SPEECH_MODELS_DIR:-thai-speech-models}:/home/app/.cache/huggingface"
+      - "${SPEECH_MODELS_DIR:-speech-models}:/home/app/.cache/huggingface"
     ports:
       # Only for poking at the service directly - Nexus AI reaches it across the
       # compose network. `curl localhost:7871/health` is the readiness check.
-      - "${THAI_STT_PUBLISH_PORT:-7871}:8000"
+      - "${STT_PUBLISH_PORT:-7871}:8000"
     networks:
       - nexusai
     restart: unless-stopped
@@ -110,40 +110,40 @@ services:
               count: all
               capabilities: [gpu]
 
-  thai-tts:
-    container_name: nexusai-thai-tts
-    # See the note on thai-stt above.
-    image: ${THAI_TTS_IMAGE:-nexusai-thai-tts}
+  tts:
+    container_name: nexusai-tts
+    # See the note on stt above.
+    image: ${TTS_IMAGE:-nexusai-tts}
     build:
-      context: ./thai-speech/tts
+      context: ./speech/tts
       args:
-        TORCH_INDEX_URL: ${THAI_SPEECH_TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu128}
+        TORCH_INDEX_URL: ${SPEECH_TORCH_INDEX_URL:-https://download.pytorch.org/whl/cu128}
     environment:
-      TTS_MODEL_ID: ${THAI_TTS_MODEL_ID:-openbmb/VoxCPM2}
-      TTS_MODEL_NAME: ${THAI_TTS_MODEL_NAME:-voxcpm2}
+      TTS_MODEL_ID: ${TTS_MODEL_ID:-openbmb/VoxCPM2}
+      TTS_MODEL_NAME: ${TTS_MODEL_NAME:-voxcpm2}
       # Which reference clip to use when the request names one this service does
       # not have. Matches the default above and the included female pair.
-      TTS_DEFAULT_VOICE: ${THAI_TTS_DEFAULT_VOICE:-female}
-      TTS_API_KEY: ${THAI_TTS_API_KEY:-}
+      TTS_DEFAULT_VOICE: ${TTS_DEFAULT_VOICE:-female}
+      TTS_API_KEY: ${TTS_API_KEY:-}
       HF_TOKEN: ${HF_TOKEN:-}
       # Set to 1 for an air-gapped host. The hub libraries then read the cache
       # and never open a connection, which turns a silent 30-second DNS timeout
       # on every start into an immediate, explicit "not in the cache".
       HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-}
       TRANSFORMERS_OFFLINE: ${HF_HUB_OFFLINE:-}
-      TTS_DEVICE: ${THAI_TTS_DEVICE:-auto}
-      TTS_CFG_VALUE: ${THAI_TTS_CFG_VALUE:-2.0}
-      TTS_INFERENCE_TIMESTEPS: ${THAI_TTS_INFERENCE_TIMESTEPS:-10}
-      TTS_NORMALIZE_TEXT: ${THAI_TTS_NORMALIZE_TEXT:-true}
-      TTS_LOAD_DENOISER: ${THAI_TTS_LOAD_DENOISER:-false}
+      TTS_DEVICE: ${TTS_DEVICE:-auto}
+      TTS_CFG_VALUE: ${TTS_CFG_VALUE:-2.0}
+      TTS_INFERENCE_TIMESTEPS: ${TTS_INFERENCE_TIMESTEPS:-10}
+      TTS_NORMALIZE_TEXT: ${TTS_NORMALIZE_TEXT:-true}
+      TTS_LOAD_DENOISER: ${TTS_LOAD_DENOISER:-false}
     volumes:
-      - "${THAI_SPEECH_MODELS_DIR:-thai-speech-models}:/home/app/.cache/huggingface"
+      - "${SPEECH_MODELS_DIR:-speech-models}:/home/app/.cache/huggingface"
       # The reference clips. This model clones a voice from a sample rather than
       # having voices of its own, so it says nothing until this directory holds a
       # <name>.wav and a matching <name>.txt. Read-only: the service only reads.
-      - "${THAI_TTS_VOICES_DIR:-./thai-speech/voices}:/voices:ro"
+      - "${TTS_VOICES_DIR:-./speech/voices}:/voices:ro"
     ports:
-      - "${THAI_TTS_PUBLISH_PORT:-7872}:8000"
+      - "${TTS_PUBLISH_PORT:-7872}:8000"
     networks:
       - nexusai
     restart: unless-stopped

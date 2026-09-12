@@ -15,7 +15,7 @@
 # back and are willing to pay for the next build.
 #
 # With no arguments it builds every service in the project that has a build
-# context: the app, and the Thai speech services when their overlay is active.
+# context: the app, and the speech services when their overlay is active.
 # llama.cpp and stable-diffusion.cpp are prebuilt images and are pulled by `up`,
 # not built here.
 #
@@ -25,7 +25,7 @@
 #
 #   docker/build.sh                    everything buildable
 #   docker/build.sh nexusai            just the app
-#   docker/build.sh thai-stt thai-tts  just the speech services
+#   docker/build.sh stt tts  just the speech services
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 

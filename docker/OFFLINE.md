@@ -81,7 +81,7 @@ already left an existing file alone, so seeding a directory turns the download
 job into a no-op that exits successfully - which matters, because the model
 servers wait on that job through `service_completed_successfully` and will not
 start until it finishes. `SDCPP_MODELS_DIR`, `LLAMACPP_MODELS_DIR` and
-`THAI_SPEECH_MODELS_DIR` swap each named volume for a host path.
+`SPEECH_MODELS_DIR` swap each named volume for a host path.
 
 **The Hugging Face libraries are told not to try.** The speech services fetch
 their checkpoints at runtime. `HF_HUB_OFFLINE=1` makes them read the cache and

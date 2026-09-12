@@ -21,7 +21,7 @@ networks:
 
 services:
   # Named `nexusai` rather than `backend` so that it matches the service name in
-  # docker-compose.yml. The optional overlays - llamacpp, sdcpp, thai-speech -
+  # docker-compose.yml. The optional overlays - llamacpp, sdcpp, speech -
   # fill in provider defaults by patching that name, and a compose overlay cannot
   # name a service its base file does not have. The container is still
   # nexusai-backend, and `-f docker-compose.split.yml up -d nexusai` is how you

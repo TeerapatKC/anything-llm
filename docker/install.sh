@@ -30,6 +30,7 @@ WAIT_FOR_MODELS=false
 WAIT_TIMEOUT_S=7200
 APP_IMAGE=""
 OFFLINE_DIR=""
+ENV_OUT=""
 
 usage() {
   cat <<'USAGE'
@@ -48,7 +49,7 @@ Options:
                     This is the only mode that works on a host with no internet
                     at all. DIR defaults to the bundle this script sits in.
   --prebuilt TAG    Use already-loaded images tagged TAG for every service that
-                    would otherwise be built - the app and the two Thai speech
+                    would otherwise be built - the app and the two speech
                     services. This is the no-compiler path on a DGX Spark:
                     `docker load -i` each tarball from
                     `build-arm64.sh --with-speech`, then --prebuilt arm64.
@@ -64,6 +65,12 @@ Options:
                     started, rather than returning while they run. Handy for an
                     unattended install; avoid it over a flaky SSH session.
   --no-start        Write config and build, but do not bring the stack up.
+  --env-out FILE    Write the docker/.env this run would produce to FILE and
+                    stop. Nothing else is touched - not the real .env, not the
+                    daemon - so it works before the target machine exists. To
+                    preview a machine other than this one, set the two things
+                    the installer decides from hardware:
+                      NEXUSAI_ARCH=aarch64 NEXUSAI_GPU_MEM_MB=131072
   --dry-run         Print what would change and stop.
   -h, --help        Show this help.
 
@@ -94,6 +101,7 @@ while [[ $# -gt 0 ]]; do
     --skip-gpu-check) SKIP_GPU_CHECK=true; shift ;;
     --wait) WAIT_FOR_MODELS=true; shift ;;
     --no-start) START=false; shift ;;
+    --env-out) ENV_OUT="${2:?--env-out needs a file path}"; DRY_RUN=true; shift 2 ;;
     --dry-run) DRY_RUN=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
@@ -132,6 +140,21 @@ if [[ -n "$OFFLINE_DIR" ]]; then
   if [[ -n "$bundle_services" && "$SERVICES_EXPLICIT" == false ]]; then
     SERVICES="$bundle_services"
   fi
+fi
+
+# --- preview --------------------------------------------------------------
+
+# Everything below writes through set_if_missing and set_key, both of which act on
+# ENV_FILE. Pointing that at the requested path is the whole implementation: the
+# preview is produced by the installer itself rather than by a second copy of its
+# rules, so the two cannot disagree.
+NO_WRITE=false
+[[ "$DRY_RUN" == true && -z "$ENV_OUT" ]] && NO_WRITE=true
+
+if [[ -n "$ENV_OUT" ]]; then
+  ENV_FILE="$ENV_OUT"
+  rm -f "$ENV_FILE"
+  mkdir -p "$(dirname "$ENV_FILE")"
 fi
 
 # --- prerequisites ----------------------------------------------------------
@@ -174,7 +197,8 @@ fi
 
 # --- what hardware is this --------------------------------------------------
 
-ARCH="$(uname -m)"
+# Overridable so this can preview another machine - a Spark, from a laptop.
+ARCH="${NEXUSAI_ARCH:-$(uname -m)}"
 CUDA_MAJOR=""
 if command -v nvidia-smi >/dev/null 2>&1; then
   # `nvidia-smi` prints "CUDA Version: 13.0" in its header. That is the driver's
@@ -194,8 +218,8 @@ fi
 # Total GPU memory in MiB, when the driver will say. On a DGX Spark this is the
 # unified pool the CPU and GPU share, which is what decides how many large models
 # can sit in memory at once. Empty when there is no driver to ask.
-GPU_MEM_MB=""
-if command -v nvidia-smi >/dev/null 2>&1; then
+GPU_MEM_MB="${NEXUSAI_GPU_MEM_MB:-}"
+if [[ -z "$GPU_MEM_MB" ]] && command -v nvidia-smi >/dev/null 2>&1; then
   GPU_MEM_MB="$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits 2>/dev/null |
     head -1 | tr -dc '0-9')"
 fi
@@ -251,7 +275,7 @@ fi
 if [[ ! -f "$ENV_FILE" ]]; then
   [[ -f "$EXAMPLE_FILE" ]] || die "Neither ${ENV_FILE} nor ${EXAMPLE_FILE} exists."
   say "Creating ${ENV_FILE} from ${EXAMPLE_FILE}."
-  [[ "$DRY_RUN" == true ]] || cp "$EXAMPLE_FILE" "$ENV_FILE"
+  [[ "$NO_WRITE" == true ]] || cp "$EXAMPLE_FILE" "$ENV_FILE"
 fi
 
 # A random value for the keys that must be secret and must not change once data
@@ -284,7 +308,7 @@ set_if_missing() {
     return 0
   fi
   ADDED+=("$key")
-  [[ "$DRY_RUN" == true ]] && return 0
+  [[ "$NO_WRITE" == true ]] && return 0
   printf "%s='%s'\n" "$key" "$value" >> "$ENV_FILE"
 }
 
@@ -294,7 +318,7 @@ set_if_missing() {
 # for.
 set_key() {
   local key="$1" value="$2"
-  [[ "$DRY_RUN" == true ]] && { ADDED+=("$key"); return 0; }
+  [[ "$NO_WRITE" == true ]] && { ADDED+=("$key"); return 0; }
   if has_key "$key"; then
     # sed -i writes a temp file in the same directory, so this keeps the
     # bind-mounted .env at the same inode the running container reads.
@@ -309,8 +333,10 @@ set_key() {
 set_image() {
   local key="$1" ref="$2" label="$3"
   [[ -z "$ref" ]] && return 0
-  docker image inspect "$ref" >/dev/null 2>&1 ||
-    die "No such image: ${ref}. Load it first with: docker load -i <tarball>"
+  if [[ "$DRY_RUN" == false ]]; then
+    docker image inspect "$ref" >/dev/null 2>&1 ||
+      die "No such image: ${ref}. Load it first with: docker load -i <tarball>"
+  fi
   set_key "$key" "$ref"
   say "${label}: ${ref} (will not be rebuilt)"
 }
@@ -331,8 +357,9 @@ if [[ "$OFFLINE" == true ]]; then
   shopt -s nullglob
   tarballs=("${OFFLINE_DIR}"/images/*.tar)
   shopt -u nullglob
-  [[ ${#tarballs[@]} -gt 0 ]] ||
+  if [[ ${#tarballs[@]} -eq 0 && "$DRY_RUN" == false ]]; then
     die "No image tarballs in ${OFFLINE_DIR}/images. The bundle is incomplete."
+  fi
 
   # `docker load` restores each image under the tag it was saved with, which is
   # what lets the compose files find them by their ordinary names. Loading one
@@ -380,14 +407,14 @@ if [[ -n "$PREBUILT_TAG" ]]; then
   # The tags build-arm64.sh writes. --app-image still wins if both are given.
   APP_IMAGE="${APP_IMAGE:-nexusai:${PREBUILT_TAG}}"
   if want speech; then
-    STT_IMAGE="nexusai-thai-stt:${PREBUILT_TAG}"
-    TTS_IMAGE="nexusai-thai-tts:${PREBUILT_TAG}"
+    STT_IMAGE="nexusai-stt:${PREBUILT_TAG}"
+    TTS_IMAGE="nexusai-tts:${PREBUILT_TAG}"
   fi
 fi
 
 set_image NEXUSAI_IMAGE "$APP_IMAGE" "App image"
-set_image THAI_STT_IMAGE "$STT_IMAGE" "Thai STT image"
-set_image THAI_TTS_IMAGE "$TTS_IMAGE" "Thai TTS image"
+set_image STT_IMAGE "$STT_IMAGE" "STT image"
+set_image TTS_IMAGE "$TTS_IMAGE" "TTS image"
 
 # Hardware-dependent, and the reason this script exists.
 if want image; then
@@ -431,7 +458,7 @@ if want llm; then
   fi
 fi
 if want speech; then
-  set_if_missing THAI_SPEECH_TORCH_INDEX_URL "$TORCH_INDEX"
+  set_if_missing SPEECH_TORCH_INDEX_URL "$TORCH_INDEX"
 fi
 
 # --- which compose files -----------------------------------------------------
@@ -444,7 +471,7 @@ if want llm; then
   fi
 fi
 if want image; then FILES+=("docker-compose.sdcpp.yml"); fi
-if want speech; then FILES+=("docker-compose.thai-speech.yml"); fi
+if want speech; then FILES+=("docker-compose.speech.yml"); fi
 
 COMPOSE_LIST="$(IFS=:; echo "${FILES[*]}")"
 
@@ -479,6 +506,19 @@ else
   say "${ENV_FILE} already had everything this script sets."
 fi
 
+if [[ -n "$ENV_OUT" ]]; then
+  say "Wrote ${ENV_OUT} - the docker/.env this install would produce."
+  say "Platform assumed: ${PLATFORM} (${ARCH})${GPU_MEM_MB:+, ${GPU_MEM_MB}MiB GPU}"
+  say "Nothing else was touched. The real .env and the daemon are untouched."
+  echo
+  say "Note: this file is only half the configuration. The provider settings that"
+  say "point the app at the local llama.cpp and speech services live in the compose"
+  say "overlays, not here, and only appear if you override them. To see the whole"
+  say "picture as the container will get it:"
+  say "  docker compose --env-file ${ENV_OUT} config"
+  exit 0
+fi
+
 if [[ "$DRY_RUN" == true ]]; then
   say "Dry run - nothing was written or started."
   exit 0
@@ -495,15 +535,15 @@ if [[ "$OFFLINE" == true ]]; then
 else
   if [[ -z "$APP_IMAGE" ]]; then BUILD_TARGETS+=(nexusai); fi
   if want speech; then
-    if [[ -z "$STT_IMAGE" ]]; then BUILD_TARGETS+=(thai-stt); fi
-    if [[ -z "$TTS_IMAGE" ]]; then BUILD_TARGETS+=(thai-tts); fi
+    if [[ -z "$STT_IMAGE" ]]; then BUILD_TARGETS+=(stt); fi
+    if [[ -z "$TTS_IMAGE" ]]; then BUILD_TARGETS+=(tts); fi
   fi
 fi
 
 if [[ ${#BUILD_TARGETS[@]} -eq 0 ]]; then
   say "Nothing to build - every image is prebuilt."
 else
-  say "Building: ${BUILD_TARGETS[*]}. The Thai speech images carry a CUDA torch stack and take a while."
+  say "Building: ${BUILD_TARGETS[*]}. The speech images carry a CUDA torch stack and take a while."
   "${COMPOSE[@]}" build "${BUILD_TARGETS[@]}"
 fi
 
@@ -591,15 +631,15 @@ say "Up. The app is on http://localhost:3001"
 if want llm; then say "  llama.cpp      http://localhost:${LLAMACPP_PUBLISH_PORT:-8082}/health"; fi
 if want image; then say "  image (FLUX)   http://localhost:${SDCPP_PUBLISH_PORT:-7861}/v1/models"; fi
 if want speech; then
-  say "  Thai STT       http://localhost:${THAI_STT_PUBLISH_PORT:-7871}/health"
-  say "  Thai TTS       http://localhost:${THAI_TTS_PUBLISH_PORT:-7872}/health"
+  say "  STT       http://localhost:${STT_PUBLISH_PORT:-7871}/health"
+  say "  TTS       http://localhost:${TTS_PUBLISH_PORT:-7872}/health"
 fi
 say "Follow the downloads with: cd docker && docker compose logs -f"
 # The repository ships a male and a female reference clip, so this is now a real
 # check rather than a standing warning: it fires only if that directory is empty,
-# which means someone pointed THAI_TTS_VOICES_DIR somewhere else.
+# which means someone pointed TTS_VOICES_DIR somewhere else.
 if want speech; then
-  voices_dir="${THAI_TTS_VOICES_DIR:-./thai-speech/voices}"
+  voices_dir="${TTS_VOICES_DIR:-./speech/voices}"
   if ! compgen -G "${voices_dir}/*.wav" >/dev/null; then
     echo
     warn "Text to speech has no voice: ${voices_dir} holds no .wav file."
