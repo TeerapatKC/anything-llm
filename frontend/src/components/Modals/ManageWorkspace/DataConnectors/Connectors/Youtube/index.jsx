@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-export default function YoutubeOptions() {
+export default function YoutubeOptions({ workspace }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
 
@@ -23,6 +23,7 @@ export default function YoutubeOptions() {
 
       const { data, error } = await System.dataConnectors.youtube.transcribe({
         url: form.get("url"),
+        workspaceSlug: workspace.slug,
       });
 
       if (!!error) {

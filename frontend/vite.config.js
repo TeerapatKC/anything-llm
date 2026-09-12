@@ -10,7 +10,11 @@ dns.setDefaultResultOrder("verbatim")
 // Where the dev server forwards API traffic. The backend is expected to be the container
 // published on 3001 by docker/docker-compose.yml; `yarn dev:server` uses the same port, so
 // either works without changing this.
-const DEV_BACKEND_ORIGIN = process.env.DEV_BACKEND_ORIGIN || "http://localhost:3001"
+// 127.0.0.1 rather than localhost on purpose. Docker Desktop publishes each
+// port on [::] as well as 0.0.0.0 but only answers on IPv4, and node resolves
+// localhost to ::1 first - so this proxy spent 30 seconds failing over on
+// every single request, and returned 500 when it gave up.
+const DEV_BACKEND_ORIGIN = process.env.DEV_BACKEND_ORIGIN || "http://127.0.0.1:3001"
 
 // https://vitejs.dev/config/
 export default defineConfig({

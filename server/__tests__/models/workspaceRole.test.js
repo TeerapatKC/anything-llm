@@ -2,6 +2,7 @@ const {
   PERMISSIONS,
   WORKSPACE_PERMISSIONS,
   WORKSPACE_PERMISSION_KEYS,
+  WORKSPACE_OPERATOR_PERMISSION_KEYS,
 } = require("../../utils/permissions");
 
 // In-memory stand-in for the tables the two role models touch, so per-workspace
@@ -18,6 +19,7 @@ const mockDb = {
   // one belongs to one person and clamps what everybody else holds inside it. A
   // workspace with no row here behaves like an ordinary shared one.
   workspaces: [],
+  settings: [],
 };
 let mockNextId = {
   permissions: 1,
@@ -31,6 +33,7 @@ function mockReset() {
   mockDb.permissions = [];
   mockDb.roles = [];
   mockDb.grants = [];
+  mockDb.settings = [];
   mockDb.wsRoles = [];
   mockDb.wsGrants = [];
   mockDb.members = [];
@@ -61,6 +64,19 @@ function mockGrantsFor(roleId) {
 }
 
 jest.mock("../../utils/prisma", () => ({
+  system_settings: {
+    findFirst: async ({ where }) =>
+      mockDb.settings.find((setting) => setting.label === where.label) ?? null,
+    upsert: async ({ where, update, create }) => {
+      const existing = mockDb.settings.find(
+        (setting) => setting.label === where.label
+      );
+      if (existing) return Object.assign(existing, update);
+      const setting = { ...create };
+      mockDb.settings.push(setting);
+      return setting;
+    },
+  },
   permissions: {
     upsert: async ({ where, create }) => {
       const existing = mockDb.permissions.find((p) => p.key === where.key);
@@ -257,6 +273,7 @@ jest.mock("../../models/eventLogs", () => ({
 
 const { Role } = require("../../models/role");
 const { WorkspaceRole } = require("../../models/workspaceRole");
+const { ReservedPermissions } = require("../../models/reservedPermissions");
 
 const ALPHA = 1;
 const BETA = 2;
@@ -274,6 +291,7 @@ async function join(userId, workspaceId, roleName) {
 beforeEach(async () => {
   mockReset();
   Role.flushCache();
+  ReservedPermissions.flushCache();
   WorkspaceRole.flushCache();
   await Role.seed();
   await WorkspaceRole.seed();
@@ -415,6 +433,32 @@ describe("private workspaces", () => {
     ).toBe(true);
   });
 
+  it("lets a private owner import web pages and YouTube without other connectors", async () => {
+    await join(7, PRIVATE, "personal-owner");
+    const user = { id: 7, role: "default" };
+    expect(
+      await WorkspaceRole.userCanInWorkspace(
+        user,
+        PRIVATE,
+        WORKSPACE_PERMISSIONS.DATA_CONNECTORS_WEB
+      )
+    ).toBe(true);
+    expect(
+      await WorkspaceRole.userCanInWorkspace(
+        user,
+        PRIVATE,
+        WORKSPACE_PERMISSIONS.DATA_CONNECTORS_YOUTUBE
+      )
+    ).toBe(true);
+    expect(
+      await WorkspaceRole.userCanInWorkspace(
+        user,
+        PRIVATE,
+        WORKSPACE_PERMISSIONS.DATA_CONNECTORS
+      )
+    ).toBe(false);
+  });
+
   it("gives an instance operator read-only audit access, nothing more", async () => {
     const admin = { id: 1, role: "admin" };
     const granted = await WorkspaceRole.permissionsForUserInWorkspace(
@@ -458,11 +502,16 @@ describe("private workspaces", () => {
 });
 
 describe("instance-wide overrides", () => {
-  it("lets a super-admin do anything in any workspace without membership", async () => {
+  it("lets an administrator manage a shared workspace without using it", async () => {
     const admin = { id: 1, role: "admin" };
-    expect(
-      await WorkspaceRole.permissionsForUserInWorkspace(admin, BETA)
-    ).toEqual(expect.arrayContaining(WORKSPACE_PERMISSION_KEYS));
+    const granted = await WorkspaceRole.permissionsForUserInWorkspace(
+      admin,
+      BETA
+    );
+    expect(granted).toEqual(
+      expect.arrayContaining(WORKSPACE_OPERATOR_PERMISSION_KEYS)
+    );
+    expect(granted).not.toContain(WORKSPACE_PERMISSIONS.CHAT);
   });
 
   it("lets workspaces.manage_all do the same", async () => {

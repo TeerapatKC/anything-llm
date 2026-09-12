@@ -685,7 +685,6 @@ export default function Directory({
           workspace={workspace}
           queue={uploadQueue}
           onUploadComplete={syncAfterUpload}
-          onLinkScraped={syncAfterUpload}
         />
       </div>
       {isFolderModalOpen && (

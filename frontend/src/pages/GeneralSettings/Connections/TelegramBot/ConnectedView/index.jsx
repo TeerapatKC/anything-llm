@@ -5,6 +5,7 @@ import ConnectedBotCard from "./ConnectedBotCard";
 import DetailsSection from "./DetailsSection";
 import UsersSection from "./UsersSection";
 import DisconnectedView from "./DisconnectedView";
+import CreateBotSection from "../SetupView/CreateBotSection";
 
 export default function ConnectedView({
   config,
@@ -29,20 +30,25 @@ export default function ConnectedView({
 
   if (!connected) {
     return (
-      <DisconnectedView
-        config={config}
-        onReconnected={onReconnected}
-        newToken={newToken}
-        setNewToken={setNewToken}
-      />
+      <div className="mt-6 grid items-start gap-6 min-[1280px]:grid-cols-[minmax(0,1.1fr)_minmax(420px,0.9fr)]">
+        <CreateBotSection reconnect />
+        <DisconnectedView
+          config={config}
+          onReconnected={onReconnected}
+          newToken={newToken}
+          setNewToken={setNewToken}
+        />
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-y-8 mt-8">
-      <ConnectedBotCard config={config} />
+    <div className="mt-6 grid items-start gap-6 min-[1300px]:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
+      <div className="min-[1300px]:col-span-2">
+        <ConnectedBotCard config={config} />
+      </div>
       {!config.smtp_configured && (
-        <p className="text-xs text-amber-500 -mt-4 max-w-[700px]">
+        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm leading-6 text-amber-300 light:text-amber-700 min-[1300px]:col-span-2">
           {t("telegram.connected.smtp-warning")}
         </p>
       )}

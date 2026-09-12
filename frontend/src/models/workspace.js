@@ -397,17 +397,6 @@ const Workspace = {
     const data = await response.json();
     return data;
   },
-  uploadLink: async function (slug, link) {
-    const response = await fetch(`${API_BASE}/workspace/${slug}/upload-link`, {
-      method: "POST",
-      body: JSON.stringify({ link }),
-      headers: baseHeaders(),
-    });
-
-    const data = await response.json();
-    return { response, data };
-  },
-
   getSuggestedMessages: async function (slug) {
     return await fetch(`${API_BASE}/workspace/${slug}/suggested-messages`, {
       method: "GET",

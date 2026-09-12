@@ -1113,10 +1113,7 @@ function supportedSTTProvider(input = "") {
 }
 
 function validLocalWhisper(input = "") {
-  const validSelection = [
-    "Xenova/whisper-small",
-    "Xenova/whisper-large",
-  ].includes(input);
+  const validSelection = input === "Xenova/whisper-large";
   return validSelection
     ? null
     : `${input} is not a valid Whisper model selection.`;

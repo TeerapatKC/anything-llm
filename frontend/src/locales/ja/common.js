@@ -67,8 +67,9 @@ const TRANSLATIONS = {
     "instance-owner": "インスタンス所有者",
     admin: "管理者",
     tools: "ツール",
+    "prompts-and-commands": "プロンプトとコマンド",
     "system-prompt-variables": "システムプロンプト変数",
-    "slash-commands": "スラッシュコマンド",
+    "slash-commands": "組み込みスラッシュコマンド",
     contact: "サポートに連絡",
     smtp: "SMTP",
     interface: "UI設定",
@@ -102,7 +103,7 @@ const TRANSLATIONS = {
     roles: {
       title: "ロールと権限",
       description:
-        "ロールは権限のまとまりに名前を付けたものです。システムロールはインスタンス全体を制御し、ワークスペースロールは各ワークスペース内でメンバーが実行できる操作を制御します。そのため、同じアカウントでもワークスペースごとに異なるロールを持つことができます。",
+        "システムロールはインスタンス全体の権限を、ワークスペースロールは各メンバーシップの権限を定めます。所有者はシステム権限を他のロールから除外できます。",
       "system-tab": "システムロール",
       "workspace-tab": "ワークスペースロール",
     },
@@ -114,7 +115,7 @@ const TRANSLATIONS = {
     "instance-owner": {
       title: "インスタンス所有者",
       description:
-        "このデプロイのスーパー管理者ロールを保持しています。このロールは削除、停止、他のユーザーへの付与はできず、下の移行機能でのみ移動できます。このページの操作は元に戻せず、他のユーザーは実行できません。",
+        "このインスタンスの所有者です。所有権の移行とリセットは所有者だけが実行できます。所有者専用アクセスでは、システム権限を他のロールから除外または再付与できます。",
     },
     "slash-commands": {
       title: "組み込みスラッシュコマンド",
@@ -618,8 +619,8 @@ const TRANSLATIONS = {
     "warn-start":
       "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にNexus AIが停止する可能性があります。",
     "warn-recommend":
-      "少なくとも2GBのRAMが推奨され、ファイルサイズは10Mb未満であることをお勧めします。",
-    "warn-end": "組み込みモデルは初回使用時に自動的にダウンロードされます。",
+      "Whisper Largeには十分な空きRAMが必要です。アップロードするファイルは10MB未満にしてください。",
+    "warn-prebuilt": "Whisper LargeはDockerイメージのビルド時に含まれます。",
   },
   embedding: {
     title: "埋め込み設定",
@@ -793,63 +794,6 @@ const TRANSLATIONS = {
   connectors: {
     "search-placeholder": "データコネクタを検索",
     "no-connectors": "データコネクタが見つかりません。",
-    github: {
-      name: "GitHubリポジトリ",
-      description:
-        "ワンクリックで公開・非公開のGitHubリポジトリ全体をインポートできます。",
-      URL: "GitHubリポジトリURL",
-      URL_explained: "収集したいGitHubリポジトリのURLです。",
-      token: "GitHubアクセストークン",
-      optional: "任意",
-      token_explained: "レート制限を回避するためのアクセストークンです。",
-      token_explained_start: "アクセストークンがない場合、",
-      token_explained_link1: "パーソナルアクセストークン",
-      token_explained_middle:
-        "がないと、GitHub APIのレート制限により収集できるファイル数が制限される場合があります。 ",
-      token_explained_link2: "一時的なアクセストークンを作成",
-      token_explained_end: "してこの問題を回避できます。",
-      ignores: "無視するファイル",
-      git_ignore:
-        ".gitignore形式で収集時に無視したいファイルをリストしてください。エンターキーで各エントリを保存します。",
-      task_explained:
-        "完了後、すべてのファイルがドキュメントピッカーからワークスペースに埋め込めるようになります。",
-      branch: "収集したいブランチ",
-      branch_loading: "-- 利用可能なブランチを読み込み中 --",
-      branch_explained: "収集したいブランチを指定します。",
-      token_information:
-        "<b>GitHubアクセストークン</b>を入力しない場合、GitHubの公開APIのレート制限により<b>トップレベル</b>のファイルのみ収集可能です。",
-      token_personal:
-        "無料のパーソナルアクセストークンはこちらから取得できます。",
-    },
-    gitlab: {
-      name: "GitLabリポジトリ",
-      description:
-        "ワンクリックで公開・非公開のGitLabリポジトリ全体をインポートできます。",
-      URL: "GitLabリポジトリURL",
-      URL_explained: "収集したいGitLabリポジトリのURLです。",
-      token: "GitLabアクセストークン",
-      optional: "任意",
-      token_description: "GitLab APIから取得する追加エンティティを選択します。",
-      token_explained_start: "アクセストークンがない場合、",
-      token_explained_link1: "パーソナルアクセストークン",
-      token_explained_middle:
-        "がないと、GitLab APIのレート制限により収集できるファイル数が制限される場合があります。 ",
-      token_explained_link2: "一時的なアクセストークンを作成",
-      token_explained_end: "してこの問題を回避できます。",
-      fetch_issues: "Issueをドキュメントとして取得",
-      ignores: "無視するファイル",
-      git_ignore:
-        ".gitignore形式で収集時に無視したいファイルをリストしてください。エンターキーで各エントリを保存します。",
-      task_explained:
-        "完了後、すべてのファイルがドキュメントピッカーからワークスペースに埋め込めるようになります。",
-      branch: "収集したいブランチ",
-      branch_loading: "-- 利用可能なブランチを読み込み中 --",
-      branch_explained: "収集したいブランチを指定します。",
-      token_information:
-        "<b>GitLabアクセストークン</b>を入力しない場合、GitLabの公開APIのレート制限により<b>トップレベル</b>のファイルのみ収集可能です。",
-      token_personal:
-        "無料のパーソナルアクセストークンはこちらから取得できます。",
-    },
     youtube: {
       name: "YouTube文字起こし",
       description: "YouTube動画の文字起こしをリンクからインポートできます。",
@@ -862,8 +806,18 @@ const TRANSLATIONS = {
         "完了後、文字起こしがドキュメントピッカーからワークスペースに埋め込めるようになります。",
     },
     "website-depth": {
-      name: "ウェブサイト一括スクレイパー",
-      description: "ウェブサイトとその下層リンクを指定した深さまで取得します。",
+      name: "ウェブサイトのリンク",
+      description:
+        "1ページだけ、またはリンク先のページもまとめて取り込みます。",
+      "import-scope": "取り込む範囲",
+      "single-page": "このページのみ",
+      "linked-pages": "このページとリンク先",
+      "invalid-url": "有効なウェブサイトのURLを入力してください。",
+      importing: "ウェブサイトの内容を取り込み中...",
+      "import-single": "このページを取り込む",
+      "import-linked": "リンク先も取り込む",
+      empty: "取り込めるページ内容が見つかりませんでした。",
+      success: "{{count}} ページを取り込みました。",
       URL: "ウェブサイトURL",
       URL_explained: "取得したいウェブサイトのURLです。",
       depth: "クロール深度",
@@ -872,37 +826,6 @@ const TRANSLATIONS = {
       max_pages_explained: "取得する最大リンク数です。",
       task_explained:
         "完了後、すべての取得内容がドキュメントピッカーからワークスペースに埋め込めるようになります。",
-    },
-    confluence: {
-      name: "Confluence",
-      description: "ワンクリックでConfluenceページ全体をインポートできます。",
-      deployment_type: "Confluenceデプロイタイプ",
-      deployment_type_explained:
-        "ConfluenceインスタンスがAtlassianクラウドかセルフホストかを選択します。",
-      base_url: "ConfluenceベースURL",
-      base_url_explained: "ConfluenceスペースのベースURLです。",
-      space_key: "Confluenceスペースキー",
-      space_key_explained:
-        "使用するConfluenceインスタンスのスペースキーです。通常は~で始まります。",
-      username: "Confluenceユーザー名",
-      username_explained: "Confluenceのユーザー名です。",
-      auth_type: "Confluence認証タイプ",
-      auth_type_explained:
-        "Confluenceページへアクセスするための認証タイプを選択してください。",
-      auth_type_username: "ユーザー名とアクセストークン",
-      auth_type_personal: "パーソナルアクセストークン",
-      token: "Confluenceアクセストークン",
-      token_explained_start:
-        "認証用のアクセストークンを入力してください。アクセストークンは",
-      token_explained_link: "こちら",
-      token_desc: "認証用アクセストークン",
-      pat_token: "Confluenceパーソナルアクセストークン",
-      pat_token_explained: "Confluenceのパーソナルアクセストークンです。",
-      task_explained:
-        "完了後、ページ内容がドキュメントピッカーからワークスペースに埋め込めるようになります。",
-      bypass_ssl: "SSL証明書の検証をスキップする",
-      bypass_ssl_explained:
-        "これにより、独自の証明書で署名された、自社ホストのConfluenceインスタンスに対して、SSL証明書の検証を回避できます。",
     },
     manage: {
       documents: "ドキュメント",
@@ -965,10 +888,6 @@ const TRANSLATIONS = {
         "フォルダーにドロップするとそこへ、ここにドロップすると {{folder}} へアップロードします",
       "file-types":
         "テキストファイル、CSV、スプレッドシート、音声ファイルなどに対応しています！",
-      "or-submit-link": "またはリンクを入力",
-      "placeholder-link": "https://example.com",
-      fetching: "取得中...",
-      "fetch-website": "ウェブサイトを取得",
       "privacy-notice":
         "これらのファイルは、このNexus AIインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
     },
@@ -981,44 +900,6 @@ const TRANSLATIONS = {
       pin_explained_block3:
         "デフォルトのままでは満足できる回答が得られない場合、ピン留めを活用するとより高品質な回答が得られます。",
       accept: "わかりました",
-    },
-    obsidian: {
-      vault_location: "保管場所",
-      vault_description:
-        "Obsidianの vault フォルダを選択して、すべてのメモとそれらの関連をインポートします。",
-      selected_files: "マークダウン形式のファイルが見つかりました：{{count}}個",
-      importing: "保管庫のインポート...",
-      import_vault: "Import Vault",
-      processing_time:
-        "これは、保管場所のサイズによって時間がかかる可能性があります。",
-      vault_warning:
-        "いかなる紛争を避けるため、Obsidianの保管場所が現在開いている状態でないことを確認してください。",
-    },
-    gitea: {
-      name: "ギテアのリポジトリ",
-      description:
-        "Gitea の任意のインスタンスから、公開またはプライベートなリポジトリ全体を 1 つのクリックでインポートします。",
-      URL: "ギテアのリポジトリURL",
-      URL_explained:
-        "収集したいリポジトリのGiteaインスタンス上のURL – 自社ホストのリポジトリもサポートされています。",
-      token: "ギテア アクセス トークン",
-      optional: "（オプション）",
-      token_explained:
-        "プライベートリポジトリや、認証が必要なインスタンス上のリポジトリを取得するには、アクセストークンが必要です。",
-      token_explained_start: "～なしで",
-      token_explained_link1: "アクセス トークン",
-      token_explained_end:
-        "ただし、Gitea インスタンスが公開しているリポジトリのみを収集できます。",
-      ignores: "ファイルは無視する",
-      git_ignore:
-        "`.gitignore`形式で、収集時に特定のファイルを無視するためのリストを作成します。保存したい項目ごとにEnterキーを押してください。",
-      task_explained:
-        "すべてのファイルが完了すると、ドキュメントピッカーを使用してワークスペースに埋め込むことができます。",
-      branch: "ファイルを収集したいブランチを指定してください。",
-      branch_loading: "— 利用可能なブランチのロード中 —",
-      branch_explained: "ファイルを収集したいブランチの名前。",
-      token_information:
-        "<b>Giteaアクセストークン</b>を入力しない場合、このデータコネクタは、あなたのGiteaインスタンス上の公開で読み取り可能なリポジトリからのみファイルを収集できます。",
     },
   },
   chat_window: {
@@ -1399,6 +1280,16 @@ const TRANSLATIONS = {
         connecting: "接続中...",
         "connect-bot": "コネクトボット",
       },
+      reconnect: {
+        title: "ステップ1：既存のボットの新しいトークンを取得",
+        description:
+          "Telegramで@BotFatherを開き、<code>/token</code>を送信して既存のボットの新しいトークンを発行します。",
+        "instruction-2":
+          "2. <code>/token</code>を<code>@BotFather</code>に送信する",
+        "instruction-3": "3. 既存のボットを選択する",
+        "instruction-4": "4. 新しいトークンをコピーしてステップ2に貼り付ける",
+        "step2-title": "ステップ2：ボットを再接続する",
+      },
       security: {
         title: "推奨されるセキュリティ設定",
         description:
@@ -1412,6 +1303,7 @@ const TRANSLATIONS = {
       "toast-connect-failed": "ボットとの接続に失敗しました。",
     },
     connected: {
+      "bot-details": "ボットの詳細",
       status: "接続されている",
       "status-disconnected":
         "通信エラー - トークンが無効または期限切れになっている可能性があります",
@@ -1473,7 +1365,8 @@ const TRANSLATIONS = {
       export: "エクスポート",
       exportFrom: "開始日",
       exportTo: "終了日",
-      exportSuccess: "スケジュールジョブのログを{{format}}としてエクスポートしました。",
+      exportSuccess:
+        "スケジュールジョブのログを{{format}}としてエクスポートしました。",
       exportFailed: "スケジュールジョブのログのエクスポートに失敗しました。",
       empty: "スケジュールジョブのログはまだありません。",
       backToJobs: "ジョブ一覧に戻る",
@@ -1857,7 +1750,7 @@ const TRANSLATIONS = {
     "role-default-suffix": "（デフォルト）",
     permissions: {
       title: "権限",
-      all: "このインスタンスのすべての権限を保持しています。",
+      all: "所有者が予約した権限と所有者専用の操作を除き、システムを管理できます。",
       none: "特別な権限はありません - 追加されたワークスペースでチャットのみ可能です。",
     },
     "message-limit": {
@@ -2140,7 +2033,8 @@ const TRANSLATIONS = {
       "delete-variable": "変数を削除",
       "add-variable": "変数を追加",
       required: "必須",
-      "required-hint": "このフローの実行時に LLM が値を指定する必要があります。",
+      "required-hint":
+        "このフローの実行時に LLM が値を指定する必要があります。",
       optional: "任意",
       "optional-hint": "LLM が上書きできる初期値を持ちます。",
       static: "固定",
@@ -2621,10 +2515,6 @@ const TRANSLATIONS = {
     "pinecone-index-name": "Pinecone インデックス名",
   },
   help: {
-    "paperless-base-url":
-      "Paperless-ngx インスタンスが動作している URL です（例: http://localhost:8000）",
-    "drupal-wiki-token":
-      "認証には API トークンが必要です。ユーザー用の API トークンを生成する方法は、Drupal Wiki の<a>マニュアル</a>を参照してください。",
     "lmstudio-context-window":
       "コンテキストウィンドウの上限を上書きします。空欄にするとモデルから自動検出します（検出に失敗した場合は 4096 が使用されます）。",
     "finish-node":
@@ -2636,13 +2526,13 @@ const TRANSLATIONS = {
     "default-system-prompt":
       "システムプロンプトは AI の応答と振る舞いを形づくる指示です。このプロンプトは新しく作成されるすべてのワークスペースに自動的に適用されます。<b>特定のワークスペース</b>のシステムプロンプトを変更するには、<b>ワークスペース設定</b>でプロンプトを編集してください。既定のシステムプロンプトに戻すには、この欄を空にして変更を保存します。",
     "toggle-3":
-      "この機能は、ウェブサイト、Confluence、YouTube、GitHub のファイルなど、ウェブ由来のコンテンツにのみ適用されます。",
+      "この機能は、ウェブサイトや YouTube の文字起こしなど、ウェブ由来のコンテンツにのみ適用されます。",
     "toggle-2":
       "監視中のドキュメントは、参照しているすべてのワークスペースで同時に自動更新されます。",
     toggle:
       "ドキュメントを「監視」対象に指定できるようにします。監視中のドキュメントの内容は定期的に取得され、Nexus AI 上で更新されます。",
     "role-modal":
-      "このロールはシステム管理者権限を持つため、下のチェックボックスに関わらず、今後のアップデートで追加されるものも含めてすべての権限を保持します。",
+      "このロールは将来追加される権限を含むシステム管理権限を持ちますが、所有者が専用に予約した権限は除きます。所有権の移行とインスタンスのリセットは常に所有者専用です。",
     "factory-reset":
       "デプロイ全体を消去し、インストール直後のようにセットアップ画面からやり直します。上のリセットとは異なり、この操作では<strong>あなた自身のアカウント</strong>と、LLM・埋め込み・ベクターデータベースの設定も削除されます。",
     "reserved-permissions":
@@ -2759,12 +2649,6 @@ const TRANSLATIONS = {
       "この項目を空欄にすると、コンテキストウィンドウの上限をモデルから自動検出し、すべてのチャットに適用します。自動検出に失敗した場合は、フォールバック値の 16000 が使用されます。",
     omlxoptions:
       "モデルのコンテキストウィンドウに使用できる最大トークン数を指定します。",
-    "drupal-wiki":
-      "完了すると、すべてのページをワークスペースへ埋め込めるようになります。",
-    "paperless-ngx-2":
-      "完了すると、すべてのドキュメントをワークスペースへ埋め込めるようになります。",
-    "paperless-ngx":
-      "Paperless-ngx インスタンスが起動しており、このマシンからアクセスできることを確認してください。",
     "generic-open-ai-options-4":
       "一部の STT サービスでは文字起こしに API キーが必要です。サービスが不要な場合は任意です。",
     "generic-open-ai-options-3":

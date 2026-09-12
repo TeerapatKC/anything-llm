@@ -3,8 +3,11 @@ import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import Workspace from "../../../models/workspace";
-import { WORKSPACE_PERMISSIONS as WS, workspaceCan } from "@/utils/permissions";
-import System from "../../../models/system";
+import {
+  WORKSPACE_PERMISSIONS as WS,
+  workspaceCan,
+  workspaceCanAny,
+} from "@/utils/permissions";
 import useUser from "../../../hooks/useUser";
 import DocumentSettings from "./Documents";
 import DataConnectors from "./DataConnectors";
@@ -15,16 +18,7 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
   const { slug } = useParams();
   const { user } = useUser();
   const [workspace, setWorkspace] = useState(null);
-  const [settings, setSettings] = useState({});
   const [selectedTab, setSelectedTab] = useState("documents");
-
-  useEffect(() => {
-    async function getSettings() {
-      const _settings = await System.keys();
-      setSettings(_settings ?? {});
-    }
-    getSettings();
-  }, []);
 
   useEffect(() => {
     async function fetchWorkspace() {
@@ -51,12 +45,17 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
             </button>
           </div>
 
-          {/* The switcher is only worth showing when there is somewhere else to
-              switch to. A private workspace's owner can upload but not attach data
-              connectors, so they would otherwise be offered a tab whose every action
-              the server refuses. */}
           {workspaceCan(WS.DOCUMENTS_UPLOAD, workspace?.slug, user) &&
-            workspaceCan(WS.DATA_CONNECTORS, workspace?.slug, user) && (
+            workspaceCanAny(
+              [
+                WS.DATA_CONNECTORS_WEB,
+                WS.DATA_CONNECTORS_YOUTUBE,
+                WS.DATA_CONNECTORS,
+                WS.DOCUMENTS_UPLOAD,
+              ],
+              workspace?.slug,
+              user
+            ) && (
               <ModalTabSwitcher
                 selectedTab={selectedTab}
                 setSelectedTab={setSelectedTab}
@@ -70,7 +69,9 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
               </div>
             </EmbeddingProgressProvider>
           ) : (
-            <DataConnectors workspace={workspace} systemSettings={settings} />
+            <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-3 pb-3 sm:px-8 sm:pb-8">
+              <DataConnectors workspace={workspace} />
+            </div>
           )}
         </div>
       </div>

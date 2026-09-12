@@ -3,17 +3,16 @@ import { Spinner } from "@/components/ui/spinner";
 import Telegram from "@/models/telegram";
 import showToast from "@/utils/toast";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 export default function DetailsSection({ config, onDisconnected }) {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col gap-y-[18px]">
-      <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
-        Details
-      </p>
-      <div className="border border-zinc-700 light:border-slate-200 rounded-xl p-4 w-[700px]">
-        <div className="flex flex-col gap-y-4 text-sm">
+    <section className="min-w-0 rounded-2xl border border-white/10 bg-zinc-800/50 p-5 shadow-sm light:border-slate-200 light:bg-white sm:p-6">
+      <h2 className="text-lg font-semibold text-theme-text-primary light:text-slate-900">
+        {t("telegram.connected.bot-details")}
+      </h2>
+      <div className="mt-5 divide-y divide-white/10 rounded-xl border border-white/10 light:divide-slate-200 light:border-slate-200">
+        <div className="flex flex-col text-sm">
           <DetailRow
             label={t("telegram.connected.linked-accounts")}
             value={config.linked_user_count ?? 0}
@@ -21,33 +20,35 @@ export default function DetailsSection({ config, onDisconnected }) {
           <DetailRow
             label={t("telegram.connected.bot-link")}
             value={
-              <Link
-                to={`https://t.me/${config.bot_username}`}
+              <a
+                href={`https://t.me/${config.bot_username}`}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-400 light:text-blue-500 underline"
+                className="break-all font-medium text-sky-400 underline underline-offset-2 light:text-sky-600"
               >
                 t.me/{config.bot_username}
-              </Link>
+              </a>
             }
           />
         </div>
-        <p className="text-xs text-zinc-400 light:text-slate-600 mt-4">
-          {t("telegram.connected.per-user-note")}
-        </p>
       </div>
-      <DisconnectButton onDisconnected={onDisconnected} />
-    </div>
+      <p className="mt-5 text-sm leading-6 text-zinc-400 light:text-slate-600">
+        {t("telegram.connected.per-user-note")}
+      </p>
+      <div className="mt-6 border-t border-white/10 pt-5 light:border-slate-200">
+        <DisconnectButton onDisconnected={onDisconnected} />
+      </div>
+    </section>
   );
 }
 
 function DetailRow({ label, value }) {
   return (
-    <div className="flex items-start justify-between">
-      <span className="font-medium text-theme-text-primary light:text-slate-900">
-        {label}
+    <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
+      <span className="text-zinc-400 light:text-slate-500">{label}</span>
+      <span className="min-w-0 text-theme-text-primary light:text-slate-900">
+        {value}
       </span>
-      <span className="text-zinc-300 light:text-slate-700">{value}</span>
     </div>
   );
 }
@@ -75,7 +76,7 @@ function DisconnectButton({ onDisconnected }) {
     <button
       onClick={handleDisconnect}
       disabled={disconnecting}
-      className="flex items-center justify-center gap-x-2 text-sm font-medium bg-zinc-50 light:bg-slate-900 text-zinc-950 light:text-white rounded-lg h-9 px-5 w-fit hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-red-400/30 px-4 text-sm font-medium text-red-300 transition-colors hover:bg-red-500/10 disabled:cursor-not-allowed disabled:opacity-50 light:text-red-700"
     >
       {disconnecting ? (
         <>

@@ -82,8 +82,9 @@ const TRANSLATIONS = {
     "model-router": "Model Router",
     admin: "Admin",
     tools: "Tools",
+    "prompts-and-commands": "Prompts & Commands",
     "system-prompt-variables": "System Prompt Variables",
-    "slash-commands": "Slash Commands",
+    "slash-commands": "Built-in Slash Commands",
     contact: "Contact Support",
     smtp: "SMTP",
     channels: "Connected Apps",
@@ -110,7 +111,7 @@ const TRANSLATIONS = {
     roles: {
       title: "Roles & Permissions",
       description:
-        "A role is a named set of permissions. System roles control the instance itself; workspace roles control what a member can do inside one workspace, so one account can be a manager in one workspace and read-only in another.",
+        "System roles grant instance-wide access. Workspace roles apply to each membership, so one person can have different access in different workspaces. The instance owner can reserve system permissions from every other role.",
       "system-tab": "System Roles",
       "workspace-tab": "Workspace Roles",
     },
@@ -122,7 +123,7 @@ const TRANSLATIONS = {
     "instance-owner": {
       title: "Instance Owner",
       description:
-        "You hold the super admin role for this deployment. It cannot be deleted, suspended, or assigned to others; it can only be moved using the transfer option below. Operations on this page are irreversible and unavailable to other users.",
+        "You own this instance. Transfer ownership and reset are available only to you. Owner-only access lets you reserve or release system permissions for other roles.",
     },
     "slash-commands": {
       title: "Built-in Slash Commands",
@@ -886,9 +887,9 @@ const TRANSLATIONS = {
     "warn-start":
       "Using the local whisper model on machines with limited RAM or CPU can stall Nexus AI when processing media files.",
     "warn-recommend":
-      "We recommend at least 2GB of RAM and upload files <10Mb.",
-    "warn-end":
-      "The built-in model will automatically download on the first use.",
+      "Whisper Large needs substantial free RAM. Keep uploads under 10 MB.",
+    "warn-prebuilt":
+      "Whisper Large is included when building the Docker image.",
   },
   embedding: {
     title: "Embedding Preference",
@@ -1063,6 +1064,16 @@ const TRANSLATIONS = {
         connecting: "Connecting...",
         "connect-bot": "Connect Bot",
       },
+      reconnect: {
+        title: "Step 1: Get a new token for your bot",
+        description:
+          "Open @BotFather in Telegram and send <code>/token</code> to generate a new token for your existing bot.",
+        "instruction-2":
+          "2. Send <code>/token</code> to <code>@BotFather</code>",
+        "instruction-3": "3. Select your existing bot",
+        "instruction-4": "4. Copy the new token and paste it into Step 2",
+        "step2-title": "Step 2: Reconnect your bot",
+      },
       security: {
         title: "Recommended Security Settings",
         description:
@@ -1076,6 +1087,7 @@ const TRANSLATIONS = {
       "toast-connect-failed": "Failed to connect bot.",
     },
     connected: {
+      "bot-details": "Bot details",
       status: "Connected",
       "status-disconnected": "Disconnected — token may be expired or invalid",
       "smtp-warning":
@@ -1152,102 +1164,6 @@ const TRANSLATIONS = {
   connectors: {
     "search-placeholder": "Search data connectors",
     "no-connectors": "No data connectors found.",
-    obsidian: {
-      vault_location: "Vault Location",
-      vault_description:
-        "Select your Obsidian vault folder to import all notes and their connections.",
-      selected_files: "Found {{count}} markdown files",
-      importing: "Importing vault...",
-      import_vault: "Import Vault",
-      processing_time:
-        "This may take a while depending on the size of your vault.",
-      vault_warning:
-        "To avoid any conflicts, make sure your Obsidian vault is not currently open.",
-    },
-    github: {
-      name: "GitHub Repo",
-      description:
-        "Import an entire public or private GitHub repository in a single click.",
-      URL: "GitHub Repo URL",
-      URL_explained: "Url of the GitHub repo you wish to collect.",
-      token: "GitHub Access Token",
-      optional: "optional",
-      token_explained: "Access Token to prevent rate limiting.",
-      token_explained_start: "Without a ",
-      token_explained_link1: "Personal Access Token",
-      token_explained_middle:
-        ", the GitHub API may limit the number of files that can be collected due to rate limits. You can ",
-      token_explained_link2: "create a temporary Access Token",
-      token_explained_end: " to avoid this issue.",
-      ignores: "File Ignores",
-      git_ignore:
-        "List in .gitignore format to ignore specific files during collection. Press enter after each entry you want to save.",
-      task_explained:
-        "Once complete, all files will be available for embedding into workspaces in the document picker.",
-      branch: "Branch you wish to collect files from.",
-      branch_loading: "-- loading available branches --",
-      branch_explained: "Branch you wish to collect files from.",
-      token_information:
-        "Without filling out the <b>GitHub Access Token</b> this data connector will only be able to collect the <b>top-level</b> files of the repo due to GitHub's public API rate-limits.",
-      token_personal:
-        "Get a free Personal Access Token with a GitHub account here.",
-    },
-    gitlab: {
-      name: "GitLab Repo",
-      description:
-        "Import an entire public or private GitLab repository in a single click.",
-      URL: "GitLab Repo URL",
-      URL_explained: "URL of the GitLab repo you wish to collect.",
-      token: "GitLab Access Token",
-      optional: "optional",
-      token_description:
-        "Select additional entities to fetch from the GitLab API.",
-      token_explained_start: "Without a ",
-      token_explained_link1: "Personal Access Token",
-      token_explained_middle:
-        ", the GitLab API may limit the number of files that can be collected due to rate limits. You can ",
-      token_explained_link2: "create a temporary Access Token",
-      token_explained_end: " to avoid this issue.",
-      fetch_issues: "Fetch Issues as Documents",
-      ignores: "File Ignores",
-      git_ignore:
-        "List in .gitignore format to ignore specific files during collection. Press enter after each entry you want to save.",
-      task_explained:
-        "Once complete, all files will be available for embedding into workspaces in the document picker.",
-      branch: "Branch you wish to collect files from",
-      branch_loading: "-- loading available branches --",
-      branch_explained: "Branch you wish to collect files from.",
-      token_information:
-        "Without filling out the <b>GitLab Access Token</b> this data connector will only be able to collect the <b>top-level</b> files of the repo due to GitLab's public API rate-limits.",
-      token_personal:
-        "Get a free Personal Access Token with a GitLab account here.",
-    },
-    gitea: {
-      name: "Gitea Repo",
-      description:
-        "Import an entire public or private repository from any Gitea instance in a single click.",
-      URL: "Gitea Repo URL",
-      URL_explained:
-        "Url of the repo you wish to collect on your Gitea instance - self-hosted instances are supported.",
-      token: "Gitea Access Token",
-      optional: "optional",
-      token_explained:
-        "Access Token required to collect private repositories or repos on instances that require authentication.",
-      token_explained_start: "Without an ",
-      token_explained_link1: "Access Token",
-      token_explained_end:
-        ", only repositories that your Gitea instance exposes publicly can be collected.",
-      ignores: "File Ignores",
-      git_ignore:
-        "List in .gitignore format to ignore specific files during collection. Press enter after each entry you want to save.",
-      task_explained:
-        "Once complete, all files will be available for embedding into workspaces in the document picker.",
-      branch: "Branch you wish to collect files from.",
-      branch_loading: "-- loading available branches --",
-      branch_explained: "Branch you wish to collect files from.",
-      token_information:
-        "Without filling out the <b>Gitea Access Token</b> this data connector will only be able to collect files from repositories that are <b>publicly readable</b> on your Gitea instance.",
-    },
     youtube: {
       name: "YouTube Transcript",
       description:
@@ -1261,8 +1177,20 @@ const TRANSLATIONS = {
         "Once complete, the transcript will be available for embedding into workspaces in the document picker.",
     },
     "website-depth": {
-      name: "Bulk Link Scraper",
-      description: "Scrape a website and its sub-links up to a certain depth.",
+      name: "Website Link",
+      description:
+        "Import one webpage or follow its links to collect more pages.",
+      "import-scope": "What would you like to import?",
+      "single-page": "This page only",
+      "linked-pages": "This page and linked pages",
+      "invalid-url": "Enter a valid website URL.",
+      importing: "Importing website content...",
+      "import-single": "Import this page",
+      "import-linked": "Import linked pages",
+      empty: "No page content could be imported.",
+      success: "Imported {{count}} pages.",
+      success_one: "Imported {{count}} page.",
+      success_other: "Imported {{count}} pages.",
       URL: "Website URL",
       URL_explained: "URL of the website you want to scrape.",
       depth: "Crawl Depth",
@@ -1272,37 +1200,6 @@ const TRANSLATIONS = {
       max_pages_explained: "Maximum number of links to scrape.",
       task_explained:
         "Once complete, all scraped content will be available for embedding into workspaces in the document picker.",
-    },
-    confluence: {
-      name: "Confluence",
-      description: "Import an entire Confluence page in a single click.",
-      deployment_type: "Confluence deployment type",
-      deployment_type_explained:
-        "Determine if your Confluence instance is hosted on Atlassian cloud or self-hosted.",
-      base_url: "Confluence base URL",
-      base_url_explained: "This is the base URL of your Confluence space.",
-      space_key: "Confluence space key",
-      space_key_explained:
-        "This is the spaces key of your confluence instance that will be used. Usually begins with ~",
-      username: "Confluence Username",
-      username_explained: "Your Confluence username",
-      auth_type: "Confluence Auth Type",
-      auth_type_explained:
-        "Select the authentication type you want to use to access your Confluence pages.",
-      auth_type_username: "Username and Access Token",
-      auth_type_personal: "Personal Access Token",
-      token: "Confluence Access Token",
-      token_explained_start:
-        "You need to provide an access token for authentication. You can generate an access token",
-      token_explained_link: "here",
-      token_desc: "Access token for authentication",
-      pat_token: "Confluence Personal Access Token",
-      pat_token_explained: "Your Confluence personal access token.",
-      bypass_ssl: "Bypass SSL Certificate Validation",
-      bypass_ssl_explained:
-        "Enable this option to bypass SSL certificate validation for self-hosted confluence instances with self-signed certificate",
-      task_explained:
-        "Once complete, the page content will be available for embedding into workspaces in the document picker.",
     },
     manage: {
       documents: "Documents",
@@ -1362,10 +1259,6 @@ const TRANSLATIONS = {
       "drop-here": "Drop onto a folder to upload there, or here for {{folder}}",
       "file-types":
         "supports text files, csv's, spreadsheets, audio files, and more!",
-      "or-submit-link": "or submit a link",
-      "placeholder-link": "https://example.com",
-      fetching: "Fetching...",
-      "fetch-website": "Fetch website",
       "privacy-notice":
         "These files will be uploaded to the document processor running on this Nexus AI instance. These files are not sent or shared with a third party.",
     },
@@ -1850,7 +1743,7 @@ const TRANSLATIONS = {
     "role-default-suffix": "(Default)",
     permissions: {
       title: "Permissions",
-      all: "Holds every permission on the instance.",
+      all: "Full system administration, except owner-reserved permissions and owner-only operations.",
       none: "No elevated permissions - can only chat in the workspaces they are added to.",
     },
     "message-limit": {
@@ -2610,10 +2503,6 @@ const TRANSLATIONS = {
     "pinecone-index-name": "Pinecone Index Name",
   },
   help: {
-    "paperless-base-url":
-      "The URL where your Paperless-ngx instance is running (e.g., http://localhost:8000)",
-    "drupal-wiki-token":
-      "You need to provide an API token for authentication. See the Drupal Wiki <a>manual</a> on how to generate an API-Token for your user.",
     "lmstudio-context-window":
       "Override the context window limit. Leave empty to auto-detect from the model (defaults to 4096 if detection fails).",
     "finish-node":
@@ -2625,13 +2514,13 @@ const TRANSLATIONS = {
     "default-system-prompt":
       "A system prompt provides instructions that shape the AI’s responses and behavior. This prompt will be automatically applied to all newly created workspaces. To change the system prompt of a <b>specific workspace</b>, edit the prompt in the <b>workspace settings</b>. To restore the system prompt to our sane default, leave this field empty and save changes.",
     "toggle-3":
-      "This feature only applies to web-based content, such as websites, Confluence, YouTube, and GitHub files.",
+      "This feature only applies to web-based content, such as websites and YouTube transcripts.",
     "toggle-2":
       "Watched documents will automatically update in all workspaces they are referenced in at the same time of update.",
     toggle:
       'Enable the ability to specify a document to be "watched". Watched document\'s content will be regularly fetched and updated in Nexus AI.',
     "role-modal":
-      "This role holds the system administrator grant, so it has every permission — including any added by future updates — regardless of the boxes below.",
+      "This role has full system administration, including permissions added later, except access reserved to the owner. Ownership transfer and instance reset always remain owner-only.",
     "factory-reset":
       "Erases the entire deployment and starts it over from the setup screen, as if it had just been installed. Unlike the reset above, this deletes <strong>your own account</strong> and the LLM, embedder and vector database configuration too.",
     "reserved-permissions":
@@ -2748,12 +2637,6 @@ const TRANSLATIONS = {
       "If you leave this field blank, the context window limit will be auto-detected from the model and applied to all chats. If auto-detection fails, a fallback context window limit of 16000 will be used.",
     omlxoptions:
       "Specify the maximum number of tokens that can be used for the model context window.",
-    "drupal-wiki":
-      "Once complete, all pages will be available for embedding into workspaces.",
-    "paperless-ngx-2":
-      "Once complete, all documents will be available for embedding into workspaces.",
-    "paperless-ngx":
-      "Make sure your Paperless-ngx instance is running and accessible from this machine.",
     "generic-open-ai-options-4":
       "Some STT services require an API key to transcribe audio - this is optional if your service does not require one.",
     "generic-open-ai-options-3":

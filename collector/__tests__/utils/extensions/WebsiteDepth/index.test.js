@@ -195,6 +195,21 @@ describe("WebsiteDepth extractLinks robustness", () => {
 });
 
 describe("WebsiteDepth websiteScraper", () => {
+  it("imports only the submitted page when depth is zero", async () => {
+    mockSite({
+      "https://example.com/docs/page": '<a href="/docs/child">child</a>',
+      "https://example.com/docs/child": "child content",
+    });
+
+    const scraped = await websiteScraper("https://example.com/docs/page", 0, 1);
+
+    expect(scraped.map((document) => document.chunkSource)).toEqual([
+      "link://https://example.com/docs/page",
+    ]);
+    expect(fetchedUrls()).not.toContain("https://example.com/docs/child");
+    expect(writeToServerDocuments).toHaveBeenCalledTimes(1);
+  });
+
   it("crawls, scrapes and stores every in-scope page", async () => {
     mockSite({
       "https://example.com/docs/page":

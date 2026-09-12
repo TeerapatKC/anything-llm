@@ -9,6 +9,7 @@ import {
   Mail,
   PanelLeftIcon,
   PenLine,
+  MessageSquareText,
   ScrollText,
   Settings,
   Unplug,
@@ -220,6 +221,34 @@ const SidebarOptions = ({ user = null, t }) => (
           permissions={[PERMISSIONS.SYSTEM_MONITORING]}
         />
         <Option
+          btnText={t("settings.admin")}
+          icon={<UserCog className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
+            {
+              btnText: t("settings.users"),
+              href: paths.settings.users(),
+              permissions: [PERMISSIONS.USERS_VIEW],
+            },
+            {
+              btnText: t("settings.roles"),
+              href: paths.settings.roles(),
+              permissions: [PERMISSIONS.ROLES_MANAGE],
+            },
+            {
+              btnText: t("settings.invites"),
+              href: paths.settings.invites(),
+              permissions: [PERMISSIONS.INVITES_MANAGE],
+            },
+            {
+              hidden: !isSuperAdmin(user),
+              btnText: t("settings.instance-owner"),
+              href: paths.settings.superAdmin(),
+              permissions: [PERMISSIONS.SYSTEM_ADMIN],
+            },
+          ]}
+        />
+        <Option
           btnText={t("settings.workspaces")}
           icon={<Layers className="h-5 w-5 shrink-0" />}
           user={user}
@@ -234,10 +263,27 @@ const SidebarOptions = ({ user = null, t }) => (
               href: paths.settings.privateWorkspaces(),
               permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
+          ]}
+        />
+        <Option
+          btnText={t("settings.prompts-and-commands")}
+          icon={<MessageSquareText className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
             {
               btnText: t("settings.default-system-prompt"),
               href: paths.settings.defaultSystemPrompt(),
               permissions: [PERMISSIONS.SYSTEM_PROMPTS],
+            },
+            {
+              btnText: t("settings.system-prompt-variables"),
+              href: paths.settings.systemPromptVariables(),
+              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
+            },
+            {
+              btnText: t("settings.slash-commands"),
+              href: paths.settings.slashCommands(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
           ]}
         />
@@ -299,26 +345,20 @@ const SidebarOptions = ({ user = null, t }) => (
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
             },
             {
-              // Deliberately a role check rather than a permission check - the flow
-              // list is temporarily restricted to the instance owner regardless of
-              // who else holds the AGENTS_FLOWS permission.
-              hidden: !isSuperAdmin(user),
               btnText: t("settings.agent-flow"),
               href: paths.settings.agentFlow(),
-              permissions: [PERMISSIONS.AGENTS_FLOWS],
+              permissions: [
+                PERMISSIONS.AGENTS_FLOWS_VIEW,
+                PERMISSIONS.AGENTS_FLOWS_EDIT,
+                PERMISSIONS.AGENTS_FLOWS_DELETE,
+              ],
             },
             {
-              // Same treatment as Agent Flow above - the DB connections configured
-              // here are instance-wide credentials shared by every workspace.
-              hidden: !isSuperAdmin(user),
               btnText: t("settings.sql-connector"),
               href: paths.settings.sqlConnector(),
               permissions: [PERMISSIONS.AGENTS_MANAGE_SKILLS],
             },
             {
-              // Same treatment again - a server added here is an instance-wide
-              // credential pointed at an outside service.
-              hidden: !isSuperAdmin(user),
               btnText: t("settings.mcp-servers"),
               href: paths.settings.mcpServers(),
               permissions: [PERMISSIONS.AGENTS_MCP_SERVERS],
@@ -345,16 +385,6 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.api-keys"),
               href: paths.settings.apiKeys(),
               permissions: [PERMISSIONS.SYSTEM_API_KEYS],
-            },
-            {
-              btnText: t("settings.system-prompt-variables"),
-              href: paths.settings.systemPromptVariables(),
-              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
-            },
-            {
-              btnText: t("settings.slash-commands"),
-              href: paths.settings.slashCommands(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
           ]}
         />
@@ -393,42 +423,12 @@ const SidebarOptions = ({ user = null, t }) => (
           ]}
         />
         <Option
-          btnText={t("settings.admin")}
-          icon={<UserCog className="h-5 w-5 shrink-0" />}
+          btnText={t("settings.smtp")}
+          icon={<Mail className="h-5 w-5 shrink-0" />}
+          href={paths.settings.smtp()}
           user={user}
-          childOptions={[
-            {
-              btnText: t("settings.users"),
-              href: paths.settings.users(),
-              permissions: [PERMISSIONS.USERS_VIEW],
-            },
-            {
-              btnText: t("settings.roles"),
-              href: paths.settings.roles(),
-              permissions: [PERMISSIONS.ROLES_MANAGE],
-            },
-            {
-              btnText: t("settings.invites"),
-              href: paths.settings.invites(),
-              permissions: [PERMISSIONS.INVITES_MANAGE],
-            },
-            {
-              hidden: !isSuperAdmin(user),
-              btnText: t("settings.instance-owner"),
-              href: paths.settings.superAdmin(),
-              permissions: [PERMISSIONS.SYSTEM_ADMIN],
-            },
-          ]}
+          permissions={[PERMISSIONS.SYSTEM_SETTINGS_SMTP]}
         />
-        {isSuperAdmin(user) && (
-          <Option
-            btnText={t("settings.smtp")}
-            icon={<Mail className="h-5 w-5 shrink-0" />}
-            href={paths.settings.smtp()}
-            user={user}
-            permissions={[PERMISSIONS.SYSTEM_ADMIN]}
-          />
-        )}
         <Option
           btnText={t("settings.logs")}
           icon={<ScrollText className="h-5 w-5 shrink-0" />}

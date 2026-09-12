@@ -5,7 +5,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import Admin from "@/models/admin";
 import System from "@/models/system";
 import showToast from "@/utils/toast";
-import { userCan, PERMISSIONS } from "@/utils/permissions";
+import { userCan, userCanAny, PERMISSIONS } from "@/utils/permissions";
 import { userFromStorage } from "@/utils/request";
 import {
   Bot,
@@ -73,9 +73,16 @@ export default function AdminAgents() {
   // system administrator may configure them.
   const currentUser = userFromStorage();
   const isSystemAdmin = userCan(PERMISSIONS.SYSTEM_ADMIN, currentUser);
-  // The page itself already requires `agents.manage_skills`, so the only section
-  // needing a gate of its own is agent flows, which has its own permission.
-  const canManageFlows = userCan(PERMISSIONS.AGENTS_FLOWS, currentUser);
+  const canViewFlows = userCanAny(
+    [
+      PERMISSIONS.AGENTS_FLOWS_VIEW,
+      PERMISSIONS.AGENTS_FLOWS_EDIT,
+      PERMISSIONS.AGENTS_FLOWS_DELETE,
+    ],
+    currentUser
+  );
+  const canEditFlows = userCan(PERMISSIONS.AGENTS_FLOWS_EDIT, currentUser);
+  const canDeleteFlows = userCan(PERMISSIONS.AGENTS_FLOWS_DELETE, currentUser);
   const filterSkillsByMode = ([_, skillConfig]) => {
     if (!skillConfig.mode) return true;
     if (skillConfig.mode.includes("adminOnly") && !isSystemAdmin) return false;
@@ -84,9 +91,7 @@ export default function AdminAgents() {
   const configurableSkills = Object.fromEntries(
     Object.entries(allConfigurableSkills)
       .filter(filterSkillsByMode)
-      // SQL Connector has its own dedicated, super-admin-only page now (mirrors Agent
-      // Flow) - kept in the shared catalog (skills.jsx) so the per-workspace skill
-      // picker can still show it, just left out of this list.
+      // SQL Connector has its own page but remains in the shared skills catalog.
       .filter(([key]) => key !== "sql-agent")
   );
 
@@ -118,19 +123,18 @@ export default function AdminAgents() {
         Admin.systemPreferencesByFields([
           "disabled_agent_skills",
           "default_agent_skills",
-          "active_agent_flows",
         ]),
-        AgentFlows.listFlows(),
+        canViewFlows ? AgentFlows.listFlows() : Promise.resolve({ flows: [] }),
         System.isFileSystemAgentAvailable(),
         System.isCreateFilesAgentAvailable(),
         System.isSendEmailAvailable(),
       ]);
 
-      const { flows = [] } = flowsRes;
-      setSettings({ ..._settings, preferences: _preferences.settings } ?? {});
-      setAgentSkills(_preferences.settings?.default_agent_skills ?? []);
+      const { flows = [] } = flowsRes || {};
+      setSettings({ ..._settings, preferences: _preferences?.settings } ?? {});
+      setAgentSkills(_preferences?.settings?.default_agent_skills ?? []);
       setDisabledAgentSkills(
-        _preferences.settings?.disabled_agent_skills ?? []
+        _preferences?.settings?.disabled_agent_skills ?? []
       );
       setActiveFlowIds(flows.filter((f) => f.active).map((f) => f.uuid));
       setAgentFlows(flows);
@@ -353,7 +357,7 @@ export default function AdminAgents() {
       >
         <form
           onSubmit={handleSubmit}
-          onChange={(e) => {
+          onChange={() => {
             if (!selectedFlow) setHasChanges(true);
           }}
           ref={formEl}
@@ -368,12 +372,6 @@ export default function AdminAgents() {
             name="system::disabled_agent_skills"
             type="hidden"
             value={disabledAgentSkills.join(",")}
-          />
-          <input
-            type="hidden"
-            name="system::active_agent_flows"
-            id="active_agent_flows"
-            value={activeFlowIds.join(",")}
           />
 
           {showSkillModal ? (
@@ -400,6 +398,8 @@ export default function AdminAgents() {
                   <PersonalizationSettings setHasChanges={setHasChanges} />
                 ) : selectedFlow ? (
                   <FlowPanel
+                    canEdit={canEditFlows}
+                    canDelete={canDeleteFlows}
                     flow={selectedFlow}
                     toggleFlow={toggleFlow}
                     enabled={activeFlowIds.includes(selectedFlow.uuid)}
@@ -473,7 +473,7 @@ export default function AdminAgents() {
 
                 <div className="space-y-4 p-3">
                   {isAgentFlowRoute ? (
-                    canManageFlows ? (
+                    canViewFlows ? (
                       <>
                         <div className="flex items-center justify-between gap-x-2 text-theme-text-primary">
                           <div className="flex min-w-0 items-center gap-x-2">
@@ -482,15 +482,17 @@ export default function AdminAgents() {
                               {t("agent-panel.agent-flows")}
                             </p>
                           </div>
-                          <Link
-                            to={paths.agents.builder()}
-                            className="flex shrink-0 items-center gap-x-1 text-sm text-cta-button hover:underline"
-                          >
-                            <Plus size={16} />
-                            {agentFlows.length === 0
-                              ? t("agent-panel.create-flow")
-                              : t("agent-panel.open-builder")}
-                          </Link>
+                          {canEditFlows && (
+                            <Link
+                              to={paths.agents.builder()}
+                              className="flex shrink-0 items-center gap-x-1 text-sm text-cta-button hover:underline"
+                            >
+                              <Plus size={16} />
+                              {agentFlows.length === 0
+                                ? t("agent-panel.create-flow")
+                                : t("agent-panel.open-builder")}
+                            </Link>
+                          )}
                         </div>
                         <AgentFlowsList
                           flows={agentFlows}
@@ -561,7 +563,7 @@ export default function AdminAgents() {
     >
       <form
         onSubmit={handleSubmit}
-        onChange={(e) => {
+        onChange={() => {
           if (!selectedFlow) setHasChanges(true);
         }}
         ref={formEl}
@@ -576,12 +578,6 @@ export default function AdminAgents() {
           name="system::disabled_agent_skills"
           type="hidden"
           value={disabledAgentSkills.join(",")}
-        />
-        <input
-          type="hidden"
-          name="system::active_agent_flows"
-          id="active_agent_flows"
-          value={activeFlowIds.join(",")}
         />
 
         <header className="flex flex-none items-start gap-3">
@@ -621,7 +617,7 @@ export default function AdminAgents() {
             <div className="thin-scrollbar min-h-0 flex-1 overflow-y-auto p-3">
               <div className="space-y-4">
                 {isAgentFlowRoute ? (
-                  canManageFlows ? (
+                  canViewFlows ? (
                     <>
                       <div className="text-theme-text-primary flex items-center justify-between gap-x-2">
                         <div className="flex items-center gap-x-2">
@@ -630,17 +626,19 @@ export default function AdminAgents() {
                             {t("agent-panel.agent-flows")}
                           </p>
                         </div>
-                        <Link
-                          to={paths.agents.builder()}
-                          className="flex items-center gap-x-1 text-cta-button hover:underline"
-                        >
-                          <Plus size={16} />
-                          <p className="text-sm">
-                            {agentFlows.length === 0
-                              ? t("agent-panel.create-flow")
-                              : t("agent-panel.open-builder")}
-                          </p>
-                        </Link>
+                        {canEditFlows && (
+                          <Link
+                            to={paths.agents.builder()}
+                            className="flex items-center gap-x-1 text-cta-button hover:underline"
+                          >
+                            <Plus size={16} />
+                            <p className="text-sm">
+                              {agentFlows.length === 0
+                                ? t("agent-panel.create-flow")
+                                : t("agent-panel.open-builder")}
+                            </p>
+                          </Link>
+                        )}
                       </div>
                       <AgentFlowsList
                         flows={agentFlows}
@@ -707,6 +705,8 @@ export default function AdminAgents() {
                     <PersonalizationSettings setHasChanges={setHasChanges} />
                   ) : selectedFlow ? (
                     <FlowPanel
+                      canEdit={canEditFlows}
+                      canDelete={canDeleteFlows}
                       flow={selectedFlow}
                       toggleFlow={toggleFlow}
                       enabled={activeFlowIds.includes(selectedFlow.uuid)}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import Sidebar from "@/components/SettingsSidebar";
 import Telegram from "@/models/telegram";
+import { TelegramLogo } from "@/components/lib/BrandIcon";
 import ConnectedView from "./ConnectedView";
 import SetupView from "./SetupView";
 import { useTranslation } from "react-i18next";
@@ -25,7 +26,7 @@ export default function TelegramBotSettings() {
   if (loading) {
     return (
       <ConnectionsLayout>
-        <div className="flex items-center justify-center h-full">
+        <div className="flex min-h-[240px] items-center justify-center">
           <Spinner size="lg" className="text-zinc-400 light:text-slate-400" />
         </div>
       </ConnectionsLayout>
@@ -35,14 +36,14 @@ export default function TelegramBotSettings() {
   const hasConfig = config?.active && config?.bot_username;
   if (!hasConfig) {
     return (
-      <ConnectionsLayout fullPage={true}>
+      <ConnectionsLayout>
         <SetupView onConnected={handleConnected} />
       </ConnectionsLayout>
     );
   }
 
   return (
-    <ConnectionsLayout fullPage={true}>
+    <ConnectionsLayout>
       <ConnectedView
         config={config}
         onDisconnected={handleDisconnected}
@@ -52,31 +53,32 @@ export default function TelegramBotSettings() {
   );
 }
 
-function ConnectionsLayout({ children, fullPage = false }) {
+function ConnectionsLayout({ children }) {
   const { t } = useTranslation();
   return (
-    <div className="w-screen h-screen overflow-hidden bg-zinc-950 light:bg-slate-50 flex min-[1100px]:mt-0 mt-6">
+    <div className="flex h-screen w-screen overflow-hidden bg-zinc-950 light:bg-slate-50">
       <Sidebar />
-      <div
-        style={{ height: "100%" }}
-        className="relative min-w-0 bg-zinc-900 light:bg-white light:border light:border-slate-300 w-full h-full overflow-y-scroll p-4 min-[1100px]:p-0"
-      >
-        {fullPage ? (
-          <div className="flex flex-col w-full px-1 py-16 min-[1100px]:px-6 min-[1100px]:py-6">
-            <div className="w-full flex flex-col gap-y-2 pb-6 border-b border-white/20 light:border-slate-300">
-              <p className="text-lg font-semibold leading-7 text-theme-text-primary light:text-slate-900">
-                {t("telegram.title")}
+      <main className="min-w-0 flex-1 overflow-y-auto bg-zinc-900 light:bg-slate-50">
+        <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-20 sm:px-6 min-[1100px]:px-10 min-[1100px]:pt-10">
+          <header className="flex items-start gap-4 border-b border-white/20 pb-6 light:border-slate-300">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-white p-2">
+              <TelegramLogo className="size-full" />
+            </div>
+            <div className="min-w-0 max-w-3xl">
+              <p className="text-xs font-medium text-zinc-400 light:text-slate-500">
+                {t("settings.channels")}
               </p>
-              <p className="text-xs leading-4 text-zinc-400 light:text-slate-600 max-w-[700px]">
+              <h1 className="mt-1 text-lg font-semibold leading-7 text-theme-text-primary light:text-slate-900">
+                {t("telegram.title")}
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-zinc-400 light:text-slate-600">
                 {t("telegram.description")}
               </p>
             </div>
-            {children}
-          </div>
-        ) : (
-          children
-        )}
-      </div>
+          </header>
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

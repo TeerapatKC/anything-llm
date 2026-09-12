@@ -208,6 +208,19 @@ describe("permission resolution", () => {
 });
 
 describe("custom roles", () => {
+  it("keeps a flow auditor separate from flow editing and owner-reserved SMTP", async () => {
+    await Role.create({
+      name: "flow-auditor",
+      displayName: "Flow Auditor",
+      permissions: [PERMISSIONS.AGENTS_FLOWS_VIEW],
+    });
+    const actor = { role: "flow-auditor" };
+    expect(await Role.userCan(actor, PERMISSIONS.AGENTS_FLOWS_VIEW)).toBe(true);
+    expect(await Role.userCan(actor, PERMISSIONS.AGENTS_FLOWS_EDIT)).toBe(false);
+    expect(await Role.userCan(actor, PERMISSIONS.AGENTS_FLOWS_DELETE)).toBe(false);
+    expect(await Role.userCan(actor, PERMISSIONS.SYSTEM_SETTINGS_SMTP)).toBe(false);
+  });
+
   it("creates a role with only the permissions that were ticked", async () => {
     const { role, error } = await Role.create({
       name: "editor",
@@ -277,6 +290,11 @@ describe("custom roles", () => {
 });
 
 describe("built-in role protection", () => {
+  it("marks Member as the default system role", async () => {
+    expect((await Role.get({ name: "default" })).isDefault).toBe(true);
+    expect((await Role.get({ name: "admin" })).isDefault).toBe(false);
+  });
+
   it("refuses to delete a built-in role", async () => {
     const admin = await Role.get({ name: "admin" });
     const { success, error } = await Role.delete(admin.id);

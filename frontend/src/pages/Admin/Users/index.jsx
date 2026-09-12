@@ -94,13 +94,9 @@ export default function AdminUsers() {
               <TableHead scope="col">
                 {t("admin-users.table.username")}
               </TableHead>
-              <TableHead scope="col">
-                {t("admin-users.table.email")}
-              </TableHead>
+              <TableHead scope="col">{t("admin-users.table.email")}</TableHead>
               <TableHead scope="col">{t("admin-users.table.role")}</TableHead>
-              <TableHead scope="col">
-                {t("admin-users.table.status")}
-              </TableHead>
+              <TableHead scope="col">{t("admin-users.table.status")}</TableHead>
               <TableHead scope="col">
                 {t("admin-users.table.date-added")}
               </TableHead>
@@ -156,7 +152,7 @@ export function RoleHintDisplay({ role, roles = [], permissionLabels = {} }) {
   const { t } = useTranslation();
   const selected = roles.find((entry) => entry.name === role);
   const granted = selected?.permissions ?? [];
-  const isSuperAdmin = granted.includes("system.admin");
+  const hasSystemAdminGrant = granted.includes("system.admin");
 
   return (
     <div className="flex flex-col gap-y-1 py-1 pb-4">
@@ -168,7 +164,7 @@ export function RoleHintDisplay({ role, roles = [], permissionLabels = {} }) {
           {selected.description}
         </p>
       )}
-      {isSuperAdmin ? (
+      {hasSystemAdminGrant ? (
         <p className="text-xs text-theme-text-secondary">
           {t("admin-users.permissions.all")}
         </p>

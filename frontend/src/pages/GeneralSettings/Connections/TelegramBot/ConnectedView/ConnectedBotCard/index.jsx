@@ -4,23 +4,22 @@ import { useTranslation } from "react-i18next";
 export default function ConnectedBotCard({ config }) {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col gap-y-[18px]">
-      <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
-        Connected Bot
-      </p>
-      <div className="flex items-start gap-x-1 border border-zinc-700 light:border-slate-200 rounded-xl p-3 w-[700px]">
-        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#00ADEC] shrink-0">
-          <TelegramLogo className="h-5 w-5 text-theme-text-primary!" />
-        </div>
-        <div className="flex flex-col gap-y-1 ml-1">
-          <p className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
-            @{config.bot_username}
-          </p>
-          <p className="text-xs text-zinc-400 light:text-slate-600">
-            {t("telegram.connected.status")}
-          </p>
-        </div>
+    <section className="flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-zinc-800/50 p-5 shadow-sm light:border-slate-200 light:bg-white sm:p-6">
+      <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white p-2.5">
+        <TelegramLogo className="size-full" />
       </div>
-    </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-medium uppercase tracking-widest text-zinc-400 light:text-slate-500">
+          {t("telegram.title")}
+        </p>
+        <p className="mt-1 truncate text-lg font-semibold text-theme-text-primary light:text-slate-900">
+          @{config.bot_username}
+        </p>
+      </div>
+      <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1.5 text-xs font-medium text-emerald-300 light:text-emerald-700">
+        <span className="size-2 rounded-full bg-emerald-400" />
+        {t("telegram.connected.status")}
+      </span>
+    </section>
   );
 }

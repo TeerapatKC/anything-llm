@@ -16,7 +16,7 @@ import {
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useTranslation } from "react-i18next";
 
-function ManageFlowMenu({ flow, onDelete }) {
+function ManageFlowMenu({ flow, onDelete, canEdit, canDelete }) {
   const [confirm, setConfirm] = useState(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -54,17 +54,21 @@ function ManageFlowMenu({ flow, onDelete }) {
           <Settings />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-40">
-          <DropdownMenuItem
-            onClick={() => navigate(paths.agents.editAgent(flow.uuid))}
-          >
-            <Pencil />
-            {t("agent-flow.edit")}
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive" onClick={deleteFlow}>
-            <Trash2 />
-            {t("agent-flow.delete")}
-          </DropdownMenuItem>
+          {canEdit && (
+            <DropdownMenuItem
+              onClick={() => navigate(paths.agents.editAgent(flow.uuid))}
+            >
+              <Pencil />
+              {t("agent-flow.edit")}
+            </DropdownMenuItem>
+          )}
+          {canEdit && canDelete && <DropdownMenuSeparator />}
+          {canDelete && (
+            <DropdownMenuItem variant="destructive" onClick={deleteFlow}>
+              <Trash2 />
+              {t("agent-flow.delete")}
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <ConfirmDialog config={confirm} onClose={() => setConfirm(null)} />
@@ -72,8 +76,16 @@ function ManageFlowMenu({ flow, onDelete }) {
   );
 }
 
-export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
+export default function FlowPanel({
+  flow,
+  toggleFlow,
+  enabled,
+  onDelete,
+  canEdit = false,
+  canDelete = false,
+}) {
   const { t } = useTranslation();
+  const canManageThisFlow = flow.scope !== "workspace";
   const handleToggle = async () => {
     try {
       const { success, error } = await AgentFlows.toggleFlow(
@@ -103,8 +115,17 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
               </label>
             </div>
             <div className="flex items-center gap-x-2">
-              <Toggle size="lg" enabled={enabled} onChange={handleToggle} />
-              <ManageFlowMenu flow={flow} onDelete={onDelete} />
+              {canEdit && canManageThisFlow && (
+                <Toggle size="lg" enabled={enabled} onChange={handleToggle} />
+              )}
+              {canManageThisFlow && (canEdit || canDelete) && (
+                <ManageFlowMenu
+                  flow={flow}
+                  onDelete={onDelete}
+                  canEdit={canEdit}
+                  canDelete={canDelete}
+                />
+              )}
             </div>
           </div>
           <p className="whitespace-pre-wrap text-theme-text-primary/60 text-xs font-medium py-1.5">
@@ -117,7 +138,7 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
               {t("agent-flow.workspace-owned-hint")}
             </p>
           ) : (
-            <FlowWorkspaceVisibility flowUuid={flow.uuid} />
+            <FlowWorkspaceVisibility flowUuid={flow.uuid} canEdit={canEdit} />
           )}
         </div>
       </div>
@@ -126,12 +147,12 @@ export default function FlowPanel({ flow, toggleFlow, enabled, onDelete }) {
 }
 
 /**
- * Lets a super admin choose exactly which workspaces' agents can see and run
+ * Lets a permitted operator choose exactly which workspaces' agents can see and run
  * this flow. Reuses the same per-workspace `agentSkillConfig.activeFlows`
  * storage that each workspace's own Agent Skills screen already writes to -
  * this is just a flow-centric view over the same data.
  */
-function FlowWorkspaceVisibility({ flowUuid }) {
+function FlowWorkspaceVisibility({ flowUuid, canEdit }) {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -208,7 +229,7 @@ function FlowWorkspaceVisibility({ flowUuid }) {
             {t("agent-flow.visibility.description")}
           </p>
         </div>
-        {workspaces.length > 0 && (
+        {canEdit && workspaces.length > 0 && (
           <Button
             type="button"
             variant="outline"
@@ -237,15 +258,21 @@ function FlowWorkspaceVisibility({ flowUuid }) {
               key={ws.id}
               className="rounded-lg bg-muted/10 ring-1 ring-foreground/10 p-3"
             >
-              <label className="flex min-h-8 w-full cursor-pointer items-center justify-between gap-4">
+              <label className="flex min-h-8 w-full items-center justify-between gap-4">
                 <span className="min-w-0 text-left text-sm font-medium text-foreground">
                   {ws.name}
                 </span>
-                <SimpleToggleSwitch
-                  size="md"
-                  enabled={selectedIds.has(ws.id)}
-                  onChange={(checked) => toggleWorkspace(ws.id, checked)}
-                />
+                {canEdit ? (
+                  <SimpleToggleSwitch
+                    size="md"
+                    enabled={selectedIds.has(ws.id)}
+                    onChange={(checked) => toggleWorkspace(ws.id, checked)}
+                  />
+                ) : (
+                  <span className="text-xs text-theme-text-secondary">
+                    {selectedIds.has(ws.id) ? "Enabled" : "Disabled"}
+                  </span>
+                )}
               </label>
             </div>
           ))}

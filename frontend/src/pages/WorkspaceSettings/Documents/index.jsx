@@ -5,10 +5,26 @@ import DataConnectors from "@/components/Modals/ManageWorkspace/DataConnectors";
 import { EmbeddingProgressProvider } from "@/EmbeddingProgressContext";
 import { cn } from "@/lib/utils";
 import WorkspaceSettingsSectionHeader from "@/components/layout/WorkspaceSettingsSectionHeader";
+import useUser from "@/hooks/useUser";
+import {
+  WORKSPACE_PERMISSIONS as WS,
+  workspaceCanAny,
+} from "@/utils/permissions";
 
 export default function WorkspaceDocuments({ workspace }) {
   const { t } = useTranslation();
+  const { user } = useUser();
   const [selectedTab, setSelectedTab] = useState("documents");
+  const canUseConnectors = workspaceCanAny(
+    [
+      WS.DATA_CONNECTORS_WEB,
+      WS.DATA_CONNECTORS_YOUTUBE,
+      WS.DATA_CONNECTORS,
+      WS.DOCUMENTS_UPLOAD,
+    ],
+    workspace?.slug,
+    user
+  );
 
   if (!workspace) return null;
 
@@ -24,14 +40,16 @@ export default function WorkspaceDocuments({ workspace }) {
           active={selectedTab === "documents"}
           onClick={() => setSelectedTab("documents")}
         />
-        <SubTabButton
-          label={t("connectors.manage.data-connectors")}
-          active={selectedTab === "dataConnectors"}
-          onClick={() => setSelectedTab("dataConnectors")}
-        />
+        {canUseConnectors && (
+          <SubTabButton
+            label={t("connectors.manage.data-connectors")}
+            active={selectedTab === "dataConnectors"}
+            onClick={() => setSelectedTab("dataConnectors")}
+          />
+        )}
       </div>
 
-      {selectedTab === "documents" ? (
+      {selectedTab === "documents" || !canUseConnectors ? (
         <EmbeddingProgressProvider>
           <DocumentSettings workspace={workspace} />
         </EmbeddingProgressProvider>

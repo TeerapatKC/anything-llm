@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Copy, Check, MessageCircle } from "lucide-react";
+import { Copy, Check } from "lucide-react";
+import { LineLogo } from "@/components/lib/BrandIcon";
 import Line from "@/models/line";
 import showToast from "@/utils/toast";
 import { Button } from "@/components/ui/button";
@@ -107,8 +108,8 @@ export default function LineConnection({ user }) {
   if (!connection?.available && !connection?.link) {
     return (
       <ConnectionCard
-        icon={<MessageCircle className="h-5 w-5 text-white" />}
-        accentClassName="bg-[#06C755]"
+        icon={<LineLogo className="size-6" />}
+        accentClassName="bg-white"
         title={t("profile_settings.line.title")}
         status="unavailable"
       >
@@ -129,8 +130,8 @@ export default function LineConnection({ user }) {
 
   return (
     <ConnectionCard
-      icon={<MessageCircle className="h-5 w-5 text-white" />}
-      accentClassName="bg-[#06C755]"
+      icon={<LineLogo className="size-6" />}
+      accentClassName="bg-white"
       title={t("profile_settings.line.title")}
       description={
         link

@@ -128,8 +128,10 @@ export default function RoleModal({
           {readOnly
             ? "This role is built into the instance and cannot be changed. It is shown here so you can see exactly what owning the instance grants."
             : scope === "workspace"
-              ? "Define what members with this role can do inside this workspace."
-              : "Define the permissions granted to users with this role."}
+              ? workspaceSlug
+                ? "Define what members with this role can do in this workspace."
+                : "Define what members with this role can do in each workspace where they hold it."
+              : "Define instance-wide access. The owner can reserve permissions from this role; ownership transfer and reset always remain owner-only."}
         </DialogDescription>
       </DialogHeader>
 

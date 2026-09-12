@@ -17,11 +17,17 @@ function agentFlowEndpoints(app) {
   // Save a flow configuration
   app.post(
     "/agent-flows/save",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS_EDIT])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
         const { name, config, uuid } = request.body;
+
+        if (uuid && AgentFlows.flowOwner(uuid) !== null)
+          return response.status(403).json({
+            success: false,
+            error: "Workspace-owned flows must be edited in their workspace.",
+          });
 
         if (!name || !config) {
           return response.status(400).json({
@@ -61,7 +67,14 @@ function agentFlowEndpoints(app) {
   // List all available flows
   app.get(
     "/agent-flows/list",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.AGENTS_FLOWS_VIEW,
+        PERMISSIONS.AGENTS_FLOWS_EDIT,
+        PERMISSIONS.AGENTS_FLOWS_DELETE,
+      ]),
+    ],
     async (_request, response) => {
       try {
         const flows = AgentFlows.listFlows();
@@ -82,7 +95,14 @@ function agentFlowEndpoints(app) {
   // Get a specific flow by UUID
   app.get(
     "/agent-flows/:uuid",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.AGENTS_FLOWS_VIEW,
+        PERMISSIONS.AGENTS_FLOWS_EDIT,
+        PERMISSIONS.AGENTS_FLOWS_DELETE,
+      ]),
+    ],
     async (request, response) => {
       try {
         const { uuid } = request.params;
@@ -141,12 +161,17 @@ function agentFlowEndpoints(app) {
   // Delete a specific flow
   app.delete(
     "/agent-flows/:uuid",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS_DELETE])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
         const { uuid } = request.params;
         const flow = AgentFlows.loadFlow(uuid);
+        if (flow && AgentFlows.flowOwner(uuid) !== null)
+          return response.status(403).json({
+            success: false,
+            error: "Workspace-owned flows must be deleted in their workspace.",
+          });
         const { success } = AgentFlows.deleteFlow(uuid);
 
         if (!success) {
@@ -177,7 +202,14 @@ function agentFlowEndpoints(app) {
   // Which workspaces can currently see/use this flow, and which cannot.
   app.get(
     "/agent-flows/:uuid/workspaces",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [
+      validatedRequest,
+      userPermissionValid([
+        PERMISSIONS.AGENTS_FLOWS_VIEW,
+        PERMISSIONS.AGENTS_FLOWS_EDIT,
+        PERMISSIONS.AGENTS_FLOWS_DELETE,
+      ]),
+    ],
     async (request, response) => {
       try {
         const { uuid } = request.params;
@@ -225,7 +257,7 @@ function agentFlowEndpoints(app) {
   // other agent skill settings are never disturbed.
   app.post(
     "/agent-flows/:uuid/workspaces",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS_EDIT])],
     async (request, response) => {
       try {
         const { uuid } = request.params;
@@ -277,7 +309,7 @@ function agentFlowEndpoints(app) {
   // Toggle flow active status
   app.post(
     "/agent-flows/:uuid/toggle",
-    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_FLOWS_EDIT])],
     async (request, response) => {
       try {
         const user = await userFromSession(request, response);
@@ -290,6 +322,12 @@ function agentFlowEndpoints(app) {
             .status(404)
             .json({ success: false, error: "Flow not found" });
         }
+
+        if (AgentFlows.flowOwner(uuid) !== null)
+          return response.status(403).json({
+            success: false,
+            error: "Workspace-owned flows must be changed in their workspace.",
+          });
 
         flow.config.active = active;
         const { success } = AgentFlows.saveFlow(flow.name, flow.config, uuid);

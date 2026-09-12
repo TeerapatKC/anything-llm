@@ -92,6 +92,11 @@ jest.mock("../../utils/prisma", () => ({
   system_settings: {
     findFirst: async ({ where }) =>
       mockDb.settings.find((s) => s.label === where.label) ?? null,
+    update: async ({ where, data }) =>
+      Object.assign(
+        mockDb.settings.find((s) => s.label === where.label),
+        data
+      ),
     upsert: async ({ where, update, create }) => {
       const existing = mockDb.settings.find((s) => s.label === where.label);
       if (existing) return Object.assign(existing, update);
@@ -120,6 +125,21 @@ beforeEach(async () => {
 describe("the reserved list itself", () => {
   it("defaults to the provider settings when nobody has chosen", async () => {
     expect(await ReservedPermissions.get()).toEqual(DEFAULT_RESERVED_PERMISSIONS);
+  });
+
+  it("keeps SMTP owner-only when upgrading a saved reserve list", async () => {
+    mockDb.settings.push({
+      id: mockNextId.settings++,
+      label: "reserved_permissions",
+      value: JSON.stringify([PERMISSIONS.SYSTEM_SETTINGS_LLM]),
+    });
+    expect(await ReservedPermissions.get()).toEqual([
+      PERMISSIONS.SYSTEM_SETTINGS_LLM,
+      PERMISSIONS.SYSTEM_SETTINGS_SMTP,
+    ]);
+    expect(await Role.userCan(ADMIN, PERMISSIONS.SYSTEM_SETTINGS_SMTP)).toBe(false);
+    await ReservedPermissions.set([PERMISSIONS.SYSTEM_SETTINGS_LLM]);
+    expect(await Role.userCan(ADMIN, PERMISSIONS.SYSTEM_SETTINGS_SMTP)).toBe(true);
   });
 
   it("distinguishes 'never configured' from 'deliberately nothing'", async () => {
@@ -302,9 +322,7 @@ describe("the environment keys a settings save may write", () => {
 describe("the shipped preset", () => {
   const { permissionForEnvKey } = require("../../utils/permissions");
 
-  it("covers exactly the AI provider settings and nothing else", () => {
-    // The preset is the behaviour the owner signed off on: provider configuration is
-    // theirs, everything else keeps following the roles that have been defined.
+  it("covers provider settings and the formerly owner-only SMTP configuration", () => {
     expect([...DEFAULT_RESERVED_PERMISSIONS].sort()).toEqual(
       [
         PERMISSIONS.SYSTEM_SETTINGS_LLM,
@@ -314,6 +332,7 @@ describe("the shipped preset", () => {
         PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
         PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
         PERMISSIONS.SYSTEM_MODEL_ROUTING,
+        PERMISSIONS.SYSTEM_SETTINGS_SMTP,
       ].sort()
     );
   });

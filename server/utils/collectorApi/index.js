@@ -65,7 +65,7 @@ class CollectorApi {
   #attachOptions() {
     return {
       whisperProvider: process.env.WHISPER_PROVIDER || "local",
-      WhisperModelPref: process.env.WHISPER_MODEL_PREF,
+      WhisperModelPref: "Xenova/whisper-large",
       openAiKey: process.env.OPEN_AI_KEY || null,
       WhisperGenericOpenAiBaseUrl:
         process.env.WHISPER_GENERIC_OPEN_AI_BASE_URL || null,

@@ -55,6 +55,7 @@ const PERMISSIONS = {
   SYSTEM_SETTINGS_IMAGE_GENERATION: "system.settings.image_generation",
   SYSTEM_SETTINGS_SECURITY: "system.settings.security",
   SYSTEM_SETTINGS_PRIVACY: "system.settings.privacy",
+  SYSTEM_SETTINGS_SMTP: "system.settings.smtp",
 
   SYSTEM_MODEL_ROUTING: "system.model_routing",
   SYSTEM_PROMPTS: "system.prompts",
@@ -171,6 +172,8 @@ const WORKSPACE_PERMISSIONS = {
   DOCUMENTS_PIN: "workspace.documents.pin",
   DOCUMENTS_WATCH: "workspace.documents.watch",
   DATA_CONNECTORS: "workspace.data_connectors",
+  DATA_CONNECTORS_WEB: "workspace.data_connectors.web",
+  DATA_CONNECTORS_YOUTUBE: "workspace.data_connectors.youtube",
 
   // Renaming only. A child of SETTINGS_GENERAL so every role that can already edit the
   // general settings keeps it for free, while a role can be handed the rename on its
@@ -239,9 +242,9 @@ const PERMISSION_CATALOG = [
   // ---------------------------------------------------------------- system scope
   {
     key: PERMISSIONS.SYSTEM_ADMIN,
-    label: "Super administrator",
+    label: "Full system administration",
     description:
-      "Grants every permission in both scopes, including ones added by future updates. Roles with this can never be locked out.",
+      "Grants instance-wide and workspace administration within private-workspace boundaries, except access reserved to the owner. It does not grant ownership transfer or instance reset.",
     category: "system",
   },
   {
@@ -300,9 +303,9 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_SETTINGS_SECURITY,
-    label: "Configure security",
+    label: "Set message limits",
     description:
-      "Password policy, session length, message limits and other account protections.",
+      "Set the per-user daily message limit and whether it applies to the instance.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
@@ -310,6 +313,14 @@ const PERMISSION_CATALOG = [
     key: PERMISSIONS.SYSTEM_SETTINGS_PRIVACY,
     label: "Configure privacy",
     description: "Data handling and personalization preferences.",
+    category: "system",
+    parent: PERMISSIONS.SYSTEM_SETTINGS,
+  },
+  {
+    key: PERMISSIONS.SYSTEM_SETTINGS_SMTP,
+    label: "Configure outgoing email (SMTP)",
+    description:
+      "Set the instance email provider and credentials, and send a test email.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
@@ -634,41 +645,45 @@ const PERMISSION_CATALOG = [
     key: PERMISSIONS.AGENTS_MANAGE_SKILLS,
     label: "Manage agent skills",
     description:
-      "Enable or disable the default agent skills, search provider and SQL connections for the instance.",
+      "Configure instance-wide agent skills, the search provider and SQL connectors, including database credentials and workspace access.",
     category: "agents",
   },
   {
     key: PERMISSIONS.AGENTS_FLOWS,
-    label: "Manage agent flows",
+    label: "Manage instance agent flows",
     description:
-      "Full control of agent flows. Tick the actions below to narrow it.",
+      "Create, view, edit, enable and delete instance-wide agent flows, and choose which workspaces can use them.",
     category: "agents",
   },
   {
     key: PERMISSIONS.AGENTS_FLOWS_VIEW,
-    label: "View agent flows",
-    description: "Read the defined agent flows without changing them.",
+    label: "View instance agent flows",
+    description:
+      "Read all agent flows for audit, including flows owned by workspaces.",
     category: "agents",
     parent: PERMISSIONS.AGENTS_FLOWS,
   },
   {
     key: PERMISSIONS.AGENTS_FLOWS_EDIT,
-    label: "Create & edit agent flows",
-    description: "Build new agent flows and change or enable existing ones.",
+    label: "Create and edit instance agent flows",
+    description:
+      "Build, edit and enable instance-wide flows, and choose which workspaces can use them. Workspace-owned flows are managed in their workspace.",
     category: "agents",
     parent: PERMISSIONS.AGENTS_FLOWS,
   },
   {
     key: PERMISSIONS.AGENTS_FLOWS_DELETE,
-    label: "Delete agent flows",
-    description: "Permanently remove agent flows.",
+    label: "Delete instance agent flows",
+    description:
+      "Permanently remove instance-wide agent flows. Workspace-owned flows are deleted in their workspace.",
     category: "agents",
     parent: PERMISSIONS.AGENTS_FLOWS,
   },
   {
     key: PERMISSIONS.AGENTS_MCP_SERVERS,
-    label: "Manage MCP servers",
-    description: "Start, stop, delete and configure MCP servers and tools.",
+    label: "Manage instance MCP servers",
+    description:
+      "Add, configure and remove MCP servers available across the instance, including servers that run local commands.",
     category: "agents",
   },
   {
@@ -701,9 +716,9 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.INTEGRATIONS_LINE,
-    label: "View LINE webhook integration",
+    label: "Manage the LINE bot",
     description:
-      "View the LINE webhook URL and connection status for the bot that answers on the instance's behalf.",
+      "Connect, configure and disconnect the LINE bot, and view its webhook URL and status.",
     category: "integrations",
   },
 
@@ -859,9 +874,25 @@ const PERMISSION_CATALOG = [
     key: WORKSPACE_PERMISSIONS.DATA_CONNECTORS,
     label: "Use data connectors",
     description:
-      "Import content into this workspace through connectors such as GitHub, Confluence, YouTube and website scraping.",
+      "Import website links and YouTube transcripts. Grant the individual permissions below to limit access to one source.",
     category: "workspace_content",
     scope: SCOPES.WORKSPACE,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.DATA_CONNECTORS_WEB,
+    label: "Import website links",
+    description: "Collect pages from a website URL for this workspace.",
+    category: "workspace_content",
+    scope: SCOPES.WORKSPACE,
+    parent: WORKSPACE_PERMISSIONS.DATA_CONNECTORS,
+  },
+  {
+    key: WORKSPACE_PERMISSIONS.DATA_CONNECTORS_YOUTUBE,
+    label: "Import YouTube transcripts",
+    description: "Collect a YouTube video's transcript for this workspace.",
+    category: "workspace_content",
+    scope: SCOPES.WORKSPACE,
+    parent: WORKSPACE_PERMISSIONS.DATA_CONNECTORS,
   },
 
   {
@@ -1175,7 +1206,7 @@ const SYSTEM_ROLES = [
     name: "admin",
     displayName: "Admin",
     description:
-      "Full control over the instance. Always holds every permission, but unlike the super admin it can be created, edited and removed like any other account.",
+      "Administers the instance and its workspaces, except permissions reserved to the owner. Cannot transfer ownership or reset the instance.",
     // Every system permission is protected, not just the super-admin grant, so a
     // release that adds new permissions tops the admin role up instead of leaving it
     // looking partially ticked in the management UI.
@@ -1282,6 +1313,8 @@ const WORKSPACE_ROLES = [
       WORKSPACE_PERMISSIONS.DOCUMENTS_VIEW,
       WORKSPACE_PERMISSIONS.DOCUMENTS_UPLOAD,
       WORKSPACE_PERMISSIONS.DOCUMENTS_REMOVE,
+      WORKSPACE_PERMISSIONS.DATA_CONNECTORS_WEB,
+      WORKSPACE_PERMISSIONS.DATA_CONNECTORS_YOUTUBE,
       WORKSPACE_PERMISSIONS.CHATS_DELETE,
     ],
   },
@@ -1377,6 +1410,7 @@ const DEFAULT_RESERVED_PERMISSIONS = [
   PERMISSIONS.SYSTEM_SETTINGS_TEXT_SPLITTING,
   PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
   PERMISSIONS.SYSTEM_MODEL_ROUTING,
+  PERMISSIONS.SYSTEM_SETTINGS_SMTP,
 ];
 
 /** The system setting the reserved list is persisted under. */
@@ -1447,6 +1481,7 @@ const SETTING_PERMISSIONS = {
  * @type {Array<{test: RegExp, permission: string}>}
  */
 const ENV_KEY_PERMISSION_RULES = [
+  { test: /^SMTP/i, permission: PERMISSIONS.SYSTEM_SETTINGS_SMTP },
   // Ordered before the LLM catch-alls: these names contain provider words too.
   {
     test: /^Text(Splitter|Chunk)|ChunkSize|ChunkOverlap|MaxEmbedChunk/i,

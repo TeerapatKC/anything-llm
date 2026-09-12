@@ -206,11 +206,18 @@ async function bulkScrapePages(links, outFolderPath) {
   return scrapedData;
 }
 
-async function websiteScraper(startUrl, depth = 1, maxLinks = 20) {
+async function websiteScraper(
+  startUrl,
+  depth = 1,
+  maxLinks = 20,
+  destination = null
+) {
+  if (destination !== null && !/^[a-z0-9-]+$/.test(destination))
+    throw new Error("Invalid document destination.");
   const websiteName = new URL(startUrl).hostname;
-  const outFolder = slugify(
-    `${slugify(websiteName)}-${v4().slice(0, 4)}`
-  ).toLowerCase();
+  const outFolder = destination
+    ? destination
+    : slugify(`${slugify(websiteName)}-${v4().slice(0, 4)}`).toLowerCase();
   const outFolderPath = path.resolve(documentsFolder, outFolder);
   console.log("Discovering links...");
   const linksToScrape = await discoverLinks(startUrl, depth, maxLinks);

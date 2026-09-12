@@ -98,7 +98,12 @@ async function fetchVideoTranscriptContent({ url }) {
  * @param {boolean} options.parseOnly - Whether to parse the transcript content only or save it to the server documents
  * @returns {Promise<TranscriptAsDocument | TranscriptAsContent>} - The transcript content for the YouTube video
  */
-async function loadYouTubeTranscript({ url }, options = { parseOnly: false }) {
+async function loadYouTubeTranscript(
+  { url, destination = null },
+  options = { parseOnly: false }
+) {
+  if (destination !== null && !/^[a-z0-9-]+$/.test(destination))
+    throw new Error("Invalid document destination.");
   const transcriptResults = await fetchVideoTranscriptContent({ url });
   if (!transcriptResults.success) {
     return {
@@ -126,9 +131,11 @@ async function loadYouTubeTranscript({ url }, options = { parseOnly: false }) {
     };
   }
 
-  const outFolder = sanitizeFileName(
-    slugify(`${metadata.author} YouTube transcripts`).toLowerCase()
-  );
+  const outFolder = destination
+    ? destination
+    : sanitizeFileName(
+        slugify(`${metadata.author} YouTube transcripts`).toLowerCase()
+      );
   const outFolderPath = path.resolve(documentsFolder, outFolder);
   const uuid = v4();
   const fileName = sanitizeFileName(`${slugify(metadata.title)}-${uuid}`);

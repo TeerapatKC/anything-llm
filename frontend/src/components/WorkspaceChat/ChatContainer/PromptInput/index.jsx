@@ -418,7 +418,11 @@ export default function PromptInput({
                       sendCommand={sendCommand}
                       promptInput={promptInput}
                       textareaRef={textareaRef}
-                      visible={!agentSessionActive & showAgentCommand}
+                      visible={
+                        !agentSessionActive &&
+                        showAgentCommand &&
+                        workspace?.type !== "personal"
+                      }
                     />
                   </div>
                   <ToolsButton

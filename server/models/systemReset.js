@@ -89,6 +89,7 @@ const RESET_SCOPE_KEYS = RESET_SCOPES.map((scope) => scope.key);
 const PRESERVED_SETTINGS = [
   "multi_user_mode",
   "reserved_permissions",
+  "reserved_smtp_permission_migrated",
   "agent_sql_connections",
   "text_splitter_chunk_size",
   "text_splitter_chunk_overlap",
@@ -111,6 +112,7 @@ const FACTORY_WIPE_TABLES = [
   "workspace_threads",
   "workspace_users",
   "workspace_documents",
+  "document_folders",
   "document_vectors",
   "embed_chats",
   "embed_configs",
@@ -118,6 +120,7 @@ const FACTORY_WIPE_TABLES = [
   "model_router_rules",
   "model_routers",
   "scheduled_job_runs",
+  "scheduled_job_logs",
   "scheduled_jobs",
   "slash_command_presets",
   "prompt_history",
@@ -137,6 +140,8 @@ const FACTORY_WIPE_TABLES = [
   "cache_data",
   "system_prompt_variables",
   "external_communication_connectors",
+  "telegram_users",
+  "line_users",
   "system_settings",
   "event_logs",
 ];

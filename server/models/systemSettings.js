@@ -346,8 +346,7 @@ const SystemSettings = {
       // - then it can be shared.
       // --------------------------------------------------------
       WhisperProvider: process.env.WHISPER_PROVIDER || "local",
-      WhisperModelPref:
-        process.env.WHISPER_MODEL_PREF || "Xenova/whisper-small",
+      WhisperModelPref: "Xenova/whisper-large",
       WhisperGenericOpenAiBaseUrl: process.env.WHISPER_GENERIC_OPEN_AI_BASE_URL,
       WhisperGenericOpenAiApiKey: !!process.env.WHISPER_GENERIC_OPEN_AI_API_KEY,
       WhisperGenericOpenAiModel: process.env.WHISPER_GENERIC_OPEN_AI_MODEL,

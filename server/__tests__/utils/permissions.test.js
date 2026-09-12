@@ -16,6 +16,7 @@ const {
   FALLBACK_WORKSPACE_ROLE,
   SETTINGS_ROUTE_PERMISSIONS,
   permissionForSetting,
+  permissionForEnvKey,
 } = require("../../utils/permissions");
 
 describe("permission catalog", () => {
@@ -190,6 +191,15 @@ describe("system setting permissions", () => {
     );
     expect(permissionForSetting("message_limit")).toBe(
       PERMISSIONS.SYSTEM_SETTINGS_SECURITY
+    );
+  });
+
+  it("protects SMTP credentials even through the generic environment endpoint", () => {
+    expect(permissionForEnvKey("SMTPPassword")).toBe(
+      PERMISSIONS.SYSTEM_SETTINGS_SMTP
+    );
+    expect(permissionForEnvKey("SMTPHost")).toBe(
+      PERMISSIONS.SYSTEM_SETTINGS_SMTP
     );
   });
 

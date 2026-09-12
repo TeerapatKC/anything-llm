@@ -184,6 +184,17 @@ const Role = {
             where: { id: existing.id },
             data: { isSystem: true },
           });
+        // Refresh the old built-in Admin description without overwriting an
+        // operator's own edits to that role.
+        if (
+          systemRole.name === "admin" &&
+          existing.description ===
+            "Full control over the instance. Always holds every permission, but unlike the super admin it can be created, edited and removed like any other account."
+        )
+          await prisma.roles.update({
+            where: { id: existing.id },
+            data: { description: systemRole.description },
+          });
         if (systemRole.protectedPermissions.length > 0) {
           const current = await this._permissionKeysFor(existing.id);
           const missing = systemRole.protectedPermissions.filter(
@@ -393,6 +404,7 @@ const Role = {
     const definition = this._definitionFor(role.name);
     return {
       ...rest,
+      isDefault: role.name === FALLBACK_ROLE,
       isSingleton: definition?.singleton ?? false,
       isImmutable: definition?.immutable ?? false,
       isAssignable: definition?.assignable ?? true,

@@ -965,9 +965,11 @@ function systemEndpoints(app) {
   app.get(
     "/system/monitoring",
     [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MONITORING])],
-    async (_, response) => {
+    async (request, response) => {
       try {
-        response.status(200).json(monitoringConfig());
+        // The request is what tells us which host the browser is on, so the
+        // Grafana iframe points at the same machine the user is already using.
+        response.status(200).json(monitoringConfig(request));
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();
@@ -1008,8 +1010,11 @@ function systemEndpoints(app) {
     ],
     async (request, response) => {
       try {
-        const { format = "csv", startDate = null, endDate = null } =
-          request.query;
+        const {
+          format = "csv",
+          startDate = null,
+          endDate = null,
+        } = request.query;
         const clause = dateRangeClause("occurredAt", startDate, endDate);
         const logs = await EventLogs.whereWithData(clause, null, null, {
           occurredAt: "desc",
@@ -1631,7 +1636,7 @@ function systemEndpoints(app) {
 
   app.post(
     "/system/validate-sql-connection",
-    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS])],
+    [validatedRequest, userPermissionValid([PERMISSIONS.AGENTS_MANAGE_SKILLS])],
     async (request, response) => {
       const { engine, connectionString } = reqBody(request);
       try {

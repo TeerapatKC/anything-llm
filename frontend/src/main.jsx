@@ -289,39 +289,48 @@ const router = createBrowserRouter([
         },
       },
       {
-        // Deliberately a role check (SuperAdminRoute), not a permission check - the
-        // flow list is temporarily restricted to the instance owner regardless of
-        // who else holds the AGENTS_FLOWS permission. Mirrors the sidebar, which
-        // hides this link the same way.
         path: "/settings/agent-flows",
         lazy: async () => {
           const { default: AdminAgents } = await import("@/pages/Admin/Agents");
           return {
-            element: <SuperAdminRoute Component={AdminAgents} />,
+            element: (
+              <PermissionRoute
+                Component={AdminAgents}
+                permissions={[
+                  PERMISSIONS.AGENTS_FLOWS_VIEW,
+                  PERMISSIONS.AGENTS_FLOWS_EDIT,
+                  PERMISSIONS.AGENTS_FLOWS_DELETE,
+                ]}
+              />
+            ),
           };
         },
       },
       {
-        // Same treatment as Agent Flow above - the DB connections configured here are
-        // instance-wide credentials, so this is a role check rather than a permission.
         path: "/settings/sql-connector",
         lazy: async () => {
           const { default: AdminAgents } = await import("@/pages/Admin/Agents");
           return {
-            element: <SuperAdminRoute Component={AdminAgents} />,
+            element: (
+              <PermissionRoute
+                Component={AdminAgents}
+                permissions={[PERMISSIONS.AGENTS_MANAGE_SKILLS]}
+              />
+            ),
           };
         },
       },
       {
-        // Same treatment again - an MCP server added here is an instance-wide
-        // credential pointed at an outside service, so this is a role check rather
-        // than a permission. A workspace's own servers are managed from that
-        // workspace's agent settings instead.
         path: "/settings/mcp-servers",
         lazy: async () => {
           const { default: AdminAgents } = await import("@/pages/Admin/Agents");
           return {
-            element: <SuperAdminRoute Component={AdminAgents} />,
+            element: (
+              <PermissionRoute
+                Component={AdminAgents}
+                permissions={[PERMISSIONS.AGENTS_MCP_SERVERS]}
+              />
+            ),
           };
         },
       },
@@ -333,7 +342,11 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <SuperAdminRoute Component={AgentBuilder} hideUserMenu={true} />
+              <PermissionRoute
+                Component={AgentBuilder}
+                permissions={[PERMISSIONS.AGENTS_FLOWS_EDIT]}
+                hideUserMenu={true}
+              />
             ),
           };
         },
@@ -346,7 +359,11 @@ const router = createBrowserRouter([
           );
           return {
             element: (
-              <SuperAdminRoute Component={AgentBuilder} hideUserMenu={true} />
+              <PermissionRoute
+                Component={AgentBuilder}
+                permissions={[PERMISSIONS.AGENTS_FLOWS_EDIT]}
+                hideUserMenu={true}
+              />
             ),
           };
         },
@@ -619,13 +636,17 @@ const router = createBrowserRouter([
         },
       },
       {
-        // Role-gated like Agent Flow and Instance Owner above - SMTP credentials send
-        // mail as this deployment, so they stay with the instance owner rather than
-        // becoming grantable through a custom role.
         path: "/settings/smtp",
         lazy: async () => {
           const { default: AdminSMTP } = await import("@/pages/Admin/SMTP");
-          return { element: <SuperAdminRoute Component={AdminSMTP} /> };
+          return {
+            element: (
+              <PermissionRoute
+                Component={AdminSMTP}
+                permissions={[PERMISSIONS.SYSTEM_SETTINGS_SMTP]}
+              />
+            ),
+          };
         },
       },
       {

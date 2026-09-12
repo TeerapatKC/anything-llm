@@ -62,6 +62,16 @@ function bootSSL(app, port = 3001) {
           WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
           "backfill_workspace_manager_scheduled_jobs"
         );
+        await WorkspaceRole.grantOnce(
+          "personal-owner",
+          WORKSPACE_PERMISSIONS.DATA_CONNECTORS_WEB,
+          "backfill_private_owner_web_connector"
+        );
+        await WorkspaceRole.grantOnce(
+          "personal-owner",
+          WORKSPACE_PERMISSIONS.DATA_CONNECTORS_YOUTUBE,
+          "backfill_private_owner_youtube_connector"
+        );
         // After role seeding - the owner role must exist before the account can be made.
         await bootstrapAdminFromEnv();
         // Instances created before the owner role existed have nobody holding it, and the
@@ -125,6 +135,16 @@ function bootHTTP(app, port = 3001) {
         "workspace-manager",
         WORKSPACE_PERMISSIONS.SCHEDULED_JOBS_MANAGE,
         "backfill_workspace_manager_scheduled_jobs"
+      );
+      await WorkspaceRole.grantOnce(
+        "personal-owner",
+        WORKSPACE_PERMISSIONS.DATA_CONNECTORS_WEB,
+        "backfill_private_owner_web_connector"
+      );
+      await WorkspaceRole.grantOnce(
+        "personal-owner",
+        WORKSPACE_PERMISSIONS.DATA_CONNECTORS_YOUTUBE,
+        "backfill_private_owner_youtube_connector"
       );
       // After role seeding - the owner role must exist before the account can be made.
       await bootstrapAdminFromEnv();

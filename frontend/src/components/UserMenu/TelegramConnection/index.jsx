@@ -110,8 +110,8 @@ export default function TelegramConnection({ user }) {
   if (!connection?.available && !connection?.link) {
     return (
       <ConnectionCard
-        icon={<TelegramLogo className="h-5 w-5 text-white" />}
-        accentClassName="bg-[#00ADEC]"
+        icon={<TelegramLogo className="size-8" />}
+        accentClassName="bg-white"
         title={t("profile_settings.telegram.title")}
         status="unavailable"
       >
@@ -132,8 +132,8 @@ export default function TelegramConnection({ user }) {
 
   return (
     <ConnectionCard
-      icon={<TelegramLogo className="h-5 w-5 text-white" />}
-      accentClassName="bg-[#00ADEC]"
+      icon={<TelegramLogo className="size-8" />}
+      accentClassName="bg-white"
       title={t("profile_settings.telegram.title")}
       description={
         link

@@ -10,17 +10,12 @@ import {
 import {
   Database,
   FileText,
-  GitBranch,
   Info,
   Link,
   Plug,
   SquareArrowOutUpRight,
 } from "lucide-react";
-import {
-  GithubLogo,
-  GitlabLogo,
-  YoutubeLogo,
-} from "@/components/lib/BrandIcon";
+import { YoutubeLogo } from "@/components/lib/BrandIcon";
 import { toPercentString } from "@/utils/numbers";
 import { useTranslation } from "react-i18next";
 import { useSourcesSidebar } from "../../ChatSidebar";
@@ -34,20 +29,13 @@ const CIRCLE_ICONS = {
   file: FileText,
   link: Link,
   youtube: YoutubeLogo,
-  github: GithubLogo,
-  gitlab: GitlabLogo,
-  gitea: GitBranch,
-  confluence: Link,
-  drupalwiki: FileText,
-  obsidian: FileText,
-  paperlessNgx: FileText,
   database: Database,
   mcp: Plug,
 };
 
 /**
  * Renders a circle with a source type icon inside, or a favicon if URL is provided.
- * @param {"file"|"link"|"youtube"|"github"|"gitlab"|"gitea"|"confluence"|"drupalwiki"|"obsidian"|"paperlessNgx"} props.type
+ * @param {"file"|"link"|"youtube"|"database"|"mcp"} props.type
  * @param {number} [props.size] - Circle diameter in px
  * @param {number} [props.iconSize] - Icon size in px
  * @param {string} [props.url] - Optional URL to fetch favicon from
@@ -257,19 +245,7 @@ export function CitationDetailModal({ source, onClose }) {
   );
 }
 
-const supportedSources = [
-  "link://",
-  "confluence://",
-  "github://",
-  "gitlab://",
-  "gitea://",
-  "drupalwiki://",
-  "youtube://",
-  "obsidian://",
-  "paperless-ngx://",
-  "database://",
-  "mcp://",
-];
+const supportedSources = ["link://", "youtube://", "database://", "mcp://"];
 
 /**
  * Parses the chunk source to get the correct title and/or display text for citations
@@ -317,41 +293,6 @@ export function parseChunkSource({ title = "", chunks = [] }) {
       case "youtube://":
         text = title;
         icon = "youtube";
-        break;
-
-      case "github://":
-        text = title;
-        icon = "github";
-        break;
-
-      case "gitlab://":
-        text = title;
-        icon = "gitlab";
-        break;
-
-      case "gitea://":
-        text = title;
-        icon = "gitea";
-        break;
-
-      case "confluence://":
-        text = title;
-        icon = "confluence";
-        break;
-
-      case "drupalwiki://":
-        text = title;
-        icon = "drupalwiki";
-        break;
-
-      case "obsidian://":
-        text = title;
-        icon = "obsidian";
-        break;
-
-      case "paperless-ngx://":
-        text = title;
-        icon = "paperlessNgx";
         break;
 
       case "database://":

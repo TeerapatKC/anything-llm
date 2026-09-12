@@ -36,6 +36,18 @@ RUN groupadd --gid 1000 app \
 
 WORKDIR /app
 
+# The base image ships pip, setuptools and wheel a few releases behind, and two of
+# their dependencies carry high-severity advisories - a path traversal in
+# jaraco.context and arbitrary code execution from a crafted wheel. Upgrading here
+# clears both, and the rest of this file then builds against the current pip.
+#
+# It does not clear what a scanner reports against the base image itself. Those
+# are Debian trixie packages - util-linux, perl-base, sqlite3 and friends - and
+# every one of them currently has no fixed version published, so `apt-get upgrade`
+# is a no-op: measured, 0 packages upgradable. They come down only when Debian
+# ships patches and the python image is rebuilt on top of them.
+RUN --mount=type=cache,target=/root/.cache/pip pip install --upgrade pip setuptools wheel
+
 RUN --mount=type=cache,target=/root/.cache/pip pip install --index-url ${TORCH_INDEX_URL} torch
 
 COPY requirements.txt ./

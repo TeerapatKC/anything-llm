@@ -81,8 +81,9 @@ const TRANSLATIONS = {
     "model-router": "ตัวจัดเส้นทางโมเดล",
     admin: "ผู้ดูแลระบบ",
     tools: "เครื่องมือ",
+    "prompts-and-commands": "พรอมต์และคำสั่ง",
     "system-prompt-variables": "ตัวแปรพรอมต์ระบบ",
-    "slash-commands": "คำสั่งสแลช",
+    "slash-commands": "คำสั่งสแลชในตัว",
     contact: "ติดต่อฝ่ายสนับสนุน",
     smtp: "SMTP",
     channels: "แอปที่เชื่อมต่อ",
@@ -109,7 +110,7 @@ const TRANSLATIONS = {
     roles: {
       title: "บทบาทและสิทธิ์",
       description:
-        "บทบาทคือชุดสิทธิ์ที่มีชื่อกำกับ บทบาทระดับระบบควบคุมอินสแตนซ์ ส่วนบทบาทระดับพื้นที่ทำงานควบคุมสิ่งที่สมาชิกทำได้ในแต่ละพื้นที่ทำงาน บัญชีเดียวจึงมีบทบาทต่างกันในแต่ละพื้นที่ทำงานได้",
+        "บทบาทระดับระบบกำหนดสิทธิ์ทั่วทั้งระบบ ส่วนบทบาทระดับพื้นที่ทำงานกำหนดสิทธิ์ตามการเป็นสมาชิกแต่ละพื้นที่ เจ้าของระบบสามารถสงวนสิทธิ์ระดับระบบไม่ให้บทบาทอื่นใช้ได้",
       "system-tab": "บทบาทระดับระบบ",
       "workspace-tab": "บทบาทระดับพื้นที่ทำงาน",
     },
@@ -121,7 +122,7 @@ const TRANSLATIONS = {
     "instance-owner": {
       title: "เจ้าของอินสแตนซ์",
       description:
-        "คุณมีบทบาทผู้ดูแลระบบสูงสุดสำหรับระบบนี้ บทบาทนี้ไม่สามารถลบ ระงับ หรือมอบให้ผู้อื่นได้ และย้ายได้ผ่านการโอนด้านล่างเท่านั้น การดำเนินการในหน้านี้ย้อนกลับไม่ได้และผู้ใช้อื่นไม่สามารถใช้งานได้",
+        "คุณเป็นเจ้าของระบบนี้ การโอนเจ้าของและรีเซ็ตทำได้เฉพาะเจ้าของ ส่วน Owner-only access ใช้สงวนหรือคืนสิทธิ์ระดับระบบให้บทบาทอื่น",
     },
     "slash-commands": {
       title: "คำสั่งสแลชที่มีในระบบ",
@@ -872,8 +873,9 @@ const TRANSLATIONS = {
     "warn-start":
       "การใช้โมเดล whisper ในเครื่องบนอุปกรณ์ที่มี RAM หรือ CPU จำกัด อาจทำให้ Nexus AI ค้างขณะประมวลผลไฟล์สื่อ",
     "warn-recommend":
-      "เราแนะนำให้มี RAM อย่างน้อย 2GB และอัปโหลดไฟล์ขนาดน้อยกว่า 10Mb",
-    "warn-end": "โมเดลในตัวจะดาวน์โหลดโดยอัตโนมัติเมื่อใช้งานครั้งแรก",
+      "Whisper Large ต้องการ RAM ว่างจำนวนมาก ควรอัปโหลดไฟล์ขนาดต่ำกว่า 10 MB",
+    "warn-prebuilt":
+      "Whisper Large รวมอยู่ใน Docker image ตั้งแต่ขั้นตอน build",
   },
   embedding: {
     title: "การตั้งค่าการฝังข้อความ",
@@ -1042,6 +1044,16 @@ const TRANSLATIONS = {
         connecting: "กำลังเชื่อมต่อ...",
         "connect-bot": "เชื่อมต่อบอท",
       },
+      reconnect: {
+        title: "ขั้นตอนที่ 1: รับโทเคนใหม่สำหรับบอทเดิม",
+        description:
+          "เปิด @BotFather ใน Telegram แล้วส่ง <code>/token</code> เพื่อสร้างโทเคนใหม่สำหรับบอทเดิม",
+        "instruction-2":
+          "2. ส่ง <code>/token</code> ไปยัง <code>@BotFather</code>",
+        "instruction-3": "3. เลือกบอทเดิมของคุณ",
+        "instruction-4": "4. คัดลอกโทเคนใหม่และวางในขั้นตอนที่ 2",
+        "step2-title": "ขั้นตอนที่ 2: เชื่อมต่อบอทอีกครั้ง",
+      },
       security: {
         title: "การตั้งค่าความปลอดภัยที่แนะนำ",
         description:
@@ -1055,6 +1067,7 @@ const TRANSLATIONS = {
       "toast-connect-failed": "เชื่อมต่อบอทไม่สำเร็จ",
     },
     connected: {
+      "bot-details": "รายละเอียดบอท",
       status: "เชื่อมต่อแล้ว",
       "status-disconnected": "ตัดการเชื่อมต่อ — โทเคนอาจหมดอายุหรือไม่ถูกต้อง",
       "smtp-warning":
@@ -1130,98 +1143,6 @@ const TRANSLATIONS = {
   connectors: {
     "search-placeholder": "ค้นหาตัวเชื่อมต่อข้อมูล",
     "no-connectors": "ไม่พบตัวเชื่อมต่อข้อมูล",
-    obsidian: {
-      vault_location: "ตำแหน่ง Vault",
-      vault_description:
-        "เลือกโฟลเดอร์ Obsidian vault ของคุณเพื่อนำเข้าโน้ตทั้งหมดและการเชื่อมโยงของโน้ตเหล่านั้น",
-      selected_files: "พบไฟล์ markdown {{count}} ไฟล์",
-      importing: "กำลังนำเข้า vault...",
-      import_vault: "นำเข้า Vault",
-      processing_time: "อาจใช้เวลาสักครู่ ขึ้นอยู่กับขนาดของ vault ของคุณ",
-      vault_warning:
-        "เพื่อหลีกเลี่ยงความขัดแย้ง โปรดตรวจสอบว่า Obsidian vault ของคุณไม่ได้เปิดอยู่ในขณะนี้",
-    },
-    github: {
-      name: "GitHub Repo",
-      description:
-        "นำเข้า GitHub repository ทั้งแบบสาธารณะและส่วนตัวได้ในคลิกเดียว",
-      URL: "URL ของ GitHub Repo",
-      URL_explained: "URL ของ GitHub repo ที่คุณต้องการดึงข้อมูล",
-      token: "GitHub Access Token",
-      optional: "ไม่บังคับ",
-      token_explained: "Access Token เพื่อป้องกันการจำกัดอัตราการเรียกใช้",
-      token_explained_start: "หากไม่มี ",
-      token_explained_link1: "Personal Access Token",
-      token_explained_middle:
-        " GitHub API อาจจำกัดจำนวนไฟล์ที่ดึงได้เนื่องจากข้อจำกัดอัตราการเรียกใช้ คุณสามารถ",
-      token_explained_link2: "สร้าง Access Token ชั่วคราว",
-      token_explained_end: " เพื่อหลีกเลี่ยงปัญหานี้ได้",
-      ignores: "ไฟล์ที่ต้องการข้าม",
-      git_ignore:
-        "ระบุรายการในรูปแบบ .gitignore เพื่อข้ามไฟล์บางไฟล์ระหว่างการดึงข้อมูล กด Enter หลังจากป้อนแต่ละรายการที่ต้องการบันทึก",
-      task_explained:
-        "เมื่อเสร็จสิ้น ไฟล์ทั้งหมดจะพร้อมให้ฝังลงในพื้นที่ทำงานผ่านตัวเลือกเอกสาร",
-      branch: "Branch ที่คุณต้องการดึงไฟล์",
-      branch_loading: "-- กำลังโหลด branch ที่มีอยู่ --",
-      branch_explained: "Branch ที่คุณต้องการดึงไฟล์",
-      token_information:
-        "หากไม่กรอก <b>GitHub Access Token</b> ตัวเชื่อมต่อข้อมูลนี้จะดึงได้เฉพาะไฟล์ใน<b>ระดับบนสุด</b>ของ repo เท่านั้น เนื่องจากข้อจำกัดอัตราการเรียกใช้ API สาธารณะของ GitHub",
-      token_personal: "รับ Personal Access Token ฟรีด้วยบัญชี GitHub ได้ที่นี่",
-    },
-    gitlab: {
-      name: "GitLab Repo",
-      description:
-        "นำเข้า GitLab repository ทั้งแบบสาธารณะและส่วนตัวได้ในคลิกเดียว",
-      URL: "URL ของ GitLab Repo",
-      URL_explained: "URL ของ GitLab repo ที่คุณต้องการดึงข้อมูล",
-      token: "GitLab Access Token",
-      optional: "ไม่บังคับ",
-      token_description: "เลือกข้อมูลเพิ่มเติมที่ต้องการดึงจาก GitLab API",
-      token_explained_start: "หากไม่มี ",
-      token_explained_link1: "Personal Access Token",
-      token_explained_middle:
-        " GitLab API อาจจำกัดจำนวนไฟล์ที่ดึงได้เนื่องจากข้อจำกัดอัตราการเรียกใช้ คุณสามารถ",
-      token_explained_link2: "สร้าง Access Token ชั่วคราว",
-      token_explained_end: " เพื่อหลีกเลี่ยงปัญหานี้ได้",
-      fetch_issues: "ดึง Issues มาเป็นเอกสาร",
-      ignores: "ไฟล์ที่ต้องการข้าม",
-      git_ignore:
-        "ระบุรายการในรูปแบบ .gitignore เพื่อข้ามไฟล์บางไฟล์ระหว่างการดึงข้อมูล กด Enter หลังจากป้อนแต่ละรายการที่ต้องการบันทึก",
-      task_explained:
-        "เมื่อเสร็จสิ้น ไฟล์ทั้งหมดจะพร้อมให้ฝังลงในพื้นที่ทำงานผ่านตัวเลือกเอกสาร",
-      branch: "Branch ที่คุณต้องการดึงไฟล์",
-      branch_loading: "-- กำลังโหลด branch ที่มีอยู่ --",
-      branch_explained: "Branch ที่คุณต้องการดึงไฟล์",
-      token_information:
-        "หากไม่กรอก <b>GitLab Access Token</b> ตัวเชื่อมต่อข้อมูลนี้จะดึงได้เฉพาะไฟล์ใน<b>ระดับบนสุด</b>ของ repo เท่านั้น เนื่องจากข้อจำกัดอัตราการเรียกใช้ API สาธารณะของ GitLab",
-      token_personal: "รับ Personal Access Token ฟรีด้วยบัญชี GitLab ได้ที่นี่",
-    },
-    gitea: {
-      name: "Gitea Repo",
-      description:
-        "นำเข้า repository ทั้งแบบสาธารณะและส่วนตัวจากอินสแตนซ์ Gitea ใดก็ได้ในคลิกเดียว",
-      URL: "URL ของ Gitea Repo",
-      URL_explained:
-        "URL ของ repo ที่คุณต้องการดึงข้อมูลบนอินสแตนซ์ Gitea ของคุณ - รองรับอินสแตนซ์แบบ self-hosted",
-      token: "Gitea Access Token",
-      optional: "ไม่บังคับ",
-      token_explained:
-        "จำเป็นต้องมี Access Token เพื่อดึงข้อมูลจาก repository ส่วนตัวหรือ repo บนอินสแตนซ์ที่ต้องยืนยันตัวตน",
-      token_explained_start: "หากไม่มี ",
-      token_explained_link1: "Access Token",
-      token_explained_end:
-        " จะดึงข้อมูลได้เฉพาะ repository ที่อินสแตนซ์ Gitea ของคุณเปิดเผยต่อสาธารณะเท่านั้น",
-      ignores: "ไฟล์ที่ต้องการข้าม",
-      git_ignore:
-        "ระบุรายการในรูปแบบ .gitignore เพื่อข้ามไฟล์บางไฟล์ระหว่างการดึงข้อมูล กด Enter หลังจากป้อนแต่ละรายการที่ต้องการบันทึก",
-      task_explained:
-        "เมื่อเสร็จสิ้น ไฟล์ทั้งหมดจะพร้อมให้ฝังลงในพื้นที่ทำงานผ่านตัวเลือกเอกสาร",
-      branch: "Branch ที่คุณต้องการดึงไฟล์",
-      branch_loading: "-- กำลังโหลด branch ที่มีอยู่ --",
-      branch_explained: "Branch ที่คุณต้องการดึงไฟล์",
-      token_information:
-        "หากไม่กรอก <b>Gitea Access Token</b> ตัวเชื่อมต่อข้อมูลนี้จะดึงได้เฉพาะไฟล์จาก repository ที่<b>อ่านได้แบบสาธารณะ</b>บนอินสแตนซ์ Gitea ของคุณเท่านั้น",
-    },
     youtube: {
       name: "ถอดเสียง YouTube",
       description: "นำเข้าคำถอดเสียงของวิดีโอ YouTube ทั้งคลิปจากลิงก์",
@@ -1234,8 +1155,17 @@ const TRANSLATIONS = {
         "เมื่อเสร็จสิ้น คำถอดเสียงจะพร้อมให้ฝังลงในพื้นที่ทำงานผ่านตัวเลือกเอกสาร",
     },
     "website-depth": {
-      name: "ตัวดึงข้อมูลลิงก์จำนวนมาก",
-      description: "ดึงข้อมูลจากเว็บไซต์และลิงก์ย่อยตามระดับความลึกที่กำหนด",
+      name: "ลิงก์เว็บไซต์",
+      description: "นำเข้าเว็บหน้าเดียวหรือดึงหน้าเว็บที่เชื่อมโยงกัน",
+      "import-scope": "ต้องการนำเข้าแบบใด",
+      "single-page": "เฉพาะหน้านี้",
+      "linked-pages": "หน้านี้และหน้าที่เชื่อมโยง",
+      "invalid-url": "กรุณากรอก URL เว็บไซต์ที่ถูกต้อง",
+      importing: "กำลังนำเข้าเนื้อหาเว็บไซต์...",
+      "import-single": "นำเข้าหน้านี้",
+      "import-linked": "นำเข้าหน้าที่เชื่อมโยง",
+      empty: "ไม่พบเนื้อหาหน้าเว็บที่นำเข้าได้",
+      success: "นำเข้าแล้ว {{count}} หน้า",
       URL: "URL ของเว็บไซต์",
       URL_explained: "URL ของเว็บไซต์ที่คุณต้องการดึงข้อมูล",
       depth: "ระดับความลึกในการรวบรวมข้อมูล",
@@ -1245,37 +1175,6 @@ const TRANSLATIONS = {
       max_pages_explained: "จำนวนลิงก์สูงสุดที่จะดึงข้อมูล",
       task_explained:
         "เมื่อเสร็จสิ้น เนื้อหาที่ดึงมาทั้งหมดจะพร้อมให้ฝังลงในพื้นที่ทำงานผ่านตัวเลือกเอกสาร",
-    },
-    confluence: {
-      name: "Confluence",
-      description: "นำเข้าหน้า Confluence ทั้งหน้าได้ในคลิกเดียว",
-      deployment_type: "ประเภทการติดตั้ง Confluence",
-      deployment_type_explained:
-        "ระบุว่าอินสแตนซ์ Confluence ของคุณโฮสต์อยู่บน Atlassian cloud หรือแบบ self-hosted",
-      base_url: "URL หลักของ Confluence",
-      base_url_explained: "นี่คือ URL หลักของ Confluence space ของคุณ",
-      space_key: "Space key ของ Confluence",
-      space_key_explained:
-        "นี่คือ space key ของอินสแตนซ์ Confluence ที่จะใช้งาน โดยปกติจะขึ้นต้นด้วย ~",
-      username: "ชื่อผู้ใช้ Confluence",
-      username_explained: "ชื่อผู้ใช้ Confluence ของคุณ",
-      auth_type: "ประเภทการยืนยันตัวตนของ Confluence",
-      auth_type_explained:
-        "เลือกประเภทการยืนยันตัวตนที่คุณต้องการใช้เพื่อเข้าถึงหน้า Confluence ของคุณ",
-      auth_type_username: "ชื่อผู้ใช้และ Access Token",
-      auth_type_personal: "Personal Access Token",
-      token: "Confluence Access Token",
-      token_explained_start:
-        "คุณต้องระบุ access token เพื่อยืนยันตัวตน คุณสามารถสร้าง access token ได้",
-      token_explained_link: "ที่นี่",
-      token_desc: "Access token สำหรับการยืนยันตัวตน",
-      pat_token: "Confluence Personal Access Token",
-      pat_token_explained: "Personal access token ของ Confluence ของคุณ",
-      bypass_ssl: "ข้ามการตรวจสอบใบรับรอง SSL",
-      bypass_ssl_explained:
-        "เปิดใช้ตัวเลือกนี้เพื่อข้ามการตรวจสอบใบรับรอง SSL สำหรับอินสแตนซ์ Confluence แบบ self-hosted ที่ใช้ใบรับรองแบบ self-signed",
-      task_explained:
-        "เมื่อเสร็จสิ้น เนื้อหาของหน้าจะพร้อมให้ฝังลงในพื้นที่ทำงานผ่านตัวเลือกเอกสาร",
     },
     manage: {
       documents: "เอกสาร",
@@ -1333,10 +1232,6 @@ const TRANSLATIONS = {
         "วางบนโฟลเดอร์เพื่ออัปโหลดเข้าโฟลเดอร์นั้น หรือวางตรงนี้เพื่อเข้า {{folder}}",
       "file-types":
         "รองรับไฟล์ข้อความ ไฟล์ csv สเปรดชีต ไฟล์เสียง และอื่น ๆ อีกมากมาย!",
-      "or-submit-link": "หรือส่งลิงก์",
-      "placeholder-link": "https://example.com",
-      fetching: "กำลังดึงข้อมูล...",
-      "fetch-website": "ดึงข้อมูลเว็บไซต์",
       "privacy-notice":
         "ไฟล์เหล่านี้จะถูกอัปโหลดไปยังตัวประมวลผลเอกสารที่ทำงานอยู่บนอินสแตนซ์ Nexus AI นี้ ไฟล์เหล่านี้จะไม่ถูกส่งหรือแชร์กับบุคคลที่สาม",
     },
@@ -1810,7 +1705,7 @@ const TRANSLATIONS = {
     "role-default-suffix": "(ค่าเริ่มต้น)",
     permissions: {
       title: "สิทธิ์",
-      all: "มีสิทธิ์ทุกอย่างในอินสแตนซ์นี้",
+      all: "ดูแลระบบได้เต็มรูปแบบ ยกเว้นสิทธิ์ที่เจ้าของสงวนไว้และงานเฉพาะเจ้าของ",
       none: "ไม่มีสิทธิ์พิเศษ - สนทนาได้เฉพาะในพื้นที่ทำงานที่ถูกเพิ่มเข้าไปเท่านั้น",
     },
     "message-limit": {
@@ -2096,8 +1991,7 @@ const TRANSLATIONS = {
       "static-hint": "ค่าตายตัวที่ไม่เปิดเผยให้ LLM เห็น",
       "categories-help":
         "LLM สามารถกำหนดตัวแปรแบบจำเป็นและไม่บังคับได้ ส่วนค่าคงที่จะไม่ถูกเปิดเผยให้ LLM เห็น",
-      "description-placeholder":
-        "คำอธิบายสำหรับ LLM ว่าค่านี้ใช้ทำอะไร",
+      "description-placeholder": "คำอธิบายสำหรับ LLM ว่าค่านี้ใช้ทำอะไร",
     },
     llmInstruction: {
       instruction: "คำสั่ง",
@@ -2561,10 +2455,6 @@ const TRANSLATIONS = {
     "pinecone-index-name": "ชื่อดัชนี Pinecone",
   },
   help: {
-    "paperless-base-url":
-      "URL ที่อินสแตนซ์ Paperless-ngx ของคุณทำงานอยู่ (เช่น http://localhost:8000)",
-    "drupal-wiki-token":
-      "คุณต้องระบุโทเคน API สำหรับการยืนยันตัวตน ดู<a>คู่มือ</a>ของ Drupal Wiki เพื่อเรียนรู้วิธีสร้างโทเคน API สำหรับผู้ใช้ของคุณ",
     "lmstudio-context-window":
       "แทนที่ขีดจำกัดขนาดบริบท เว้นว่างไว้เพื่อตรวจหาอัตโนมัติจากโมเดล (ใช้ค่า 4096 หากตรวจหาไม่สำเร็จ)",
     "finish-node":
@@ -2575,13 +2465,13 @@ const TRANSLATIONS = {
     "default-system-prompt":
       "System prompt คือคำสั่งที่กำหนดรูปแบบคำตอบและพฤติกรรมของ AI พรอมต์นี้จะถูกนำไปใช้กับพื้นที่ทำงานที่สร้างใหม่ทั้งหมดโดยอัตโนมัติ หากต้องการเปลี่ยน system prompt ของ<b>พื้นที่ทำงานใดพื้นที่หนึ่ง</b> ให้แก้ไขพรอมต์ใน<b>การตั้งค่าพื้นที่ทำงาน</b> หากต้องการคืนค่า system prompt กลับเป็นค่าเริ่มต้น ให้เว้นช่องนี้ว่างไว้แล้วบันทึกการเปลี่ยนแปลง",
     "toggle-3":
-      "ฟีเจอร์นี้ใช้ได้เฉพาะกับเนื้อหาที่มาจากเว็บเท่านั้น เช่น เว็บไซต์ Confluence YouTube และไฟล์บน GitHub",
+      "ฟีเจอร์นี้ใช้ได้เฉพาะกับเนื้อหาที่มาจากเว็บ เช่น เว็บไซต์และคำบรรยายวิดีโอ YouTube",
     "toggle-2":
       "เอกสารที่ถูกเฝ้าดูจะอัปเดตโดยอัตโนมัติในทุกพื้นที่ทำงานที่อ้างอิงถึงเอกสารนั้นในเวลาเดียวกัน",
     toggle:
       'เปิดใช้ความสามารถในการกำหนดให้ "เฝ้าดู" เอกสาร เนื้อหาของเอกสารที่ถูกเฝ้าดูจะถูกดึงและอัปเดตใน Nexus AI เป็นระยะ',
     "role-modal":
-      "บทบาทนี้มีสิทธิ์ผู้ดูแลระบบ จึงมีสิทธิ์ทุกอย่าง รวมถึงสิทธิ์ที่จะเพิ่มเข้ามาในอนาคต โดยไม่ขึ้นกับช่องที่เลือกด้านล่าง",
+      "บทบาทนี้มีสิทธิ์ดูแลระบบ รวมถึงสิทธิ์ที่เพิ่มในอนาคต ยกเว้นสิทธิ์ที่เจ้าของสงวนไว้ การโอนเจ้าของและรีเซ็ตระบบเป็นสิทธิ์เฉพาะเจ้าของเสมอ",
     "factory-reset":
       "ล้างการติดตั้งทั้งหมดและเริ่มต้นใหม่จากหน้าตั้งค่าเริ่มต้น เสมือนเพิ่งติดตั้งใหม่ ต่างจากการรีเซ็ตด้านบน การดำเนินการนี้จะลบ<strong>บัญชีของคุณเอง</strong> รวมถึงการกำหนดค่า LLM ตัวฝังข้อความ และฐานข้อมูลเวกเตอร์ด้วย",
     "reserved-permissions":
@@ -2695,11 +2585,6 @@ const TRANSLATIONS = {
     "omlxoptions-2":
       "หากคุณเว้นช่องนี้ว่างไว้ ระบบจะตรวจหาขีดจำกัดขนาดบริบทจากโมเดลโดยอัตโนมัติและนำไปใช้กับทุกการสนทนา หากตรวจหาไม่สำเร็จ จะใช้ค่าสำรองที่ 16000",
     omlxoptions: "ระบุจำนวนโทเคนสูงสุดที่ใช้ได้สำหรับขนาดบริบทของโมเดล",
-    "drupal-wiki": "เมื่อเสร็จสิ้น หน้าทั้งหมดจะพร้อมให้ฝังลงในพื้นที่ทำงาน",
-    "paperless-ngx-2":
-      "เมื่อเสร็จสิ้น เอกสารทั้งหมดจะพร้อมให้ฝังลงในพื้นที่ทำงาน",
-    "paperless-ngx":
-      "โปรดตรวจสอบว่าอินสแตนซ์ Paperless-ngx ของคุณกำลังทำงานและเข้าถึงได้จากเครื่องนี้",
     "generic-open-ai-options-4":
       "บริการ STT บางแห่งต้องใช้คีย์ API ในการถอดเสียง ซึ่งไม่บังคับหากบริการของคุณไม่ต้องการ",
     "generic-open-ai-options-3":

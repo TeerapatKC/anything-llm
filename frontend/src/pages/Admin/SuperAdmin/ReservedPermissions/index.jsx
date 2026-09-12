@@ -60,9 +60,8 @@ export default function ReservedPermissions() {
   const matchesPreset =
     selected.size === preset.length && preset.every((key) => selected.has(key));
 
-  // Coarse permissions reach further than their labels suggest - `system.settings` is
-  // also what every unmapped settings key falls back to, so reserving it quietly takes
-  // the support email and password policy with it.
+  // Coarse permissions also cover their children and any setting that uses the
+  // coarse permission as a fallback.
   const reservedParents = categories
     .flatMap((category) => category.permissions)
     .filter(
@@ -113,11 +112,9 @@ export default function ReservedPermissions() {
           <AlertDescription>
             You have reserved{" "}
             {reservedParents.map((permission) => permission.label).join(", ")},
-            which covers everything beneath it. “Manage system settings” is also
-            what any setting without a permission of its own falls back to — so
-            reserving it takes the support email, message limits and password
-            policy away from your admins too. Reserve the individual entries
-            instead if that is not what you want.
+            which covers every child permission. “Manage system settings” also
+            covers settings without a more specific permission. Reserve the
+            individual entries if you want other roles to keep the rest.
           </AlertDescription>
         </Alert>
       )}

@@ -1,6 +1,9 @@
 const { reqBody, userFromSession } = require("../utils/http");
 const { validatedRequest } = require("../utils/middleware/validatedRequest");
-const { superAdminOnly } = require("../utils/middleware/authorizedRequest");
+const {
+  userPermissionValid,
+} = require("../utils/middleware/authorizedRequest");
+const { PERMISSIONS } = require("../utils/permissions");
 const { updateENV } = require("../utils/helpers/updateENV");
 const { EventLogs } = require("../models/eventLogs");
 const {
@@ -15,16 +18,14 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 /**
  * Outbound email (SMTP) configuration.
  *
- * Reserved to the instance owner, the same way Agent Flows are on this deployment -
- * every route here is gated on holding the `super-admin` role rather than on a
- * permission, so it cannot be handed to a custom role.
+ * Controlled by the SMTP settings permission, which the owner may reserve.
  */
 function smtpEndpoints(app) {
   if (!app) return;
 
   app.get(
     "/smtp",
-    [validatedRequest, superAdminOnly()],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS_SMTP])],
     async (_request, response) => {
       try {
         const cfg = resolvedConfig();
@@ -45,7 +46,7 @@ function smtpEndpoints(app) {
 
   app.post(
     "/smtp",
-    [validatedRequest, superAdminOnly()],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS_SMTP])],
     async (request, response) => {
       try {
         const actor = await userFromSession(request, response);
@@ -76,9 +77,10 @@ function smtpEndpoints(app) {
                 "Host, username and from-address are required to enable SMTP.",
             });
           if (!EMAIL_PATTERN.test(fromEmail))
-            return response
-              .status(200)
-              .json({ success: false, error: "From-address is not a valid email." });
+            return response.status(200).json({
+              success: false,
+              error: "From-address is not a valid email.",
+            });
           if (!password && !isConfigured())
             return response.status(200).json({
               success: false,
@@ -128,7 +130,7 @@ function smtpEndpoints(app) {
 
   app.post(
     "/smtp/test",
-    [validatedRequest, superAdminOnly()],
+    [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_SETTINGS_SMTP])],
     async (request, response) => {
       try {
         const { to = "" } = reqBody(request);
@@ -148,9 +150,10 @@ function smtpEndpoints(app) {
         response.status(200).json({ success: true, error: null });
       } catch (e) {
         console.error(e);
-        response
-          .status(200)
-          .json({ success: false, error: e.message || "Failed to send test email." });
+        response.status(200).json({
+          success: false,
+          error: e.message || "Failed to send test email.",
+        });
       }
     }
   );

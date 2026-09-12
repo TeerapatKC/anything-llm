@@ -23,7 +23,7 @@ export default function ConnectionCard({
     <div className="overflow-hidden rounded-xl border border-theme-modal-border">
       <div className="flex items-center gap-x-3 border-b border-theme-modal-border bg-theme-bg-primary px-4 py-3">
         <span
-          className={`flex size-9 shrink-0 items-center justify-center rounded-full ${accentClassName} ${
+          className={`flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-full ${accentClassName} ${
             // An unset platform keeps its mark but not its shout.
             status === "unavailable" ? "opacity-40 grayscale" : ""
           }`}

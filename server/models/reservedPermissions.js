@@ -3,7 +3,10 @@ const {
   RESERVABLE_PERMISSION_KEYS,
   DEFAULT_RESERVED_PERMISSIONS,
   RESERVED_PERMISSIONS_SETTING,
+  PERMISSIONS,
 } = require("../utils/permissions");
+
+const SMTP_RESERVATION_MIGRATION = "reserved_smtp_permission_migrated";
 
 /**
  * Permissions the instance owner keeps to themselves.
@@ -63,6 +66,31 @@ const ReservedPermissions = {
         where: { label: RESERVED_PERMISSIONS_SETTING },
       });
 
+      // SMTP used to be hard-coded owner-only. Preserve that boundary for existing
+      // installations, including owners who had saved a custom or empty reserve list.
+      const migration = await prisma.system_settings.findFirst({
+        where: { label: SMTP_RESERVATION_MIGRATION },
+      });
+      if (!migration) {
+        if (setting !== null) {
+          const legacy = this.validate(JSON.parse(setting.value || "[]"));
+          const upgraded = this.validate([
+            ...legacy,
+            PERMISSIONS.SYSTEM_SETTINGS_SMTP,
+          ]);
+          await prisma.system_settings.update({
+            where: { label: RESERVED_PERMISSIONS_SETTING },
+            data: { value: JSON.stringify(upgraded) },
+          });
+          setting.value = JSON.stringify(upgraded);
+        }
+        await prisma.system_settings.upsert({
+          where: { label: SMTP_RESERVATION_MIGRATION },
+          update: {},
+          create: { label: SMTP_RESERVATION_MIGRATION, value: "true" },
+        });
+      }
+
       // No row at all means nobody has made a decision yet, so the shipped default
       // applies. A row holding an empty list means the owner chose to reserve nothing.
       const reserved =
@@ -95,6 +123,11 @@ const ReservedPermissions = {
           label: RESERVED_PERMISSIONS_SETTING,
           value: JSON.stringify(reserved),
         },
+      });
+      await prisma.system_settings.upsert({
+        where: { label: SMTP_RESERVATION_MIGRATION },
+        update: {},
+        create: { label: SMTP_RESERVATION_MIGRATION, value: "true" },
       });
 
       this.flushCache();

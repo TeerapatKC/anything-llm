@@ -20,28 +20,27 @@ export default function UsersSection({ linkedUsers, fetchUsers }) {
   }
 
   return (
-    <div className="flex flex-col gap-y-[18px] w-[700px]">
-      <div className="flex flex-col gap-y-2">
-        <p className="text-base font-semibold text-theme-text-primary light:text-slate-900">
+    <section className="min-w-0 rounded-2xl border border-white/10 bg-zinc-800/50 p-5 shadow-sm light:border-slate-200 light:bg-white sm:p-6">
+      <div className="flex flex-col gap-2">
+        <h2 className="text-lg font-semibold text-theme-text-primary light:text-slate-900">
           {t("telegram.users.title")}
-        </p>
-        <p className="text-xs text-zinc-400 light:text-slate-600">
+        </h2>
+        <p className="text-sm leading-6 text-zinc-400 light:text-slate-600">
           {t("telegram.users.description")}
         </p>
       </div>
-      <div className="border-t border-zinc-700 light:border-slate-200" />
       {linkedUsers.length === 0 ? (
-        <p className="text-xs text-zinc-400 light:text-slate-600 py-2">
+        <p className="mt-5 rounded-xl border border-dashed border-white/15 px-4 py-8 text-center text-sm text-zinc-400 light:border-slate-300 light:text-slate-600">
           {t("telegram.users.empty")}
         </p>
       ) : (
-        <div className="flex flex-col gap-y-2">
+        <div className="mt-5 divide-y divide-white/10 light:divide-slate-200">
           {linkedUsers.map((user) => (
             <UserRow key={user.chatId} user={user} onUnlink={handleUnlink} />
           ))}
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -54,32 +53,29 @@ function UserRow({ user, onUnlink }) {
   const initial = (account || "?")[0].toUpperCase();
 
   return (
-    <>
-      <div className="flex items-center gap-x-3">
-        <div className="bg-zinc-800 light:bg-slate-300 size-8 rounded-full flex items-center justify-center shrink-0">
-          <span className="text-sm font-semibold text-theme-text-primary light:text-slate-900">
-            {initial}
-          </span>
-        </div>
-        <div className="flex flex-col min-w-0 flex-1">
-          <span className="text-sm font-medium text-theme-text-primary light:text-slate-900 truncate">
-            {account}
-          </span>
-          <span className="text-xs text-zinc-400 light:text-slate-600 truncate">
-            {telegramHandle}
-          </span>
-        </div>
-        <span className="text-xs text-zinc-400 light:text-slate-600 truncate w-[180px] shrink-0">
-          {user.workspace || t("telegram.users.no-workspace")}
+    <div className="flex flex-wrap items-center gap-3 py-3">
+      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sky-500/15">
+        <span className="text-sm font-semibold text-sky-300 light:text-sky-700">
+          {initial}
         </span>
-        <button
-          onClick={() => onUnlink(user.chatId)}
-          className="text-sm text-white/80 light:text-slate-500 hover:text-white light:hover:text-slate-700 transition-colors shrink-0"
-        >
-          {t("telegram.users.disconnect")}
-        </button>
       </div>
-      <div className="border-t border-zinc-800 light:border-slate-200" />
-    </>
+      <div className="flex min-w-[120px] flex-1 flex-col">
+        <span className="truncate text-sm font-medium text-theme-text-primary light:text-slate-900">
+          {account}
+        </span>
+        <span className="truncate text-xs text-zinc-400 light:text-slate-600">
+          {telegramHandle}
+        </span>
+      </div>
+      <span className="max-w-full truncate text-xs text-zinc-400 light:text-slate-600">
+        {user.workspace || t("telegram.users.no-workspace")}
+      </span>
+      <button
+        onClick={() => onUnlink(user.chatId)}
+        className="shrink-0 text-sm text-red-300 transition-colors hover:text-red-200 light:text-red-700 light:hover:text-red-800"
+      >
+        {t("telegram.users.disconnect")}
+      </button>
+    </div>
   );
 }

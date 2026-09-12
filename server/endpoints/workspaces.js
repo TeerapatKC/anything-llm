@@ -280,62 +280,6 @@ function workspaceEndpoints(app) {
   );
 
   app.post(
-    "/workspace/:slug/upload-link",
-    [
-      validatedRequest,
-      workspacePermissionValid([WS_PERMISSIONS.DOCUMENTS_UPLOAD]),
-    ],
-    async (request, response) => {
-      try {
-        const Collector = new CollectorApi();
-        const { link = "" } = reqBody(request);
-        const processingOnline = await Collector.online();
-
-        if (!processingOnline) {
-          response
-            .status(500)
-            .json({
-              success: false,
-              error: `Document processing API is not online. Link ${link} will not be processed automatically.`,
-            })
-            .end();
-          return;
-        }
-
-        const {
-          success,
-          reason,
-          documents = [],
-        } = await Collector.processLink(link);
-        if (!success) {
-          response.status(500).json({ success: false, error: reason }).end();
-          return;
-        }
-
-        // A scraped link lands in the same staging folder an upload does, so
-        // it has to be drained the same way or it stays instance-visible.
-        const destination = await DocumentFolder.privateFolderFor(
-          response.locals?.user
-        );
-        if (!!destination) moveProcessedDocsToFolder(documents, destination);
-
-        Collector.log(
-          `Link ${link} uploaded processed and successfully. It is now available in documents.`
-        );
-        await EventLogs.logEvent(
-          "link_uploaded",
-          { link },
-          response.locals?.user?.id
-        );
-        response.status(200).json({ success: true, error: null });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500).end();
-      }
-    }
-  );
-
-  app.post(
     "/workspace/:slug/update-embeddings",
     [
       validatedRequest,

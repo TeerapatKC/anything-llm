@@ -24,7 +24,7 @@ const PROVIDER_KEYS = ["google", "microsoft", "outlook", "custom"];
 /**
  * Outbound email (SMTP) configuration.
  *
- * Restricted to the instance owner - see the note on the `/settings/smtp` route.
+ * Requires the SMTP settings permission, which the owner can reserve.
  * Google and Microsoft are offered as one-click presets that lock the host/port/security
  * fields to the values those providers require; anything else falls back to a fully
  * custom SMTP server.

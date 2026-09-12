@@ -1,23 +1,23 @@
 const fs = require("fs");
 const path = require("path");
 const { v4 } = require("uuid");
-const defaultWhisper = "Xenova/whisper-small"; // Model Card: https://huggingface.co/Xenova/whisper-small
-const fileSize = {
-  "Xenova/whisper-small": "250mb",
-  "Xenova/whisper-large": "1.56GB",
-};
+const defaultWhisper = "Xenova/whisper-large";
 
 class LocalWhisper {
-  constructor({ options }) {
-    this.model = options?.WhisperModelPref ?? defaultWhisper;
-    this.fileSize = fileSize[this.model];
+  constructor() {
+    this.model = defaultWhisper;
+    this.fileSize = "1.56GB";
     this.cacheDir = path.resolve(
       process.env.STORAGE_DIR
         ? path.resolve(process.env.STORAGE_DIR, `models`)
         : path.resolve(__dirname, `../../../server/storage/models`)
     );
-
-    this.modelPath = path.resolve(this.cacheDir, ...this.model.split("/"));
+    this.prebuiltModelDir = process.env.WHISPER_PREBUILT_MODEL_DIR;
+    this.usePrebuiltModel = !!this.prebuiltModelDir;
+    this.modelPath = path.resolve(
+      this.usePrebuiltModel ? this.prebuiltModelDir : this.cacheDir,
+      ...this.model.split("/")
+    );
     // Make directory when it does not exist in existing installations
     if (!fs.existsSync(this.cacheDir))
       fs.mkdirSync(this.cacheDir, { recursive: true });
@@ -116,6 +116,12 @@ class LocalWhisper {
   }
 
   async client() {
+    if (this.usePrebuiltModel && !fs.existsSync(this.modelPath)) {
+      throw new Error(
+        `Prebuilt Whisper model is missing at ${this.modelPath}.`
+      );
+    }
+
     if (!fs.existsSync(this.modelPath)) {
       this.#log(
         `The native whisper model has never been run and will be downloaded right now. Subsequent runs will be faster. (~${this.fileSize})`
@@ -123,13 +129,13 @@ class LocalWhisper {
     }
 
     try {
-      // Convert ESM to CommonJS via import so we can load this library.
-      const pipeline = (...args) =>
-        import("@xenova/transformers").then(({ pipeline }) => {
-          return pipeline(...args);
-        });
+      const { pipeline, env } = await import("@xenova/transformers");
+      if (this.usePrebuiltModel) env.localModelPath = this.prebuiltModelDir;
       return await pipeline("automatic-speech-recognition", this.model, {
-        cache_dir: this.cacheDir,
+        cache_dir: this.usePrebuiltModel
+          ? this.prebuiltModelDir
+          : this.cacheDir,
+        local_files_only: this.usePrebuiltModel,
         ...(!fs.existsSync(this.modelPath)
           ? {
               // Show download progress if we need to download any files

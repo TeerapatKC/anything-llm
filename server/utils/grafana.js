@@ -21,15 +21,65 @@ const DEFAULT_DASHBOARDS = [
   },
 ];
 
-function grafanaPublicUrl() {
+/**
+ * The scheme and hostname the browser used to reach this server, with any port
+ * stripped. X-Forwarded-* comes first for the split deployment, where nginx sits
+ * in front and the backend only ever sees the proxy.
+ *
+ * The Host header is set by the client, so it is validated rather than trusted:
+ * a hostname, a bracketed IPv6 literal, nothing else. A forged value would in any
+ * case only change the iframe on the forger's own page.
+ */
+function browserOrigin(request) {
+  if (!request?.headers) return null;
+
+  const forwardedHost = String(request.headers["x-forwarded-host"] || "")
+    .split(",")[0]
+    .trim();
+  const rawHost = forwardedHost || String(request.headers.host || "").trim();
+  if (!rawHost) return null;
+
+  // Strip the port: "example.com:3001" and "[::1]:3001" both keep only the host.
+  const host = rawHost.startsWith("[")
+    ? rawHost.slice(0, rawHost.indexOf("]") + 1)
+    : rawHost.split(":")[0];
+  if (!host) return null;
+  if (!/^\[[0-9a-fA-F:.]+\]$|^[A-Za-z0-9.-]+$/.test(host)) return null;
+
+  const forwardedProto = String(request.headers["x-forwarded-proto"] || "")
+    .split(",")[0]
+    .trim()
+    .toLowerCase();
+  const protocol =
+    forwardedProto === "https" || forwardedProto === "http"
+      ? forwardedProto
+      : request.secure
+        ? "https"
+        : "http";
+
+  return { protocol, host };
+}
+
+/**
+ * GRAFANA_PUBLIC_URL still wins when it is set - that is the escape hatch for a
+ * Grafana behind its own domain or reverse proxy, where guessing from the app's
+ * origin would be wrong.
+ */
+function grafanaPublicUrl(request = null) {
   const explicit = String(process.env.GRAFANA_PUBLIC_URL || "")
     .trim()
     .replace(/\/$/, "");
   if (explicit) return explicit;
 
   const port = String(process.env.GRAFANA_PUBLISH_PORT || "").trim();
-  if (port) return `http://localhost:${port}`;
-  return "";
+  if (!port) return "";
+
+  const origin = browserOrigin(request);
+  if (origin) return `${origin.protocol}://${origin.host}:${port}`;
+
+  // No request to learn from - a CLI caller, or a test. Same machine is the only
+  // assumption left, and it is the one the old code always made.
+  return `http://localhost:${port}`;
 }
 
 function parseDashboards() {
@@ -53,8 +103,8 @@ function parseDashboards() {
     .filter(Boolean);
 }
 
-function monitoringConfig() {
-  const publicUrl = grafanaPublicUrl();
+function monitoringConfig(request = null) {
+  const publicUrl = grafanaPublicUrl(request);
   return {
     enabled: Boolean(publicUrl),
     publicUrl,

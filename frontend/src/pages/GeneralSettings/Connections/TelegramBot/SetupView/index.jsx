@@ -31,14 +31,17 @@ export default function SetupView({ onConnected }) {
   }
 
   return (
-    <div className="flex flex-col gap-y-8 mt-8">
+    <div className="mt-6 grid items-start gap-6 min-[1300px]:grid-cols-[minmax(0,1.3fr)_minmax(300px,0.7fr)]">
       <CreateBotSection />
-      <form onSubmit={handleConnect} className="flex flex-col gap-y-[18px]">
-        <div className="flex flex-col gap-y-2">
-          <p className="text-sm light:text-base font-semibold text-theme-text-primary light:text-slate-900">
+      <form
+        onSubmit={handleConnect}
+        className="flex min-w-0 flex-col gap-6 rounded-2xl border border-white/10 bg-zinc-800/50 p-5 shadow-sm light:border-slate-200 light:bg-white sm:p-6"
+      >
+        <div className="flex flex-col gap-2">
+          <h2 className="text-lg font-semibold text-theme-text-primary light:text-slate-900">
             {t("telegram.setup.step2.title")}
-          </p>
-          <p className="text-xs text-zinc-400 light:text-slate-600 max-w-[700px]">
+          </h2>
+          <p className="text-sm leading-6 text-zinc-400 light:text-slate-600">
             {t("telegram.setup.step2.description")}
           </p>
         </div>
@@ -46,7 +49,7 @@ export default function SetupView({ onConnected }) {
         <button
           type="submit"
           disabled={connecting}
-          className="flex items-center justify-center gap-x-1.5 text-sm font-medium bg-zinc-50 light:bg-slate-900 text-zinc-900 light:text-white rounded-lg h-9 px-5 w-fit hover:opacity-90 transition-opacity duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#229ed9] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#168ac3] disabled:cursor-not-allowed disabled:opacity-50"
         >
           {connecting ? (
             <>
@@ -55,7 +58,7 @@ export default function SetupView({ onConnected }) {
             </>
           ) : (
             <>
-              <TelegramLogo className="h-5 w-5" />
+              <TelegramLogo className="size-5" />
               {t("telegram.setup.step2.connect-bot")}
             </>
           )}
@@ -71,24 +74,29 @@ function BotTokenInput({ botToken, setBotToken }) {
   const Icon = showToken ? Eye : EyeOff;
 
   return (
-    <div className="flex flex-col gap-y-1.5 w-[320px]">
-      <label className="text-sm font-medium text-zinc-200 light:text-slate-900">
+    <div className="flex min-w-0 flex-col gap-2">
+      <label
+        htmlFor="telegram-bot-token"
+        className="text-sm font-medium text-zinc-200 light:text-slate-900"
+      >
         {t("telegram.setup.step2.bot-token")}
       </label>
-      <div className="bg-zinc-800 light:bg-white light:border light:border-slate-300 h-8 rounded-lg px-3.5 flex items-center gap-x-2">
+      <div className="flex h-11 items-center gap-3 rounded-xl border border-white/10 bg-zinc-900 px-3.5 focus-within:border-sky-500 light:border-slate-300 light:bg-slate-50">
         <button
           type="button"
           onClick={() => setShowToken(!showToken)}
-          className="text-zinc-400 light:text-slate-500 hover:text-zinc-300 light:hover:text-slate-700 transition-colors shrink-0"
+          aria-label={t("telegram.setup.step2.bot-token")}
+          className="shrink-0 text-zinc-400 transition-colors hover:text-zinc-200 light:text-slate-500 light:hover:text-slate-700"
         >
           <Icon className="h-4 w-4" />
         </button>
         <input
+          id="telegram-bot-token"
           type={showToken ? "text" : "password"}
           value={botToken}
           onChange={(e) => setBotToken(e.target.value)}
           placeholder="123456:ABC-DEF123ghlkl-zyx57W2v"
-          className="bg-transparent flex-1 text-sm text-theme-text-primary light:text-slate-900 placeholder:text-zinc-400 light:placeholder:text-slate-500 outline-none min-w-0"
+          className="min-w-0 flex-1 bg-transparent text-sm text-theme-text-primary outline-none placeholder:text-zinc-500 light:text-slate-900 light:placeholder:text-slate-400"
           autoComplete="off"
         />
       </div>
