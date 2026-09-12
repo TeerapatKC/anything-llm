@@ -191,20 +191,23 @@ WORKDIR /app/collector
 ENV PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com/chrome-for-testing-public
 RUN yarn install --production --network-timeout 100000 && yarn cache clean
 
-# Keep the built-in transcription model in the image, outside the persistent
-# /app/server/storage volume (which would hide files copied there at build time).
-ENV WHISPER_PREBUILT_MODEL_DIR=/app/collector/models
-RUN set -eu; \
-    model_dir="$WHISPER_PREBUILT_MODEL_DIR/Xenova/whisper-large"; \
-    revision="451f4b004423a67138e1d510de9c7cd904c259e7"; \
-    mkdir -p "$model_dir/onnx"; \
-    for file in config.json tokenizer.json tokenizer_config.json preprocessor_config.json generation_config.json onnx/encoder_model_quantized.onnx onnx/decoder_model_merged_quantized.onnx; do \
-      curl --fail --location --retry 5 --retry-all-errors --retry-delay 5 --connect-timeout 30 \
-        "https://huggingface.co/Xenova/whisper-large/resolve/$revision/$file" \
-        --output "$model_dir/$file"; \
-    done; \
-    test "$(stat -c%s "$model_dir/onnx/encoder_model_quantized.onnx")" -gt 500000000; \
-    test "$(stat -c%s "$model_dir/onnx/decoder_model_merged_quantized.onnx")" -gt 800000000
+# Every model the application would otherwise download the first time someone
+# uses a feature: both native embedders, the reranker, and the transcription
+# model. Without these an air-gapped install fails at the first document upload,
+# and the failure names a Hugging Face URL rather than anything actionable.
+#
+# The directory sits outside /app/server/storage on purpose. That path is a volume
+# at runtime, and a volume mounted over a directory hides whatever the image put
+# there - so docker-entrypoint.sh copies what is missing into the volume instead.
+# Whisper is read in place from here, being large and never modified.
+ENV NEXUSAI_PREBUILT_MODELS_DIR=/app/prebuilt-models
+ENV WHISPER_PREBUILT_MODEL_DIR=/app/prebuilt-models
+# Run with `sh <file>` rather than as an executable: this stage runs as nexusai,
+# which cannot chmod a root-owned file in /usr/local/bin. Nothing needs chown
+# either - the files are created by the user that will read them.
+COPY --chown=nexusai:nexusai ./docker/prefetch-models.sh /app/prefetch-models.sh
+RUN sh /app/prefetch-models.sh "$NEXUSAI_PREBUILT_MODELS_DIR" \
+    && rm /app/prefetch-models.sh
 
 WORKDIR /app
 USER nexusai
