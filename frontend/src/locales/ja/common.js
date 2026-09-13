@@ -91,10 +91,25 @@ const TRANSLATIONS = {
     audio: {
       "stt-title": "音声テキスト変換設定",
       "stt-description":
-        "Nexus AI で使用する音声テキスト変換プロバイダーを選択します。対応している場合は、デフォルトでブラウザ内蔵サービスを使用します。",
+        "音声テキスト変換の設定はサーバー側で管理されます。このページでは確認のみできます。",
       "tts-title": "テキスト読み上げ設定",
       "tts-description":
-        "Nexus AI で使用するテキスト読み上げプロバイダーを選択します。対応している場合は、デフォルトでブラウザ内蔵サービスを使用します。",
+        "テキスト読み上げの設定はサーバー側で管理されます。このページでは音声モデルのみ変更できます。",
+      provider: "プロバイダー",
+      "provider-description":
+        "このインスタンスで現在使用中のプロバイダーです。",
+      model: "モデル",
+      "model-description": "このインスタンスで現在使用中の音声モデルです。",
+      "model-unavailable": "モデル情報なし",
+      "voices-unavailable":
+        "設定されたサービスから音声一覧を取得できません。サービスが起動し、音声が導入されているか確認してください。",
+      "saved-voice-unavailable":
+        "保存された音声（{{voice}}）は利用可能な一覧にありません。",
+      active: "使用中",
+      "managed-by-env":
+        "プロバイダーとその他の設定はサーバー側で管理されます。プロバイダーを変更するには {{envKey}} を更新して再起動してください。",
+      "save-changes": "変更を保存",
+      saving: "保存中...",
     },
     workspaces: {
       title: "インスタンスのワークスペース",
@@ -670,13 +685,19 @@ const TRANSLATIONS = {
     },
   },
   vector: {
-    title: "ベクターデータベース設定",
+    title: "ベクターデータベース",
     description:
-      "これは、Nexus AIインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
+      "このインスタンスのベクターデータベースはサーバー側で設定されています。",
     provider: {
-      title: "ベクターデータベースプロバイダー",
-      description: "LanceDBの場合、特に設定は必要ありません。",
+      title: "使用中のベクターデータベース",
+      description:
+        "すべてのワークスペースで現在使用されているデータベースです。",
     },
+    active: "使用中",
+    "managed-by-env":
+      "環境変数で管理されています。この画面では変更できません。",
+    "change-instructions":
+      "データベースまたは接続設定を変更するには、サーバー環境の VECTOR_DB と関連する変数を更新し、インスタンスを再起動してください。",
   },
   embeddable: {
     title: "埋め込みチャットウィジェット",
@@ -2671,22 +2692,12 @@ const TRANSLATIONS = {
       "一部の STT サービスでは文字起こしに API キーが必要です。サービスが不要な場合は任意です。",
     "generic-open-ai-options-3":
       "音声の文字起こしに使用する、OpenAI 互換 STT サービスのベース URL を指定してください。",
-    "lemonade-options-4":
-      "Whisper などの文字起こしモデルを Lemonade サーバーに読み込むと、ここに表示されます。",
-    "lemonade-options-3":
-      "Lemonade サーバーの API キーです。Lemonade の LLM および埋め込み設定と共有されます。",
-    "kokoro-options":
-      "Kokoro サーバーに接続して音声を読み込めませんでした。音声 ID を手動で入力してください。",
     "open-ai-generic-options-3":
       "ほとんどの TTS サービスには複数の音声モデルがあります。使用したい音声モデルの識別子です。",
     "open-ai-generic-options-2":
       "一部の TTS サービスでは音声生成に API キーが必要です。サービスが不要な場合は任意です。",
     "open-ai-generic-options":
       "音声を生成する、OpenAI 互換 TTS サービスのベース URL を指定してください。",
-    "piper-ttsoptions-2":
-      "「✔」は、そのモデルが既にローカルに保存されており、実行時にダウンロードが不要であることを示します。",
-    "piper-ttsoptions":
-      "PiperTTS のモデルはすべてブラウザ上でローカルに動作します。低スペックの端末では負荷が高くなる場合があります。",
     "generic-open-ai-options-5":
       "音声の文字起こしに使用する OpenAI 互換サービスのベース URL です。",
     "parsed-files-menu-2":

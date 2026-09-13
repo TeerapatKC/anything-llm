@@ -6,7 +6,7 @@ import MicButton from "../MicButton";
 import useSilenceDetector from "../useSilenceDetector";
 import { audioBlobToWav } from "@/utils/audio/toWav";
 
-const SILENCE_INTERVAL = 3_200; // ms of silence before auto-stop, matches BrowserNative.
+const SILENCE_INTERVAL = 3_200; // ms of silence before auto-stop.
 const MIME_CANDIDATES = [
   "audio/webm;codecs=opus",
   "audio/webm",

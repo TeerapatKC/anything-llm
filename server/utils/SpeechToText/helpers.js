@@ -6,7 +6,7 @@ const { hotdirPath, isWithin } = require("../files");
 
 /**
  * Convert an audio buffer to a 16kHz mono WAV buffer via the collector's
- * FFMPEG wrapper. Use this when the downstream STT provider (e.g. Lemonade)
+ * FFMPEG wrapper. Use this when the downstream STT service
  * runs a whisper.cpp backend that rejects webm/opus input.
  * @param {Buffer} audioBuffer - Source audio buffer.
  * @param {string} extension - Source file extension including the leading dot (e.g. ".webm").

@@ -99,10 +99,24 @@ const TRANSLATIONS = {
     audio: {
       "stt-title": "Speech-to-text Preference",
       "stt-description":
-        "Choose the speech-to-text provider used in your Nexus AI experience. The browser's built-in service is used by default when supported.",
+        "Speech-to-text settings are configured on the server and shown here for reference.",
       "tts-title": "Text-to-speech Preference",
       "tts-description":
-        "Choose the text-to-speech provider used in your Nexus AI experience. The browser's built-in service is used by default when supported.",
+        "Text-to-speech settings are configured on the server. Only the voice model can be changed here.",
+      provider: "Provider",
+      "provider-description": "The provider currently used by this instance.",
+      model: "Model",
+      "model-description": "The audio model currently used by this instance.",
+      "model-unavailable": "Model unavailable",
+      "voices-unavailable":
+        "No voices are available from the configured service. Check that it is running and has voices installed.",
+      "saved-voice-unavailable":
+        "The saved voice ({{voice}}) is not in the available list.",
+      active: "Active",
+      "managed-by-env":
+        "The provider and other settings are managed on the server. To change the provider, update {{envKey}} and restart the instance.",
+      "save-changes": "Save changes",
+      saving: "Saving...",
     },
     workspaces: {
       title: "Instance Workspaces",
@@ -962,11 +976,16 @@ const TRANSLATIONS = {
   vector: {
     title: "Vector Database",
     description:
-      "These are the credentials and settings for how your Nexus AI instance will function. It's important these keys are current and correct.",
+      "The vector database used by this instance is configured on the server.",
     provider: {
-      title: "Vector Database Provider",
-      description: "There is no configuration needed for LanceDB.",
+      title: "Active vector database",
+      description: "This is the database currently used for all workspaces.",
     },
+    active: "Active",
+    "managed-by-env":
+      "Managed through environment variables. Settings cannot be changed here.",
+    "change-instructions":
+      "To change the database or its connection settings, update VECTOR_DB and the matching variables in the server environment, then restart the instance.",
   },
   embeddable: {
     title: "Embeddable Chat Widgets",
@@ -2660,22 +2679,12 @@ const TRANSLATIONS = {
       "Some STT services require an API key to transcribe audio - this is optional if your service does not require one.",
     "generic-open-ai-options-3":
       "This should be the base URL of the OpenAI compatible STT service you will transcribe audio with.",
-    "lemonade-options-4":
-      "Load a Whisper or transcription model into your Lemonade server, then it will appear here.",
-    "lemonade-options-3":
-      "The API key for your Lemonade server. Shared with the Lemonade LLM and embedder settings.",
-    "kokoro-options":
-      "Could not reach the Kokoro server to load voices. Enter a voice id manually.",
     "open-ai-generic-options-3":
       "Most TTS services will have several voice models available, this is the identifier for the voice model you want to use.",
     "open-ai-generic-options-2":
       "Some TTS services require an API key to generate TTS responses - this is optional if your service does not require one.",
     "open-ai-generic-options":
       "This should be the base URL of the OpenAI compatible TTS service you will generate TTS responses from.",
-    "piper-ttsoptions-2":
-      'The "✔" indicates this model is already stored locally and does not need to be downloaded when run.',
-    "piper-ttsoptions":
-      "All PiperTTS models will run in your browser locally. This can be resource intensive on lower-end devices.",
     "generic-open-ai-options-5":
       "The base URL of the OpenAI-compatible service used to transcribe audio.",
     "parsed-files-menu-2":

@@ -1605,15 +1605,6 @@ function systemEndpoints(app) {
             .json({ success: false, error: "No audio file provided." });
         }
 
-        const provider = process.env.STT_PROVIDER || "native";
-        if (provider === "native") {
-          return response.status(400).json({
-            success: false,
-            error:
-              "Server-side transcription is disabled. Set STT_PROVIDER to a supported provider.",
-          });
-        }
-
         const { getSTTProvider } = require("../utils/SpeechToText");
         const stt = getSTTProvider();
         const text = await stt.transcribe(

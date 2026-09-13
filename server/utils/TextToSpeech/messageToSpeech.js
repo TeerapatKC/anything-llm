@@ -11,10 +11,6 @@ const { stripThinkingFromText } = require("../helpers");
  * which sounds like the message being spoken twice, and read Markdown markers
  * such as `**` literally.
  *
- * This mirrors `frontend/src/utils/chat/messageToSpeech.js`, which does the
- * same cleanup for the browser-native and Piper paths that speak on the client.
- * Keep the two in sync.
- *
  * @param {string} message - The raw stored message body.
  * @returns {string} A plain-text string suitable for TTS.
  */

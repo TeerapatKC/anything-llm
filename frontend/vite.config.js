@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from "url"
 import postcss from "./postcss.config.js"
 import react from "@vitejs/plugin-react"
 import dns from "dns"
+import process from "node:process"
 import { visualizer } from "rollup-plugin-visualizer"
 
 dns.setDefaultResultOrder("verbatim")
@@ -18,14 +19,6 @@ const DEV_BACKEND_ORIGIN = process.env.DEV_BACKEND_ORIGIN || "http://127.0.0.1:3
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  assetsInclude: [
-    './public/piper/ort-wasm-simd-threaded.wasm',
-    './public/piper/piper_phonemize.wasm',
-    './public/piper/piper_phonemize.data',
-  ],
-  worker: {
-    format: 'es'
-  },
   server: {
     port: 3000,
     host: "localhost",
@@ -90,15 +83,6 @@ export default defineConfig({
     },
     commonjsOptions: {
       transformMixedEsModules: true
-    }
-  },
-  optimizeDeps: {
-    include: ["@mintplex-labs/piper-tts-web"],
-    esbuildOptions: {
-      define: {
-        global: "globalThis"
-      },
-      plugins: []
     }
   }
 })

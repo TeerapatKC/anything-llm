@@ -1,26 +1,11 @@
 function getSTTProvider() {
-  const provider = process.env.STT_PROVIDER || "native";
-  switch (provider) {
-    case "openai":
-      const { OpenAiSTT } = require("./openAi");
-      return new OpenAiSTT();
-    case "lemonade":
-      const { LemonadeSTT } = require("./lemonade");
-      return new LemonadeSTT();
-    case "deepgram":
-      const { DeepgramSTT } = require("./deepgram");
-      return new DeepgramSTT();
-    case "generic-openai":
-      const { GenericOpenAiSTT } = require("./openAiGeneric");
-      return new GenericOpenAiSTT();
-    case "groq":
-      const { GroqSTT } = require("./groq");
-      return new GroqSTT();
-    default:
-      throw new Error(
-        `STT_PROVIDER "${provider}" is not a server-side provider.`
-      );
-  }
+  const provider = process.env.STT_PROVIDER || "generic-openai";
+  if (provider !== "generic-openai")
+    throw new Error(
+      `Unsupported STT_PROVIDER "${provider}". Use generic-openai.`
+    );
+  const { GenericOpenAiSTT } = require("./openAiGeneric");
+  return new GenericOpenAiSTT();
 }
 
 module.exports = { getSTTProvider };

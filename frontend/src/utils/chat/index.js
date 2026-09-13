@@ -1,5 +1,5 @@
 import { THREAD_RENAME_EVENT } from "@/components/Sidebar/ActiveWorkspaces/ThreadContainer";
-import { emitAssistantMessageCompleteEvent } from "@/components/contexts/TTSProvider";
+import { emitAssistantMessageCompleteEvent } from "@/hooks/useTTSAutoplay";
 import { getAgentSessionActive } from "@/utils/chat/agent";
 import { emitMemoriesUpdatedEvent } from "@/components/WorkspaceChat/ChatContainer/MemoriesSidebar/MemoriesContext";
 export const ABORT_STREAM_EVENT = "abort-chat-stream";

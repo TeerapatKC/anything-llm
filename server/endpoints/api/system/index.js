@@ -109,15 +109,14 @@ function apiSystemEndpoints(app) {
     async (request, response) => {
       /*
       #swagger.tags = ['System Settings']
-      #swagger.description = 'Update a system setting or preference.'
+      #swagger.description = 'Update a system setting or preference. Vector database settings and audio settings other than the text-to-speech voice are read-only here and must be configured in the server environment.'
       #swagger.requestBody = {
         description: 'Key pair object that matches a valid setting and value. Get keys from GET /v1/system or refer to codebase.',
         required: true,
         content: {
           "application/json": {
             example: {
-              VectorDB: "lancedb",
-              AnotherKey: "updatedValue"
+              GenericOpenAiMaxTokens: 512
             }
           }
         }

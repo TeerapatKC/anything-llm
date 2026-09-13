@@ -272,16 +272,17 @@ const PERMISSION_CATALOG = [
   },
   {
     key: PERMISSIONS.SYSTEM_SETTINGS_VECTOR_DB,
-    label: "Configure the vector database",
-    description: "Point the instance at a vector database and set its access.",
+    label: "View the vector database",
+    description:
+      "See which vector database the instance uses. Its configuration is managed in the server environment.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
   {
     key: PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION,
-    label: "Configure transcription",
+    label: "Manage audio preferences",
     description:
-      "Choose the speech-to-text and text-to-speech providers used for audio.",
+      "View the audio providers configured on the server and choose a text-to-speech voice.",
     category: "system",
     parent: PERMISSIONS.SYSTEM_SETTINGS,
   },
@@ -1496,7 +1497,7 @@ const ENV_KEY_PERMISSION_RULES = [
     permission: PERMISSIONS.SYSTEM_SETTINGS_IMAGE_GENERATION,
   },
   {
-    test: /^(Whisper|Speech|Tts|Stt|Deepgram|ElevenLabs|Kokoro|Piper)/i,
+    test: /^(Whisper|Speech|Tts|Stt)/i,
     permission: PERMISSIONS.SYSTEM_SETTINGS_TRANSCRIPTION,
   },
   {

@@ -19,10 +19,7 @@ import {
   PASTE_ATTACHMENT_EVENT,
 } from "./ChatContainer/DnDWrapper";
 import { CircleAlert } from "lucide-react";
-import {
-  TTSProvider,
-  useWatchForAutoPlayAssistantTTSResponse,
-} from "../contexts/TTSProvider";
+import { useWatchForAutoPlayAssistantTTSResponse } from "@/hooks/useTTSAutoplay";
 import { PENDING_HOME_MESSAGE } from "@/utils/constants";
 
 export default function WorkspaceChat({ loading, workspace }) {
@@ -119,26 +116,24 @@ export default function WorkspaceChat({ loading, workspace }) {
   setEventDelegatorForCodeSnippets();
 
   return (
-    <TTSProvider>
-      <DnDWrapper
-        loaded={loaded}
-        opts={{
-          files: [],
-          ready: true,
-          dragging,
-          setDragging,
-          onDrop: handleDropWithoutThread,
-          parseAttachments: () => [],
-        }}
-      >
-        <ChatContainer
-          key={loaded.key}
-          workspace={loaded.workspace}
-          threadSlug={loaded.threadSlug}
-          knownHistory={loaded.history}
-        />
-      </DnDWrapper>
-    </TTSProvider>
+    <DnDWrapper
+      loaded={loaded}
+      opts={{
+        files: [],
+        ready: true,
+        dragging,
+        setDragging,
+        onDrop: handleDropWithoutThread,
+        parseAttachments: () => [],
+      }}
+    >
+      <ChatContainer
+        key={loaded.key}
+        workspace={loaded.workspace}
+        threadSlug={loaded.threadSlug}
+        knownHistory={loaded.history}
+      />
+    </DnDWrapper>
   );
 }
 

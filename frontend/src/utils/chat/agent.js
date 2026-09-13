@@ -2,7 +2,7 @@ import { v4 } from "uuid";
 import { safeJsonParse } from "../request";
 import { API_BASE } from "../constants";
 import { useEffect, useState } from "react";
-import { emitAssistantMessageCompleteEvent } from "@/components/contexts/TTSProvider";
+import { emitAssistantMessageCompleteEvent } from "@/hooks/useTTSAutoplay";
 import { THREAD_RENAME_EVENT } from "@/components/Sidebar/ActiveWorkspaces/ThreadContainer";
 
 export const AGENT_SESSION_START = "agentSessionStart";

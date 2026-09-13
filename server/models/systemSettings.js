@@ -353,51 +353,18 @@ const SystemSettings = {
       WhisperGenericOpenAiModel: process.env.WHISPER_GENERIC_OPEN_AI_MODEL,
 
       // --------------------------------------------------------
-      // TTS/STT  Selection Settings & Configs
-      // - Currently the only 3rd party is OpenAI or the native browser-built in
+      // OpenAI-compatible speech service settings
       // --------------------------------------------------------
-      TextToSpeechProvider: process.env.TTS_PROVIDER || "native",
-      TTSOpenAIKey: !!process.env.TTS_OPEN_AI_KEY,
-      TTSOpenAIVoiceModel: process.env.TTS_OPEN_AI_VOICE_MODEL,
-
-      // Eleven Labs TTS
-      TTSElevenLabsKey: !!process.env.TTS_ELEVEN_LABS_KEY,
-      TTSElevenLabsVoiceModel: process.env.TTS_ELEVEN_LABS_VOICE_MODEL,
-      // Piper TTS
-      TTSPiperTTSVoiceModel:
-        process.env.TTS_PIPER_VOICE_MODEL ?? "en_US-hfc_female-medium",
-      // OpenAI Generic TTS
+      TextToSpeechProvider: process.env.TTS_PROVIDER || "generic-openai",
       TTSOpenAICompatibleKey: !!process.env.TTS_OPEN_AI_COMPATIBLE_KEY,
       TTSOpenAICompatibleModel: process.env.TTS_OPEN_AI_COMPATIBLE_MODEL,
       TTSOpenAICompatibleVoiceModel:
         process.env.TTS_OPEN_AI_COMPATIBLE_VOICE_MODEL,
       TTSOpenAICompatibleEndpoint: process.env.TTS_OPEN_AI_COMPATIBLE_ENDPOINT,
-      // Kokoro TTS
-      TTSKokoroEndpoint: process.env.TTS_KOKORO_ENDPOINT,
-      TTSKokoroKey: !!process.env.TTS_KOKORO_KEY,
-      TTSKokoroVoiceModel: process.env.TTS_KOKORO_VOICE_MODEL,
-
-      // STT Selection
-      SpeechToTextProvider: process.env.STT_PROVIDER || "native",
-      // STT OpenAI
-      STTOpenAIModel: process.env.STT_OPEN_AI_MODEL,
-
-      // STT Lemonade
-      STTLemonadeBasePath: process.env.STT_LEMONADE_BASE_PATH,
-      STTLemonadeModelPref: process.env.STT_LEMONADE_MODEL_PREF,
-
-      // STT Deepgram
-      STTDeepgramApiKey: !!process.env.STT_DEEPGRAM_API_KEY,
-      STTDeepgramModel: process.env.STT_DEEPGRAM_MODEL,
-
-      // STT Generic OpenAI
+      SpeechToTextProvider: process.env.STT_PROVIDER || "generic-openai",
       STTOpenAICompatibleKey: !!process.env.STT_OPEN_AI_COMPATIBLE_KEY,
       STTOpenAICompatibleModel: process.env.STT_OPEN_AI_COMPATIBLE_MODEL,
       STTOpenAICompatibleEndpoint: process.env.STT_OPEN_AI_COMPATIBLE_ENDPOINT,
-
-      // STT Groq
-      STTGroqApiKey: !!process.env.STT_GROQ_API_KEY,
-      STTGroqModel: process.env.STT_GROQ_MODEL,
 
       // --------------------------------------------------------
       // Agent Settings & Configs

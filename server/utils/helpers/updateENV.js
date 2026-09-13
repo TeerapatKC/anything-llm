@@ -1,6 +1,43 @@
 const { resetAllVectorStores } = require("../vectorStore/resetAllVectorStores");
 const { validateModelSettings } = require("./llmModelSettings");
 
+// These values may be read by the settings page, but only the server environment
+// may configure them. Keep this guard in updateENV so both settings APIs enforce it.
+const ENV_MANAGED_VECTOR_KEYS = new Set([
+  "VectorDB",
+  "ChromaEndpoint",
+  "ChromaApiHeader",
+  "ChromaApiKey",
+  "ChromaCloudApiKey",
+  "ChromaCloudTenant",
+  "ChromaCloudDatabase",
+  "WeaviateEndpoint",
+  "WeaviateApiKey",
+  "QdrantEndpoint",
+  "QdrantApiKey",
+  "PineConeKey",
+  "PineConeIndex",
+  "MilvusAddress",
+  "MilvusUsername",
+  "MilvusPassword",
+  "ZillizEndpoint",
+  "ZillizApiToken",
+  "AstraDBApplicationToken",
+  "AstraDBEndpoint",
+  "PGVectorConnectionString",
+  "PGVectorTableName",
+]);
+const EDITABLE_TTS_VOICE_KEYS = new Set(["TTSOpenAICompatibleVoiceModel"]);
+
+function isEnvManagedAudioKey(key) {
+  return (
+    key === "SpeechToTextProvider" ||
+    key === "TextToSpeechProvider" ||
+    ((key.startsWith("STT") || key.startsWith("TTS")) &&
+      !EDITABLE_TTS_VOICE_KEYS.has(key))
+  );
+}
+
 const KEY_MAPPING = {
   LLMProvider: {
     envKey: "LLM_PROVIDER",
@@ -371,39 +408,11 @@ const KEY_MAPPING = {
     checks: [],
   },
 
-  // TTS/STT Integration ENVS
+  // OpenAI-compatible TTS/STT integration ENVs
   TextToSpeechProvider: {
     envKey: "TTS_PROVIDER",
     checks: [supportedTTSProvider],
   },
-
-  // TTS OpenAI
-  TTSOpenAIKey: {
-    envKey: "TTS_OPEN_AI_KEY",
-    checks: [validOpenAIKey],
-  },
-  TTSOpenAIVoiceModel: {
-    envKey: "TTS_OPEN_AI_VOICE_MODEL",
-    checks: [],
-  },
-
-  // TTS ElevenLabs
-  TTSElevenLabsKey: {
-    envKey: "TTS_ELEVEN_LABS_KEY",
-    checks: [isNotEmpty],
-  },
-  TTSElevenLabsVoiceModel: {
-    envKey: "TTS_ELEVEN_LABS_VOICE_MODEL",
-    checks: [],
-  },
-
-  // PiperTTS Local
-  TTSPiperTTSVoiceModel: {
-    envKey: "TTS_PIPER_VOICE_MODEL",
-    checks: [],
-  },
-
-  // OpenAI Generic TTS
   TTSOpenAICompatibleKey: {
     envKey: "TTS_OPEN_AI_COMPATIBLE_KEY",
     checks: [],
@@ -421,53 +430,10 @@ const KEY_MAPPING = {
     checks: [isValidURL],
   },
 
-  // Kokoro TTS (self-hosted kokoro-fastapi)
-  TTSKokoroEndpoint: {
-    envKey: "TTS_KOKORO_ENDPOINT",
-    checks: [isValidURL],
-  },
-  TTSKokoroKey: {
-    envKey: "TTS_KOKORO_KEY",
-    checks: [],
-  },
-  TTSKokoroVoiceModel: {
-    envKey: "TTS_KOKORO_VOICE_MODEL",
-    checks: [isNotEmpty],
-  },
-
-  // STT Selection
   SpeechToTextProvider: {
     envKey: "STT_PROVIDER",
     checks: [supportedSTTProvider],
   },
-
-  // STT OpenAI
-  STTOpenAIModel: {
-    envKey: "STT_OPEN_AI_MODEL",
-    checks: [],
-  },
-
-  // STT Lemonade
-  STTLemonadeBasePath: {
-    envKey: "STT_LEMONADE_BASE_PATH",
-    checks: [isValidURL],
-  },
-  STTLemonadeModelPref: {
-    envKey: "STT_LEMONADE_MODEL_PREF",
-    checks: [],
-  },
-
-  // STT Deepgram
-  STTDeepgramApiKey: {
-    envKey: "STT_DEEPGRAM_API_KEY",
-    checks: [isNotEmpty],
-  },
-  STTDeepgramModel: {
-    envKey: "STT_DEEPGRAM_MODEL",
-    checks: [isNotEmpty],
-  },
-
-  // STT OpenAI Generic
   STTOpenAICompatibleKey: {
     envKey: "STT_OPEN_AI_COMPATIBLE_KEY",
     checks: [],
@@ -479,16 +445,6 @@ const KEY_MAPPING = {
   STTOpenAICompatibleEndpoint: {
     envKey: "STT_OPEN_AI_COMPATIBLE_ENDPOINT",
     checks: [isValidURL],
-  },
-
-  // STT Groq
-  STTGroqApiKey: {
-    envKey: "STT_GROQ_API_KEY",
-    checks: [isNotEmpty],
-  },
-  STTGroqModel: {
-    envKey: "STT_GROQ_MODEL",
-    checks: [isNotEmpty],
   },
 
   // SMTP / Outbound Email Settings
@@ -590,27 +546,15 @@ function validOllamaLLMBasePath(input = "") {
 }
 
 function supportedTTSProvider(input = "") {
-  const validSelection = [
-    "native",
-    "openai",
-    "elevenlabs",
-    "piper_local",
-    "generic-openai",
-    "kokoro",
-  ].includes(input);
-  return validSelection ? null : `${input} is not a valid TTS provider.`;
+  return input === "generic-openai"
+    ? null
+    : "Only the OpenAI-compatible TTS provider is supported.";
 }
 
 function supportedSTTProvider(input = "") {
-  const validSelection = [
-    "native",
-    "openai",
-    "lemonade",
-    "deepgram",
-    "groq",
-    "generic-openai",
-  ].includes(input);
-  return validSelection ? null : `${input} is not a valid STT provider.`;
+  return input === "generic-openai"
+    ? null
+    : "Only the OpenAI-compatible STT provider is supported.";
 }
 
 function validLocalWhisper(input = "") {
@@ -828,6 +772,22 @@ async function validatePGVectorTableName(key, prevValue, nextValue) {
 // to the process will at least alleviate that issue. It does not perform comprehensive validity checks or sanity checks
 // and is simply for debugging when the .env not found issue many come across.
 async function updateENV(newENVs = {}, force = false, userId = null) {
+  if (Object.keys(newENVs).some(isEnvManagedAudioKey)) {
+    return {
+      newValues: {},
+      error:
+        "Audio settings are managed by environment variables. Only the text-to-speech voice model can be changed through the API.",
+    };
+  }
+
+  if (Object.keys(newENVs).some((key) => ENV_MANAGED_VECTOR_KEYS.has(key))) {
+    return {
+      newValues: {},
+      error:
+        "Vector database settings are managed by environment variables and cannot be changed through the API.",
+    };
+  }
+
   let error = "";
   const runAfterAll = [];
   const validKeys = Object.keys(KEY_MAPPING);

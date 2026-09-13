@@ -1,13 +1,11 @@
 const {
   fetchOpenRouterEmbeddingModels,
 } = require("../EmbeddingEngines/openRouter");
-const { ElevenLabsTTS } = require("../TextToSpeech/elevenLabs");
 const { getAllLemonadeModels } = require("../lemonadeModels");
 const { isModelEnabled } = require("./llmModelSettings");
 
 const SUPPORT_CUSTOM_MODELS = [
   "generic-openai",
-  "elevenlabs-tts",
   "openai-imggen",
   "openrouter-imggen",
   "ollama-imggen",
@@ -17,13 +15,9 @@ const SUPPORT_CUSTOM_MODELS = [
   "cohere-embedder",
   "openrouter-embedder",
   "lemonade-embedder",
-  "openai-stt",
-  "deepgram-stt",
-  "lemonade-stt",
-  "groq-stt",
   "generic-openai-stt",
-  "kokoro-tts",
   "generic-openai-tts",
+  "generic-openai-tts-voices",
 ];
 
 function availableLlmModels(
@@ -88,12 +82,6 @@ async function getCustomModels(
   switch (provider) {
     case "generic-openai":
       return getGenericOpenAiModels(basePath, apiKey);
-    case "openai-stt":
-      return openAiSttModels(apiKey);
-    case "groq-stt":
-      return getGroqSTTModels(apiKey);
-    case "elevenlabs-tts":
-      return getElevenLabsModels(apiKey);
     case "openai-imggen":
       return getOpenAiImageModels(apiKey);
     case "openrouter-imggen":
@@ -116,115 +104,15 @@ async function getCustomModels(
       return getOpenRouterEmbeddingModels();
     case "lemonade-embedder":
       return getLemonadeModels(basePath, "embedding");
-    case "lemonade-stt":
-      return getLemonadeSTTModels(basePath);
-    case "deepgram-stt":
-      return getDeepgramSTTModels(apiKey);
-    case "kokoro-tts":
-      return kokoroTtsVoices(basePath, apiKey);
     case "generic-openai-stt":
       return getOpenAiCompatibleAudioModels("stt", basePath, apiKey);
     case "generic-openai-tts":
       return getOpenAiCompatibleAudioModels("tts", basePath, apiKey);
+    case "generic-openai-tts-voices":
+      return getOpenAiCompatibleTtsVoices();
     default:
       return { models: [], error: "Invalid provider for custom models" };
   }
-}
-
-async function openAiSttModels(apiKey = null) {
-  const fallback = [
-    { id: "whisper-1", name: "whisper-1", organization: "OpenAi" },
-    {
-      id: "gpt-4o-transcribe",
-      name: "gpt-4o-transcribe",
-      organization: "OpenAi",
-    },
-    {
-      id: "gpt-4o-mini-transcribe",
-      name: "gpt-4o-mini-transcribe",
-      organization: "OpenAi",
-    },
-  ];
-
-  const { OpenAI: OpenAIApi } = require("openai");
-  const openai = new OpenAIApi({
-    apiKey: apiKey || process.env.OPEN_AI_KEY,
-  });
-
-  const allModels = await openai.models
-    .list()
-    .then((results) => results.data)
-    .catch((e) => {
-      console.error(`OpenAI:listModels (stt)`, e.message);
-      return null;
-    });
-
-  if (!allModels) return { models: fallback, error: null };
-
-  // The /v1/models response has no category/type field, so we filter by id.
-  // Realtime variants use a separate WebSocket API and are not compatible
-  // with the audio.transcriptions.create endpoint we use server-side.
-  const models = allModels
-    .filter(
-      (m) =>
-        (m.id.includes("whisper") || m.id.includes("transcribe")) &&
-        !m.id.includes("realtime")
-    )
-    .map((m) => ({ ...m, name: m.id, organization: "OpenAi" }));
-
-  return { models: models.length ? models : fallback, error: null };
-}
-
-async function getGroqSTTModels(_apiKey = null) {
-  const { OpenAI: OpenAIApi } = require("openai");
-  const apiKey =
-    _apiKey === true
-      ? process.env.STT_GROQ_API_KEY
-      : _apiKey || process.env.STT_GROQ_API_KEY || null;
-
-  const openai = new OpenAIApi({
-    baseURL: "https://api.groq.com/openai/v1",
-    apiKey,
-  });
-  const models = (
-    await openai.models
-      .list()
-      .then((results) => results.data)
-      .catch((e) => {
-        console.error(`GroqSTT:listModels`, e.message);
-        return [];
-      })
-  ).filter((model) => model.id.includes("whisper"));
-
-  // Api Key was successful so lets save it for future uses
-  if (models.length > 0 && !!apiKey) process.env.GROQ_STT_API_KEY = apiKey;
-  return { models, error: null };
-}
-
-async function getElevenLabsModels(apiKey = null) {
-  const models = (await ElevenLabsTTS.voices(apiKey)).map((model) => {
-    return {
-      id: model.voice_id,
-      organization: model.category,
-      name: model.name,
-    };
-  });
-
-  if (models.length === 0) {
-    return {
-      models: [
-        {
-          id: "21m00Tcm4TlvDq8ikWAM",
-          organization: "premade",
-          name: "Rachel (default)",
-        },
-      ],
-      error: null,
-    };
-  }
-
-  if (models.length > 0 && !!apiKey) process.env.TTS_ELEVEN_LABS_KEY = apiKey;
-  return { models, error: null };
 }
 
 function getNativeEmbedderModels() {
@@ -292,54 +180,6 @@ async function getLemonadeModels(
   }
 }
 
-async function getLemonadeSTTModels(basePath = null) {
-  try {
-    const models = await getAllLemonadeModels(basePath, "transcription");
-    return { models, error: null };
-  } catch (e) {
-    console.error(`Lemonade:getLemonadeSTTModels`, e.message);
-    return { models: [], error: "Could not fetch Lemonade STT Models" };
-  }
-}
-
-async function getDeepgramSTTModels(_apiKey = null) {
-  const apiKey =
-    _apiKey === true
-      ? process.env.STT_DEEPGRAM_API_KEY
-      : _apiKey || process.env.STT_DEEPGRAM_API_KEY || null;
-  if (!apiKey)
-    return { models: [], error: "No Deepgram API key was provided." };
-
-  try {
-    const response = await fetch("https://api.deepgram.com/v1/models", {
-      method: "GET",
-      headers: { Authorization: `Token ${apiKey}` },
-    });
-    if (!response.ok) throw new Error(`Deepgram returned ${response.status}`);
-
-    let models = new Map();
-    const data = await response.json();
-    (data?.stt ?? [])
-      .filter((m) => m.batch !== false)
-      .forEach((m) => {
-        if (models.has(m.canonical_name)) return;
-        models.set(m.canonical_name, {
-          id: m.canonical_name,
-          name: m.canonical_name,
-          organization: "Deepgram",
-        });
-      });
-
-    models = Array.from(models.values());
-    // Api Key was successful so lets save it for future uses
-    if (models.length > 0 && _apiKey) process.env.STT_DEEPGRAM_API_KEY = apiKey;
-    return { models, error: null };
-  } catch (e) {
-    console.error(`Deepgram:getDeepgramSTTModels`, e.message);
-    return { models: [], error: "Could not fetch Deepgram STT models" };
-  }
-}
-
 /**
  * List models from the configured OpenAI-compatible LLM endpoint.
  * @param {string|null} basePath - Optional URL override for settings validation.
@@ -374,58 +214,6 @@ async function getGenericOpenAiModels(basePath = null, apiKey = null) {
       error: "Could not reach the configured LLM model service",
     };
   }
-}
-
-/**
- * Pulls the live voice list from a self-hosted kokoro-fastapi server's
- * /audio/voices endpoint. basePath is the OpenAI-compatible base URL the
- * user pointed at their kokoro instance (e.g. http://localhost:8880/v1).
- * @param {string} basePath - The base path to the Kokoro instance.
- * @param {string} apiKey - The API key to use.
- * @returns {Promise<{models: Array<{id: string, organization: string, name: string}>, error: string | null}>}
- */
-async function kokoroTtsVoices(basePath = null, apiKey = null) {
-  let endpoint = basePath || process.env.TTS_KOKORO_ENDPOINT;
-  if (!endpoint)
-    return { models: [], error: "No Kokoro endpoint was provided." };
-
-  endpoint = new URL(endpoint);
-  endpoint.pathname = "/v1/audio/voices";
-  const headers = { "Content-Type": "application/json" };
-  const key = typeof apiKey === "boolean" ? null : apiKey;
-  if (key) headers.Authorization = `Bearer ${key}`;
-
-  const voices = await fetch(endpoint.toString(), { method: "GET", headers })
-    .then((res) => {
-      if (!res.ok) throw new Error(res.statusText || "Failed to load voices");
-      return res.json();
-    })
-    .then((data) => (Array.isArray(data?.voices) ? data.voices : []))
-    .catch((e) => {
-      console.error(`Kokoro:listVoices`, e.message);
-      return null;
-    });
-
-  if (!voices || !Array.isArray(voices))
-    return { models: [], error: "Could not fetch Kokoro voices." };
-
-  // kokoro-fastapi < 0.3.x returns voices as plain id strings while >= 0.3.x
-  // returns { id, name } objects. Normalize both shapes to { id, name } so the
-  // voice list renders regardless of the kokoro-fastapi version being used.
-  const models = voices
-    .map((voice) => {
-      if (typeof voice === "string")
-        return { id: voice, name: voice, organization: "Kokoro" };
-      if (voice && typeof voice === "object" && voice.id)
-        return {
-          id: voice.id,
-          name: voice.name || voice.id,
-          organization: "Kokoro",
-        };
-      return null;
-    })
-    .filter(Boolean);
-  return { models, error: null };
 }
 
 /**
@@ -641,6 +429,54 @@ async function getOpenAiCompatibleAudioModels(
       error: `Could not fetch models from ${endpoint}`,
     };
   }
+}
+
+/**
+ * Read available voices from the configured TTS service. VoxCPM2 exposes
+ * /v1/voices; other OpenAI-compatible services may use /v1/audio/voices.
+ * This uses only the server's configured endpoint and credential.
+ */
+async function getOpenAiCompatibleTtsVoices() {
+  const basePath = process.env.TTS_OPEN_AI_COMPATIBLE_ENDPOINT;
+  if (!basePath) return { models: [], error: "No TTS endpoint is configured." };
+
+  try {
+    const base = new URL(basePath);
+    const path = base.pathname.replace(/\/+$/, "");
+    const headers = {};
+    if (process.env.TTS_OPEN_AI_COMPATIBLE_KEY)
+      headers.Authorization = `Bearer ${process.env.TTS_OPEN_AI_COMPATIBLE_KEY}`;
+
+    for (const suffix of ["/voices", "/audio/voices"]) {
+      const endpoint = new URL(base);
+      endpoint.pathname = `${path}${suffix}`;
+      try {
+        const response = await fetch(endpoint, {
+          headers,
+          signal: AbortSignal.timeout(10000),
+        });
+        if (!response.ok) continue;
+        const data = await response.json();
+        const voices = Array.isArray(data?.voices)
+          ? data.voices
+          : data?.voices && typeof data.voices === "object"
+            ? Object.keys(data.voices)
+            : [];
+        const models = voices
+          .map((voice) => {
+            const id = typeof voice === "string" ? voice : voice?.id;
+            return id ? { id, name: voice?.name || id } : null;
+          })
+          .filter(Boolean);
+        return { models, error: null };
+      } catch {
+        // Try the other common voice-list route before reporting failure.
+      }
+    }
+  } catch (error) {
+    return { models: [], error: `Invalid TTS endpoint: ${error.message}` };
+  }
+  return { models: [], error: "Could not load voices from the TTS service." };
 }
 
 module.exports = {

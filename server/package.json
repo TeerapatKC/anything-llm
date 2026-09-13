@@ -56,7 +56,6 @@
     "docx": "9.6.1",
     "dompurify": "3.3.3",
     "dotenv": "^16.0.3",
-    "elevenlabs": "^0.5.0",
     "exceljs": "4.4.0",
     "express": "^4.21.2",
     "extract-json-from-string": "^1.0.1",
