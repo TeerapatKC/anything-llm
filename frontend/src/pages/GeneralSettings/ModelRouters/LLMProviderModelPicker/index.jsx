@@ -52,7 +52,10 @@ export default function LLMProviderModelPicker({
       ) : (
         <Select value={model} onValueChange={setModel}>
           <SelectTrigger className="h-9 w-full rounded-lg bg-theme-settings-input-bg text-theme-text-primary">
-            <SelectValue placeholder="Choose a model" />
+            <SelectValue placeholder="Choose a model">
+              {available.models.find((item) => item.id === model)?.name ||
+                model}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {available.models.map((item) => (

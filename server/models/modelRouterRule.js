@@ -21,7 +21,7 @@ const VALID_COMPARATORS = [
   "neq",
   "between",
 ];
-const VALID_CONDITION_LOGIC = ["AND"];
+const VALID_CONDITION_LOGIC = ["AND", "OR"];
 const TITLE_REGEX = /^[a-z0-9_]+$/;
 
 const ModelRouterRule = {
@@ -67,10 +67,10 @@ const ModelRouterRule = {
         };
     }
 
-    if (!data.route_provider || !data.route_model)
+    if (data.route_provider !== "generic-openai" || !data.route_model)
       return {
         rule: null,
-        error: "Route provider and model are required.",
+        error: "Choose an available OpenAI-compatible model.",
       };
 
     try {
@@ -141,6 +141,14 @@ const ModelRouterRule = {
 
   update: async function (id = null, data = {}) {
     if (!id) throw new Error("No rule id provided for update");
+    if (
+      data.route_provider !== undefined &&
+      data.route_provider !== "generic-openai"
+    )
+      return {
+        rule: null,
+        error: "Only OpenAI-compatible models are supported.",
+      };
 
     const updates = {};
 

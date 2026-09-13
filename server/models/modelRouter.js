@@ -13,8 +13,7 @@ const ModelRouter = {
       return String(value).trim();
     },
     fallback_provider: (value) => {
-      if (!value || typeof value !== "string") return null;
-      return String(value);
+      return value === "generic-openai" ? value : null;
     },
     fallback_model: (value) => {
       if (!value || typeof value !== "string") return null;

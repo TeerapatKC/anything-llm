@@ -113,7 +113,9 @@ const Workspace = {
       return value;
     },
     chatProvider: (value) => {
-      return value === "generic-openai" ? value : null;
+      return ["generic-openai", "nexusai-router"].includes(value)
+        ? value
+        : null;
     },
     chatModel: (value) => {
       if (!value || typeof value !== "string") return null;
@@ -316,7 +318,7 @@ const Workspace = {
     // every settings save just to learn what kind of workspace this is.
     const target = await prisma.workspaces.findFirst({
       where: { id: Number(id) },
-      select: { type: true },
+      select: { type: true, router_id: true },
     });
     if (target?.type === WORKSPACE_TYPES.PERSONAL) {
       const attempted = Object.keys(updates).filter((key) => key !== "name");
@@ -330,6 +332,18 @@ const Workspace = {
     const validatedUpdates = this.validateFields(updates);
     if (Object.keys(validatedUpdates).length === 0)
       return { workspace: { id }, message: "No valid fields to update!" };
+
+    if (validatedUpdates.chatProvider === "nexusai-router") {
+      const routerId = validatedUpdates.router_id ?? target.router_id;
+      if (!routerId)
+        return { workspace: null, message: "Select a model router." };
+      const { ModelRouter } = require("./modelRouter");
+      if (!(await ModelRouter.get({ id: routerId })))
+        return {
+          workspace: null,
+          message: "The selected model router no longer exists.",
+        };
+    }
 
     // If the user unset the chatProvider we will need
     // to then clear the chatModel as well to prevent confusion during
@@ -467,6 +481,10 @@ const Workspace = {
         ([, value]) => value !== null && value !== undefined && value !== ""
       )
     );
+    if (profile.workspace.chatProvider === "nexusai-router")
+      configuredFields.chatModel = null;
+    else if (profile.workspace.chatProvider === "generic-openai")
+      configuredFields.router_id = null;
     return {
       ...workspace,
       ...configuredFields,

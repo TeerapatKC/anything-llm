@@ -207,10 +207,10 @@ function ConditionRow({
   const properties = createProperties(t);
 
   return (
-    <div className="flex items-end gap-x-5">
+    <div className="flex flex-wrap items-end gap-3">
       {logicBadge}
       <div
-        className={`grid flex-1 ${isBoolean ? "grid-cols-2" : "grid-cols-3"} gap-x-5`}
+        className={`grid min-w-0 flex-1 grid-cols-1 gap-3 ${isBoolean ? "sm:grid-cols-2" : "sm:grid-cols-3"}`}
       >
         <FieldColumn
           label={showLabels ? t("model-router.rule-form.property-label") : null}
@@ -223,10 +223,11 @@ function ConditionRow({
             <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
               <SelectValue
                 placeholder={t("model-router.rule-form.property-select")}
-              />
+              >
+                {properties.find((p) => p.value === condition.property)?.label}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              null
               {properties.map((p) => (
                 <SelectItem key={p.value} value={p.value}>
                   {p.label}
@@ -286,7 +287,11 @@ function BooleanValueField({ value, onChange }) {
   return (
     <Select value={value || "true"} onValueChange={onChange} required>
       <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
-        <SelectValue placeholder={t("ui.select-option")} />
+        <SelectValue placeholder={t("ui.select-option")}>
+          {value === "false"
+            ? t("model-router.rule-form.bool-false")
+            : t("model-router.rule-form.bool-true")}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         <SelectItem value="true">
@@ -316,10 +321,11 @@ function ComparatorAndValueFields({ condition, onChange, showLabels }) {
           <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
             <SelectValue
               placeholder={t("model-router.rule-form.comparator-select")}
-            />
+            >
+              {comparators.find((c) => c.value === condition.comparator)?.label}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
-            null
             {comparators.map((c) => (
               <SelectItem key={c.value} value={c.value}>
                 {c.label}

@@ -1,10 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import { Pencil, Play, X } from "lucide-react";
+import { Pencil, Play, Trash2 } from "lucide-react";
 import { humanizeCron } from "../utils/cron";
 import { useTranslation } from "react-i18next";
 import { SimpleToggleSwitch } from "@/components/lib/Toggle";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+import TableRowActions from "@/components/lib/TableRowActions";
+import {
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 // One row of the scheduled-jobs list. Clicking the name navigates to the
 // run history (global or workspace-scoped, per `runsPath`); CRUD callbacks
@@ -29,8 +33,8 @@ export default function JobRow({
     ? t(`scheduledJobs.status.${job.latestRun.status}`, job.latestRun.status)
     : t("scheduledJobs.row.neverRun");
 
-  const stop = (handler) => (e) => {
-    e.stopPropagation();
+  const runAction = (handler) => (event) => {
+    event.stopPropagation();
     handler();
   };
 
@@ -40,7 +44,10 @@ export default function JobRow({
       tabIndex={0}
       onClick={() => navigate(runsPath)}
       onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
+        if (
+          e.target === e.currentTarget &&
+          (e.key === "Enter" || e.key === " ")
+        ) {
           e.preventDefault();
           navigate(runsPath);
         }
@@ -54,9 +61,7 @@ export default function JobRow({
       <TableCell className="text-theme-text-secondary">
         {humanizeCron(job.schedule, i18n.language)}
       </TableCell>
-      <TableCell className="text-theme-text-secondary">
-        {statusText}
-      </TableCell>
+      <TableCell className="text-theme-text-secondary">{statusText}</TableCell>
       <TableCell className="text-theme-text-secondary">
         {job.lastRunAt ? new Date(job.lastRunAt).toLocaleString() : "—"}
       </TableCell>
@@ -66,38 +71,28 @@ export default function JobRow({
           : "—"}
       </TableCell>
       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-end gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={stop(() => onDelete(job.id))}
-            title={t("scheduledJobs.row.delete")}
-            className="text-theme-text-secondary hover:text-destructive hover:bg-destructive/10"
-          >
-            <X className="h-4 w-4 shrink-0" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={stop(() => onEdit(job))}
-            title={t("scheduledJobs.row.edit")}
-            className="text-theme-text-secondary"
-          >
-            <Pencil className="h-4 w-4 shrink-0" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            onClick={stop(() => onTrigger(job.id))}
-            disabled={inFlight}
-            title={t("scheduledJobs.row.runNow")}
-            className="text-theme-text-secondary"
-          >
-            <Play className="h-4 w-4 shrink-0" />
-          </Button>
+        <div className="flex items-center justify-end gap-2">
+          <TableRowActions>
+            <DropdownMenuItem
+              disabled={inFlight}
+              onClick={runAction(() => onTrigger(job.id))}
+            >
+              <Play className="size-4" />
+              {t("scheduledJobs.row.runNow")}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={runAction(() => onEdit(job))}>
+              <Pencil className="size-4" />
+              {t("scheduledJobs.row.edit")}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={runAction(() => onDelete(job.id))}
+            >
+              <Trash2 className="size-4" />
+              {t("scheduledJobs.row.delete")}
+            </DropdownMenuItem>
+          </TableRowActions>
           <SimpleToggleSwitch
             size="sm"
             enabled={job.enabled}

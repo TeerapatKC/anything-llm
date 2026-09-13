@@ -240,6 +240,7 @@ describeValidation("chatMode", () => {
 describeValidation("chatProvider", () => {
   it("passes a valid string through", () => {
     expect(Workspace.validations.chatProvider("generic-openai")).toBe("generic-openai");
+    expect(Workspace.validations.chatProvider("nexusai-router")).toBe("nexusai-router");
     expect(Workspace.validations.chatProvider("openai")).toBeNull();
   });
 

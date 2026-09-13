@@ -149,8 +149,8 @@ export default function RuleForm({
           </DialogHeader>
 
           <div className="flex flex-col gap-y-5">
-            <div className="flex gap-x-5 items-start">
-              <div className="flex flex-col gap-y-1.5 w-[500px]">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="flex min-w-0 flex-col gap-y-1.5">
                 <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
                   {t("model-router.rule-form.title-label")}
                 </label>
@@ -163,13 +163,15 @@ export default function RuleForm({
                   required
                 />
               </div>
-              <div className="flex flex-col gap-y-1.5 w-[300px]">
+              <div className="flex min-w-0 flex-col gap-y-1.5">
                 <label className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-950">
                   {t("model-router.rule-form.rule-type")}
                 </label>
                 <Select value={ruleType} onValueChange={setRuleType}>
                   <SelectTrigger className="bg-zinc-800 light:bg-white light:border light:border-slate-300 text-theme-text-primary light:text-slate-700 text-sm rounded-[8px] outline-none w-full h-8 px-3.5">
-                    <SelectValue placeholder={t("ui.select-option")} />
+                    <SelectValue placeholder={t("ui.select-option")}>
+                      {ruleTypes.find((rt) => rt.value === ruleType)?.label}
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     {ruleTypes.map((rt) => (

@@ -1608,19 +1608,32 @@ const TRANSLATIONS = {
   "model-router": {
     title: "モデルルーター",
     description:
-      "モデルルーターを使用すると、特定の条件に基づいて、チャットメッセージを異なるLLMプロバイダーやモデルに自動的にルーティングするためのルールを定義できます。",
+      "ルールに基づいてチャットの回答モデルを自動選択し、ワークスペースのチャット設定でルーターを指定します。",
+    workspace: {
+      "source-label": "チャットモデルの選択方法",
+      "source-description":
+        "単一のモデルを使うか、ルールに従ってモデルルーターに選択させます。",
+      "direct-model": "単一モデル",
+      router: "モデルルーター",
+      "choose-router": "ルーターを選択",
+      "no-routers": "モデルルーターはまだありません。",
+      "manage-routers": "ルーターを管理",
+      fallback: "基本モデル",
+    },
     table: {
       name: "名前",
-      fallback: "代替案",
+      fallback: "基本モデル",
       rules: "ルール",
       workspaces: "作業スペース",
+      "configure-rules": "ルールを設定",
+      "configure-rules-for": "{{name}} のルールを設定",
     },
     "no-routers": "現時点では、特定のモデルのルーターはまだありません。",
     "empty-description":
       "現時点では、設定されたルーターはありません。設定を開始するために、一つ作成してください。",
     "new-router-button": "新しいルーター",
     "delete-confirm":
-      "ルーター「{{name}}」を削除してもよろしいですか？\nこれにより、すべての設定と、それを使用しているすべてのワークスペースとの関連を解除します。\n\nこの操作は取り消すことができません。",
+      "ルーター「{{name}}」とすべてのルールを削除しますか？使用中のルーターは削除できません。この操作は取り消せません。",
     "toast-deleted": "ルーターが削除されました",
     "toast-delete-failed": "ルーターの削除に失敗しました: {{error}}",
     "new-router": {
@@ -1629,14 +1642,14 @@ const TRANSLATIONS = {
       "name-placeholder": "例：コスト最適化ツール",
       description: "説明",
       "description-placeholder": "任意の説明",
-      "fallback-label": "主要なプロバイダーおよびモデル",
+      "fallback-label": "基本モデル",
       "fallback-description":
         "以下の状況で使用されます。\n* どのルーティングルールにも一致しない場合\n* LLMによって分類されたルールを評価する場合",
       "cooldown-label": "キャッシュクールダウン (秒)",
       "cooldown-help":
         "ルーティングの決定が再評価されるまでの、キャッシュの保持時間を設定します。キャッシュを無効にするには、0に設定してください。",
       "name-required": "氏名が必須です。",
-      "fallback-required": "主要な提供者とモデルが必要です。",
+      "fallback-required": "基本モデルを選択してください。",
       cancel: "キャンセル",
       create: "ルーターを作成する",
     },
@@ -1699,9 +1712,8 @@ const TRANSLATIONS = {
         "例えば、「ユーザーが、法律、契約、またはコンプライアンスに関する情報を求めている」",
       "match-description-help":
         "このルールが適用される状況を説明してください。LLMは、この状況に基づいて、このルールを使用すべきかどうかを判断します。",
-      "route-to-label": "提供者およびモデルへのアクセス方法",
-      "route-to-description":
-        "このルールに合致する場合、このプロバイダ/モデルを使用してください。",
+      "route-to-label": "使用するモデル",
+      "route-to-description": "このルールに一致した場合に使用するモデルです。",
       cancel: "キャンセル",
       saving: "保存中...",
       "update-rule": "更新ルール",

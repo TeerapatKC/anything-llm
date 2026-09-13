@@ -12,6 +12,27 @@ const { EventLogs } = require("../models/eventLogs");
 function modelRouterEndpoints(app) {
   if (!app) return;
 
+  // Workspace model pickers need names and IDs, but not the routing rules.
+  app.get(
+    "/model-routers/options",
+    [validatedRequest],
+    async (_request, response) => {
+      try {
+        const routers = await ModelRouter.where();
+        return response.status(200).json({
+          routers: routers.map(({ id, name, fallback_model }) => ({
+            id,
+            name,
+            fallback_model,
+          })),
+        });
+      } catch (error) {
+        console.error(error);
+        return response.sendStatus(500);
+      }
+    }
+  );
+
   app.get(
     "/model-routers",
     [validatedRequest, userPermissionValid([PERMISSIONS.SYSTEM_MODEL_ROUTING])],
@@ -118,6 +139,20 @@ function modelRouterEndpoints(app) {
         const user = await userFromSession(request, response);
         const { id } = request.params;
         const router = await ModelRouter.get({ id: Number(id) });
+        const {
+          PrivateWorkspaceProfile,
+        } = require("../models/privateWorkspaceProfile");
+        const privateProfile = await PrivateWorkspaceProfile.get();
+        if (
+          (await ModelRouter.workspaceCount(Number(id))) > 0 ||
+          (privateProfile.workspace.chatProvider === "nexusai-router" &&
+            privateProfile.workspace.router_id === Number(id))
+        )
+          return response.status(409).json({
+            success: false,
+            error:
+              "This router is in use. Choose another model or router for its workspaces first.",
+          });
         const success = await ModelRouter.delete(Number(id));
         if (!success)
           return response

@@ -2,6 +2,18 @@ import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 
 const ModelRouter = {
+  getOptions: async () => {
+    return await fetch(`${API_BASE}/model-routers/options`, {
+      method: "GET",
+      headers: baseHeaders(),
+    })
+      .then((res) => res.json())
+      .then((res) => res?.routers || [])
+      .catch((e) => {
+        console.error(e);
+        return [];
+      });
+  },
   getAll: async () => {
     return await fetch(`${API_BASE}/model-routers`, {
       method: "GET",

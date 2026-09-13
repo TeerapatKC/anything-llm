@@ -1,5 +1,6 @@
 const { ModelRouterService } = require("../../router");
 const { getLLMProvider } = require("../../helpers");
+const { isModelEnabled } = require("../../helpers/llmModelSettings");
 
 class NexusAIModelRouter {
   constructor(workspace, embedder = null) {
@@ -100,6 +101,26 @@ class NexusAIModelRouter {
   }
 
   #finalize() {
+    if (
+      this.resolvedRoute.provider !== "generic-openai" ||
+      !isModelEnabled(this.resolvedRoute.model)
+    ) {
+      if (
+        this.router.fallback_provider !== "generic-openai" ||
+        !isModelEnabled(this.router.fallback_model)
+      )
+        throw new Error(
+          "The router's primary model is unavailable or disabled."
+        );
+      this.routerService.clearStickyRoute(this._routeKey);
+      this.resolvedRoute = {
+        provider: this.router.fallback_provider,
+        model: this.router.fallback_model,
+        ruleTitle: null,
+        ruleType: null,
+        isFallback: true,
+      };
+    }
     this.delegateProvider = this._instrumentProvider(
       getLLMProvider({
         provider: this.resolvedRoute.provider,

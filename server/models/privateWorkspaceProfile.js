@@ -40,6 +40,7 @@ const PrivateWorkspaceProfile = {
     "openAiPrompt",
     "chatProvider",
     "chatModel",
+    "router_id",
     "chatMode",
     "openAiTemp",
     "openAiHistory",
@@ -94,11 +95,24 @@ const PrivateWorkspaceProfile = {
     }
     // Old profiles may contain retired provider IDs. Keep their models from
     // reaching the only supported LLM service until a new model is selected.
-    if (workspace.chatProvider && workspace.chatProvider !== "generic-openai") {
+    if (
+      workspace.chatProvider &&
+      !["generic-openai", "nexusai-router"].includes(workspace.chatProvider)
+    ) {
       workspace.chatProvider = null;
       workspace.chatModel = null;
     }
-    if (workspace.agentProvider && workspace.agentProvider !== "generic-openai") {
+    if (workspace.chatProvider === "nexusai-router") {
+      workspace.chatModel = null;
+      workspace.router_id = Number(workspace.router_id) || null;
+      if (!workspace.router_id) workspace.chatProvider = null;
+    } else {
+      workspace.router_id = null;
+    }
+    if (
+      workspace.agentProvider &&
+      workspace.agentProvider !== "generic-openai"
+    ) {
       workspace.agentProvider = null;
       workspace.agentModel = null;
     }
@@ -183,6 +197,15 @@ const PrivateWorkspaceProfile = {
             ? current.agentSkillConfig
             : updates.agentSkillConfig,
       });
+
+      if (merged.workspace.chatProvider === "nexusai-router") {
+        const { ModelRouter } = require("./modelRouter");
+        if (!(await ModelRouter.get({ id: merged.workspace.router_id })))
+          return {
+            profile: null,
+            error: "The selected model router no longer exists.",
+          };
+      }
 
       const value = JSON.stringify(merged);
       await prisma.system_settings.upsert({

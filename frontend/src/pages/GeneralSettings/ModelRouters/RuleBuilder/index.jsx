@@ -7,6 +7,8 @@ import showToast from "@/utils/toast";
 import RuleForm from "./RuleForm";
 import RuleRow from "./RuleRow";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import PageHeader from "@/components/layout/PageHeader";
+import { Button } from "@/components/ui/button";
 
 function RulesList({
   rules,
@@ -93,7 +95,7 @@ function RulesList({
 function EmptyRulesState({ onCreateRule }) {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-col items-center justify-center gap-8 py-28">
+    <div className="flex flex-col items-center justify-center gap-6 rounded-lg border border-theme-sidebar-border py-20">
       <div className="flex flex-col items-center gap-1.5 text-center">
         <p className="text-base font-semibold leading-6 text-zinc-50 light:text-slate-900">
           {t("model-router.rules.no-rules")}
@@ -102,12 +104,9 @@ function EmptyRulesState({ onCreateRule }) {
           {t("model-router.rules.empty-description")}
         </p>
       </div>
-      <button
-        onClick={onCreateRule}
-        className="border-none flex items-center justify-center h-9 px-5 py-2.5 rounded-lg bg-slate-50 text-zinc-950 text-sm font-medium leading-5 hover:opacity-90 transition-opacity duration-200"
-      >
+      <Button onClick={onCreateRule} size="lg">
         {t("model-router.rules.new-rule-button")}
-      </button>
+      </Button>
     </div>
   );
 }
@@ -192,26 +191,21 @@ export default function RuleBuilder({
 
   return (
     <div>
-      <div className="flex items-end justify-between pb-6 border-b border-white/20 light:border-slate-300">
-        <div className="flex flex-col gap-y-2">
-          <p className="text-lg font-semibold leading-7 text-theme-text-primary light:text-slate-900">
-            {routerName
-              ? t("model-router.rules.title-with-name", { name: routerName })
-              : t("model-router.rules.title")}
-          </p>
-          <p className="text-xs leading-4 text-zinc-400 light:text-slate-600 max-w-[700px]">
-            {t("model-router.rules.description")}
-          </p>
-        </div>
-        {hasRules && (
-          <button
-            onClick={openCreate}
-            className="border-none shrink-0 flex items-center justify-center h-9 px-5 py-2.5 rounded-lg bg-slate-50 text-zinc-950 text-sm font-medium leading-5 hover:opacity-90 transition-opacity duration-200"
-          >
-            {t("model-router.rules.add-rule")}
-          </button>
-        )}
-      </div>
+      <PageHeader
+        title={
+          routerName
+            ? t("model-router.rules.title-with-name", { name: routerName })
+            : t("model-router.rules.title")
+        }
+        description={t("model-router.rules.description")}
+        actions={
+          hasRules ? (
+            <Button onClick={openCreate} size="lg">
+              {t("model-router.rules.add-rule")}
+            </Button>
+          ) : null
+        }
+      />
 
       {hasRules ? (
         <RulesList

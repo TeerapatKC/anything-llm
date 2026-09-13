@@ -1,6 +1,7 @@
 import { Trans, useTranslation } from "react-i18next";
 import { GripVertical, Pencil, Trash2 } from "lucide-react";
-import { SimpleToggleSwitch } from "@/components/lib/Toggle";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import truncate from "truncate";
 
 const COMPARATOR_SYMBOLS = {
@@ -39,7 +40,7 @@ export default function RuleRow({
 
   return (
     <div
-      className={`group flex items-center gap-3 px-3 py-2 rounded-lg bg-zinc-800 light:bg-slate-100 transition-colors ${
+      className={`group flex flex-wrap items-center gap-3 rounded-lg border border-theme-sidebar-border bg-theme-bg-secondary px-3 py-3 transition-colors ${
         isEditing ? "ring-1 ring-blue-500/60" : ""
       } ${isDisabled ? "opacity-50" : ""}`}
     >
@@ -64,15 +65,11 @@ export default function RuleRow({
           <span className="text-sm font-medium leading-5 text-theme-text-primary light:text-slate-900 truncate">
             {rule.title}
           </span>
-          {rule.type === "llm" ? (
-            <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-fuchsia-500/20 text-fuchsia-400 light:bg-fuchsia-100 light:text-fuchsia-700">
-              {t("model-router.rules.badge-llm")}
-            </span>
-          ) : (
-            <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 light:bg-blue-100 light:text-blue-700">
-              {t("model-router.rules.badge-calculated")}
-            </span>
-          )}
+          <Badge variant="outline">
+            {rule.type === "llm"
+              ? t("model-router.rules.badge-llm")
+              : t("model-router.rules.badge-calculated")}
+          </Badge>
         </div>
         {rule.type === "llm" ? (
           <LLMRuleBody rule={rule} />
@@ -81,10 +78,10 @@ export default function RuleRow({
         )}
       </div>
       <div className="flex items-center gap-x-3 shrink-0">
-        <SimpleToggleSwitch
-          enabled={rule.enabled}
-          onChange={onToggle}
-          size="md"
+        <Switch
+          checked={rule.enabled}
+          onCheckedChange={onToggle}
+          aria-label={rule.title}
         />
         <button
           onClick={onEdit}
@@ -112,7 +109,7 @@ function LLMRuleBody({ rule }) {
         i18nKey="model-router.rules.llm-rule-body"
         values={{
           description: truncate(rule.description, 100),
-          route: `${rule.route_provider}/${rule.route_model}`,
+          route: rule.route_model,
         }}
         components={{
           desc: (
@@ -128,7 +125,7 @@ function LLMRuleBody({ rule }) {
 function CalculatedRuleBody({ rule }) {
   const { t } = useTranslation();
   const conditions = Array.isArray(rule.conditions) ? rule.conditions : [];
-  const route = `${rule.route_provider}/${rule.route_model}`;
+  const route = rule.route_model;
 
   if (conditions.length === 0) {
     return (

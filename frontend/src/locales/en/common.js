@@ -754,19 +754,32 @@ const TRANSLATIONS = {
   "model-router": {
     title: "Model Routers",
     description:
-      "Model routers let you define rules to automatically route chat messages to different LLM providers and models based on conditions.",
+      "Choose which available model answers each chat message using rules, then assign a router in workspace Chat settings.",
+    workspace: {
+      "source-label": "Chat model source",
+      "source-description":
+        "Use one model for every message, or let a model router choose using its rules.",
+      "direct-model": "Single model",
+      router: "Model router",
+      "choose-router": "Choose a router",
+      "no-routers": "No model routers have been created yet.",
+      "manage-routers": "Manage routers",
+      fallback: "Primary model",
+    },
     table: {
       name: "Name",
-      fallback: "Fallback",
+      fallback: "Primary model",
       rules: "Rules",
       workspaces: "Workspaces",
+      "configure-rules": "Configure rules",
+      "configure-rules-for": "Configure rules for {{name}}",
     },
     "no-routers": "No model routers yet",
     "empty-description":
       "No model routers configured yet. Create one to get started.",
     "new-router-button": "New Router",
     "delete-confirm":
-      'Are you sure you want to delete the router "{{name}}"?\nThis will remove all its rules and unlink any workspaces using it.\n\nThis action is irreversible.',
+      'Delete the router "{{name}}" and all its rules? Routers in use cannot be deleted. This action is irreversible.',
     "toast-deleted": "Router deleted",
     "toast-delete-failed": "Failed to delete router: {{error}}",
     "new-router": {
@@ -775,14 +788,14 @@ const TRANSLATIONS = {
       "name-placeholder": "e.g. Cost Optimizer",
       description: "Description",
       "description-placeholder": "Optional description",
-      "fallback-label": "Primary Provider & Model",
+      "fallback-label": "Primary model",
       "fallback-description":
         "Used when no routing rule matches. Also used to evaluate LLM-classified rules.",
       "cooldown-label": "Cache Cooldown (seconds)",
       "cooldown-help":
         "How long a routing decision is cached before re-evaluating rules. Set to 0 to disable caching.",
       "name-required": "Name is required.",
-      "fallback-required": "Primary provider and model are required.",
+      "fallback-required": "A primary model is required.",
       cancel: "Cancel",
       create: "Create Router",
     },
@@ -845,8 +858,8 @@ const TRANSLATIONS = {
         "e.g. The user is asking about legal topics, contracts, or compliance",
       "match-description-help":
         "Describe the situation when you want this rule to match. This is evaluated by your LLM to determine if it should be used.",
-      "route-to-label": "Route to Provider & Model",
-      "route-to-description": "When this rule matches, use this provider/model",
+      "route-to-label": "Route to model",
+      "route-to-description": "When this rule matches, use this model",
       cancel: "Cancel",
       saving: "Saving...",
       "update-rule": "Update Rule",
