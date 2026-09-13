@@ -178,18 +178,18 @@ export default function GeneralEmbeddingPreference() {
                   )}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-theme-text-primary">
-                    {isGeneric
-                      ? t("embedding.generic-name")
-                      : providerSupported
-                        ? t("embedding.native-name")
-                        : provider}
-                  </p>
-                  <p className="text-sm text-theme-text-secondary">
+                  <p className="break-all font-semibold text-theme-text-primary">
                     {isGeneric
                       ? values.EmbeddingModelPref || t("embedding.no-model")
                       : providerSupported
                         ? "multilingual-e5-small"
+                        : provider}
+                  </p>
+                  <p className="mt-0.5 text-sm text-theme-text-secondary">
+                    {isGeneric
+                      ? t("embedding.generic-name")
+                      : providerSupported
+                        ? t("embedding.native-name")
                         : t("embedding.unsupported-provider")}
                   </p>
                 </div>

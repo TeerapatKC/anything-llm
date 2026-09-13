@@ -25,6 +25,10 @@ export default function AudioPreference() {
       ) : (
         <>
           <SpeechToTextProvider settings={settings} />
+          <div
+            className="mx-1 border-t border-theme-modal-border md:mx-6"
+            aria-hidden="true"
+          />
           <TextToSpeechProvider settings={settings} />
         </>
       )}

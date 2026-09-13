@@ -91,23 +91,20 @@ const TRANSLATIONS = {
     audio: {
       "stt-title": "音声テキスト変換設定",
       "stt-description":
-        "音声テキスト変換の設定はサーバー側で管理されます。このページでは確認のみできます。",
+        "このインスタンスで使用中の音声テキスト変換モデルを確認できます。",
       "tts-title": "テキスト読み上げ設定",
       "tts-description":
-        "テキスト読み上げの設定はサーバー側で管理されます。このページでは音声モデルのみ変更できます。",
-      provider: "プロバイダー",
-      "provider-description":
-        "このインスタンスで現在使用中のプロバイダーです。",
+        "テキスト読み上げモデルを確認し、音声モデルを選択できます。",
       model: "モデル",
       "model-description": "このインスタンスで現在使用中の音声モデルです。",
+      "stt-model-description": "音声をテキストに変換します。",
+      "tts-model-description": "テキストから音声を生成します。",
       "model-unavailable": "モデル情報なし",
       "voices-unavailable":
         "設定されたサービスから音声一覧を取得できません。サービスが起動し、音声が導入されているか確認してください。",
       "saved-voice-unavailable":
         "保存された音声（{{voice}}）は利用可能な一覧にありません。",
       active: "使用中",
-      "managed-by-env":
-        "プロバイダーとその他の設定はサーバー側で管理されます。プロバイダーを変更するには {{envKey}} を更新して再起動してください。",
       "save-changes": "変更を保存",
       saving: "保存中...",
     },
@@ -721,8 +718,6 @@ const TRANSLATIONS = {
     active: "使用中",
     "managed-by-env":
       "環境変数で管理されています。この画面では変更できません。",
-    "change-instructions":
-      "データベースまたは接続設定を変更するには、サーバー環境の VECTOR_DB と関連する変数を更新し、インスタンスを再起動してください。",
   },
   embeddable: {
     title: "埋め込みチャットウィジェット",

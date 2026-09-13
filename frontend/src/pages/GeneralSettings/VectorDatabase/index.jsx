@@ -20,7 +20,7 @@ const VECTOR_DBS = {
   lancedb: {
     name: "LanceDB",
     logo: LanceDbLogo,
-    description: "A local vector database running with Nexus AI.",
+    description: "A local vector database running on this server.",
   },
   pgvector: {
     name: "PGVector",
@@ -128,9 +128,6 @@ export default function GeneralVectorDatabase() {
                 {t("vector.managed-by-env")}
               </div>
             </div>
-            <p className="mt-4 text-xs text-theme-text-secondary">
-              {t("vector.change-instructions")}
-            </p>
           </div>
         </div>
       )}

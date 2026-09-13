@@ -98,23 +98,20 @@ const TRANSLATIONS = {
     "sidebar-description": "Displays the settings sidebar.",
     audio: {
       "stt-title": "Speech-to-text Preference",
-      "stt-description":
-        "Speech-to-text settings are configured on the server and shown here for reference.",
+      "stt-description": "View the speech-to-text model used by this instance.",
       "tts-title": "Text-to-speech Preference",
       "tts-description":
-        "Text-to-speech settings are configured on the server. Only the voice model can be changed here.",
-      provider: "Provider",
-      "provider-description": "The provider currently used by this instance.",
+        "View the text-to-speech model and choose a voice model.",
       model: "Model",
       "model-description": "The audio model currently used by this instance.",
+      "stt-model-description": "Converts speech into text.",
+      "tts-model-description": "Generates speech from text.",
       "model-unavailable": "Model unavailable",
       "voices-unavailable":
         "No voices are available from the configured service. Check that it is running and has voices installed.",
       "saved-voice-unavailable":
         "The saved voice ({{voice}}) is not in the available list.",
       active: "Active",
-      "managed-by-env":
-        "The provider and other settings are managed on the server. To change the provider, update {{envKey}} and restart the instance.",
       "save-changes": "Save changes",
       saving: "Saving...",
     },
@@ -1008,8 +1005,6 @@ const TRANSLATIONS = {
     active: "Active",
     "managed-by-env":
       "Managed through environment variables. Settings cannot be changed here.",
-    "change-instructions":
-      "To change the database or its connection settings, update VECTOR_DB and the matching variables in the server environment, then restart the instance.",
   },
   embeddable: {
     title: "Embeddable Chat Widgets",
