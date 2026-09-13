@@ -28,6 +28,11 @@ const ENV_MANAGED_VECTOR_KEYS = new Set([
   "PGVectorTableName",
 ]);
 const EDITABLE_TTS_VOICE_KEYS = new Set(["TTSOpenAICompatibleVoiceModel"]);
+const ENV_MANAGED_EMBEDDING_KEYS = new Set([
+  "EmbeddingEngine",
+  "EmbeddingBasePath",
+  "GenericOpenAiEmbeddingApiKey",
+]);
 
 function isEnvManagedAudioKey(key) {
   return (
@@ -88,7 +93,6 @@ const KEY_MAPPING = {
   EmbeddingEngine: {
     envKey: "EMBEDDING_ENGINE",
     checks: [supportedEmbeddingModel],
-    postUpdate: [handleVectorStoreReset],
   },
   EmbeddingBasePath: {
     envKey: "EMBEDDING_BASE_PATH",
@@ -97,27 +101,12 @@ const KEY_MAPPING = {
   EmbeddingModelPref: {
     envKey: "EMBEDDING_MODEL_PREF",
     checks: [isNotEmpty],
-    postUpdate: [handleVectorStoreReset, downloadEmbeddingModelIfRequired],
+    postUpdate: [handleVectorStoreReset],
   },
   EmbeddingModelMaxChunkLength: {
     envKey: "EMBEDDING_MODEL_MAX_CHUNK_LENGTH",
     checks: [nonZero],
   },
-  EmbeddingOutputDimensions: {
-    envKey: "EMBEDDING_OUTPUT_DIMENSIONS",
-    checks: [],
-  },
-  OllamaEmbeddingBatchSize: {
-    envKey: "OLLAMA_EMBEDDING_BATCH_SIZE",
-    checks: [nonZero],
-  },
-
-  // Gemini Embedding Settings
-  GeminiEmbeddingApiKey: {
-    envKey: "GEMINI_EMBEDDING_API_KEY",
-    checks: [isNotEmpty],
-  },
-
   // Generic OpenAI Embedding Settings
   GenericOpenAiEmbeddingApiKey: {
     envKey: "GENERIC_OPEN_AI_EMBEDDING_API_KEY",
@@ -126,6 +115,10 @@ const KEY_MAPPING = {
   GenericOpenAiEmbeddingMaxConcurrentChunks: {
     envKey: "GENERIC_OPEN_AI_EMBEDDING_MAX_CONCURRENT_CHUNKS",
     checks: [nonZero],
+  },
+  GenericOpenAiEmbeddingApiDelayMs: {
+    envKey: "GENERIC_OPEN_AI_EMBEDDING_API_DELAY_MS",
+    checks: [validEmbeddingApiDelay],
   },
   GenericOpenAiEmbeddingPassagePrefix: {
     envKey: "GENERIC_OPEN_AI_EMBEDDING_PASSAGE_PREFIX",
@@ -296,17 +289,13 @@ const KEY_MAPPING = {
     preUpdate: [validatePGVectorTableName],
   },
 
-  // Credentials shared with embedding providers.
+  // Credentials for other AI providers.
   OpenRouterApiKey: {
     envKey: "OPENROUTER_API_KEY",
     checks: [isNotEmpty],
   },
   CohereApiKey: {
     envKey: "COHERE_API_KEY",
-    checks: [isNotEmpty],
-  },
-  VoyageAiApiKey: {
-    envKey: "VOYAGEAI_API_KEY",
     checks: [isNotEmpty],
   },
 
@@ -509,6 +498,14 @@ function nonZero(input = "") {
   return Number(input) <= 0 ? "Value must be greater than zero" : null;
 }
 
+function validEmbeddingApiDelay(input = "") {
+  if (input === "") return null;
+  const delay = Number(input);
+  return Number.isInteger(delay) && delay >= 500
+    ? null
+    : "Embedding API delay must be at least 500 milliseconds.";
+}
+
 function isValidURL(input = "") {
   try {
     new URL(input);
@@ -585,22 +582,7 @@ function supportedTranscriptionProvider(input = "") {
 }
 
 function supportedEmbeddingModel(input = "") {
-  const supported = [
-    "openai",
-    "azure",
-    "gemini",
-    "localai",
-    "native",
-    "ollama",
-    "lmstudio",
-    "cohere",
-    "voyageai",
-    "litellm",
-    "generic-openai",
-    "mistral",
-    "openrouter",
-    "lemonade",
-  ];
+  const supported = ["native", "generic-openai"];
   return supported.includes(input)
     ? null
     : `Invalid Embedding model type. Must be one of ${supported.join(", ")}.`;
@@ -675,7 +657,7 @@ async function handleVectorStoreReset(key, prevValue, nextValue, userId) {
     return await resetAllVectorStores({ vectorDbKey: prevValue, userId });
   }
 
-  if (key === "EmbeddingEngine" || key === "EmbeddingModelPref") {
+  if (key === "EmbeddingModelPref") {
     console.log(
       `${key} changed from ${prevValue} to ${nextValue} - resetting ${process.env.VECTOR_DB} namespaces`
     );
@@ -684,22 +666,6 @@ async function handleVectorStoreReset(key, prevValue, nextValue, userId) {
       userId,
     });
   }
-  return false;
-}
-
-/**
- * Downloads the embedding model in background if the user has selected a different model
- * - Only supported for the native embedder
- * - Must have the native embedder selected prior (otherwise will download on embed)
- */
-async function downloadEmbeddingModelIfRequired(key, prevValue, nextValue) {
-  if (prevValue === nextValue) return;
-  if (key !== "EmbeddingModelPref" || process.env.EMBEDDING_ENGINE !== "native")
-    return;
-
-  const { NativeEmbedder } = require("../EmbeddingEngines/native");
-  if (!NativeEmbedder.supportedModels[nextValue]) return; // if the model is not supported, don't download it
-  new NativeEmbedder().embedderClient();
   return false;
 }
 
@@ -772,6 +738,17 @@ async function validatePGVectorTableName(key, prevValue, nextValue) {
 // to the process will at least alleviate that issue. It does not perform comprehensive validity checks or sanity checks
 // and is simply for debugging when the .env not found issue many come across.
 async function updateENV(newENVs = {}, force = false, userId = null) {
+  if (
+    Object.keys(newENVs).some((key) => ENV_MANAGED_EMBEDDING_KEYS.has(key)) ||
+    (process.env.EMBEDDING_ENGINE !== "generic-openai" &&
+      "EmbeddingModelPref" in newENVs)
+  ) {
+    return {
+      newValues: {},
+      error:
+        "The embedding provider and its connection are managed by environment variables. The built-in model cannot be changed here.",
+    };
+  }
   if (Object.keys(newENVs).some(isEnvManagedAudioKey)) {
     return {
       newValues: {},

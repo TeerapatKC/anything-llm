@@ -5,7 +5,7 @@ const { v4 } = require("uuid");
 const { SUPPORTED_NATIVE_EMBEDDING_MODELS } = require("./constants");
 
 class NativeEmbedder {
-  static defaultModel = "Xenova/all-MiniLM-L6-v2";
+  static defaultModel = "MintplexLabs/multilingual-e5-small";
 
   // ONNX sessions cannot be freed on onnxruntime-node 1.14 (dispose() is a
   // no-op), so we must only ever create one pipeline per model.
@@ -46,7 +46,16 @@ class NativeEmbedder {
         : path.resolve(__dirname, `../../../storage/models`)
     );
     this.modelPath = path.resolve(this.cacheDir, ...this.model.split("/"));
-    this.modelDownloaded = fs.existsSync(this.modelPath);
+    this.modelDownloaded = [
+      "config.json",
+      "tokenizer.json",
+      "onnx/model_quantized.onnx",
+    ].every((file) => fs.existsSync(path.join(this.modelPath, file)));
+    if (this.modelDownloaded) {
+      this.modelDownloaded =
+        fs.statSync(path.join(this.modelPath, "onnx/model_quantized.onnx"))
+          .size > 200_000_000;
+    }
 
     // Limit of how many strings we can process in a single pass to stay with resource or network limits
     this.maxConcurrentChunks = this.modelInfo.maxConcurrentChunks;
@@ -66,9 +75,6 @@ class NativeEmbedder {
    * @returns {string}
    */
   static _getEmbeddingModel() {
-    const envModel =
-      process.env.EMBEDDING_MODEL_PREF ?? NativeEmbedder.defaultModel;
-    if (NativeEmbedder.supportedModels?.[envModel]) return envModel;
     return NativeEmbedder.defaultModel;
   }
 
@@ -93,17 +99,10 @@ class NativeEmbedder {
 
   /**
    * Get the embedding model to use.
-   * We only support a few models and will default to the default model if the environment variable is not set or not supported.
-   *
-   * Why only a few? Because we need to mirror them on the CDN so non-US users can download them.
-   * eg: "Xenova/all-MiniLM-L6-v2"
-   * eg: "Xenova/nomic-embed-text-v1"
+   * The built-in embedder uses the one model bundled at build time.
    * @returns {string}
    */
   getEmbeddingModel() {
-    const envModel =
-      process.env.EMBEDDING_MODEL_PREF ?? NativeEmbedder.defaultModel;
-    if (NativeEmbedder.supportedModels?.[envModel]) return envModel;
     return NativeEmbedder.defaultModel;
   }
 
@@ -140,6 +139,8 @@ class NativeEmbedder {
       // Convert ESM to CommonJS via import so we can load this library.
       const pipeline = (...args) =>
         import("@xenova/transformers").then(({ pipeline, env }) => {
+          if (process.env.NEXUS_AI_RUNTIME === "docker")
+            env.allowRemoteModels = false;
           if (!this.modelDownloaded) {
             // if model is not downloaded, we will log where we are fetching from.
             if (hostOverride) {
@@ -189,10 +190,13 @@ class NativeEmbedder {
       return await NativeEmbedder.#pipelinePromises.get(this.model);
 
     const loadPromise = (async () => {
-      if (!this.modelDownloaded)
-        this.log(
-          "The native embedding model has never been run and will be downloaded right now. Subsequent runs will be faster. (~23MB)"
-        );
+      if (!this.modelDownloaded) {
+        if (process.env.NEXUS_AI_RUNTIME === "docker")
+          throw new Error(
+            "The bundled multilingual-e5-small model is missing or incomplete. Rebuild the Docker image and restart the container."
+          );
+        this.log("The built-in multilingual-e5-small model is not cached.");
+      }
 
       let fetchResponse = await this.#fetchWithHost();
       if (fetchResponse.pipeline !== null) {

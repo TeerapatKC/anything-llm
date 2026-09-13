@@ -660,13 +660,38 @@ const TRANSLATIONS = {
   },
   embedding: {
     title: "埋め込み設定",
-    "desc-start":
-      "LLMがネイティブに埋め込みエンジンをサポートしていない場合、テキストの埋め込み用に追加の認証情報を指定する必要がある場合があります。",
-    "desc-end":
-      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをNexus AIが処理できるフォーマットに変換するために必要です。",
+    description: "設定済みの埋め込みプロバイダーとモデルを表示します。",
     provider: {
-      title: "埋め込みプロバイダー",
+      title: "使用中の埋め込みプロバイダー",
     },
+    active: "使用中",
+    invalid: "設定エラー",
+    "unsupported-provider":
+      "EMBEDDING_ENGINE を native または generic-openai に設定し、サーバーを再起動してください。",
+    managed:
+      "プロバイダー、ベース URL、API キーはサーバーの環境変数で管理します。",
+    "native-name": "Built-in",
+    "generic-name": "OpenAI 互換",
+    "no-model": "モデル未設定",
+    settings: "モデル設定",
+    "settings-description":
+      "設定済みサービスが返したモデルを選び、埋め込みの制限を調整します。",
+    model: "埋め込みモデル",
+    "loading-models": "モデルを読み込み中...",
+    "select-model": "モデルを選択",
+    "models-unavailable":
+      "設定済みサービスからモデル一覧を取得できませんでした。",
+    "model-not-listed":
+      "現在のモデル（{{model}}）はサービスの一覧にありません。",
+    "max-chunk-length": "チャンクの最大長",
+    "max-concurrent-chunks": "同時チャンク数の上限",
+    "api-delay": "リクエスト間隔（ミリ秒、任意）",
+    "passage-prefix": "文書プレフィックス",
+    "query-prefix": "検索プレフィックス",
+    "model-change-warning":
+      "埋め込みモデルを変更すると既存のベクトルが削除されます。文書の再埋め込みが必要です。",
+    "save-error": "埋め込み設定を保存できませんでした。",
+    saved: "埋め込み設定を保存しました。",
   },
   text: {
     title: "テキスト分割とチャンク化の設定",

@@ -15,7 +15,7 @@ class GenericOpenAiEmbedder {
     this.basePath = process.env.EMBEDDING_BASE_PATH;
     this.openai = new OpenAIApi({
       baseURL: this.basePath,
-      apiKey: process.env.GENERIC_OPEN_AI_EMBEDDING_API_KEY ?? null,
+      apiKey: process.env.GENERIC_OPEN_AI_EMBEDDING_API_KEY || "unused",
     });
     this.model = process.env.EMBEDDING_MODEL_PREF ?? null;
     this.embeddingMaxChunkLength = maximumChunkLength();
@@ -42,7 +42,7 @@ class GenericOpenAiEmbedder {
    * @returns {number}
    */
   get apiRequestDelay() {
-    if (!("GENERIC_OPEN_AI_EMBEDDING_API_DELAY_MS" in process.env)) return null;
+    if (!process.env.GENERIC_OPEN_AI_EMBEDDING_API_DELAY_MS) return null;
     if (isNaN(Number(process.env.GENERIC_OPEN_AI_EMBEDDING_API_DELAY_MS)))
       return null;
     const delayTimeout = Number(

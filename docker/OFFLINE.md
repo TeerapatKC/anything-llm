@@ -170,9 +170,9 @@ leave four containers stuck pulling on an otherwise working stack.
 
 ## The models that are not in the bundle
 
-Four features fetch a model from the internet the first time someone uses them,
+Several features fetch a model from the internet the first time someone uses them,
 through a different library and into a different place than the model servers:
-both native embedders, the reranker, the transcription of uploaded audio, and the
+the built-in `multilingual-e5-small` embedder, the reranker, the transcription of uploaded audio, and the
 language data for OCR. The app also refreshes a model pricing table at boot.
 
 None of that is in the bundle, and none of it needs to be - `docker/prefetch-models.sh`
@@ -187,9 +187,8 @@ This was found the hard way. The embedder used to reach the image only because
 the build context happened to include whatever the build machine had already
 downloaded, which `.dockerignore` now excludes - so a build from a clean checkout
 produced an image that failed at the first document upload, with an error naming
-a Hugging Face URL. Verified since with the container on `--network none`:
-embedding, reranking, the transcription model path, both OCR languages and the
-pricing cache all resolve with no route out.
+a Hugging Face URL. The build now pins and verifies the `multilingual-e5-small`
+ONNX file and seeds it into the storage volume before the server starts.
 
 ## Per-workspace models
 

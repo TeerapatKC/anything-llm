@@ -929,13 +929,37 @@ const TRANSLATIONS = {
   },
   embedding: {
     title: "Embedding Preference",
-    "desc-start":
-      "When using an LLM that does not natively support an embedding engine - you may need to additionally specify credentials for embedding text.",
-    "desc-end":
-      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which Nexus AI can use to process.",
+    description: "View the configured embedding provider and model.",
     provider: {
-      title: "Embedding Provider",
+      title: "Active embedding provider",
     },
+    active: "Active",
+    invalid: "Invalid configuration",
+    "unsupported-provider":
+      "Set EMBEDDING_ENGINE to native or generic-openai and restart the server.",
+    managed:
+      "The provider, base URL, and API key are managed in the server environment.",
+    "native-name": "Built-in",
+    "generic-name": "OpenAI Compatible",
+    "no-model": "No model configured",
+    settings: "Model settings",
+    "settings-description":
+      "Choose a model reported by the configured service and adjust embedding limits.",
+    model: "Embedding model",
+    "loading-models": "Loading models...",
+    "select-model": "Select a model",
+    "models-unavailable": "No models were returned by the configured service.",
+    "model-not-listed":
+      "The current model ({{model}}) was not returned by the service.",
+    "max-chunk-length": "Maximum chunk length",
+    "max-concurrent-chunks": "Maximum concurrent chunks",
+    "api-delay": "Delay between requests (ms, optional)",
+    "passage-prefix": "Passage prefix",
+    "query-prefix": "Query prefix",
+    "model-change-warning":
+      "Changing the embedding model clears existing vector embeddings. Documents will need to be embedded again.",
+    "save-error": "The embedding settings could not be saved.",
+    saved: "Embedding settings saved.",
   },
   imageGeneration: {
     title: "Image Generation Preference",

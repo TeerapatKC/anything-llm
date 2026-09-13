@@ -137,7 +137,8 @@ function getLLMProvider({ provider = null, model = null } = {}) {
   const { GenericOpenAiLLM } = require("../AiProviders/genericOpenAi");
   // Existing workspaces may still have a retired provider saved. Use the
   // instance model until they save a new selection from the live model list.
-  const selectedModel = provider && provider !== "generic-openai" ? null : model;
+  const selectedModel =
+    provider && provider !== "generic-openai" ? null : model;
   return new GenericOpenAiLLM(getEmbeddingEngineSelection(), selectedModel);
 }
 
@@ -146,57 +147,20 @@ function getLLMProvider({ provider = null, model = null } = {}) {
  * @returns {BaseEmbedderProvider}
  */
 function getEmbeddingEngineSelection() {
-  const { NativeEmbedder } = require("../EmbeddingEngines/native");
-  const engineSelection = process.env.EMBEDDING_ENGINE;
-  switch (engineSelection) {
-    case "openai":
-      const { OpenAiEmbedder } = require("../EmbeddingEngines/openAi");
-      return new OpenAiEmbedder();
-    case "azure":
-      const {
-        AzureOpenAiEmbedder,
-      } = require("../EmbeddingEngines/azureOpenAi");
-      return new AzureOpenAiEmbedder();
-    case "localai":
-      const { LocalAiEmbedder } = require("../EmbeddingEngines/localAi");
-      return new LocalAiEmbedder();
-    case "ollama":
-      const { OllamaEmbedder } = require("../EmbeddingEngines/ollama");
-      return new OllamaEmbedder();
-    case "native":
-      return new NativeEmbedder();
-    case "lmstudio":
-      const { LMStudioEmbedder } = require("../EmbeddingEngines/lmstudio");
-      return new LMStudioEmbedder();
-    case "cohere":
-      const { CohereEmbedder } = require("../EmbeddingEngines/cohere");
-      return new CohereEmbedder();
-    case "voyageai":
-      const { VoyageAiEmbedder } = require("../EmbeddingEngines/voyageAi");
-      return new VoyageAiEmbedder();
-    case "litellm":
-      const { LiteLLMEmbedder } = require("../EmbeddingEngines/liteLLM");
-      return new LiteLLMEmbedder();
-    case "mistral":
-      const { MistralEmbedder } = require("../EmbeddingEngines/mistral");
-      return new MistralEmbedder();
-    case "generic-openai":
-      const {
-        GenericOpenAiEmbedder,
-      } = require("../EmbeddingEngines/genericOpenAi");
-      return new GenericOpenAiEmbedder();
-    case "gemini":
-      const { GeminiEmbedder } = require("../EmbeddingEngines/gemini");
-      return new GeminiEmbedder();
-    case "openrouter":
-      const { OpenRouterEmbedder } = require("../EmbeddingEngines/openRouter");
-      return new OpenRouterEmbedder();
-    case "lemonade":
-      const { LemonadeEmbedder } = require("../EmbeddingEngines/lemonade");
-      return new LemonadeEmbedder();
-    default:
-      return new NativeEmbedder();
+  const provider = process.env.EMBEDDING_ENGINE || "native";
+  if (provider === "native") {
+    const { NativeEmbedder } = require("../EmbeddingEngines/native");
+    return new NativeEmbedder();
   }
+  if (provider === "generic-openai") {
+    const {
+      GenericOpenAiEmbedder,
+    } = require("../EmbeddingEngines/genericOpenAi");
+    return new GenericOpenAiEmbedder();
+  }
+  throw new Error(
+    `Unsupported EMBEDDING_ENGINE "${provider}". Use native or generic-openai.`
+  );
 }
 
 /**

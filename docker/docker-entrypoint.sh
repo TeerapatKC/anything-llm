@@ -29,12 +29,13 @@ seed_prebuilt_models() {
 
   mkdir -p "$target"
   copied=""
-  for src in "$prebuilt"/Xenova/*/ "$prebuilt"/pricing "$prebuilt"/tesseract; do
+  for src in "$prebuilt"/MintplexLabs/*/ "$prebuilt"/Xenova/*/ "$prebuilt"/pricing "$prebuilt"/tesseract; do
     [ -e "$src" ] || continue
     case "$src" in */Xenova/whisper-large/) continue ;; esac
 
     case "$src" in
       */Xenova/*) dest="$target/Xenova/$(basename "$src")" ;;
+      */MintplexLabs/*) dest="$target/MintplexLabs/$(basename "$src")" ;;
       *) dest="$target/$(basename "$src")" ;;
     esac
     [ -e "$dest" ] && continue

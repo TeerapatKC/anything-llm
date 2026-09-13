@@ -1,256 +1,148 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Brain } from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import { SpinnerBlock } from "@/components/ui/spinner";
-import System from "@/models/system";
-import showToast from "@/utils/toast";
-import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
-import OpenAiLogo from "@/media/llmprovider/openai.png";
-import AzureOpenAiLogo from "@/media/llmprovider/azure.png";
-import GeminiAiLogo from "@/media/llmprovider/gemini.png";
-import LocalAiLogo from "@/media/llmprovider/localai.png";
-import OllamaLogo from "@/media/llmprovider/ollama.png";
-import LMStudioLogo from "@/media/llmprovider/lmstudio.png";
-import CohereLogo from "@/media/llmprovider/cohere.png";
-import VoyageAiLogo from "@/media/embeddingprovider/voyageai.png";
-import LiteLLMLogo from "@/media/llmprovider/litellm.png";
-import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
-import MistralAiLogo from "@/media/llmprovider/mistral.jpeg";
-import OpenRouterLogo from "@/media/llmprovider/openrouter.jpeg";
-import LemonadeLogo from "@/media/llmprovider/lemonade.png";
-
-import ChangeWarningModal from "@/components/ChangeWarning";
-import OpenAiOptions from "@/components/EmbeddingSelection/OpenAiOptions";
-import AzureAiOptions from "@/components/EmbeddingSelection/AzureAiOptions";
-import GeminiOptions from "@/components/EmbeddingSelection/GeminiOptions";
-import LocalAiOptions from "@/components/EmbeddingSelection/LocalAiOptions";
-import NativeEmbeddingOptions from "@/components/EmbeddingSelection/NativeEmbeddingOptions";
-import OllamaEmbeddingOptions from "@/components/EmbeddingSelection/OllamaOptions";
-import LMStudioEmbeddingOptions from "@/components/EmbeddingSelection/LMStudioOptions";
-import CohereEmbeddingOptions from "@/components/EmbeddingSelection/CohereOptions";
-import VoyageAiOptions from "@/components/EmbeddingSelection/VoyageAiOptions";
-import LiteLLMOptions from "@/components/EmbeddingSelection/LiteLLMOptions";
-import GenericOpenAiEmbeddingOptions from "@/components/EmbeddingSelection/GenericOpenAiOptions";
-import OpenRouterOptions from "@/components/EmbeddingSelection/OpenRouterOptions";
-import MistralAiOptions from "@/components/EmbeddingSelection/MistralAiOptions";
-import LemonadeOptions from "@/components/EmbeddingSelection/LemonadeOptions";
-
-import EmbedderItem from "@/components/EmbeddingSelection/EmbedderItem";
-import { ChevronsUpDown, Search, X } from "lucide-react";
-import { useModal } from "@/hooks/useModal";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useTranslation } from "react-i18next";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ChangeWarningModal from "@/components/ChangeWarning";
+import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
+import System from "@/models/system";
+import showToast from "@/utils/toast";
 
-const EMBEDDERS = [
-  {
-    name: "Nexus AI Embedder",
-    value: "native",
-    logo: NexusAIIcon,
-    options: (settings) => <NativeEmbeddingOptions settings={settings} />,
-    description: "Use the built-in embedding provider for Nexus AI. Zero setup!",
-  },
-  {
-    name: "OpenAI",
-    value: "openai",
-    logo: OpenAiLogo,
-    options: (settings) => <OpenAiOptions settings={settings} />,
-    description: "Use OpenAI's hosted embedding models through the OpenAI API.",
-  },
-  {
-    name: "Azure OpenAI",
-    value: "azure",
-    logo: AzureOpenAiLogo,
-    options: (settings) => <AzureAiOptions settings={settings} />,
-    description: "The enterprise option of OpenAI hosted on Azure services.",
-  },
-  {
-    name: "Gemini",
-    value: "gemini",
-    logo: GeminiAiLogo,
-    options: (settings) => <GeminiOptions settings={settings} />,
-    description: "Run powerful embedding models from Google AI.",
-  },
-  {
-    name: "Local AI",
-    value: "localai",
-    logo: LocalAiLogo,
-    options: (settings) => <LocalAiOptions settings={settings} />,
-    description: "Run embedding models locally on your own machine.",
-  },
-  {
-    name: "Ollama",
-    value: "ollama",
-    logo: OllamaLogo,
-    options: (settings) => <OllamaEmbeddingOptions settings={settings} />,
-    description: "Run embedding models locally on your own machine.",
-  },
-  {
-    name: "LM Studio",
-    value: "lmstudio",
-    logo: LMStudioLogo,
-    options: (settings) => <LMStudioEmbeddingOptions settings={settings} />,
-    description:
-      "Discover, download, and run thousands of cutting edge LLMs in a few clicks.",
-  },
-  {
-    name: "Lemonade",
-    value: "lemonade",
-    logo: LemonadeLogo,
-    options: (settings) => <LemonadeOptions settings={settings} />,
-    description:
-      "Run embedding models locally on your own machine using Lemonade.",
-  },
-  {
-    name: "OpenRouter",
-    value: "openrouter",
-    logo: OpenRouterLogo,
-    options: (settings) => <OpenRouterOptions settings={settings} />,
-    description: "Run embedding models from OpenRouter.",
-  },
-  {
-    name: "LiteLLM",
-    value: "litellm",
-    logo: LiteLLMLogo,
-    options: (settings) => <LiteLLMOptions settings={settings} />,
-    description: "Run powerful embedding models from LiteLLM.",
-  },
-  {
-    name: "Cohere",
-    value: "cohere",
-    logo: CohereLogo,
-    options: (settings) => <CohereEmbeddingOptions settings={settings} />,
-    description: "Run powerful embedding models from Cohere.",
-  },
-  {
-    name: "Voyage AI",
-    value: "voyageai",
-    logo: VoyageAiLogo,
-    options: (settings) => <VoyageAiOptions settings={settings} />,
-    description: "Run powerful embedding models from Voyage AI.",
-  },
-  {
-    name: "Mistral AI",
-    value: "mistral",
-    logo: MistralAiLogo,
-    options: (settings) => <MistralAiOptions settings={settings} />,
-    description: "Run powerful embedding models from Mistral AI.",
-  },
-  {
-    name: "Generic OpenAI",
-    value: "generic-openai",
-    logo: GenericOpenAiLogo,
-    options: (settings) => (
-      <GenericOpenAiEmbeddingOptions settings={settings} />
-    ),
-    description: "Run embedding models from any OpenAI compatible API service.",
-  },
+const EDITABLE_KEYS = [
+  "EmbeddingModelPref",
+  "EmbeddingModelMaxChunkLength",
+  "GenericOpenAiEmbeddingMaxConcurrentChunks",
+  "GenericOpenAiEmbeddingApiDelayMs",
+  "GenericOpenAiEmbeddingPassagePrefix",
+  "GenericOpenAiEmbeddingQueryPrefix",
 ];
 
+function editableValues(settings) {
+  return {
+    EmbeddingModelPref: settings?.EmbeddingModelPref || "",
+    EmbeddingModelMaxChunkLength: String(
+      settings?.EmbeddingModelMaxChunkLength || ""
+    ),
+    GenericOpenAiEmbeddingMaxConcurrentChunks: String(
+      settings?.GenericOpenAiEmbeddingMaxConcurrentChunks || 500
+    ),
+    GenericOpenAiEmbeddingApiDelayMs: String(
+      settings?.GenericOpenAiEmbeddingApiDelayMs || ""
+    ),
+    GenericOpenAiEmbeddingPassagePrefix:
+      settings?.GenericOpenAiEmbeddingPassagePrefix || "",
+    GenericOpenAiEmbeddingQueryPrefix:
+      settings?.GenericOpenAiEmbeddingQueryPrefix || "",
+  };
+}
+
 export default function GeneralEmbeddingPreference() {
-  const [saving, setSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [hasEmbeddings, setHasEmbeddings] = useState(false);
-  const [hasCachedEmbeddings, setHasCachedEmbeddings] = useState(false);
-  const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredEmbedders, setFilteredEmbedders] = useState([]);
-  const [selectedEmbedder, setSelectedEmbedder] = useState(null);
-  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
-  const searchInputRef = useRef(null);
-  const { isOpen, openModal, closeModal } = useModal();
   const { t } = useTranslation();
-
-  function embedderModelChanged(formEl) {
-    try {
-      const newModel = new FormData(formEl).get("EmbeddingModelPref") ?? null;
-      if (newModel === null) return false;
-      return settings?.EmbeddingModelPref !== newModel;
-    } catch (error) {
-      console.error(error);
-    }
-    return false;
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (
-      (selectedEmbedder !== settings?.EmbeddingEngine ||
-        embedderModelChanged(e.target)) &&
-      hasChanges &&
-      (hasEmbeddings || hasCachedEmbeddings)
-    ) {
-      openModal();
-    } else {
-      await handleSaveSettings();
-    }
-  };
-
-  const handleSaveSettings = async () => {
-    setSaving(true);
-    const form = document.getElementById("embedding-form");
-    const settingsData = {};
-    const formData = new FormData(form);
-    settingsData.EmbeddingEngine = selectedEmbedder;
-    for (var [key, value] of formData.entries()) settingsData[key] = value;
-
-    const { error } = await System.updateSystem(settingsData);
-    if (error) {
-      showToast(`Failed to save embedding settings: ${error}`, "error");
-      setHasChanges(true);
-    } else {
-      showToast("Embedding preferences saved successfully.", "success");
-      setHasChanges(false);
-    }
-    setSaving(false);
-    closeModal();
-  };
-
-  const updateChoice = (selection) => {
-    setSearchQuery("");
-    setSelectedEmbedder(selection);
-    setSearchMenuOpen(false);
-    setHasChanges(true);
-  };
-
-  const handleXButton = () => {
-    if (searchQuery.length > 0) {
-      setSearchQuery("");
-      if (searchInputRef.current) searchInputRef.current.value = "";
-    } else {
-      setSearchMenuOpen(!searchMenuOpen);
-    }
-  };
+  const [settings, setSettings] = useState(null);
+  const [values, setValues] = useState(null);
+  const [models, setModels] = useState([]);
+  const [modelError, setModelError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [confirmReset, setConfirmReset] = useState(false);
 
   useEffect(() => {
-    async function fetchKeys() {
-      const _settings = await System.keys();
-      setSettings(_settings);
-      setSelectedEmbedder(_settings?.EmbeddingEngine || "native");
-      setHasEmbeddings(_settings?.HasExistingEmbeddings || false);
-      setHasCachedEmbeddings(_settings?.HasCachedEmbeddings || false);
+    let active = true;
+    System.keys().then((result) => {
+      if (!active) return;
+      setSettings(result);
+      setValues(editableValues(result));
       setLoading(false);
-    }
-    fetchKeys();
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  useEffect(() => {
-    const filtered = EMBEDDERS.filter((embedder) =>
-      embedder.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredEmbedders(filtered);
-  }, [searchQuery, selectedEmbedder]);
+  const provider = settings?.EmbeddingEngine || "native";
+  const isGeneric = provider === "generic-openai";
+  const providerSupported = provider === "native" || isGeneric;
 
-  const selectedEmbedderObject = EMBEDDERS.find(
-    (embedder) => embedder.value === selectedEmbedder
+  useEffect(() => {
+    if (!isGeneric) return;
+    let active = true;
+    setModelsLoading(true);
+    System.customModels("generic-openai-embedder").then(({ models, error }) => {
+      if (!active) return;
+      setModels((models || []).filter((model) => model?.id));
+      setModelError(error || "");
+      setModelsLoading(false);
+    });
+    return () => {
+      active = false;
+    };
+  }, [isGeneric]);
+
+  const original = editableValues(settings);
+  const changes = isGeneric
+    ? Object.fromEntries(
+        EDITABLE_KEYS.filter((key) => values?.[key] !== original[key]).map(
+          (key) => [key, values[key]]
+        )
+      )
+    : {};
+  const hasChanges = Object.keys(changes).length > 0;
+  const modelChanged = "EmbeddingModelPref" in changes;
+  const modelIsListed = models.some(
+    (model) => model.id === values?.EmbeddingModelPref
   );
+  const canSave =
+    hasChanges &&
+    !saving &&
+    (!modelChanged || modelIsListed) &&
+    (!values?.EmbeddingModelMaxChunkLength ||
+      Number(values.EmbeddingModelMaxChunkLength) > 1) &&
+    (!values?.GenericOpenAiEmbeddingApiDelayMs ||
+      Number(values.GenericOpenAiEmbeddingApiDelayMs) >= 500) &&
+    Number(values?.GenericOpenAiEmbeddingMaxConcurrentChunks) > 0;
+
+  const setField = (key, value) =>
+    setValues((current) => ({ ...current, [key]: value }));
+
+  const save = async () => {
+    if (!canSave) return;
+    setSaving(true);
+    const result = await System.updateSystem(changes);
+    setSaving(false);
+    setConfirmReset(false);
+    if (result.error || result.refused?.length) {
+      showToast(result.error || t("embedding.save-error"), "error");
+      return;
+    }
+    setSettings((current) => ({ ...current, ...changes }));
+    showToast(t("embedding.saved"), "success");
+  };
+
+  const submit = (event) => {
+    event.preventDefault();
+    if (!canSave) return;
+    if (
+      modelChanged &&
+      (settings?.HasExistingEmbeddings || settings?.HasCachedEmbeddings)
+    ) {
+      setConfirmReset(true);
+      return;
+    }
+    save();
+  };
 
   return (
     <SettingsLayout>
@@ -258,123 +150,219 @@ export default function GeneralEmbeddingPreference() {
         <SpinnerBlock className="min-h-[60vh]" />
       ) : (
         <form
-          id="embedding-form"
-          onSubmit={handleSubmit}
-          className="flex flex-col w-full"
+          onSubmit={submit}
+          className="flex w-full flex-col px-1 py-6 md:px-6"
         >
           <PageHeader
             title={t("embedding.title")}
-            description={
-              <>
-                {t("embedding.desc-start")}
-                <br />
-                {t("embedding.desc-end")}
-              </>
-            }
+            description={t("embedding.description")}
           />
-          <div className="w-full justify-end flex">
-            {hasChanges && (
-              <Button size="lg" type="submit" className="mt-3">
-                {saving ? t("common.saving") : t("common.save")}
-              </Button>
-            )}
-          </div>
-          <div className="text-base font-bold text-theme-text-primary mt-6 mb-4">
-            {t("embedding.provider.title")}
-          </div>
-          <Popover open={searchMenuOpen} onOpenChange={setSearchMenuOpen}>
-            <PopoverTrigger
-              render={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full max-w-[640px] h-[64px] justify-between gap-0 p-[14px] rounded-lg border-2 border-transparent bg-theme-settings-input-bg hover:bg-theme-settings-input-bg hover:border-primary-button aria-expanded:bg-theme-settings-input-bg transition-all duration-300"
+
+          <div className="mt-6 max-w-4xl">
+            <h2 className="text-base font-semibold text-theme-text-primary">
+              {t("embedding.provider.title")}
+            </h2>
+            <div className="mt-4 rounded-xl border border-theme-modal-border bg-theme-bg-secondary p-4 sm:p-5">
+              <div className="flex items-center gap-3">
+                <span
+                  className={`flex size-11 shrink-0 items-center justify-center rounded-lg ${isGeneric ? "bg-white p-1.5" : "border border-theme-modal-border bg-theme-settings-input-bg text-primary-button"}`}
                 >
-                  <div className="flex gap-x-4 items-center flex-1 min-w-0">
+                  {isGeneric ? (
                     <img
-                      src={selectedEmbedderObject.logo}
-                      alt={`${selectedEmbedderObject.name} logo`}
-                      className="w-10 h-10 rounded-md shrink-0"
+                      src={GenericOpenAiLogo}
+                      alt=""
+                      className="size-full object-contain"
                     />
-                    <div className="flex flex-col text-left min-w-0">
-                      <div className="text-sm font-semibold text-theme-text-primary truncate">
-                        {selectedEmbedderObject.name}
-                      </div>
-                      <div className="mt-1 text-xs text-description font-normal truncate">
-                        {selectedEmbedderObject.description}
-                      </div>
-                    </div>
-                  </div>
-                  <ChevronsUpDown
-                    size={24}
-                    className="text-theme-text-primary"
-                  />
-                </Button>
-              }
-            />
-            <PopoverContent
-              align="start"
-              sideOffset={4}
-              className="w-(--anchor-width) max-w-[640px] max-h-[310px] min-h-[64px] flex-col gap-0 rounded-lg bg-theme-settings-input-bg p-0 border-2 border-primary-button"
-            >
-              <div className="flex items-center border-b border-[#9CA3AF] px-4">
-                <Search
-                  size={20}
-                  className="text-theme-text-primary shrink-0"
-                />
-                <Input
-                  type="text"
-                  name="embedder-search"
-                  autoComplete="off"
-                  placeholder={t("ui.search-embedding-providers")}
-                  className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  ref={searchInputRef}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") e.preventDefault();
-                  }}
-                />
-                <X
-                  size={20}
-                  className="cursor-pointer text-theme-text-primary hover:text-x-button shrink-0"
-                  onClick={handleXButton}
-                />
+                  ) : (
+                    <Brain size={26} strokeWidth={1.8} aria-hidden="true" />
+                  )}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-theme-text-primary">
+                    {isGeneric
+                      ? t("embedding.generic-name")
+                      : providerSupported
+                        ? t("embedding.native-name")
+                        : provider}
+                  </p>
+                  <p className="text-sm text-theme-text-secondary">
+                    {isGeneric
+                      ? values.EmbeddingModelPref || t("embedding.no-model")
+                      : providerSupported
+                        ? "multilingual-e5-small"
+                        : t("embedding.unsupported-provider")}
+                  </p>
+                </div>
+                <span className="rounded-full border border-primary-button px-2.5 py-1 text-xs font-semibold text-primary-button">
+                  {t(
+                    providerSupported ? "embedding.active" : "embedding.invalid"
+                  )}
+                </span>
               </div>
-              <div className="flex-1 flex flex-col gap-y-1 overflow-y-auto thin-scrollbar px-2 py-2 max-h-[245px]">
-                {filteredEmbedders.map((embedder) => (
-                  <EmbedderItem
-                    key={embedder.name}
-                    name={embedder.name}
-                    value={embedder.value}
-                    image={embedder.logo}
-                    description={embedder.description}
-                    checked={selectedEmbedder === embedder.value}
-                    onClick={() => updateChoice(embedder.value)}
-                  />
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-          <div
-            onChange={() => setHasChanges(true)}
-            className="mt-4 flex flex-col gap-y-1"
-          >
-            {selectedEmbedder &&
-              EMBEDDERS.find(
-                (embedder) => embedder.value === selectedEmbedder
-              )?.options(settings)}
+              <p className="mt-4 border-t border-theme-modal-border pt-4 text-sm text-theme-text-secondary">
+                {t("embedding.managed")}
+              </p>
+            </div>
           </div>
+
+          {isGeneric && (
+            <div className="mt-8 max-w-4xl">
+              <h2 className="text-base font-semibold text-theme-text-primary">
+                {t("embedding.settings")}
+              </h2>
+              <p className="mt-1 text-sm text-theme-text-secondary">
+                {t("embedding.settings-description")}
+              </p>
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <Label className="mb-2 block">{t("embedding.model")}</Label>
+                  <Select
+                    value={modelIsListed ? values.EmbeddingModelPref : null}
+                    onValueChange={(value) =>
+                      setField("EmbeddingModelPref", value)
+                    }
+                    disabled={modelsLoading || models.length === 0}
+                  >
+                    <SelectTrigger className="h-11 w-full bg-theme-settings-input-bg text-theme-text-primary">
+                      <SelectValue
+                        placeholder={
+                          modelsLoading
+                            ? t("embedding.loading-models")
+                            : t("embedding.select-model")
+                        }
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {models.map((model) => (
+                        <SelectItem key={model.id} value={model.id}>
+                          {model.name || model.id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {(modelError || (!modelsLoading && models.length === 0)) && (
+                    <p className="mt-2 text-sm text-theme-text-secondary">
+                      {modelError || t("embedding.models-unavailable")}
+                    </p>
+                  )}
+                  {!modelsLoading &&
+                    values.EmbeddingModelPref &&
+                    !modelIsListed && (
+                      <p className="mt-2 text-sm text-theme-text-secondary">
+                        {t("embedding.model-not-listed", {
+                          model: values.EmbeddingModelPref,
+                        })}
+                      </p>
+                    )}
+                </div>
+                <div>
+                  <Label
+                    htmlFor="embedding-chunk-length"
+                    className="mb-2 block"
+                  >
+                    {t("embedding.max-chunk-length")}
+                  </Label>
+                  <Input
+                    id="embedding-chunk-length"
+                    type="number"
+                    min="2"
+                    value={values.EmbeddingModelMaxChunkLength}
+                    onChange={(event) =>
+                      setField(
+                        "EmbeddingModelMaxChunkLength",
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="embedding-concurrent" className="mb-2 block">
+                    {t("embedding.max-concurrent-chunks")}
+                  </Label>
+                  <Input
+                    id="embedding-concurrent"
+                    type="number"
+                    min="1"
+                    value={values.GenericOpenAiEmbeddingMaxConcurrentChunks}
+                    onChange={(event) =>
+                      setField(
+                        "GenericOpenAiEmbeddingMaxConcurrentChunks",
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+                <div>
+                  <Label
+                    htmlFor="embedding-passage-prefix"
+                    className="mb-2 block"
+                  >
+                    {t("embedding.passage-prefix")}
+                  </Label>
+                  <Input
+                    id="embedding-passage-prefix"
+                    value={values.GenericOpenAiEmbeddingPassagePrefix}
+                    onChange={(event) =>
+                      setField(
+                        "GenericOpenAiEmbeddingPassagePrefix",
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="embedding-api-delay" className="mb-2 block">
+                    {t("embedding.api-delay")}
+                  </Label>
+                  <Input
+                    id="embedding-api-delay"
+                    type="number"
+                    min="500"
+                    value={values.GenericOpenAiEmbeddingApiDelayMs}
+                    onChange={(event) =>
+                      setField(
+                        "GenericOpenAiEmbeddingApiDelayMs",
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+                <div>
+                  <Label
+                    htmlFor="embedding-query-prefix"
+                    className="mb-2 block"
+                  >
+                    {t("embedding.query-prefix")}
+                  </Label>
+                  <Input
+                    id="embedding-query-prefix"
+                    value={values.GenericOpenAiEmbeddingQueryPrefix}
+                    onChange={(event) =>
+                      setField(
+                        "GenericOpenAiEmbeddingQueryPrefix",
+                        event.target.value
+                      )
+                    }
+                  />
+                </div>
+              </div>
+              {hasChanges && (
+                <div className="mt-6 flex justify-end">
+                  <Button type="submit" size="lg" disabled={!canSave}>
+                    {saving ? t("common.saving") : t("common.save")}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </form>
       )}
-      <Dialog
-        open={isOpen}
-        onOpenChange={(open) => (open ? openModal() : closeModal())}
-      >
+      <Dialog open={confirmReset} onOpenChange={setConfirmReset}>
         <DialogContent>
           <ChangeWarningModal
-            warningText="Switching the embedding model will reset all previously embedded documents in all workspaces.\n\nConfirming will clear all embeddings from your vector database and remove all documents from your workspaces. Your uploaded documents will not be deleted, they will be available for re-embedding."
-            onClose={closeModal}
-            onConfirm={handleSaveSettings}
+            warningText={t("embedding.model-change-warning")}
+            onClose={() => setConfirmReset(false)}
+            onConfirm={save}
           />
         </DialogContent>
       </Dialog>

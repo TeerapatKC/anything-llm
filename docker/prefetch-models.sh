@@ -42,14 +42,11 @@ hf_model() {
 
 TEXT_FILES="config.json tokenizer.json tokenizer_config.json special_tokens_map.json vocab.txt"
 
-# The default native embedder. Every document upload needs it, so without this an
-# air-gapped install fails at the first thing anyone tries to do.
-hf_model Xenova/all-MiniLM-L6-v2 751bff37182d3f1213fa05d7196b954e230abad9 \
-  $TEXT_FILES onnx/model_quantized.onnx
-
-# The other native embedder, offered in the same dropdown.
-hf_model Xenova/nomic-embed-text-v1 2f98ed5b9768f159d9cc55782f2e867abbc8d6ac \
-  $TEXT_FILES quantize_config.json onnx/model_quantized.onnx
+# The sole built-in embedder. Download its exact ONNX and tokenizer files while
+# building so first document uploads also work without internet access.
+hf_model MintplexLabs/multilingual-e5-small e8caab1f2133068933e2a8c7536a73149cf803f1 \
+  config.json tokenizer.json tokenizer_config.json special_tokens_map.json \
+  sentencepiece.bpe.model onnx/model_quantized.onnx
 
 # The native reranker, used when a workspace turns reranking on.
 hf_model Xenova/ms-marco-MiniLM-L-6-v2 a09144355adeed5f58c8ed011d209bf8ee5a1fec \
@@ -66,8 +63,7 @@ hf_model Xenova/whisper-large 451f4b004423a67138e1d510de9c7cd904c259e7 \
 # failure looks like.
 say "checking sizes"
 for f in \
-  "Xenova/all-MiniLM-L6-v2/onnx/model_quantized.onnx:20000000" \
-  "Xenova/nomic-embed-text-v1/onnx/model_quantized.onnx:100000000" \
+  "MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx:200000000" \
   "Xenova/ms-marco-MiniLM-L-6-v2/onnx/model_quantized.onnx:20000000" \
   "Xenova/whisper-large/onnx/encoder_model_quantized.onnx:500000000" \
   "Xenova/whisper-large/onnx/decoder_model_merged_quantized.onnx:800000000"
@@ -79,6 +75,8 @@ do
     exit 1
   }
 done
+
+echo "4654c156f3e4171abc9c716cdb771bf9116455d15ac1aab364aeeede0e3205b0  ${DEST}/MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx" | sha256sum -c -
 
 # OCR language data. tesseract.js looks for <cache>/<lang>.traineddata and, not
 # finding it, fetches a gzipped copy from a CDN - so scanned PDFs and images are

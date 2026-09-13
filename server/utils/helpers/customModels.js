@@ -1,6 +1,3 @@
-const {
-  fetchOpenRouterEmbeddingModels,
-} = require("../EmbeddingEngines/openRouter");
 const { getAllLemonadeModels } = require("../lemonadeModels");
 const { isModelEnabled } = require("./llmModelSettings");
 
@@ -12,9 +9,7 @@ const SUPPORT_CUSTOM_MODELS = [
   "lemonade-imggen",
   "localai-imggen",
   "native-embedder",
-  "cohere-embedder",
-  "openrouter-embedder",
-  "lemonade-embedder",
+  "generic-openai-embedder",
   "generic-openai-stt",
   "generic-openai-tts",
   "generic-openai-tts-voices",
@@ -98,12 +93,8 @@ async function getCustomModels(
       return getLocalAiImageModels(basePath, apiKey);
     case "native-embedder":
       return getNativeEmbedderModels();
-    case "cohere-embedder":
-      return getCohereModels(apiKey, "embed");
-    case "openrouter-embedder":
-      return getOpenRouterEmbeddingModels();
-    case "lemonade-embedder":
-      return getLemonadeModels(basePath, "embedding");
+    case "generic-openai-embedder":
+      return getGenericOpenAiEmbeddingModels();
     case "generic-openai-stt":
       return getOpenAiCompatibleAudioModels("stt", basePath, apiKey);
     case "generic-openai-tts":
@@ -120,50 +111,32 @@ function getNativeEmbedderModels() {
   return { models: NativeEmbedder.availableModels(), error: null };
 }
 
-async function getCohereModels(_apiKey = null, type = "chat") {
-  const apiKey =
-    _apiKey === true
-      ? process.env.COHERE_API_KEY
-      : _apiKey || process.env.COHERE_API_KEY || null;
+async function getGenericOpenAiEmbeddingModels() {
+  const endpoint = process.env.EMBEDDING_BASE_PATH;
+  if (!endpoint)
+    return { models: [], error: "Embedding model service is not configured" };
 
-  // Cohere's models endpoint is queried directly so we can keep filtering by
-  // endpoint (chat/embed) which the OpenAI-compatible /models route does not support.
-  const models = await fetch(
-    `https://api.cohere.com/v1/models?page_size=1000&endpoint=${type}`,
-    {
-      method: "GET",
-      headers: { Authorization: `Bearer ${apiKey}` },
-    }
-  )
-    .then((res) => res.json())
-    .then((data) => data?.models || [])
-    .then((models) =>
-      models.map((model) => ({
-        id: model.name,
-        name: model.name,
-      }))
-    )
-    .catch((e) => {
-      console.error(`Cohere:listModels`, e.message);
-      return [];
+  try {
+    const { OpenAI } = require("openai");
+    const client = new OpenAI({
+      baseURL: endpoint,
+      apiKey: process.env.GENERIC_OPEN_AI_EMBEDDING_API_KEY || "unused",
+      timeout: 10000,
     });
-
-  return { models, error: null };
-}
-
-async function getOpenRouterEmbeddingModels() {
-  const knownModels = await fetchOpenRouterEmbeddingModels();
-  if (!Object.keys(knownModels).length === 0)
-    return { models: [], error: null };
-
-  const models = Object.values(knownModels).map((model) => {
+    const result = await client.models.list();
     return {
-      id: model.id,
-      organization: model.organization,
-      name: model.name,
+      models: result.data
+        .filter((model) => typeof model.id === "string" && model.id.trim())
+        .map((model) => ({ id: model.id, name: model.id })),
+      error: null,
     };
-  });
-  return { models, error: null };
+  } catch (error) {
+    console.error("GenericOpenAI:getEmbeddingModels", error.message);
+    return {
+      models: [],
+      error: "Could not reach the configured embedding model service",
+    };
+  }
 }
 
 async function getLemonadeModels(

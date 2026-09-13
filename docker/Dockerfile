@@ -192,7 +192,7 @@ ENV PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com/chrome-for-testin
 RUN yarn install --production --network-timeout 100000 && yarn cache clean
 
 # Every model the application would otherwise download the first time someone
-# uses a feature: both native embedders, the reranker, and the transcription
+# uses a feature: the built-in multilingual embedder, the reranker, and the transcription
 # model. Without these an air-gapped install fails at the first document upload,
 # and the failure names a Hugging Face URL rather than anything actionable.
 #

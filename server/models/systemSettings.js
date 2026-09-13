@@ -295,17 +295,14 @@ const SystemSettings = {
         embeddingEngine === "native"
           ? NativeEmbedder._getEmbeddingModel()
           : process.env.EMBEDDING_MODEL_PREF,
-      EmbeddingOutputDimensions:
-        process.env.EMBEDDING_OUTPUT_DIMENSIONS || null,
       EmbeddingModelMaxChunkLength:
         process.env.EMBEDDING_MODEL_MAX_CHUNK_LENGTH,
-      OllamaEmbeddingBatchSize: process.env.OLLAMA_EMBEDDING_BATCH_SIZE || 1,
-      VoyageAiApiKey: !!process.env.VOYAGEAI_API_KEY,
       GenericOpenAiEmbeddingApiKey:
         !!process.env.GENERIC_OPEN_AI_EMBEDDING_API_KEY,
       GenericOpenAiEmbeddingMaxConcurrentChunks:
         process.env.GENERIC_OPEN_AI_EMBEDDING_MAX_CONCURRENT_CHUNKS || 500,
-      GeminiEmbeddingApiKey: !!process.env.GEMINI_EMBEDDING_API_KEY,
+      GenericOpenAiEmbeddingApiDelayMs:
+        process.env.GENERIC_OPEN_AI_EMBEDDING_API_DELAY_MS || "",
       GenericOpenAiEmbeddingPassagePrefix:
         process.env.GENERIC_OPEN_AI_EMBEDDING_PASSAGE_PREFIX || "",
       GenericOpenAiEmbeddingQueryPrefix:
