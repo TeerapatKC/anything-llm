@@ -21,7 +21,7 @@ const {
  * behind whatever Grafana's anonymous access happens to allow.
  *
  * An iframe cannot send the Authorization header the rest of the API uses, so entry
- * is a two-step handshake. The monitoring endpoint hands the page a short-lived
+ * is a two-step handshake. The dashboards endpoint (/system/monitoring) hands the page a short-lived
  * entry token; the iframe opens /grafana/_nexus/enter?token=...&next=..., which is
  * checked here and traded for an httpOnly cookie scoped to /grafana. Every request
  * after that carries the cookie.
@@ -132,7 +132,7 @@ function deny(response) {
     .status(401)
     .type("text/plain")
     .send(
-      "Grafana is available to Nexus AI users with monitoring access. Open it from Instance Settings > Monitoring."
+      "Grafana is available to Nexus AI users with dashboard access. Open it from Instance Settings > Dashboards."
     );
 }
 
@@ -184,7 +184,7 @@ function forward(request, response, internal) {
       }
       if (outgoing.location)
         outgoing.location = rewriteLocation(outgoing.location);
-      // Framed by the app's own Monitoring page and nothing else.
+      // Framed by the app's own Dashboards page and nothing else.
       outgoing["x-frame-options"] = "SAMEORIGIN";
       response.writeHead(upstreamResponse.statusCode || 502, outgoing);
       upstreamResponse.pipe(response);

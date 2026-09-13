@@ -14,7 +14,7 @@ import { ExternalLink, MonitorOff, RotateCw } from "lucide-react";
  *
  * By default the server reverse-proxies Grafana under /grafana on the app's own
  * origin, so Grafana needs no port or hostname a browser can reach. The iframe
- * enters with a short-lived token from the monitoring endpoint, which the server
+ * enters with a short-lived token from the dashboards endpoint, which the server
  * trades for a cookie scoped to /grafana. When GRAFANA_PUBLIC_URL is set the iframe
  * loads that URL directly instead.
  *
@@ -26,7 +26,7 @@ import { ExternalLink, MonitorOff, RotateCw } from "lucide-react";
  * server when it proxies, by the browser when it does not - and a Nexus-styled empty
  * state is shown instead.
  */
-export default function Monitoring() {
+export default function Dashboards() {
   const { t } = useTranslation();
   const { isLight } = useTheme();
   const theme = isLight ? "light" : "dark";
@@ -41,7 +41,7 @@ export default function Monitoring() {
   // Also the retry for a proxied Grafana: a fresh config carries a fresh entry
   // token and the server's latest reachability answer.
   const load = useCallback(async () => {
-    const next = await System.monitoring();
+    const next = await System.dashboards();
     setConfig(next);
     setLoading(false);
   }, []);
@@ -59,8 +59,8 @@ export default function Monitoring() {
       paneClassName="overflow-hidden flex flex-col"
     >
       <PageHeader
-        title={t("monitoring.title")}
-        description={t("monitoring.description")}
+        title={t("dashboards.title")}
+        description={t("dashboards.description")}
       />
 
       {loading ? (
@@ -69,8 +69,8 @@ export default function Monitoring() {
         </p>
       ) : !config.enabled || dashboards.length === 0 ? (
         <GrafanaStatusPanel
-          title={t("monitoring.unavailable")}
-          description={t("monitoring.unavailable-hint")}
+          title={t("dashboards.unavailable")}
+          description={t("dashboards.unavailable-hint")}
         />
       ) : dashboards.length === 1 ? (
         <DashboardFrame
@@ -148,20 +148,20 @@ function DashboardFrame({ dashboard, config, theme, onReload }) {
           size="sm"
           render={<a href={openUrl} target="_blank" rel="noreferrer" />}
         >
-          {t("monitoring.open-grafana")}
+          {t("dashboards.open-grafana")}
           <ExternalLink />
         </Button>
       </div>
 
       {status === "checking" ? (
         <GrafanaStatusPanel
-          title={t("monitoring.checking")}
-          description={t("monitoring.checking-hint")}
+          title={t("dashboards.checking")}
+          description={t("dashboards.checking-hint")}
         />
       ) : status === "error" ? (
         <GrafanaStatusPanel
-          title={t("monitoring.load-error")}
-          description={t("monitoring.load-error-hint")}
+          title={t("dashboards.load-error")}
+          description={t("dashboards.load-error-hint")}
           actions={
             <>
               <button
@@ -170,7 +170,7 @@ function DashboardFrame({ dashboard, config, theme, onReload }) {
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-theme-bg-secondary text-theme-text-primary rounded-lg hover:bg-theme-sidebar-item-hover transition-all duration-300 w-full md:w-auto"
               >
                 <RotateCw className="w-4 h-4" />
-                {t("monitoring.retry")}
+                {t("dashboards.retry")}
               </button>
               <a
                 href={openUrl}
@@ -179,7 +179,7 @@ function DashboardFrame({ dashboard, config, theme, onReload }) {
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-theme-bg-secondary text-theme-text-primary rounded-lg hover:bg-theme-sidebar-item-hover transition-all duration-300 w-full md:w-auto"
               >
                 <ExternalLink className="w-4 h-4" />
-                {t("monitoring.open-grafana")}
+                {t("dashboards.open-grafana")}
               </a>
             </>
           }

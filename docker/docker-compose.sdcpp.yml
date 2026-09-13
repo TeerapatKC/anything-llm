@@ -80,6 +80,9 @@ services:
     #
     # -l 0.0.0.0 matters: sd-server listens on 127.0.0.1 by default, which inside
     # a container means nothing else can reach it.
+    # Keep the large T5 prompt encoder off the GPU. On shared-GPU deployments
+    # (including DGX Spark) it can otherwise exhaust the device budget before
+    # FLUX starts sampling. Override SDCPP_BACKEND for a dedicated GPU.
     command: >
       --diffusion-model /models/flux1-schnell-Q8_0.gguf
       --vae /models/ae.safetensors
@@ -90,6 +93,7 @@ services:
       --steps ${SDCPP_STEPS:-4}
       -W 1024 -H 1024
       --diffusion-fa
+      --backend ${SDCPP_BACKEND:-te=cpu}
       -l 0.0.0.0
       --listen-port 8080
     volumes:

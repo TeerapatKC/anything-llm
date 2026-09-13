@@ -68,7 +68,6 @@ const TRANSLATIONS = {
     logs: "Logs",
     "event-logs": "User Event Logs",
     dashboards: "Dashboards",
-    monitoring: "Dashboards",
     "scheduled-jobs": "Scheduled Jobs",
     "scheduled-jobs-logs": "Scheduled Job Logs",
     privacy: "Privacy & Data",
@@ -1217,18 +1216,18 @@ const TRANSLATIONS = {
     "go-settings": "Go to Settings",
     "go-home": "Go Home",
   },
-  monitoring: {
+  dashboards: {
     title: "Dashboards",
     description: "Live Grafana dashboards for this instance.",
     "open-grafana": "Open in Grafana",
     unavailable: "Dashboards are not configured for this instance.",
     "unavailable-hint":
-      "Set GRAFANA_PUBLIC_URL so Dashboards can be shown here.",
+      "Set GRAFANA_INTERNAL_URL (or GRAFANA_PUBLIC_URL) so Dashboards can be shown here.",
     checking: "Checking Grafana…",
     "checking-hint": "Verifying that the dashboard service is reachable.",
     "load-error": "Grafana is unavailable",
     "load-error-hint":
-      "Could not reach the Grafana service. Confirm it is running and that GRAFANA_PUBLIC_URL is correct, then try again.",
+      "Could not reach the Grafana service. Confirm the grafana container is running, then try again.",
     retry: "Try again",
   },
   privacy: {

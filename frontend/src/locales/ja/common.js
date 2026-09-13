@@ -56,7 +56,6 @@ const TRANSLATIONS = {
     logs: "ログ",
     "event-logs": "ユーザーイベントログ",
     dashboards: "ダッシュボード",
-    monitoring: "ダッシュボード",
     privacy: "プライバシーとデータ",
     "ai-providers": "AIプロバイダー",
     agent: "エージェント",
@@ -835,18 +834,18 @@ const TRANSLATIONS = {
     "go-settings": "設定へ移動",
     "go-home": "ホームへ戻る",
   },
-  monitoring: {
+  dashboards: {
     title: "ダッシュボード",
-    description: "このインスタンスの Grafana ダッシュボードです。",
+    description: "このインスタンスのリアルタイム Grafana ダッシュボードです。",
     "open-grafana": "Grafana で開く",
     unavailable: "このインスタンスではダッシュボードが設定されていません。",
     "unavailable-hint":
-      "ダッシュボードを表示するには GRAFANA_PUBLIC_URL を設定してください。",
+      "ダッシュボードを表示するには GRAFANA_INTERNAL_URL（または GRAFANA_PUBLIC_URL）を設定してください。",
     checking: "Grafana を確認しています…",
     "checking-hint": "ダッシュボードサービスに到達できるか確認しています。",
     "load-error": "Grafana を利用できません",
     "load-error-hint":
-      "Grafana サービスに接続できませんでした。サービスが起動していることと GRAFANA_PUBLIC_URL が正しいことを確認してから、もう一度お試しください。",
+      "Grafana サービスに接続できませんでした。grafana コンテナが起動していることを確認してから、もう一度お試しください。",
     retry: "再試行",
   },
   privacy: {

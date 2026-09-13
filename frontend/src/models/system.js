@@ -591,12 +591,12 @@ const System = {
         return [];
       });
   },
-  monitoring: async () => {
+  dashboards: async () => {
     return await fetch(`${API_BASE}/system/monitoring`, {
       headers: baseHeaders(),
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Could not load monitoring dashboards.");
+        if (!res.ok) throw new Error("Could not load dashboards.");
         return res.json();
       })
       .catch((e) => {

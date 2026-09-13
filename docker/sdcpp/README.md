@@ -69,6 +69,14 @@ The diffusion model is fixed to `flux1-schnell-Q8_0.gguf`. `SDCPP_T5XXL` can
 select `t5xxl-Q8_0.gguf` to save 4.6GB on the prompt encoder. The downloader
 fetches the required files on the next `up`, leaving old files in the volume.
 
+The default `SDCPP_BACKEND=te=cpu` runs the T5 prompt encoder on the CPU while
+allowing auto-fit to place diffusion on a GPU when one has room. This frees GPU
+memory for generation when the machine also hosts language models. It needs
+enough system RAM and can make prompt encoding slower. A dedicated GPU with
+ample free VRAM can override this in `docker/.env` (for example,
+`SDCPP_BACKEND=all=cuda0`). Recreate `sdcpp` after changing this value; a restart
+alone does not update container arguments.
+
 ## Tuning
 
 The generation flags live in the `command:` block of
@@ -77,9 +85,13 @@ schnell is distilled for, and `sd-server`'s own defaults of twenty steps at 7.0
 would be both slower and wrong for it. The OpenAI request body has no field for
 either, so they are fixed at startup rather than per request.
 
-If a generation runs out of GPU memory, add `--offload-to-cpu` to keep weights in
-RAM, `--backend te=cpu` to run the text encoders on the CPU, or `--vae-tiling` to
-decode in tiles. `sd-server --help` in the image lists the rest:
+If generation still runs out of GPU memory after moving T5 to the CPU, check
+other GPU users with `nvidia-smi`. The model file being loaded does not mean
+there is enough free memory to generate: the encoder and sampling graphs need
+additional working space. You can select the smaller `SDCPP_T5XXL` file,
+reduce concurrent GPU workloads, or use `--offload-to-cpu` to keep more weights
+in RAM. `--vae-tiling` reduces memory use while decoding. `sd-server --help` in
+the image lists the supported flags:
 
 ```bash
 docker run --rm --entrypoint /sd-server ghcr.io/leejet/stable-diffusion.cpp:master-cuda --help

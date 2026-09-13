@@ -67,7 +67,6 @@ const TRANSLATIONS = {
     logs: "บันทึก",
     "event-logs": "บันทึกเหตุการณ์ผู้ใช้",
     dashboards: "แดชบอร์ด",
-    monitoring: "แดชบอร์ด",
     "scheduled-jobs": "งานตามกำหนดเวลา",
     "scheduled-jobs-logs": "บันทึกงานตามกำหนดเวลา",
     privacy: "ความเป็นส่วนตัวและข้อมูล",
@@ -1195,17 +1194,18 @@ const TRANSLATIONS = {
     "go-settings": "ไปที่การตั้งค่า",
     "go-home": "กลับหน้าหลัก",
   },
-  monitoring: {
+  dashboards: {
     title: "แดชบอร์ด",
-    description: "แดชบอร์ด Grafana ของอินสแตนซ์นี้",
+    description: "แดชบอร์ด Grafana ของอินสแตนซ์นี้แบบเรียลไทม์",
     "open-grafana": "เปิดใน Grafana",
     unavailable: "ยังไม่ได้ตั้งค่าแดชบอร์ดสำหรับอินสแตนซ์นี้",
-    "unavailable-hint": "ตั้งค่า GRAFANA_PUBLIC_URL เพื่อแสดงแดชบอร์ดที่นี่",
+    "unavailable-hint":
+      "ตั้งค่า GRAFANA_INTERNAL_URL (หรือ GRAFANA_PUBLIC_URL) เพื่อแสดงแดชบอร์ดที่นี่",
     checking: "กำลังตรวจสอบ Grafana…",
     "checking-hint": "กำลังยืนยันว่าบริการแดชบอร์ดเข้าถึงได้",
     "load-error": "Grafana ไม่พร้อมใช้งาน",
     "load-error-hint":
-      "เชื่อมต่อบริการ Grafana ไม่ได้ ตรวจสอบว่าบริการทำงานอยู่และ GRAFANA_PUBLIC_URL ถูกต้อง แล้วลองอีกครั้ง",
+      "เชื่อมต่อบริการ Grafana ไม่ได้ ตรวจสอบว่าคอนเทนเนอร์ grafana ทำงานอยู่ แล้วลองอีกครั้ง",
     retry: "ลองอีกครั้ง",
   },
   privacy: {

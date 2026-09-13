@@ -385,13 +385,13 @@ const router = createBrowserRouter([
       {
         path: "/settings/dashboards",
         lazy: async () => {
-          const { default: Monitoring } = await import(
-            "@/pages/GeneralSettings/Monitoring"
+          const { default: Dashboards } = await import(
+            "@/pages/GeneralSettings/Dashboards"
           );
           return {
             element: (
               <PermissionRoute
-                Component={Monitoring}
+                Component={Dashboards}
                 permissions={[PERMISSIONS.SYSTEM_MONITORING]}
               />
             ),
