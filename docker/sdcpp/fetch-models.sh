@@ -23,6 +23,13 @@ fetch() {
     return 0
   fi
 
+  # Same switch as the llama.cpp fetcher: an air-gapped host should say which file
+  # the bundle is missing, not spend its retries on a Hugging Face it cannot reach.
+  if [ "${NEXUSAI_OFFLINE:-0}" = "1" ]; then
+    echo "[models] missing ${name} in offline mode; refusing to download." >&2
+    return 1
+  fi
+
   # Downloaded to .part and renamed only on success, so an interrupted run never
   # leaves a truncated file that looks complete to the next one.
   part="${DEST}/${name}.part"

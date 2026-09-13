@@ -53,6 +53,7 @@ services:
     environment:
       SDCPP_MODEL_REPO: ${SDCPP_MODEL_REPO:-second-state/FLUX.1-schnell-GGUF}
       SDCPP_T5XXL: ${SDCPP_T5XXL:-t5xxl_fp16.safetensors}
+      NEXUSAI_OFFLINE: ${NEXUSAI_OFFLINE:-0}
     volumes:
       # A docker volume by default, or a host directory when SDCPP_MODELS_DIR
       # names one - compose reads a value that looks like a path as a bind mount
