@@ -40,7 +40,7 @@ fetch() {
   mv "${part}" "${DEST}/${name}"
 }
 
-fetch "${SDCPP_DIFFUSION_MODEL:-flux1-schnell-Q4_0.gguf}"
+fetch "flux1-schnell-Q8_0.gguf"
 fetch "${SDCPP_T5XXL:-t5xxl_fp16.safetensors}"
 fetch "clip_l.safetensors"
 fetch "ae.safetensors"

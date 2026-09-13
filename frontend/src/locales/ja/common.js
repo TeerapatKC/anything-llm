@@ -480,6 +480,12 @@ const TRANSLATIONS = {
           "この機能を使うには先にSMTPを設定して有効にする必要があります。",
         needsSmtpLink: "SMTP設定に移動",
       },
+      generateImage: {
+        title: "画像を生成",
+        description:
+          "設定済みの画像モデルを使い、テキストの説明から画像を作成します。",
+        unavailable: "このインスタンスでは画像生成を利用できません。",
+      },
     },
     mcp: {
       title: "MCP サーバー",
@@ -1771,9 +1777,12 @@ const TRANSLATIONS = {
   },
   imageGeneration: {
     title: "画像生成の好み",
-    description:
-      "`/img` コマンドを使用して画像を生成するために使用するプロバイダーを設定します。",
-    provider: "画像生成サービスプロバイダー",
+    description: "`/img` の指示から画像を生成するモデルを確認できます。",
+    "model-title": "モデル",
+    "model-help": "このインスタンスで現在使用中の画像モデルです。",
+    "model-description": "テキストの指示から画像を生成します。",
+    active: "使用中",
+    invalid: "設定された画像モデルを利用できません。",
     card: {
       "failed-to-load": "画像の読み込みに失敗しました。",
       "alt-text": "生成された画像",
@@ -2515,7 +2524,6 @@ const TRANSLATIONS = {
     "search-stt-providers": "音声認識プロバイダーを検索",
     "search-tts-providers": "音声合成プロバイダーを検索",
     "search-embedding-providers": "すべての埋め込みプロバイダーを検索",
-    "search-image-providers": "画像生成プロバイダーを検索",
     "search-llm-providers": "すべての LLM プロバイダーを検索",
     "search-available-llm-providers": "利用可能な LLM プロバイダーを検索",
     "search-vectordb-providers":

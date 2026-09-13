@@ -28,6 +28,10 @@ const SKILL_FILTER_CONFIG = {
   "send-email": {
     getAvailability: () => require("../smtp").isSendingEnabled(),
   },
+  "generate-image": {
+    getAvailability: () =>
+      require("../ImageGenerators").isImageGenerationAvailable(),
+  },
 };
 
 const USER_AGENT = {

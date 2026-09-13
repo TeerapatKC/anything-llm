@@ -39,7 +39,10 @@ export default function SlashCommandsTab({
         System.keys(),
       ]);
       setPresets(presets);
-      setImageGenEnabled(!!settings?.ImageGenerationProvider);
+      setImageGenEnabled(
+        settings?.ImageGenerationProvider === "localai" &&
+          !!settings?.ImageGenerationModelPref
+      );
     }
     load();
   }, [workspace?.slug]);

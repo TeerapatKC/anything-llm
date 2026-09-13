@@ -309,20 +309,15 @@ const SystemSettings = {
         process.env.GENERIC_OPEN_AI_EMBEDDING_QUERY_PREFIX || "",
 
       // --------------------------------------------------------
-      // Image Generation Provider Selection Settings & Configs
+      // Image generation is configured by the server environment.
       // --------------------------------------------------------
       ImageGenerationProvider: process.env.IMAGE_GEN_PROVIDER || null,
-      ImageGenerationModelPref: process.env.IMAGE_GEN_MODEL_PREF || null,
-      ImageGenerationDimensions: process.env.IMAGE_GEN_SIZE_PREF || "512x512",
-      ImageGenerationOpenAiKey: !!process.env.IMAGE_GEN_OPENAI_KEY,
-      ImageGenerationOpenRouterApiKey:
-        !!process.env.IMAGE_GEN_OPENROUTER_API_KEY,
-      ImageGenerationOllamaBasePath: process.env.IMAGE_GEN_OLLAMA_BASE_PATH,
-      ImageGenerationOllamaAuthToken: !!process.env.IMAGE_GEN_OLLAMA_AUTH_TOKEN,
-      ImageGenerationLemonadeBasePath: process.env.IMAGE_GEN_LEMONADE_BASE_PATH,
-      ImageGenerationLemonadeApiKey: !!process.env.IMAGE_GEN_LEMONADE_API_KEY,
-      ImageGenerationLocalAiBasePath: process.env.IMAGE_GEN_LOCALAI_BASE_PATH,
-      ImageGenerationLocalAiApiKey: !!process.env.IMAGE_GEN_LOCALAI_API_KEY,
+      ImageGenerationModelPref:
+        process.env.IMAGE_GEN_PROVIDER === "localai" &&
+        process.env.IMAGE_GEN_LOCALAI_BASE_PATH
+          ? "flux1-schnell-Q8_0.gguf"
+          : null,
+      ImageGenerationDimensions: process.env.IMAGE_GEN_SIZE_PREF || "1024x1024",
 
       // --------------------------------------------------------
       // VectorDB Provider Selection Settings & Configs

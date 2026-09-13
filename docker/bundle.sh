@@ -402,7 +402,7 @@ if [[ "$SKIP_MODELS" == false ]]; then
   fi
 
   if want image; then
-    say "Fetching FLUX.1-schnell. About 17GB."
+    say "Fetching FLUX.1-schnell Q8 and its support weights. About 23GB."
     fetch_with_curl docker/sdcpp/fetch-models.sh "${MODELS_DIR}/sdcpp"
   fi
 

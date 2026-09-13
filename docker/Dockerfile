@@ -179,17 +179,13 @@ HEALTHCHECK --interval=1m --timeout=10s --start-period=10s \
 
 # Install server layer
 # Also pull and build collector deps (chromium issues prevent bad bindings)
+#
+# Ordered slowest-changing first, because a changed layer rebuilds every layer after
+# it. The models never change without an edit to their script; dependencies change
+# with a lockfile; source changes on every commit. With source copied first, as it
+# used to be, a one-line code change re-ran both installs and re-downloaded 2GB of
+# models - half an hour for what is now a copy.
 FROM build AS backend-build
-COPY --chown=nexusai:nexusai ./server /app/server/
-WORKDIR /app/server
-RUN yarn install --production --network-timeout 100000 && yarn cache clean
-WORKDIR /app
-
-# Install collector dependencies
-COPY --chown=nexusai:nexusai ./collector/ ./collector/
-WORKDIR /app/collector
-ENV PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com/chrome-for-testing-public
-RUN yarn install --production --network-timeout 100000 && yarn cache clean
 
 # Every model the application would otherwise download the first time someone
 # uses a feature: the built-in multilingual embedder, the reranker, and the transcription
@@ -208,6 +204,22 @@ ENV WHISPER_PREBUILT_MODEL_DIR=/app/prebuilt-models
 COPY --chown=nexusai:nexusai ./docker/prefetch-models.sh /app/prefetch-models.sh
 RUN sh /app/prefetch-models.sh "$NEXUSAI_PREBUILT_MODELS_DIR" \
     && rm /app/prefetch-models.sh
+
+# Dependencies from the manifests alone. Neither package has an install script or a
+# local file: dependency that would need the source present.
+COPY --chown=nexusai:nexusai ./server/package.json ./server/yarn.lock /app/server/
+WORKDIR /app/server
+RUN yarn install --production --network-timeout 100000 && yarn cache clean
+
+COPY --chown=nexusai:nexusai ./collector/package.json ./collector/yarn.lock /app/collector/
+WORKDIR /app/collector
+ENV PUPPETEER_DOWNLOAD_BASE_URL=https://storage.googleapis.com/chrome-for-testing-public
+RUN yarn install --production --network-timeout 100000 && yarn cache clean
+
+# Source last. .dockerignore keeps node_modules out of the context, so these copies
+# land beside the installed dependencies rather than over them.
+COPY --chown=nexusai:nexusai ./server /app/server/
+COPY --chown=nexusai:nexusai ./collector/ /app/collector/
 
 WORKDIR /app
 USER nexusai

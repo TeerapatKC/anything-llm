@@ -382,6 +382,12 @@ const TRANSLATIONS = {
         description:
           "เปิดใช้งานให้เอเจนต์เริ่มต้นสร้างแผนภูมิประเภทต่าง ๆ จากข้อมูลที่ให้มาหรือที่ระบุในการสนทนา",
       },
+      generateImage: {
+        title: "สร้างภาพ",
+        description:
+          "อนุญาตให้เอเจนต์สร้างภาพจากคำบรรยายด้วยโมเดลสร้างภาพที่กำหนดไว้",
+        unavailable: "ระบบนี้ยังไม่พร้อมให้สร้างภาพ",
+      },
       web: {
         title: "ค้นหาเว็บ",
         description:
@@ -938,8 +944,12 @@ const TRANSLATIONS = {
   },
   imageGeneration: {
     title: "การตั้งค่าการสร้างภาพ",
-    description: "กำหนดค่าผู้ให้บริการที่ใช้สร้างภาพจากคำสั่งสนทนา /img",
-    provider: "ผู้ให้บริการสร้างภาพ",
+    description: "ดูโมเดลที่ใช้สร้างภาพจากคำสั่ง /img",
+    "model-title": "โมเดล",
+    "model-help": "โมเดลสร้างภาพที่อินสแตนซ์นี้กำลังใช้งาน",
+    "model-description": "สร้างภาพจากข้อความคำสั่ง",
+    active: "กำลังใช้งาน",
+    invalid: "ไม่พบโมเดลสร้างภาพที่ตั้งค่าไว้",
     card: {
       "failed-to-load": "โหลดรูปภาพไม่สำเร็จ",
       "alt-text": "ภาพที่สร้างขึ้น",
@@ -2449,7 +2459,6 @@ const TRANSLATIONS = {
     "search-stt-providers": "ค้นหาผู้ให้บริการแปลงเสียงเป็นข้อความ",
     "search-tts-providers": "ค้นหาผู้ให้บริการแปลงข้อความเป็นเสียง",
     "search-embedding-providers": "ค้นหาผู้ให้บริการฝังข้อความทั้งหมด",
-    "search-image-providers": "ค้นหาผู้ให้บริการสร้างภาพ",
     "search-llm-providers": "ค้นหาผู้ให้บริการ LLM ทั้งหมด",
     "search-available-llm-providers": "ค้นหาผู้ให้บริการ LLM ที่ใช้ได้",
     "search-vectordb-providers": "ค้นหาผู้ให้บริการฐานข้อมูลเวกเตอร์ทั้งหมด",

@@ -15,6 +15,7 @@ import {
   File,
   FilePlus,
   FolderOpen,
+  ImageIcon,
   ListFilter,
   Mail,
 } from "lucide-react";
@@ -22,6 +23,7 @@ import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";
 import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";
 import GenerateChartsImage from "@/media/agents/generate-charts.png";
+import GenerateImageImage from "@/media/agents/generate-image.png";
 import GenerateSaveImages from "@/media/agents/generate-save-files.png";
 import FileSystemImage from "@/media/agents/file-system.png";
 import ScheduledJobsImage from "@/media/agents/scheduled-jobs.png";
@@ -62,6 +64,7 @@ export const getDefaultSkills = (t) => ({
  * @param {object} options - The options for the configurable skills.
  * @param {boolean} options.fileSystemAgentAvailable - Whether the file system agent is available.
  * @param {boolean} options.createFilesAgentAvailable - Whether the create files agent is available.
+ * @param {boolean} options.imageGenerationAvailable - Whether an image endpoint is configured.
  * @returns {object} The configurable skills.
  */
 export const getConfigurableSkills = (
@@ -70,6 +73,7 @@ export const getConfigurableSkills = (
     fileSystemAgentAvailable = true,
     createFilesAgentAvailable = true,
     smtpReady = true,
+    imageGenerationAvailable = true,
   } = {}
 ) => ({
   ...(fileSystemAgentAvailable && {
@@ -99,6 +103,18 @@ export const getConfigurableSkills = (
     skill: "create-chart",
     icon: ChartColumn,
     image: GenerateChartsImage,
+  },
+  "generate-image": {
+    title: t("agent.skill.generateImage.title"),
+    description: t("agent.skill.generateImage.description"),
+    component: GenericSkillPanel,
+    skill: "generate-image",
+    icon: ImageIcon,
+    image: GenerateImageImage,
+    disabled: !imageGenerationAvailable,
+    disabledHint: !imageGenerationAvailable
+      ? t("agent.skill.generateImage.unavailable")
+      : null,
   },
   "web-browsing": {
     title: t("agent.skill.web.title"),
@@ -139,10 +155,7 @@ export const getConfigurableSkills = (
     disabledHint: !smtpReady ? (
       <span>
         {t("agent.skill.sendEmail.needsSmtp")}{" "}
-        <Link
-          to={paths.settings.smtp()}
-          className="text-cta-button underline"
-        >
+        <Link to={paths.settings.smtp()} className="text-cta-button underline">
           {t("agent.skill.sendEmail.needsSmtpLink")}
         </Link>
       </span>

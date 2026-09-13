@@ -126,7 +126,9 @@ class AgentHandler {
 
   checkSetup() {
     if (!process.env.GENERIC_OPEN_AI_BASE_PATH)
-      throw new Error("Generic OpenAI API base path must be configured for agents.");
+      throw new Error(
+        "Generic OpenAI API base path must be configured for agents."
+      );
   }
 
   /**
@@ -278,9 +280,10 @@ class AgentHandler {
     );
 
     this.provider = "generic-openai";
-    this.model = router.resolvedRoute.provider === "generic-openai"
-      ? router.resolvedRoute.model
-      : this.providerDefault();
+    this.model =
+      router.resolvedRoute.provider === "generic-openai"
+        ? router.resolvedRoute.model
+        : this.providerDefault();
     this.routingMetadata = router.routingMetadata;
     // Held so the model-router-cooldown plugin can restart the cooldown when
     // the agent stops responding. Routing re-resolves per turn, so this always
@@ -450,6 +453,12 @@ class AgentHandler {
    */
   async #toggleAgentTool({ skill, enabled = true, serverName = null }) {
     if (!skill || !this.aibitat?.agents.has(WORKSPACE_AGENT.name)) return;
+    if (
+      enabled &&
+      skill === "generate-image" &&
+      !require("../ImageGenerators").isImageGenerationAvailable()
+    )
+      return;
     const { loadable, registered } = resolveAgentSkill(skill, { serverName });
     const agent = () => this.aibitat.agents.get(WORKSPACE_AGENT.name);
 

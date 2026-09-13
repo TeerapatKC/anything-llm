@@ -47,24 +47,14 @@ async function generateImage(
     };
   }
 
-  // Show friendly "not set up" message instead of generic provider error
-  const { getImageGeneratorProvider } = require("../../helpers");
-  try {
-    getImageGeneratorProvider();
-  } catch {
-    const { Role } = require("../../../models/role");
-    const { PERMISSIONS } = require("../../permissions");
-    const canConfigure =
-      !user || (await Role.userCan(user, PERMISSIONS.SYSTEM_SETTINGS));
+  if (!require("../../ImageGenerators").isImageGenerationAvailable()) {
     return {
       uuid: msgUUID,
       type: "textResponse",
       textResponse: "",
       sources: [],
       close: true,
-      error: canConfigure
-        ? "Image generation isn't set up yet. Choose a provider in Settings → Image Generation."
-        : "Image generation isn't set up yet. Contact an admin to configure it.",
+      error: "Image generation is unavailable on this instance.",
     };
   }
 

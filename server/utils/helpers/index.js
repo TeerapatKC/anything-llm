@@ -171,29 +171,13 @@ function getEmbeddingEngineSelection() {
  */
 function getImageGeneratorProvider() {
   const provider = process.env.IMAGE_GEN_PROVIDER;
-  switch (provider) {
-    case "openai":
-      const { OpenAiImageGenerator } = require("../ImageGenerators/openAi");
-      return new OpenAiImageGenerator();
-    case "ollama":
-      const { OllamaImageGenerator } = require("../ImageGenerators/ollama");
-      return new OllamaImageGenerator();
-    case "lemonade":
-      const { LemonadeImageGenerator } = require("../ImageGenerators/lemonade");
-      return new LemonadeImageGenerator();
-    case "localai":
-      const { LocalAiImageGenerator } = require("../ImageGenerators/localAi");
-      return new LocalAiImageGenerator();
-    case "openrouter":
-      const {
-        OpenRouterImageGenerator,
-      } = require("../ImageGenerators/openRouter");
-      return new OpenRouterImageGenerator();
-    default:
-      throw new Error(
-        `No valid image generation provider was set. Got: ${provider}`
-      );
-  }
+  if (provider !== "localai")
+    throw new Error(
+      `Unsupported IMAGE_GEN_PROVIDER "${provider}". Use localai.`
+    );
+
+  const { LocalAiImageGenerator } = require("../ImageGenerators/localAi");
+  return new LocalAiImageGenerator();
 }
 
 /**

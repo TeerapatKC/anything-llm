@@ -18,9 +18,8 @@ async function generateImageForWorkspace({ prompt, size, signal }) {
 }
 
 /**
- * Edits/transforms images from a prompt + reference images using the
- * system-configured provider. Falls back to generation if the provider
- * doesn't support editing (Ollama handles this internally).
+ * Handles reference images through the configured generator. FLUX.1-schnell
+ * generates a new image from the prompt and reports that references were ignored.
  * @param {{prompt: string, images: Buffer[], size?: string, signal?: AbortSignal}} params
  * @returns {Promise<{storageFilename: string, filename: string, fileSize: number, buffer: Buffer}>}
  */
@@ -38,4 +37,19 @@ async function editImageForWorkspace({ prompt, images, size, signal }) {
   return { ...saved, buffer, ...(notice && { notice }) };
 }
 
-module.exports = { generateImageForWorkspace, editImageForWorkspace };
+/** Whether the configured FLUX endpoint can be used by /img and agent skills. */
+function isImageGenerationAvailable() {
+  try {
+    const { getImageGeneratorProvider } = require("../helpers");
+    getImageGeneratorProvider();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+module.exports = {
+  generateImageForWorkspace,
+  editImageForWorkspace,
+  isImageGenerationAvailable,
+};

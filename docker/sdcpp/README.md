@@ -2,7 +2,7 @@
 
 Runs FLUX.1-schnell through
 [stable-diffusion.cpp](https://github.com/leejet/stable-diffusion.cpp), a ggml
-C++ engine working on quantized GGUF weights. A prebuilt ~2.4GB image and ~17GB
+C++ engine working on quantized GGUF weights. A prebuilt ~2.4GB image and ~23GB
 of weights, with no torch stack to build and no Hugging Face token to obtain. The
 cost is quantization: output is a little behind what the full bf16 weights give.
 
@@ -13,10 +13,9 @@ the OpenAI shape, which is exactly what the LocalAI provider in
 `server/utils/ImageGenerators` calls. So there is no service of ours in between,
 only an image and some flags.
 
-It does not implement LocalAI's `/v1/models/capabilities`, so the model dropdown
-in Settings finds nothing and falls back to a free-text box. Type any name you
-like. `sd-server` hosts whatever model it was started with and does not check the
-one you send.
+The Settings page displays the loaded FLUX.1-schnell Q8 model without a model
+selector. The OpenAI-compatible API advertises `sd-cpp-local` as its model ID;
+the GGUF file is selected when `sd-server` starts.
 
 ## Start it
 
@@ -40,15 +39,13 @@ Pick the image tag for your hardware with `SDCPP_IMAGE_TAG` in `docker/.env`:
 
 ## Nexus AI is pointed at it for you
 
-The overlay fills in `/settings/image-generation-preference`, so the page comes
-up on LocalAI with the base URL `http://sdcpp:8080/v1` already set. The host name
-is the compose service, not localhost, because the backend reaches it across the
-compose network. Then `/img a red fox in snow` in any workspace.
-
-These are defaults, not overrides: anything set for the same key in `docker/.env`
-wins, and saving on the Settings page writes the value there - so a choice made
-in the UI survives the next `up`. Delete the key from `docker/.env` to go back to
-the default.
+The overlay sets the image provider to `localai` and its base URL to
+`http://sdcpp:8080/v1`. The host name is the compose service, not localhost,
+because the backend reaches it across the compose network. The Settings page
+shows the active model without editing controls. Then `/img a red fox in snow`
+in any workspace. To let an agent create images from ordinary chat requests,
+enable **Generate images** under Agent Skills for that workspace or in the
+instance defaults.
 
 This works with either base file. `docker-compose.split.yml` calls its backend
 `nexusai` as well, so the same overlay patches both deployments.
@@ -59,20 +56,18 @@ This works with either base file. `docker-compose.split.yml` calls its backend
 both text encoders in one ungated Apache-2.0 repository. Keeping every required
 file in this repository also avoids token-gated upstream downloads.
 
-Defaults and what they cost:
+Required files and approximate sizes:
 
 | File | Default | Size |
 | --- | --- | --- |
-| Transformer | `flux1-schnell-Q4_0.gguf` | 6.7GB |
+| Transformer | `flux1-schnell-Q8_0.gguf` | 12.6GB |
 | Text encoder | `t5xxl_fp16.safetensors` | 9.8GB |
 | Text encoder | `clip_l.safetensors` | 0.25GB |
 | VAE | `ae.safetensors` | 0.34GB |
 
-`SDCPP_DIFFUSION_MODEL` and `SDCPP_T5XXL` pick other files from that repository.
-`flux1-schnell-Q8_0.gguf` costs 12.6GB and gives up less to quantization;
-`t5xxl-Q8_0.gguf` saves 4.6GB on the prompt encoder. Change either and the
-downloader fetches the new file on the next `up`, leaving the old one in the
-volume.
+The diffusion model is fixed to `flux1-schnell-Q8_0.gguf`. `SDCPP_T5XXL` can
+select `t5xxl-Q8_0.gguf` to save 4.6GB on the prompt encoder. The downloader
+fetches the required files on the next `up`, leaving old files in the volume.
 
 ## Tuning
 

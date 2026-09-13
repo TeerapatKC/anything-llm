@@ -56,13 +56,16 @@ import {
 } from "lucide-react";
 
 /**
- * Credential-gated skills that stay visible (toggle disabled, with a hint) instead of
- * disappearing entirely when the credential is missing. Reserved for a skill whose
+ * Skills that stay visible (toggle disabled, with a hint) instead of
+ * disappearing when the required server service is unavailable. Reserved for a skill whose
  * catalog entry - shared with the Admin agent settings page - already supplies its own
  * `disabled`/`disabledHint`, so there is a concrete next step ("go configure SMTP") to
  * show rather than the generic "N skills are hidden" message the rest fall back to.
  */
-const CREDENTIAL_SKILLS_SHOWN_DISABLED = new Set(["send-email"]);
+const CREDENTIAL_SKILLS_SHOWN_DISABLED = new Set([
+  "send-email",
+  "generate-image",
+]);
 
 /** Nav key for the panel that manages this workspace's SQL connections. */
 const SQL_MANAGER_KEY = "workspace-sql-connections";
@@ -297,6 +300,8 @@ export default function AgentSkillSelection({
       };
       const smtpReady =
         skills?.skillCredentials?.["send-email"]?.configured !== false;
+      const imageGenerationAvailable =
+        skills?.skillCredentials?.["generate-image"]?.configured === true;
       const resolvedConfig = skills?.config ?? {};
       const toNavItems = (category, entries, activeIds = []) =>
         Object.entries(entries)
@@ -466,6 +471,7 @@ export default function AgentSkillSelection({
             fileSystemAgentAvailable: fsAvailable,
             createFilesAgentAvailable: createFilesAvailable,
             smtpReady,
+            imageGenerationAvailable,
           }),
           resolvedConfig.activeSkills
         ),
@@ -716,9 +722,12 @@ export default function AgentSkillSelection({
     );
 
   const smtpReady = skillCredentials?.["send-email"]?.configured !== false;
+  const imageGenerationAvailable =
+    skillCredentials?.["generate-image"]?.configured === true;
   const allConfigurableSkills = getConfigurableSkills(t, {
     ...availability,
     smtpReady,
+    imageGenerationAvailable,
   });
 
   const defaultSkills = getDefaultSkills(t);

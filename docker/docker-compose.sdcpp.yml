@@ -1,7 +1,7 @@
 # Optional overlay: FLUX.1-schnell served by stable-diffusion.cpp.
 #
 # An overlay rather than another service in docker-compose.yml because it wants a
-# GPU and ~17GB of weights, and nobody without the hardware should pay for that
+# GPU and ~23GB of weights, and nobody without the hardware should pay for that
 # just by running `up`.
 #
 # sd-server already speaks the OpenAI image API, so nothing sits between it and
@@ -15,21 +15,15 @@
 # Deliberately no `name:` here - the project name comes from whichever base file
 # it is layered onto, so the services join that project's network.
 #
-# Nexus AI is pointed at it automatically: the service block below fills in the
-# Image Generation settings, so the page comes up on LocalAI with this service
-# already selected. Anything you set in docker/.env wins over these, and so does
-# anything you save in Settings, because saving writes the value into docker/.env
-# and compose reads that file on the next `up`.
-#
-# sd-server does not implement LocalAI's /v1/models/capabilities, so the model
-# dropdown in Settings falls back to a free-text box. The name you type is not
-# checked against anything - sd-server serves whatever model it was started with.
+# The app uses the LocalAI-compatible image API at this service and shows the
+# loaded FLUX.1-schnell Q8 model in Settings. Provider and model are not
+# editable in the UI.
 #
 # See docker/sdcpp/README.md for the image tags, the memory table and the
 # quantization choices.
 
 volumes:
-  # The GGUF transformer, the VAE and both text encoders. ~17GB at the defaults.
+  # The GGUF transformer, the VAE and both text encoders. ~23GB at the defaults.
   # Unused when SDCPP_MODELS_DIR points the mounts at a directory of your own -
   # which is how an air-gapped install runs, off weights that arrived on a disk.
   sdcpp-models:
@@ -39,16 +33,11 @@ networks:
     driver: bridge
 
 services:
-  # Defaults for /settings/image-generation-preference. `:-` means these apply
-  # only when the key is absent from docker/.env, so an explicit choice - yours by
-  # hand, or the one Settings wrote when you last saved - always takes precedence.
-  #
   # `nexusai` is the app service in both base files - docker-compose.split.yml
   # names its backend that too, for exactly this reason.
   nexusai:
     environment:
-      IMAGE_GEN_PROVIDER: ${IMAGE_GEN_PROVIDER:-localai}
-      IMAGE_GEN_MODEL_PREF: ${IMAGE_GEN_MODEL_PREF:-flux.1-schnell}
+      IMAGE_GEN_PROVIDER: localai
       IMAGE_GEN_LOCALAI_BASE_PATH: ${IMAGE_GEN_LOCALAI_BASE_PATH:-http://sdcpp:8080/v1}
 
   # A one-shot downloader rather than a step baked into the server image: the
@@ -63,7 +52,6 @@ services:
     entrypoint: ["sh", "/fetch-models.sh"]
     environment:
       SDCPP_MODEL_REPO: ${SDCPP_MODEL_REPO:-second-state/FLUX.1-schnell-GGUF}
-      SDCPP_DIFFUSION_MODEL: ${SDCPP_DIFFUSION_MODEL:-flux1-schnell-Q4_0.gguf}
       SDCPP_T5XXL: ${SDCPP_T5XXL:-t5xxl_fp16.safetensors}
     volumes:
       # A docker volume by default, or a host directory when SDCPP_MODELS_DIR
@@ -92,7 +80,7 @@ services:
     # -l 0.0.0.0 matters: sd-server listens on 127.0.0.1 by default, which inside
     # a container means nothing else can reach it.
     command: >
-      --diffusion-model /models/${SDCPP_DIFFUSION_MODEL:-flux1-schnell-Q4_0.gguf}
+      --diffusion-model /models/flux1-schnell-Q8_0.gguf
       --vae /models/ae.safetensors
       --clip_l /models/clip_l.safetensors
       --t5xxl /models/${SDCPP_T5XXL:-t5xxl_fp16.safetensors}

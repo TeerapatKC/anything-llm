@@ -129,14 +129,14 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
   } else if (data.type === "clarificationRequest") {
     if (!data.requestId || !Array.isArray(data.questions)) return;
   } else if (data.type === "imageGenerationPending") {
-    // Carries no content - it only swaps the generic loading placeholder for
-    // the image-pending card while an inline /img command generates.
+    // The agent skill supplies a pendingId so its result can replace this card.
+    // An inline /img command still sends the older, empty event.
     return setChatHistory((prev) => [
       ...prev.filter((msg) => !!msg.content),
       {
         type: "imageGenerationPending",
-        uuid: v4(),
-        content: "",
+        uuid: data.content?.pendingId || v4(),
+        content: data.content?.prompt || "",
         role: "assistant",
         sources: [],
         closed: false,
@@ -338,14 +338,26 @@ export default function handleSocketResponse(socket, event, setChatHistory) {
 
   if (data.type === "imageGenerationCard") {
     return setChatHistory((prev) => {
+      const payload =
+        data.content && typeof data.content === "object"
+          ? data.content
+          : {
+              text: data.content,
+              outputs: data.outputs,
+              chatId: data.chatId,
+            };
+      const history = prev.filter(
+        (msg) => !!msg.content && msg.uuid !== payload.pendingId
+      );
+      if (payload.failed) return history;
       return [
-        ...prev.filter((msg) => !!msg.content),
+        ...history,
         {
           uuid: v4(),
           type: "textResponse",
-          content: data.content,
-          outputs: data.outputs || [],
-          chatId: data.chatId || null,
+          content: payload.text,
+          outputs: payload.outputs || [],
+          chatId: payload.chatId || null,
           role: "assistant",
           sources: [],
           closed: true,

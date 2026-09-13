@@ -62,6 +62,19 @@ function agentSkillWhitelistEndpoints(app) {
     }
   );
 
+  app.get(
+    "/agent-skills/image-generation/is-available",
+    [validatedRequest],
+    (_request, response) => {
+      const {
+        isImageGenerationAvailable,
+      } = require("../utils/ImageGenerators");
+      return response.status(200).json({
+        available: isImageGenerationAvailable(),
+      });
+    }
+  );
+
   app.post(
     "/agent-skills/whitelist/add",
     [validatedRequest, userPermissionValid(PERMISSIONS.ANY)],

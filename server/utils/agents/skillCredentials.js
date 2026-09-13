@@ -1,10 +1,8 @@
-const { SystemSettings } = require("../../models/systemSettings");
-
 /**
- * Which agent skills need a credential before they can do anything, and how to
- * tell whether an administrator has already supplied it.
+ * Which agent skills need an instance-wide service or credential before they
+ * can do anything, and how to tell whether it is available.
  *
- * Credentials are deliberately instance-wide: an API key or OAuth grant is
+ * These dependencies are deliberately instance-wide: an API key or OAuth grant is
  * bought/authorized once for the whole deployment, so a workspace manager never
  * enters one. That leaves a gap the per-workspace skill picker has to close -
  * offering a toggle for a skill whose key was never set produces an agent that
@@ -64,9 +62,8 @@ async function hasSQLConnections(workspaceId = null) {
 }
 
 /**
- * Resolve, for every credential-gated skill, whether an administrator has
- * already configured it. Skills absent from the returned map need no
- * credential and are always offerable.
+ * Resolve the readiness of each dependency-gated skill. Skills absent from
+ * the returned map need no instance-wide dependency and are always offerable.
  *
  * The lookup is wrapped so a skill whose check throws while reading its stored
  * config reports itself as unconfigured instead of failing the whole request.
@@ -83,6 +80,8 @@ async function skillCredentialStatus(workspaceId = null) {
 
   const sql = await safely(() => hasSQLConnections(workspaceId));
   const smtp = await safely(() => require("../smtp").isSendingEnabled());
+  const imageGeneration =
+    require("../ImageGenerators").isImageGenerationAvailable();
 
   return {
     "web-browsing": {
@@ -98,6 +97,10 @@ async function skillCredentialStatus(workspaceId = null) {
     "send-email": {
       configured: smtp,
       hint: "SMTP has not been configured and enabled for this instance.",
+    },
+    "generate-image": {
+      configured: imageGeneration,
+      hint: "Image generation is unavailable on this instance.",
     },
   };
 }

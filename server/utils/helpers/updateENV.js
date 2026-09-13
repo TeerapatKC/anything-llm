@@ -40,6 +40,19 @@ const ENV_MANAGED_TRANSCRIPTION_KEYS = new Set([
   "WhisperGenericOpenAiApiKey",
   "WhisperGenericOpenAiModel",
 ]);
+const ENV_MANAGED_IMAGE_KEYS = new Set([
+  "ImageGenerationProvider",
+  "ImageGenerationModelPref",
+  "ImageGenerationDimensions",
+  "ImageGenerationOpenAiKey",
+  "ImageGenerationOpenRouterApiKey",
+  "ImageGenerationOllamaBasePath",
+  "ImageGenerationOllamaAuthToken",
+  "ImageGenerationLemonadeBasePath",
+  "ImageGenerationLemonadeApiKey",
+  "ImageGenerationLocalAiBasePath",
+  "ImageGenerationLocalAiApiKey",
+]);
 
 function isEnvManagedAudioKey(key) {
   return (
@@ -133,52 +146,6 @@ const KEY_MAPPING = {
   },
   GenericOpenAiEmbeddingQueryPrefix: {
     envKey: "GENERIC_OPEN_AI_EMBEDDING_QUERY_PREFIX",
-    checks: [],
-  },
-
-  // Image Generation Settings
-  ImageGenerationProvider: {
-    envKey: "IMAGE_GEN_PROVIDER",
-    checks: [isNotEmpty, supportedImageGenerationProvider],
-  },
-  ImageGenerationModelPref: {
-    envKey: "IMAGE_GEN_MODEL_PREF",
-    checks: [],
-  },
-  ImageGenerationDimensions: {
-    envKey: "IMAGE_GEN_SIZE_PREF",
-    checks: [],
-  },
-  ImageGenerationOpenAiKey: {
-    envKey: "IMAGE_GEN_OPENAI_KEY",
-    checks: [isNotEmpty, validOpenAIKey],
-  },
-  ImageGenerationOpenRouterApiKey: {
-    envKey: "IMAGE_GEN_OPENROUTER_API_KEY",
-    checks: [isNotEmpty],
-  },
-  ImageGenerationOllamaBasePath: {
-    envKey: "IMAGE_GEN_OLLAMA_BASE_PATH",
-    checks: [isNotEmpty, validOllamaLLMBasePath, validDockerizedUrl],
-  },
-  ImageGenerationOllamaAuthToken: {
-    envKey: "IMAGE_GEN_OLLAMA_AUTH_TOKEN",
-    checks: [],
-  },
-  ImageGenerationLemonadeBasePath: {
-    envKey: "IMAGE_GEN_LEMONADE_BASE_PATH",
-    checks: [isValidURL],
-  },
-  ImageGenerationLemonadeApiKey: {
-    envKey: "IMAGE_GEN_LEMONADE_API_KEY",
-    checks: [],
-  },
-  ImageGenerationLocalAiBasePath: {
-    envKey: "IMAGE_GEN_LOCALAI_BASE_PATH",
-    checks: [isNotEmpty, validLLMExternalBasePath, validDockerizedUrl],
-  },
-  ImageGenerationLocalAiApiKey: {
-    envKey: "IMAGE_GEN_LOCALAI_API_KEY",
     checks: [],
   },
 
@@ -499,29 +466,6 @@ function validOpenAIKey(input = "") {
   return input.startsWith("sk-") ? null : "OpenAI Key must start with sk-";
 }
 
-function validLLMExternalBasePath(input = "") {
-  try {
-    new URL(input);
-    if (!input.includes("v1")) return "URL must include /v1";
-    if (input.split("").slice(-1)?.[0] === "/")
-      return "URL cannot end with a slash";
-    return null;
-  } catch {
-    return "Not a valid URL";
-  }
-}
-
-function validOllamaLLMBasePath(input = "") {
-  try {
-    new URL(input);
-    if (input.split("").slice(-1)?.[0] === "/")
-      return "URL cannot end with a slash";
-    return null;
-  } catch {
-    return "Not a valid URL";
-  }
-}
-
 function supportedTTSProvider(input = "") {
   return input === "generic-openai"
     ? null
@@ -570,13 +514,6 @@ function supportedVectorDB(input = "") {
   return supported.includes(input)
     ? null
     : `Invalid VectorDB type. Must be one of ${supported.join(", ")}.`;
-}
-
-function supportedImageGenerationProvider(input = "") {
-  const supported = ["openai", "ollama", "lemonade", "openrouter", "localai"];
-  return supported.includes(input)
-    ? null
-    : `Invalid image generation provider. Must be one of ${supported.join(", ")}.`;
 }
 
 function validChromaURL(input = "") {
@@ -730,6 +667,14 @@ async function updateENV(newENVs = {}, force = false, userId = null) {
       newValues: {},
       error:
         "Transcription settings are managed by environment variables and cannot be changed through the API.",
+    };
+  }
+
+  if (Object.keys(newENVs).some((key) => ENV_MANAGED_IMAGE_KEYS.has(key))) {
+    return {
+      newValues: {},
+      error:
+        "Image generation settings are managed by environment variables and cannot be changed through the API.",
     };
   }
 

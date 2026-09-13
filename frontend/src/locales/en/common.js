@@ -384,6 +384,12 @@ const TRANSLATIONS = {
         description:
           "Enable the default agent to generate various types of charts from data provided or given in chat.",
       },
+      generateImage: {
+        title: "Generate images",
+        description:
+          "Allow the agent to create images from text descriptions using the configured image model.",
+        unavailable: "Image generation is unavailable on this instance.",
+      },
       web: {
         title: "Web Search",
         description:
@@ -954,9 +960,12 @@ const TRANSLATIONS = {
   },
   imageGeneration: {
     title: "Image Generation Preference",
-    description:
-      "Configure the provider used to generate images from the /img chat command.",
-    provider: "Image Generation Provider",
+    description: "View the model used to generate images from /img prompts.",
+    "model-title": "Model",
+    "model-help": "The image model currently used by this instance.",
+    "model-description": "Generates images from text prompts.",
+    active: "Active",
+    invalid: "The configured image model is unavailable.",
     card: {
       "failed-to-load": "Image failed to load",
       "alt-text": "Generated image",
@@ -2500,7 +2509,6 @@ const TRANSLATIONS = {
     "search-stt-providers": "Search speech to text providers",
     "search-tts-providers": "Search text to speech providers",
     "search-embedding-providers": "Search all embedding providers",
-    "search-image-providers": "Search image generation providers",
     "search-llm-providers": "Search all LLM providers",
     "search-available-llm-providers": "Search available LLM providers",
     "search-vectordb-providers": "Search all vector database providers",
