@@ -5,12 +5,13 @@ export default function ContextualSaveBar({
   showing = false,
   onSave,
   onCancel,
+  saving = false,
 }) {
   if (!showing) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 bg-background border-t shadow-lg flex items-center justify-end px-6 z-40 transition-all">
-      <div className="absolute ml-6 left-0 md:left-1/2 transform md:-translate-x-1/2 flex items-center gap-x-2">
+    <div className="fixed inset-x-0 bottom-0 z-40 flex flex-wrap items-center justify-between gap-3 border-t bg-background px-4 py-3 shadow-lg sm:px-6">
+      <div className="flex min-w-0 items-center gap-2">
         <TriangleAlert
           size={18}
           className="text-yellow-600 dark:text-yellow-400"
@@ -19,12 +20,22 @@ export default function ContextualSaveBar({
           Unsaved Changes
         </p>
       </div>
-      <div className="flex items-center gap-x-3">
-        <Button variant="outline" onClick={onCancel}>
+      <div className="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onCancel}
+          disabled={saving}
+        >
           Cancel
         </Button>
-        <Button variant="default" onClick={onSave}>
-          Save
+        <Button
+          type="button"
+          variant="default"
+          onClick={onSave}
+          disabled={saving}
+        >
+          {saving ? "Saving..." : "Save"}
         </Button>
       </div>
     </div>

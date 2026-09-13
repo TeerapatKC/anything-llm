@@ -1,0 +1,1 @@
+Qwen, OpenAI, and Gemma SVG brand icons are from [Lobe Icons](https://github.com/lobehub/lobe-icons), version 1.90.0, distributed under the MIT license. The icons identify the respective model families; model availability comes from the configured LLM service.

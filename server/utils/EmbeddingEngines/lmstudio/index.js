@@ -1,4 +1,4 @@
-const { parseLMStudioBasePath } = require("../../AiProviders/lmStudio");
+const { parseLMStudioBasePath } = require("../../lmStudioUrl");
 const {
   maximumChunkLength,
   reportEmbeddingProgress,

@@ -97,7 +97,7 @@ class AIbitat {
    * @param {string} props.interrupt - [default: "NEVER"] The interrupt mode for the AIbitat instance.
    * @param {number} props.maxRounds - [default: 100] The maximum number of rounds for the AIbitat instance.
    * @param {number} props.maxToolCalls - [default: AIbitat.defaultMaxToolCalls()] The maximum number of tools an agent can chain for a single response.
-   * @param {string} props.provider - [default: "openai"] The provider for the AIbitat instance.
+   * @param {string} props.provider - [default: "generic-openai"] The LLM provider for the AIbitat instance.
    * @param {Object} props.handlerProps - The handler properties for the AIbitat instance.
    * @param {Object} props.skillRuntime - [default: null] Resolved per-workspace runtime knobs
    * (see utils/agents/workspaceSkills). When null, the instance-wide env/system values are used.
@@ -109,7 +109,7 @@ class AIbitat {
       interrupt = "NEVER",
       maxRounds = 100,
       maxToolCalls = AIbitat.defaultMaxToolCalls(),
-      provider = "openai",
+      provider = "generic-openai",
       handlerProps = {}, // Inherited props we can spread so aibitat can access.
       skillRuntime = null,
       ...rest
@@ -750,10 +750,8 @@ class AIbitat {
 
     // get the provider that will be used for the channel
     // if the channel has a provider, use that otherwise
-    // use the GPT-4 because it has a better reasoning
+    // Use the configured model unless this channel explicitly selects another.
     const provider = this.getProviderForConfig({
-      // @ts-expect-error
-      model: "gpt-4",
       ...this.defaultProvider,
       ...channelConfig,
     });
@@ -1426,14 +1424,14 @@ Consider enabling \x1b[0;93mIntelligent Skill Selection\x1b[0m to reduce token u
    * so aborting the session cancels whatever requests that provider has in flight.
    *
    * @param config The provider configuration.
-   * @returns {Providers.OpenAIProvider} The provider instance.
+   * @returns {Providers.GenericOpenAiProvider} The provider instance.
    */
   getProviderForConfig(config) {
     const provider = this.#buildProviderForConfig(config);
     // Record the slug the instance was built from so usage metrics can be
     // priced - pre-built instances (config.provider as an object) keep theirs.
     if (typeof config?.provider === "string")
-      provider.providerSlug ??= config.provider;
+      provider.providerSlug = "generic-openai";
     provider.attachAbortSignal?.(this.abortController.signal);
     return provider;
   }
@@ -1443,91 +1441,15 @@ Consider enabling \x1b[0;93mIntelligent Skill Selection\x1b[0m to reduce token u
    * If the provider is a string, it will return the default provider for that string.
    *
    * @param config The provider configuration.
-   * @returns {Providers.OpenAIProvider} The provider instance.
+   * @returns {Providers.GenericOpenAiProvider} The provider instance.
    */
   #buildProviderForConfig(config) {
     if (typeof config.provider === "object") return config.provider;
-
-    switch (config.provider) {
-      case "openai":
-        return new Providers.OpenAIProvider({ model: config.model });
-      case "anthropic":
-        return new Providers.AnthropicProvider({ model: config.model });
-      case "lmstudio":
-        return new Providers.LMStudioProvider({ model: config.model });
-      case "ollama":
-        return new Providers.OllamaProvider({ model: config.model });
-      case "groq":
-        return new Providers.GroqProvider({ model: config.model });
-      case "togetherai":
-        return new Providers.TogetherAIProvider({ model: config.model });
-      case "azure":
-        return new Providers.AzureOpenAiProvider({ model: config.model });
-      case "koboldcpp":
-        return new Providers.KoboldCPPProvider({});
-      case "localai":
-        return new Providers.LocalAIProvider({ model: config.model });
-      case "openrouter":
-        return new Providers.OpenRouterProvider({ model: config.model });
-      case "mistral":
-        return new Providers.MistralProvider({ model: config.model });
-      case "generic-openai":
-        return new Providers.GenericOpenAiProvider({ model: config.model });
-      case "perplexity":
-        return new Providers.PerplexityProvider({ model: config.model });
-      case "textgenwebui":
-        return new Providers.TextWebGenUiProvider({});
-      case "bedrock":
-        return new Providers.AWSBedrockProvider({ model: config.model });
-      case "fireworksai":
-        return new Providers.FireworksAIProvider({ model: config.model });
-      case "nvidia-nim":
-        return new Providers.NvidiaNimProvider({ model: config.model });
-      case "moonshotai":
-        return new Providers.MoonshotAiProvider({ model: config.model });
-      case "deepseek":
-        return new Providers.DeepSeekProvider({ model: config.model });
-      case "litellm":
-        return new Providers.LiteLLMProvider({ model: config.model });
-      case "apipie":
-        return new Providers.ApiPieProvider({ model: config.model });
-      case "xai":
-        return new Providers.XAIProvider({ model: config.model });
-      case "zai":
-        return new Providers.ZAIProvider({ model: config.model });
-      case "novita":
-        return new Providers.NovitaProvider({ model: config.model });
-      case "ppio":
-        return new Providers.PPIOProvider({ model: config.model });
-      case "gemini":
-        return new Providers.GeminiProvider({ model: config.model });
-      case "cometapi":
-        return new Providers.CometApiProvider({ model: config.model });
-      case "foundry":
-        return new Providers.FoundryProvider({ model: config.model });
-      case "giteeai":
-        return new Providers.GiteeAIProvider({ model: config.model });
-      case "cohere":
-        return new Providers.CohereProvider({ model: config.model });
-      case "docker-model-runner":
-        return new Providers.DockerModelRunnerProvider({ model: config.model });
-      case "privatemode":
-        return new Providers.PrivatemodeProvider({ model: config.model });
-      case "sambanova":
-        return new Providers.SambaNovaProvider({ model: config.model });
-      case "lemonade":
-        return new Providers.LemonadeProvider({ model: config.model });
-      case "omlx":
-        return new Providers.OMLXProvider({ model: config.model });
-      case "minimax":
-        return new Providers.MinimaxProvider({ model: config.model });
-      case "cerebras":
-        return new Providers.CerebrasProvider({ model: config.model });
-      default:
-        throw new Error(
-          `Unknown provider: ${config.provider}. Please use a valid provider.`
-        );
-    }
+    // Retired provider values can remain in older workspace records. Use the
+    // configured Generic OpenAI service until a live model is selected.
+    return new Providers.GenericOpenAiProvider({
+      model: config.provider === "generic-openai" ? config.model : null,
+    });
   }
 
   /**

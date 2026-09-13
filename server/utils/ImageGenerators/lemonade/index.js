@@ -1,4 +1,4 @@
-const { parseLemonadeServerEndpoint } = require("../../AiProviders/lemonade");
+const { parseLemonadeServerEndpoint } = require("../../lemonadeModels");
 const { BaseImageGenerator } = require("../base");
 
 class LemonadeImageGenerator extends BaseImageGenerator {

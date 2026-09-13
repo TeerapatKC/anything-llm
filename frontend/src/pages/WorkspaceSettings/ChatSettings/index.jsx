@@ -49,15 +49,15 @@ export default function ChatSettings({ workspace }) {
 
   if (!workspace) return null;
   return (
-    <div id="workspace-chat-settings-container" className="relative">
+    <div id="workspace-chat-settings-container">
       <form
         ref={formEl}
         onSubmit={handleUpdate}
         id="chat-settings-form"
-        className="w-1/2 flex flex-col gap-y-[32px]"
+        className="flex w-full max-w-4xl flex-col gap-y-[32px]"
       >
         {hasChanges && (
-          <div className="absolute top-0 right-0">
+          <div className="flex w-full justify-end">
             <Button size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
             </Button>

@@ -8,13 +8,81 @@ Two scripts do it:
 
 | | runs on | needs a network | produces |
 |---|---|---|---|
-| `docker/bundle.sh` | Windows, or a DGX Spark that has a network | yes | one directory, 60GB or so |
-| `docker/install.sh --offline` | the air-gapped DGX Spark | no | a running stack |
+| `docker/bundle.sh` | Windows, or a DGX Spark that has a network | yes | one directory with the images and weights |
+| `docker/install.sh --offline` | the air-gapped target | no | a running stack |
+
+## Rehearse the production offline install on this x86_64 machine
+
+The rehearsal uses the same bundle and installer as production, with three
+small, real GGUF models in place of the 37GB production set. From Git Bash or
+WSL on this machine, while it still has internet and Docker Desktop is running
+in Linux-container mode:
+
+```bash
+bash docker/bundle.sh --quick-test --checksums
+```
+
+PowerShell's `bash` may open WSL. The bundler detects a Windows-only Docker
+credential helper there and uses a temporary anonymous Docker configuration
+for the public images it needs, while retaining the selected context and buildx
+builder. Your Docker configuration is not changed.
+Docker Desktop's WSL integration must be enabled. You can also start Git Bash
+explicitly from PowerShell:
+
+```powershell
+cd D:\work\nexus-ai\anything-llm
+& 'C:\Program Files\Git\bin\bash.exe' -lc 'bash docker/bundle.sh --quick-test --checksums'
+```
+
+This writes `docker/bundle-quick-test/` for `linux/amd64`. The GGUF files total
+about 1.17GB; building the full app image and collecting its dependencies takes
+additional time and disk space. Check `MANIFEST.txt` and keep the whole directory.
+If an image export fails, rerun the same bundle command while still online.
+The script replaces an archive only after the new tar is complete and verified;
+do not run the offline installer until the bundle command finishes. Under WSL,
+the app image is staged temporarily on the Linux filesystem before it is copied
+to `/mnt/<drive>`, so both filesystems need enough free space during export.
+The test can then be run with the host disconnected from the internet:
+
+```bash
+bash docker/bundle-quick-test/docker/install.sh --offline
+```
+
+On Windows, run that install command from Git Bash when the bundle lives on a
+Windows drive. Docker Desktop can fail to create its internal WSL bind mount
+from a `/mnt/d/...` source with `docker-desktop-bind-mounts/...: file exists`.
+Git Bash makes the installer write a `D:/...` source instead. From PowerShell:
+
+```powershell
+cd D:\work\nexus-ai\anything-llm
+& 'C:\Program Files\Git\bin\bash.exe' -lc 'bash docker/bundle-quick-test/docker/install.sh --offline'
+```
+
+Re-running the installer is safe and does not remove the containers or their
+persistent storage. The Compose orphan warning is unrelated to the bind mount
+error; do not add `--remove-orphans` just to address it.
+
+The installer loads the saved images, checks that every listed image archive and
+model weight is present, selects `qwen2.5-0.5b` initially, and exposes all three
+models through the live `/v1/models` endpoint. It sets a 2048-token context and
+serves one model at a time. The app and llama.cpp use the same production Compose
+files; the installer uses `docker compose up --pull never --no-build`, and the
+model fetcher refuses network downloads. Check `http://localhost:8082/v1/models` and the model
+picker at `http://localhost:3001/settings/llm-preference` after startup.
+
+This rehearsal uses the normal container names and host ports, including backend
+port 3001, so stop any existing Nexus AI Compose stack using them first. It also
+needs the NVIDIA container runtime used by the production llama.cpp service;
+`--skip-gpu-check` only bypasses the installer's detection when GPU containers
+already work. An x86_64 bundle cannot be installed on a DGX Spark: build the
+production `linux/arm64` bundle separately for that machine. Testing on a fresh
+Docker daemon or VM additionally checks that no images were supplied by the
+workstation's existing cache.
 
 ## Build the bundle
 
-From Git Bash on Windows, or from a shell on any Spark that can reach the
-network:
+From Git Bash or WSL on Windows, or from a shell on any Spark that can reach
+the network:
 
 ```bash
 bash docker/bundle.sh
@@ -32,13 +100,15 @@ bundle/
     sdcpp/         FLUX.1-schnell
     hf/            a Hugging Face cache for the two speech services
   offline.env      what points the stack at images/ and models/
+  images.list      every image archive the installer expects
   MANIFEST.txt     what is in here, and what to run next
 ```
 
-Everything in it is for `linux/arm64`, because the deployment target always is.
-On Windows the app image cross-builds under emulation and takes the better part
-of an hour; on a Spark it is native and takes minutes. The model downloads are
-the same either way and dominate the wall clock.
+The default bundle is for `linux/arm64`, because the production target is a DGX
+Spark. `--quick-test` instead builds `linux/amd64` for this workstation.
+For a default arm64 bundle, Windows cross-builds under emulation and takes the
+better part of an hour; on a Spark the build is native and takes minutes. The
+quick-test amd64 build is native on this workstation.
 
 To trim it, name fewer services or fewer models:
 
@@ -67,9 +137,9 @@ On the Spark, with no network:
 That loads every image tarball, writes `docker/.env` with the bundle's own paths
 substituted in, and starts the stack. It builds nothing and pulls nothing.
 
-Re-running it is safe. It only adds the keys that are missing, apart from the
-image references and model paths, which it always rewrites - pointing the
-deployment at a bundle in a new location is the reason you would run it again.
+Re-running it is safe. It preserves generated secrets and other local settings,
+while applying the image references, model paths and LLM settings recorded in
+`offline.env`. This also replaces a remote model URL left by an earlier install.
 
 ## What makes the offline path work
 
@@ -98,6 +168,29 @@ TensorFlow checkpoint nothing would ever have opened.
 includes the monitoring four from the base compose file, which would otherwise
 leave four containers stuck pulling on an otherwise working stack.
 
+## The models that are not in the bundle
+
+Four features fetch a model from the internet the first time someone uses them,
+through a different library and into a different place than the model servers:
+both native embedders, the reranker, the transcription of uploaded audio, and the
+language data for OCR. The app also refreshes a model pricing table at boot.
+
+None of that is in the bundle, and none of it needs to be - `docker/prefetch-models.sh`
+puts all of it inside the app image at build time, with every revision pinned.
+The files land outside `/app/server/storage`, because that path is a volume at
+runtime and a volume hides whatever the image left underneath it; the entrypoint
+copies what is missing into the volume on each start, never overwriting. The
+transcription model is the exception: 1.5GB is read in place rather than
+duplicated into a customer's data volume.
+
+This was found the hard way. The embedder used to reach the image only because
+the build context happened to include whatever the build machine had already
+downloaded, which `.dockerignore` now excludes - so a build from a clean checkout
+produced an image that failed at the first document upload, with an error naming
+a Hugging Face URL. Verified since with the container on `--network none`:
+embedding, reranking, the transcription model path, both OCR languages and the
+pricing cache all resolve with no route out.
+
 ## Per-workspace models
 
 Each workspace stores its own provider and model, and the request carries that
@@ -107,11 +200,12 @@ configuration, offline included.
 
 How many of those models stay in memory at once is the part worth setting.
 `install.sh` reads the total GPU memory and, above 64GB, raises the resident
-limit to one per model and the context window to 16384. A Spark has 128GB shared
-between CPU and GPU, so all three fit and switching workspaces never waits for a
-reload. Below that threshold it leaves the conservative values alone and says so.
-Set `LLAMACPP_MODELS_MAX` or `LLAMACPP_CTX` in `docker/.env` by hand to override
-either; the installer never rewrites a value that is already there.
+limit to one per model. A Spark has 128GB shared between CPU and GPU, so all
+three fit and switching workspaces never waits for a reload. The production
+bundle writes a 16384-token context into both the model preset and app config;
+the small test bundle uses 2048. Set `LLAMACPP_CTX` while building a bundle to
+choose a different value. The bundle records that value in `offline.env` so the
+installed server and app agree.
 
 ## Checking a bundle before you carry it
 
@@ -130,10 +224,15 @@ The installer names what it cannot find rather than letting compose fail later:
 
 - *"is not a bundle - no offline.env in it"* - the path is wrong, or the copy
   did not finish.
+- *"Missing or empty image tarball: X"* - the copy is incomplete, even if a
+  matching image is cached in Docker already.
+- *"Incomplete image tarball: X"* - a previous image export was interrupted;
+  rerun `bundle.sh` on the online build machine before installing.
+- *"Missing or empty model file: X"* - a GGUF file did not arrive intact.
 - *"The bundle names X for Y, but no tarball in it carries that image"* -
   `images/` is incomplete. Re-run `bundle.sh --skip-models` on the build machine.
 - *"No image tarballs in .../images"* - only the directory structure arrived.
 
-For the model weights there is no such check at install time, because the files
-are only opened when a server starts. If a model server exits at once, compare
-its directory against `MANIFEST.txt`.
+For transferred files, `--checksums` writes SHA-256 values into `MANIFEST.txt`.
+Use them to verify the copy if you suspect corruption; the installer's fast
+presence check cannot prove that a nonempty GGUF or tarball is uncorrupted.

@@ -8,6 +8,7 @@ import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import ExportLogsControl from "@/components/ExportLogsControl";
+import ClearRecordsButton from "@/components/ClearRecordsButton";
 import ScheduledJobs from "@/models/scheduledJobs";
 import usePolling from "@/hooks/usePolling";
 import showToast from "@/utils/toast";
@@ -68,7 +69,6 @@ export default function ScheduledJobLogsPage() {
   useEffect(() => {
     setLoading(true);
     fetchLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset, jobId, slug]);
 
   // Poll while any listed run is still in flight so status/duration update live.
@@ -78,7 +78,7 @@ export default function ScheduledJobLogsPage() {
     setConfirm({
       title: t("scheduledJobs.logs.clearTitle"),
       description: t("scheduledJobs.logs.clearDescription"),
-      confirmText: t("scheduledJobs.logs.clearConfirm"),
+      confirmText: t("common.deleteAll"),
       variant: "destructive",
       onConfirm: async () => {
         const { success, error } = await ScheduledJobs.clearLogs();
@@ -88,10 +88,7 @@ export default function ScheduledJobLogsPage() {
           setCanNext(false);
           setOffset(0);
         } else {
-          showToast(
-            t("scheduledJobs.logs.clearFailed", { error }),
-            "error"
-          );
+          showToast(t("scheduledJobs.logs.clearFailed", { error }), "error");
         }
       },
     });
@@ -134,27 +131,26 @@ export default function ScheduledJobLogsPage() {
         description={t("scheduledJobs.logs.description")}
         actions={
           !slug ? (
-            <Button
-              type="button"
-              size="lg"
-              variant="destructive"
+            <ClearRecordsButton
               disabled={loading || logs.length === 0}
               onClick={handleClearLogs}
             >
-              {t("scheduledJobs.logs.clear")}
-            </Button>
+              {t("common.deleteAll")}
+            </ClearRecordsButton>
           ) : null
         }
       >
         {jobId ? (
-          <button
+          <Button
             type="button"
+            size="lg"
+            variant="outline"
             onClick={() => navigate(jobsPath)}
-            className="border-none flex items-center gap-2 text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 text-sm transition-colors w-fit"
+            className="w-fit"
           >
             <ArrowLeft className="h-4 w-4" />
             {t("scheduledJobs.logs.backToJobs")}
-          </button>
+          </Button>
         ) : null}
       </PageHeader>
       <div className="mt-3 flex w-full flex-wrap justify-end gap-2">
@@ -244,7 +240,8 @@ export default function ScheduledJobLogsPage() {
     </>
   );
 
-  if (slug) return <div className="w-full max-w-5xl mx-auto px-4 py-10">{content}</div>;
+  if (slug)
+    return <div className="w-full max-w-5xl mx-auto px-4 py-10">{content}</div>;
   return <SettingsLayout>{content}</SettingsLayout>;
 }
 

@@ -32,6 +32,7 @@ const TRANSLATIONS = {
     loading: "Loading",
     refresh: "Refresh",
     delete: "Delete",
+    deleteAll: "Delete all",
   },
   home: {
     welcome: "Welcome",
@@ -239,7 +240,7 @@ const TRANSLATIONS = {
     model: {
       title: "Workspace Chat model",
       description:
-        "The specific chat model that will be used for this workspace. If empty, will use the system LLM preference.",
+        "Choose the chat model for this workspace from the models configured on the server.",
     },
     mode: {
       title: "Chat mode",
@@ -694,10 +695,30 @@ const TRANSLATIONS = {
     },
   },
   llm: {
-    title: "LLM Preference",
+    title: "Default AI Model",
     description:
-      "These are the credentials and settings for your preferred LLM chat & embedding provider. It is important that these keys are current and correct, or else Nexus AI will not function properly.",
-    provider: "LLM Provider",
+      "Choose the default model for this instance. The connection and API key are managed on the server.",
+    provider: "Model",
+    "model-description":
+      "Workspaces can choose a different model from the same list.",
+    "inference-settings": "Model settings",
+    "context-window-description":
+      "Maximum number of tokens used to assemble the chat context.",
+    "max-tokens-description":
+      "Maximum number of tokens requested for each response.",
+    "positive-integer": "Enter a whole number greater than zero.",
+    "available-models": "Available models",
+    "available-models-description":
+      "Enable models, choose a default, and set limits for each model.",
+    default: "Default",
+    enabled: "Enabled",
+    "make-default": "Set as default",
+    "keep-one-enabled":
+      "At least one model must stay enabled and be the default.",
+    "invalid-model-limits":
+      "Enter positive whole numbers. Max Tokens cannot exceed the context window.",
+    saving: "Saving...",
+    "save-changes": "Save changes",
     providers: {
       azure_openai: {
         azure_service_endpoint: "Azure Service Endpoint",
@@ -1124,7 +1145,6 @@ const TRANSLATIONS = {
   event: {
     title: "User Event Logs",
     description: "Audit trail of actions taken on this instance.",
-    clear: "Clear User Event Logs",
     export: "Export",
     exportFrom: "From",
     exportTo: "To",
@@ -1538,10 +1558,8 @@ const TRANSLATIONS = {
       title: "Scheduled Job Logs",
       description:
         "Every run of your scheduled jobs — status, duration, and result-email delivery — across every job.",
-      clear: "Clear logs",
-      clearTitle: "Clear all schedule logs?",
+      clearTitle: "Delete all scheduled job logs?",
       clearDescription: "This action is irreversible.",
-      clearConfirm: "Clear logs",
       clearSuccess: "Schedule logs cleared successfully.",
       clearFailed: "Failed to clear logs: {{error}}",
       export: "Export",

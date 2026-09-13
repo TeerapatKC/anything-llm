@@ -24,7 +24,10 @@ jest.mock("openai", () => ({
   })),
 }));
 
-const { getCustomModels } = require("../../../utils/helpers/customModels");
+const {
+  getCustomModels,
+  availableLlmModels,
+} = require("../../../utils/helpers/customModels");
 
 const KEY = "GENERIC_OPEN_AI_API_KEY";
 const REAL_KEY = "sk-a-real-looking-secret";
@@ -67,6 +70,19 @@ describe("getCustomModels credential handling", () => {
     ]);
   });
 
+  it("reads models from the OpenAI-compatible URL selected in the env", async () => {
+    process.env.GENERIC_OPEN_AI_BASE_PATH = "https://another-service.invalid/v1";
+
+    await getCustomModels("generic-openai");
+
+    const { OpenAI } = require("openai");
+    expect(OpenAI).toHaveBeenCalledWith(
+      expect.objectContaining({
+        baseURL: "https://another-service.invalid/v1",
+      })
+    );
+  });
+
   it("caches a genuine key so it survives a restart", async () => {
     await getCustomModels("generic-openai", "sk-newly-entered-key", null);
     expect(process.env[KEY]).toBe("sk-newly-entered-key");
@@ -107,5 +123,44 @@ describe("getCustomModels credential handling", () => {
     expect(models).toEqual([]);
     expect(error).toMatch(/invalid provider/i);
     expect(process.env[KEY]).toBe(REAL_KEY);
+  });
+
+  it("reports a failed live model request without inventing fallback models", async () => {
+    mockListModels.mockRejectedValueOnce(new Error("service offline"));
+
+    const { models, error } = await getCustomModels("generic-openai");
+
+    expect(models).toEqual([]);
+    expect(error).toMatch(/could not reach/i);
+  });
+
+  it("does not call the public OpenAI API when no model service is configured", async () => {
+    delete process.env.GENERIC_OPEN_AI_BASE_PATH;
+
+    const { models, error } = await getCustomModels("generic-openai");
+
+    expect(models).toEqual([]);
+    expect(error).toMatch(/not configured/i);
+    expect(mockListModels).not.toHaveBeenCalled();
+  });
+});
+
+describe("availableLlmModels", () => {
+  const live = [
+    { id: "qwen27b", name: "Qwen", organization: "local" },
+    { id: "gemma-4-12b", name: "Gemma", organization: "local" },
+  ];
+
+  it("shows the live service's models when the allowlist is blank", () => {
+    expect(availableLlmModels(live, "")).toEqual([
+      { id: "qwen27b", name: "Qwen" },
+      { id: "gemma-4-12b", name: "Gemma" },
+    ]);
+  });
+
+  it("filters live models only when an explicit allowlist is set", () => {
+    expect(availableLlmModels(live, "gemma-4-12b, missing-model")).toEqual([
+      { id: "gemma-4-12b", name: "Gemma" },
+    ]);
   });
 });

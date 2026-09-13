@@ -4,11 +4,14 @@ const InheritMultiple = require("./helpers/classes.js");
 const UnTooled = require("./helpers/untooled.js");
 const { tooledStream, tooledComplete } = require("./helpers/tooled.js");
 const { RetryError } = require("../error.js");
-const { toValidNumber } = require("../../../http/index.js");
 const { getNexusAIUserAgent } = require("../../../../endpoints/utils");
 const { GenericOpenAiLLM } = require("../../../AiProviders/genericOpenAi");
 const { attachmentToContentBlock } = require("../../../helpers/attachments");
 const ToolCallTextFilter = require("./helpers/toolCallTextFilter.js");
+const {
+  resolveModel,
+  settingsForModel,
+} = require("../../../helpers/llmModelSettings");
 
 /**
  * The agent provider for the Generic OpenAI provider.
@@ -22,10 +25,10 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
   constructor(config = {}) {
     super();
     this.providerTag = "generic-openai";
-    const { model = "gpt-4.1-nano" } = config;
+    const model = resolveModel(config.model);
     const client = new OpenAI({
       baseURL: process.env.GENERIC_OPEN_AI_BASE_PATH,
-      apiKey: process.env.GENERIC_OPEN_AI_API_KEY ?? null,
+      apiKey: process.env.GENERIC_OPEN_AI_API_KEY || "unused",
       defaultHeaders: {
         "User-Agent": getNexusAIUserAgent(),
         ...GenericOpenAiLLM.parseCustomHeaders(),
@@ -33,12 +36,11 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
     });
 
     this._client = client;
+    if (!model) throw new Error("Generic OpenAI must have a configured model.");
     this.model = model;
     this.verbose = true;
     this._supportsToolCalling = null;
-    this.maxTokens = process.env.GENERIC_OPEN_AI_MAX_TOKENS
-      ? toValidNumber(process.env.GENERIC_OPEN_AI_MAX_TOKENS, 1024)
-      : 1024;
+    this.maxTokens = settingsForModel(model).maxTokens;
   }
 
   get client() {

@@ -36,33 +36,38 @@ export default function VectorDatabase({ workspace }) {
 
   if (!workspace) return null;
   return (
-    <div className="w-full relative">
+    <div className="w-full">
       <form
         ref={formEl}
         onSubmit={handleUpdate}
-        className="w-1/2 flex flex-col gap-y-[32px]"
+        className="flex w-full flex-col gap-y-[32px]"
       >
         {hasChanges && (
-          <div className="absolute top-0 right-0">
+          <div className="flex w-full justify-end">
             <Button size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
             </Button>
           </div>
         )}
-        <div className="flex items-start gap-x-5">
-          <VectorDBIdentifier workspace={workspace} />
-          <VectorCount reload={true} workspace={workspace} />
+        <div className="flex w-full flex-col gap-y-[32px] md:w-1/2">
+          <div className="flex items-start gap-x-5">
+            <VectorDBIdentifier workspace={workspace} />
+            <VectorCount reload={true} workspace={workspace} />
+          </div>
+          <VectorSearchMode
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+          <MaxContextSnippets
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+          <DocumentSimilarityThreshold
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+          <ResetDatabase workspace={workspace} />
         </div>
-        <VectorSearchMode workspace={workspace} setHasChanges={setHasChanges} />
-        <MaxContextSnippets
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
-        <DocumentSimilarityThreshold
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
-        <ResetDatabase workspace={workspace} />
       </form>
     </div>
   );

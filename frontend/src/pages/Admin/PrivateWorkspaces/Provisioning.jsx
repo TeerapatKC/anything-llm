@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Highlighter from "react-highlight-words";
 import SystemPromptVariable from "@/models/systemPromptVariable";
 import { Link } from "react-router-dom";
 import paths from "@/utils/paths";
-import { Button } from "@/components/ui/button";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -50,6 +50,7 @@ export default function Provisioning({
 }) {
   const [form, setForm] = useState(() => profileForm(profile));
   const [saving, setSaving] = useState(false);
+  const formEl = useRef(null);
   const [availableVariables, setAvailableVariables] = useState(
     NAME_TEMPLATE_FALLBACK_VARIABLES
   );
@@ -78,6 +79,12 @@ export default function Provisioning({
   }, []);
   if (!form) return null;
 
+  const original = profileForm(profile);
+  const hasChanges =
+    String(form.quotaPerUser) !== String(original.quotaPerUser) ||
+    form.nameTemplate !== original.nameTemplate ||
+    form.ownerRoleId !== original.ownerRoleId;
+
   async function submit(e) {
     e.preventDefault();
     setSaving(true);
@@ -90,93 +97,99 @@ export default function Provisioning({
   }
 
   return (
-    <form onSubmit={submit} className="flex max-w-2xl flex-col gap-y-6">
-      <Field
-        label="Private workspaces per user"
-        hint="Zero stops anyone creating a new one without touching what already exists."
+    <>
+      <form
+        ref={formEl}
+        onSubmit={submit}
+        className="flex max-w-2xl flex-col gap-y-6"
       >
-        <Input
-          type="number"
-          min={0}
-          max={100}
-          value={form.quotaPerUser}
-          onChange={(e) =>
-            setForm((prev) => ({ ...prev, quotaPerUser: e.target.value }))
-          }
-        />
-      </Field>
-
-      <Field
-        label="Name template"
-        hint={<NameTemplateHelp availableVariables={availableVariables} />}
-      >
-        <TemplateInput
-          value={form.nameTemplate}
-          variables={availableVariables}
-          onChange={(nameTemplate) =>
-            setForm((prev) => ({ ...prev, nameTemplate }))
-          }
-        />
-      </Field>
-
-      <Field
-        label="What the owner may do inside it"
-        hint="The workspace role each owner is given. Edit the role itself to decide whether they may upload documents. No role opens the workspace settings screens - a private workspace has none."
-      >
-        <Select
-          value={form.ownerRoleId ? String(form.ownerRoleId) : DEFAULT_ROLE}
-          onValueChange={(value) =>
-            setForm((prev) => ({
-              ...prev,
-              ownerRoleId: value === DEFAULT_ROLE ? null : Number(value),
-            }))
-          }
+        <Field
+          label="Private workspaces per user"
+          hint="Zero stops anyone creating a new one without touching what already exists."
         >
-          <SelectTrigger>
-            {/* Base UI renders the raw value unless the label is resolved here - the
+          <Input
+            type="number"
+            min={0}
+            max={100}
+            value={form.quotaPerUser}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, quotaPerUser: e.target.value }))
+            }
+          />
+        </Field>
+
+        <Field
+          label="Name template"
+          hint={<NameTemplateHelp availableVariables={availableVariables} />}
+        >
+          <TemplateInput
+            value={form.nameTemplate}
+            variables={availableVariables}
+            onChange={(nameTemplate) =>
+              setForm((prev) => ({ ...prev, nameTemplate }))
+            }
+          />
+        </Field>
+
+        <Field
+          label="What the owner may do inside it"
+          hint="The workspace role each owner is given. Edit the role itself to decide whether they may upload documents. No role opens the workspace settings screens - a private workspace has none."
+        >
+          <Select
+            value={form.ownerRoleId ? String(form.ownerRoleId) : DEFAULT_ROLE}
+            onValueChange={(value) =>
+              setForm((prev) => ({
+                ...prev,
+                ownerRoleId: value === DEFAULT_ROLE ? null : Number(value),
+              }))
+            }
+          >
+            <SelectTrigger>
+              {/* Base UI renders the raw value unless the label is resolved here - the
                 popup that knows the labels has not mounted yet on first paint. */}
-            <SelectValue>
-              {(value) =>
-                value === DEFAULT_ROLE
-                  ? DEFAULT_ROLE_LABEL
-                  : (workspaceRoles.find(
-                      (role) => String(role.id) === String(value)
-                    )?.displayName ?? value)
-              }
-            </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={DEFAULT_ROLE} label={DEFAULT_ROLE_LABEL}>
-              {DEFAULT_ROLE_LABEL}
-            </SelectItem>
-            {workspaceRoles
-              .filter((role) => !role.workspace_id)
-              .map((role) => (
-                <SelectItem
-                  key={role.id}
-                  value={String(role.id)}
-                  label={role.displayName}
-                >
-                  {role.displayName}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
-      </Field>
+              <SelectValue>
+                {(value) =>
+                  value === DEFAULT_ROLE
+                    ? DEFAULT_ROLE_LABEL
+                    : (workspaceRoles.find(
+                        (role) => String(role.id) === String(value)
+                      )?.displayName ?? value)
+                }
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={DEFAULT_ROLE} label={DEFAULT_ROLE_LABEL}>
+                {DEFAULT_ROLE_LABEL}
+              </SelectItem>
+              {workspaceRoles
+                .filter((role) => !role.workspace_id)
+                .map((role) => (
+                  <SelectItem
+                    key={role.id}
+                    value={String(role.id)}
+                    label={role.displayName}
+                  >
+                    {role.displayName}
+                  </SelectItem>
+                ))}
+            </SelectContent>
+          </Select>
+        </Field>
 
-      {stats && (
-        <p className="text-xs text-muted-foreground">
-          {stats.workspaceCount} private workspace(s) across {stats.ownerCount}{" "}
-          user(s) right now.
-        </p>
-      )}
-
-      <div>
-        <Button type="submit" disabled={saving}>
-          {saving ? "Saving..." : "Save"}
-        </Button>
-      </div>
-    </form>
+        {stats && (
+          <p className="text-xs text-muted-foreground">
+            {stats.workspaceCount} private workspace(s) across{" "}
+            {stats.ownerCount} user(s) right now.
+          </p>
+        )}
+      </form>
+      <ContextualSaveBar
+        showing={hasChanges}
+        saving={saving}
+        onSave={() => formEl.current?.requestSubmit()}
+        onCancel={() => setForm(profileForm(profile))}
+      />
+    </>
   );
 }
 

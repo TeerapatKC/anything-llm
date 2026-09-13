@@ -1,86 +1,67 @@
 const AIbitat = require("../../../../utils/agents/aibitat");
-const {
-  MODEL_PRICING,
-} = require("../../../../utils/helpers/modelPricing");
+const { MODEL_PRICING } = require("../../../../utils/helpers/modelPricing");
 
-describe("AIbitat.getProviderForConfig providerSlug wiring", () => {
-  const originalOpenAiKey = process.env.OPEN_AI_KEY;
+describe("AIbitat Generic OpenAI provider", () => {
+  const originalModel = process.env.GENERIC_OPEN_AI_MODEL_PREF;
 
   beforeAll(() => {
-    // The OpenAI SDK refuses to construct without an api key - the tests
-    // never make a request, so any value works.
-    process.env.OPEN_AI_KEY = "test-key";
+    process.env.GENERIC_OPEN_AI_MODEL_PREF = "configured-model";
   });
 
   afterAll(() => {
-    if (originalOpenAiKey === undefined) delete process.env.OPEN_AI_KEY;
-    else process.env.OPEN_AI_KEY = originalOpenAiKey;
+    if (originalModel === undefined) delete process.env.GENERIC_OPEN_AI_MODEL_PREF;
+    else process.env.GENERIC_OPEN_AI_MODEL_PREF = originalModel;
   });
 
   afterEach(() => jest.restoreAllMocks());
 
-  test("stamps the instance with the NexusAI slug it was built from", () => {
-    const aibitat = new AIbitat({ provider: "openai", model: "gpt-4o" });
+  test("uses the selected Generic OpenAI model and slug", () => {
+    const aibitat = new AIbitat({ provider: "generic-openai", model: "selected-model" });
     const provider = aibitat.getProviderForConfig({
-      provider: "openai",
-      model: "gpt-4o",
+      provider: "generic-openai",
+      model: "selected-model",
     });
 
-    // The slug must be the pricing-map key ("openai"), not the class name
-    // ("OpenAIProvider") that goes into the metrics `provider` field.
-    expect(provider.providerSlug).toBe("openai");
-    expect(provider.constructor.name).not.toBe(provider.providerSlug);
+    expect(provider.providerSlug).toBe("generic-openai");
+    expect(provider.model).toBe("selected-model");
   });
 
-  test("re-routing to a different slug stamps the new delegate's slug", () => {
-    // Mirrors a model router re-route: same aibitat, a new per-turn provider
-    // instance built from the resolved delegate's slug.
-    const aibitat = new AIbitat({ provider: "openai", model: "gpt-4o" });
-    const first = aibitat.getProviderForConfig({
+  test("retired provider values use the configured Generic OpenAI model", () => {
+    const aibitat = new AIbitat({ provider: "generic-openai" });
+    const provider = aibitat.getProviderForConfig({
       provider: "openai",
-      model: "gpt-4o",
-    });
-    const second = aibitat.getProviderForConfig({
-      provider: "ollama",
-      model: "llama3:latest",
+      model: "old-model",
     });
 
-    expect(first.providerSlug).toBe("openai");
-    expect(second.providerSlug).toBe("ollama");
+    expect(provider.providerSlug).toBe("generic-openai");
+    expect(provider.model).toBe("configured-model");
   });
 
   test("a pre-built provider instance keeps its own slug", () => {
-    const aibitat = new AIbitat({ provider: "openai", model: "gpt-4o" });
-    const prebuilt = aibitat.getProviderForConfig({
-      provider: "openai",
-      model: "gpt-4o",
-    });
+    const aibitat = new AIbitat({ provider: "generic-openai" });
+    const prebuilt = aibitat.getProviderForConfig({ provider: "generic-openai" });
     prebuilt.providerSlug = "custom-slug";
 
-    // config.provider as an object bypasses construction entirely - the
-    // stamp must not overwrite the slug the instance already carries.
-    const returned = aibitat.getProviderForConfig({ provider: prebuilt });
-    expect(returned).toBe(prebuilt);
-    expect(returned.providerSlug).toBe("custom-slug");
+    expect(aibitat.getProviderForConfig({ provider: prebuilt })).toBe(prebuilt);
+    expect(prebuilt.providerSlug).toBe("custom-slug");
   });
 
-  test("the stamped slug is what reaches the pricing lookup", () => {
+  test("records usage under the Generic OpenAI slug and selected model", () => {
     const getCostBreakdown = jest
       .spyOn(MODEL_PRICING, "getCostBreakdown")
       .mockReturnValue({ inputCost: 1, outputCost: 2, totalCost: 3 });
-
-    const aibitat = new AIbitat({ provider: "openai", model: "gpt-4o" });
+    const aibitat = new AIbitat({ provider: "generic-openai" });
     const provider = aibitat.getProviderForConfig({
-      provider: "openai",
-      model: "gpt-4o",
+      provider: "generic-openai",
+      model: "selected-model",
     });
 
     provider.resetUsage();
     provider.recordUsage({ prompt_tokens: 100, completion_tokens: 10 });
 
     expect(getCostBreakdown).toHaveBeenCalledWith(
-      "openai",
-      "gpt-4o",
+      "generic-openai",
+      "selected-model",
       expect.objectContaining({ prompt_tokens: 100, completion_tokens: 10 })
     );
     expect(provider.getCumulativeUsage().totalCost).toBe(3);

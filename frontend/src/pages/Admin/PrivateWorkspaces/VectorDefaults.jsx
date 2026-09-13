@@ -2,7 +2,8 @@ import { useRef, useState } from "react";
 import VectorSearchMode from "@/pages/WorkspaceSettings/VectorDatabase/VectorSearchMode";
 import MaxContextSnippets from "@/pages/WorkspaceSettings/VectorDatabase/MaxContextSnippets";
 import DocumentSimilarityThreshold from "@/pages/WorkspaceSettings/VectorDatabase/DocumentSimilarityThreshold";
-import { collectFields, SaveBar } from "./index";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
+import { collectFields } from "./index";
 
 /**
  * The retrieval settings every private workspace is created with.
@@ -14,6 +15,7 @@ import { collectFields, SaveBar } from "./index";
 export default function VectorDefaults({ workspace, onSave }) {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
   const formEl = useRef(null);
 
   async function handleUpdate(e) {
@@ -26,23 +28,37 @@ export default function VectorDefaults({ workspace, onSave }) {
 
   if (!workspace) return null;
   return (
-    <div className="relative w-full">
+    <div className="w-full">
       <form
+        key={resetKey}
         ref={formEl}
         onSubmit={handleUpdate}
-        className="flex w-1/2 flex-col gap-y-[32px]"
+        className="flex w-full flex-col gap-y-[32px]"
       >
-        <SaveBar hasChanges={hasChanges} saving={saving} />
-        <VectorSearchMode workspace={workspace} setHasChanges={setHasChanges} />
-        <MaxContextSnippets
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
-        <DocumentSimilarityThreshold
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
+        <div className="flex w-full flex-col gap-y-[32px] md:w-1/2">
+          <VectorSearchMode
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+          <MaxContextSnippets
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+          <DocumentSimilarityThreshold
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+        </div>
       </form>
+      <ContextualSaveBar
+        showing={hasChanges}
+        saving={saving}
+        onSave={() => formEl.current?.requestSubmit()}
+        onCancel={() => {
+          setHasChanges(false);
+          setResetKey((key) => key + 1);
+        }}
+      />
     </div>
   );
 }

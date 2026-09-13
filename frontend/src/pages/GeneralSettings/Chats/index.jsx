@@ -6,7 +6,7 @@ import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
 import showToast from "@/utils/toast";
 import System from "@/models/system";
-import { ChevronDown, ListFilter, Trash2 } from "lucide-react";
+import { ChevronDown, ListFilter } from "lucide-react";
 import { saveAs } from "file-saver";
 import { useTranslation } from "react-i18next";
 import { CanViewChatHistory } from "@/components/CanViewChatHistory";
@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import ClearRecordsButton from "@/components/ClearRecordsButton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -96,14 +97,20 @@ export default function WorkspaceChats() {
 
   const handleClearAllChats = async () => {
     setConfirm({
-      title: "Clear all chats?",
+      title: "Delete all workspace chat logs?",
       description: "This action is irreversible.",
-      confirmText: "Clear all",
+      confirmText: t("common.deleteAll"),
       variant: "destructive",
       onConfirm: async () => {
-        await System.deleteChat(-1);
-        setChats([]);
-        showToast("Cleared all chats.", "success");
+        const { success, error } = await System.deleteChat(-1);
+        if (success) {
+          setChats([]);
+          setCanNext(false);
+          setOffset(0);
+          showToast("Cleared all chats.", "success");
+        } else {
+          showToast(`Failed to clear chats: ${error}`, "error");
+        }
       },
     });
   };
@@ -129,6 +136,14 @@ export default function WorkspaceChats() {
           <PageHeader
             title={t("recorded.title")}
             description={t("recorded.description")}
+            actions={
+              <ClearRecordsButton
+                disabled={loading || chats.length === 0}
+                onClick={handleClearAllChats}
+              >
+                {t("common.deleteAll")}
+              </ClearRecordsButton>
+            }
           />
           <div className="mt-3 mb-4 flex w-full flex-wrap justify-end gap-2">
             <DropdownMenu>
@@ -175,18 +190,6 @@ export default function WorkspaceChats() {
                 label: data.name,
               }))}
             />
-            {chats.length > 0 && (
-              <Button
-                type="button"
-                size="lg"
-                variant="destructive"
-                disabled={loading}
-                onClick={handleClearAllChats}
-              >
-                <Trash2 />
-                Clear Chats
-              </Button>
-            )}
           </div>
           <div className="overflow-x-auto">
             <ChatsContainer

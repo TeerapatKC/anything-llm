@@ -7,7 +7,7 @@ const { reqBody } = require("../../utils/http");
 const { safeJsonParse, decodeHtmlEntities } = require("../../utils/http");
 const {
   parseLemonadeServerEndpoint,
-} = require("../../utils/AiProviders/lemonade");
+} = require("../../utils/lemonadeModels");
 
 function lemonadeUtilsEndpoints(app) {
   if (!app) return;

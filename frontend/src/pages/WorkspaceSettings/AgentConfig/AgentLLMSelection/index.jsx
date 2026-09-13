@@ -1,216 +1,81 @@
-import React, { useEffect, useRef, useState } from "react";
-import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
-import AgentLLMItem from "./AgentLLMItem";
-import { ALL_LLM_PROVIDERS } from "@/pages/GeneralSettings/LLMPreference";
-import { ChevronsUpDown, Gauge, Search, X } from "lucide-react";
-import AgentModelSelection from "../AgentModelSelection";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
-const ENABLED_PROVIDERS = [
-  "openai",
-  "anthropic",
-  "lmstudio",
-  "ollama",
-  "localai",
-  "groq",
-  "azure",
-  "koboldcpp",
-  "togetherai",
-  "openrouter",
-  "novita",
-  "mistral",
-  "perplexity",
-  "textgenwebui",
-  "generic-openai",
-  "bedrock",
-  "fireworksai",
-  "deepseek",
-  "ppio",
-  "litellm",
-  "apipie",
-  "xai",
-  "nvidia-nim",
-  "gemini",
-  "moonshotai",
-  "cometapi",
-  "foundry",
-  "zai",
-  "giteeai",
-  "cohere",
-  "docker-model-runner",
-  "privatemode",
-  "sambanova",
-  "lemonade",
-  "omlx",
-  "minimax",
-  "cerebras",
-];
-const WARN_PERFORMANCE = [
-  "lmstudio",
-  "koboldcpp",
-  "ollama",
-  "localai",
-  "textgenwebui",
-  "docker-model-runner",
-];
-
-const LLM_DEFAULT = {
-  name: "System Default",
-  value: "none",
-  logo: NexusAIIcon,
-  options: () => <React.Fragment />,
-  description:
-    "Agents will use the workspace or system LLM unless otherwise specified.",
-  requiredConfig: [],
-};
-
-const LLMS = [
-  LLM_DEFAULT,
-  ...ALL_LLM_PROVIDERS.filter((llm) => ENABLED_PROVIDERS.includes(llm.value)),
-];
+import CuratedModelPicker, {
+  selectAvailableModel,
+  useAvailableLlmModels,
+} from "@/components/LLMSelection/CuratedModels";
 
 export default function AgentLLMSelection({
   settings,
   workspace,
   setHasChanges,
+  markMismatchAsChanged = true,
 }) {
-  const [filteredLLMs, setFilteredLLMs] = useState([]);
-  const [selectedLLM, setSelectedLLM] = useState(
-    workspace?.agentProvider ?? "none"
-  );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [searchMenuOpen, setSearchMenuOpen] = useState(false);
-  const searchInputRef = useRef(null);
   const { t } = useTranslation();
-  function updateLLMChoice(selection) {
-    setSearchQuery("");
-    setSelectedLLM(selection);
-    setSearchMenuOpen(false);
+  const available = useAvailableLlmModels();
+  const [touched, setTouched] = useState(false);
+  const [model, setModel] = useState("");
+
+  useEffect(() => {
+    if (available.loading) return;
+    setModel(
+      selectAvailableModel(
+        available.models,
+        touched ? model : workspace?.agentModel,
+        workspace?.chatModel,
+        settings?.GenericOpenAiModelPref
+      )
+    );
+  }, [
+    available.loading,
+    available.models,
+    workspace?.agentModel,
+    workspace?.chatModel,
+    settings?.GenericOpenAiModelPref,
+    touched,
+    model,
+  ]);
+
+  useEffect(() => {
+    if (
+      markMismatchAsChanged &&
+      workspace &&
+      model &&
+      (workspace.agentProvider !== "generic-openai" ||
+        workspace.agentModel !== model)
+    ) {
+      setHasChanges(true);
+    }
+  }, [
+    workspace?.agentProvider,
+    workspace?.agentModel,
+    model,
+    setHasChanges,
+    markMismatchAsChanged,
+  ]);
+
+  function selectModel(value) {
+    setModel(value);
+    setTouched(true);
     setHasChanges(true);
   }
 
-  function handleXButton() {
-    if (searchQuery.length > 0) {
-      setSearchQuery("");
-      if (searchInputRef.current) searchInputRef.current.value = "";
-    } else {
-      setSearchMenuOpen(!searchMenuOpen);
-    }
-  }
-
-  useEffect(() => {
-    const filtered = LLMS.filter((llm) =>
-      llm.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredLLMs(filtered);
-  }, [searchQuery, selectedLLM]);
-
-  const selectedLLMObject = LLMS.find((llm) => llm.value === selectedLLM);
   return (
-    <div className="flex flex-col gap-y-[8px]">
-      {WARN_PERFORMANCE.includes(selectedLLM) && (
-        <div className="flex flex-col md:flex-row md:items-center gap-x-2 text-theme-text-primary bg-blue-800/30 w-fit rounded-lg px-4 py-2">
-          <div className="gap-x-2 flex items-center">
-            <Gauge className="shrink-0" size={25} />
-            <p className="text-sm">{t("agent.performance-warning")}</p>
-          </div>
-        </div>
+    <div className="flex w-full flex-col gap-3">
+      {model && (
+        <input type="hidden" name="agentProvider" value="generic-openai" />
       )}
-
-      <div className="flex flex-col gap-y-[8px]">
-        <label htmlFor="name" className="block input-label">
-          {t("agent.provider.title")}
-        </label>
-        <p className="text-theme-text-primary/60 text-xs font-medium">
-          {t("agent.provider.description")}
-        </p>
-      </div>
-
-      <input type="hidden" name="agentProvider" value={selectedLLM} />
-      <Popover open={searchMenuOpen} onOpenChange={setSearchMenuOpen}>
-        <PopoverTrigger
-          render={
-            <Button
-              type="button"
-              variant="ghost"
-              className="w-full max-w-[640px] h-[64px] justify-between gap-0 p-[14px] rounded-lg border-2 border-transparent bg-theme-settings-input-bg hover:bg-theme-settings-input-bg hover:border-primary-button aria-expanded:bg-theme-settings-input-bg transition-all duration-300"
-            >
-              <div className="flex gap-x-4 items-center flex-1 min-w-0">
-                <img
-                  src={selectedLLMObject.logo}
-                  alt={`${selectedLLMObject.name} logo`}
-                  className="w-10 h-10 rounded-md shrink-0"
-                />
-                <div className="flex flex-col text-left min-w-0">
-                  <div className="text-sm font-semibold text-theme-text-primary truncate">
-                    {selectedLLMObject.name}
-                  </div>
-                  <div className="mt-1 text-xs text-description font-normal truncate">
-                    {selectedLLMObject.description}
-                  </div>
-                </div>
-              </div>
-              <ChevronsUpDown size={24} className="text-theme-text-primary" />
-            </Button>
-          }
-        />
-        <PopoverContent
-          align="start"
-          sideOffset={4}
-          className="w-(--anchor-width) max-w-[640px] max-h-[310px] min-h-[64px] flex-col gap-0 rounded-lg bg-theme-settings-input-bg p-0 border-2 border-primary-button"
-        >
-          <div className="flex items-center border-b border-[#9CA3AF] px-4">
-            <Search size={20} className="text-theme-text-primary shrink-0" />
-            <Input
-              type="text"
-              name="llm-search"
-              autoComplete="off"
-              placeholder={t("ui.search-available-llm-providers")}
-              className="h-[38px] border-0 bg-transparent px-3 shadow-none focus-visible:ring-0 focus-visible:border-0 text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
-              onChange={(e) => setSearchQuery(e.target.value)}
-              ref={searchInputRef}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
-            />
-            <X
-              size={20}
-              className="cursor-pointer text-theme-text-primary hover:text-x-button shrink-0"
-              onClick={handleXButton}
-            />
-          </div>
-          <div className="flex-1 flex flex-col gap-y-1 overflow-y-auto thin-scrollbar px-2 py-2 max-h-[245px]">
-            {filteredLLMs.map((llm) => {
-              return (
-                <AgentLLMItem
-                  llm={llm}
-                  key={llm.name}
-                  availableLLMs={LLMS}
-                  settings={settings}
-                  checked={selectedLLM === llm.value}
-                  onClick={() => updateLLMChoice(llm.value)}
-                />
-              );
-            })}
-          </div>
-        </PopoverContent>
-      </Popover>
-      {selectedLLM !== "none" && (
-        <div className="flex flex-col gap-y-1">
-          <AgentModelSelection
-            provider={selectedLLM}
-            workspace={workspace}
-            setHasChanges={setHasChanges}
-          />
-        </div>
-      )}
+      <CuratedModelPicker
+        name="agentModel"
+        value={model}
+        onChange={selectModel}
+        models={available.models}
+        loading={available.loading}
+        error={available.error}
+        onRefresh={available.refresh}
+        label={t("agent.mode.title")}
+        description={t("agent.mode.description")}
+      />
     </div>
   );
 }

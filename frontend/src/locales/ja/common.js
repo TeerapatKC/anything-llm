@@ -33,6 +33,7 @@ const TRANSLATIONS = {
     loading: "読み込み中",
     refresh: "リフレッシュ",
     delete: "削除",
+    deleteAll: "すべて削除",
   },
   settings: {
     title: "インスタンス設定",
@@ -223,7 +224,7 @@ const TRANSLATIONS = {
     model: {
       title: "ワークスペースチャットモデル",
       description:
-        "このワークスペースで使用するチャットモデルを指定します。空の場合はシステムのLLM設定が使用されます。",
+        "サーバーで設定されたモデルから、このワークスペースのチャットモデルを選択します。",
     },
     mode: {
       title: "チャットモード",
@@ -592,10 +593,29 @@ const TRANSLATIONS = {
     },
   },
   llm: {
-    title: "LLMの設定",
+    title: "既定のAIモデル",
     description:
-      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、Nexus AIは正しく動作しません。",
-    provider: "LLMプロバイダー",
+      "このインスタンスの既定のモデルを選択します。接続先とAPIキーはサーバー側で管理されます。",
+    provider: "モデル",
+    "model-description": "ワークスペースでは同じ一覧から別のモデルを選べます。",
+    "inference-settings": "モデル設定",
+    "context-window-description":
+      "会話のコンテキストを構成する際に使用するトークン数の上限です。",
+    "max-tokens-description":
+      "応答ごとにモデルへ要求するトークン数の上限です。",
+    "positive-integer": "0より大きい整数を入力してください。",
+    "available-models": "利用可能なモデル",
+    "available-models-description":
+      "モデルの有効化、既定モデル、およびモデルごとの制限を設定します。",
+    default: "既定",
+    enabled: "有効",
+    "make-default": "既定に設定",
+    "keep-one-enabled":
+      "少なくとも1つのモデルを有効にし、既定に設定してください。",
+    "invalid-model-limits":
+      "正の整数を入力してください。最大トークン数はコンテキスト長以下にしてください。",
+    saving: "保存中...",
+    "save-changes": "変更を保存",
     providers: {
       azure_openai: {
         azure_service_endpoint: "Azure サービス エンドポイント",
@@ -754,7 +774,6 @@ const TRANSLATIONS = {
   event: {
     title: "ユーザーイベントログ",
     description: "このインスタンスで行われた操作の監査ログです。",
-    clear: "ユーザーイベントログをクリア",
     export: "エクスポート",
     exportFrom: "開始日",
     exportTo: "終了日",
@@ -1356,10 +1375,8 @@ const TRANSLATIONS = {
       title: "スケジュールジョブのログ",
       description:
         "すべてのスケジュールジョブの実行状況・実行時間・メール送信結果です。",
-      clear: "ログを消去",
-      clearTitle: "すべてのスケジュールジョブのログを消去しますか?",
+      clearTitle: "すべてのスケジュールジョブのログを削除しますか?",
       clearDescription: "この操作は元に戻せません。",
-      clearConfirm: "ログを消去",
       clearSuccess: "スケジュールジョブのログを消去しました。",
       clearFailed: "ログの消去に失敗しました: {{error}}",
       export: "エクスポート",

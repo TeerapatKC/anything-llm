@@ -1,7 +1,6 @@
 const { BackgroundService } = require("../BackgroundWorkers");
 const { EncryptionManager } = require("../EncryptionManager");
 const { CommunicationKey } = require("../comKey");
-const eagerLoadContextWindows = require("./eagerLoadContextWindows");
 const markOnboarded = require("./markOnboarded");
 const { bootstrapAdminFromEnv, ensureJWTSecret } = require("./bootstrapAdmin");
 const {
@@ -81,7 +80,6 @@ function bootSSL(app, port = 3001) {
         new CommunicationKey(true);
         new EncryptionManager();
         new BackgroundService().boot();
-        await eagerLoadContextWindows();
         console.log(`Primary server in HTTPS mode listening on port ${port}`);
         // Telegram is an optional integration. A slow API or duplicate poller
         // must never hold the primary application startup path open.
@@ -155,7 +153,6 @@ function bootHTTP(app, port = 3001) {
       new CommunicationKey(true);
       new EncryptionManager();
       new BackgroundService().boot();
-      await eagerLoadContextWindows();
       console.log(`Primary server in HTTP mode listening on port ${port}`);
       // Telegram is an optional integration. A slow API or duplicate poller
       // must never hold the primary application startup path open.

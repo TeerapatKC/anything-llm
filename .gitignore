@@ -46,6 +46,7 @@ yarn.lock
 # Offline bundle: image tarballs and model weights staged for an air-gapped
 # deployment. Tens of gigabytes, all of it downloaded rather than authored.
 /docker/bundle/
+/docker/bundle-quick-test/
 /docker/models/
 
 # Interrupted downloads. The model fetchers write to <name>.part and rename on

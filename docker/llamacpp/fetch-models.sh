@@ -28,6 +28,11 @@ fetch() {
     return 0
   fi
 
+  if [ "${NEXUSAI_OFFLINE:-0}" = "1" ]; then
+    echo "[models] missing ${name} in offline mode; refusing to download." >&2
+    return 1
+  fi
+
   # Downloaded to .part and renamed only on success, so an interrupted run never
   # leaves a truncated file that the server would then try to load.
   part="${DEST}/${name}.part"
@@ -61,6 +66,19 @@ fi
 for model in $(echo "${MODELS}" | tr ',' ' '); do
   mmproj=""
   case "${model}" in
+    # Small, public smoke-test models. Together these files are about 1.17 GB.
+    qwen2.5-0.5b)
+      repo="Qwen/Qwen2.5-0.5B-Instruct-GGUF"
+      file="qwen2.5-0.5b-instruct-q4_k_m.gguf"
+      ;;
+    smollm2-360m)
+      repo="HuggingFaceTB/SmolLM2-360M-Instruct-GGUF"
+      file="smollm2-360m-instruct-q8_0.gguf"
+      ;;
+    gemma3-270m)
+      repo="ggml-org/gemma-3-270m-it-GGUF"
+      file="gemma-3-270m-it-Q8_0.gguf"
+      ;;
     qwen3.8-27b)
       repo="unsloth/Qwen3.8-27B-GGUF"
       file="${LLAMACPP_QWEN_FILE:-Qwen3.8-27B-UD-Q4_K_XL.gguf}"
@@ -82,7 +100,8 @@ for model in $(echo "${MODELS}" | tr ',' ' '); do
       ;;
     *)
       echo "[models] unknown model '${model}'." >&2
-      echo "[models] Known names: qwen3.8-27b, gpt-oss-20b, gemma-4-12b." >&2
+      echo "[models] Known names: qwen2.5-0.5b, smollm2-360m, gemma3-270m," >&2
+      echo "[models]              qwen3.8-27b, gpt-oss-20b, gemma-4-12b." >&2
       exit 1
       ;;
   esac

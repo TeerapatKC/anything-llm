@@ -113,16 +113,14 @@ const Workspace = {
       return value;
     },
     chatProvider: (value) => {
-      if (!value || typeof value !== "string" || value === "none") return null;
-      return String(value);
+      return value === "generic-openai" ? value : null;
     },
     chatModel: (value) => {
       if (!value || typeof value !== "string") return null;
       return String(value);
     },
     agentProvider: (value) => {
-      if (!value || typeof value !== "string" || value === "none") return null;
-      return String(value);
+      return value === "generic-openai" ? value : null;
     },
     agentModel: (value) => {
       if (!value || typeof value !== "string") return null;

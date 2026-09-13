@@ -27,6 +27,8 @@ services:
   nexusai:
     environment:
       GENERIC_OPEN_AI_MODEL_PREF: ${GENERIC_OPEN_AI_MODEL_PREF:-gemma-4-12b}
+      # The app reads /v1/models from GENERIC_OPEN_AI_BASE_PATH. Its model
+      # picker must also work when that URL points at an external service.
 
   # Downloads the weights and generates the preset file. A one-shot job rather
   # than a step inside the server image: the weights dwarf the image, they change
@@ -45,6 +47,7 @@ services:
       # stack works before spending 37GB on weights.
       LLAMACPP_MODELS: ${LLAMACPP_MODELS-qwen3.8-27b,gpt-oss-20b,gemma-4-12b}
       LLAMACPP_CTX: ${LLAMACPP_CTX:-8192}
+      NEXUSAI_OFFLINE: ${NEXUSAI_OFFLINE:-0}
       # Swap in another quantization from the same repository. The README lists
       # what each one costs.
       LLAMACPP_QWEN_FILE: ${LLAMACPP_QWEN_FILE:-}

@@ -110,6 +110,42 @@ router mode: it advertises a set of models and loads one on demand when a reques
 names it. All of them appear in the model dropdown in Nexus AI, so a workspace
 picks its own.
 
+### Fast local test with three small models
+
+To rehearse the actual production bundle/install path with these models on an
+offline x86_64 host, use [`docker/OFFLINE.md`](../OFFLINE.md#rehearse-the-production-offline-install-on-this-x86_64-machine).
+That path saves the app, dependency images and model weights while online, then
+installs them with registry pulls and model downloads disabled.
+
+To check the real model picker without downloading the roughly 37GB production
+set, layer `docker-compose.llamacpp-quick-test.yml` last. It overrides the remote
+LLM URL and `LLAMACPP_MODELS=''` in `docker/.env` for this Compose run, so the
+current `.env` file does not need editing. The three GGUF files total about
+1.17GB:
+
+| Model ID shown in Nexus AI | File size | Source |
+| --- | ---: | --- |
+| `qwen2.5-0.5b` | 491MB | [Qwen Q4_K_M](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/blob/main/qwen2.5-0.5b-instruct-q4_k_m.gguf) |
+| `smollm2-360m` | 386MB | [HuggingFaceTB Q8_0](https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct-GGUF/blob/main/smollm2-360m-instruct-q8_0.gguf) |
+| `gemma3-270m` | 292MB | [ggml-org Q8_0](https://huggingface.co/ggml-org/gemma-3-270m-it-GGUF/blob/main/gemma-3-270m-it-Q8_0.gguf) |
+
+```bash
+cd docker
+docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml -f docker-compose.llamacpp-models.yml -f docker-compose.llamacpp-quick-test.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml -f docker-compose.llamacpp-models.yml -f docker-compose.llamacpp-quick-test.yml logs -f llamacpp-models
+```
+
+Once the download job exits successfully, check `http://localhost:8082/v1/models`
+and refresh `/settings/llm-preference`. The test overlay sets a 2048-token
+context and loads one model at a time to keep memory use low. These very small
+models are for verifying discovery, selection, and basic requests; their answer
+quality and tool use are not representative of the large models below. Starting
+the overlay does not edit `docker/.env`, but saving settings in the UI can write
+the test URL and model there. Restore those values before starting the normal
+Compose stack again if you saved a test selection.
+
+### Full-size model set
+
 ```bash
 cd docker
 docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml   -f docker-compose.llamacpp-models.yml up -d
@@ -136,6 +172,34 @@ Only one model is resident at a time by default, which is what keeps three large
 models on one card from colliding. Switching between them costs a reload pause of
 a few seconds. Raise `LLAMACPP_MODELS_MAX` if you have the memory to keep more
 than one loaded.
+
+### Choosing the model source
+
+The app uses `GENERIC_OPEN_AI_BASE_PATH` for both chat requests and the live
+model picker. It asks that URL's `/models` endpoint for available IDs; a model
+name in an env file does not add a model to the picker by itself.
+
+- **Production with the llama.cpp overlay:** Leave `GENERIC_OPEN_AI_BASE_PATH`
+  unset in `docker/.env`. The overlay defaults to `http://llamacpp:8080/v1`.
+  In router mode, `LLAMACPP_MODELS` controls which weights are downloaded and
+  the router advertises only models it can serve.
+- **Testing with a remote service:** Run the base `docker-compose.yml` without
+  the llama.cpp overlays and set these values in `docker/.env`:
+
+  ```env
+  LLM_PROVIDER='generic-openai'
+  GENERIC_OPEN_AI_BASE_PATH='https://llama-cpp.zenflowai.app/v1'
+  GENERIC_OPEN_AI_MODEL_PREF='qwen27b'
+  GENERIC_OPEN_AI_API_KEY='unused'
+  ```
+
+  `qwen27b` is the ID this service reported when this example was written.
+  Check its `/v1/models` response if that changes. Use a real API key when the
+  selected service requires one.
+- **Another OpenAI-compatible service:** Set the same variables to its `/v1`
+  URL, one of its live model IDs, and its API key if required. A blank or unset
+  `GENERIC_OPEN_AI_ALLOWED_MODELS` shows every ID returned by `/models`; set a
+  comma-separated list only when you want to restrict the picker.
 
 ### About each one
 

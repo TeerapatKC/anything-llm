@@ -553,6 +553,20 @@ const System = {
         return { models: [], error: e.message };
       });
   },
+  availableLlmModels: async function (includeDisabled = false) {
+    return fetch(
+      `${API_BASE}/system/available-llm-models${includeDisabled ? "?includeDisabled=true" : ""}`,
+      {
+        headers: baseHeaders(),
+      }
+    )
+      .then(async (res) => {
+        const result = await res.json();
+        if (!res.ok) throw new Error(result?.error || "Could not load models.");
+        return result;
+      })
+      .catch((error) => ({ models: [], error: error.message }));
+  },
   chats: async (offset = 0, feedback = null) => {
     return await fetch(`${API_BASE}/system/workspace-chats`, {
       method: "POST",

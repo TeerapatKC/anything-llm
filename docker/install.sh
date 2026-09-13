@@ -134,11 +134,41 @@ if [[ -n "$OFFLINE_DIR" ]]; then
   [[ -f "${OFFLINE_DIR}/offline.env" ]] ||
     die "${OFFLINE_DIR} is not a bundle - no offline.env in it. Build one with docker/bundle.sh on a machine that has a network."
 
+  if [[ -f "${OFFLINE_DIR}/images.list" ]]; then
+    while IFS= read -r image_tar; do
+      [[ -n "$image_tar" ]] || continue
+      [[ -s "${OFFLINE_DIR}/images/${image_tar}" ]] ||
+        die "Missing or empty image tarball: ${image_tar}. Finish copying the bundle."
+      if [[ "$DRY_RUN" == false ]] && ! tar -tf "${OFFLINE_DIR}/images/${image_tar}" >/dev/null 2>&1; then
+        die "Incomplete image tarball: ${image_tar}. Rerun docker/bundle.sh on the build machine before installing."
+      fi
+    done < "${OFFLINE_DIR}/images.list"
+  fi
+
   # The bundle's own idea of what it contains wins unless --services was given.
   bundle_services="$(grep '^NEXUSAI_BUNDLE_SERVICES=' "${OFFLINE_DIR}/offline.env" |
     head -1 | cut -d= -f2- | tr -d "'")"
   if [[ -n "$bundle_services" && "$SERVICES_EXPLICIT" == false ]]; then
     SERVICES="$bundle_services"
+  fi
+
+  if want llm; then
+    # A copied bundle can be incomplete even when offline.env is present. Check
+    # every advertised weight before touching the daemon or the local .env.
+    preset="${OFFLINE_DIR}/models/llamacpp/models.ini"
+    [[ -s "$preset" ]] ||
+      die "Missing ${preset}. Rebuild or finish copying the LLM bundle."
+    bundle_models="$(sed -n "s/^LLAMACPP_MODELS=['\"]\?\([^'\"]*\).*/\1/p" "${OFFLINE_DIR}/offline.env" | head -1)"
+    [[ -n "$bundle_models" ]] || die "The LLM bundle has no LLAMACPP_MODELS list."
+    for model in $(echo "$bundle_models" | tr ',' ' '); do
+      grep -Fxq "[${model}]" "$preset" ||
+        die "Model ${model} is missing from ${preset}."
+    done
+    while IFS= read -r model_file; do
+      [[ "$model_file" == /models/* ]] || die "Invalid model path in ${preset}: ${model_file}"
+      [[ -s "${OFFLINE_DIR}/models/llamacpp/${model_file#/models/}" ]] ||
+        die "Missing or empty model file: ${model_file}. Finish copying the bundle."
+    done < <(awk -F= '/^[[:space:]]*(model|mmproj)[[:space:]]*=/ {gsub(/[[:space:]]/, "", $2); print $2}' "$preset")
   fi
 fi
 
@@ -252,6 +282,14 @@ case "$ARCH" in
     die "Unsupported architecture: ${ARCH}."
     ;;
 esac
+
+if [[ "$OFFLINE" == true ]]; then
+  bundle_platform="$(sed -n "s/^NEXUSAI_BUNDLE_PLATFORM=['\"]\?\([^'\"]*\).*/\1/p" "${OFFLINE_DIR}/offline.env" | head -1)"
+  host_platform="linux/amd64"
+  [[ "$ARCH" == aarch64 || "$ARCH" == arm64 ]] && host_platform="linux/arm64"
+  [[ -z "$bundle_platform" || "$bundle_platform" == "$host_platform" ]] ||
+    die "Bundle is for ${bundle_platform}, but this host is ${host_platform}. Rebuild with --platform ${host_platform}."
+fi
 
 # server-cuda is published for both architectures, so llama.cpp needs no split.
 LLAMACPP_TAG="server-cuda"
@@ -376,6 +414,12 @@ if [[ "$OFFLINE" == true ]]; then
   # The bundle records its settings with __BUNDLE__ standing in for its own
   # location, because where it ends up on this machine is not knowable when it
   # is built. Substituting here is what lets it be copied anywhere.
+  # Git Bash's /d/... path works for shell file checks, but Docker Compose on
+  # Windows needs a native drive path when it resolves a bind mount from .env.
+  bundle_mount_dir="$OFFLINE_DIR"
+  if command -v cygpath >/dev/null 2>&1; then
+    bundle_mount_dir="$(cygpath -m "$OFFLINE_DIR")"
+  fi
   while IFS= read -r line; do
     [[ "$line" =~ ^[[:space:]]*# ]] && continue
     [[ "$line" =~ ^[[:space:]]*$ ]] && continue
@@ -383,15 +427,16 @@ if [[ "$OFFLINE" == true ]]; then
     value="${line#*=}"
     value="${value%\'}"
     value="${value#\'}"
-    value="${value//__BUNDLE__/${OFFLINE_DIR}}"
+    value="${value//__BUNDLE__/${bundle_mount_dir}}"
     # Not a setting - it is how this script knew which services to install.
-    [[ "$key" == "NEXUSAI_BUNDLE_SERVICES" ]] && continue
+    [[ "$key" == "NEXUSAI_BUNDLE_SERVICES" || "$key" == "NEXUSAI_BUNDLE_PLATFORM" ]] && continue
     if [[ "$key" == *_IMAGE ]] && [[ "$DRY_RUN" == false ]]; then
       docker image inspect "$value" >/dev/null 2>&1 ||
         die "The bundle names ${value} for ${key}, but no tarball in it carries that image."
     fi
     set_key "$key" "$value"
   done < "${OFFLINE_DIR}/offline.env"
+  [[ "$(env_value NEXUSAI_OFFLINE)" == "1" ]] || set_key NEXUSAI_OFFLINE "1"
 
   # Nothing is built offline, and nothing is pulled. Saying so up front means a
   # missing image fails here, by name, rather than as a compose error further on.
@@ -563,13 +608,23 @@ if [[ "$START" == false ]]; then
 fi
 
 if [[ "$OFFLINE" == true ]]; then
-  say "Starting from the bundle. Nothing is downloaded; the model servers still"
-  say "take a few minutes to read tens of gigabytes of weights off the disk."
+  say "Starting from the bundle with registry pulls disabled."
+  WAIT_FOR_MODELS=true
+  if [[ "$OFFLINE_DIR" == /mnt/* ]] && grep -qi microsoft /proc/version 2>/dev/null; then
+    warn "This bundle is on a Windows drive mounted through WSL. If Docker Desktop reports docker-desktop-bind-mounts/...: file exists, rerun the installer from Git Bash so its bind mounts use Windows drive paths."
+  fi
 else
   say "Starting. The first run downloads model weights - tens of gigabytes if you"
   say "kept the defaults - so give it time before deciding something is wrong."
 fi
-"${COMPOSE[@]}" up -d
+compose_up() {
+  if [[ "$OFFLINE" == true ]]; then
+    "${COMPOSE[@]}" up -d --pull never --no-build
+  else
+    "${COMPOSE[@]}" up -d
+  fi
+}
+compose_up
 
 # The model servers wait on a one-shot downloader through
 # `depends_on: service_completed_successfully`, and `up -d` does not reliably come
@@ -591,7 +646,7 @@ finish_pending() {
 ' ' ')"
   [[ -z "${pending// /}" ]] && return 0
   say "Starting services that were waiting on their downloads: ${pending}"
-  "${COMPOSE[@]}" up -d
+  compose_up
   pending="$(created_services | tr '
 ' ' ')"
   [[ -z "${pending// /}" ]]
@@ -610,7 +665,7 @@ if [[ "$WAIT_FOR_MODELS" == true ]]; then
       break
     fi
     say "Waiting on ${busy} - watch it with: docker compose logs -f ${busy%% *}"
-    sleep 60
+    if [[ "$OFFLINE" == true ]]; then sleep 5; else sleep 60; fi
   done
 fi
 

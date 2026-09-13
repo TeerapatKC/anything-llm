@@ -80,6 +80,7 @@ describeValidation("agentSkillConfig", () => {
       disabledSubSkills: {},
       activeFlows: [],
       activeMcpServers: [],
+      activeSqlConnections: [],
       searchProvider: null,
       // Every runtime knob starts out inheriting the instance-wide value.
       runtime: {
@@ -238,7 +239,8 @@ describeValidation("chatMode", () => {
 
 describeValidation("chatProvider", () => {
   it("passes a valid string through", () => {
-    expect(Workspace.validations.chatProvider("openai")).toBe("openai");
+    expect(Workspace.validations.chatProvider("generic-openai")).toBe("generic-openai");
+    expect(Workspace.validations.chatProvider("openai")).toBeNull();
   });
 
   it("returns null for none, null, empty, or non-string", () => {
@@ -263,7 +265,8 @@ describeValidation("chatModel", () => {
 
 describeValidation("agentProvider", () => {
   it("passes a valid string through", () => {
-    expect(Workspace.validations.agentProvider("openai")).toBe("openai");
+    expect(Workspace.validations.agentProvider("generic-openai")).toBe("generic-openai");
+    expect(Workspace.validations.agentProvider("openai")).toBeNull();
   });
 
   it("returns null for none, null, empty, or non-string", () => {

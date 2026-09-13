@@ -9,9 +9,7 @@ import Admin from "@/models/admin";
 import { Skeleton } from "@/components/ui/skeleton";
 import useUser from "@/hooks/useUser";
 import { useIsMobile } from "@/hooks/use-mobile";
-import AgentSkillSelection, {
-  ChatModeWarning,
-} from "./AgentSkillSelection";
+import AgentSkillSelection, { ChatModeWarning } from "./AgentSkillSelection";
 import { WORKSPACE_PERMISSIONS, workspaceCan } from "@/utils/permissions";
 import {
   Bot,
@@ -22,6 +20,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
 
 const CONFIG_SECTIONS = {
   MODEL: "model",
@@ -33,12 +32,13 @@ const CONFIG_SECTIONS = {
  *  describing the defaults every private workspace is created with.
  * @param {object|null} [props.skillsDataSource] - where the skill selection reads and
  *  writes. Defaults to this workspace's own agent skills.
- * @param {function|null} [props.onSaveAgentModel] - what to do with the provider/model
+ * @param {function|null} [props.onSaveAgentModel] - what to do with the model
  *  form. Defaults to saving it onto this workspace.
  * @param {{manageSkills?: boolean, setModel?: boolean}|null} [props.permissions] -
  *  overrides the per-workspace permission checks, for screens that are gated on an
  *  instance permission instead.
  * @param {{title?: string, description?: string, modelDescription?: string}|null} [props.copy]
+ * @param {boolean} [props.contextualSaveBar] - show the shared unsaved-changes bar for the model form.
  */
 export default function WorkspaceAgentConfiguration({
   workspace,
@@ -46,6 +46,7 @@ export default function WorkspaceAgentConfiguration({
   onSaveAgentModel = null,
   permissions = null,
   copy = null,
+  contextualSaveBar = false,
 }) {
   const { user } = useUser();
   const isMobile = useIsMobile();
@@ -53,6 +54,7 @@ export default function WorkspaceAgentConfiguration({
   const [settings, setSettings] = useState({});
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [formResetKey, setFormResetKey] = useState(0);
   const [loading, setLoading] = useState(true);
   const [selectedSection, setSelectedSection] = useState(null);
   const [skillNavigation, setSkillNavigation] = useState([]);
@@ -67,8 +69,8 @@ export default function WorkspaceAgentConfiguration({
   const canManageSkills =
     permissions?.manageSkills ??
     workspaceCan(WORKSPACE_PERMISSIONS.AGENTS_MANAGE, workspace?.slug, user);
-  // Picking the agent's provider/model is the same capability as choosing the
-  // workspace's chat LLM, so it rides on that permission rather than a role check.
+  // Picking the agent's model uses the same permission as choosing the
+  // workspace's chat model.
   const canSetAgentModel =
     permissions?.setModel ??
     workspaceCan(WORKSPACE_PERMISSIONS.SETTINGS_LLM, workspace?.slug, user);
@@ -191,7 +193,7 @@ export default function WorkspaceAgentConfiguration({
               <div hidden={!canSetAgentModel}>
                 <ConfigNavItem
                   icon={Cpu}
-                  title="Model & provider"
+                  title="Model"
                   selected={selectedSection === CONFIG_SECTIONS.MODEL}
                   onClick={() => setSelectedSection(CONFIG_SECTIONS.MODEL)}
                 />
@@ -266,14 +268,15 @@ export default function WorkspaceAgentConfiguration({
             >
               <div className="mb-5">
                 <h2 className="text-base font-semibold text-theme-text-primary">
-                  Model &amp; provider
+                  Model
                 </h2>
                 <p className="mt-1 text-sm text-theme-text-secondary">
                   {copy?.modelDescription ??
-                    "Select the provider and model used by this workspace's agent."}
+                    "Select the model used by this workspace's agent."}
                 </p>
               </div>
               <form
+                key={formResetKey}
                 ref={formEl}
                 onSubmit={handleUpdate}
                 onChange={() => setHasChanges(true)}
@@ -284,8 +287,9 @@ export default function WorkspaceAgentConfiguration({
                   settings={settings}
                   workspace={workspace}
                   setHasChanges={setHasChanges}
+                  markMismatchAsChanged={!contextualSaveBar}
                 />
-                {hasChanges && (
+                {hasChanges && !contextualSaveBar && (
                   <Button
                     type="submit"
                     size="lg"
@@ -329,6 +333,17 @@ export default function WorkspaceAgentConfiguration({
           </section>
         )}
       </div>
+      {contextualSaveBar && (
+        <ContextualSaveBar
+          showing={hasChanges}
+          saving={saving}
+          onSave={() => formEl.current?.requestSubmit()}
+          onCancel={() => {
+            setHasChanges(false);
+            setFormResetKey((key) => key + 1);
+          }}
+        />
+      )}
     </div>
   );
 }

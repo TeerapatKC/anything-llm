@@ -1,4 +1,4 @@
-const { parseLemonadeServerEndpoint } = require("../../AiProviders/lemonade");
+const { parseLemonadeServerEndpoint } = require("../../lemonadeModels");
 const { toChunks, reportEmbeddingProgress } = require("../../helpers");
 
 class LemonadeEmbedder {

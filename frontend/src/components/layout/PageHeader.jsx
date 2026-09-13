@@ -48,7 +48,9 @@ export default function PageHeader({
           ) : null}
         </div>
         {actions ? (
-          <div className="flex shrink-0 items-center gap-x-2">{actions}</div>
+          <div className="ml-auto flex shrink-0 items-center gap-x-2">
+            {actions}
+          </div>
         ) : null}
       </div>
       {children}

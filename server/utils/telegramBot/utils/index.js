@@ -157,13 +157,10 @@ function decryptToken(encryptedToken) {
  */
 function resolveWorkspaceProvider(workspace) {
   const { getBaseLLMProviderModel } = require("../../helpers");
-  const provider =
-    workspace?.agentProvider ??
-    workspace?.chatProvider ??
-    process.env.LLM_PROVIDER;
+  const provider = "generic-openai";
   const model =
-    workspace?.agentModel ??
-    workspace?.chatModel ??
+    (workspace?.agentProvider === provider && workspace?.agentModel) ||
+    (workspace?.chatProvider === provider && workspace?.chatModel) ||
     getBaseLLMProviderModel({ provider });
   return { provider, model };
 }

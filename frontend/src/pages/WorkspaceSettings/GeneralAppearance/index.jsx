@@ -45,24 +45,26 @@ export default function GeneralInfo({ slug, deletionProtected = false }) {
 
   if (!workspace || loading) return null;
   return (
-    <div className="w-full relative flex flex-col gap-y-[32px]">
+    <div className="flex w-full flex-col gap-y-[32px]">
       <form
         ref={formEl}
         onSubmit={handleUpdate}
-        className="w-1/2 flex flex-col"
+        className="flex w-full flex-col gap-y-6"
       >
         {hasChanges && (
-          <div className="absolute top-0 right-0">
+          <div className="flex w-full justify-end">
             <Button size="lg" type="submit">
               {saving ? "Updating..." : "Update Workspace"}
             </Button>
           </div>
         )}
-        <WorkspaceName
-          key={workspace.slug}
-          workspace={workspace}
-          setHasChanges={setHasChanges}
-        />
+        <div className="w-full md:w-1/2">
+          <WorkspaceName
+            key={workspace.slug}
+            workspace={workspace}
+            setHasChanges={setHasChanges}
+          />
+        </div>
       </form>
       <SuggestedChatMessages slug={workspace.slug} />
       <WorkspaceStatus workspace={workspace} />

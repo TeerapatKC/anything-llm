@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
+import { Button } from "@/components/ui/button";
 import {
   ArrowLeft,
   Brain,
@@ -41,7 +42,6 @@ export default function RunDetailPage() {
   useEffect(() => {
     fetchRun();
     fetchEmailLogs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId, slug]);
 
   const fetchRun = async () => {
@@ -77,7 +77,6 @@ export default function RunDetailPage() {
     if (isNonTerminal || !run?.status) return;
     const timeoutId = setTimeout(fetchEmailLogs, 2000);
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [run?.status]);
 
   const handleKillRun = async () => {
@@ -151,7 +150,10 @@ function RunDetailLayout({ slug = null, children }) {
   // Same reasoning as RunHistoryPage - a workspace-owned job's run detail
   // renders as its own screen rather than pulling in the instance-wide admin
   // sidebar, which would be the wrong navigation context here.
-  if (slug) return <div className="w-full max-w-5xl mx-auto px-4 py-10">{children}</div>;
+  if (slug)
+    return (
+      <div className="w-full max-w-5xl mx-auto px-4 py-10">{children}</div>
+    );
   return <SettingsLayout>{children}</SettingsLayout>;
 }
 
@@ -191,14 +193,16 @@ function RunHeader({ t, job, run, result, killing, onBack, onKillRun }) {
   return (
     <div className="w-full flex items-end justify-between gap-x-4 pb-6 border-theme-sidebar-border light:border-zinc-300 border-b-2">
       <div className="flex flex-col gap-y-2">
-        <button
+        <Button
           type="button"
+          size="lg"
+          variant="outline"
           onClick={onBack}
-          className="border-none flex items-center gap-2 text-zinc-400 light:text-slate-600 hover:text-zinc-50 light:hover:text-slate-950 text-sm transition-colors w-fit"
+          className="w-fit"
         >
           <ArrowLeft className="h-4 w-4" />
           {t("scheduledJobs.runDetail.back")}
-        </button>
+        </Button>
         <p className="text-lg leading-7 font-semibold text-zinc-50 light:text-slate-950">
           {t("scheduledJobs.runDetail.runHeading", {
             name: job?.name || t("scheduledJobs.runDetail.unknownJob"),

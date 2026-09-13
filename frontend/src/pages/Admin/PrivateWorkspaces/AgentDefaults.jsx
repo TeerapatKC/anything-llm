@@ -1,6 +1,5 @@
 import WorkspaceAgentConfiguration from "@/pages/WorkspaceSettings/AgentConfig";
 import Admin from "@/models/admin";
-import showToast from "@/utils/toast";
 
 /**
  * The agent every private workspace runs.
@@ -12,7 +11,7 @@ import showToast from "@/utils/toast";
  * connection. Both belong to a real workspace, and both are already reachable from the
  * instance-wide agent pages.
  */
-export default function AgentDefaults({ workspace, settings }) {
+export default function AgentDefaults({ workspace, settings, onSave }) {
   if (!workspace) return null;
 
   return (
@@ -20,12 +19,13 @@ export default function AgentDefaults({ workspace, settings }) {
       workspace={workspace}
       settings={settings}
       permissions={{ manageSkills: true, setModel: true }}
+      contextualSaveBar
       copy={{
         title: "Agent configuration",
         description:
           "The model and capabilities every private workspace runs with. Changing this reaches every private workspace, including ones already in use.",
         modelDescription:
-          "Select the provider and model used by the agent inside private workspaces.",
+          "Select the model used by the agent inside private workspaces.",
       }}
       skillsDataSource={{
         load: () => Admin.privateWorkspaceAgentSkills(),
@@ -35,19 +35,7 @@ export default function AgentDefaults({ workspace, settings }) {
           "Private workspaces now follow the instance default skills.",
         ownsEntities: false,
       }}
-      onSaveAgentModel={async (fields) => {
-        const result = await Admin.updatePrivateWorkspaceProfile({
-          workspace: fields,
-        });
-        if (!result?.success) {
-          showToast(result?.error ?? "Could not save", "error", {
-            clear: true,
-          });
-          return false;
-        }
-        showToast("Saved", "success", { clear: true });
-        return true;
-      }}
+      onSaveAgentModel={onSave}
     />
   );
 }

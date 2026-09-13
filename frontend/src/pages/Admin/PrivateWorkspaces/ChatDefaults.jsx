@@ -5,7 +5,8 @@ import ChatHistorySettings from "@/pages/WorkspaceSettings/ChatSettings/ChatHist
 import ChatPromptSettings from "@/pages/WorkspaceSettings/ChatSettings/ChatPromptSettings";
 import ChatQueryRefusalResponse from "@/pages/WorkspaceSettings/ChatSettings/ChatQueryRefusalResponse";
 import ChatTemperatureSettings from "@/pages/WorkspaceSettings/ChatSettings/ChatTemperatureSettings";
-import { collectFields, SaveBar } from "./index";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
+import { collectFields } from "./index";
 
 /**
  * The chat settings every private workspace is created with.
@@ -18,6 +19,7 @@ import { collectFields, SaveBar } from "./index";
 export default function ChatDefaults({ workspace, settings, onSave }) {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [resetKey, setResetKey] = useState(0);
   const formEl = useRef(null);
 
   async function handleUpdate(e) {
@@ -32,15 +34,16 @@ export default function ChatDefaults({ workspace, settings, onSave }) {
   return (
     <div className="relative">
       <form
+        key={resetKey}
         ref={formEl}
         onSubmit={handleUpdate}
-        className="flex w-1/2 flex-col gap-y-[32px]"
+        className="flex w-full max-w-4xl flex-col gap-y-[32px]"
       >
-        <SaveBar hasChanges={hasChanges} saving={saving} />
         <WorkspaceLLMSelection
           settings={settings}
           workspace={workspace}
           setHasChanges={setHasChanges}
+          markMismatchAsChanged={false}
         />
         <ChatModeSelection
           workspace={workspace}
@@ -65,6 +68,15 @@ export default function ChatDefaults({ workspace, settings, onSave }) {
           setHasChanges={setHasChanges}
         />
       </form>
+      <ContextualSaveBar
+        showing={hasChanges}
+        saving={saving}
+        onSave={() => formEl.current?.requestSubmit()}
+        onCancel={() => {
+          setHasChanges(false);
+          setResetKey((key) => key + 1);
+        }}
+      />
     </div>
   );
 }

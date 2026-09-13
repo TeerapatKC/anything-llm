@@ -6,7 +6,6 @@ import System from "@/models/system";
 import { WorkspaceRole } from "@/models/role";
 import showToast from "@/utils/toast";
 import { castToType } from "@/utils/types";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -153,7 +152,7 @@ export default function PrivateWorkspaces() {
               <TabsTrigger value={TABS.AGENT}>Agent configuration</TabsTrigger>
             </TabsList>
 
-            <TabsContent value={TABS.PROVISIONING} className="pt-6">
+            <TabsContent value={TABS.PROVISIONING} className="pb-24 pt-6">
               <Provisioning
                 profile={profile}
                 stats={stats}
@@ -161,23 +160,24 @@ export default function PrivateWorkspaces() {
                 onSave={save}
               />
             </TabsContent>
-            <TabsContent value={TABS.CHAT} className="pt-6">
+            <TabsContent value={TABS.CHAT} className="pb-24 pt-6">
               <ChatDefaults
                 workspace={asWorkspace}
                 settings={systemSettings}
                 onSave={(fields) => save({ workspace: fields })}
               />
             </TabsContent>
-            <TabsContent value={TABS.VECTOR} className="pt-6">
+            <TabsContent value={TABS.VECTOR} className="pb-24 pt-6">
               <VectorDefaults
                 workspace={asWorkspace}
                 onSave={(fields) => save({ workspace: fields })}
               />
             </TabsContent>
-            <TabsContent value={TABS.AGENT} className="pt-6">
+            <TabsContent value={TABS.AGENT} className="pb-24 pt-6">
               <AgentDefaults
                 workspace={asWorkspace}
                 settings={systemSettings}
+                onSave={(fields) => save({ workspace: fields })}
               />
             </TabsContent>
           </Tabs>
@@ -214,16 +214,4 @@ export function collectFields(form) {
   for (const [key, value] of new FormData(form).entries())
     data[key] = castToType(key, value);
   return data;
-}
-
-/** The save bar the workspace settings screens show once something changes. */
-export function SaveBar({ hasChanges, saving }) {
-  if (!hasChanges) return null;
-  return (
-    <div className="absolute right-0 top-0">
-      <Button size="lg" type="submit">
-        {saving ? "Saving..." : "Save defaults"}
-      </Button>
-    </div>
-  );
 }

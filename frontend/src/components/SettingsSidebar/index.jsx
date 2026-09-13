@@ -248,46 +248,7 @@ const SidebarOptions = ({ user = null, t }) => (
             },
           ]}
         />
-        <Option
-          btnText={t("settings.workspaces")}
-          icon={<Layers className="h-5 w-5 shrink-0" />}
-          user={user}
-          childOptions={[
-            {
-              btnText: t("settings.instance-workspaces"),
-              href: paths.settings.workspaces(),
-              permissions: [PERMISSIONS.WORKSPACES_VIEW_ALL],
-            },
-            {
-              btnText: t("settings.private-workspaces"),
-              href: paths.settings.privateWorkspaces(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
-            },
-          ]}
-        />
-        <Option
-          btnText={t("settings.prompts-and-commands")}
-          icon={<MessageSquareText className="h-5 w-5 shrink-0" />}
-          user={user}
-          childOptions={[
-            {
-              btnText: t("settings.default-system-prompt"),
-              href: paths.settings.defaultSystemPrompt(),
-              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
-            },
-            {
-              btnText: t("settings.system-prompt-variables"),
-              href: paths.settings.systemPromptVariables(),
-              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
-            },
-            {
-              btnText: t("settings.slash-commands"),
-              href: paths.settings.slashCommands(),
-              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
-            },
-          ]}
-        />
-        <Option
+                <Option
           btnText={t("settings.ai-providers")}
           icon={<Settings className="h-5 w-5 shrink-0" />}
           user={user}
@@ -331,6 +292,45 @@ const SidebarOptions = ({ user = null, t }) => (
               btnText: t("settings.model-router"),
               href: paths.settings.modelRouters(),
               permissions: [PERMISSIONS.SYSTEM_MODEL_ROUTING],
+            },
+          ]}
+        />
+        <Option
+          btnText={t("settings.workspaces")}
+          icon={<Layers className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
+            {
+              btnText: t("settings.instance-workspaces"),
+              href: paths.settings.workspaces(),
+              permissions: [PERMISSIONS.WORKSPACES_VIEW_ALL],
+            },
+            {
+              btnText: t("settings.private-workspaces"),
+              href: paths.settings.privateWorkspaces(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
+            },
+          ]}
+        />
+        <Option
+          btnText={t("settings.prompts-and-commands")}
+          icon={<MessageSquareText className="h-5 w-5 shrink-0" />}
+          user={user}
+          childOptions={[
+            {
+              btnText: t("settings.default-system-prompt"),
+              href: paths.settings.defaultSystemPrompt(),
+              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
+            },
+            {
+              btnText: t("settings.system-prompt-variables"),
+              href: paths.settings.systemPromptVariables(),
+              permissions: [PERMISSIONS.SYSTEM_PROMPTS],
+            },
+            {
+              btnText: t("settings.slash-commands"),
+              href: paths.settings.slashCommands(),
+              permissions: [PERMISSIONS.SYSTEM_SETTINGS],
             },
           ]}
         />

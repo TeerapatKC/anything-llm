@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Builds everything a DGX Spark needs and writes it into one directory, so the
-# machine it is carried to never opens a network connection.
+# Builds an offline deployment bundle. The default target is a DGX Spark;
+# --quick-test targets this x86_64 workstation with three small models.
 #
 # That is the whole point of this script. The rest of the tooling assumes the
 # deployment host can reach a registry and Hugging Face; an air-gapped Spark can
@@ -9,16 +9,17 @@
 #
 # Run it on a machine that does have a network. Both targets work:
 #
-#   Windows + Docker Desktop   from Git Bash. Cross-builds arm64 under emulation,
-#                              so the app image takes the better part of an hour.
+#   Windows + Docker Desktop   from Git Bash or WSL with Docker integration.
+#                              Cross-builds arm64 under emulation, so the app
+#                              image takes the better part of an hour.
 #   A DGX Spark with a network  builds natively, in minutes.
 #
-# Everything it produces is for linux/arm64, because the deployment target always
-# is. The bundle looks like this:
+# The default bundle is linux/arm64. --quick-test is linux/amd64. Each looks like:
 #
 #   bundle/
 #     docker/          the compose files, the installer and the voices
 #     images/          every container image, saved as a tarball
+#     images.list      the image archives required by this stack
 #     models/          the GGUF weights and the Hugging Face cache
 #     offline.env      the settings that point the stack at the two above
 #     MANIFEST.txt     what is in here, and what to run on the Spark
@@ -34,34 +35,42 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 REPO_ROOT="$(pwd)"
 
 OUT="docker/bundle"
+OUT_EXPLICIT=false
 SERVICES="llm,image,speech"
 # The catalogue docker/llamacpp/fetch-models.sh knows. Narrow it to shrink the
 # bundle: the three together are about 37GB.
 MODELS="qwen3.8-27b,gpt-oss-20b,gemma-4-12b"
+PLATFORM="linux/arm64"
+QUICK_TEST=false
+SERVICES_EXPLICIT=false
+MODELS_EXPLICIT=false
+PLATFORM_EXPLICIT=false
 SKIP_BUILD=false
 SKIP_IMAGES=false
 SKIP_MODELS=false
 CHECKSUMS=false
 DRY_RUN=false
-APP_IMAGE_REF="nexusai:arm64"
-STT_IMAGE_REF="nexusai-stt:arm64"
-TTS_IMAGE_REF="nexusai-tts:arm64"
-
 usage() {
   cat <<'USAGE'
 Usage: bash docker/bundle.sh [options]
 
-  On Windows run it through bash as shown - PowerShell cannot execute a .sh file
-  directly. On Linux and on a DGX Spark the bare path works.
+  On Windows use Git Bash or WSL with Docker Desktop integration. In WSL,
+  a Windows-only Docker credential helper is bypassed for public images
+  using a temporary, anonymous Docker configuration.
 
 Options:
-  --out DIR         Where to write the bundle (default: docker/bundle).
+  --out DIR         Where to write the bundle (default: docker/bundle, or
+                    docker/bundle-quick-test with --quick-test).
   --services LIST   Comma-separated services to include, from llm, image,
                     speech. Use "none" for the app alone.
                     (default: llm,image,speech)
   --models LIST     Which LLMs to download, from qwen3.8-27b, gpt-oss-20b,
-                    gemma-4-12b. (default: all three, about 37GB)
-  --skip-build      Do not rebuild the app and speech images; save the arm64
+                    gemma-4-12b, qwen2.5-0.5b, smollm2-360m, gemma3-270m.
+                    (default: the three large production models, about 37GB)
+  --quick-test      Bundle the three small real models (about 1.17GB), LLM only,
+                    for an offline rehearsal on this x86_64 Docker host.
+  --platform NAME   linux/arm64 (production) or linux/amd64 (LLM-only test).
+  --skip-build      Do not rebuild the app and speech images; save the target
                     images already tagged on this machine.
   --skip-images     Models only. For topping up a bundle whose images are done.
   --skip-models     Images only.
@@ -74,14 +83,17 @@ Examples:
   bash docker/bundle.sh
   bash docker/bundle.sh --models gemma-4-12b
   bash docker/bundle.sh --services llm --skip-build
+  bash docker/bundle.sh --quick-test
 USAGE
 }
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --out) OUT="${2:?--out needs a directory}"; shift 2 ;;
-    --services) SERVICES="${2:?--services needs a list}"; shift 2 ;;
-    --models) MODELS="${2:?--models needs a list}"; shift 2 ;;
+    --out) OUT="${2:?--out needs a directory}"; OUT_EXPLICIT=true; shift 2 ;;
+    --services) SERVICES="${2:?--services needs a list}"; SERVICES_EXPLICIT=true; shift 2 ;;
+    --models) MODELS="${2:?--models needs a list}"; MODELS_EXPLICIT=true; shift 2 ;;
+    --quick-test) QUICK_TEST=true; shift ;;
+    --platform) PLATFORM="${2:?--platform needs linux/amd64 or linux/arm64}"; PLATFORM_EXPLICIT=true; shift 2 ;;
     --skip-build) SKIP_BUILD=true; shift ;;
     --skip-images) SKIP_IMAGES=true; shift ;;
     --skip-models) SKIP_MODELS=true; shift ;;
@@ -92,14 +104,35 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ "$QUICK_TEST" == true ]]; then
+  [[ "$OUT_EXPLICIT" == true ]] || OUT="docker/bundle-quick-test"
+  [[ "$SERVICES_EXPLICIT" == true ]] || SERVICES="llm"
+  [[ "$MODELS_EXPLICIT" == true ]] || MODELS="qwen2.5-0.5b,smollm2-360m,gemma3-270m"
+  [[ "$PLATFORM_EXPLICIT" == true ]] || PLATFORM="linux/amd64"
+fi
+[[ "$PLATFORM" == "linux/arm64" || "$PLATFORM" == "linux/amd64" ]] ||
+  { echo "Unsupported platform: ${PLATFORM}" >&2; exit 2; }
+if [[ "$PLATFORM" == "linux/amd64" && "$SERVICES" != "llm" ]]; then
+  echo "linux/amd64 bundles currently support --services llm only." >&2
+  exit 2
+fi
+ARCH="${PLATFORM#linux/}"
+APP_IMAGE_REF="nexusai:${ARCH}"
+STT_IMAGE_REF="nexusai-stt:${ARCH}"
+TTS_IMAGE_REF="nexusai-tts:${ARCH}"
+CTX="${LLAMACPP_CTX:-8192}"
+if [[ "$PLATFORM" == "linux/arm64" ]]; then CTX="${LLAMACPP_CTX:-16384}"; fi
+if [[ "$QUICK_TEST" == true ]]; then CTX="${LLAMACPP_CTX:-2048}"; fi
+MODEL_PREF="${MODELS%%,*}"
+if [[ ",$MODELS," == *",gemma-4-12b,"* && "$QUICK_TEST" == false ]]; then
+  MODEL_PREF="gemma-4-12b"
+fi
+
 want() { [[ ",${SERVICES}," == *",$1,"* ]]; }
 
 say() { printf '\033[36m[bundle]\033[0m %s\n' "$*"; }
 warn() { printf '\033[33m[bundle]\033[0m %s\n' "$*" >&2; }
 die() { printf '\033[31m[bundle]\033[0m %s\n' "$*" >&2; exit 1; }
-
-command -v docker >/dev/null 2>&1 || die "docker is not on PATH."
-docker info >/dev/null 2>&1 || die "The docker daemon is not reachable."
 
 # Git Bash rewrites an absolute /foo argument into a Windows path on its way to a
 # native program, which mangles the container side of every -v flag. Turning the
@@ -111,8 +144,10 @@ docker_path() {
 drun() { MSYS_NO_PATHCONV=1 docker "$@"; }
 
 say "Bundle: ${OUT}"
+say "Platform: ${PLATFORM}"
 say "Services: ${SERVICES}"
 want llm && say "LLMs: ${MODELS}"
+want llm && say "Context: ${CTX} tokens; initial model: ${MODEL_PREF}"
 
 if [[ "$DRY_RUN" == true ]]; then
   if [[ "$SKIP_BUILD" == true ]]; then
@@ -136,34 +171,134 @@ if [[ "$DRY_RUN" == true ]]; then
   exit 0
 fi
 
+command -v docker >/dev/null 2>&1 || die "docker is not on PATH."
+
+# Docker Desktop sometimes copies a Windows-only "desktop.exe" credential
+# helper into WSL's config. Linux Docker then fails with "exec format error"
+# before it can pull even public images. This bundle only uses public images,
+# so use a throwaway anonymous config in that case. Leave the user's config
+# and credentials untouched; the Docker Desktop WSL socket remains available
+# through the default context.
+ANON_DOCKER_CONFIG=""
+if grep -qi microsoft /proc/version 2>/dev/null; then
+  current_docker_config="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
+  if [[ -f "$current_docker_config" ]] &&
+     grep -Eq '"desktop(\.exe)?"' "$current_docker_config"; then
+    current_docker_dir="$(cd "${current_docker_config%/config.json}" && pwd)"
+    docker_tmp_root="$(cd "${TMPDIR:-/tmp}" && pwd -P)"
+    ANON_DOCKER_CONFIG="$(mktemp -d "${docker_tmp_root}/nexus-bundle-docker.XXXXXX")"
+    # Keep the selected Docker context and existing buildx cache metadata.
+    # Only registry credentials are omitted from the temporary config.
+    docker_context="$(docker context show 2>/dev/null || true)"
+    if [[ "$docker_context" =~ ^[a-zA-Z0-9_.-]+$ ]]; then
+      printf '{"currentContext":"%s"}\n' "$docker_context" > "${ANON_DOCKER_CONFIG}/config.json"
+    else
+      printf '{}\n' > "${ANON_DOCKER_CONFIG}/config.json"
+    fi
+    for docker_metadata in contexts buildx; do
+      if [[ -e "${current_docker_dir}/$docker_metadata" ]]; then
+        ln -s "${current_docker_dir}/$docker_metadata" "${ANON_DOCKER_CONFIG}/$docker_metadata"
+      fi
+    done
+    cleanup_docker_config() {
+      # Only remove the directory this invocation created. Its buildx and
+      # contexts entries are symlinks; rm removes the links, not their targets.
+      if [[ "$ANON_DOCKER_CONFIG" == "$docker_tmp_root"/nexus-bundle-docker.* &&
+            -d "$ANON_DOCKER_CONFIG" ]]; then
+        rm -rf -- "$ANON_DOCKER_CONFIG"
+      fi
+    }
+    trap cleanup_docker_config EXIT
+    if DOCKER_CONFIG="$ANON_DOCKER_CONFIG" docker info >/dev/null 2>&1; then
+      export DOCKER_CONFIG="$ANON_DOCKER_CONFIG"
+      warn "WSL uses a Windows Docker credential helper. Using a temporary anonymous Docker config for public images."
+    else
+      cleanup_docker_config
+      ANON_DOCKER_CONFIG=""
+      die "Docker Desktop is not reachable through WSL's default Docker socket. Enable WSL integration, or run this script from Git Bash."
+    fi
+  fi
+fi
+docker info >/dev/null 2>&1 || die "The docker daemon is not reachable."
+
 mkdir -p "$OUT"
 # An absolute path, because the bind mounts below and the manifest both need one.
 OUT_ABS="$(cd "$OUT" && pwd)"
 IMAGES_DIR="${OUT_ABS}/images"
 MODELS_DIR="${OUT_ABS}/models"
+if [[ -f "${OUT_ABS}/offline.env" ]]; then
+  existing_platform="$(sed -n "s/^NEXUSAI_BUNDLE_PLATFORM=['\"]\?\([^'\"]*\).*/\1/p" "${OUT_ABS}/offline.env" | head -1)"
+  [[ -z "$existing_platform" || "$existing_platform" == "$PLATFORM" ]] ||
+    die "${OUT_ABS} holds a ${existing_platform} bundle. Pick another --out directory."
+fi
 
 # --- images -----------------------------------------------------------------
+
+# A completed archive is published only after docker save and a tar read-back
+# succeed. In particular, a failed export must never leave a plausible-looking
+# nexusai-amd64.tar that the offline installer later tries to load.
+save_image_archive() {
+  local ref="$1" dest="$2" stage_on_linux="${3:-false}"
+  local partial="${dest}.partial"
+  local stage="$partial" temp_stage=""
+  rm -f -- "$partial"
+  if [[ "$stage_on_linux" == true && "$dest" == /mnt/* ]] &&
+     grep -qi microsoft /proc/version 2>/dev/null; then
+    # Docker save streams to WSL's Linux filesystem first. Copying the finished
+    # tar to /mnt/<drive> avoids BuildKit exporting a large tar directly through
+    # the Windows filesystem, which can exhaust WSL memory.
+    temp_stage="$(mktemp "${TMPDIR:-/tmp}/nexus-image.XXXXXX")"
+    stage="$temp_stage"
+  fi
+  if ! docker save "$ref" -o "$stage"; then
+    rm -f -- "$stage" "$partial"
+    die "Could not save ${ref}. Check free disk space and WSL/Docker memory, then rerun the bundle command."
+  fi
+  if [[ -n "$temp_stage" ]]; then
+    if ! cp -- "$temp_stage" "$partial"; then
+      rm -f -- "$temp_stage" "$partial"
+      die "Could not copy ${ref} into the bundle. Check free space on the bundle drive."
+    fi
+    rm -f -- "$temp_stage"
+  fi
+  if ! tar -tf "$partial" >/dev/null 2>&1; then
+    rm -f -- "$partial"
+    die "The saved ${ref} archive is incomplete. Check free disk space and rerun."
+  fi
+  mv -f -- "$partial" "$dest"
+}
 
 if [[ "$SKIP_IMAGES" == false ]]; then
   mkdir -p "$IMAGES_DIR"
 
   if [[ "$SKIP_BUILD" == false ]]; then
-    say "Building the arm64 images. On an x86 host this is the slow part."
-    build_args=(--out-dir "$IMAGES_DIR" "$APP_IMAGE_REF")
-    want speech && build_args=(--with-speech "${build_args[@]}")
-    bash docker/build-arm64.sh "${build_args[@]}"
+    if [[ "$PLATFORM" == "linux/arm64" ]]; then
+      say "Building the arm64 images. On an x86 host this is the slow part."
+      build_args=(--out-dir "$IMAGES_DIR" "$APP_IMAGE_REF")
+      want speech && build_args=(--with-speech "${build_args[@]}")
+      bash docker/build-arm64.sh "${build_args[@]}"
+    else
+      say "Building the native amd64 app image into Docker for the offline rehearsal."
+      docker build --platform "$PLATFORM" --file ./docker/Dockerfile \
+        --target production-build --build-arg ARG_UID=1000 --build-arg ARG_GID=1000 \
+        --tag "$APP_IMAGE_REF" .
+      docker image inspect "$APP_IMAGE_REF" >/dev/null 2>&1 ||
+        die "The build finished but ${APP_IMAGE_REF} was not loaded into Docker. Select the default Docker builder and rerun."
+      say "Saving the app image as a verified archive."
+      save_image_archive "$APP_IMAGE_REF" "${IMAGES_DIR}/nexusai-${ARCH}.tar" true
+    fi
   else
-    say "Saving the arm64 images already on this machine."
+    say "Saving the ${ARCH} images already on this machine."
     save_existing() {
-      local ref="$1" dest="$2"
+      local ref="$1" dest="$2" stage_on_linux="${3:-false}"
       docker image inspect "$ref" >/dev/null 2>&1 ||
         die "No such image: ${ref}. Drop --skip-build, or build it first."
-      docker save "$ref" -o "$dest"
+      save_image_archive "$ref" "$dest" "$stage_on_linux"
     }
-    save_existing "$APP_IMAGE_REF" "${IMAGES_DIR}/nexusai-arm64.tar"
+    save_existing "$APP_IMAGE_REF" "${IMAGES_DIR}/nexusai-${ARCH}.tar" true
     if want speech; then
-      save_existing "$STT_IMAGE_REF" "${IMAGES_DIR}/nexusai-stt-arm64.tar"
-      save_existing "$TTS_IMAGE_REF" "${IMAGES_DIR}/nexusai-tts-arm64.tar"
+      save_existing "$STT_IMAGE_REF" "${IMAGES_DIR}/nexusai-stt-${ARCH}.tar"
+      save_existing "$TTS_IMAGE_REF" "${IMAGES_DIR}/nexusai-tts-${ARCH}.tar"
     fi
   fi
 
@@ -193,29 +328,50 @@ if [[ "$SKIP_IMAGES" == false ]]; then
   REPLACED=()
   for ref in "${THIRD_PARTY[@]}"; do
     file="${IMAGES_DIR}/$(echo "$ref" | tr '/:' '--').tar"
-    if [[ -f "$file" ]]; then
+    if [[ -f "$file" ]] && tar -tf "$file" >/dev/null 2>&1; then
       say "Have $(basename "$file")"
       continue
     fi
+    [[ -f "$file" ]] && warn "Replacing incomplete $(basename "$file")"
     had_arch="$(docker image inspect "$ref" --format '{{.Architecture}}' 2>/dev/null || true)"
-    [[ -n "$had_arch" && "$had_arch" != "arm64" ]] && REPLACED+=("$ref")
-    say "Pulling ${ref} for arm64"
-    docker pull --platform linux/arm64 "$ref" >/dev/null
-    docker save "$ref" -o "$file"
-    # Dropped again so an arm64 image that cannot run here does not sit on the
-    # disk, and does not shadow the native one in a later `docker compose up`.
+    [[ -n "$had_arch" && "$had_arch" != "$ARCH" ]] && REPLACED+=("$ref")
+    say "Pulling ${ref} for ${ARCH}"
+    docker pull --platform "$PLATFORM" "$ref" >/dev/null
+    save_image_archive "$ref" "$file"
+    # The tarball is what matters. Remove this temporary tag so a cross-arch
+    # pull does not shadow a native image in a later `docker compose up`.
     docker rmi "$ref" >/dev/null 2>&1 || true
   done
 
   if [[ ${#REPLACED[@]} -gt 0 ]]; then
     echo
     warn "These tags held an image for this machine's own architecture, and the"
-    warn "arm64 pull took their place. Nothing here needs them, but if you run the"
+    warn "${ARCH} pull took their place. Nothing here needs them, but if you run the"
     warn "stack locally, put them back with:"
     for ref in "${REPLACED[@]}"; do warn "  docker pull ${ref}"; done
     echo
   fi
 fi
+
+# Record what the selected stack needs, independently of what happens to be in
+# this Docker daemon's cache. The installer checks this list on the target.
+expected_images=("nexusai-${ARCH}.tar")
+if want speech; then
+  expected_images+=("nexusai-stt-${ARCH}.tar" "nexusai-tts-${ARCH}.tar")
+fi
+required_refs=(
+  "gcr.io/cadvisor/cadvisor:latest"
+  "prom/node-exporter:latest"
+  "prom/prometheus:latest"
+  "grafana/grafana:latest"
+)
+if want llm || want image; then required_refs+=("curlimages/curl:latest"); fi
+if want llm; then required_refs+=("ghcr.io/ggml-org/llama.cpp:server-cuda"); fi
+if want image; then required_refs+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark"); fi
+for ref in "${required_refs[@]}"; do
+  expected_images+=("$(echo "$ref" | tr '/:' '--').tar")
+done
+printf '%s\n' "${expected_images[@]}" > "${OUT_ABS}/images.list"
 
 # --- models ------------------------------------------------------------------
 
@@ -236,9 +392,13 @@ fetch_with_curl() {
 
 if [[ "$SKIP_MODELS" == false ]]; then
   if want llm; then
-    say "Fetching the LLM weights. Tens of gigabytes - leave it running."
+    if [[ "$QUICK_TEST" == true ]]; then
+      say "Fetching the three small LLM weights (about 1.17GB)."
+    else
+      say "Fetching the LLM weights. Tens of gigabytes - leave it running."
+    fi
     fetch_with_curl docker/llamacpp/fetch-models.sh "${MODELS_DIR}/llamacpp" \
-      "LLAMACPP_MODELS=${MODELS}" "LLAMACPP_CTX=${LLAMACPP_CTX:-8192}"
+      "LLAMACPP_MODELS=${MODELS}" "LLAMACPP_CTX=${CTX}"
   fi
 
   if want image; then
@@ -298,6 +458,7 @@ mkdir -p "${OUT_ABS}/docker"
 # and its own image tags, and the installer writes a fresh one on the target.
 tar -cf - -C "$REPO_ROOT" \
   --exclude='docker/bundle' \
+  --exclude='docker/bundle-quick-test' \
   --exclude='docker/out' \
   --exclude='docker/.env' \
   docker | tar -xf - -C "$OUT_ABS"
@@ -328,6 +489,8 @@ fi
   echo "# instead of downloaded, and the hub libraries are told not to try."
   echo
   echo "NEXUSAI_IMAGE='${APP_IMAGE_REF}'"
+  echo "NEXUSAI_OFFLINE='1'"
+  echo "NEXUSAI_BUNDLE_PLATFORM='${PLATFORM}'"
   if want speech; then
     echo "STT_IMAGE='${STT_IMAGE_REF}'"
     echo "TTS_IMAGE='${TTS_IMAGE_REF}'"
@@ -338,6 +501,14 @@ fi
     echo "LLAMACPP_MODELS_DIR='__BUNDLE__/models/llamacpp'"
     echo "LLAMACPP_MODELS='${MODELS}'"
     echo "LLAMACPP_IMAGE_TAG='server-cuda'"
+    echo "LLAMACPP_CTX='${CTX}'"
+    if [[ "$QUICK_TEST" == true ]]; then echo "LLAMACPP_MODELS_MAX='1'"; fi
+    echo "LLM_PROVIDER='generic-openai'"
+    echo "GENERIC_OPEN_AI_BASE_PATH='http://llamacpp:8080/v1'"
+    echo "GENERIC_OPEN_AI_MODEL_PREF='${MODEL_PREF}'"
+    echo "GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT='${CTX}'"
+    echo "GENERIC_OPEN_AI_ALLOWED_MODELS=''"
+    if [[ "$QUICK_TEST" == true ]]; then echo "GENERIC_OPEN_AI_MAX_TOKENS='256'"; fi
   fi
   if want image; then
     echo "SDCPP_MODELS_DIR='__BUNDLE__/models/sdcpp'"
@@ -352,11 +523,12 @@ say "Writing the manifest."
 {
   echo "Nexus AI offline bundle"
   echo "Built:     $(date -u '+%Y-%m-%d %H:%M:%SZ') on $(uname -s) $(uname -m)"
-  echo "Platform:  linux/arm64"
+  echo "Platform:  ${PLATFORM}"
+  if [[ "$QUICK_TEST" == true ]]; then echo "Profile:   quick-test"; fi
   echo "Services:  ${SERVICES}"
   want llm && echo "LLMs:      ${MODELS}"
   echo
-  echo "On the DGX Spark, with no network:"
+  echo "On a ${PLATFORM} host, with no network:"
   echo
   echo "  bundle/docker/install.sh --offline"
   echo
@@ -384,5 +556,5 @@ say "Writing the manifest."
 cat "${OUT_ABS}/MANIFEST.txt"
 
 echo
-say "Done. Copy the whole directory to the DGX Spark, then run there:"
+say "Done. Copy the whole directory to the ${PLATFORM} host, then run there:"
 say "  <bundle>/docker/install.sh --offline"

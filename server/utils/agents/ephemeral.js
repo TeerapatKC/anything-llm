@@ -213,8 +213,10 @@ class EphemeralAgentHandler extends AgentHandler {
       await this.#resolveRouterProvider();
     }
 
-    if (!this.provider)
-      throw new Error("No valid provider found for the agent.");
+    if (this.provider !== "generic-openai") {
+      this.provider = "generic-openai";
+      this.model = this.providerDefault();
+    }
     this.log(`Start ${this.#invocationUUID}::${this.provider}:${this.model}`);
     this.checkSetup();
   }

@@ -1508,6 +1508,10 @@ const ENV_KEY_PERMISSION_RULES = [
   // Everything else that names a chat provider, plus the provider selector itself.
   { test: /^LLMProvider$/i, permission: PERMISSIONS.SYSTEM_SETTINGS_LLM },
   {
+    test: /^GenericOpenAiModelSettings$/i,
+    permission: PERMISSIONS.SYSTEM_SETTINGS_LLM,
+  },
+  {
     test: /(Model(Pref|Preference|TokenLimit|Type)|ApiKey|Key|Token|BasePath|Endpoint|MaxTokens|TokenLimit|TimeoutMs|SafetySetting|CacheControl)$/i,
     permission: PERMISSIONS.SYSTEM_SETTINGS_LLM,
   },

@@ -2,6 +2,7 @@ import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import ExportLogsControl from "@/components/ExportLogsControl";
+import ClearRecordsButton from "@/components/ClearRecordsButton";
 import useQuery from "@/hooks/useQuery";
 import System from "@/models/system";
 import { useEffect, useState } from "react";
@@ -42,9 +43,9 @@ export default function AdminLogs() {
 
   const handleResetLogs = async () => {
     setConfirm({
-      title: "Clear all event logs?",
+      title: "Delete all event logs?",
       description: "This action is irreversible.",
-      confirmText: "Clear logs",
+      confirmText: t("common.deleteAll"),
       variant: "destructive",
       onConfirm: async () => {
         const { success, error } = await System.clearEventLogs();
@@ -72,7 +73,10 @@ export default function AdminLogs() {
       blob,
       `nexusai-event-logs-${new Date().toISOString().slice(0, 10)}.${format}`
     );
-    showToast(t("event.exportSuccess", { format: format.toUpperCase() }), "success");
+    showToast(
+      t("event.exportSuccess", { format: format.toUpperCase() }),
+      "success"
+    );
   };
 
   const handlePrevious = () => {
@@ -89,15 +93,12 @@ export default function AdminLogs() {
         title={t("event.title")}
         description={t("event.description")}
         actions={
-          <Button
-            type="button"
-            size="lg"
-            variant="destructive"
+          <ClearRecordsButton
             disabled={loading || logs.length === 0}
             onClick={handleResetLogs}
           >
-            {t("event.clear")}
-          </Button>
+            {t("common.deleteAll")}
+          </ClearRecordsButton>
         }
       />
       <div className="mt-3 flex w-full flex-wrap justify-end gap-2">

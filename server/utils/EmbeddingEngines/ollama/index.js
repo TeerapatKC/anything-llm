@@ -3,7 +3,7 @@ const {
   reportEmbeddingProgress,
 } = require("../../helpers");
 const { Ollama } = require("ollama");
-const { OllamaAILLM } = require("../../AiProviders/ollama");
+const { applyOllamaFetch } = require("../../ollamaFetch");
 
 class OllamaEmbedder {
   constructor() {
@@ -27,7 +27,7 @@ class OllamaEmbedder {
     this.client = new Ollama({
       host: this.basePath,
       headers,
-      fetch: OllamaAILLM.applyOllamaFetch(),
+      fetch: applyOllamaFetch(),
     });
     this.log(
       `initialized with model ${this.model} at ${this.basePath}. Batch size: ${this.maxConcurrentChunks}, num_ctx: ${this.embeddingMaxChunkLength}`

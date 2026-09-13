@@ -43,7 +43,10 @@ const {
   LOGO_FILENAME,
   isDefaultFilename,
 } = require("../utils/files/logo");
-const { getCustomModels } = require("../utils/helpers/customModels");
+const {
+  getCustomModels,
+  availableLlmModels,
+} = require("../utils/helpers/customModels");
 const { WorkspaceChats } = require("../models/workspaceChats");
 const {
   userPermissionValid,
@@ -958,6 +961,32 @@ function systemEndpoints(app) {
       } catch (error) {
         console.error(error);
         response.status(500).end();
+      }
+    }
+  );
+
+  // Advertise only models reported by the configured OpenAI-compatible service.
+  // Its URL and credential stay on the server.
+  app.get(
+    "/system/available-llm-models",
+    [validatedRequest],
+    async (request, response) => {
+      try {
+        const { models, error } = await getCustomModels("generic-openai");
+        if (error) return response.status(502).json({ models: [], error });
+
+        return response.status(200).json({
+          models: availableLlmModels(
+            models,
+            undefined,
+            request.query.includeDisabled === "true"
+          ),
+        });
+      } catch (error) {
+        console.error("Failed to fetch available LLM models", error);
+        return response
+          .status(502)
+          .json({ models: [], error: "Model service unavailable" });
       }
     }
   );

@@ -10,9 +10,12 @@ const {
   extractReasoningContent,
 } = require("../../helpers/chat/responses");
 const { v4: uuidv4 } = require("uuid");
-const { toValidNumber } = require("../../http");
 const { getNexusAIUserAgent } = require("../../../endpoints/utils");
 const { attachmentToContentBlock } = require("../../helpers/attachments");
+const {
+  resolveModel,
+  settingsForModel,
+} = require("../../helpers/llmModelSettings");
 
 class GenericOpenAiLLM {
   constructor(embedder = null, modelPreference = null) {
@@ -26,17 +29,14 @@ class GenericOpenAiLLM {
     this.basePath = process.env.GENERIC_OPEN_AI_BASE_PATH;
     this.openai = new OpenAIApi({
       baseURL: this.basePath,
-      apiKey: process.env.GENERIC_OPEN_AI_API_KEY ?? null,
+      apiKey: process.env.GENERIC_OPEN_AI_API_KEY || "unused",
       defaultHeaders: {
         "User-Agent": getNexusAIUserAgent(),
         ...GenericOpenAiLLM.parseCustomHeaders(),
       },
     });
-    this.model =
-      modelPreference ?? process.env.GENERIC_OPEN_AI_MODEL_PREF ?? null;
-    this.maxTokens = process.env.GENERIC_OPEN_AI_MAX_TOKENS
-      ? toValidNumber(process.env.GENERIC_OPEN_AI_MAX_TOKENS, 1024)
-      : 1024;
+    this.model = resolveModel(modelPreference);
+    this.maxTokens = settingsForModel(this.model).maxTokens;
     if (!this.model)
       throw new Error("GenericOpenAI must have a valid model set.");
     this.limits = {
@@ -96,20 +96,14 @@ class GenericOpenAiLLM {
     return "streamGetChatCompletion" in this;
   }
 
-  static promptWindowLimit(_modelName) {
-    const limit = process.env.GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT || 4096;
-    if (!limit || isNaN(Number(limit)))
-      throw new Error("No token context limit was set.");
-    return Number(limit);
+  static promptWindowLimit(modelName) {
+    return settingsForModel(resolveModel(modelName)).contextWindow;
   }
 
   // Ensure the user set a value for the token limit
   // and if undefined - assume 4096 window.
   promptWindowLimit() {
-    const limit = process.env.GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT || 4096;
-    if (!limit || isNaN(Number(limit)))
-      throw new Error("No token context limit was set.");
-    return Number(limit);
+    return GenericOpenAiLLM.promptWindowLimit(this.model);
   }
 
   // Short circuit since we have no idea if the model is valid or not

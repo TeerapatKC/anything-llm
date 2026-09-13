@@ -1,5 +1,5 @@
 const path = require("path");
-const { parseLemonadeServerEndpoint } = require("../../AiProviders/lemonade");
+const { parseLemonadeServerEndpoint } = require("../../lemonadeModels");
 const { convertAudioBufferToWav } = require("../helpers");
 
 class LemonadeSTT {
