@@ -5,12 +5,14 @@ class GenericOpenAiWhisper {
     const { OpenAI: OpenAIApi } = require("openai");
     if (!options.WhisperGenericOpenAiBaseUrl)
       throw new Error("No base URL was set.");
+    if (!options.WhisperGenericOpenAiModel)
+      throw new Error("No transcription model was configured.");
 
     this.openai = new OpenAIApi({
       baseURL: options.WhisperGenericOpenAiBaseUrl,
-      apiKey: options.WhisperGenericOpenAiApiKey || null,
+      apiKey: options.WhisperGenericOpenAiApiKey || "unused",
     });
-    this.model = options.WhisperGenericOpenAiModel || "whisper-small";
+    this.model = options.WhisperGenericOpenAiModel;
     this.temperature = 0;
     this.#log("Initialized.");
   }

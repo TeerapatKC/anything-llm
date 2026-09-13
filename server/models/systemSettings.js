@@ -339,9 +339,7 @@ const SystemSettings = {
       ...this.llmPreferenceKeys(),
 
       // --------------------------------------------------------
-      // Whisper (Audio transcription) Selection Settings & Configs
-      // - Currently the only 3rd party is OpenAI, so is OPEN_AI_KEY is set
-      // - then it can be shared.
+      // Transcription settings are selected through the server environment.
       // --------------------------------------------------------
       WhisperProvider: process.env.WHISPER_PROVIDER || "local",
       WhisperModelPref: "Xenova/whisper-large",

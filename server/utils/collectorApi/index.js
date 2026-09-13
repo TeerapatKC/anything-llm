@@ -4,8 +4,6 @@ const { Agent } = require("undici");
 /**
  * @typedef {Object} CollectorOptions
  * @property {string} whisperProvider - The provider to use for whisper, defaults to "local"
- * @property {string} WhisperModelPref - The model to use for whisper if set.
- * @property {string} openAiKey - The API key to use for OpenAI interfacing, mostly passed to OAI Whisper provider.
  * @property {string} WhisperGenericOpenAiBaseUrl - The base URL of the OpenAI compatible endpoint used by the generic Whisper provider.
  * @property {string} WhisperGenericOpenAiApiKey - The API key used by the generic (OpenAI compatible) Whisper provider.
  * @property {string} WhisperGenericOpenAiModel - The transcription model used by the generic (OpenAI compatible) Whisper provider.
@@ -65,8 +63,6 @@ class CollectorApi {
   #attachOptions() {
     return {
       whisperProvider: process.env.WHISPER_PROVIDER || "local",
-      WhisperModelPref: "Xenova/whisper-large",
-      openAiKey: process.env.OPEN_AI_KEY || null,
       WhisperGenericOpenAiBaseUrl:
         process.env.WHISPER_GENERIC_OPEN_AI_BASE_URL || null,
       WhisperGenericOpenAiApiKey:

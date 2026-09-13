@@ -7,13 +7,11 @@ const {
 const { tokenizeString } = require("../../utils/tokenizer");
 const { default: slugify } = require("slugify");
 const { LocalWhisper } = require("../../utils/WhisperProviders/localWhisper");
-const { OpenAiWhisper } = require("../../utils/WhisperProviders/OpenAiWhisper");
 const {
   GenericOpenAiWhisper,
 } = require("../../utils/WhisperProviders/GenericOpenAiWhisper");
 
 const WHISPER_PROVIDERS = {
-  openai: OpenAiWhisper,
   "generic-openai": GenericOpenAiWhisper,
   local: LocalWhisper,
 };
@@ -24,14 +22,30 @@ async function asAudio({
   options = {},
   metadata = {},
 }) {
-  const WhisperProvider = WHISPER_PROVIDERS.hasOwnProperty(
-    options?.whisperProvider
+  const providerId = options?.whisperProvider || "local";
+  const WhisperProvider = Object.prototype.hasOwnProperty.call(
+    WHISPER_PROVIDERS,
+    providerId
   )
-    ? WHISPER_PROVIDERS[options?.whisperProvider]
-    : WHISPER_PROVIDERS.local;
+    ? WHISPER_PROVIDERS[providerId]
+    : null;
+  if (!WhisperProvider) {
+    if (!options.absolutePath) trashFile(fullFilePath);
+    return {
+      success: false,
+      reason: `Unsupported transcription provider: ${providerId}`,
+      documents: [],
+    };
+  }
 
   console.log(`-- Working ${filename} --`);
-  const whisper = new WhisperProvider({ options });
+  let whisper;
+  try {
+    whisper = new WhisperProvider({ options });
+  } catch (error) {
+    if (!options.absolutePath) trashFile(fullFilePath);
+    return { success: false, reason: error.message, documents: [] };
+  }
   const { content, error } = await whisper.processFile(fullFilePath, filename);
 
   if (!!error) {

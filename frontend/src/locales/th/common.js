@@ -900,15 +900,9 @@ const TRANSLATIONS = {
   },
   transcription: {
     title: "การตั้งค่าโมเดลถอดเสียง",
-    description:
-      "นี่คือข้อมูลรับรองและการตั้งค่าสำหรับผู้ให้บริการโมเดลถอดเสียงที่คุณเลือก คีย์เหล่านี้ต้องเป็นปัจจุบันและถูกต้อง มิฉะนั้นไฟล์สื่อและเสียงจะไม่ถูกถอดเสียง",
-    provider: "ผู้ให้บริการถอดเสียง",
-    "warn-start":
-      "การใช้โมเดล whisper ในเครื่องบนอุปกรณ์ที่มี RAM หรือ CPU จำกัด อาจทำให้ Nexus AI ค้างขณะประมวลผลไฟล์สื่อ",
-    "warn-recommend":
-      "Whisper Large ต้องการ RAM ว่างจำนวนมาก ควรอัปโหลดไฟล์ขนาดต่ำกว่า 10 MB",
-    "warn-prebuilt":
-      "Whisper Large รวมอยู่ใน Docker image ตั้งแต่ขั้นตอน build",
+    description: "ดูโมเดลที่ใช้ถอดเสียงจากไฟล์เสียงและวิดีโอที่อัปโหลด",
+    "model-description": "แปลงเสียงและวิดีโอที่อัปโหลดเป็นข้อความ",
+    invalid: "ไม่พบโมเดลถอดเสียงที่ตั้งค่าไว้",
   },
   embedding: {
     title: "การตั้งค่าการฝังข้อความ",
@@ -2458,7 +2452,6 @@ const TRANSLATIONS = {
     "search-image-providers": "ค้นหาผู้ให้บริการสร้างภาพ",
     "search-llm-providers": "ค้นหาผู้ให้บริการ LLM ทั้งหมด",
     "search-available-llm-providers": "ค้นหาผู้ให้บริการ LLM ที่ใช้ได้",
-    "search-transcription-providers": "ค้นหาผู้ให้บริการถอดเสียง",
     "search-vectordb-providers": "ค้นหาผู้ให้บริการฐานข้อมูลเวกเตอร์ทั้งหมด",
     "document-name": "ชื่อเอกสาร",
     "time-until-refresh": "เวลาจนกว่าจะรีเฟรชครั้งถัดไป",

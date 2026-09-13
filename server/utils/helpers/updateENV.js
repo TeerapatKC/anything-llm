@@ -33,6 +33,13 @@ const ENV_MANAGED_EMBEDDING_KEYS = new Set([
   "EmbeddingBasePath",
   "GenericOpenAiEmbeddingApiKey",
 ]);
+const ENV_MANAGED_TRANSCRIPTION_KEYS = new Set([
+  "WhisperProvider",
+  "WhisperModelPref",
+  "WhisperGenericOpenAiBaseUrl",
+  "WhisperGenericOpenAiApiKey",
+  "WhisperGenericOpenAiModel",
+]);
 
 function isEnvManagedAudioKey(key) {
   return (
@@ -299,33 +306,6 @@ const KEY_MAPPING = {
     checks: [isNotEmpty],
   },
 
-  // Whisper (transcription) providers
-  WhisperProvider: {
-    envKey: "WHISPER_PROVIDER",
-    checks: [isNotEmpty, supportedTranscriptionProvider],
-    postUpdate: [],
-  },
-  WhisperModelPref: {
-    envKey: "WHISPER_MODEL_PREF",
-    checks: [validLocalWhisper],
-    postUpdate: [],
-  },
-  WhisperGenericOpenAiBaseUrl: {
-    envKey: "WHISPER_GENERIC_OPEN_AI_BASE_URL",
-    checks: [isValidURL],
-    postUpdate: [],
-  },
-  WhisperGenericOpenAiApiKey: {
-    envKey: "WHISPER_GENERIC_OPEN_AI_API_KEY",
-    checks: [],
-    postUpdate: [],
-  },
-  WhisperGenericOpenAiModel: {
-    envKey: "WHISPER_GENERIC_OPEN_AI_MODEL",
-    checks: [isNotEmpty],
-    postUpdate: [],
-  },
-
   // System Settings
   JWTSecret: {
     envKey: "JWT_SECRET",
@@ -554,13 +534,6 @@ function supportedSTTProvider(input = "") {
     : "Only the OpenAI-compatible STT provider is supported.";
 }
 
-function validLocalWhisper(input = "") {
-  const validSelection = input === "Xenova/whisper-large";
-  return validSelection
-    ? null
-    : `${input} is not a valid Whisper model selection.`;
-}
-
 function supportedLLM(input = "") {
   return input === "generic-openai"
     ? null
@@ -572,13 +545,6 @@ function supportedSMTPProvider(input = "") {
   return supported.includes(input)
     ? null
     : `Invalid SMTP provider. Must be one of ${supported.join(", ")}.`;
-}
-
-function supportedTranscriptionProvider(input = "") {
-  const validSelection = ["openai", "generic-openai", "local"].includes(input);
-  return validSelection
-    ? null
-    : `${input} is not a valid transcription model provider.`;
 }
 
 function supportedEmbeddingModel(input = "") {
@@ -754,6 +720,16 @@ async function updateENV(newENVs = {}, force = false, userId = null) {
       newValues: {},
       error:
         "Audio settings are managed by environment variables. Only the text-to-speech voice model can be changed through the API.",
+    };
+  }
+
+  if (
+    Object.keys(newENVs).some((key) => ENV_MANAGED_TRANSCRIPTION_KEYS.has(key))
+  ) {
+    return {
+      newValues: {},
+      error:
+        "Transcription settings are managed by environment variables and cannot be changed through the API.",
     };
   }
 

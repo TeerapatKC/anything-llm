@@ -647,13 +647,9 @@ const TRANSLATIONS = {
   transcription: {
     title: "文字起こしモデルの設定",
     description:
-      "これは、お好みの文字起こしモデルプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、メディアファイルや音声が正しく文字起こしされません。",
-    provider: "文字起こしプロバイダー",
-    "warn-start":
-      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にNexus AIが停止する可能性があります。",
-    "warn-recommend":
-      "Whisper Largeには十分な空きRAMが必要です。アップロードするファイルは10MB未満にしてください。",
-    "warn-prebuilt": "Whisper LargeはDockerイメージのビルド時に含まれます。",
+      "アップロードされた音声と動画の文字起こしに使用するモデルを確認できます。",
+    "model-description": "アップロードされた音声と動画をテキストに変換します。",
+    invalid: "設定された文字起こしモデルを利用できません。",
   },
   embedding: {
     title: "埋め込み設定",
@@ -2522,7 +2518,6 @@ const TRANSLATIONS = {
     "search-image-providers": "画像生成プロバイダーを検索",
     "search-llm-providers": "すべての LLM プロバイダーを検索",
     "search-available-llm-providers": "利用可能な LLM プロバイダーを検索",
-    "search-transcription-providers": "音声文字起こしプロバイダーを検索",
     "search-vectordb-providers":
       "すべてのベクターデータベースプロバイダーを検索",
     "document-name": "ドキュメント名",

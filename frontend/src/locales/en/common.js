@@ -914,15 +914,9 @@ const TRANSLATIONS = {
   },
   transcription: {
     title: "Transcription Model Preference",
-    description:
-      "These are the credentials and settings for your preferred transcription model provider. Its important these keys are current and correct or else media files and audio will not transcribe.",
-    provider: "Transcription Provider",
-    "warn-start":
-      "Using the local whisper model on machines with limited RAM or CPU can stall Nexus AI when processing media files.",
-    "warn-recommend":
-      "Whisper Large needs substantial free RAM. Keep uploads under 10 MB.",
-    "warn-prebuilt":
-      "Whisper Large is included when building the Docker image.",
+    description: "View the model used to transcribe uploaded audio and video.",
+    "model-description": "Converts uploaded audio and video into text.",
+    invalid: "The configured transcription model is unavailable.",
   },
   embedding: {
     title: "Embedding Preference",
@@ -2509,7 +2503,6 @@ const TRANSLATIONS = {
     "search-image-providers": "Search image generation providers",
     "search-llm-providers": "Search all LLM providers",
     "search-available-llm-providers": "Search available LLM providers",
-    "search-transcription-providers": "Search audio transcription providers",
     "search-vectordb-providers": "Search all vector database providers",
     "document-name": "Document Name",
     "time-until-refresh": "Time until next refresh",

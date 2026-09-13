@@ -140,6 +140,39 @@ substituted in, and starts the stack. It builds nothing and pulls nothing.
 Re-running it is safe. It preserves generated secrets and other local settings,
 while applying the image references, model paths and LLM settings recorded in
 `offline.env`. This also replaces a remote model URL left by an earlier install.
+The default model, the allowed-model list and the max-tokens setting are kept as
+the customer set them, unless they name a model the bundle no longer carries.
+
+## Updating a customer's install
+
+Build a new bundle here, copy it to the customer's machine next to the old one,
+and run the same command from the **new** bundle:
+
+```bash
+<new-bundle>/docker/install.sh --offline
+```
+
+What a customer has built up lives in two places, and both come along:
+
+| What | Where | How it survives |
+|---|---|---|
+| Database, chat history, users, workspaces, documents | the `nexusai-storage` docker volume | found again by name; nothing in an install deletes it |
+| Settings-page values (SMTP, model choices), `JWT_SECRET`, `SIG_KEY`, `SIG_SALT` | `docker/.env`, bind-mounted into the app | the installer copies it out of the existing `nexusai` container into the new bundle before anything else |
+
+The encryption keys matter as much as the settings: a new `SIG_KEY` makes the
+LINE and Telegram bot tokens stored under the old one unreadable, and a new
+`JWT_SECRET` signs everyone out.
+
+The installer stops rather than guessing when the new bundle already has a
+`docker/.env` of its own (from a test install, say) and the running container
+reads a different one. `--carry-over` takes the running deployment's; `--keep-env`
+keeps the bundle's. If the old container has already been removed, pass a saved
+copy of its `.env` with `--from-env FILE`. Whenever an existing `.env` is replaced,
+the old one is left beside it as `.env.before-install`.
+
+Do not change settings in the app while the installer runs - anything saved
+after the copy is taken is not carried over. Delete the old bundle directory only
+once the new install is up and its settings check out.
 
 ## What makes the offline path work
 

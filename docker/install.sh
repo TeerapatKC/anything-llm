@@ -13,6 +13,13 @@
 #
 # Safe to re-run. It only ever adds keys that are missing from docker/.env - an
 # existing value, whether you wrote it or the Settings page did, is never touched.
+#
+# Also the update path. Everything a customer has set lives in two places: the
+# storage volume (database, chat history, documents) and the .env the app writes its
+# Settings page into (SMTP, model choices, and the keys that encrypt stored data).
+# The volume is found again by name. The .env is not - a new bundle is a new
+# directory - so when a nexusai container already exists, its .env is carried into
+# this one before anything else happens.
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
@@ -31,6 +38,9 @@ WAIT_TIMEOUT_S=7200
 APP_IMAGE=""
 OFFLINE_DIR=""
 ENV_OUT=""
+FROM_ENV=""
+CARRY_OVER=false
+KEEP_ENV=false
 
 usage() {
   cat <<'USAGE'
@@ -64,6 +74,15 @@ Options:
   --wait            Block until the model downloads finish and every service is
                     started, rather than returning while they run. Handy for an
                     unattended install; avoid it over a flaky SSH session.
+  --carry-over      Replace this directory's docker/.env with the one the
+                    existing nexusai container reads. Only needed when this
+                    directory already has a .env of its own; without one, the
+                    carry-over happens on its own.
+  --from-env FILE   Start docker/.env from FILE - a .env saved off a previous
+                    install, when its container is already gone.
+  --keep-env        Use this directory's docker/.env as it is, even though the
+                    existing nexusai container reads a different one. Its
+                    settings, and possibly its data, will not follow.
   --no-start        Write config and build, but do not bring the stack up.
   --env-out FILE    Write the docker/.env this run would produce to FILE and
                     stop. Nothing else is touched - not the real .env, not the
@@ -102,6 +121,9 @@ while [[ $# -gt 0 ]]; do
     --wait) WAIT_FOR_MODELS=true; shift ;;
     --no-start) START=false; shift ;;
     --env-out) ENV_OUT="${2:?--env-out needs a file path}"; DRY_RUN=true; shift 2 ;;
+    --from-env) FROM_ENV="${2:?--from-env needs a file path}"; shift 2 ;;
+    --carry-over) CARRY_OVER=true; shift ;;
+    --keep-env) KEEP_ENV=true; shift ;;
     --dry-run) DRY_RUN=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage >&2; exit 2 ;;
@@ -308,6 +330,97 @@ if [[ "$GPU_IN_DOCKER" == false && "$SKIP_GPU_CHECK" == false ]]; then
   fi
 fi
 
+# --- an existing deployment ---------------------------------------------------
+
+# Docker Desktop reports bind-mount sources as D:\... paths; Git Bash spells those
+# /d/... . Anywhere else the path is already usable.
+host_path() {
+  if [[ -n "$1" ]] && command -v cygpath >/dev/null 2>&1; then cygpath -u "$1"; else printf '%s' "$1"; fi
+}
+abs_path() {
+  (cd "$(dirname "$1")" 2>/dev/null && printf '%s/%s' "$(pwd -P)" "$(basename "$1")")
+}
+
+RUNNING_ENV=""
+RUNNING_ENV_SOURCE=""
+RUNNING_STORAGE=""
+DRY_ENV_FILE=""
+cleanup_env_copies() { rm -f ${RUNNING_ENV:+"$RUNNING_ENV"} ${DRY_ENV_FILE:+"$DRY_ENV_FILE"}; }
+trap cleanup_env_copies EXIT
+
+# A preview of another machine has nothing to do with the containers on this one.
+if [[ -z "$ENV_OUT" ]] && docker container inspect nexusai >/dev/null 2>&1; then
+  RUNNING_ENV_SOURCE="$(docker container inspect nexusai --format \
+    '{{range .Mounts}}{{if eq .Destination "/app/server/.env"}}{{.Source}}{{end}}{{end}}')"
+  RUNNING_STORAGE="$(docker container inspect nexusai --format \
+    '{{range .Mounts}}{{if eq .Destination "/app/server/storage"}}{{if .Name}}{{.Name}}{{else}}{{.Source}}{{end}}{{end}}{{end}}')"
+  # Read through the container rather than from the host path: the old bundle
+  # directory may already be gone, and a file replaced on the host after the
+  # container started is not the one the app has been writing its settings to.
+  RUNNING_ENV="$(mktemp)"
+  if ! MSYS_NO_PATHCONV=1 docker cp nexusai:/app/server/.env - 2>/dev/null |
+       tar -xOf - > "$RUNNING_ENV" 2>/dev/null || [[ ! -s "$RUNNING_ENV" ]]; then
+    running_src="$(host_path "$RUNNING_ENV_SOURCE")"
+    if [[ -n "$running_src" && -s "$running_src" ]]; then
+      cat "$running_src" > "$RUNNING_ENV"
+    else
+      rm -f "$RUNNING_ENV"
+      RUNNING_ENV=""
+    fi
+  fi
+fi
+
+running_env_is_this_one() {
+  [[ -f "$ENV_FILE" ]] || return 1
+  local src
+  src="$(host_path "$RUNNING_ENV_SOURCE")"
+  if [[ -n "$src" && -e "$src" && "$(abs_path "$src")" == "$(abs_path "$ENV_FILE")" ]]; then
+    return 0
+  fi
+  [[ -n "$RUNNING_ENV" ]] && cmp -s "$RUNNING_ENV" "$ENV_FILE"
+}
+
+CARRY_FROM=""
+CARRY_LABEL=""
+if [[ -n "$FROM_ENV" ]]; then
+  [[ -s "$FROM_ENV" ]] || die "--from-env: no such file, or it is empty: ${FROM_ENV}"
+  CARRY_FROM="$FROM_ENV"
+  CARRY_LABEL="$FROM_ENV"
+elif [[ -n "$RUNNING_ENV" && "$KEEP_ENV" == false ]] && ! running_env_is_this_one; then
+  # A .env already here and a container reading another one is exactly how a
+  # redeploy loses its SMTP settings and its encryption keys, so do not guess.
+  if [[ -f "$ENV_FILE" && "$CARRY_OVER" == false ]]; then
+    warn "The nexusai container already on this machine reads a different .env:"
+    warn "  ${RUNNING_ENV_SOURCE:-(path unknown)}"
+    warn "Installing with $(abs_path "$ENV_FILE") instead would drop its Settings-page"
+    warn "values (SMTP, model choices) and the keys that encrypt its stored data."
+    warn "  --carry-over   bring that deployment's .env into this directory (an update)"
+    warn "  --keep-env     use this directory's .env as it is (a separate install)"
+    die "Refusing to guess which of the two this install is."
+  fi
+  CARRY_FROM="$RUNNING_ENV"
+  CARRY_LABEL="the existing nexusai container (${RUNNING_ENV_SOURCE:-path unknown})"
+elif [[ "$CARRY_OVER" == true && -z "$RUNNING_ENV" ]]; then
+  die "--carry-over: there is no nexusai container to carry settings from. Pass a saved copy of its .env with --from-env."
+fi
+
+if [[ -n "$CARRY_FROM" ]]; then
+  say "Carrying settings and secrets over from ${CARRY_LABEL}."
+  if [[ "$NO_WRITE" == true ]]; then
+    # A dry run still has to answer from the carried file, or every key in it
+    # would be reported as about to be added. A scratch copy leaves the real
+    # one untouched.
+    DRY_ENV_FILE="$(mktemp)"
+    ENV_NAME="$ENV_FILE"
+    ENV_FILE="$DRY_ENV_FILE"
+    NO_WRITE=false
+  elif [[ -f "$ENV_FILE" && -z "$ENV_OUT" ]]; then
+    cp "$ENV_FILE" "${ENV_FILE}.before-install"
+    say "The ${ENV_FILE} it replaces is kept as ${ENV_FILE}.before-install."
+  fi
+  cat "$CARRY_FROM" > "$ENV_FILE"
+fi
+
 # --- docker/.env ------------------------------------------------------------
 
 if [[ ! -f "$ENV_FILE" ]]; then
@@ -354,18 +467,25 @@ set_if_missing() {
 # callers mean it: pointing the deployment at a different image, or at a bundle
 # that has just been copied to a new path, is the whole reason they were asked
 # for.
+#
+# Rewritten in place with `cat >`, never `sed -i`. sed -i renames a new file over
+# the old one, and a single-file bind mount stays on the old inode: the running
+# container then keeps writing its Settings page into a file the host no longer
+# shows. A value that is already right is not rewritten at all.
 set_key() {
   local key="$1" value="$2"
-  [[ "$NO_WRITE" == true ]] && { ADDED+=("$key"); return 0; }
+  if has_key "$key" && [[ "$(env_value "$key")" == "$value" ]]; then
+    return 0
+  fi
+  ADDED+=("$key")
+  [[ "$NO_WRITE" == true ]] && return 0
   if has_key "$key"; then
-    # sed -i writes a temp file in the same directory, so this keeps the
-    # bind-mounted .env at the same inode the running container reads.
-    sed -i.bak -E "s|^[[:space:]]*${key}[[:space:]]*=.*|${key}='${value}'|" "$ENV_FILE"
-    rm -f "${ENV_FILE}.bak"
+    sed -E "s|^[[:space:]]*${key}[[:space:]]*=.*|${key}='${value}'|" "$ENV_FILE" > "${ENV_FILE}.tmp"
+    cat "${ENV_FILE}.tmp" > "$ENV_FILE"
+    rm -f "${ENV_FILE}.tmp"
   else
     printf "%s='%s'\n" "$key" "$value" >> "$ENV_FILE"
   fi
-  ADDED+=("$key")
 }
 
 set_image() {
@@ -389,6 +509,22 @@ set_if_missing SERVER_PORT "3001"
 set_if_missing JWT_SECRET "$(random_hex)"
 set_if_missing SIG_KEY "$(random_hex)"
 set_if_missing SIG_SALT "$(random_hex)"
+
+# The database and chat history are wherever STORAGE_LOCATION points. An install
+# that points somewhere other than the container it replaces comes up looking brand
+# new - the old data intact, but out of sight. Only volume names are compared; a host
+# directory is spelled too many ways across Windows and Linux to compare reliably.
+if [[ -n "$RUNNING_STORAGE" ]]; then
+  new_storage="$(env_value STORAGE_LOCATION)"
+  if [[ -n "$new_storage" && "$new_storage" != */* && "$new_storage" != .* && "$new_storage" != *\\* ]]; then
+    project="$(env_value COMPOSE_PROJECT_NAME)"
+    new_storage="${project:-nexusai}_${new_storage}"
+    if [[ "$new_storage" != "$RUNNING_STORAGE" ]]; then
+      warn "Storage changes from ${RUNNING_STORAGE} to ${new_storage}. The existing database"
+      warn "and chat history stay in ${RUNNING_STORAGE} and this install will not see them."
+    fi
+  fi
+fi
 
 if [[ "$OFFLINE" == true ]]; then
   say "Installing from the bundle at ${OFFLINE_DIR}"
@@ -420,6 +556,30 @@ if [[ "$OFFLINE" == true ]]; then
   if command -v cygpath >/dev/null 2>&1; then
     bundle_mount_dir="$(cygpath -m "$OFFLINE_DIR")"
   fi
+  # Settings a person picks in the app, for which the bundle only supplies a
+  # starting value. An update keeps what is there unless it names a model the new
+  # bundle no longer carries. offline.env writes LLAMACPP_MODELS before these, so
+  # the list checked against is already the new one.
+  keep_user_choice() {
+    local key="$1" current models m
+    has_key "$key" || return 1
+    current="$(env_value "$key")"
+    models=",$(env_value LLAMACPP_MODELS),"
+    case "$key" in
+      GENERIC_OPEN_AI_MODEL_PREF)
+        [[ -n "$current" && "$models" == *",${current},"* ]] ;;
+      GENERIC_OPEN_AI_ALLOWED_MODELS)
+        # Blank means every model. A list is kept while any entry in it still exists.
+        [[ -z "$current" ]] && return 0
+        for m in $(echo "$current" | tr ',' ' '); do
+          [[ "$models" == *",${m},"* ]] && return 0
+        done
+        return 1 ;;
+      *)
+        [[ -n "$current" ]] ;;
+    esac
+  }
+
   while IFS= read -r line; do
     [[ "$line" =~ ^[[:space:]]*# ]] && continue
     [[ "$line" =~ ^[[:space:]]*$ ]] && continue
@@ -430,6 +590,10 @@ if [[ "$OFFLINE" == true ]]; then
     value="${value//__BUNDLE__/${bundle_mount_dir}}"
     # Not a setting - it is how this script knew which services to install.
     [[ "$key" == "NEXUSAI_BUNDLE_SERVICES" || "$key" == "NEXUSAI_BUNDLE_PLATFORM" ]] && continue
+    case "$key" in
+      GENERIC_OPEN_AI_MODEL_PREF|GENERIC_OPEN_AI_MAX_TOKENS|GENERIC_OPEN_AI_ALLOWED_MODELS)
+        keep_user_choice "$key" && continue ;;
+    esac
     if [[ "$key" == *_IMAGE ]] && [[ "$DRY_RUN" == false ]]; then
       docker image inspect "$value" >/dev/null 2>&1 ||
         die "The bundle names ${value} for ${key}, but no tarball in it carries that image."
@@ -524,8 +688,13 @@ COMPOSE_LIST="$(IFS=:; echo "${FILES[*]}")"
 # does the same thing afterwards, without anyone having to remember the flags.
 # COMPOSE_PATH_SEPARATOR keeps the ':' working on Windows, where compose would
 # otherwise expect ';'.
-if has_key COMPOSE_FILE; then
-  say "COMPOSE_FILE is already set in ${ENV_FILE} - leaving it alone."
+if [[ "$OFFLINE" == true ]] && has_key COMPOSE_FILE; then
+  # A bundle decides which services exist, so an update from one with a different
+  # set - or a .env carried over from an older install - must not keep the old list.
+  set_key COMPOSE_PATH_SEPARATOR ":"
+  set_key COMPOSE_FILE "$COMPOSE_LIST"
+elif has_key COMPOSE_FILE; then
+  say "COMPOSE_FILE is already set in ${ENV_NAME:-$ENV_FILE} - leaving it alone."
 else
   ADDED+=("COMPOSE_PATH_SEPARATOR" "COMPOSE_FILE")
   if [[ "$DRY_RUN" == false ]]; then
@@ -546,9 +715,9 @@ for f in "${FILES[@]}"; do COMPOSE+=(-f "$f"); done
 
 say "Compose files: ${COMPOSE_LIST}"
 if [[ ${#ADDED[@]} -gt 0 ]]; then
-  say "Keys added to ${ENV_FILE}: ${ADDED[*]}"
+  say "Keys added or changed in ${ENV_NAME:-$ENV_FILE}: ${ADDED[*]}"
 else
-  say "${ENV_FILE} already had everything this script sets."
+  say "${ENV_NAME:-$ENV_FILE} already had everything this script sets."
 fi
 
 if [[ -n "$ENV_OUT" ]]; then
