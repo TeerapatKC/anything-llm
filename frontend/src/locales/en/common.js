@@ -1234,7 +1234,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privacy & Data-Handling",
     description:
-      "This is your configuration for how connected third party providers and Nexus AI handle your data.",
+      "See what is stored on this server and what is sent to the configured model services.",
   },
   connectors: {
     "search-placeholder": "Search data connectors",

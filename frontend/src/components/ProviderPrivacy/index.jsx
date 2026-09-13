@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import System from "@/models/system";
 import { PROVIDER_PRIVACY_MAP } from "./constants";
-import { SquareArrowOutUpRight } from "lucide-react";
-import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
+import { BrainCircuit, Database, SquareArrowOutUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { titleCase, sentenceCase } from "text-case";
 
@@ -13,17 +12,17 @@ function defaultProvider(providerString) {
     return {
       name: "Not configured",
       description: [
-        "No provider has been chosen yet. You can pick one under Settings once setup is finished.",
+        "The active service has not been reported by the server yet.",
       ],
-      logo: NexusAIIcon,
+      icon: "database",
     };
 
   return {
     name: titleCase(sentenceCase(String(providerString))),
     description: [
-      `"${providerString}" has no known data handling policy defined in Nexus AI.`,
+      "Data is processed by the configured service. Check where this endpoint runs and its retention policy before sending sensitive content.",
     ],
-    logo: NexusAIIcon,
+    icon: "database",
   };
 }
 
@@ -60,19 +59,33 @@ export default function ProviderPrivacy() {
 
   if (loading) return null;
   return (
-    <div className="flex flex-col gap-8 w-full max-w-2xl">
+    <div className="flex flex-col gap-8 w-full max-w-4xl">
+      <section className="rounded-xl border border-theme-sidebar-border bg-theme-bg-secondary p-5 text-theme-text-secondary">
+        <h2 className="mb-2 text-base font-semibold text-theme-text-primary">
+          What is saved on this server
+        </h2>
+        <p className="text-sm leading-6">
+          Chat messages and responses are saved in the application database so
+          conversations can be reopened. Uploaded and collected documents are
+          processed into text and kept in server storage. When a document is
+          added to a workspace, its text is split into excerpts, converted into
+          embeddings, and indexed in the selected vector database for search.
+          The configured model receives the chat content and document context
+          needed to answer each request.
+        </p>
+      </section>
       <ProviderPrivacyItem
-        title="LLM Provider"
+        title="Chat model"
         provider={providers.llmProvider}
         altText="LLM Logo"
       />
       <ProviderPrivacyItem
-        title="Embedding Preference"
+        title="Embedding model"
         provider={providers.embeddingEngine}
         altText="Embedding Logo"
       />
       <ProviderPrivacyItem
-        title="Vector Database"
+        title="Vector database"
         provider={providers.vectorDb}
         altText="Vector DB Logo"
       />
@@ -85,41 +98,48 @@ function ProviderPrivacyItem({ title, provider, altText }) {
     <div className="flex flex-col items-start gap-y-3 pb-4 border-b border-theme-sidebar-border">
       <div className="text-theme-text-primary text-base font-bold">{title}</div>
       <div className="flex items-start gap-3">
-        <img
-          src={provider.logo}
-          alt={altText}
-          className="w-8 h-8 rounded shrink-0 mt-0.5"
-        />
+        {provider.logo ? (
+          <img
+            src={provider.logo}
+            alt={altText}
+            className="w-8 h-8 rounded shrink-0 mt-0.5 object-contain"
+          />
+        ) : (
+          <span
+            className="flex size-8 shrink-0 items-center justify-center rounded bg-theme-bg-secondary text-theme-text-secondary"
+            aria-hidden="true"
+          >
+            {provider.icon === "brain" ? (
+              <BrainCircuit className="size-5" />
+            ) : (
+              <Database className="size-5" />
+            )}
+          </span>
+        )}
         <div className="flex flex-col gap-2 flex-1">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-theme-text-primary text-sm font-semibold">
               {provider.name}
             </span>
           </div>
-          {provider.policyUrl ? (
-            <div className="text-theme-text-secondary text-sm">
-              Your usage, chats, and data are subject to the service&apos;s{" "}
-              <Link
-                className="text-theme-text-secondary hover:text-theme-text-primary text-sm font-medium underline transition-colors inline-flex items-center gap-1"
-                to={provider.policyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                privacy policy
-                <SquareArrowOutUpRight size={12} />
-              </Link>
-              .
-            </div>
-          ) : (
-            provider.description && (
-              <ul className="flex flex-col list-none gap-1">
-                {provider.description.map((desc, idx) => (
-                  <li key={idx} className="text-theme-text-secondary text-sm">
-                    {desc}
-                  </li>
-                ))}
-              </ul>
-            )
+          {provider.description?.map((desc, idx) => (
+            <p
+              key={idx}
+              className="text-theme-text-secondary text-sm leading-6"
+            >
+              {desc}
+            </p>
+          ))}
+          {provider.policyUrl && (
+            <Link
+              className="text-theme-text-secondary hover:text-theme-text-primary text-sm font-medium underline transition-colors inline-flex items-center gap-1"
+              to={provider.policyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Service privacy policy
+              <SquareArrowOutUpRight size={12} />
+            </Link>
           )}
         </div>
       </div>

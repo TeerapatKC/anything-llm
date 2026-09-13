@@ -1,4 +1,3 @@
-import NexusAIIcon from "@/media/logo/nexus-ai-icon.png";
 import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
 import ZillizLogo from "@/media/vectordbs/zilliz.png";
 import AstraDBLogo from "@/media/vectordbs/astraDB.png";
@@ -12,9 +11,9 @@ import PGVectorLogo from "@/media/vectordbs/pgvector.png";
 
 const LLM_PROVIDER_PRIVACY_MAP = {
   "generic-openai": {
-    name: "Generic OpenAI compatible service",
+    name: "OpenAI-compatible endpoint",
     description: [
-      "Chats and prompts are sent to the OpenAI-compatible service configured for this instance.",
+      "When you chat, your message, relevant conversation history, and any document context used for the answer are sent to the configured endpoint. It may run locally or on another server; that service controls any copies it retains.",
     ],
     logo: GenericOpenAiLogo,
   },
@@ -23,60 +22,76 @@ const VECTOR_DB_PROVIDER_PRIVACY_MAP = {
   pgvector: {
     name: "PGVector",
     description: [
-      "Your vectors and document text are stored on your PostgreSQL instance.",
-      "Access to your instance is managed by you.",
+      "Document excerpts and their embeddings are saved in the configured PostgreSQL database for workspace search. Where that database runs determines where this indexed data is stored.",
     ],
     logo: PGVectorLogo,
   },
   chroma: {
     name: "Chroma",
     description: [
-      "Your vectors and document text are stored on your Chroma instance.",
-      "Access to your instance is managed by you.",
+      "Document excerpts and their embeddings are saved in the configured Chroma database for workspace search. Where that database runs determines where this indexed data is stored.",
     ],
     logo: ChromaLogo,
   },
   chromacloud: {
     name: "Chroma Cloud",
+    description: [
+      "Indexed document excerpts and embeddings are sent to Chroma Cloud and stored there for search.",
+    ],
     policyUrl: "https://www.trychroma.com/privacy",
     logo: ChromaLogo,
   },
   pinecone: {
     name: "Pinecone",
+    description: [
+      "Indexed document excerpts and embeddings are sent to Pinecone and stored there for search.",
+    ],
     policyUrl: "https://www.pinecone.io/privacy/",
     logo: PineconeLogo,
   },
   qdrant: {
     name: "Qdrant",
+    description: [
+      "Indexed document excerpts and embeddings are stored in the configured Qdrant database for search. This may be a local or remote service.",
+    ],
     policyUrl: "https://qdrant.tech/legal/privacy-policy/",
     logo: QDrantLogo,
   },
   weaviate: {
     name: "Weaviate",
+    description: [
+      "Indexed document excerpts and embeddings are stored in the configured Weaviate database for search. This may be a local or remote service.",
+    ],
     policyUrl: "https://weaviate.io/privacy",
     logo: WeaviateLogo,
   },
   milvus: {
     name: "Milvus",
     description: [
-      "Your vectors and document text are stored on your Milvus instance (cloud or self-hosted).",
+      "Indexed document excerpts and embeddings are stored in the configured Milvus database for search. This may be a self-hosted or cloud service.",
     ],
     logo: MilvusLogo,
   },
   zilliz: {
     name: "Zilliz Cloud",
+    description: [
+      "Indexed document excerpts and embeddings are sent to Zilliz Cloud and stored there for search.",
+    ],
     policyUrl: "https://zilliz.com/privacy-policy",
     logo: ZillizLogo,
   },
   astra: {
     name: "AstraDB",
+    description: [
+      "Indexed document excerpts and embeddings are sent to the configured AstraDB database and stored there for search.",
+    ],
     policyUrl: "https://www.ibm.com/us-en/privacy",
     logo: AstraDBLogo,
   },
   lancedb: {
     name: "LanceDB",
     description: [
-      "Your vectors and document text are stored privately on this instance of Nexus AI.",
+      "Document excerpts and their embeddings are stored in the LanceDB files on this server for workspace search. The source documents remain in the server's document storage.",
     ],
     logo: LanceDbLogo,
   },
@@ -84,16 +99,16 @@ const VECTOR_DB_PROVIDER_PRIVACY_MAP = {
 
 const EMBEDDING_ENGINE_PROVIDER_PRIVACY_MAP = {
   native: {
-    name: "Nexus AI Built-in (multilingual-e5-small)",
+    name: "Built-in (multilingual-e5-small)",
     description: [
-      "Your document text is embedded privately on this instance of Nexus AI.",
+      "Document excerpts and search queries are converted into embeddings on this server. The text is not sent to an external embedding endpoint.",
     ],
-    logo: NexusAIIcon,
+    icon: "brain",
   },
   "generic-openai": {
-    name: "Generic OpenAI compatible service",
+    name: "OpenAI-compatible endpoint",
     description: [
-      "Data is shared according to the terms of service applicable with your generic endpoint provider.",
+      "Document excerpts and search queries are sent to the configured endpoint to generate embeddings. The endpoint may run locally or remotely; a remote service may retain what it receives under its own policy.",
     ],
     logo: GenericOpenAiLogo,
   },

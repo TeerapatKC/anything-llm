@@ -852,7 +852,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "プライバシーとデータ処理",
     description:
-      "これは、接続されているサードパーティプロバイダーとNexus AIがデータをどのように処理するかの設定です。",
+      "サーバーに保存されるデータと、設定済みのモデルサービスに送信されるデータを確認できます。",
   },
   connectors: {
     "search-placeholder": "データコネクタを検索",
