@@ -59,7 +59,7 @@ const {
   permissionForEnvKey,
 } = require("../utils/permissions");
 const { Role } = require("../models/role");
-const { monitoringConfig } = require("../utils/grafana");
+const { monitoringConfig, grafanaReachable } = require("../utils/grafana");
 const { fetchPfp, determinePfpFilepath } = require("../utils/files/pfp");
 const { exportChatsAsType } = require("../utils/helpers/chat/convertTo");
 const { exportRows, dateRangeClause } = require("../utils/helpers/exportTable");
@@ -998,7 +998,9 @@ function systemEndpoints(app) {
       try {
         // The request is what tells us which host the browser is on, so the
         // Grafana iframe points at the same machine the user is already using.
-        response.status(200).json(monitoringConfig(request));
+        const config = monitoringConfig(request, response.locals.user);
+        if (config.proxied) config.reachable = await grafanaReachable();
+        response.status(200).json(config);
       } catch (e) {
         console.error(e);
         response.sendStatus(500).end();

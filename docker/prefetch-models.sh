@@ -38,13 +38,22 @@ hf_model() {
   repo="$1"; rev="$2"; shift 2
   say "${repo}"
   for f in "$@"; do hf_file "$repo" "$rev" "$f"; done
+  # Read by docker-entrypoint.sh: a volume holding a copy seeded from another
+  # revision gets this one instead, so fixing a model here reaches existing installs.
+  printf '%s\n' "$rev" > "${DEST}/${repo}/.prebuilt-revision"
 }
 
 TEXT_FILES="config.json tokenizer.json tokenizer_config.json special_tokens_map.json vocab.txt"
 
 # The sole built-in embedder. Download its exact ONNX and tokenizer files while
 # building so first document uploads also work without internet access.
-hf_model MintplexLabs/multilingual-e5-small e8caab1f2133068933e2a8c7536a73149cf803f1 \
+#
+# The revision matters more than it looks. e8caab1 carries a 235MB onnxruntime 1.20
+# optimizer export - fused com.microsoft ops, ai.onnx.ml opset 5 - which the
+# onnxruntime-node 1.14 inside @xenova/transformers refuses; its wasm fallback then
+# hangs and no document is ever embedded. This revision's file is a plain opset-11
+# export, the same one upstream AnythingLLM serves, and loads offline in that runtime.
+hf_model MintplexLabs/multilingual-e5-small 4fd851a90ba06323d9428739c08ff91b09a1bfbe \
   config.json tokenizer.json tokenizer_config.json special_tokens_map.json \
   sentencepiece.bpe.model onnx/model_quantized.onnx
 
@@ -63,7 +72,7 @@ hf_model Xenova/whisper-large 451f4b004423a67138e1d510de9c7cd904c259e7 \
 # failure looks like.
 say "checking sizes"
 for f in \
-  "MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx:200000000" \
+  "MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx:400000000" \
   "Xenova/ms-marco-MiniLM-L-6-v2/onnx/model_quantized.onnx:20000000" \
   "Xenova/whisper-large/onnx/encoder_model_quantized.onnx:500000000" \
   "Xenova/whisper-large/onnx/decoder_model_merged_quantized.onnx:800000000"
@@ -76,7 +85,7 @@ do
   }
 done
 
-echo "4654c156f3e4171abc9c716cdb771bf9116455d15ac1aab364aeeede0e3205b0  ${DEST}/MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx" | sha256sum -c -
+echo "ca456c06b3a9505ddfd9131408916dd79290368331e7d76bb621f1cba6bc8665  ${DEST}/MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx" | sha256sum -c -
 
 # OCR language data. tesseract.js looks for <cache>/<lang>.traineddata and, not
 # finding it, fetches a gzipped copy from a CDN - so scanned PDFs and images are

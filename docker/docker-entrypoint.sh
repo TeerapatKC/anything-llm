@@ -22,6 +22,26 @@ fi
 # Whisper is skipped. It is read straight out of the image through
 # WHISPER_PREBUILT_MODEL_DIR, and at 1.5GB it would otherwise be duplicated into
 # every deployment's data volume.
+# Whether a model already in the volume should give way to the image's copy. One
+# this entrypoint seeded carries the revision it came from, and is replaced when the
+# image now carries another. One without that marker was put there by someone else
+# and stays - except the single known-bad file an image seeded before markers
+# existed: the 235MB onnxruntime 1.20 export of multilingual-e5-small, which the
+# app's onnxruntime 1.14 cannot load, so no document could ever be embedded.
+stale_prebuilt() {
+  src="$1"; dest="$2"
+  [ -f "$src/.prebuilt-revision" ] || return 1
+  if [ -f "$dest/.prebuilt-revision" ]; then
+    cmp -s "$src/.prebuilt-revision" "$dest/.prebuilt-revision" && return 1
+    return 0
+  fi
+  case "$dest" in
+    */MintplexLabs/multilingual-e5-small)
+      [ "$(stat -c%s "$dest/onnx/model_quantized.onnx" 2>/dev/null)" = "235052531" ] && return 0 ;;
+  esac
+  return 1
+}
+
 seed_prebuilt_models() {
   prebuilt="${NEXUSAI_PREBUILT_MODELS_DIR:-/app/prebuilt-models}"
   target="${STORAGE_DIR:-/app/server/storage}/models"
@@ -38,7 +58,11 @@ seed_prebuilt_models() {
       */MintplexLabs/*) dest="$target/MintplexLabs/$(basename "$src")" ;;
       *) dest="$target/$(basename "$src")" ;;
     esac
-    [ -e "$dest" ] && continue
+    if [ -e "$dest" ]; then
+      stale_prebuilt "$src" "$dest" || continue
+      echo "[entrypoint] replacing $(basename "$dest") with the image's revision"
+      rm -rf "$dest"
+    fi
 
     mkdir -p "$(dirname "$dest")"
     cp -r "$src" "$dest" && copied="$copied $(basename "$src")"

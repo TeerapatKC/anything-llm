@@ -31,6 +31,11 @@ class NativeEmbedder {
    */
   static supportedModels = SUPPORTED_NATIVE_EMBEDDING_MODELS;
 
+  // A model onnxruntime-node cannot load makes transformers.js fall back to wasm,
+  // and that fallback can hang forever - every upload then waits on it with nothing
+  // in the log. A few seconds is a normal load; this turns the hang into an error.
+  static loadTimeoutMs = 120_000;
+
   // This is a folder that Mintplex Labs hosts for those who cannot capture the HF model download
   // endpoint for various reasons. This endpoint is not guaranteed to be active or maintained
   // and may go offline at any time at Mintplex Labs's discretion.
@@ -151,30 +156,52 @@ class NativeEmbedder {
           }
           return pipeline(...args);
         });
-      return {
-        pipeline: await pipeline("feature-extraction", this.model, {
-          cache_dir: this.cacheDir,
-          ...(!this.modelDownloaded
-            ? {
-                // Show download progress if we need to download any files
-                progress_callback: (data) => {
-                  if (!data.hasOwnProperty("progress")) return;
-                  console.log(
-                    `\x1b[36m[NativeEmbedder - Downloading model]\x1b[0m ${
-                      data.file
-                    } ${~~data?.progress}%`
-                  );
-                },
-              }
-            : {}),
-        }),
-        retry: false,
-        error: null,
-      };
+      let timer;
+      const timeout = new Promise((_, reject) => {
+        timer = setTimeout(
+          () =>
+            reject(
+              new Error(
+                `${this.model} did not finish loading within ${NativeEmbedder.loadTimeoutMs / 1000}s - the bundled model file is likely incompatible with this runtime.`
+              )
+            ),
+          NativeEmbedder.loadTimeoutMs
+        );
+      });
+      const load = pipeline("feature-extraction", this.model, {
+        cache_dir: this.cacheDir,
+        ...(!this.modelDownloaded
+          ? {
+              // Show download progress if we need to download any files
+              progress_callback: (data) => {
+                if (!data.hasOwnProperty("progress")) return;
+                console.log(
+                  `\x1b[36m[NativeEmbedder - Downloading model]\x1b[0m ${
+                    data.file
+                  } ${~~data?.progress}%`
+                );
+              },
+            }
+          : {}),
+      });
+      try {
+        return {
+          pipeline: await Promise.race([load, timeout]),
+          retry: false,
+          error: null,
+        };
+      } finally {
+        clearTimeout(timer);
+      }
     } catch (error) {
       return {
         pipeline: null,
-        retry: hostOverride === null ? this.#fallbackHost : false,
+        // Remote models are disabled in docker, so the CDN fallback could only
+        // fail the same way - and on an air-gapped host, after a network timeout.
+        retry:
+          hostOverride === null && process.env.NEXUS_AI_RUNTIME !== "docker"
+            ? this.#fallbackHost
+            : false,
         error,
       };
     }
@@ -205,11 +232,12 @@ class NativeEmbedder {
         return fetchResponse.pipeline;
       }
 
-      this.log(
-        `Failed to download model from primary URL. Using fallback ${fetchResponse.retry}`
-      );
-      if (!!fetchResponse.retry)
+      if (fetchResponse.retry) {
+        this.log(
+          `Failed to download model from primary URL. Using fallback ${fetchResponse.retry}`
+        );
         fetchResponse = await this.#fetchWithHost(fetchResponse.retry);
+      }
       if (fetchResponse.pipeline !== null) {
         this.modelDownloaded = true;
         NativeEmbedder.#pipelines.set(this.model, fetchResponse.pipeline);

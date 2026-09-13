@@ -50,6 +50,7 @@ const { smtpEndpoints } = require("./endpoints/smtp");
 const { usecaseDataEndpoints } = require("./endpoints/usecaseData");
 const { httpLogger } = require("./middleware/httpLogger");
 const { register, httpMetricsMiddleware } = require("./utils/metrics");
+const { grafanaProxy } = require("./utils/grafanaProxy");
 const app = express();
 const apiRouter = express.Router();
 const FILE_LIMIT = "3GB";
@@ -73,6 +74,9 @@ app.get("/metrics", async (_request, response) => {
   response.set("Content-Type", register.contentType);
   response.end(await register.metrics());
 });
+// Grafana under the app's own origin, so it needs no port of its own. Ahead of the
+// body parsers, which would otherwise consume the request stream it forwards.
+app.use("/grafana", grafanaProxy);
 app.use(bodyParser.text({ limit: FILE_LIMIT }));
 app.use(
   bodyParser.json({

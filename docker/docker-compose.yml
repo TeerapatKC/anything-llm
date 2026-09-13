@@ -47,8 +47,11 @@ services:
       # This deployment is intended to run unattended. Keep this overrideable from
       # docker/.env, while allowing all agent skills by default as requested.
       AGENT_AUTO_APPROVED_SKILLS: "${AGENT_AUTO_APPROVED_SKILLS:-<all>}"
-      # The backend uses this browser-facing port to expose the built-in Grafana
-      # dashboard link when GRAFANA_PUBLIC_URL is not explicitly configured.
+      # Where the app reaches Grafana to show it under its own /grafana route, so a
+      # browser never needs Grafana's port. Set GRAFANA_PUBLIC_URL to have browsers
+      # load Grafana directly instead, or GRAFANA_INTERNAL_URL='' to turn this off.
+      GRAFANA_INTERNAL_URL: "${GRAFANA_INTERNAL_URL-http://grafana:3000}"
+      # Only used when the proxy is off and GRAFANA_PUBLIC_URL is unset.
       GRAFANA_PUBLISH_PORT: "${GRAFANA_PUBLISH_PORT:-3300}"
     networks:
       - nexusai
@@ -109,12 +112,28 @@ services:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
       GF_AUTH_ANONYMOUS_ORG_NAME: "Main Org."
+      # Served from /grafana, because that is where the app proxies it
+      # (server/utils/grafanaProxy.js).
+      GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s:%(http_port)s/grafana/"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      # Grafana Live pushes over a websocket the proxy does not carry; dashboards
+      # refresh by polling instead.
+      GF_LIVE_MAX_CONNECTIONS: "0"
+      # Nothing to phone home to on an air-gapped host.
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_PLUGINS_PREINSTALL_DISABLED: "true"
     volumes:
       - "grafana-data:/var/lib/grafana"
       - "./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro"
       - "./monitoring/grafana/dashboards:/etc/grafana/dashboards:ro"
     ports:
-      - "${GRAFANA_PUBLISH_PORT:-3300}:3000"
+      # Loopback only. Users see Grafana through the app's /grafana route, so no
+      # other machine needs this port - it stays for an operator's SSH tunnel.
+      # GRAFANA_BIND_ADDRESS=0.0.0.0 publishes it to the network again.
+      - "${GRAFANA_BIND_ADDRESS:-127.0.0.1}:${GRAFANA_PUBLISH_PORT:-3300}:3000"
     depends_on:
       - prometheus
     networks:

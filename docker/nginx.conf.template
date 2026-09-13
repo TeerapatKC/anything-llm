@@ -52,6 +52,23 @@ server {
     proxy_send_timeout 1h;
   }
 
+  # Grafana, reverse-proxied by the backend under the app's own origin. `^~` keeps
+  # the static-asset regex below from answering for Grafana's own svg/woff2/png.
+  location ^~ /grafana/ {
+    proxy_pass $backend_url;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_buffering off;
+
+    # Framed by the app's Monitoring page. An add_header here replaces the
+    # server-level DENY, which would otherwise block the iframe.
+    proxy_hide_header X-Frame-Options;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+  }
+
   # PWA manifest is generated on the fly by the backend (custom app name/icon)
   location = /manifest.json {
     proxy_pass $backend_url;

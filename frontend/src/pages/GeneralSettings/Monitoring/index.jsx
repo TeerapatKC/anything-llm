@@ -5,19 +5,26 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import System from "@/models/system";
 import { useTheme } from "@/hooks/useTheme";
+import { API_BASE } from "@/utils/constants";
 import { useTranslation } from "react-i18next";
 import { ExternalLink, MonitorOff, RotateCw } from "lucide-react";
 
 /**
  * Grafana dashboards embedded in Instance Settings.
  *
- * The iframe talks to Grafana on its published port. Access to *this page* is the
- * permission gate (`system.monitoring`); Grafana itself still decides what a
- * public/anonymous viewer can see.
+ * By default the server reverse-proxies Grafana under /grafana on the app's own
+ * origin, so Grafana needs no port or hostname a browser can reach. The iframe
+ * enters with a short-lived token from the monitoring endpoint, which the server
+ * trades for a cookie scoped to /grafana. When GRAFANA_PUBLIC_URL is set the iframe
+ * loads that URL directly instead.
+ *
+ * Access to *this page* is the permission gate (`system.monitoring`); Grafana itself
+ * still decides what a viewer can see.
  *
  * When Grafana is unreachable the browser would otherwise paint its own
- * connection-refused page inside the iframe. We probe from the frontend first and
- * swap in a Nexus-styled empty state instead.
+ * connection-refused page inside the iframe. Reachability is checked first - by the
+ * server when it proxies, by the browser when it does not - and a Nexus-styled empty
+ * state is shown instead.
  */
 export default function Monitoring() {
   const { t } = useTranslation();
@@ -26,24 +33,22 @@ export default function Monitoring() {
   const [loading, setLoading] = useState(true);
   const [config, setConfig] = useState({
     enabled: false,
+    proxied: false,
     publicUrl: "",
     dashboards: [],
   });
 
-  useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      const next = await System.monitoring();
-      if (!cancelled) {
-        setConfig(next);
-        setLoading(false);
-      }
-    }
-    load();
-    return () => {
-      cancelled = true;
-    };
+  // Also the retry for a proxied Grafana: a fresh config carries a fresh entry
+  // token and the server's latest reachability answer.
+  const load = useCallback(async () => {
+    const next = await System.monitoring();
+    setConfig(next);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const dashboards = config.dashboards || [];
   const defaultUid = dashboards[0]?.uid;
@@ -70,8 +75,9 @@ export default function Monitoring() {
       ) : dashboards.length === 1 ? (
         <DashboardFrame
           dashboard={dashboards[0]}
-          publicUrl={config.publicUrl}
+          config={config}
           theme={theme}
+          onReload={load}
         />
       ) : (
         <Tabs defaultValue={defaultUid} className="mt-4 flex-1 min-h-0">
@@ -90,8 +96,9 @@ export default function Monitoring() {
             >
               <DashboardFrame
                 dashboard={dashboard}
-                publicUrl={config.publicUrl}
+                config={config}
                 theme={theme}
+                onReload={load}
               />
             </TabsContent>
           ))}
@@ -101,31 +108,37 @@ export default function Monitoring() {
   );
 }
 
-function DashboardFrame({ dashboard, publicUrl, theme }) {
+function DashboardFrame({ dashboard, config, theme, onReload }) {
   const { t } = useTranslation();
   const { embedUrl, openUrl } = useMemo(
-    () => dashboardUrls(publicUrl, dashboard, theme),
-    [publicUrl, dashboard, theme]
+    () => dashboardUrls(config, dashboard, theme),
+    [config, dashboard, theme]
   );
   const [status, setStatus] = useState("checking"); // checking | ready | error
   const [checkKey, setCheckKey] = useState(0);
 
   const retry = useCallback(() => {
     setStatus("checking");
-    setCheckKey((key) => key + 1);
-  }, []);
+    if (config.proxied) onReload();
+    else setCheckKey((key) => key + 1);
+  }, [config.proxied, onReload]);
 
   useEffect(() => {
+    if (config.proxied) {
+      setStatus(config.reachable ? "ready" : "error");
+      return;
+    }
+
     let cancelled = false;
     async function check() {
-      const ok = await probeGrafana(publicUrl);
+      const ok = await probeGrafana(config.publicUrl);
       if (!cancelled) setStatus(ok ? "ready" : "error");
     }
     check();
     return () => {
       cancelled = true;
     };
-  }, [publicUrl, checkKey]);
+  }, [config, checkKey]);
 
   return (
     <div className="mt-4 flex-1 min-h-0 flex flex-col gap-3">
@@ -209,9 +222,9 @@ function GrafanaStatusPanel({ title, description, actions = null }) {
 }
 
 /**
- * Browser-side reachability check. Uses no-cors so a live Grafana without CORS
- * headers still counts as reachable (opaque response). A refused connection /
- * DNS failure rejects and we treat that as down.
+ * Browser-side reachability check, used only when Grafana is loaded directly. Uses
+ * no-cors so a live Grafana without CORS headers still counts as reachable (opaque
+ * response). A refused connection / DNS failure rejects and we treat that as down.
  * @param {string} publicUrl
  * @returns {Promise<boolean>}
  */
@@ -237,18 +250,36 @@ async function probeGrafana(publicUrl) {
   }
 }
 
-function dashboardUrls(publicUrl, dashboard, theme) {
-  const base = String(publicUrl || "").replace(/\/$/, "");
-  const slug = dashboard.slug || dashboard.uid;
-  const openUrl = `${base}/d/${dashboard.uid}/${slug}`;
-  if (dashboard.publicToken) {
-    return {
-      openUrl,
-      embedUrl: `${base}/public-dashboards/${dashboard.publicToken}?theme=${theme}`,
-    };
+/**
+ * The origin the API - and so the /grafana proxy - lives on. Empty when the SPA is
+ * served by the same origin, which is every deployment except `yarn dev`.
+ */
+function serverOrigin() {
+  if (!/^https?:\/\//i.test(API_BASE)) return "";
+  try {
+    return new URL(API_BASE).origin;
+  } catch {
+    return "";
   }
-  return {
-    openUrl,
-    embedUrl: `${openUrl}?orgId=1&kiosk&theme=${theme}&from=now-6h&to=now&refresh=30s`,
-  };
+}
+
+function dashboardUrls(config, dashboard, theme) {
+  const slug = dashboard.slug || dashboard.uid;
+  const openPath = `/d/${dashboard.uid}/${slug}`;
+  const embedPath = dashboard.publicToken
+    ? `/public-dashboards/${dashboard.publicToken}?theme=${theme}`
+    : `${openPath}?orgId=1&kiosk&theme=${theme}&from=now-6h&to=now&refresh=30s`;
+
+  const base = String(config.publicUrl || "").replace(/\/$/, "");
+  if (!config.proxied)
+    return { openUrl: `${base}${openPath}`, embedUrl: `${base}${embedPath}` };
+
+  // Both links enter through the handshake, which sets the /grafana cookie and then
+  // redirects to the page asked for.
+  const enter = (path) =>
+    `${serverOrigin()}${base}/_nexus/enter?${new URLSearchParams({
+      token: config.entryToken || "",
+      next: `${base}${path}`,
+    })}`;
+  return { openUrl: enter(openPath), embedUrl: enter(embedPath) };
 }
