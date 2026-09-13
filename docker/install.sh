@@ -361,8 +361,16 @@ if [[ -z "$ENV_OUT" ]] && docker container inspect nexusai >/dev/null 2>&1; then
   if ! MSYS_NO_PATHCONV=1 docker cp nexusai:/app/server/.env - 2>/dev/null |
        tar -xOf - > "$RUNNING_ENV" 2>/dev/null || [[ ! -s "$RUNNING_ENV" ]]; then
     running_src="$(host_path "$RUNNING_ENV_SOURCE")"
-    if [[ -n "$running_src" && -s "$running_src" ]]; then
+    if [[ -n "$running_src" && -f "$running_src" && -s "$running_src" ]]; then
       cat "$running_src" > "$RUNNING_ENV"
+    elif docker container inspect nexusai --format '{{range .Config.Env}}{{println .}}{{end}}' 2>/dev/null |
+         grep -E '^(JWT_SECRET|SIG_KEY|SIG_SALT|SMTP_[A-Z_]+)=' |
+         sed -E "s/^([A-Z_]+)=(.*)$/\1='\2'/" > "$RUNNING_ENV" && [[ -s "$RUNNING_ENV" ]]; then
+      # No .env file to read. Docker creates a directory when a bind-mount source
+      # is missing, so an install started before its .env existed leaves one here,
+      # and the app could never save a setting into it. What it did run with came
+      # from the container's own environment, so carry the secrets and SMTP from there.
+      RUNNING_ENV_SOURCE="${RUNNING_ENV_SOURCE:-.env} is not a file - read from the container environment"
     else
       rm -f "$RUNNING_ENV"
       RUNNING_ENV=""
