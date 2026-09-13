@@ -48,6 +48,7 @@ describe('OpenAICompatibleChat', () => {
 
     // Setup mock LLM connector
     mockLLMConnector = {
+      model: 'resolved-model',
       promptWindowLimit: jest.fn().mockReturnValue(4000),
       compressMessages: jest.fn().mockResolvedValue([]),
       getChatCompletion: jest.fn().mockResolvedValue({
@@ -157,6 +158,7 @@ describe('OpenAICompatibleChat', () => {
         expect.objectContaining({
           workspaceId: mockWorkspace.id,
           prompt: promptString,
+          aiModel: mockLLMConnector.model,
           response: expect.objectContaining({
             text: 'Mock response',
             attachments: []
@@ -243,6 +245,7 @@ describe('OpenAICompatibleChat', () => {
         expect.objectContaining({
           workspaceId: mockWorkspace.id,
           prompt: promptString,
+          aiModel: mockLLMConnector.model,
           response: expect.objectContaining({
             text: 'Mock streamed response',
             attachments: []

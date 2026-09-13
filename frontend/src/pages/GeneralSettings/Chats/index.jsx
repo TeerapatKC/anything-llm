@@ -238,6 +238,7 @@ function ChatsContainer({
             <TableHead scope="col">{t("recorded.table.id")}</TableHead>
             <TableHead scope="col">{t("recorded.table.by")}</TableHead>
             <TableHead scope="col">{t("recorded.table.workspace")}</TableHead>
+            <TableHead scope="col">{t("recorded.table.model")}</TableHead>
             <TableHead scope="col">{t("recorded.table.prompt")}</TableHead>
             <TableHead scope="col">{t("recorded.table.response")}</TableHead>
             <TableHead scope="col">{t("recorded.table.feedback")}</TableHead>
@@ -247,9 +248,9 @@ function ChatsContainer({
         </TableHeader>
         <TableBody>
           {loading ? (
-            <TableLoadingRow colSpan={8} />
+            <TableLoadingRow colSpan={9} />
           ) : !chats || chats.length === 0 ? (
-            <TableEmptyRow colSpan={8}>
+            <TableEmptyRow colSpan={9}>
               {t("recorded.empty", "No chat logs found")}
             </TableEmptyRow>
           ) : (

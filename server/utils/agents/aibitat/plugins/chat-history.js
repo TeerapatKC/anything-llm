@@ -112,6 +112,7 @@ const chatHistory = {
         await WorkspaceChats.upsert(aibitat.trackedChatId, {
           workspaceId: Number(invocation.workspace_id),
           prompt,
+          aiModel: aibitat.providerInstance?.model ?? null,
           response: {
             text: response,
             sources: citations,
@@ -148,6 +149,7 @@ const chatHistory = {
         await WorkspaceChats.upsert(aibitat.trackedChatId, {
           workspaceId: Number(invocation.workspace_id),
           prompt,
+          aiModel: aibitat.providerInstance?.model ?? null,
           response: {
             sources: [...existingSources, ...citations],
             // when we have a _storeSpecial called the options param can include a storedResponse() function
@@ -214,6 +216,7 @@ const chatHistory = {
         try {
           await WorkspaceChats.upsert(chatId, {
             workspaceId: Number(invocation.workspace_id),
+            aiModel: aibitat.providerInstance?.model ?? null,
             response: {
               text: partialReply?.content ?? "",
               sources: aibitat._pendingCitations ?? [],

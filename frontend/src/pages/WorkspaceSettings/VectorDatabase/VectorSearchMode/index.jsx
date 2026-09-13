@@ -52,7 +52,9 @@ export default function VectorSearchMode({ workspace, setHasChanges }) {
         required={true}
       >
         <SelectTrigger className="border-none bg-theme-settings-input-bg text-theme-text-primary text-sm mt-2 rounded-lg focus:outline-primary-button active:outline-primary-button outline-none w-full p-2.5">
-          <SelectValue placeholder={t("ui.select-option")} />
+          <SelectValue placeholder={t("ui.select-option")}>
+            {(value) => hint[value]?.title ?? value}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="default">Default</SelectItem>

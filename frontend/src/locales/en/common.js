@@ -556,6 +556,7 @@ const TRANSLATIONS = {
       id: "ID",
       by: "Sent By",
       workspace: "Workspace",
+      model: "AI Model",
       prompt: "Prompt",
       response: "Response",
       feedback: "Feedback",

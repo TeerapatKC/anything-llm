@@ -849,6 +849,7 @@ function workspaceEndpoints(app) {
             workspaceId: workspace.id,
             prompt: chat.prompt,
             response: JSON.stringify(chatResponse),
+            aiModel: chat.aiModel,
             user_id: user?.id,
             thread_id: newThread.id,
           };

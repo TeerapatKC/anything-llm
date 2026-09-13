@@ -136,8 +136,9 @@ docker compose -f docker-compose.yml -f docker-compose.llamacpp.yml -f docker-co
 ```
 
 Once the download job exits successfully, check `http://localhost:8082/v1/models`
-and refresh `/settings/llm-preference`. The test overlay sets a 2048-token
-context and loads one model at a time to keep memory use low. These very small
+and refresh `/settings/llm-preference`. The test overlay sets an 8192-token
+context and loads one model at a time to keep memory use low. Agent prompts
+include tool definitions and need more room than a plain chat. These very small
 models are for verifying discovery, selection, and basic requests; their answer
 quality and tool use are not representative of the large models below. Starting
 the overlay does not edit `docker/.env`, but saving settings in the UI can write

@@ -539,6 +539,7 @@ const TRANSLATIONS = {
       id: "ID",
       by: "送信者",
       workspace: "ワークスペース",
+      model: "AIモデル",
       prompt: "プロンプト",
       response: "応答",
       feedback: "評価",

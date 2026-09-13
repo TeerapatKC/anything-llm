@@ -1,5 +1,8 @@
 /* eslint-env jest */
-const { prepareChatsForExport } = require("../../../utils/helpers/chat/convertTo");
+const {
+  prepareChatsForExport,
+  exportChatsAsType,
+} = require("../../../utils/helpers/chat/convertTo");
 
 // Mock the database models
 jest.mock("../../../models/workspaceChats");
@@ -11,6 +14,7 @@ const { EmbedChats } = require("../../../models/embedChats");
 const mockChat = (withImages = false) => {
   return {
     id: 1,
+    aiModel: "qwen2.5-0.5b",
     prompt: "Test prompt",
     response: JSON.stringify({
       text: "Test response",
@@ -57,6 +61,7 @@ describe("prepareChatsForExport", () => {
     expect(result).toBeDefined();
     expect(result).toEqual([{
       id: chatExample.id,
+      ai_model: chatExample.aiModel,
       prompt: chatExample.prompt,
       response: responseJson.text,
       sent_at: chatExample.createdAt,
@@ -76,6 +81,7 @@ describe("prepareChatsForExport", () => {
     expect(result).toBeDefined();
     expect(result).toEqual([{
       id: chatExample.id,
+      ai_model: chatExample.aiModel,
       prompt: chatExample.prompt,
       response: responseJson.text,
       sent_at: chatExample.createdAt,
@@ -105,6 +111,7 @@ describe("prepareChatsForExport", () => {
     expect(result.attachments).not.toBeDefined();
     expect(result).toEqual([{
       id: chatExample.id,
+      ai_model: chatExample.aiModel,
       prompt: chatExample.prompt,
       response: responseJson.text,
       sent_at: chatExample.createdAt,
@@ -131,11 +138,13 @@ describe("prepareChatsForExport", () => {
       instruction: chatExample.workspace.openAiPrompt,
       input: chatExample.prompt,
       output: responseJson1.text,
+      ai_model: chatExample.aiModel,
     },
     {
       instruction: chatExample.workspace.openAiPrompt,
       input: imageChatExample.prompt,
       output: responseJson2.text,
+      ai_model: imageChatExample.aiModel,
     }]);
   });
 
@@ -165,6 +174,7 @@ describe("prepareChatsForExport", () => {
             },
             {
               role: "assistant",
+              ai_model: chatExample.aiModel,
               content: [{
                 type: "text",
                 text: responseJson.text,
@@ -205,6 +215,7 @@ describe("prepareChatsForExport", () => {
             },
             {
               role: "assistant",
+              ai_model: chatExample.aiModel,
               content: [{
                 type: "text",
                 text: responseJson.text,
@@ -225,6 +236,7 @@ describe("prepareChatsForExport", () => {
             },
             {
               role: "assistant",
+              ai_model: imageChatExample.aiModel,
               content: [{
                 type: "text",
                 text: imageResponseJson.text,
@@ -234,5 +246,25 @@ describe("prepareChatsForExport", () => {
         },
       },
     );
+  });
+
+  test("includes the recorded model in every downloadable workspace chat format", async () => {
+    WorkspaceChats.whereWithData.mockResolvedValue([mockChat()]);
+
+    const csv = await exportChatsAsType("csv", "workspace");
+    expect(csv.data.split("\n")[0]).toContain("ai_model");
+    expect(csv.data).toContain("qwen2.5-0.5b");
+
+    const json = await exportChatsAsType("json", "workspace");
+    expect(JSON.parse(json.data)[0].ai_model).toBe("qwen2.5-0.5b");
+
+    const jsonl = await exportChatsAsType("jsonl", "workspace");
+    const messages = JSON.parse(jsonl.data).messages;
+    expect(
+      messages.find((message) => message.role === "assistant").ai_model
+    ).toBe("qwen2.5-0.5b");
+
+    const alpaca = await exportChatsAsType("jsonAlpaca", "workspace");
+    expect(JSON.parse(alpaca.data)[0].ai_model).toBe("qwen2.5-0.5b");
   });
 });

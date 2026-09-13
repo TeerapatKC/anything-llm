@@ -548,6 +548,7 @@ const TRANSLATIONS = {
       id: "ID",
       by: "ส่งโดย",
       workspace: "พื้นที่ทำงาน",
+      model: "โมเดล AI",
       prompt: "พรอมต์",
       response: "คำตอบ",
       feedback: "คะแนน",

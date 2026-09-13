@@ -64,7 +64,7 @@ error; do not add `--remove-orphans` just to address it.
 
 The installer loads the saved images, checks that every listed image archive and
 model weight is present, selects `qwen2.5-0.5b` initially, and exposes all three
-models through the live `/v1/models` endpoint. It sets a 2048-token context and
+models through the live `/v1/models` endpoint. It sets an 8192-token context and
 serves one model at a time. The app and llama.cpp use the same production Compose
 files; the installer uses `docker compose up --pull never --no-build`, and the
 model fetcher refuses network downloads. Check `http://localhost:8082/v1/models` and the model
@@ -203,7 +203,7 @@ How many of those models stay in memory at once is the part worth setting.
 limit to one per model. A Spark has 128GB shared between CPU and GPU, so all
 three fit and switching workspaces never waits for a reload. The production
 bundle writes a 16384-token context into both the model preset and app config;
-the small test bundle uses 2048. Set `LLAMACPP_CTX` while building a bundle to
+the small test bundle uses 8192. Set `LLAMACPP_CTX` while building a bundle to
 choose a different value. The bundle records that value in `offline.env` so the
 installed server and app agree.
 

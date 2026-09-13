@@ -202,6 +202,7 @@ async function chatSync({
   const { chat } = await WorkspaceChats.new({
     workspaceId: workspace.id,
     prompt: String(prompt),
+    aiModel: LLMConnector.model,
     response: {
       text: textResponse,
       sources,
@@ -469,6 +470,7 @@ async function streamChat({
     const { chat } = await WorkspaceChats.new({
       workspaceId: workspace.id,
       prompt: String(prompt),
+      aiModel: LLMConnector.model,
       response: {
         text: completeText,
         sources,

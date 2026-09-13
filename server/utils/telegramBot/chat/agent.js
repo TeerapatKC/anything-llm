@@ -233,6 +233,8 @@ async function handleAgentResponse(
       const { chat } = await WorkspaceChats.new({
         workspaceId: workspace.id,
         prompt: message,
+        aiModel:
+          agentHandler.aibitat?.providerInstance?.model ?? agentHandler.model,
         response: {
           text: responseText,
           sources,

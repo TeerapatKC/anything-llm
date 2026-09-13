@@ -178,6 +178,7 @@ async function streamResponse({
       thread,
       message,
       completeText,
+      aiModel: LLMConnector.model,
       sources,
       chatMode,
       metrics,
@@ -340,6 +341,7 @@ async function persistAndDeliver({
   thread,
   message,
   completeText,
+  aiModel,
   sources,
   chatMode,
   metrics,
@@ -356,6 +358,7 @@ async function persistAndDeliver({
   const { chat } = await WorkspaceChats.new({
     workspaceId: workspace.id,
     prompt: message,
+    aiModel,
     response: {
       text: completeText,
       sources,

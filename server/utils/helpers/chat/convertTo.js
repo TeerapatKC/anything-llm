@@ -109,6 +109,7 @@ async function prepareChatsForExport(
       return {
         ...baseData,
         workspace: chat.workspace ? chat.workspace.name : "unknown workspace",
+        ai_model: chat.aiModel ?? null,
         username: chat.user
           ? chat.user.username
           : chat.api_session_id !== null
@@ -137,6 +138,7 @@ async function prepareChatsForExport(
         ),
         input: chat.prompt,
         output: responseJson.text,
+        ...(chatType === "workspace" ? { ai_model: chat.aiModel ?? null } : {}),
       };
     });
 
@@ -185,6 +187,7 @@ async function prepareChatsForExport(
       },
       {
         role: "assistant",
+        ...(chatType === "workspace" ? { ai_model: chat.aiModel ?? null } : {}),
         content: [
           {
             type: "text",

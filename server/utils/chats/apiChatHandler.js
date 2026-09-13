@@ -213,6 +213,8 @@ async function chatSync({
         await WorkspaceChats.new({
           workspaceId: workspace.id,
           prompt: String(message),
+          aiModel:
+            agentHandler.aibitat?.providerInstance?.model ?? agentHandler.model,
           response: {
             text: textResponse,
             sources: citations,
@@ -462,6 +464,7 @@ async function chatSync({
   const { chat } = await WorkspaceChats.new({
     workspaceId: workspace.id,
     prompt: message,
+    aiModel: LLMConnector.model,
     response: {
       text: textResponse,
       sources,
@@ -600,6 +603,8 @@ async function streamChat({
         await WorkspaceChats.new({
           workspaceId: workspace.id,
           prompt: String(message),
+          aiModel:
+            agentHandler.aibitat?.providerInstance?.model ?? agentHandler.model,
           response: {
             text: textResponse,
             sources: citations,
@@ -880,6 +885,7 @@ async function streamChat({
     const { chat } = await WorkspaceChats.new({
       workspaceId: workspace.id,
       prompt: message,
+      aiModel: LLMConnector.model,
       response: {
         text: completeText,
         sources,

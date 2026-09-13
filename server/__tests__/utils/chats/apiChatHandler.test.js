@@ -62,6 +62,8 @@ jest.mock("../../../utils/agents/ephemeral", () => {
   const streamAgentEvents = jest.fn();
   const EphemeralAgentHandler = jest.fn().mockImplementation(function (args) {
     this.args = args;
+    this.model = "requested-model";
+    this.aibitat = { providerInstance: { model: "resolved-model" } };
     this.init = jest.fn().mockResolvedValue();
     this.createAIbitat = jest.fn().mockResolvedValue();
     this.startAgentCluster = jest.fn();
@@ -162,6 +164,7 @@ function expectedSavePayload({ user, thread, sessionId }) {
   return expect.objectContaining({
     workspaceId: workspace.id,
     prompt: "@agent summarize this",
+    aiModel: "resolved-model",
     include: true,
     threadId: thread?.id || null,
     apiSessionId: sessionId,

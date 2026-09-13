@@ -8,15 +8,15 @@ services:
     environment:
       GENERIC_OPEN_AI_BASE_PATH: http://llamacpp:8080/v1
       GENERIC_OPEN_AI_MODEL_PREF: qwen2.5-0.5b
-      GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT: "2048"
+      GENERIC_OPEN_AI_MODEL_TOKEN_LIMIT: "8192"
       GENERIC_OPEN_AI_MAX_TOKENS: "256"
       GENERIC_OPEN_AI_ALLOWED_MODELS: ""
 
   llamacpp-models:
     environment:
       LLAMACPP_MODELS: qwen2.5-0.5b,smollm2-360m,gemma3-270m
-      LLAMACPP_CTX: "2048"
+      LLAMACPP_CTX: "8192"
 
   llamacpp:
     environment:
-      LLAMA_ARG_CTX_SIZE: "2048"
+      LLAMA_ARG_CTX_SIZE: "8192"

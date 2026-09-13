@@ -311,6 +311,7 @@ model workspace_chats {
   workspaceId     Int
   prompt          String
   response        String
+  aiModel         String?  @map("ai_model")
   include         Boolean  @default(true)
   user_id         Int?
   thread_id       Int? // No relation to prevent whole table migration

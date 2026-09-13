@@ -122,7 +122,7 @@ STT_IMAGE_REF="nexusai-stt:${ARCH}"
 TTS_IMAGE_REF="nexusai-tts:${ARCH}"
 CTX="${LLAMACPP_CTX:-8192}"
 if [[ "$PLATFORM" == "linux/arm64" ]]; then CTX="${LLAMACPP_CTX:-16384}"; fi
-if [[ "$QUICK_TEST" == true ]]; then CTX="${LLAMACPP_CTX:-2048}"; fi
+if [[ "$QUICK_TEST" == true ]]; then CTX="${LLAMACPP_CTX:-8192}"; fi
 MODEL_PREF="${MODELS%%,*}"
 if [[ ",$MODELS," == *",gemma-4-12b,"* && "$QUICK_TEST" == false ]]; then
   MODEL_PREF="gemma-4-12b"

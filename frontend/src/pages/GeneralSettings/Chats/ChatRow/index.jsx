@@ -87,6 +87,9 @@ export default function ChatRow({ chat, onDelete }) {
         <TableCell className="font-medium">{chat.id}</TableCell>
         <TableCell className="font-medium">{chat.user?.username}</TableCell>
         <TableCell>{chat.workspace?.name}</TableCell>
+        <TableCell className="text-theme-text-secondary whitespace-nowrap">
+          {chat.aiModel || "—"}
+        </TableCell>
         <TableCell
           onClick={openPromptModal}
           className="border-transparent cursor-pointer hover:underline"

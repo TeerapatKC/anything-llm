@@ -362,6 +362,7 @@ async function streamChatWithWorkspace(
   const { chat } = await WorkspaceChats.new({
     workspaceId: workspace.id,
     prompt: message,
+    aiModel: LLMConnector.model,
     response: {
       text: completeText ?? "",
       sources,

@@ -1,5 +1,6 @@
 jest.mock("../../utils/prisma", () => ({
   workspace_chats: {
+    create: jest.fn(),
     upsert: jest.fn(),
     update: jest.fn(),
   },
@@ -10,6 +11,37 @@ const { WorkspaceChats } = require("../../models/workspaceChats");
 
 beforeEach(() => {
   jest.clearAllMocks();
+});
+
+describe("WorkspaceChats.new", () => {
+  it("records the model used for this turn independently of workspace defaults", async () => {
+    prisma.workspace_chats.create.mockResolvedValue({
+      id: 52,
+      aiModel: "qwen2.5-0.5b",
+    });
+
+    const { chat } = await WorkspaceChats.new({
+      workspaceId: 5,
+      prompt: "hello",
+      response: { text: "hi" },
+      aiModel: "qwen2.5-0.5b",
+    });
+
+    expect(prisma.workspace_chats.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ aiModel: "qwen2.5-0.5b" }),
+    });
+    expect(chat.aiModel).toBe("qwen2.5-0.5b");
+  });
+
+  it("leaves non-model answers unassigned", async () => {
+    prisma.workspace_chats.create.mockResolvedValue({ id: 53, aiModel: null });
+
+    await WorkspaceChats.new({ workspaceId: 5, prompt: "hello" });
+
+    expect(prisma.workspace_chats.create).toHaveBeenCalledWith({
+      data: expect.objectContaining({ aiModel: null }),
+    });
+  });
 });
 
 describe("WorkspaceChats.upsert", () => {
@@ -49,6 +81,19 @@ describe("WorkspaceChats.upsert", () => {
 
     const [args] = prisma.workspace_chats.upsert.mock.calls[0];
     expect(args.create.prompt).toBe("hello");
+  });
+
+  it("updates the model on an agent placeholder when the answer is saved", async () => {
+    prisma.workspace_chats.upsert.mockResolvedValue({
+      id: 50,
+      aiModel: "gemma3-270m",
+    });
+
+    await WorkspaceChats.upsert(50, { ...revealArgs, aiModel: "gemma3-270m" });
+
+    const [args] = prisma.workspace_chats.upsert.mock.calls[0];
+    expect(args.update.aiModel).toBe("gemma3-270m");
+    expect(args.create.aiModel).toBe("gemma3-270m");
   });
 
   it("returns the record rather than a field of it", async () => {

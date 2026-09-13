@@ -83,6 +83,7 @@ const WorkspaceChats = {
     workspaceId,
     prompt,
     response = {},
+    aiModel = null,
     user = null,
     threadId = null,
     include = true,
@@ -94,6 +95,7 @@ const WorkspaceChats = {
           workspaceId,
           prompt,
           response: safeJSONStringify(response),
+          aiModel: aiModel || null,
           user_id: user?.id || null,
           thread_id: threadId,
           api_session_id: apiSessionId,
@@ -488,12 +490,16 @@ const WorkspaceChats = {
       threadId: null,
       include: true,
       apiSessionId: null,
+      aiModel: null,
     }
   ) {
     try {
       const payload = {
         workspaceId: data.workspaceId,
         response: safeJSONStringify(data.response),
+        ...(data.aiModel !== undefined
+          ? { aiModel: data.aiModel || null }
+          : {}),
         user_id: data.user?.id || null,
         thread_id: data.threadId,
         api_session_id: data.apiSessionId,

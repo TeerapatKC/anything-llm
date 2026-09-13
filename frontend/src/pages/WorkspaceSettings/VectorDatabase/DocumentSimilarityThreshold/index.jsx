@@ -12,6 +12,12 @@ export default function DocumentSimilarityThreshold({
   setHasChanges,
 }) {
   const { t } = useTranslation();
+  const options = [
+    { value: "0", label: t("vector-workspace.doc.zero") },
+    { value: "0.25", label: t("vector-workspace.doc.low") },
+    { value: "0.5", label: t("vector-workspace.doc.medium") },
+    { value: "0.75", label: t("vector-workspace.doc.high") },
+  ];
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-y-[8px]">
@@ -31,15 +37,18 @@ export default function DocumentSimilarityThreshold({
         required={true}
       >
         <SelectTrigger className="mt-2">
-          <SelectValue />
+          <SelectValue>
+            {(value) =>
+              options.find((option) => option.value === value)?.label ?? value
+            }
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="0">{t("vector-workspace.doc.zero")}</SelectItem>
-          <SelectItem value="0.25">{t("vector-workspace.doc.low")}</SelectItem>
-          <SelectItem value="0.5">
-            {t("vector-workspace.doc.medium")}
-          </SelectItem>
-          <SelectItem value="0.75">{t("vector-workspace.doc.high")}</SelectItem>
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
     </div>
