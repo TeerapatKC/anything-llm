@@ -46,6 +46,11 @@ LANGUAGE = os.getenv("STT_LANGUAGE", "th") or None
 # Whisper's encoder takes 30 seconds at a time; longer audio is windowed.
 CHUNK_LENGTH_S = int(os.getenv("STT_CHUNK_LENGTH_S", "30"))
 BATCH_SIZE = int(os.getenv("STT_BATCH_SIZE", "8"))
+# A load that fails for lack of GPU memory is usually temporary: after a restart every
+# model server on the shared GPU loads at once. Rather than stay broken until someone
+# restarts the container, wait this long and exit - Docker's restart policy then starts
+# a fresh process with a clean CUDA state. 0 turns it off.
+OOM_RESTART_SECONDS = int(os.getenv("STT_OOM_RESTART_SECONDS", "60"))
 
 
 @contextlib.asynccontextmanager
@@ -61,6 +66,11 @@ app = FastAPI(title="Speech-to-text", lifespan=lifespan)
 
 def log(message):
     print(f"[stt] {message}", flush=True)
+
+
+def is_out_of_memory(error):
+    text = str(error).lower()
+    return "out of memory" in text or "cuda_error_out_of_memory" in text
 
 
 def load_pipeline():
@@ -98,6 +108,13 @@ def load_pipeline():
         STATE["status"] = "error"
         STATE["error"] = str(e)
         log(f"Failed to load {MODEL_ID}: {e}")
+        if OOM_RESTART_SECONDS > 0 and is_out_of_memory(e):
+            log(
+                f"Out of GPU memory - exiting in {OOM_RESTART_SECONDS}s so the "
+                "container restarts and tries again."
+            )
+            time.sleep(OOM_RESTART_SECONDS)
+            os._exit(1)
 
 
 def require_key(authorization):

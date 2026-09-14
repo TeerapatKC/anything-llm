@@ -83,6 +83,8 @@ services:
       # and transcribed into nonsense. Set it empty to auto-detect instead.
       STT_LANGUAGE: ${STT_LANGUAGE-th}
       STT_API_KEY: ${STT_API_KEY:-}
+      # See TTS_OOM_RESTART_SECONDS below: retry an out-of-memory load by restarting.
+      STT_OOM_RESTART_SECONDS: ${STT_OOM_RESTART_SECONDS:-60}
       HF_TOKEN: ${HF_TOKEN:-}
       # Set to 1 for an air-gapped host. The hub libraries then read the cache
       # and never open a connection, which turns a silent 30-second DNS timeout
@@ -136,6 +138,10 @@ services:
       # build kernels with. This one has none, so it runs uncompiled rather than
       # failing to load. true forces compilation, false turns it off.
       TTS_OPTIMIZE: ${TTS_OPTIMIZE:-auto}
+      # When the model fails to load for lack of GPU memory - every model server on
+      # a shared GPU loads at once after a restart - wait this many seconds and exit,
+      # so restart: unless-stopped tries again in a fresh process. 0 turns it off.
+      TTS_OOM_RESTART_SECONDS: ${TTS_OOM_RESTART_SECONDS:-60}
       TTS_CFG_VALUE: ${TTS_CFG_VALUE:-2.0}
       TTS_INFERENCE_TIMESTEPS: ${TTS_INFERENCE_TIMESTEPS:-10}
       TTS_NORMALIZE_TEXT: ${TTS_NORMALIZE_TEXT:-true}

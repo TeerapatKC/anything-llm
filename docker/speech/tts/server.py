@@ -76,6 +76,12 @@ OPTIMIZE = os.getenv("TTS_OPTIMIZE", "auto").strip().lower()
 # Long inputs are slow and drift; Nexus AI reads whole chat messages aloud, so
 # this is a real limit rather than a theoretical one.
 MAX_INPUT_CHARS = int(os.getenv("TTS_MAX_INPUT_CHARS", "2000"))
+# A load that fails for lack of GPU memory is usually temporary: after a restart every
+# model server on the shared GPU loads at once. Rather than stay broken until someone
+# restarts the container, wait this long and exit - Docker's restart policy then starts
+# a fresh process with a clean CUDA state, which retrying in this one cannot promise.
+# 0 turns it off.
+OOM_RESTART_SECONDS = int(os.getenv("TTS_OOM_RESTART_SECONDS", "60"))
 
 
 @contextlib.asynccontextmanager
@@ -102,6 +108,11 @@ def should_optimize(device):
     if OPTIMIZE in {"0", "false", "no", "off"}:
         return False
     return bool(os.getenv("CC") or shutil.which("cc") or shutil.which("gcc"))
+
+
+def is_out_of_memory(error):
+    text = str(error).lower()
+    return "out of memory" in text or "cuda_error_out_of_memory" in text
 
 
 def list_voices():
@@ -207,6 +218,13 @@ def load_pipeline():
         STATE["status"] = "error"
         STATE["error"] = str(e)
         log(f"Failed to load the model: {e}")
+        if OOM_RESTART_SECONDS > 0 and is_out_of_memory(e):
+            log(
+                f"Out of GPU memory - exiting in {OOM_RESTART_SECONDS}s so the "
+                "container restarts and tries again."
+            )
+            time.sleep(OOM_RESTART_SECONDS)
+            os._exit(1)
 
 
 def require_key(authorization):
