@@ -98,6 +98,12 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: nexusai-cadvisor
+    # See docker-compose.yml: only what the dashboard reads, at the scrape interval.
+    command:
+      - -housekeeping_interval=15s
+      - -docker_only=true
+      - -store_container_labels=false
+      - -disable_metrics=advtcp,app,cpuLoad,cpu_topology,cpuset,hugetlb,memory_numa,percpu,pressure,process,referenced_memory,resctrl,sched,tcp,udp
     privileged: true
     devices:
       - /dev/kmsg

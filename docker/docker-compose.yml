@@ -64,6 +64,17 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: nexusai-cadvisor
+    # By default cAdvisor re-reads every cgroup on the host once a second and
+    # exports per-CPU, process and socket detail - on a DGX that held a full core
+    # (~110% CPU) to feed a Prometheus that only scrapes every 15s. The dashboard
+    # (monitoring/grafana/dashboards/docker-overview.json) reads cpu, memory,
+    # network and disk I/O for the app's containers, by name, and nothing else, so
+    # that is all that is collected, at the scrape interval.
+    command:
+      - -housekeeping_interval=15s
+      - -docker_only=true
+      - -store_container_labels=false
+      - -disable_metrics=advtcp,app,cpuLoad,cpu_topology,cpuset,hugetlb,memory_numa,percpu,pressure,process,referenced_memory,resctrl,sched,tcp,udp
     privileged: true
     devices:
       - /dev/kmsg
