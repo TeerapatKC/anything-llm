@@ -230,7 +230,7 @@ export default forwardRef(function (
           )}
         </div>
         {!isAtBottom && (
-          <div className="absolute bottom-40 right-10 z-50 cursor-pointer animate-pulse">
+          <div className="absolute bottom-48 md:bottom-40 right-10 z-50 cursor-pointer animate-pulse">
             <div className="flex flex-col items-center">
               <div
                 className="p-1 rounded-full border border-theme-sidebar-border bg-white/10 hover:bg-white/20 hover:text-white"

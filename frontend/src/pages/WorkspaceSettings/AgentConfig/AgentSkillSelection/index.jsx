@@ -780,18 +780,6 @@ export default function AgentSkillSelection({
           />
         </div>
 
-        {focusedSkill.image ? (
-          <img
-            src={focusedSkill.image}
-            alt={focusedSkill.title}
-            className="w-full rounded-xl border border-theme-sidebar-border"
-          />
-        ) : (
-          <div className="flex h-48 w-full items-center justify-center rounded-xl border border-theme-sidebar-border bg-sidebar-accent/30 text-theme-text-secondary">
-            {FocusIcon && <FocusIcon size={48} />}
-          </div>
-        )}
-
         <p className="text-sm leading-6 text-theme-text-secondary">
           {focusedSkill.description}
         </p>
@@ -1723,16 +1711,6 @@ function SkillGroup({
 }
 
 function SkillVisual({ skill, fallbackIcon: FallbackIcon }) {
-  if (skill.image) {
-    return (
-      <img
-        src={skill.image}
-        alt=""
-        className="size-14 shrink-0 rounded-lg border border-theme-sidebar-border object-cover"
-      />
-    );
-  }
-
   const SkillIcon = skill.Icon ?? skill.icon ?? FallbackIcon;
   return (
     <span className="flex size-14 shrink-0 items-center justify-center rounded-lg border border-theme-sidebar-border bg-sidebar-accent/50 text-theme-text-secondary">

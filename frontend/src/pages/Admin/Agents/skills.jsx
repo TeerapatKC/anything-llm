@@ -19,17 +19,6 @@ import {
   ListFilter,
   Mail,
 } from "lucide-react";
-import RAGImage from "@/media/agents/rag-memory.png";
-import SummarizeImage from "@/media/agents/view-summarize.png";
-import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";
-import GenerateChartsImage from "@/media/agents/generate-charts.png";
-import GenerateImageImage from "@/media/agents/generate-image.png";
-import GenerateSaveImages from "@/media/agents/generate-save-files.png";
-import FileSystemImage from "@/media/agents/file-system.png";
-import ScheduledJobsImage from "@/media/agents/scheduled-jobs.png";
-// Same asset AgentWebSearchSelection uses for its own header.
-import WebSearchImage from "@/media/agents/scrape-websites.png";
-import SQLAgentImage from "@/media/agents/sql-agent.png";
 
 export const getDefaultSkills = (t) => ({
   "rag-memory": {
@@ -37,7 +26,6 @@ export const getDefaultSkills = (t) => ({
     description: t("agent.skill.rag.description"),
     component: DefaultSkillPanel,
     icon: Brain,
-    image: RAGImage,
     skill: "rag-memory",
   },
   "document-summarizer": {
@@ -45,7 +33,6 @@ export const getDefaultSkills = (t) => ({
     description: t("agent.skill.view.description"),
     component: DefaultSkillPanel,
     icon: File,
-    image: SummarizeImage,
     skill: "document-summarizer",
   },
   "web-scraping": {
@@ -53,7 +40,6 @@ export const getDefaultSkills = (t) => ({
     description: t("agent.skill.scrape.description"),
     component: DefaultSkillPanel,
     icon: AppWindow,
-    image: ScrapeWebsitesImage,
     skill: "web-scraping",
   },
 });
@@ -83,7 +69,6 @@ export const getConfigurableSkills = (
       component: FileSystemSkillPanel,
       skill: "filesystem-agent",
       icon: FolderOpen,
-      image: FileSystemImage,
     },
   }),
   ...(createFilesAgentAvailable && {
@@ -93,7 +78,6 @@ export const getConfigurableSkills = (
       component: CreateFileSkillPanel,
       skill: "create-files-agent",
       icon: FilePlus,
-      image: GenerateSaveImages,
     },
   }),
   "create-chart": {
@@ -102,7 +86,6 @@ export const getConfigurableSkills = (
     component: GenericSkillPanel,
     skill: "create-chart",
     icon: ChartColumn,
-    image: GenerateChartsImage,
   },
   "generate-image": {
     title: t("agent.skill.generateImage.title"),
@@ -110,7 +93,6 @@ export const getConfigurableSkills = (
     component: GenericSkillPanel,
     skill: "generate-image",
     icon: ImageIcon,
-    image: GenerateImageImage,
     disabled: !imageGenerationAvailable,
     disabledHint: !imageGenerationAvailable
       ? t("agent.skill.generateImage.unavailable")
@@ -121,20 +103,14 @@ export const getConfigurableSkills = (
     description: t("agent.skill.web.description"),
     component: AgentWebSearchSelection,
     skill: "web-browsing",
-    // Mirrors what AgentWebSearchSelection renders internally. Declared here too
-    // so every surface that reads this catalog — the workspace-level skill
-    // picker included — can show the same icon and artwork.
     icon: ListFilter,
-    image: WebSearchImage,
   },
   "sql-agent": {
     title: t("agent.skill.sql.title"),
     description: t("agent.skill.sql.description"),
     component: AgentSQLConnectorSelection,
     skill: "sql-agent",
-    // Same as above, mirroring AgentSQLConnectorSelection.
     icon: Database,
-    image: SQLAgentImage,
   },
   "create-scheduled-job": {
     title: t("agent.skill.scheduledJob.title"),
@@ -142,7 +118,6 @@ export const getConfigurableSkills = (
     component: GenericSkillPanel,
     skill: "create-scheduled-job",
     icon: CalendarCheck,
-    image: ScheduledJobsImage,
     mode: ["adminOnly"],
   },
   "send-email": {

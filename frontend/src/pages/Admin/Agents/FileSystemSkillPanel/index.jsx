@@ -108,7 +108,6 @@ export default function FileSystemSkillPanel({
   toggleSkill,
   enabled = false,
   disabled = false,
-  image,
   icon,
   setHasChanges,
   hasChanges = false,
@@ -179,7 +178,6 @@ export default function FileSystemSkillPanel({
           />
         </div>
 
-        <img src={image} alt={title} className="w-full rounded-md" />
         <WarningBanner />
         <div className="flex flex-col gap-y-1">
           <p className="text-theme-text-secondary/60 text-xs font-medium">

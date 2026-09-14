@@ -25,7 +25,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import SearchProviderItem from "./SearchProviderItem";
-import WebSearchImage from "@/media/agents/scrape-websites.png";
 import {
   SerpApiOptions,
   SearchApiOptions,
@@ -226,11 +225,6 @@ export default function AgentWebSearchSelection({
             onChange={() => toggleSkill(skill)}
           />
         </div>
-        <img
-          src={WebSearchImage}
-          alt="Web Search"
-          className="w-full rounded-md"
-        />
         <p className="text-theme-text-secondary/60 text-xs font-medium py-1.5">
           {description}
         </p>

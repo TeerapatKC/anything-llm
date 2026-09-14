@@ -6,7 +6,6 @@ import Toggle from "@/components/lib/Toggle";
 export default function DefaultSkillPanel({
   title,
   description,
-  image,
   icon,
   enabled = true,
   toggleSkill,
@@ -37,7 +36,6 @@ export default function DefaultSkillPanel({
             onChange={() => toggleSkill(skill)}
           />
         </div>
-        <img src={image} alt={title} className="w-full rounded-md" />
         <p className="text-theme-text-secondary/60 text-xs font-medium py-1.5">
           {description}
           <br />

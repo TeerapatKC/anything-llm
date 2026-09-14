@@ -1403,7 +1403,7 @@ onboarding flow since its background is dark and is the same fill as the inputs.
 
 .markdown strong {
   font-weight: 600;
-  color: #fff;
+  color: var(--theme-text-primary);
 }
 
 .file-row {

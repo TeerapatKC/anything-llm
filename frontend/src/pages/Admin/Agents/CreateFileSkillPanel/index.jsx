@@ -46,7 +46,6 @@ export default function CreateFileSkillPanel({
   toggleSkill,
   enabled = false,
   disabled = false,
-  image,
   icon,
   setHasChanges,
   hasChanges = false,
@@ -112,7 +111,6 @@ export default function CreateFileSkillPanel({
           />
         </div>
 
-        <img src={image} alt={title} className="w-full rounded-md" />
         <p className="text-theme-text-secondary/60 text-xs font-medium">
           {t("agent.skill.createFiles.description")}
         </p>
