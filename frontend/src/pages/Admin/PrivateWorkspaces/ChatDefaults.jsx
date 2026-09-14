@@ -16,7 +16,12 @@ import { collectFields } from "./index";
  * profile rather than one workspace, and the prompt has no revision history to offer
  * since no conversation has happened in a template.
  */
-export default function ChatDefaults({ workspace, settings, onSave }) {
+export default function ChatDefaults({
+  workspace,
+  settings,
+  onSave,
+  saveBarProps,
+}) {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resetKey, setResetKey] = useState(0);
@@ -69,6 +74,7 @@ export default function ChatDefaults({ workspace, settings, onSave }) {
         />
       </form>
       <ContextualSaveBar
+        {...saveBarProps}
         showing={hasChanges}
         saving={saving}
         onSave={() => formEl.current?.requestSubmit()}

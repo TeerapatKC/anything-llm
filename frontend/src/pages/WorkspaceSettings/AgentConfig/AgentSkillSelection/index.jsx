@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import Workspace from "@/models/workspace";
@@ -180,6 +180,7 @@ export default function AgentSkillSelection({
   onNavigationChange,
   onItemStatusChange,
   dataSource = null,
+  saveBarProps,
 }) {
   const { t } = useTranslation();
   // Where this screen reads and writes its selection. The default is the workspace in
@@ -202,6 +203,8 @@ export default function AgentSkillSelection({
   const [hasChanges, setHasChanges] = useState(false);
   const [configured, setConfigured] = useState(false);
   const [config, setConfig] = useState(null);
+  const savedConfig = useRef(null);
+  const saveBarActions = useRef(null);
   const [catalog, setCatalog] = useState(null);
   const [instanceSearchProvider, setInstanceSearchProvider] = useState(null);
   // What "inherit" currently resolves to for each runtime knob.
@@ -282,6 +285,7 @@ export default function AgentSkillSelection({
           : false;
       setConfigured(skills?.configured ?? false);
       setConfig(skills?.config ?? null);
+      savedConfig.current = structuredClone(skills?.config ?? null);
       setCatalog(skills?.catalog ?? null);
       setInstanceSearchProvider(skills?.instanceSearchProvider ?? null);
       setInstanceRuntime(skills?.instanceRuntime ?? null);
@@ -656,6 +660,7 @@ export default function AgentSkillSelection({
     if (result?.workspace || result?.success) {
       showToast(io.savedMessage, "success", { clear: true });
       setConfigured(true);
+      savedConfig.current = structuredClone(config);
       setHasChanges(false);
     } else {
       showToast(`Error: ${result?.message ?? result?.error}`, "error", {
@@ -671,6 +676,7 @@ export default function AgentSkillSelection({
     if (result?.workspace || result?.success) {
       const skills = await io.load();
       setConfig(skills?.config ?? null);
+      savedConfig.current = structuredClone(skills?.config ?? null);
       setConfigured(false);
       setHasChanges(false);
       showToast(io.revertedMessage, "success", { clear: true });
@@ -681,6 +687,28 @@ export default function AgentSkillSelection({
     }
     setSaving(false);
   }
+
+  function cancelPendingChanges() {
+    setConfig(structuredClone(savedConfig.current));
+    setHasChanges(false);
+    setRefreshKey((key) => key + 1);
+  }
+
+  useEffect(() => {
+    saveBarActions.current = {
+      onSave: handleSave,
+      onCancel: cancelPendingChanges,
+    };
+  });
+
+  useEffect(() => {
+    if (!saveBarProps?.register) return;
+    return saveBarProps.register(saveBarProps.id, {
+      showing: hasChanges,
+      saving,
+      actions: saveBarActions,
+    });
+  }, [saveBarProps?.id, saveBarProps?.register, hasChanges, saving]);
 
   if (loading) return <LoadingSkeleton />;
   if (!config)
@@ -826,6 +854,7 @@ export default function AgentSkillSelection({
 
         <SkillSaveActions
           hasChanges={hasChanges}
+          hideSave={Boolean(saveBarProps?.register)}
           configured={configured}
           saving={saving}
           onSave={handleSave}
@@ -845,6 +874,7 @@ export default function AgentSkillSelection({
         />
         <SkillSaveActions
           hasChanges={hasChanges}
+          hideSave={Boolean(saveBarProps?.register)}
           configured={configured}
           saving={saving}
           onSave={handleSave}
@@ -1386,6 +1416,7 @@ export default function AgentSkillSelection({
           </div>
           <SkillSaveActions
             hasChanges={hasChanges}
+            hideSave={Boolean(saveBarProps?.register)}
             configured={configured}
             saving={saving}
             onSave={handleSave}
@@ -1541,7 +1572,7 @@ export default function AgentSkillSelection({
       />
 
       <div className="flex items-center gap-x-2">
-        {hasChanges && (
+        {hasChanges && !saveBarProps?.register && (
           <Button variant="default" type="button" onClick={handleSave}>
             {saving ? "Saving..." : "Save agent skills"}
           </Button>
@@ -1600,10 +1631,17 @@ export function ChatModeWarning({ workspace }) {
   );
 }
 
-function SkillSaveActions({ hasChanges, configured, saving, onSave, onReset }) {
+function SkillSaveActions({
+  hasChanges,
+  configured,
+  saving,
+  onSave,
+  onReset,
+  hideSave = false,
+}) {
   return (
     <div className="flex items-center gap-x-2 border-t border-theme-sidebar-border pt-4">
-      {hasChanges && (
+      {hasChanges && !hideSave && (
         <Button type="button" onClick={onSave}>
           {saving ? "Saving..." : "Save agent skills"}
         </Button>

@@ -11,7 +11,13 @@ import Admin from "@/models/admin";
  * connection. Both belong to a real workspace, and both are already reachable from the
  * instance-wide agent pages.
  */
-export default function AgentDefaults({ workspace, settings, onSave }) {
+export default function AgentDefaults({
+  workspace,
+  settings,
+  onSave,
+  saveBarProps,
+  skillSaveBarProps,
+}) {
   if (!workspace) return null;
 
   return (
@@ -20,6 +26,8 @@ export default function AgentDefaults({ workspace, settings, onSave }) {
       settings={settings}
       permissions={{ manageSkills: true, setModel: true }}
       contextualSaveBar
+      saveBarProps={saveBarProps}
+      skillSaveBarProps={skillSaveBarProps}
       copy={{
         title: "Agent configuration",
         description:

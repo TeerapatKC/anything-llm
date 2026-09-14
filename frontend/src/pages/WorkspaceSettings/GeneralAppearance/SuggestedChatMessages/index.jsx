@@ -1,29 +1,34 @@
 import PreLoader from "@/components/Preloader";
 import Workspace from "@/models/workspace";
 import showToast from "@/utils/toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Label } from "@/components/ui/label";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
 
-export default function SuggestedChatMessages({ slug }) {
+export default function SuggestedChatMessages({ slug, saveBarProps }) {
   const [suggestedMessages, setSuggestedMessages] = useState([]);
   const [editingIndex, setEditingIndex] = useState(-1);
   const [newMessage, setNewMessage] = useState({ heading: "", message: "" });
   const [hasChanges, setHasChanges] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const savedMessages = useRef([]);
   const { t } = useTranslation();
   useEffect(() => {
     async function fetchWorkspace() {
       if (!slug) return;
       const suggestedMessages = await Workspace.getSuggestedMessages(slug);
       setSuggestedMessages(suggestedMessages);
+      savedMessages.current = structuredClone(suggestedMessages);
       setLoading(false);
     }
     fetchWorkspace();
   }, [slug]);
 
   const handleSaveSuggestedMessages = async () => {
+    setSaving(true);
     const validMessages = suggestedMessages.filter(
       (msg) => msg?.message?.trim()?.length > 0
     );
@@ -33,10 +38,20 @@ export default function SuggestedChatMessages({ slug }) {
     );
     if (!success) {
       showToast(`Failed to update suggested chat messages: ${error}`, "error");
+      setSaving(false);
       return;
     }
+    savedMessages.current = structuredClone(validMessages);
     setSuggestedMessages(validMessages);
     setEditingIndex(-1);
+    setHasChanges(false);
+    setSaving(false);
+  };
+
+  const handleCancel = () => {
+    setSuggestedMessages(structuredClone(savedMessages.current));
+    setEditingIndex(-1);
+    setNewMessage({ heading: "", message: "" });
     setHasChanges(false);
   };
 
@@ -182,7 +197,7 @@ export default function SuggestedChatMessages({ slug }) {
         </button>
       )}
 
-      {hasChanges && (
+      {hasChanges && !saveBarProps?.register && (
         <div className="flex justify-start">
           <button
             type="button"
@@ -193,6 +208,13 @@ export default function SuggestedChatMessages({ slug }) {
           </button>
         </div>
       )}
+      <ContextualSaveBar
+        {...saveBarProps}
+        showing={hasChanges}
+        saving={saving}
+        onSave={handleSaveSuggestedMessages}
+        onCancel={handleCancel}
+      />
     </div>
   );
 }

@@ -47,6 +47,9 @@ export default function WorkspaceAgentConfiguration({
   permissions = null,
   copy = null,
   contextualSaveBar = false,
+  saveBarProps,
+  skillSaveBarProps,
+  onWorkspaceSaved,
 }) {
   const { user } = useUser();
   const isMobile = useIsMobile();
@@ -140,8 +143,11 @@ export default function WorkspaceAgentConfiguration({
       );
       if (!!updatedWorkspace) {
         showToast("Workspace updated!", "success", { clear: true });
+        onWorkspaceSaved?.(updatedWorkspace);
       } else {
         showToast(`Error: ${message}`, "error", { clear: true });
+        setSaving(false);
+        return;
       }
     }
 
@@ -246,14 +252,16 @@ export default function WorkspaceAgentConfiguration({
         >
           {isMobile && (
             <div className="flex w-fit">
-              <button
+              <Button
                 type="button"
+                size="lg"
+                variant="outline"
                 onClick={() => setSelectedSection(null)}
-                className="flex items-center gap-x-1 rounded-lg border border-theme-sidebar-border bg-card px-3 py-2 text-sm font-medium text-cta-button transition-colors hover:bg-theme-action-menu-bg"
+                className="w-fit"
               >
                 <ChevronLeft size={20} />
                 Back
-              </button>
+              </Button>
             </div>
           )}
           <section className="thin-scrollbar min-h-[360px] min-w-0 flex-1 overflow-y-auto rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10 min-[1100px]:p-5">
@@ -312,6 +320,7 @@ export default function WorkspaceAgentConfiguration({
                   focusSkillId={selectedSection}
                   onNavigationChange={handleSkillNavigation}
                   onItemStatusChange={handleSkillStatusChange}
+                  saveBarProps={skillSaveBarProps}
                 />
               </div>
             )}
@@ -335,6 +344,7 @@ export default function WorkspaceAgentConfiguration({
       </div>
       {contextualSaveBar && (
         <ContextualSaveBar
+          {...saveBarProps}
           showing={hasChanges}
           saving={saving}
           onSave={() => formEl.current?.requestSubmit()}

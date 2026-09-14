@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
 import Admin from "@/models/admin";
@@ -15,12 +15,20 @@ import ChatDefaults from "./ChatDefaults";
 import VectorDefaults from "./VectorDefaults";
 import AgentDefaults from "./AgentDefaults";
 import ReconcileDialog from "./ReconcileDialog";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
 
 const TABS = {
   PROVISIONING: "provisioning",
   CHAT: "chat",
   VECTOR: "vector",
   AGENT: "agent",
+};
+const TAB_LABELS = {
+  [TABS.PROVISIONING]: "Provisioning",
+  [TABS.CHAT]: "Chat settings",
+  [TABS.VECTOR]: "Vector database",
+  [TABS.AGENT]: "Agent configuration",
+  "agent-skills": "Agent skills",
 };
 
 /**
@@ -47,6 +55,30 @@ export default function PrivateWorkspaces() {
   const [review, setReview] = useState(null);
   const [toggling, setToggling] = useState(false);
   const [activeTab, setActiveTab] = useState(TABS.PROVISIONING);
+  const [visitedTabs, setVisitedTabs] = useState([TABS.PROVISIONING]);
+  const [saveBars, setSaveBars] = useState({});
+  const saveBarActions = useRef({});
+
+  const registerSaveBar = useCallback((id, { showing, saving, actions }) => {
+    saveBarActions.current[id] = actions;
+    setSaveBars((current) => ({ ...current, [id]: { showing, saving } }));
+    return () => {
+      if (saveBarActions.current[id] === actions)
+        delete saveBarActions.current[id];
+      setSaveBars((current) => {
+        const next = { ...current };
+        delete next[id];
+        return next;
+      });
+    };
+  }, []);
+
+  function selectTab(tab) {
+    setVisitedTabs((current) =>
+      current.includes(tab) ? current : [...current, tab]
+    );
+    setActiveTab(tab);
+  }
 
   async function refresh() {
     const [{ profile, stats }, keys, { roles }] = await Promise.all([
@@ -113,6 +145,12 @@ export default function PrivateWorkspaces() {
   if (loading) return <FullScreenLoader />;
 
   const enabled = Boolean(profile?.enabled);
+  const dirtyTab = [
+    activeTab,
+    ...(activeTab === TABS.AGENT ? ["agent-skills"] : []),
+    ...Object.values(TABS),
+    "agent-skills",
+  ].find((tab) => saveBars[tab]?.showing);
 
   return (
     <SettingsLayout>
@@ -140,11 +178,7 @@ export default function PrivateWorkspaces() {
         </div>
 
         {enabled ? (
-          <Tabs
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="min-h-0"
-          >
+          <Tabs value={activeTab} onValueChange={selectTab} className="min-h-0">
             <TabsList>
               <TabsTrigger value={TABS.PROVISIONING}>Provisioning</TabsTrigger>
               <TabsTrigger value={TABS.CHAT}>Chat settings</TabsTrigger>
@@ -152,33 +186,54 @@ export default function PrivateWorkspaces() {
               <TabsTrigger value={TABS.AGENT}>Agent configuration</TabsTrigger>
             </TabsList>
 
-            <TabsContent value={TABS.PROVISIONING} className="pb-24 pt-6">
+            <TabsContent
+              value={TABS.PROVISIONING}
+              keepMounted
+              className="pb-24 pt-6"
+            >
               <Provisioning
                 profile={profile}
                 stats={stats}
                 workspaceRoles={workspaceRoles}
                 onSave={save}
+                saveBarProps={{
+                  id: TABS.PROVISIONING,
+                  register: registerSaveBar,
+                }}
               />
             </TabsContent>
-            <TabsContent value={TABS.CHAT} className="pb-24 pt-6">
-              <ChatDefaults
-                workspace={asWorkspace}
-                settings={systemSettings}
-                onSave={(fields) => save({ workspace: fields })}
-              />
+            <TabsContent value={TABS.CHAT} keepMounted className="pb-24 pt-6">
+              {visitedTabs.includes(TABS.CHAT) && (
+                <ChatDefaults
+                  workspace={asWorkspace}
+                  settings={systemSettings}
+                  onSave={(fields) => save({ workspace: fields })}
+                  saveBarProps={{ id: TABS.CHAT, register: registerSaveBar }}
+                />
+              )}
             </TabsContent>
-            <TabsContent value={TABS.VECTOR} className="pb-24 pt-6">
-              <VectorDefaults
-                workspace={asWorkspace}
-                onSave={(fields) => save({ workspace: fields })}
-              />
+            <TabsContent value={TABS.VECTOR} keepMounted className="pb-24 pt-6">
+              {visitedTabs.includes(TABS.VECTOR) && (
+                <VectorDefaults
+                  workspace={asWorkspace}
+                  onSave={(fields) => save({ workspace: fields })}
+                  saveBarProps={{ id: TABS.VECTOR, register: registerSaveBar }}
+                />
+              )}
             </TabsContent>
-            <TabsContent value={TABS.AGENT} className="pb-24 pt-6">
-              <AgentDefaults
-                workspace={asWorkspace}
-                settings={systemSettings}
-                onSave={(fields) => save({ workspace: fields })}
-              />
+            <TabsContent value={TABS.AGENT} keepMounted className="pb-24 pt-6">
+              {visitedTabs.includes(TABS.AGENT) && (
+                <AgentDefaults
+                  workspace={asWorkspace}
+                  settings={systemSettings}
+                  onSave={(fields) => save({ workspace: fields })}
+                  saveBarProps={{ id: TABS.AGENT, register: registerSaveBar }}
+                  skillSaveBarProps={{
+                    id: "agent-skills",
+                    register: registerSaveBar,
+                  }}
+                />
+              )}
             </TabsContent>
           </Tabs>
         ) : (
@@ -188,6 +243,14 @@ export default function PrivateWorkspaces() {
           </p>
         )}
       </div>
+
+      <ContextualSaveBar
+        showing={Boolean(dirtyTab)}
+        saving={saveBars[dirtyTab]?.saving}
+        description={TAB_LABELS[dirtyTab]}
+        onSave={() => saveBarActions.current[dirtyTab]?.current?.onSave?.()}
+        onCancel={() => saveBarActions.current[dirtyTab]?.current?.onCancel?.()}
+      />
 
       {review && (
         <ReconcileDialog

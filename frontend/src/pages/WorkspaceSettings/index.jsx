@@ -16,6 +16,8 @@ import WorkspaceDocuments from "./Documents";
 import WorkspaceSlashCommands from "./SlashCommands";
 import WorkspaceScheduledJobs from "./ScheduledJobs";
 import System from "@/models/system";
+import ContextualSaveBar from "@/components/ContextualSaveBar";
+import useContextualSaveBars from "@/hooks/useContextualSaveBars";
 
 const TABS = {
   "general-appearance": GeneralAppearance,
@@ -27,6 +29,20 @@ const TABS = {
   documents: WorkspaceDocuments,
   "slash-commands": WorkspaceSlashCommands,
   "scheduled-jobs": WorkspaceScheduledJobs,
+};
+const FORM_TABS = [
+  "general-appearance",
+  "chat-settings",
+  "vector-database",
+  "agent-config",
+];
+const SAVE_BAR_LABELS = {
+  "general-appearance:name": "Workspace name",
+  "general-appearance:messages": "Suggested chat messages",
+  "chat-settings:form": "Chat settings",
+  "vector-database:form": "Vector database",
+  "agent-config:model": "Agent model",
+  "agent-config:skills": "Agent skills",
 };
 
 export default function WorkspaceSettings() {
@@ -84,6 +100,72 @@ function ShowWorkspaceChat() {
   if (!TabContent) return <Navigate to={paths.workspace.chat(slug)} replace />;
 
   return (
+    <WorkspaceSettingsContent
+      key={slug}
+      slug={slug}
+      tab={tab}
+      workspace={workspace}
+      deletionProtected={deletionProtected}
+      TabContent={TabContent}
+      onWorkspaceSaved={(updated) =>
+        setWorkspace((current) => ({ ...current, ...updated }))
+      }
+    />
+  );
+}
+
+function WorkspaceSettingsContent({
+  slug,
+  tab,
+  workspace,
+  deletionProtected,
+  TabContent,
+  onWorkspaceSaved,
+}) {
+  const [visitedTabs, setVisitedTabs] = useState([tab]);
+  const { saveBars, saveBarActions, registerSaveBar } = useContextualSaveBars();
+
+  useEffect(() => {
+    if (!FORM_TABS.includes(tab)) return;
+    setVisitedTabs((current) =>
+      current.includes(tab) ? current : [...current, tab]
+    );
+  }, [tab]);
+
+  const dirtyId = Object.keys(saveBars).find(
+    (id) => id.startsWith(`${tab}:`) && saveBars[id]?.showing
+  );
+
+  function saveBarProps(id) {
+    return { id, register: registerSaveBar };
+  }
+
+  function renderFormTab(section) {
+    const Component = TABS[section];
+    const common = { slug, workspace, deletionProtected, onWorkspaceSaved };
+    if (section === "general-appearance")
+      return (
+        <Component
+          {...common}
+          saveBarProps={saveBarProps("general-appearance:name")}
+          suggestedSaveBarProps={saveBarProps("general-appearance:messages")}
+        />
+      );
+    if (section === "agent-config")
+      return (
+        <Component
+          {...common}
+          contextualSaveBar
+          saveBarProps={saveBarProps("agent-config:model")}
+          skillSaveBarProps={saveBarProps("agent-config:skills")}
+        />
+      );
+    return (
+      <Component {...common} saveBarProps={saveBarProps(`${section}:form`)} />
+    );
+  }
+
+  return (
     <SidebarPageLayout>
       <WorkspaceSettingsSidebar workspace={workspace} />
       <div
@@ -91,13 +173,29 @@ function ShowWorkspaceChat() {
         className="thin-scrollbar transition-all duration-500 relative min-w-0 bg-theme-bg-secondary w-full h-full overflow-y-scroll"
       >
         <div className="px-4 pb-6 pt-20 min-[1100px]:px-16 min-[1100px]:pt-6">
-          <TabContent
-            slug={slug}
-            workspace={workspace}
-            deletionProtected={deletionProtected}
-          />
+          {FORM_TABS.map((section) =>
+            visitedTabs.includes(section) || tab === section ? (
+              <div key={section} hidden={tab !== section}>
+                {renderFormTab(section)}
+              </div>
+            ) : null
+          )}
+          {!FORM_TABS.includes(tab) && (
+            <TabContent
+              slug={slug}
+              workspace={workspace}
+              deletionProtected={deletionProtected}
+            />
+          )}
         </div>
       </div>
+      <ContextualSaveBar
+        showing={Boolean(dirtyId)}
+        saving={saveBars[dirtyId]?.saving}
+        description={SAVE_BAR_LABELS[dirtyId]}
+        onSave={() => saveBarActions.current[dirtyId]?.current?.onSave?.()}
+        onCancel={() => saveBarActions.current[dirtyId]?.current?.onCancel?.()}
+      />
     </SidebarPageLayout>
   );
 }

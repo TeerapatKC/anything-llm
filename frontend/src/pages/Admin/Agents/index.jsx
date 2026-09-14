@@ -18,6 +18,7 @@ import {
   Workflow,
 } from "lucide-react";
 import ContextualSaveBar from "@/components/ContextualSaveBar";
+import { Button } from "@/components/ui/button";
 import { castToType } from "@/utils/types";
 import { FullScreenLoader } from "@/components/Preloader";
 import { getDefaultSkills, getConfigurableSkills } from "./skills.jsx";
@@ -383,18 +384,20 @@ export default function AdminAgents() {
           {showSkillModal ? (
             <>
               <div className="flex w-fit">
-                <button
+                <Button
                   type="button"
+                  size="lg"
+                  variant="outline"
                   onClick={() => {
                     setShowSkillModal(false);
                     setSelectedSkill("");
                     setSelectedFlow(null);
                   }}
-                  className="flex items-center gap-x-1 rounded-lg border border-theme-sidebar-border bg-card px-3 py-2 text-sm font-medium text-cta-button transition-colors hover:bg-theme-action-menu-bg"
+                  className="w-fit"
                 >
                   <ChevronLeft size={20} />
                   {t("agent-panel.back")}
-                </button>
+                </Button>
               </div>
 
               <div className="w-full min-w-0 overflow-x-hidden rounded-xl bg-card p-4 text-theme-text-primary ring-1 ring-foreground/10">

@@ -12,7 +12,7 @@ import { collectFields } from "./index";
  * describe a particular workspace rather than configure one: its namespace, how many
  * vectors it currently holds, and the button that empties it.
  */
-export default function VectorDefaults({ workspace, onSave }) {
+export default function VectorDefaults({ workspace, onSave, saveBarProps }) {
   const [hasChanges, setHasChanges] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resetKey, setResetKey] = useState(0);
@@ -51,6 +51,7 @@ export default function VectorDefaults({ workspace, onSave }) {
         </div>
       </form>
       <ContextualSaveBar
+        {...saveBarProps}
         showing={hasChanges}
         saving={saving}
         onSave={() => formEl.current?.requestSubmit()}

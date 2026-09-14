@@ -32,6 +32,14 @@ function profileForm(profile) {
   return value;
 }
 
+function sameProvisioningFields(a, b) {
+  return (
+    String(a?.quotaPerUser) === String(b?.quotaPerUser) &&
+    a?.nameTemplate === b?.nameTemplate &&
+    a?.ownerRoleId === b?.ownerRoleId
+  );
+}
+
 /**
  * How private workspaces are handed out: how many, called what, and with what the
  * owner may do inside their own.
@@ -47,15 +55,25 @@ export default function Provisioning({
   stats,
   workspaceRoles = [],
   onSave,
+  saveBarProps,
 }) {
   const [form, setForm] = useState(() => profileForm(profile));
   const [saving, setSaving] = useState(false);
   const formEl = useRef(null);
+  const previousProfile = useRef(profile);
   const [availableVariables, setAvailableVariables] = useState(
     NAME_TEMPLATE_FALLBACK_VARIABLES
   );
 
-  useEffect(() => setForm(profileForm(profile)), [profile]);
+  useEffect(() => {
+    const previous = profileForm(previousProfile.current);
+    setForm((current) =>
+      !current || sameProvisioningFields(current, previous)
+        ? profileForm(profile)
+        : current
+    );
+    previousProfile.current = profile;
+  }, [profile]);
   useEffect(() => {
     let cancelled = false;
 
@@ -80,10 +98,7 @@ export default function Provisioning({
   if (!form) return null;
 
   const original = profileForm(profile);
-  const hasChanges =
-    String(form.quotaPerUser) !== String(original.quotaPerUser) ||
-    form.nameTemplate !== original.nameTemplate ||
-    form.ownerRoleId !== original.ownerRoleId;
+  const hasChanges = !sameProvisioningFields(form, original);
 
   async function submit(e) {
     e.preventDefault();
@@ -184,6 +199,7 @@ export default function Provisioning({
         )}
       </form>
       <ContextualSaveBar
+        {...saveBarProps}
         showing={hasChanges}
         saving={saving}
         onSave={() => formEl.current?.requestSubmit()}
