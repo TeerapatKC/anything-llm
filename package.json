@@ -21,7 +21,7 @@
     "prisma:migrate": "cd server && npx prisma migrate dev --name init",
     "prisma:seed": "cd server && npx prisma db seed",
     "prisma:setup": "yarn prisma:generate && yarn prisma:migrate && yarn prisma:seed",
-    "prisma:reset": "truncate -s 0 server/storage/nexusai.db && yarn prisma:migrate",
+    "prisma:reset": "rm -f server/storage/nexusai.db-wal server/storage/nexusai.db-shm && truncate -s 0 server/storage/nexusai.db && yarn prisma:migrate",
     "prod:server": "cd server && yarn start",
     "prod:frontend": "cd frontend && yarn build",
     "translations:verify": "cd frontend/src/locales && node verifyTranslations.mjs",
