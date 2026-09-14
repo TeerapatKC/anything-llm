@@ -121,6 +121,7 @@ services:
     container_name: nexusai-node-exporter
     command:
       - "--path.rootfs=/host"
+    pid: host
     volumes:
       - "/:/host:ro"
     networks:

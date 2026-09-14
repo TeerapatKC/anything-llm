@@ -3,16 +3,50 @@
   "uid": "nexusai-docker-overview",
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 3,
   "refresh": "30s",
   "time": { "from": "now-6h", "to": "now" },
   "panels": [
+    {
+      "id": 24,
+      "title": "Host Metrics Collector (node-exporter)",
+      "description": "A value of 0 means Prometheus cannot scrape node-exporter. Host CPU, memory, disk, swap, load, and network panels will have no data until the collector is running and reachable.",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "up{job=\"node-exporter\"}", "legendFormat": "node-exporter", "instant": true, "range": false }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "No scrape target",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "Down", "color": "red" },
+                "1": { "text": "Up", "color": "green" }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
     {
       "id": 1,
       "title": "Host CPU Usage (%)",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
       "targets": [
         {
           "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
@@ -29,7 +63,7 @@
       "title": "Host Memory Usage (%)",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
       "targets": [
         {
           "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
@@ -46,7 +80,7 @@
       "title": "Nexus AI - CPU Usage",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
       "targets": [
         {
           "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 100",
@@ -60,7 +94,7 @@
       "title": "Nexus AI - Memory Usage",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
       "targets": [
         {
           "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"})",
@@ -74,7 +108,7 @@
       "title": "Nexus AI - Network I/O (receive)",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
       "targets": [
         {
           "expr": "sum(rate(container_network_receive_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m]))",
@@ -88,7 +122,7 @@
       "title": "Nexus AI - Network I/O (transmit)",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
       "targets": [
         {
           "expr": "sum(rate(container_network_transmit_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m]))",
@@ -102,7 +136,7 @@
       "title": "Nexus AI - Uptime",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 24 },
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 28 },
       "targets": [
         {
           "expr": "time() - container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}",
@@ -116,7 +150,7 @@
       "title": "Host Memory Available",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 30 },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 34 },
       "targets": [
         {
           "expr": "node_memory_MemAvailable_bytes",
@@ -140,14 +174,14 @@
     },
     {
       "id": 9,
-      "title": "Host Disk Free (C:)",
-      "description": "This host runs Docker Desktop on Windows via WSL2, so node-exporter sees the WSL VM's own filesystem tree rather than a plain \"/\" - there is no mountpoint that means \"host root\" here. /mnt/host/c is the actual Windows C: drive (9p passthrough), which is what running low on disk actually means on this machine.",
+      "title": "Host Disk Free",
+      "description": "Available space on the host root filesystem. On Docker Desktop with WSL2, use the Windows C: drive when a root filesystem metric is unavailable.",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 30 },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 34 },
       "targets": [
         {
-          "expr": "node_filesystem_avail_bytes{mountpoint=\"/mnt/host/c\"}",
+          "expr": "max by (instance) (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/\"}) or on(instance) max by (instance) (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/mnt/host/c\"})",
           "legendFormat": "Free"
         }
       ],
@@ -158,7 +192,7 @@
       "title": "Nexus AI - HTTP Requests In-Flight",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
       "targets": [
         {
           "expr": "nexusai_http_requests_in_flight",
@@ -172,7 +206,7 @@
       "title": "Nexus AI - Active Agent Sessions",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
       "targets": [
         {
           "expr": "nexusai_active_agent_sessions",
@@ -186,7 +220,7 @@
       "title": "Nexus AI - HTTP Request Rate by Status",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 44 },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 48 },
       "targets": [
         {
           "expr": "sum by (status_code) (rate(nexusai_http_request_duration_seconds_count[5m]))",
@@ -200,7 +234,7 @@
       "title": "Host Load Average",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 56 },
       "targets": [
         { "expr": "node_load1", "legendFormat": "1m" },
         { "expr": "node_load5", "legendFormat": "5m" },
@@ -213,7 +247,7 @@
       "title": "Host Swap Usage",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 56 },
       "targets": [
         {
           "expr": "node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes",
@@ -231,7 +265,7 @@
       "title": "Host Disk I/O",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 60 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 64 },
       "targets": [
         {
           "expr": "sum(rate(node_disk_read_bytes_total[5m]))",
@@ -249,7 +283,7 @@
       "title": "Host Network I/O (all interfaces)",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 60 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 64 },
       "targets": [
         {
           "expr": "sum(rate(node_network_receive_bytes_total{device!=\"lo\"}[5m]))",
@@ -265,13 +299,13 @@
     {
       "id": 17,
       "title": "Nexus AI - Memory % of Host Total",
-      "description": "No memory limit is set on the container (docker-compose has no mem_limit), so container_spec_memory_limit_bytes reports 0 and a %-of-limit query would divide by zero. This compares against the host's total memory instead - the ceiling that actually gets a container OOM-killed.",
+      "description": "No memory limit is set on the container. Compare cAdvisor container memory usage with its machine_memory_bytes total, so this panel remains available even when node-exporter is down.",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 68 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 72 },
       "targets": [
         {
-          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}) / sum(node_memory_MemTotal_bytes) * 100",
+          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}) / max(machine_memory_bytes{job=\"cadvisor\"}) * 100",
           "legendFormat": "Memory % of host total"
         }
       ],
@@ -286,7 +320,7 @@
       "description": "This cAdvisor build does not export container_fs_reads_bytes_total/container_fs_writes_bytes_total - only sector counts. Approximated as sectors * 512 bytes, the standard Linux block-device sector size.",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 68 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 72 },
       "targets": [
         {
           "expr": "sum(rate(container_fs_sector_reads_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
@@ -304,7 +338,7 @@
       "title": "Nexus AI - Container Restart Count",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 76 },
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 80 },
       "targets": [
         {
           "expr": "changes(container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[$__range])",
@@ -331,7 +365,7 @@
       "title": "Nexus AI - Event Loop Lag",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 82 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 86 },
       "targets": [
         {
           "expr": "nexusai_process_nodejs_eventloop_lag_seconds",
@@ -349,7 +383,7 @@
       "title": "Nexus AI - Heap Usage",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 82 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 86 },
       "targets": [
         {
           "expr": "nexusai_process_nodejs_heap_size_used_bytes",
@@ -367,7 +401,7 @@
       "title": "Nexus AI - Open File Descriptors",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 90 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 94 },
       "targets": [
         {
           "expr": "nexusai_process_process_open_fds",
@@ -381,7 +415,7 @@
       "title": "Nexus AI - Active Handles / Requests",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 90 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 94 },
       "targets": [
         {
           "expr": "nexusai_process_nodejs_active_handles_total",

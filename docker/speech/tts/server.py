@@ -29,6 +29,7 @@ intended use.
 
 import contextlib
 import os
+import shutil
 import tempfile
 import threading
 import time
@@ -67,6 +68,11 @@ LOAD_DENOISER = os.getenv("TTS_LOAD_DENOISER", "false").lower() in {
     "yes",
 }
 DEVICE = os.getenv("TTS_DEVICE", "auto")
+# torch.compile speeds synthesis up on a GPU, but Triton builds its kernels with a C
+# compiler at runtime and this image carries none - forced on, loading fails outright
+# with "Failed to find C compiler". auto compiles only when a compiler is actually
+# present; true and false force it either way.
+OPTIMIZE = os.getenv("TTS_OPTIMIZE", "auto").strip().lower()
 # Long inputs are slow and drift; Nexus AI reads whole chat messages aloud, so
 # this is a real limit rather than a theoretical one.
 MAX_INPUT_CHARS = int(os.getenv("TTS_MAX_INPUT_CHARS", "2000"))
@@ -85,6 +91,17 @@ app = FastAPI(title="Multilingual text-to-speech", lifespan=lifespan)
 
 def log(message):
     print(f"[multilingual-tts] {message}", flush=True)
+
+
+def should_optimize(device):
+    """Whether to torch.compile the model on this device - see TTS_OPTIMIZE."""
+    if not str(device).startswith("cuda"):
+        return False
+    if OPTIMIZE in {"1", "true", "yes", "on"}:
+        return True
+    if OPTIMIZE in {"0", "false", "no", "off"}:
+        return False
+    return bool(os.getenv("CC") or shutil.which("cc") or shutil.which("gcc"))
 
 
 def list_voices():
@@ -157,7 +174,12 @@ def load_pipeline():
         device = DEVICE
         if device == "auto":
             device = "cuda" if has_cuda else "cpu"
-        optimize = device.startswith("cuda")
+        optimize = should_optimize(device)
+        if device.startswith("cuda") and not optimize:
+            log(
+                "torch.compile is off (no C compiler for Triton, or TTS_OPTIMIZE "
+                "is false) - synthesis runs uncompiled."
+            )
 
         log(f"Loading {MODEL_ID}. The first run downloads the weights.")
         started = time.time()

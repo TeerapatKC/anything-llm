@@ -132,6 +132,10 @@ services:
       HF_HUB_OFFLINE: ${HF_HUB_OFFLINE:-}
       TRANSFORMERS_OFFLINE: ${HF_HUB_OFFLINE:-}
       TTS_DEVICE: ${TTS_DEVICE:-auto}
+      # auto runs torch.compile only when the image has a C compiler for Triton to
+      # build kernels with. This one has none, so it runs uncompiled rather than
+      # failing to load. true forces compilation, false turns it off.
+      TTS_OPTIMIZE: ${TTS_OPTIMIZE:-auto}
       TTS_CFG_VALUE: ${TTS_CFG_VALUE:-2.0}
       TTS_INFERENCE_TIMESTEPS: ${TTS_INFERENCE_TIMESTEPS:-10}
       TTS_NORMALIZE_TEXT: ${TTS_NORMALIZE_TEXT:-true}
