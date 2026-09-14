@@ -12,6 +12,11 @@ const {
   resolveModel,
   settingsForModel,
 } = require("../../../helpers/llmModelSettings");
+const {
+  hasImageAttachments,
+  modelSupportsVision,
+  stripImageAttachments,
+} = require("../../../helpers/modelVision");
 
 /**
  * The agent provider for the Generic OpenAI provider.
@@ -131,10 +136,28 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
   }
 
   /**
+   * A text-only model rejects the whole request when it is sent an image, and
+   * agent history replays earlier uploads and `/img` results on every turn - so
+   * one image would break every later message in the thread. Drop the images,
+   * with a note the model can relay, when this model is known not to see them.
+   * @param {Array} messages
+   * @returns {Promise<Array>}
+   */
+  async #withoutUnsupportedImages(messages) {
+    if (!hasImageAttachments(messages)) return messages;
+    if (await modelSupportsVision(this.model)) return messages;
+    this.providerLog(
+      `${this.model} cannot view images - sending the text without them.`
+    );
+    return stripImageAttachments(messages);
+  }
+
+  /**
    * Stream a chat completion with tool calling support.
    * Uses native tool calling when supported, otherwise falls back to UnTooled.
    */
   async stream(messages, functions = [], eventHandler = null) {
+    messages = await this.#withoutUnsupportedImages(messages);
     const useNative = await this.supportsNativeToolCalling();
 
     if (!useNative) {
@@ -179,6 +202,7 @@ class GenericOpenAiProvider extends InheritMultiple([Provider, UnTooled]) {
    * Uses native tool calling when supported, otherwise falls back to UnTooled.
    */
   async complete(messages, functions = []) {
+    messages = await this.#withoutUnsupportedImages(messages);
     const useNative = await this.supportsNativeToolCalling();
 
     if (!useNative) {

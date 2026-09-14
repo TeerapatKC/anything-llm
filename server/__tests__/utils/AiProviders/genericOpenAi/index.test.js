@@ -2,8 +2,110 @@ const {
   GenericOpenAiLLM,
 } = require("../../../../utils/AiProviders/genericOpenAi");
 const GenericOpenAiProvider = require("../../../../utils/agents/aibitat/providers/genericOpenAi.js");
+const modelVision = require("../../../../utils/helpers/modelVision");
+
+jest.mock("../../../../utils/helpers/modelVision", () => ({
+  ...jest.requireActual("../../../../utils/helpers/modelVision"),
+  modelSupportsVision: jest.fn(async () => true),
+}));
 
 const ORIGINAL_ENV = process.env;
+const IMAGE = {
+  name: "image.png",
+  mime: "image/png",
+  contentString: "data:image/png;base64,AAAA",
+};
+
+describe("images sent to a model that cannot view them", () => {
+  afterEach(() => modelVision.modelSupportsVision.mockReset());
+
+  function chatMessages() {
+    return [
+      { role: "system", content: "sys" },
+      {
+        role: "user",
+        content: [
+          { type: "text", text: "describe this" },
+          { type: "image_url", image_url: { url: IMAGE.contentString } },
+        ],
+      },
+    ];
+  }
+
+  it("chat completion drops images for a text-only model", async () => {
+    modelVision.modelSupportsVision.mockResolvedValue(false);
+    const provider = new GenericOpenAiLLM();
+    const create = jest.fn(async () => ({
+      choices: [{ message: { content: "ok" } }],
+      usage: {},
+    }));
+    provider.openai = { chat: { completions: { create } } };
+
+    await provider.getChatCompletion(chatMessages(), {});
+
+    const sent = create.mock.calls[0][0].messages;
+    expect(modelVision.modelSupportsVision).toHaveBeenCalledWith("test-model");
+    expect(sent[1].content).toBe(
+      `describe this\n\n${modelVision.IMAGE_OMITTED_NOTE}`
+    );
+  });
+
+  it("chat completion keeps images for a vision model", async () => {
+    modelVision.modelSupportsVision.mockResolvedValue(true);
+    const provider = new GenericOpenAiLLM();
+    const create = jest.fn(async () => ({
+      choices: [{ message: { content: "ok" } }],
+      usage: {},
+    }));
+    provider.openai = { chat: { completions: { create } } };
+
+    await provider.getChatCompletion(chatMessages(), {});
+
+    expect(create.mock.calls[0][0].messages[1].content[1].type).toBe(
+      "image_url"
+    );
+  });
+
+  it("does not look the model up when there are no images", async () => {
+    const provider = new GenericOpenAiLLM();
+    const create = jest.fn(async () => ({
+      choices: [{ message: { content: "ok" } }],
+      usage: {},
+    }));
+    provider.openai = { chat: { completions: { create } } };
+
+    await provider.getChatCompletion([{ role: "user", content: "hi" }], {});
+
+    expect(modelVision.modelSupportsVision).not.toHaveBeenCalled();
+  });
+
+  it("agent stream drops current and replayed images for a text-only model", async () => {
+    modelVision.modelSupportsVision.mockResolvedValue(false);
+    const provider = new GenericOpenAiProvider({ model: "qwen3.8-27b" });
+    jest.spyOn(provider, "supportsNativeToolCalling").mockResolvedValue(true);
+    const sentinel = new Error("stop after capturing the request");
+    const create = jest.fn(async () => {
+      throw sentinel;
+    });
+    provider._client = { chat: { completions: { create } } };
+    jest.spyOn(console, "error").mockImplementation(() => {});
+
+    await expect(
+      provider.stream([
+        { role: "system", content: "sys" },
+        { role: "user", content: "earlier /img", attachments: [IMAGE] },
+        { role: "assistant", content: "here it is" },
+        { role: "user", content: "now this", attachments: [IMAGE] },
+      ])
+    ).rejects.toBe(sentinel);
+
+    const sent = create.mock.calls[0][0].messages;
+    expect(sent.some((m) => Array.isArray(m.content))).toBe(false);
+    expect(sent[1].content).toContain(modelVision.IMAGE_OMITTED_NOTE);
+    expect(sent[3].content).toContain(modelVision.IMAGE_OMITTED_NOTE);
+    console.error.mockRestore();
+  });
+});
 
 function userContent(messages) {
   return messages.find((m) => m.role === "user").content;

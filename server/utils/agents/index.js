@@ -502,11 +502,13 @@ class AgentHandler {
 
   async init() {
     await this.#validInvocation();
-    await this.#providerSetupAndCheck();
 
-    // Retrieve cached attachments (images, etc.) from the HTTP request
+    // Retrieve cached attachments (images, etc.) from the HTTP request. Before
+    // provider setup, because a model router resolves there and its
+    // `hasImageAttachment` rules need to see them.
     this.attachments = getAndClearInvocationAttachments(this.#invocationUUID);
 
+    await this.#providerSetupAndCheck();
     return this;
   }
 

@@ -215,7 +215,30 @@ class GenericOpenAiLLM {
     };
   }
 
+  /**
+   * A text-only model rejects the whole request when it is sent an image (llama.cpp
+   * answers 500 without an mmproj), and chat history replays earlier uploads and
+   * `/img` results. Drop the images, with a note the model can relay, when this
+   * model is known not to see them.
+   * @param {Array} messages
+   * @returns {Promise<Array>}
+   */
+  async #withoutUnsupportedImages(messages) {
+    const {
+      hasImageContent,
+      modelSupportsVision,
+      stripImageContent,
+    } = require("../../helpers/modelVision");
+    if (!hasImageContent(messages)) return messages;
+    if (await modelSupportsVision(this.model)) return messages;
+    this.log(
+      `${this.model} cannot view images - sending the text without them.`
+    );
+    return stripImageContent(messages);
+  }
+
   async getChatCompletion(messages = null, { temperature = 0.7 }) {
+    messages = await this.#withoutUnsupportedImages(messages);
     const result = await LLMPerformanceMonitor.measureAsyncFunction(
       this.openai.chat.completions
         .create({
@@ -256,6 +279,7 @@ class GenericOpenAiLLM {
   }
 
   async streamGetChatCompletion(messages = null, { temperature = 0.7 }) {
+    messages = await this.#withoutUnsupportedImages(messages);
     const measuredStreamRequest = await LLMPerformanceMonitor.measureStream({
       func: this.openai.chat.completions.create({
         model: this.model,
