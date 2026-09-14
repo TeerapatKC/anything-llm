@@ -110,7 +110,10 @@ done
 DOCKER_CFG="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
 CRED_STORE=""
 if [[ -f "$DOCKER_CFG" ]]; then
-  CRED_STORE="$(grep -o '"credsStore"[[:space:]]*:[[:space:]]*"[^"]*"' "$DOCKER_CFG" | head -1 | awk -F'"' '{print $4}')"
+  # `|| true`: a config.json with no credsStore - the usual case on Linux - makes
+  # grep fail, and under pipefail that assignment alone ended the script with exit
+  # 1 and not a word of output.
+  CRED_STORE="$(grep -o '"credsStore"[[:space:]]*:[[:space:]]*"[^"]*"' "$DOCKER_CFG" | head -1 | awk -F'"' '{print $4}' || true)"
 fi
 if [[ -n "$CRED_STORE" ]] && ! command -v "docker-credential-${CRED_STORE}" >/dev/null 2>&1 && ! command -v "docker-credential-${CRED_STORE}.exe" >/dev/null 2>&1; then
   echo "docker is set to read registry credentials from '${CRED_STORE}', but" >&2

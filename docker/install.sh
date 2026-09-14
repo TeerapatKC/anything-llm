@@ -229,7 +229,9 @@ docker info >/dev/null 2>&1 || die "The docker daemon is not reachable. Start Do
 DOCKER_CFG="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
 CRED_STORE=""
 if [[ -f "$DOCKER_CFG" && "$OFFLINE" == false ]]; then
-  CRED_STORE="$(grep -o '"credsStore"[[:space:]]*:[[:space:]]*"[^"]*"' "$DOCKER_CFG" | head -1 | awk -F'"' '{print $4}')"
+  # `|| true`: see build-arm64.sh - no credsStore in config.json would otherwise end
+  # the installer silently under pipefail.
+  CRED_STORE="$(grep -o '"credsStore"[[:space:]]*:[[:space:]]*"[^"]*"' "$DOCKER_CFG" | head -1 | awk -F'"' '{print $4}' || true)"
 fi
 if [[ -n "$CRED_STORE" ]] && ! command -v "docker-credential-${CRED_STORE}" >/dev/null 2>&1 && ! command -v "docker-credential-${CRED_STORE}.exe" >/dev/null 2>&1; then
   echo "docker is set to read registry credentials from '${CRED_STORE}', but" >&2
