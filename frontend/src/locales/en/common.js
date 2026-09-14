@@ -1604,9 +1604,9 @@ const TRANSLATIONS = {
     emptySubtitle: "Create one to get started.",
     noWorkspacePermission:
       "You don't have permission to manage scheduled jobs in this workspace.",
-    smtpRequiredTitle: "SMTP email must be configured first",
+    smtpRequiredTitle: "Scheduled jobs are paused until SMTP email is ready",
     smtpRequiredDescription:
-      "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled.",
+      "You can view, create, and edit jobs now. They will not run on schedule, and Run now is unavailable, until SMTP email is configured and enabled.",
     smtpRequiredCta: "Go to SMTP settings",
     logs: {
       title: "Scheduled Job Logs",

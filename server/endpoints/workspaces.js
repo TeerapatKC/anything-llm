@@ -2043,7 +2043,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -2062,7 +2061,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -2083,7 +2081,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -2111,7 +2108,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2172,7 +2168,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2196,7 +2191,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2272,7 +2266,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2307,7 +2300,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2398,7 +2390,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2458,7 +2449,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2476,18 +2466,27 @@ function workspaceEndpoints(app) {
           if (!job) return;
           clause = { jobId: job.id };
         }
-        clause = { ...clause, ...dateRangeClause("startedAt", startDate, endDate) };
+        clause = {
+          ...clause,
+          ...dateRangeClause("startedAt", startDate, endDate),
+        };
 
         const runs = await ScheduledJobRun.where(
           clause,
           null,
           { startedAt: "desc" },
-          { job: { include: { workspace: { select: { name: true, slug: true } } } } }
+          {
+            job: {
+              include: { workspace: { select: { name: true, slug: true } } },
+            },
+          }
         );
         const emailLogsByRun = await ScheduledJobLog.groupByRunId(
           runs.map((r) => r.id)
         );
-        const rows = runs.map((run) => scheduledJobRunToRow(run, emailLogsByRun));
+        const rows = runs.map((run) =>
+          scheduledJobRunToRow(run, emailLogsByRun)
+        );
         const { contentType, data } = exportRows(
           format,
           rows,
@@ -2509,7 +2508,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2536,7 +2534,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -2572,7 +2569,6 @@ function workspaceEndpoints(app) {
       validatedRequest,
       workspacePermissionValid([WS_PERMISSIONS.SCHEDULED_JOBS_MANAGE]),
       validWorkspaceSlug,
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {

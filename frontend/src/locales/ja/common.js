@@ -1410,9 +1410,9 @@ const TRANSLATIONS = {
     emptySubtitle: "作成して使い始めましょう。",
     noWorkspacePermission:
       "このワークスペースでスケジュールジョブを管理する権限がありません。",
-    smtpRequiredTitle: "先にSMTPメールを設定する必要があります",
+    smtpRequiredTitle: "SMTPメールの準備ができるまでジョブは一時停止します",
     smtpRequiredDescription:
-      "スケジュールジョブは結果をメールで送信するため、送信用メールの設定と有効化が完了するまで利用できません。",
+      "ジョブの表示・作成・編集はできますが、SMTPメールの設定と有効化が完了するまで定期実行と手動実行はできません。",
     smtpRequiredCta: "SMTP設定に移動",
     logs: {
       title: "スケジュールジョブのログ",

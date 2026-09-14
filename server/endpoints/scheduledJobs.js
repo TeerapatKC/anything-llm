@@ -24,14 +24,12 @@ const backgroundService = new BackgroundService();
 function scheduledJobEndpoints(app) {
   if (!app) return;
 
-  // Whether SMTP is configured and enabled - the frontend checks this before
-  // showing anything else on the page, so it must not itself require SMTP.
+  // SMTP readiness controls execution, not whether jobs can be configured.
+  // Workspace managers use this same status endpoint without system-wide
+  // scheduled-job permission.
   app.get(
     "/scheduled-jobs/smtp-status",
-    [
-      validatedRequest,
-      userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-    ],
+    [validatedRequest],
     async (_request, response) => {
       try {
         return response.status(200).json({ ready: isSendingEnabled() });
@@ -48,7 +46,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -67,7 +64,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -86,7 +82,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -121,7 +116,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -149,7 +143,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -191,7 +184,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {
@@ -221,7 +213,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -318,7 +309,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -344,7 +334,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -379,10 +368,14 @@ function scheduledJobEndpoints(app) {
               .status(400)
               .json({ job: null, error: "Invalid recipient type" });
           }
-          if (recipientType === "workspace" && !Array.isArray(recipientWorkspaceIds)) {
-            return response
-              .status(400)
-              .json({ job: null, error: "Recipient workspaces must be an array" });
+          if (
+            recipientType === "workspace" &&
+            !Array.isArray(recipientWorkspaceIds)
+          ) {
+            return response.status(400).json({
+              job: null,
+              error: "Recipient workspaces must be an array",
+            });
           }
           if (recipientType === "user" && !Array.isArray(recipientUserIds)) {
             return response
@@ -445,7 +438,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -477,7 +469,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -568,7 +559,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -579,7 +569,11 @@ function scheduledJobEndpoints(app) {
           clause,
           limit,
           { startedAt: "desc" },
-          { job: { include: { workspace: { select: { name: true, slug: true } } } } },
+          {
+            job: {
+              include: { workspace: { select: { name: true, slug: true } } },
+            },
+          },
           offset * limit
         );
         const totalLogs = await ScheduledJobRun.count(clause);
@@ -620,7 +614,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (request, response) => {
       try {
@@ -639,12 +632,18 @@ function scheduledJobEndpoints(app) {
           clause,
           null,
           { startedAt: "desc" },
-          { job: { include: { workspace: { select: { name: true, slug: true } } } } }
+          {
+            job: {
+              include: { workspace: { select: { name: true, slug: true } } },
+            },
+          }
         );
         const emailLogsByRun = await ScheduledJobLog.groupByRunId(
           runs.map((r) => r.id)
         );
-        const rows = runs.map((run) => scheduledJobRunToRow(run, emailLogsByRun));
+        const rows = runs.map((run) =>
+          scheduledJobRunToRow(run, emailLogsByRun)
+        );
         const { contentType, data } = exportRows(
           format,
           rows,
@@ -672,7 +671,6 @@ function scheduledJobEndpoints(app) {
     [
       validatedRequest,
       userPermissionValid([PERMISSIONS.AGENTS_SCHEDULED_JOBS]),
-      requireSmtpReady,
     ],
     async (_request, response) => {
       try {

@@ -15,6 +15,7 @@ import {
 // come from the parent.
 export default function JobRow({
   job,
+  smtpReady,
   runsPath,
   onTrigger,
   onToggle,
@@ -66,7 +67,7 @@ export default function JobRow({
         {job.lastRunAt ? new Date(job.lastRunAt).toLocaleString() : "—"}
       </TableCell>
       <TableCell className="text-theme-text-secondary">
-        {job.enabled && job.nextRunAt
+        {job.enabled && smtpReady && job.nextRunAt
           ? new Date(job.nextRunAt).toLocaleString()
           : "—"}
       </TableCell>
@@ -74,7 +75,7 @@ export default function JobRow({
         <div className="flex items-center justify-end gap-2">
           <TableRowActions>
             <DropdownMenuItem
-              disabled={inFlight}
+              disabled={inFlight || !smtpReady}
               onClick={runAction(() => onTrigger(job.id))}
             >
               <Play className="size-4" />

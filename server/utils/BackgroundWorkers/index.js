@@ -370,6 +370,8 @@ class BackgroundService {
     // configured and enabled, cron-fired and manually-triggered runs alike are
     // skipped rather than executed with nowhere to send the result.
     if (!isSendingEnabled()) {
+      const { ScheduledJob } = require("../../models/scheduledJob");
+      await ScheduledJob.recomputeNextRunAt(jobId);
       this.#log(`Scheduled job ${jobId} skipped: SMTP is not configured`);
       return null;
     }

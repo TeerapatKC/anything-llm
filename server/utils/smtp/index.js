@@ -257,9 +257,8 @@ async function sendScheduledJobResultEmail({
 }
 
 /**
- * Express middleware for the Scheduled Jobs routes (global and workspace-owned
- * alike) - the whole feature only exists to deliver results by email, so every
- * route is gated on SMTP being configured AND turned on.
+ * Block manual Scheduled Job triggers until outbound email is configured and
+ * enabled. Job configuration and history remain available while SMTP is off.
  */
 function requireSmtpReady(_request, response, next) {
   if (!isSendingEnabled()) {

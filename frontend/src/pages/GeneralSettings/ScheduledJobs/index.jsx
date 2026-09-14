@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SettingsLayout from "@/components/layout/SettingsLayout";
 import PageHeader from "@/components/layout/PageHeader";
@@ -76,25 +76,22 @@ export default function ScheduledJobsPage({ workspace = null }) {
   const [editingJob, setEditingJob] = useState(null);
   const [confirm, setConfirm] = useState(null);
 
-  const fetchJobs = async () => {
-    const { jobs: foundJobs } = await jobsApi.list();
+  const refresh = useCallback(async () => {
+    const [{ jobs: foundJobs }, { ready }] = await Promise.all([
+      jobsApi.list(),
+      jobsApi.smtpStatus(),
+    ]);
     setJobs(foundJobs || []);
+    setSmtpReady(!!ready);
     setLoading(false);
-  };
-
-  useEffect(() => {
-    jobsApi.smtpStatus().then(({ ready }) => setSmtpReady(!!ready));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [jobsApi]);
 
   useEffect(() => {
-    if (!smtpReady) return;
-    fetchJobs();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [smtpReady, jobsApi]);
+    refresh();
+  }, [refresh]);
 
   // Poll every 5s while tab is visible so status badges and run timestamps stay in sync.
-  usePolling(fetchJobs, 5000, !!smtpReady);
+  usePolling(refresh, 5000);
 
   const handleDelete = async (id) => {
     setConfirm({
@@ -104,7 +101,7 @@ export default function ScheduledJobsPage({ workspace = null }) {
       onConfirm: async () => {
         await jobsApi.delete(id);
         showToast(t("scheduledJobs.toast.deleted"), "success", { clear: true });
-        fetchJobs();
+        refresh();
       },
     });
   };
@@ -112,7 +109,7 @@ export default function ScheduledJobsPage({ workspace = null }) {
   const handleToggle = async (id) => {
     const result = await jobsApi.toggle(id);
     if (result?.error) showToast(result.error, "error", { clear: true });
-    fetchJobs();
+    refresh();
   };
 
   const handleTrigger = async (id) => {
@@ -133,7 +130,7 @@ export default function ScheduledJobsPage({ workspace = null }) {
     } else {
       showToast(t("scheduledJobs.toast.triggered"), "success", { clear: true });
     }
-    fetchJobs();
+    refresh();
   };
 
   const handleEdit = (job) => {
@@ -152,65 +149,71 @@ export default function ScheduledJobsPage({ workspace = null }) {
         title={t("scheduledJobs.title")}
         description={t("scheduledJobs.description")}
         actions={
-          smtpReady ? (
-            <Button size="lg" onClick={handleCreate} disabled={loading}>
-              <Plus className="h-4 w-4" />
-              {t("scheduledJobs.newJob")}
-            </Button>
-          ) : null
+          <Button size="lg" onClick={handleCreate} disabled={loading}>
+            <Plus className="h-4 w-4" />
+            {t("scheduledJobs.newJob")}
+          </Button>
         }
       />
 
-      {smtpReady === false ? (
-        <SmtpRequiredNotice />
-      ) : (
-        <div className="overflow-x-auto mt-6">
-          <Table className="text-left min-w-[720px]">
-            <TableHeader>
-              <TableRow>
-                <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.schedule")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.status")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.lastRun")}</TableHead>
-                <TableHead scope="col">{t("scheduledJobs.table.nextRun")}</TableHead>
-                <TableHead scope="col" className="text-right">
-                  {t("scheduledJobs.table.actions")}
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {smtpReady === null || loading ? (
-                <TableLoadingRow colSpan={6} />
-              ) : jobs.length === 0 ? (
-                <TableEmptyRow
-                  colSpan={6}
-                  description={t("scheduledJobs.emptySubtitle")}
-                  action={
-                    <Button onClick={handleCreate}>
-                      <Plus className="h-4 w-4" />
-                      {t("scheduledJobs.newJob")}
-                    </Button>
-                  }
-                >
-                  {t("scheduledJobs.emptyTitle")}
-                </TableEmptyRow>
-              ) : (
-                jobs.map((job) => (
-                  <JobRow
-                    key={job.id}
-                    job={job}
-                    runsPath={jobsApi.runsPath(job.id)}
-                    onTrigger={handleTrigger}
-                    onToggle={handleToggle}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                  />
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+      {smtpReady === false && (
+        <SmtpRequiredNotice showSettingsLink={!isWorkspaceScoped} />
       )}
+      <div className="overflow-x-auto mt-6">
+        <Table className="text-left min-w-[720px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead scope="col">{t("scheduledJobs.table.name")}</TableHead>
+              <TableHead scope="col">
+                {t("scheduledJobs.table.schedule")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("scheduledJobs.table.status")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("scheduledJobs.table.lastRun")}
+              </TableHead>
+              <TableHead scope="col">
+                {t("scheduledJobs.table.nextRun")}
+              </TableHead>
+              <TableHead scope="col" className="text-right">
+                {t("scheduledJobs.table.actions")}
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              <TableLoadingRow colSpan={6} />
+            ) : jobs.length === 0 ? (
+              <TableEmptyRow
+                colSpan={6}
+                description={t("scheduledJobs.emptySubtitle")}
+                action={
+                  <Button onClick={handleCreate}>
+                    <Plus className="h-4 w-4" />
+                    {t("scheduledJobs.newJob")}
+                  </Button>
+                }
+              >
+                {t("scheduledJobs.emptyTitle")}
+              </TableEmptyRow>
+            ) : (
+              jobs.map((job) => (
+                <JobRow
+                  key={job.id}
+                  job={job}
+                  smtpReady={smtpReady}
+                  runsPath={jobsApi.runsPath(job.id)}
+                  onTrigger={handleTrigger}
+                  onToggle={handleToggle}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
       <Dialog
         open={isOpen}
@@ -223,7 +226,7 @@ export default function ScheduledJobsPage({ workspace = null }) {
             workspaceSlug={workspace?.slug || null}
             onSaved={() => {
               closeModal();
-              fetchJobs();
+              refresh();
             }}
           />
         </DialogContent>
@@ -236,30 +239,33 @@ export default function ScheduledJobsPage({ workspace = null }) {
   return <SettingsLayout>{content}</SettingsLayout>;
 }
 
-function SmtpRequiredNotice() {
+function SmtpRequiredNotice({ showSettingsLink }) {
   const { t } = useTranslation();
   return (
-    <div className="mt-6 flex flex-col items-center gap-3 rounded-lg border border-zinc-700 light:border-slate-200 px-6 py-12 text-center">
-      <Mail size={28} className="text-zinc-400 light:text-slate-400" />
-      <p className="text-sm font-medium text-zinc-50 light:text-slate-700">
-        {t(
-          "scheduledJobs.smtpRequiredTitle",
-          "SMTP email must be configured first"
-        )}
-      </p>
-      <p className="max-w-md text-xs text-zinc-400 light:text-slate-500">
-        {t(
-          "scheduledJobs.smtpRequiredDescription",
-          "Scheduled Jobs delivers its results by email, so it stays unavailable until outbound email is set up and enabled."
-        )}
-      </p>
-      <Button
-        size="sm"
-        render={<a href={paths.settings.smtp()} />}
-        className="mt-1"
-      >
-        {t("scheduledJobs.smtpRequiredCta", "Go to SMTP settings")}
-      </Button>
+    <div
+      role="status"
+      className="mt-6 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4"
+    >
+      <div className="flex items-start gap-3">
+        <Mail size={20} className="mt-0.5 shrink-0 text-amber-500" />
+        <div>
+          <p className="text-sm font-semibold text-theme-text-primary">
+            {t("scheduledJobs.smtpRequiredTitle")}
+          </p>
+          <p className="mt-1 text-xs text-theme-text-secondary">
+            {t("scheduledJobs.smtpRequiredDescription")}
+          </p>
+        </div>
+      </div>
+      {showSettingsLink && (
+        <Button
+          size="sm"
+          render={<a href={paths.settings.smtp()} />}
+          className="mt-3"
+        >
+          {t("scheduledJobs.smtpRequiredCta")}
+        </Button>
+      )}
     </div>
   );
 }
