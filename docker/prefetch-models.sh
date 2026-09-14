@@ -94,13 +94,33 @@ echo "ca456c06b3a9505ddfd9131408916dd79290368331e7d76bb621f1cba6bc8665  ${DEST}/
 #
 # English is the default; Thai is here because it is what this deployment reads.
 # Add more by name - each is a couple of megabytes.
+#
+# Fetched from the npm registry, which this build already depends on for yarn
+# install, with jsdelivr - the CDN serving the same package - as the fallback.
+# jsdelivr alone failed the build on a network that blocks it ("Failed to connect
+# to cdn.jsdelivr.net port 443 after 0 ms"). The version is pinned, and the file is
+# byte-identical from either source.
 say "OCR language data"
 mkdir -p "${DEST}/tesseract"
+TESSDATA_VERSION="${TESSDATA_VERSION:-1.0.0}"
 for lang in ${OCR_LANGUAGES:-eng tha}; do
-  curl --fail --silent --show-error --location --retry 5 --retry-all-errors     --retry-delay 5 --connect-timeout 30     "https://cdn.jsdelivr.net/npm/@tesseract.js-data/${lang}/4.0.0_best_int/${lang}.traineddata.gz"     --output "${DEST}/tesseract/${lang}.traineddata.gz"
   # Cached uncompressed: that is the name and the form tesseract.js reads back.
-  gunzip -f "${DEST}/tesseract/${lang}.traineddata.gz"
-  [ -s "${DEST}/tesseract/${lang}.traineddata" ] || {
+  out="${DEST}/tesseract/${lang}.traineddata"
+  tgz="${DEST}/tesseract/${lang}.tgz"
+  if curl --fail --silent --show-error --location --retry 3 --retry-delay 5 \
+       --connect-timeout 30 --output "$tgz" \
+       "https://registry.npmjs.org/@tesseract.js-data/${lang}/-/${lang}-${TESSDATA_VERSION}.tgz" \
+     && tar -xzOf "$tgz" "package/4.0.0_best_int/${lang}.traineddata.gz" | gunzip > "$out"; then
+    :
+  else
+    say "npm registry failed for ${lang} - trying jsdelivr"
+    curl --fail --silent --show-error --location --retry 3 --retry-delay 5 \
+      --connect-timeout 30 \
+      "https://cdn.jsdelivr.net/npm/@tesseract.js-data/${lang}@${TESSDATA_VERSION}/4.0.0_best_int/${lang}.traineddata.gz" \
+      | gunzip > "$out"
+  fi
+  rm -f "$tgz"
+  [ -s "$out" ] || {
     echo "[prefetch] ${lang}.traineddata is empty" >&2; exit 1; }
 done
 
