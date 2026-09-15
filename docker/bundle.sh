@@ -401,6 +401,37 @@ if want llm || want image || want speech; then required_refs+=("utkuozdemir/nvid
 for ref in "${required_refs[@]}"; do
   expected_images+=("$(echo "$ref" | tr '/:' '--').tar")
 done
+# With --skip-images nothing above saved an archive, but the list still names
+# everything the stack now runs. An image added since the bundle's images were
+# made would then be required on the target and absent from the bundle - found
+# only on the air-gapped host. Refuse here, before the list is rewritten.
+if [[ "$SKIP_IMAGES" == true ]]; then
+  missing_images=()
+  for image_tar in "${expected_images[@]}"; do
+    [[ -s "${IMAGES_DIR}/${image_tar}" ]] || missing_images+=("$image_tar")
+  done
+  if [[ ${#missing_images[@]} -gt 0 ]]; then
+    warn "--skip-images, but the stack needs image archives this bundle does not have:"
+    for image_tar in "${missing_images[@]}"; do warn "  ${image_tar}"; done
+    # A third-party image is one pull and one save - the same two steps the
+    # images section above runs - so hand those over rather than a rebuild. The
+    # app images cannot be fetched that way: build-arm64.sh writes them straight
+    # to a tarball and never tags them in this daemon, so --skip-build would not
+    # find them either.
+    echo >&2
+    warn "Fetch the third-party ones with:"
+    for ref in "${required_refs[@]}"; do
+      image_tar="$(echo "$ref" | tr '/:' '--').tar"
+      [[ -s "${IMAGES_DIR}/${image_tar}" ]] && continue
+      warn "  docker pull --platform ${PLATFORM} ${ref} && docker save ${ref} -o ${OUT}/images/${image_tar}"
+    done
+    for image_tar in "${missing_images[@]}"; do
+      [[ "$image_tar" == nexusai-* ]] &&
+        warn "  ${image_tar} is built here: rerun without --skip-images to build it."
+    done
+    die "images.list left unchanged."
+  fi
+fi
 printf '%s\n' "${expected_images[@]}" > "${OUT_ABS}/images.list"
 
 # --- models ------------------------------------------------------------------

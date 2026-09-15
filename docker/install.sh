@@ -159,8 +159,17 @@ if [[ -n "$OFFLINE_DIR" ]]; then
   if [[ -f "${OFFLINE_DIR}/images.list" ]]; then
     while IFS= read -r image_tar; do
       [[ -n "$image_tar" ]] || continue
-      [[ -s "${OFFLINE_DIR}/images/${image_tar}" ]] ||
-        die "Missing or empty image tarball: ${image_tar}. Finish copying the bundle."
+      if [[ ! -s "${OFFLINE_DIR}/images/${image_tar}" ]]; then
+        # Two causes look the same from here: a copy that stopped short, or a bundle
+        # topped up with --skip-images after the stack gained an image.
+        warn "Missing or empty image tarball: ${image_tar}"
+        warn "Either the bundle copy is incomplete, or it was last run with --skip-images"
+        warn "after this image was added. On the build machine, rerun bundle.sh with the"
+        warn "original --services/--models plus --skip-images --skip-models: it prints the"
+        warn "docker pull/save commands for exactly the missing archives. Then copy"
+        warn "${image_tar} into ${OFFLINE_DIR}/images/ here."
+        die "Refusing to install from an incomplete bundle."
+      fi
       if [[ "$DRY_RUN" == false ]] && ! tar -tf "${OFFLINE_DIR}/images/${image_tar}" >/dev/null 2>&1; then
         die "Incomplete image tarball: ${image_tar}. Rerun docker/bundle.sh on the build machine before installing."
       fi
