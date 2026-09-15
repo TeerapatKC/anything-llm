@@ -15,6 +15,7 @@ Exits 1 when any panel is empty.
 """
 import json
 import pathlib
+import re
 import sys
 import urllib.parse
 import urllib.request
@@ -23,33 +24,58 @@ PROM = (sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:9090").rstrip("/
 DASHBOARD = pathlib.Path(__file__).resolve().parent / "grafana" / "dashboards" / "docker-overview.json"
 
 
-def query(expr):
-    url = f"{PROM}/api/v1/query?" + urllib.parse.urlencode({"query": expr})
+def api(path, params=None):
+    url = f"{PROM}/api/v1/{path}" + ("?" + urllib.parse.urlencode(params) if params else "")
     try:
         with urllib.request.urlopen(url, timeout=10) as response:
             body = json.load(response)
     except Exception as error:  # the report is the point - never a traceback
         return None, str(error)
     if body.get("status") != "success":
-        return None, body.get("error", "query failed")
-    return body["data"]["result"], None
+        return None, body.get("error", "request failed")
+    return body["data"], None
+
+
+def query(expr):
+    data, error = api("query", {"query": expr})
+    return (data["result"] if data else None), error
 
 
 def main():
-    targets, error = query("up")
+    targets, error = api("targets")
     if error:
         print(f"Cannot query Prometheus at {PROM}: {error}")
         print("Is the stack up, and is this the published port? Pass the address as an argument.")
         return 2
 
     print(f"Collectors scraped by {PROM}:")
-    for target in sorted(targets, key=lambda t: t["metric"].get("job", "")):
-        state = "up" if target["value"][1] == "1" else "DOWN"
-        print(f"  {state:4}  {target['metric'].get('job', '?'):14} {target['metric'].get('instance', '')}")
+    active = sorted(targets["activeTargets"], key=lambda t: t["labels"].get("job", ""))
+    for target in active:
+        state = "up" if target["health"] == "up" else "DOWN"
+        print(f"  {state:4}  {target['labels'].get('job', '?'):14} {target['labels'].get('instance', '')}")
+        # Why it is down, in Prometheus's words: connection refused means the
+        # container is not running, no such host that it is not on the network.
+        if state == "DOWN" and target.get("lastError"):
+            print(f"        {target['lastError']}")
+
+    dashboard = json.loads(DASHBOARD.read_text(encoding="utf-8"))
+
+    # A job the dashboard reads that Prometheus has no target for is not a
+    # collector that is down - it is a Prometheus still running an older
+    # prometheus.yml, which it reads only when it starts.
+    configured = {t["labels"].get("job") for t in active}
+    wanted = {
+        job
+        for panel in dashboard["panels"]
+        for target in panel.get("targets", [])
+        for job in re.findall(r'job="([^"]+)"', target["expr"])
+    }
+    for job in sorted(wanted - configured):
+        print(f"  MISSING  {job:12} not scraped at all. If prometheus.yml has this job, the running")
+        print("                        Prometheus predates it: docker restart nexusai-prometheus")
 
     # Grafana fills these in; any fixed window gives the same yes-or-no answer.
     substitutions = {"$__range": "6h", "$__rate_interval": "1m", "$__interval": "1m"}
-    dashboard = json.loads(DASHBOARD.read_text(encoding="utf-8"))
     empty, checked = [], 0
     for panel in dashboard["panels"]:
         for target in panel.get("targets", []):

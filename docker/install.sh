@@ -844,6 +844,15 @@ compose_up() {
 }
 compose_up
 
+# Prometheus reads prometheus.yml once, when it starts. The file is bind-mounted,
+# and compose recreates a container only when the container's own definition
+# changes - so an update that added a scrape job left the running Prometheus on
+# the old list, and the dashboard showed "No data" for a collector that was up.
+# A restart costs a few seconds of scrapes; its data lives in a volume.
+if docker container inspect nexusai-prometheus >/dev/null 2>&1; then
+  docker restart nexusai-prometheus >/dev/null
+fi
+
 # The model servers wait on a one-shot downloader through
 # `depends_on: service_completed_successfully`, and `up -d` does not reliably come
 # back to start them once that job finishes: on a first install they were left
