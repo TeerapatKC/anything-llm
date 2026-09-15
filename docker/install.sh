@@ -905,6 +905,39 @@ if ! finish_pending; then
   warn "Nothing is wrong. Repeating up -d is safe and starts only what is left."
 fi
 
+# node-exporter on a DGX Spark can wedge: once 40 scrapes hang it answers every
+# later one with 503, and the dashboard's whole host row reads "No data" while the
+# rest of the stack is fine. A redeploy was handed over in exactly that state, so
+# check here - after the Prometheus restart above - and let check-dashboard.py
+# restart only an exporter that is stuck. Never the app, and never fatal: a panel
+# that is still empty (a model not loaded yet) is reported, not a failed install.
+check_dashboard() {
+  docker container inspect nexusai-prometheus >/dev/null 2>&1 || return 0
+  local py="" candidate port
+  # `python3` alone is not enough: on Windows it can be a store alias that prints a
+  # message and exits, so ask the interpreter to prove it is a usable Python 3.
+  for candidate in python3 python; do
+    if command -v "$candidate" >/dev/null 2>&1 &&
+       "$candidate" -c 'import sys; sys.exit(sys.version_info < (3, 6))' >/dev/null 2>&1; then
+      py="$candidate"
+      break
+    fi
+  done
+  if [[ -z "$py" ]]; then
+    warn "No Python 3 on this host, so the monitoring dashboard was not checked."
+    warn "Once one is installed: python3 $(pwd)/monitoring/check-dashboard.py --fix"
+    return 0
+  fi
+  port="${PROMETHEUS_PUBLISH_PORT:-$(env_value PROMETHEUS_PUBLISH_PORT)}"
+  echo
+  say "Checking the monitoring dashboard. Only an exporter that is stuck gets restarted."
+  if ! "$py" monitoring/check-dashboard.py "http://127.0.0.1:${port:-9090}" --fix --settle 60; then
+    warn "Some dashboard panels have no data yet - listed above. The app is not affected."
+    warn "Check again later with: python3 $(pwd)/monitoring/check-dashboard.py --fix"
+  fi
+}
+check_dashboard
+
 echo
 say "Up. The app is on http://localhost:3001"
 # Written as `if` rather than `want x && say ...`: a short-circuited AND-OR list

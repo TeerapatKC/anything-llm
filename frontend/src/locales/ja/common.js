@@ -1395,6 +1395,12 @@ const TRANSLATIONS = {
       empty: "まだ誰も Telegram チャットを連携していません。",
       "no-workspace": "ワークスペース未選択",
       disconnect: "接続を解除",
+      "disconnect-label": "{{account}} の接続を解除",
+      disconnecting: "接続を解除しています…",
+      "confirm-title": "この Telegram チャットの接続を解除しますか？",
+      "confirm-description":
+        "{{account}}（{{handle}}）はボットから応答を受け取れなくなります。プロフィール設定から再度連携できます。",
+      cancel: "キャンセル",
       "toast-unlink-failed": "そのチャットの接続解除に失敗しました。",
       "toast-unlinked": "チャットの接続を解除しました。",
       unknown: "不明",

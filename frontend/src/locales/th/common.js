@@ -1169,6 +1169,12 @@ const TRANSLATIONS = {
       empty: "ยังไม่มีใครเชื่อมแชท Telegram",
       "no-workspace": "ยังไม่ได้เลือกเวิร์กสเปซ",
       disconnect: "ตัดการเชื่อมต่อ",
+      "disconnect-label": "ตัดการเชื่อมต่อ {{account}}",
+      disconnecting: "กำลังตัดการเชื่อมต่อ…",
+      "confirm-title": "ตัดการเชื่อมต่อแชท Telegram นี้?",
+      "confirm-description":
+        "{{account}} ({{handle}}) จะไม่ได้รับคำตอบจากบอทอีก จนกว่าจะเชื่อมบัญชีใหม่จากหน้าตั้งค่าโปรไฟล์",
+      cancel: "ยกเลิก",
       "toast-unlink-failed": "ตัดการเชื่อมต่อแชทนี้ไม่สำเร็จ",
       "toast-unlinked": "ตัดการเชื่อมต่อแชทแล้ว",
       unknown: "ไม่ทราบ",

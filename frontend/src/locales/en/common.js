@@ -1191,6 +1191,12 @@ const TRANSLATIONS = {
       empty: "Nobody has linked a Telegram chat yet.",
       "no-workspace": "No workspace selected",
       disconnect: "Disconnect",
+      "disconnect-label": "Disconnect {{account}}",
+      disconnecting: "Disconnecting…",
+      "confirm-title": "Disconnect this Telegram chat?",
+      "confirm-description":
+        "{{account}} ({{handle}}) will stop getting answers from the bot. They can link again from their profile settings.",
+      cancel: "Cancel",
       "toast-unlink-failed": "Failed to disconnect that chat.",
       "toast-unlinked": "Chat disconnected.",
       unknown: "Unknown",

@@ -262,12 +262,20 @@ That appends a SHA-256 per file. It reads the whole bundle back, so it is slow.
 
 ## If the dashboard shows "No data"
 
-On the Spark, from the bundle:
+`install.sh` runs `check-dashboard.py --fix --settle 60` at the end of every
+install, so a deploy is not handed over with a wedged exporter. It needs Python 3
+on the host, skips the check with a warning when there is none, and never fails
+the install over a panel that is still empty. To check again later, on the Spark,
+from the bundle:
 
 ```bash
 python3 <bundle>/docker/monitoring/check-dashboard.py          # report only
 python3 <bundle>/docker/monitoring/check-dashboard.py --fix    # and repair
 ```
+
+`--settle SECONDS` first waits for a Prometheus that has just started to scrape
+every target once; without it, a healthy exporter that has not been scraped yet
+reads as DOWN and would be restarted for nothing.
 
 It lists every collector with Prometheus's own error for the ones that are down,
 then every panel whose query comes back empty. Python's standard library and the
