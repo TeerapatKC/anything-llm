@@ -4,6 +4,7 @@ const { WorkspaceThread } = require("../../../models/workspaceThread");
 const { TelegramUser } = require("../../../models/telegramUser");
 const { WorkspaceRole } = require("../../../models/workspaceRole");
 const { Role } = require("../../../models/role");
+const { PersonalWorkspace } = require("../../../models/personalWorkspace");
 const {
   PERMISSIONS,
   WORKSPACE_PERMISSIONS: WS_PERMISSIONS,
@@ -109,6 +110,10 @@ async function canCreateWorkspace(user) {
  */
 async function chattableWorkspaces(user) {
   if (!user) return [];
+  // The web app hands out the private workspace on its workspace listing. Someone who
+  // only ever talks to the bot never loads that page, so do the same here - otherwise
+  // their private workspace would not exist yet and could never be picked.
+  await PersonalWorkspace.provisionFor(user);
   const workspaces = await Workspace.whereWithUser(user, { active: true });
   const allowed = await Promise.all(
     workspaces.map(async (workspace) =>
@@ -116,6 +121,18 @@ async function chattableWorkspaces(user) {
     )
   );
   return allowed.filter(Boolean);
+}
+
+/**
+ * How a workspace is named in a bot's workspace list. A private workspace is marked,
+ * since otherwise it looks exactly like a shared one of the same name.
+ * @param {{name: string, type?: string}} workspace
+ * @returns {string}
+ */
+function workspaceLabel(workspace) {
+  return PersonalWorkspace.isPersonal(workspace)
+    ? `🔒 ${workspace.name}`
+    : workspace.name;
 }
 
 /**
@@ -177,6 +194,7 @@ module.exports = {
   canManageWorkspaceLLM,
   canCreateWorkspace,
   chattableWorkspaces,
+  workspaceLabel,
   workspaceForUser,
   threadForUser,
   defaultWorkspaceForUser,

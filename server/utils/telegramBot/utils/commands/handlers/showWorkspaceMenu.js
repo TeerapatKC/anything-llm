@@ -1,4 +1,8 @@
-const { chattableWorkspaces, canCreateWorkspace } = require("../../access");
+const {
+  chattableWorkspaces,
+  canCreateWorkspace,
+  workspaceLabel,
+} = require("../../access");
 const { asMessageId } = require("../../index");
 const { translatorFor } = require("../../i18n");
 const WORKSPACES_PER_PAGE = 8;
@@ -66,7 +70,9 @@ async function showWorkspaceMenu(ctx, chatId, page = 0, messageId = null) {
     const isCurrent = ws.slug === state.workspaceSlug;
     return [
       {
-        text: isCurrent ? `🟢 ${ws.name} (${t("common.active")})` : ws.name,
+        text: isCurrent
+          ? `🟢 ${workspaceLabel(ws)} (${t("common.active")})`
+          : workspaceLabel(ws),
         callback_data: `ws:${ws.id}`,
       },
     ];

@@ -1,4 +1,8 @@
 const { Workspace } = require("../models/workspace");
+const { PersonalWorkspace } = require("../models/personalWorkspace");
+const {
+  workspaceLabel,
+} = require("../utils/telegramBot/utils/access");
 const { User } = require("../models/user");
 const { LineUser } = require("../models/lineUser");
 const {
@@ -76,7 +80,7 @@ function formatWorkspaceList(accessible, activeId) {
   return accessible
     .map(
       (w, i) =>
-        `${i + 1}. ${w.id === activeId ? "-> " : ""}${w.name} (${w.slug})`
+        `${i + 1}. ${w.id === activeId ? "-> " : ""}${workspaceLabel(w)} (${w.slug})`
     )
     .join("\n");
 }
@@ -259,6 +263,9 @@ async function handleTextEvent(event, connectorConfig) {
     return;
   }
 
+  // Hand out the private workspace the way the web app's listing does, so someone
+  // who only ever uses LINE still has one to switch to.
+  await PersonalWorkspace.provisionFor(nexusUser);
   const accessible = await Workspace.whereWithUser(nexusUser);
   const workspace =
     accessible.find((w) => w.id === lineUser.active_workspace_id) ||

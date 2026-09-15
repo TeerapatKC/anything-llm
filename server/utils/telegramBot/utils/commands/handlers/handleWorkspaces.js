@@ -1,4 +1,4 @@
-const { chattableWorkspaces } = require("../../access");
+const { chattableWorkspaces, workspaceLabel } = require("../../access");
 const { asMessageId } = require("../../index");
 const { escapeHTML } = require("../../format");
 const { translatorFor } = require("../../i18n");
@@ -45,7 +45,7 @@ async function showWorkspaceList(
   );
 
   const lines = pageWorkspaces.map((workspace) => {
-    const name = escapeHTML(workspace.name);
+    const name = escapeHTML(workspaceLabel(workspace));
     return workspace.slug === session.workspaceSlug
       ? `🟢 <b>${name}</b> (${t("common.active")})`
       : `• ${name}`;
@@ -55,8 +55,8 @@ async function showWorkspaceList(
     {
       text:
         workspace.slug === session.workspaceSlug
-          ? `🟢 ${workspace.name} (${t("common.active")})`
-          : workspace.name,
+          ? `🟢 ${workspaceLabel(workspace)} (${t("common.active")})`
+          : workspaceLabel(workspace),
       callback_data: `wsq:${workspace.id}`,
     },
   ]);

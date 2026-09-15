@@ -2,6 +2,7 @@ const { User } = require("../../models/user");
 const { EventLogs } = require("../../models/eventLogs");
 const { LineUser } = require("../../models/lineUser");
 const { Workspace } = require("../../models/workspace");
+const { PersonalWorkspace } = require("../../models/personalWorkspace");
 const {
   consumePairingCode,
   checkAttemptAllowance,
@@ -80,7 +81,9 @@ async function linkAccount({
 
   // Land the chat in a workspace it may actually use, so the first message after
   // linking works without a /workspace switch. A user who belongs to none stays
-  // unset and is told to ask for access.
+  // unset and is told to ask for access. Their private workspace is handed out first,
+  // the same way the web app's workspace listing does it.
+  await PersonalWorkspace.provisionFor(user);
   const accessible = await Workspace.whereWithUser(user);
   const workspace = accessible[0] || null;
   if (workspace)
