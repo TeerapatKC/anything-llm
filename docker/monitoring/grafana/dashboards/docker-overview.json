@@ -1,19 +1,680 @@
 {
   "title": "NexusAI - Docker Overview",
   "uid": "nexusai-docker-overview",
+  "description": "Laid out for a DGX Spark: the host and its unified CPU+GPU memory first, then the GB10 GPU, the model services, the app, and the collectors' own health at the bottom.",
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 3,
+  "version": 4,
   "refresh": "30s",
   "time": { "from": "now-6h", "to": "now" },
   "panels": [
+    {
+      "id": 100,
+      "type": "row",
+      "title": "DGX Host",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "panels": []
+    },
+    {
+      "id": 30,
+      "title": "CPU Used",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "expr": "100 - (avg(irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU used",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 31,
+      "title": "Unified Memory Used",
+      "description": "On a DGX Spark the CPU and the GB10 GPU share one memory pool, so loaded models are counted here. nvidia-smi reports GPU memory as Not Supported on this hardware - this is the number to watch instead.",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "targets": [
+        {
+          "expr": "node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes",
+          "legendFormat": "Used",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 1,
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 8,
+      "title": "Memory Available",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "targets": [
+        {
+          "expr": "node_memory_MemAvailable_bytes",
+          "legendFormat": "Available",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 536870912 },
+              { "color": "green", "value": 1073741824 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 9,
+      "title": "Disk Free",
+      "description": "Available space on the host root filesystem. On Docker Desktop with WSL2, the Windows C: drive is used when a root filesystem metric is unavailable.",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "targets": [
+        {
+          "expr": "max by (instance) (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/\"}) or on(instance) max by (instance) (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/mnt/host/c\"})",
+          "legendFormat": "Free",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "decimals": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 10737418240 },
+              { "color": "green", "value": 53687091200 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 1,
+      "title": "CPU Usage (%)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 5 },
+      "targets": [
+        {
+          "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+          "legendFormat": "CPU used %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "min": 0, "max": 100 },
+        "overrides": []
+      }
+    },
+    {
+      "id": 2,
+      "title": "Unified Memory Usage (%)",
+      "description": "CPU and GPU share this memory on a DGX Spark.",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 5 },
+      "targets": [
+        {
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "Memory used %"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "min": 0, "max": 100 },
+        "overrides": []
+      }
+    },
+    {
+      "id": 13,
+      "title": "Load Average",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 13 },
+      "targets": [
+        { "expr": "node_load1", "legendFormat": "1m" },
+        { "expr": "node_load5", "legendFormat": "5m" },
+        { "expr": "node_load15", "legendFormat": "15m" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 14,
+      "title": "Swap Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 13 },
+      "targets": [
+        {
+          "expr": "node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes",
+          "legendFormat": "Swap used"
+        },
+        {
+          "expr": "node_memory_SwapTotal_bytes",
+          "legendFormat": "Swap total"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 15,
+      "title": "Disk I/O",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 21 },
+      "targets": [
+        {
+          "expr": "sum(rate(node_disk_read_bytes_total[5m]))",
+          "legendFormat": "Read"
+        },
+        {
+          "expr": "sum(rate(node_disk_written_bytes_total[5m]))",
+          "legendFormat": "Write"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 16,
+      "title": "Network I/O (all interfaces)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 21 },
+      "targets": [
+        {
+          "expr": "sum(rate(node_network_receive_bytes_total{device!=\"lo\"}[5m]))",
+          "legendFormat": "Receive"
+        },
+        {
+          "expr": "sum(rate(node_network_transmit_bytes_total{device!=\"lo\"}[5m]))",
+          "legendFormat": "Transmit"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 101,
+      "type": "row",
+      "title": "GPU (GB10)",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 29 },
+      "panels": []
+    },
+    {
+      "id": 40,
+      "title": "GPU Utilization",
+      "description": "From nvidia_gpu_exporter (nvidia-smi). GPU memory is not shown: the GB10 has no dedicated VRAM - see Unified Memory in the host row.",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 30 },
+      "targets": [
+        {
+          "expr": "max(nvidia_smi_utilization_gpu_ratio)",
+          "legendFormat": "GPU",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 0,
+          "min": 0,
+          "max": 1,
+          "noValue": "No data - see GPU exporter below",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 0.8 },
+              { "color": "red", "value": 0.95 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 41,
+      "title": "GPU Temperature",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 8, "x": 8, "y": 30 },
+      "targets": [
+        {
+          "expr": "max(nvidia_smi_temperature_gpu)",
+          "legendFormat": "GPU",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "decimals": 0,
+          "noValue": "No data - see GPU exporter below",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 75 },
+              { "color": "red", "value": 85 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 42,
+      "title": "GPU Power Draw",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 4, "w": 8, "x": 16, "y": 30 },
+      "targets": [
+        {
+          "expr": "sum(nvidia_smi_power_draw_watts)",
+          "legendFormat": "GPU",
+          "instant": true,
+          "range": false
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "watt",
+          "decimals": 1,
+          "noValue": "No data - see GPU exporter below",
+          "color": { "mode": "fixed", "fixedColor": "blue" }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 43,
+      "title": "GPU Utilization (%)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 34 },
+      "targets": [
+        { "expr": "max(nvidia_smi_utilization_gpu_ratio)", "legendFormat": "GPU" }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit", "min": 0, "max": 1 },
+        "overrides": []
+      }
+    },
+    {
+      "id": 44,
+      "title": "GPU Temperature",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 34 },
+      "targets": [
+        { "expr": "max(nvidia_smi_temperature_gpu)", "legendFormat": "GPU" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "celsius" }, "overrides": [] }
+    },
+    {
+      "id": 45,
+      "title": "GPU Power Draw",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 34 },
+      "targets": [
+        { "expr": "sum(nvidia_smi_power_draw_watts)", "legendFormat": "GPU" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "watt", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "AI Services (llama.cpp, FLUX, STT, TTS)",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+      "panels": []
+    },
+    {
+      "id": 50,
+      "title": "AI Services - Memory",
+      "description": "Container memory as its cgroup accounts it. Memory the GPU driver allocates for a model may not all be counted here - compare with Unified Memory Used in the host row.",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
+      "targets": [
+        {
+          "expr": "sum by (name) (container_memory_working_set_bytes{name=~\"^nexusai-(llamacpp|sdcpp|stt|tts)$\"})",
+          "legendFormat": "{{name}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 51,
+      "title": "AI Services - CPU Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
+      "targets": [
+        {
+          "expr": "sum by (name) (rate(container_cpu_usage_seconds_total{name=~\"^nexusai-(llamacpp|sdcpp|stt|tts)$\"}[5m])) * 100",
+          "legendFormat": "{{name}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 103,
+      "type": "row",
+      "title": "Nexus AI App",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 51 },
+      "panels": []
+    },
+    {
+      "id": 3,
+      "title": "Nexus AI - CPU Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
+      "targets": [
+        {
+          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 100",
+          "legendFormat": "Nexus AI"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent" }, "overrides": [] }
+    },
+    {
+      "id": 4,
+      "title": "Nexus AI - Memory Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
+      "targets": [
+        {
+          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"})",
+          "legendFormat": "Nexus AI"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
+    },
+    {
+      "id": 17,
+      "title": "Nexus AI - Memory % of Host Total",
+      "description": "No memory limit is set on the container. Compare cAdvisor container memory usage with its machine_memory_bytes total, so this panel remains available even when node-exporter is down.",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 60 },
+      "targets": [
+        {
+          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}) / max(machine_memory_bytes{job=\"cadvisor\"}) * 100",
+          "legendFormat": "Memory % of host total"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "percent", "min": 0, "max": 100 },
+        "overrides": []
+      }
+    },
+    {
+      "id": 18,
+      "title": "Nexus AI - Disk I/O",
+      "description": "This cAdvisor build does not export container_fs_reads_bytes_total/container_fs_writes_bytes_total - only sector counts. Approximated as sectors * 512 bytes, the standard Linux block-device sector size.",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 60 },
+      "targets": [
+        {
+          "expr": "sum(rate(container_fs_sector_reads_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
+          "legendFormat": "Read"
+        },
+        {
+          "expr": "sum(rate(container_fs_sector_writes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
+          "legendFormat": "Write"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 5,
+      "title": "Nexus AI - Network I/O (receive)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 68 },
+      "targets": [
+        {
+          "expr": "sum(rate(container_network_receive_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m]))",
+          "legendFormat": "Nexus AI rx"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 6,
+      "title": "Nexus AI - Network I/O (transmit)",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 68 },
+      "targets": [
+        {
+          "expr": "sum(rate(container_network_transmit_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m]))",
+          "legendFormat": "Nexus AI tx"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
+    },
+    {
+      "id": 10,
+      "title": "Nexus AI - HTTP Requests In-Flight",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 76 },
+      "targets": [
+        {
+          "expr": "nexusai_http_requests_in_flight",
+          "legendFormat": "In-flight requests"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 11,
+      "title": "Nexus AI - Active Agent Sessions",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 76 },
+      "targets": [
+        {
+          "expr": "nexusai_active_agent_sessions",
+          "legendFormat": "Active sessions"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 12,
+      "title": "Nexus AI - HTTP Request Rate by Status",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 84 },
+      "targets": [
+        {
+          "expr": "sum by (status_code) (rate(nexusai_http_request_duration_seconds_count[5m]))",
+          "legendFormat": "{{status_code}}"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
+    },
+    {
+      "id": 20,
+      "title": "Nexus AI - Event Loop Lag",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 92 },
+      "targets": [
+        {
+          "expr": "nexusai_process_nodejs_eventloop_lag_seconds",
+          "legendFormat": "mean"
+        },
+        {
+          "expr": "nexusai_process_nodejs_eventloop_lag_p99_seconds",
+          "legendFormat": "p99"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 21,
+      "title": "Nexus AI - Heap Usage",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 92 },
+      "targets": [
+        {
+          "expr": "nexusai_process_nodejs_heap_size_used_bytes",
+          "legendFormat": "Heap used"
+        },
+        {
+          "expr": "nexusai_process_nodejs_heap_size_total_bytes",
+          "legendFormat": "Heap total"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 22,
+      "title": "Nexus AI - Open File Descriptors",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 100 },
+      "targets": [
+        {
+          "expr": "nexusai_process_process_open_fds",
+          "legendFormat": "Open FDs"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 23,
+      "title": "Nexus AI - Active Handles / Requests",
+      "type": "timeseries",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 100 },
+      "targets": [
+        {
+          "expr": "nexusai_process_nodejs_active_handles_total",
+          "legendFormat": "Active handles"
+        },
+        {
+          "expr": "nexusai_process_nodejs_active_requests_total",
+          "legendFormat": "Active requests"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
+    },
+    {
+      "id": 7,
+      "title": "Nexus AI - Uptime",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 108 },
+      "targets": [
+        {
+          "expr": "time() - container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}",
+          "legendFormat": "Nexus AI"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "unit": "s", "color": { "mode": "fixed", "fixedColor": "green" } },
+        "overrides": []
+      }
+    },
+    {
+      "id": 19,
+      "title": "Nexus AI - Container Restart Count",
+      "type": "stat",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 108 },
+      "targets": [
+        {
+          "expr": "changes(container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[$__range])",
+          "legendFormat": "Restarts"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 1 },
+              { "color": "red", "value": 3 }
+            ]
+          }
+        },
+        "overrides": []
+      }
+    },
+    {
+      "id": 104,
+      "type": "row",
+      "title": "Monitoring Status",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 114 },
+      "panels": []
+    },
     {
       "id": 24,
       "title": "Host Metrics Collector (node-exporter)",
       "description": "A value of 0 means Prometheus cannot scrape node-exporter. Host CPU, memory, disk, swap, load, and network panels will have no data until the collector is running and reachable.",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "gridPos": { "h": 4, "w": 12, "x": 0, "y": 115 },
       "targets": [
         { "expr": "up{job=\"node-exporter\"}", "legendFormat": "node-exporter", "instant": true, "range": false }
       ],
@@ -42,391 +703,38 @@
       }
     },
     {
-      "id": 1,
-      "title": "Host CPU Usage (%)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
-      "targets": [
-        {
-          "expr": "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
-          "legendFormat": "CPU used %"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0, "max": 100 },
-        "overrides": []
-      }
-    },
-    {
-      "id": 2,
-      "title": "Host Memory Usage (%)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
-      "targets": [
-        {
-          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
-          "legendFormat": "Memory used %"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0, "max": 100 },
-        "overrides": []
-      }
-    },
-    {
-      "id": 3,
-      "title": "Nexus AI - CPU Usage",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
-      "targets": [
-        {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 100",
-          "legendFormat": "Nexus AI"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "percent" }, "overrides": [] }
-    },
-    {
-      "id": 4,
-      "title": "Nexus AI - Memory Usage",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
-      "targets": [
-        {
-          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"})",
-          "legendFormat": "Nexus AI"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
-    },
-    {
-      "id": 5,
-      "title": "Nexus AI - Network I/O (receive)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
-      "targets": [
-        {
-          "expr": "sum(rate(container_network_receive_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m]))",
-          "legendFormat": "Nexus AI rx"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
-    },
-    {
-      "id": 6,
-      "title": "Nexus AI - Network I/O (transmit)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
-      "targets": [
-        {
-          "expr": "sum(rate(container_network_transmit_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m]))",
-          "legendFormat": "Nexus AI tx"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
-    },
-    {
-      "id": 7,
-      "title": "Nexus AI - Uptime",
+      "id": 25,
+      "title": "GPU Metrics Collector (nvidia_gpu_exporter)",
+      "description": "A value of 0 means Prometheus cannot scrape the GPU exporter. It runs from docker-compose.gpu-monitoring.yml, which install.sh adds alongside the GPU services; without that overlay the GPU row has no data.",
       "type": "stat",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 28 },
+      "gridPos": { "h": 4, "w": 12, "x": 12, "y": 115 },
       "targets": [
-        {
-          "expr": "time() - container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}",
-          "legendFormat": "Nexus AI"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "s" }, "overrides": [] }
-    },
-    {
-      "id": 8,
-      "title": "Host Memory Available",
-      "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 34 },
-      "targets": [
-        {
-          "expr": "node_memory_MemAvailable_bytes",
-          "legendFormat": "Available"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "bytes",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              { "color": "red", "value": null },
-              { "color": "yellow", "value": 536870912 },
-              { "color": "green", "value": 1073741824 }
-            ]
-          }
-        },
-        "overrides": []
-      }
-    },
-    {
-      "id": 9,
-      "title": "Host Disk Free",
-      "description": "Available space on the host root filesystem. On Docker Desktop with WSL2, use the Windows C: drive when a root filesystem metric is unavailable.",
-      "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 34 },
-      "targets": [
-        {
-          "expr": "max by (instance) (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/\"}) or on(instance) max by (instance) (node_filesystem_avail_bytes{job=\"node-exporter\",mountpoint=\"/mnt/host/c\"})",
-          "legendFormat": "Free"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "bytes" }, "overrides": [] }
-    },
-    {
-      "id": 10,
-      "title": "Nexus AI - HTTP Requests In-Flight",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 40 },
-      "targets": [
-        {
-          "expr": "nexusai_http_requests_in_flight",
-          "legendFormat": "In-flight requests"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 11,
-      "title": "Nexus AI - Active Agent Sessions",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 40 },
-      "targets": [
-        {
-          "expr": "nexusai_active_agent_sessions",
-          "legendFormat": "Active sessions"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 12,
-      "title": "Nexus AI - HTTP Request Rate by Status",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 48 },
-      "targets": [
-        {
-          "expr": "sum by (status_code) (rate(nexusai_http_request_duration_seconds_count[5m]))",
-          "legendFormat": "{{status_code}}"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "reqps" }, "overrides": [] }
-    },
-    {
-      "id": 13,
-      "title": "Host Load Average",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 56 },
-      "targets": [
-        { "expr": "node_load1", "legendFormat": "1m" },
-        { "expr": "node_load5", "legendFormat": "5m" },
-        { "expr": "node_load15", "legendFormat": "15m" }
-      ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 14,
-      "title": "Host Swap Usage",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 56 },
-      "targets": [
-        {
-          "expr": "node_memory_SwapTotal_bytes - node_memory_SwapFree_bytes",
-          "legendFormat": "Swap used"
-        },
-        {
-          "expr": "node_memory_SwapTotal_bytes",
-          "legendFormat": "Swap total"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 15,
-      "title": "Host Disk I/O",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 64 },
-      "targets": [
-        {
-          "expr": "sum(rate(node_disk_read_bytes_total[5m]))",
-          "legendFormat": "Read"
-        },
-        {
-          "expr": "sum(rate(node_disk_written_bytes_total[5m]))",
-          "legendFormat": "Write"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
-    },
-    {
-      "id": 16,
-      "title": "Host Network I/O (all interfaces)",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 64 },
-      "targets": [
-        {
-          "expr": "sum(rate(node_network_receive_bytes_total{device!=\"lo\"}[5m]))",
-          "legendFormat": "Receive"
-        },
-        {
-          "expr": "sum(rate(node_network_transmit_bytes_total{device!=\"lo\"}[5m]))",
-          "legendFormat": "Transmit"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
-    },
-    {
-      "id": 17,
-      "title": "Nexus AI - Memory % of Host Total",
-      "description": "No memory limit is set on the container. Compare cAdvisor container memory usage with its machine_memory_bytes total, so this panel remains available even when node-exporter is down.",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 72 },
-      "targets": [
-        {
-          "expr": "sum(container_memory_usage_bytes{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}) / max(machine_memory_bytes{job=\"cadvisor\"}) * 100",
-          "legendFormat": "Memory % of host total"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": { "unit": "percent", "min": 0, "max": 100 },
-        "overrides": []
-      }
-    },
-    {
-      "id": 18,
-      "title": "Nexus AI - Disk I/O",
-      "description": "This cAdvisor build does not export container_fs_reads_bytes_total/container_fs_writes_bytes_total - only sector counts. Approximated as sectors * 512 bytes, the standard Linux block-device sector size.",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 72 },
-      "targets": [
-        {
-          "expr": "sum(rate(container_fs_sector_reads_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
-          "legendFormat": "Read"
-        },
-        {
-          "expr": "sum(rate(container_fs_sector_writes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
-          "legendFormat": "Write"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "Bps" }, "overrides": [] }
-    },
-    {
-      "id": 19,
-      "title": "Nexus AI - Container Restart Count",
-      "type": "stat",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 80 },
-      "targets": [
-        {
-          "expr": "changes(container_start_time_seconds{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[$__range])",
-          "legendFormat": "Restarts"
-        }
+        { "expr": "up{job=\"nvidia-gpu\"}", "legendFormat": "nvidia_gpu_exporter", "instant": true, "range": false }
       ],
       "fieldConfig": {
         "defaults": {
           "unit": "short",
+          "noValue": "No scrape target",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "Down", "color": "red" },
+                "1": { "text": "Up", "color": "green" }
+              }
+            }
+          ],
           "thresholds": {
             "mode": "absolute",
             "steps": [
-              { "color": "green", "value": null },
-              { "color": "yellow", "value": 1 },
-              { "color": "red", "value": 3 }
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
             ]
           }
         },
         "overrides": []
       }
-    },
-    {
-      "id": 20,
-      "title": "Nexus AI - Event Loop Lag",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 86 },
-      "targets": [
-        {
-          "expr": "nexusai_process_nodejs_eventloop_lag_seconds",
-          "legendFormat": "mean"
-        },
-        {
-          "expr": "nexusai_process_nodejs_eventloop_lag_p99_seconds",
-          "legendFormat": "p99"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "s", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 21,
-      "title": "Nexus AI - Heap Usage",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 86 },
-      "targets": [
-        {
-          "expr": "nexusai_process_nodejs_heap_size_used_bytes",
-          "legendFormat": "Heap used"
-        },
-        {
-          "expr": "nexusai_process_nodejs_heap_size_total_bytes",
-          "legendFormat": "Heap total"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "bytes", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 22,
-      "title": "Nexus AI - Open File Descriptors",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 94 },
-      "targets": [
-        {
-          "expr": "nexusai_process_process_open_fds",
-          "legendFormat": "Open FDs"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
-    },
-    {
-      "id": 23,
-      "title": "Nexus AI - Active Handles / Requests",
-      "type": "timeseries",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 94 },
-      "targets": [
-        {
-          "expr": "nexusai_process_nodejs_active_handles_total",
-          "legendFormat": "Active handles"
-        },
-        {
-          "expr": "nexusai_process_nodejs_active_requests_total",
-          "legendFormat": "Active requests"
-        }
-      ],
-      "fieldConfig": { "defaults": { "unit": "short", "min": 0 }, "overrides": [] }
     }
   ]
 }

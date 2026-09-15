@@ -719,6 +719,9 @@ if want llm; then
 fi
 if want image; then FILES+=("docker-compose.sdcpp.yml"); fi
 if want speech; then FILES+=("docker-compose.speech.yml"); fi
+# GPU telemetry for the dashboard. Only alongside a GPU service: it reserves a GPU,
+# and by this point the installer has refused to go on without the toolkit.
+if want llm || want image || want speech; then FILES+=("docker-compose.gpu-monitoring.yml"); fi
 
 COMPOSE_LIST="$(IFS=:; echo "${FILES[*]}")"
 

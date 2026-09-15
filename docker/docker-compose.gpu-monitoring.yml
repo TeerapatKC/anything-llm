@@ -1,0 +1,49 @@
+# Optional overlay: GPU telemetry for the Grafana dashboard's GPU row.
+#
+# An overlay rather than part of the monitoring stack in docker-compose.yml
+# because it reserves a GPU, and a host without the NVIDIA container toolkit
+# would otherwise fail to start anything at all. install.sh adds it whenever it
+# installs one of the GPU services (llm, image, speech).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.gpu-monitoring.yml up -d
+#
+# nvidia_gpu_exporter rather than dcgm-exporter, for a DGX Spark in particular:
+#
+#   - it reads nvidia-smi, which the container toolkit mounts in from the host
+#     driver, so it follows whatever driver DGX OS ships
+#   - dcgm-exporter starts its own nv-hostengine, which NVIDIA advises against on
+#     DGX systems that already run one
+#
+# On the GB10, nvidia-smi reports GPU memory as Not Supported: there is no VRAM,
+# the GPU allocates from the unified pool node-exporter already reports. The
+# dashboard therefore shows utilization, temperature and power from here, and
+# memory from the host row.
+#
+# Pinned, not :latest - the image travels in the offline bundle, and the
+# dashboard's queries depend on its metric names.
+#
+# Deliberately no `name:` here - the project name comes from the base file.
+
+networks:
+  nexusai:
+    driver: bridge
+
+services:
+  gpu-exporter:
+    image: utkuozdemir/nvidia_gpu_exporter:1.15.1
+    container_name: nexusai-gpu-exporter
+    environment:
+      # nvidia-smi is all it needs - no CUDA libraries.
+      NVIDIA_DRIVER_CAPABILITIES: utility
+    networks:
+      - nexusai
+    restart: unless-stopped
+    # Scraped by Prometheus across the compose network on 9835; nothing is
+    # published to the host.
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

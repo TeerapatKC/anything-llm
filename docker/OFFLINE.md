@@ -201,7 +201,8 @@ TensorFlow checkpoint nothing would ever have opened.
 
 **Every image is in the bundle, not just the ones this project builds.** That
 includes the monitoring four from the base compose file, which would otherwise
-leave four containers stuck pulling on an otherwise working stack.
+leave four containers stuck pulling on an otherwise working stack, and - with any
+GPU service - the pinned `nvidia_gpu_exporter` behind the dashboard's GPU row.
 
 ## The app's own models
 

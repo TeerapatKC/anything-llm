@@ -346,6 +346,10 @@ if [[ "$SKIP_IMAGES" == false ]]; then
   want llm && THIRD_PARTY+=("ghcr.io/ggml-org/llama.cpp:server-cuda")
   # master-cuda-spark is the GB10 build. The plain master-cuda tag is x86 only.
   want image && THIRD_PARTY+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark")
+  # The dashboard's GPU row. install.sh starts it with any GPU service.
+  if want llm || want image || want speech; then
+    THIRD_PARTY+=("utkuozdemir/nvidia_gpu_exporter:1.15.1")
+  fi
 
   # Pulling a tag for another architecture replaces whatever is under that tag
   # here. For the monitoring images that is a working local copy, so say which
@@ -393,6 +397,7 @@ required_refs=(
 )
 if want llm; then required_refs+=("ghcr.io/ggml-org/llama.cpp:server-cuda"); fi
 if want image; then required_refs+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark"); fi
+if want llm || want image || want speech; then required_refs+=("utkuozdemir/nvidia_gpu_exporter:1.15.1"); fi
 for ref in "${required_refs[@]}"; do
   expected_images+=("$(echo "$ref" | tr '/:' '--').tar")
 done
