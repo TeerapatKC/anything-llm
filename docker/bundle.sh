@@ -74,7 +74,9 @@ Options:
   --platform NAME   linux/arm64 (production) or linux/amd64 (LLM-only test).
   --skip-build      Do not rebuild the app and speech images; save the target
                     images already tagged on this machine.
-  --skip-images     Models only. For topping up a bundle whose images are done.
+  --skip-images     Do not build or save the app images. Third-party images the
+                    bundle lacks are still pulled; ones already there are kept.
+                    For topping up a bundle whose app images are done.
   --skip-models     Images only.
   --checksums       Write a SHA-256 for every file into the manifest. Correct,
                     and slow: it reads the whole bundle back.
@@ -294,6 +296,29 @@ save_image_archive() {
   mv -f -- "$partial" "$dest"
 }
 
+# The images this project does not build. The monitoring four are in the base
+# compose file and come up with everything else, so leaving them out would
+# leave a working stack with four containers stuck pulling.
+THIRD_PARTY=(
+  "gcr.io/cadvisor/cadvisor:latest"
+  "prom/node-exporter:latest"
+  "prom/prometheus:latest"
+  "grafana/grafana:latest"
+)
+# Every model downloader runs in this image, the app's own nexusai-models job
+# included, so it is needed even with --services none. It stays in the bundle
+# even though the weights arrive with it: the job still runs on the target,
+# finds every file present and exits, and nothing waiting on it starts until
+# it has.
+THIRD_PARTY+=("curlimages/curl:latest")
+if want llm; then THIRD_PARTY+=("ghcr.io/ggml-org/llama.cpp:server-cuda"); fi
+# master-cuda-spark is the GB10 build. The plain master-cuda tag is x86 only.
+if want image; then THIRD_PARTY+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark"); fi
+# The dashboard's GPU row. install.sh starts it with any GPU service.
+if want llm || want image || want speech; then
+  THIRD_PARTY+=("utkuozdemir/nvidia_gpu_exporter:1.15.1")
+fi
+
 if [[ "$SKIP_IMAGES" == false ]]; then
   mkdir -p "$IMAGES_DIR"
 
@@ -327,111 +352,70 @@ if [[ "$SKIP_IMAGES" == false ]]; then
       save_existing "$TTS_IMAGE_REF" "${IMAGES_DIR}/nexusai-tts-${ARCH}.tar"
     fi
   fi
+fi
 
-  # The images this project does not build. The monitoring four are in the base
-  # compose file and come up with everything else, so leaving them out would
-  # leave a working stack with four containers stuck pulling.
-  THIRD_PARTY=(
-    "gcr.io/cadvisor/cadvisor:latest"
-    "prom/node-exporter:latest"
-    "prom/prometheus:latest"
-    "grafana/grafana:latest"
-  )
-  # Every model downloader runs in this image, the app's own nexusai-models job
-  # included, so it is needed even with --services none. It stays in the bundle
-  # even though the weights arrive with it: the job still runs on the target,
-  # finds every file present and exits, and nothing waiting on it starts until
-  # it has.
-  THIRD_PARTY+=("curlimages/curl:latest")
-  want llm && THIRD_PARTY+=("ghcr.io/ggml-org/llama.cpp:server-cuda")
-  # master-cuda-spark is the GB10 build. The plain master-cuda tag is x86 only.
-  want image && THIRD_PARTY+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark")
-  # The dashboard's GPU row. install.sh starts it with any GPU service.
-  if want llm || want image || want speech; then
-    THIRD_PARTY+=("utkuozdemir/nvidia_gpu_exporter:1.15.1")
-  fi
+# The app images - the ones only a build can produce.
+APP_ARCHIVES=("nexusai-${ARCH}.tar")
+if want speech; then
+  APP_ARCHIVES+=("nexusai-stt-${ARCH}.tar" "nexusai-tts-${ARCH}.tar")
+fi
 
-  # Pulling a tag for another architecture replaces whatever is under that tag
-  # here. For the monitoring images that is a working local copy, so say which
-  # ones to put back rather than leaving a broken workstation behind.
-  REPLACED=()
-  for ref in "${THIRD_PARTY[@]}"; do
-    file="${IMAGES_DIR}/$(echo "$ref" | tr '/:' '--').tar"
-    if [[ -f "$file" ]] && tar -tf "$file" >/dev/null 2>&1; then
-      say "Have $(basename "$file")"
-      continue
-    fi
-    [[ -f "$file" ]] && warn "Replacing incomplete $(basename "$file")"
-    had_arch="$(docker image inspect "$ref" --format '{{.Architecture}}' 2>/dev/null || true)"
-    [[ -n "$had_arch" && "$had_arch" != "$ARCH" ]] && REPLACED+=("$ref")
-    say "Pulling ${ref} for ${ARCH}"
-    docker pull --platform "$PLATFORM" "$ref" >/dev/null
-    save_image_archive "$ref" "$file"
-    # The tarball is what matters. Remove this temporary tag so a cross-arch
-    # pull does not shadow a native image in a later `docker compose up`.
-    docker rmi "$ref" >/dev/null 2>&1 || true
+# With --skip-images a missing app archive cannot be made here: build-arm64.sh
+# writes them straight to a tarball and never tags them in this daemon, so there
+# is nothing to save. Refuse before pulling anything or rewriting images.list.
+if [[ "$SKIP_IMAGES" == true ]]; then
+  missing_app=()
+  for image_tar in "${APP_ARCHIVES[@]}"; do
+    [[ -s "${IMAGES_DIR}/${image_tar}" ]] || missing_app+=("$image_tar")
   done
-
-  if [[ ${#REPLACED[@]} -gt 0 ]]; then
-    echo
-    warn "These tags held an image for this machine's own architecture, and the"
-    warn "${ARCH} pull took their place. Nothing here needs them, but if you run the"
-    warn "stack locally, put them back with:"
-    for ref in "${REPLACED[@]}"; do warn "  docker pull ${ref}"; done
-    echo
+  if [[ ${#missing_app[@]} -gt 0 ]]; then
+    for image_tar in "${missing_app[@]}"; do warn "Missing ${IMAGES_DIR}/${image_tar}"; done
+    die "--skip-images, but these app images are not in the bundle and have to be built. Rerun without --skip-images."
   fi
+fi
+
+# Third-party images are fetched even with --skip-images, which only skips
+# building and saving the app images. An archive already here is kept, so this
+# costs a few seconds on a complete bundle - and it is what lets a bundle made
+# before an image joined the stack be topped up in one run, rather than failing
+# on the air-gapped target or handing someone a docker command to copy.
+mkdir -p "$IMAGES_DIR"
+# Pulling a tag for another architecture replaces whatever is under that tag
+# here. For the monitoring images that is a working local copy, so say which
+# ones to put back rather than leaving a broken workstation behind.
+REPLACED=()
+for ref in "${THIRD_PARTY[@]}"; do
+  file="${IMAGES_DIR}/$(echo "$ref" | tr '/:' '--').tar"
+  if [[ -f "$file" ]] && tar -tf "$file" >/dev/null 2>&1; then
+    say "Have $(basename "$file")"
+    continue
+  fi
+  [[ -f "$file" ]] && warn "Replacing incomplete $(basename "$file")"
+  had_arch="$(docker image inspect "$ref" --format '{{.Architecture}}' 2>/dev/null || true)"
+  [[ -n "$had_arch" && "$had_arch" != "$ARCH" ]] && REPLACED+=("$ref")
+  say "Pulling ${ref} for ${ARCH}"
+  docker pull --platform "$PLATFORM" "$ref" >/dev/null
+  save_image_archive "$ref" "$file"
+  # The tarball is what matters. Remove this temporary tag so a cross-arch
+  # pull does not shadow a native image in a later `docker compose up`.
+  docker rmi "$ref" >/dev/null 2>&1 || true
+done
+
+if [[ ${#REPLACED[@]} -gt 0 ]]; then
+  echo
+  warn "These tags held an image for this machine's own architecture, and the"
+  warn "${ARCH} pull took their place. Nothing here needs them, but if you run the"
+  warn "stack locally, put them back with:"
+  for ref in "${REPLACED[@]}"; do warn "  docker pull ${ref}"; done
+  echo
 fi
 
 # Record what the selected stack needs, independently of what happens to be in
 # this Docker daemon's cache. The installer checks this list on the target.
-expected_images=("nexusai-${ARCH}.tar")
-if want speech; then
-  expected_images+=("nexusai-stt-${ARCH}.tar" "nexusai-tts-${ARCH}.tar")
-fi
-required_refs=(
-  "gcr.io/cadvisor/cadvisor:latest"
-  "prom/node-exporter:latest"
-  "prom/prometheus:latest"
-  "grafana/grafana:latest"
-  "curlimages/curl:latest"
-)
-if want llm; then required_refs+=("ghcr.io/ggml-org/llama.cpp:server-cuda"); fi
-if want image; then required_refs+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark"); fi
-if want llm || want image || want speech; then required_refs+=("utkuozdemir/nvidia_gpu_exporter:1.15.1"); fi
-for ref in "${required_refs[@]}"; do
+expected_images=("${APP_ARCHIVES[@]}")
+for ref in "${THIRD_PARTY[@]}"; do
   expected_images+=("$(echo "$ref" | tr '/:' '--').tar")
 done
-# With --skip-images nothing above saved an archive, but the list still names
-# everything the stack now runs. An image added since the bundle's images were
-# made would then be required on the target and absent from the bundle - found
-# only on the air-gapped host. Refuse here, before the list is rewritten.
-if [[ "$SKIP_IMAGES" == true ]]; then
-  missing_images=()
-  for image_tar in "${expected_images[@]}"; do
-    [[ -s "${IMAGES_DIR}/${image_tar}" ]] || missing_images+=("$image_tar")
-  done
-  if [[ ${#missing_images[@]} -gt 0 ]]; then
-    warn "--skip-images, but the stack needs image archives this bundle does not have:"
-    for image_tar in "${missing_images[@]}"; do warn "  ${image_tar}"; done
-    # A third-party image is one pull and one save - the same two steps the
-    # images section above runs - so hand those over rather than a rebuild. The
-    # app images cannot be fetched that way: build-arm64.sh writes them straight
-    # to a tarball and never tags them in this daemon, so --skip-build would not
-    # find them either.
-    echo >&2
-    warn "Fetch the third-party ones with:"
-    for ref in "${required_refs[@]}"; do
-      image_tar="$(echo "$ref" | tr '/:' '--').tar"
-      [[ -s "${IMAGES_DIR}/${image_tar}" ]] && continue
-      warn "  docker pull --platform ${PLATFORM} ${ref} && docker save ${ref} -o ${OUT}/images/${image_tar}"
-    done
-    for image_tar in "${missing_images[@]}"; do
-      [[ "$image_tar" == nexusai-* ]] &&
-        warn "  ${image_tar} is built here: rerun without --skip-images to build it."
-    done
-    die "images.list left unchanged."
-  fi
-fi
 printf '%s\n' "${expected_images[@]}" > "${OUT_ABS}/images.list"
 
 # --- models ------------------------------------------------------------------

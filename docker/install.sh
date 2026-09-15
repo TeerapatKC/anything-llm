@@ -163,11 +163,10 @@ if [[ -n "$OFFLINE_DIR" ]]; then
         # Two causes look the same from here: a copy that stopped short, or a bundle
         # topped up with --skip-images after the stack gained an image.
         warn "Missing or empty image tarball: ${image_tar}"
-        warn "Either the bundle copy is incomplete, or it was last run with --skip-images"
-        warn "after this image was added. On the build machine, rerun bundle.sh with the"
-        warn "original --services/--models plus --skip-images --skip-models: it prints the"
-        warn "docker pull/save commands for exactly the missing archives. Then copy"
-        warn "${image_tar} into ${OFFLINE_DIR}/images/ here."
+        warn "Either the bundle copy is incomplete, or the bundle predates this image. On"
+        warn "the build machine, rerun bundle.sh with the original --services/--models plus"
+        warn "--skip-build --skip-images --skip-models: it pulls just the missing archives."
+        warn "Then copy ${image_tar} into ${OFFLINE_DIR}/images/ here."
         die "Refusing to install from an incomplete bundle."
       fi
       if [[ "$DRY_RUN" == false ]] && ! tar -tf "${OFFLINE_DIR}/images/${image_tar}" >/dev/null 2>&1; then
