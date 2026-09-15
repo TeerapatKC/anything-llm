@@ -260,6 +260,32 @@ bash docker/bundle.sh --checksums
 
 That appends a SHA-256 per file. It reads the whole bundle back, so it is slow.
 
+## If the dashboard shows "No data"
+
+On the Spark, from the bundle:
+
+```bash
+python3 <bundle>/docker/monitoring/check-dashboard.py          # report only
+python3 <bundle>/docker/monitoring/check-dashboard.py --fix    # and repair
+```
+
+It lists every collector with Prometheus's own error for the ones that are down,
+then every panel whose query comes back empty. Python's standard library and the
+docker CLI are all it needs, so it runs with no network. `--fix` restarts only
+what it found stuck, then waits for the panels to fill:
+
+- **A job reported MISSING** - Prometheus reads `prometheus.yml` only when it
+  starts, and compose does not recreate it when only that file changed. It is
+  restarted. `install.sh` now does this on every run as well.
+- **node-exporter DOWN with 503** - it refuses scrapes once 40 are stuck in
+  flight. It is restarted, and its collectors are timed one at a time so a
+  collector that hangs on this hardware is named. Disable that one with
+  `--no-collector.<name>`.
+- **cAdvisor or the GPU exporter DOWN** - restarted.
+
+The app itself is never restarted by the script; that would disconnect everyone
+using it.
+
 ## If something is missing on the Spark
 
 The installer names what it cannot find rather than letting compose fail later:
