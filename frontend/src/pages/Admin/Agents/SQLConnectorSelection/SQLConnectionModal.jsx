@@ -317,7 +317,7 @@ export default function SQLConnectionModal({
               <label className="block mb-2 text-sm font-medium text-theme-text-primary mt-4">
                 {t("sql-connector.modal.select-engine")}
               </label>
-              <div className="grid md:grid-cols-4 gap-4 grid-cols-2">
+              <div className="flex flex-wrap gap-3 sm:gap-4">
                 <DBEngine
                   provider="postgresql"
                   active={engine === "postgresql"}
@@ -509,13 +509,13 @@ function DBEngine({ provider, active, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className={`flex flex-col p-4 border border-white/40 bg-zinc-800 light:bg-theme-settings-input-bg rounded-lg w-fit hover:bg-zinc-700 ${
+      className={`flex flex-col p-3 sm:p-4 border border-white/40 bg-zinc-800 light:bg-theme-settings-input-bg rounded-lg w-fit hover:bg-zinc-700 ${
         active ? "bg-blue-500/50!" : ""
       }`}
     >
       <img
         src={DB_LOGOS[provider]}
-        className="h-[100px] rounded-md"
+        className="h-20 sm:h-[100px] rounded-md"
         alt={provider}
       />
     </button>
