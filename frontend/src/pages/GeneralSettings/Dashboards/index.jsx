@@ -266,9 +266,12 @@ function serverOrigin() {
 function dashboardUrls(config, dashboard, theme) {
   const slug = dashboard.slug || dashboard.uid;
   const openPath = `/d/${dashboard.uid}/${slug}`;
+  // hideLogo: since 12.4 kiosk mode adds a "Powered by Grafana" bar that is sticky
+  // to the bottom of the iframe, so it sits over the panels rather than after them.
+  // The "Open in Grafana" link keeps Grafana's own chrome.
   const embedPath = dashboard.publicToken
-    ? `/public-dashboards/${dashboard.publicToken}?theme=${theme}`
-    : `${openPath}?orgId=1&kiosk&theme=${theme}&from=now-6h&to=now&refresh=30s`;
+    ? `/public-dashboards/${dashboard.publicToken}?theme=${theme}&hideLogo=true`
+    : `${openPath}?orgId=1&kiosk&hideLogo=true&theme=${theme}&from=now-6h&to=now&refresh=30s`;
 
   const base = String(config.publicUrl || "").replace(/\/$/, "");
   if (!config.proxied)

@@ -462,17 +462,17 @@
     {
       "id": 18,
       "title": "Nexus AI - Disk I/O",
-      "description": "This cAdvisor build does not export container_fs_reads_bytes_total/container_fs_writes_bytes_total - only sector counts. Approximated as sectors * 512 bytes, the standard Linux block-device sector size.",
+      "description": "Byte counters where cAdvisor exports them. Some cAdvisor builds export only sector counts instead; those are approximated as sectors * 512 bytes, the standard Linux block-device sector size.",
       "type": "timeseries",
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "gridPos": { "h": 8, "w": 12, "x": 12, "y": 60 },
       "targets": [
         {
-          "expr": "sum(rate(container_fs_sector_reads_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
+          "expr": "sum(rate(container_fs_reads_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) or sum(rate(container_fs_sector_reads_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
           "legendFormat": "Read"
         },
         {
-          "expr": "sum(rate(container_fs_sector_writes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
+          "expr": "sum(rate(container_fs_writes_bytes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) or sum(rate(container_fs_sector_writes_total{name=~\"^nexusai$|^nexusai-backend$|^nexusai-frontend$\"}[5m])) * 512",
           "legendFormat": "Write"
         }
       ],
