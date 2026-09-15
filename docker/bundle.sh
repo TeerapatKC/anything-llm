@@ -228,6 +228,30 @@ mkdir -p "$OUT"
 OUT_ABS="$(cd "$OUT" && pwd)"
 IMAGES_DIR="${OUT_ABS}/images"
 MODELS_DIR="${OUT_ABS}/models"
+
+# The app's own models - the embedder, reranker and Whisper. Every bundle needs
+# them, whatever --services says, and install.sh refuses one without them. The
+# same four files install.sh checks.
+app_models_missing() {
+  local f
+  for f in \
+    MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx \
+    Xenova/ms-marco-MiniLM-L-6-v2/onnx/model_quantized.onnx \
+    Xenova/whisper-large/onnx/encoder_model_quantized.onnx \
+    Xenova/whisper-large/onnx/decoder_model_merged_quantized.onnx
+  do
+    [[ -s "${MODELS_DIR}/nexusai/${f}" ]] || { printf '%s' "models/nexusai/${f}"; return 0; }
+  done
+  return 1
+}
+
+# --skip-models on a bundle directory from before these models moved out of the
+# app image produces a bundle that fails on the air-gapped target, where nothing
+# can be done about it. Say so here, before an hour of image builds.
+if [[ "$SKIP_MODELS" == true ]] && missing="$(app_models_missing)"; then
+  die "--skip-models, but ${OUT} has no ${missing}. The app's models are no longer inside its image. Drop --skip-models (weights already present are skipped, so it costs about 2GB), or run once with --skip-build --skip-images."
+fi
+
 if [[ -f "${OUT_ABS}/offline.env" ]]; then
   existing_platform="$(sed -n "s/^NEXUSAI_BUNDLE_PLATFORM=['\"]\?\([^'\"]*\).*/\1/p" "${OUT_ABS}/offline.env" | head -1)"
   [[ -z "$existing_platform" || "$existing_platform" == "$PLATFORM" ]] ||
@@ -455,6 +479,11 @@ PY
         chown -R 1000:1000 /cache
       '
   fi
+fi
+
+# Last chance to catch an incomplete bundle while this machine still has a network.
+if missing="$(app_models_missing)"; then
+  die "The bundle has no ${missing}. Rerun with --skip-build --skip-images to fetch the app's models."
 fi
 
 # --- the compose files, the installer and the voices -------------------------

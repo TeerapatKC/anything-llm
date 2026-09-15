@@ -179,6 +179,18 @@ if [[ -n "$OFFLINE_DIR" ]]; then
   # unable to embed a single document, so stop here and say which file.
   if grep -q '^NEXUSAI_MODELS_DIR=' "${OFFLINE_DIR}/offline.env"; then
     app_models="${OFFLINE_DIR}/models/nexusai"
+    # No directory at all is not a copy that stopped short: the bundle was built
+    # with --skip-models on top of one from before these models left the image.
+    # Nothing on this host can fetch them, so say what fixes it on the build machine.
+    if [[ ! -d "$app_models" ]]; then
+      warn "This bundle has no models/nexusai - the embedder, reranker, Whisper and OCR"
+      warn "data are no longer inside the app image. It was most likely built with"
+      warn "--skip-models. On the machine that built it, while it has a network, run:"
+      warn "  bash docker/bundle.sh --skip-build --skip-images"
+      warn "(add the same --out/--services/--models/--quick-test as the original build),"
+      warn "then copy its models/nexusai into ${OFFLINE_DIR}/models/ here."
+      die "Refusing to install an app that could not embed a single document."
+    fi
     for model_file in \
       MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx \
       Xenova/ms-marco-MiniLM-L-6-v2/onnx/model_quantized.onnx \
