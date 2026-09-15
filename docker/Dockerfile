@@ -181,29 +181,25 @@ HEALTHCHECK --interval=1m --timeout=10s --start-period=10s \
 # Also pull and build collector deps (chromium issues prevent bad bindings)
 #
 # Ordered slowest-changing first, because a changed layer rebuilds every layer after
-# it. The models never change without an edit to their script; dependencies change
-# with a lockfile; source changes on every commit. With source copied first, as it
-# used to be, a one-line code change re-ran both installs and re-downloaded 2GB of
-# models - half an hour for what is now a copy.
+# it. Dependencies change with a lockfile; source changes on every commit. With
+# source copied first, as it used to be, a one-line code change re-ran both installs.
 FROM build AS backend-build
 
-# Every model the application would otherwise download the first time someone
-# uses a feature: the built-in multilingual embedder, the reranker, and the transcription
-# model. Without these an air-gapped install fails at the first document upload,
-# and the failure names a Hugging Face URL rather than anything actionable.
+# Where the models the application would otherwise download the first time someone
+# uses a feature are mounted: the built-in multilingual embedder, the reranker, the
+# transcription model and the OCR language data. Without these an air-gapped install
+# fails at the first document upload, with an error naming a Hugging Face URL.
+#
+# They are not in this image. docker/prefetch-models.sh fetches them into a volume
+# (the `nexusai-models` job in the compose files) or into an offline bundle, and the
+# compose files mount that here read-only. Kept out because they were 1.76GB of the
+# image and never change with the code, yet every update carried them across again.
 #
 # The directory sits outside /app/server/storage on purpose. That path is a volume
-# at runtime, and a volume mounted over a directory hides whatever the image put
-# there - so docker-entrypoint.sh copies what is missing into the volume instead.
+# at runtime, so docker-entrypoint.sh copies what is missing into it instead.
 # Whisper is read in place from here, being large and never modified.
 ENV NEXUSAI_PREBUILT_MODELS_DIR=/app/prebuilt-models
 ENV WHISPER_PREBUILT_MODEL_DIR=/app/prebuilt-models
-# Run with `sh <file>` rather than as an executable: this stage runs as nexusai,
-# which cannot chmod a root-owned file in /usr/local/bin. Nothing needs chown
-# either - the files are created by the user that will read them.
-COPY --chown=nexusai:nexusai ./docker/prefetch-models.sh /app/prefetch-models.sh
-RUN sh /app/prefetch-models.sh "$NEXUSAI_PREBUILT_MODELS_DIR" \
-    && rm /app/prefetch-models.sh
 
 # Dependencies from the manifests alone. Neither package has an install script or a
 # local file: dependency that would need the source present.

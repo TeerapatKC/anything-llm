@@ -12,6 +12,8 @@ volumes:
   # directory. Compose reads a value that looks like a path as a bind mount and anything
   # else as a reference to a volume declared here, so one variable covers both.
   nexusai-storage:
+  # See docker-compose.yml: the models the nexusai-models job fetches.
+  nexusai-models:
   prometheus-data:
   grafana-data:
 
@@ -20,6 +22,21 @@ networks:
     driver: bridge
 
 services:
+  # See docker-compose.yml for why these models are not in the image.
+  nexusai-models:
+    image: curlimages/curl:latest
+    container_name: nexusai-models
+    user: "0:0"
+    entrypoint: ["sh", "/prefetch-models.sh", "/models"]
+    environment:
+      NEXUSAI_OFFLINE: ${NEXUSAI_OFFLINE:-0}
+    volumes:
+      - "${NEXUSAI_MODELS_DIR:-nexusai-models}:/models"
+      - "./prefetch-models.sh:/prefetch-models.sh:ro"
+    networks:
+      - nexusai
+    restart: "no"
+
   # Named `nexusai` rather than `backend` so that it matches the service name in
   # docker-compose.yml. The optional overlays - llamacpp, sdcpp, speech -
   # fill in provider defaults by patching that name, and a compose overlay cannot
@@ -49,6 +66,10 @@ services:
       - "${STORAGE_LOCATION:?set STORAGE_LOCATION in docker/.env - a docker volume name, or a host directory outside this repo. See docker/.env.example}:/app/server/storage"
       - "../collector/hotdir/:/app/collector/hotdir"
       - "../collector/outputs/:/app/collector/outputs"
+      - "${NEXUSAI_MODELS_DIR:-nexusai-models}:/app/prebuilt-models:ro"
+    depends_on:
+      nexusai-models:
+        condition: service_completed_successfully
     user: "${UID:-1000}:${GID:-1000}"
     # Only needed if you want to hit the API directly - the frontend container
     # reaches the backend over the compose network, not through this port.

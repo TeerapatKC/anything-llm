@@ -96,6 +96,7 @@ bundle/
   collector/       the upload directories the app bind-mounts
   images/          every container image, saved with docker save
   models/
+    nexusai/       the app's embedder, reranker, Whisper and OCR data
     llamacpp/      the GGUF weights and the router preset
     sdcpp/         FLUX.1-schnell
     hf/            a Hugging Face cache for the two speech services
@@ -183,8 +184,9 @@ with no route out.
 already left an existing file alone, so seeding a directory turns the download
 job into a no-op that exits successfully - which matters, because the model
 servers wait on that job through `service_completed_successfully` and will not
-start until it finishes. `SDCPP_MODELS_DIR`, `LLAMACPP_MODELS_DIR` and
-`SPEECH_MODELS_DIR` swap each named volume for a host path.
+start until it finishes. `NEXUSAI_MODELS_DIR`, `SDCPP_MODELS_DIR`,
+`LLAMACPP_MODELS_DIR` and `SPEECH_MODELS_DIR` swap each named volume for a host
+path.
 
 **The Hugging Face libraries are told not to try.** The speech services fetch
 their checkpoints at runtime. `HF_HUB_OFFLINE=1` makes them read the cache and
@@ -201,27 +203,34 @@ TensorFlow checkpoint nothing would ever have opened.
 includes the monitoring four from the base compose file, which would otherwise
 leave four containers stuck pulling on an otherwise working stack.
 
-## The models that are not in the bundle
+## The app's own models
 
 Several features fetch a model from the internet the first time someone uses them,
 through a different library and into a different place than the model servers:
 the built-in `multilingual-e5-small` embedder, the reranker, the transcription of uploaded audio, and the
 language data for OCR. The app also refreshes a model pricing table at boot.
 
-None of that is in the bundle, and none of it needs to be - `docker/prefetch-models.sh`
-puts all of it inside the app image at build time, with every revision pinned.
-The files land outside `/app/server/storage`, because that path is a volume at
-runtime and a volume hides whatever the image left underneath it; the entrypoint
-copies what is missing into the volume on each start, never overwriting. The
+`docker/prefetch-models.sh` fetches all of it, with every revision pinned, into
+`models/nexusai` in the bundle. On the target the `nexusai-models` job runs the
+same script with `NEXUSAI_OFFLINE=1`: it finds every file, checks the sizes and
+the embedder's SHA-256, and exits - and the app does not start until it has. The
+directory is mounted read-only at `/app/prebuilt-models`. The entrypoint copies
+what is missing into the storage volume on each start, never overwriting. The
 transcription model is the exception: 1.5GB is read in place rather than
 duplicated into a customer's data volume.
 
-This was found the hard way. The embedder used to reach the image only because
-the build context happened to include whatever the build machine had already
-downloaded, which `.dockerignore` now excludes - so a build from a clean checkout
-produced an image that failed at the first document upload, with an error naming
-a Hugging Face URL. The build now pins and verifies the `multilingual-e5-small`
-ONNX file and seeds it into the storage volume before the server starts.
+These used to be baked into the app image. That was 1.76GB of it, and because
+`docker save` writes every layer into the tarball, no copy tool could tell the
+unchanged models apart from the new code. Now they are ordinary files whose bytes
+do not change between bundles, so an update copied with `rsync` over the previous
+bundle's directory on the target transfers only the image tarballs and scripts
+that did change. A plain copy of a whole new bundle still carries them.
+
+Pinning matters for a reason found the hard way. The embedder used to reach the
+image only because the build context happened to include whatever the build
+machine had already downloaded, which `.dockerignore` now excludes - so a build
+from a clean checkout produced an image that failed at the first document upload,
+with an error naming a Hugging Face URL.
 
 ## Per-workspace models
 

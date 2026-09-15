@@ -6,8 +6,8 @@
 # Models the application downloads at runtime. They differ from machine to
 # machine, and letting them into the build context made the image depend on
 # whatever the builder had already run - which is how a missing embedder went
-# unnoticed for so long. docker/prefetch-models.sh puts a pinned copy in the
-# image instead, so the build no longer depends on the builder's own state.
+# unnoticed for so long. docker/prefetch-models.sh now fetches a pinned copy into
+# a volume beside the image, so the image no longer depends on the builder's state.
 **/server/storage/models/Xenova/
 **/server/storage/models/tesseract/
 **/server/storage/models/pricing/

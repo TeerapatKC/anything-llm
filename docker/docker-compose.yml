@@ -5,6 +5,10 @@ volumes:
   # directory. Compose reads a value that looks like a path as a bind mount and anything
   # else as a reference to a volume declared here, so one variable covers both.
   nexusai-storage:
+  # The embedder, reranker, transcription model and OCR data the nexusai-models job
+  # fetches. Unused when NEXUSAI_MODELS_DIR points the mounts at a directory of your
+  # own - which is how an air-gapped install runs, off the bundle's models/nexusai.
+  nexusai-models:
   prometheus-data:
   grafana-data:
 
@@ -13,6 +17,26 @@ networks:
     driver: bridge
 
 services:
+  # A one-shot downloader rather than a step in the app image: about 2GB of models
+  # that never change with the code, and were carried to the customer again with
+  # every update while they were baked in. A pre-seeded directory makes this a
+  # quick check that exits successfully without opening a connection.
+  nexusai-models:
+    image: curlimages/curl:latest
+    container_name: nexusai-models
+    # The named volume is created root-owned, and the curl image's own user
+    # cannot write to it.
+    user: "0:0"
+    entrypoint: ["sh", "/prefetch-models.sh", "/models"]
+    environment:
+      NEXUSAI_OFFLINE: ${NEXUSAI_OFFLINE:-0}
+    volumes:
+      - "${NEXUSAI_MODELS_DIR:-nexusai-models}:/models"
+      - "./prefetch-models.sh:/prefetch-models.sh:ro"
+    networks:
+      - nexusai
+    restart: "no"
+
   nexusai:
     container_name: nexusai
     # Naming the image explicitly is what lets a prebuilt one be used instead of
@@ -38,6 +62,12 @@ services:
       - "${STORAGE_LOCATION:?set STORAGE_LOCATION in docker/.env - a docker volume name, or a host directory outside this repo. See docker/.env.example}:/app/server/storage"
       - "../collector/hotdir/:/app/collector/hotdir"
       - "../collector/outputs/:/app/collector/outputs"
+      # Read-only: the entrypoint copies what the app writes to into the storage
+      # volume, and Whisper is only ever read.
+      - "${NEXUSAI_MODELS_DIR:-nexusai-models}:/app/prebuilt-models:ro"
+    depends_on:
+      nexusai-models:
+        condition: service_completed_successfully
     user: "${UID:-1000}:${GID:-1000}"
     ports:
       - "3001:3001"

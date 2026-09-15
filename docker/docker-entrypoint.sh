@@ -13,13 +13,14 @@ if [ -z "$STORAGE_DIR" ]; then
     echo "================================================================"
 fi
 
-# The models baked into the image at build time have to be copied into the
-# storage volume, because that is where the application looks for them and a
-# volume hides anything the image left at the same path. Copied rather than
-# symlinked so an operator can replace one without rebuilding, and never
-# overwriting: a model already in the volume is the one in use.
+# The models docker/prefetch-models.sh fetched - mounted read-only at
+# NEXUSAI_PREBUILT_MODELS_DIR by the compose files, not part of the image - have to
+# be copied into the storage volume, because that is where the application looks
+# for them. Copied rather than symlinked so an operator can replace one without
+# touching the mount, and never overwriting: a model already in the volume is the
+# one in use.
 #
-# Whisper is skipped. It is read straight out of the image through
+# Whisper is skipped. It is read straight out of the mount through
 # WHISPER_PREBUILT_MODEL_DIR, and at 1.5GB it would otherwise be duplicated into
 # every deployment's data volume.
 # Whether a model already in the volume should give way to the image's copy. One
@@ -45,6 +46,13 @@ stale_prebuilt() {
 seed_prebuilt_models() {
   prebuilt="${NEXUSAI_PREBUILT_MODELS_DIR:-/app/prebuilt-models}"
   target="${STORAGE_DIR:-/app/server/storage}/models"
+  # Said out loud because the consequence surfaces much later and somewhere else:
+  # the first document upload tries to reach Hugging Face, and offline it fails.
+  if [ ! -f "$prebuilt/MintplexLabs/multilingual-e5-small/.prebuilt-revision" ]; then
+    echo "[entrypoint] WARNING: no prebuilt models at ${prebuilt}. Start through the compose"
+    echo "[entrypoint] files, which run the nexusai-models job and mount its volume here;"
+    echo "[entrypoint] without it the embedder is downloaded on first use, or fails offline."
+  fi
   [ -d "$prebuilt" ] || return 0
 
   mkdir -p "$target"
@@ -60,7 +68,7 @@ seed_prebuilt_models() {
     esac
     if [ -e "$dest" ]; then
       stale_prebuilt "$src" "$dest" || continue
-      echo "[entrypoint] replacing $(basename "$dest") with the image's revision"
+      echo "[entrypoint] replacing $(basename "$dest") with the revision in ${prebuilt}"
       rm -rf "$dest"
     fi
 
@@ -68,7 +76,7 @@ seed_prebuilt_models() {
     cp -r "$src" "$dest" && copied="$copied $(basename "$src")"
   done
 
-  [ -n "$copied" ] && echo "[entrypoint] seeded from the image:${copied}"
+  [ -n "$copied" ] && echo "[entrypoint] seeded from ${prebuilt}:${copied}"
   return 0
 }
 seed_prebuilt_models

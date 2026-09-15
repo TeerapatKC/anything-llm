@@ -20,7 +20,9 @@
 #     docker/          the compose files, the installer and the voices
 #     images/          every container image, saved as a tarball
 #     images.list      the image archives required by this stack
-#     models/          the GGUF weights and the Hugging Face cache
+#     models/          the GGUF weights, the Hugging Face cache, and the app's own
+#                      embedder, reranker, Whisper and OCR data (models/nexusai) -
+#                      kept out of the app image so an update does not re-ship them
 #     offline.env      the settings that point the stack at the two above
 #     MANIFEST.txt     what is in here, and what to run on the Spark
 #
@@ -311,13 +313,12 @@ if [[ "$SKIP_IMAGES" == false ]]; then
     "prom/prometheus:latest"
     "grafana/grafana:latest"
   )
-  # Both model services run their downloader in this image. It stays in the
-  # bundle even though the weights arrive with it: the job still runs on the
-  # target, finds every file present and exits, and the model server will not
-  # start until it has.
-  if want llm || want image; then
-    THIRD_PARTY+=("curlimages/curl:latest")
-  fi
+  # Every model downloader runs in this image, the app's own nexusai-models job
+  # included, so it is needed even with --services none. It stays in the bundle
+  # even though the weights arrive with it: the job still runs on the target,
+  # finds every file present and exits, and nothing waiting on it starts until
+  # it has.
+  THIRD_PARTY+=("curlimages/curl:latest")
   want llm && THIRD_PARTY+=("ghcr.io/ggml-org/llama.cpp:server-cuda")
   # master-cuda-spark is the GB10 build. The plain master-cuda tag is x86 only.
   want image && THIRD_PARTY+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark")
@@ -364,8 +365,8 @@ required_refs=(
   "prom/node-exporter:latest"
   "prom/prometheus:latest"
   "grafana/grafana:latest"
+  "curlimages/curl:latest"
 )
-if want llm || want image; then required_refs+=("curlimages/curl:latest"); fi
 if want llm; then required_refs+=("ghcr.io/ggml-org/llama.cpp:server-cuda"); fi
 if want image; then required_refs+=("ghcr.io/leejet/stable-diffusion.cpp:master-cuda-spark"); fi
 for ref in "${required_refs[@]}"; do
@@ -391,6 +392,13 @@ fetch_with_curl() {
 }
 
 if [[ "$SKIP_MODELS" == false ]]; then
+  # Whatever the services, the app itself needs these. They used to be baked into
+  # the app image, where they rode along inside every update's tarball; as plain
+  # files they are identical between bundles, so an rsync-style copy skips them.
+  say "Fetching the app's embedder, reranker, Whisper and OCR data. About 2GB."
+  fetch_with_curl docker/prefetch-models.sh "${MODELS_DIR}/nexusai" \
+    "OCR_LANGUAGES=${OCR_LANGUAGES:-eng tha}"
+
   if want llm; then
     if [[ "$QUICK_TEST" == true ]]; then
       say "Fetching the three small LLM weights (about 1.17GB)."
@@ -491,6 +499,7 @@ fi
   echo "NEXUSAI_IMAGE='${APP_IMAGE_REF}'"
   echo "NEXUSAI_OFFLINE='1'"
   echo "NEXUSAI_BUNDLE_PLATFORM='${PLATFORM}'"
+  echo "NEXUSAI_MODELS_DIR='__BUNDLE__/models/nexusai'"
   if want speech; then
     echo "STT_IMAGE='${STT_IMAGE_REF}'"
     echo "TTS_IMAGE='${TTS_IMAGE_REF}'"

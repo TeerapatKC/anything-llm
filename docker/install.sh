@@ -174,6 +174,22 @@ if [[ -n "$OFFLINE_DIR" ]]; then
     SERVICES="$bundle_services"
   fi
 
+  # The app's own models travel beside its image rather than inside it. A bundle
+  # without them - or one built before they moved out - would bring the app up
+  # unable to embed a single document, so stop here and say which file.
+  if grep -q '^NEXUSAI_MODELS_DIR=' "${OFFLINE_DIR}/offline.env"; then
+    app_models="${OFFLINE_DIR}/models/nexusai"
+    for model_file in \
+      MintplexLabs/multilingual-e5-small/onnx/model_quantized.onnx \
+      Xenova/ms-marco-MiniLM-L-6-v2/onnx/model_quantized.onnx \
+      Xenova/whisper-large/onnx/encoder_model_quantized.onnx \
+      Xenova/whisper-large/onnx/decoder_model_merged_quantized.onnx
+    do
+      [[ -s "${app_models}/${model_file}" ]] ||
+        die "Missing or empty model file: models/nexusai/${model_file}. Finish copying the bundle."
+    done
+  fi
+
   if want llm; then
     # A copied bundle can be incomplete even when offline.env is present. Check
     # every advertised weight before touching the daemon or the local .env.
